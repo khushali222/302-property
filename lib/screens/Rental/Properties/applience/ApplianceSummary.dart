@@ -297,33 +297,38 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                               _buildDetailRowPair(
                                   'Name',
                                   appliance.applianceName ?? '',
-                                  'Warranty Expiration',
-                                  appliance.warrantyExpiry != null
-                                      ? formatDate(appliance.warrantyExpiry!)
-                                      : ''),
-                              _buildDetailRowPair(
-                                  'Model',
-                                  appliance.model ?? '',
                                   'Category',
                                   appliance.categoryName ?? ''),
                               _buildDetailRowPair('Type', appliance.type ?? '',
-                                  'Brand', appliance.brand ?? ''),
-                              _buildDetailRowPair(
-                                  'Description',
-                                  appliance.applianceDescription ?? '',
-                                  'Status',
-                                  appliance.status ?? '',
+                                  'Status', appliance.status ?? '',
                                   valueColor2:
                                       _getStatusColor(appliance.status)),
                               _buildDetailRowPair(
+                                  'Model',
+                                  appliance.model ?? '',
+                                  'Brand',
+                                  appliance.brand ?? ''),
+                              _buildDetailRowPair(
+                                  'Description',
+                                  appliance.applianceDescription ?? '',
                                   'Serial Number',
-                                  appliance.serialNumber ?? '',
+                                  appliance.serialNumber ?? ''),
+                              _buildDetailRowPair(
                                   'Installed Date',
                                   appliance.installedDate != null
                                       ? formatDate(appliance.installedDate!)
+                                      : '',
+                                  'Warranty Expiry',
+                                  appliance.warrantyExpiry != null
+                                      ? formatDate(appliance.warrantyExpiry!)
                                       : ''),
-                              // if (appliance.lastMaintenanceDate != null)
-                              //   _buildDetailRowPair('Last Maintenance', formatDate(appliance.lastMaintenanceDate!), 'Appliance ID', appliance.applianceId ?? ''),
+                              if (appliance.lastMaintenanceDate != null &&
+                                  appliance.lastMaintenanceDate!.isNotEmpty)
+                                _buildDetailRowPair(
+                                    'Last Maintenance',
+                                    formatDate(appliance.lastMaintenanceDate!),
+                                    '',
+                                    ''),
                             ],
                             showEdit: true,
                           ),
@@ -341,7 +346,8 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                                       .map((entry) {
                                       int index = entry.key;
                                       dynamic filter = entry.value;
-                                      print("filtter name ${filter['filter_name']}");
+                                      print(
+                                          "filtter name ${filter['filter_name']}");
                                       return _buildDetailRowPair(
                                         'Filter Name',
                                         filter['filter_name'] ?? '',
@@ -630,7 +636,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
         value.isEmpty ||
         value.trim() == '' ||
         value == 'N/A') {
-      return 'Not specified';
+      return '-'; // Using a dash instead of "Not specified" for a cleaner look
     }
     return value;
   }

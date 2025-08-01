@@ -604,20 +604,17 @@ class _Add_new_propertyState extends State<Add_new_property> {
       var bathController = TextEditingController();
       var bedController = TextEditingController();
 
-      fields = [
-        customTextField('Unit', unitController),
-        customTextField('Unit Address', unitAddressController),
-        customTextField('SQft', sqftController),
-        customDropdownField('Bath', bathArray, bathController),
-        customDropdownField('Bed', roomsArray, bedController),
-        // customTextField('Bath', bathController),
-        // customTextField('Bed', bedController),
-
-        SizedBox(
-          height: 10,
-        ),
-        photo(propertyGroups.length), // Pass the index
-      ];
+                                    fields = [
+                                customTextField('Unit', unitController),
+                                customTextField('Unit Address', unitAddressController),
+                                customTextField('SQft', sqftController),
+                                customDropdownField('Bath', bathArray, bathController),
+                                customDropdownField('Bed', roomsArray, bedController),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                photo(propertyGroups.length), // Pass the index
+                              ];
 
       controllers = [
         unitController,
@@ -631,18 +628,15 @@ class _Add_new_propertyState extends State<Add_new_property> {
       var bathController = TextEditingController();
       var bedController = TextEditingController();
 
-      fields = [
-        customTextField('SQft', sqftController),
-        customDropdownField('Bath', bathArray, bathController),
-        customDropdownField('Bed', roomsArray, bedController),
-        // customTextField('Bath', bathController),
-        // customTextField('Bed', bedController),
-
-        SizedBox(
-          height: 10,
-        ),
-        photo(propertyGroups.length), // Pass the index
-      ];
+                                    fields = [
+                                customTextField('SQft', sqftController),
+                                customDropdownField('Bath', bathArray, bathController),
+                                customDropdownField('Bed', roomsArray, bedController),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                photo(propertyGroups.length), // Pass the index
+                              ];
 
       controllers = [sqftController, bathController, bedController];
     } else if (selectedpropertytype == 'Commercial') {

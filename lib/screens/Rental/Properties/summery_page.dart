@@ -61,6 +61,32 @@ class Summery_page extends StatefulWidget {
 
 class _Summery_pageState extends State<Summery_page>
     with SingleTickerProviderStateMixin {
+  // Arrays for bed and bath dropdowns
+  static const List<String> roomsArray = [
+    "1 Bed",
+    "2 Bed",
+    "3 Bed",
+    "4 Bed",
+    "5 Bed",
+    "6 Bed",
+    "7 Bed",
+    "8 Bed",
+    "9 Bed",
+    "9+ Bed",
+  ];
+
+  static const List<String> bathArray = [
+    "1 Bath",
+    "1.5 Bath",
+    "2 Bath",
+    "2.5 Bath",
+    "3 Bath",
+    "3.5 Bath",
+    "4 Bath",
+    "4.5 Bath",
+    "5 Bath",
+    "5+ Bath",
+  ];
   TabController? _tabController;
   ScrollController _scrollController = ScrollController();
   late Future<List<TenantData>> futurePropertysummery;
@@ -599,9 +625,11 @@ class _Summery_pageState extends State<Summery_page>
                   children: [
                     width < 400
                         ? Text("Work Order ",
-                            style: TextStyle( color: blueColor, fontWeight: FontWeight.bold))
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold))
                         : Text("Work Order",
-                            style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 1),
                     ascending1
@@ -650,7 +678,9 @@ class _Summery_pageState extends State<Summery_page>
                 },
                 child: Row(
                   children: [
-                    Text("   Status", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
+                    Text("   Status",
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
@@ -700,7 +730,8 @@ class _Summery_pageState extends State<Summery_page>
                 child: Row(
                   children: [
                     Text("       Billable ",
-                        style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -3982,7 +4013,8 @@ class _Summery_pageState extends State<Summery_page>
                           ),
                           child: SingleChildScrollView(
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 15,right: 15,top: 10,bottom: 10),
+                              padding: const EdgeInsets.only(
+                                  left: 25, right: 25, top: 10, bottom: 10),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -5709,51 +5741,52 @@ class _Summery_pageState extends State<Summery_page>
                                                                           .circular(
                                                                               3),
                                                                   child:
-                                                                      TextFormField(
-                                                                    controller:
-                                                                        bath3,
-                                                                    cursorColor:
-                                                                        Colors
-                                                                            .black,
+                                                                      Container(
+                                                                    padding: EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                            10),
                                                                     decoration:
-                                                                        InputDecoration(
-                                                                      //  hintText: label,
-                                                                      // labelText: label,
-                                                                      // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                                      filled:
-                                                                          true,
-                                                                      fillColor:
-                                                                          Colors
-                                                                              .white,
-                                                                      border:
-                                                                          OutlineInputBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(3),
-                                                                        borderSide:
-                                                                            BorderSide.none,
+                                                                        BoxDecoration(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              3),
+                                                                      border: Border.all(
+                                                                          color:
+                                                                              Color(0xFF8A95A8)),
+                                                                    ),
+                                                                    child:
+                                                                        DropdownButtonHideUnderline(
+                                                                      child: DropdownButton<
+                                                                          String>(
+                                                                        isExpanded:
+                                                                            true,
+                                                                        value: bath3.text.isNotEmpty
+                                                                            ? bath3.text
+                                                                            : null,
+                                                                        hint: Text(
+                                                                            'Select Bath'),
+                                                                        items: bathArray.map((String
+                                                                            value) {
+                                                                          return DropdownMenuItem<
+                                                                              String>(
+                                                                            value:
+                                                                                value,
+                                                                            child:
+                                                                                Text(value),
+                                                                          );
+                                                                        }).toList(),
+                                                                        onChanged:
+                                                                            (String?
+                                                                                newValue) {
+                                                                          setState(
+                                                                              () {
+                                                                            bath3.text =
+                                                                                newValue ?? '';
+                                                                          });
+                                                                        },
                                                                       ),
-                                                                      enabledBorder:
-                                                                          OutlineInputBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(3),
-                                                                        borderSide:
-                                                                            const BorderSide(color: Color(0xFF8A95A8)),
-                                                                      ),
-                                                                      focusedBorder:
-                                                                          OutlineInputBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(3),
-                                                                        borderSide: const BorderSide(
-                                                                            color:
-                                                                                Color(0xFF8A95A8),
-                                                                            width: 2),
-                                                                      ),
-                                                                      contentPadding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              10.0,
-                                                                          horizontal:
-                                                                              10.0),
                                                                     ),
                                                                   ),
                                                                 ),
@@ -5786,51 +5819,52 @@ class _Summery_pageState extends State<Summery_page>
                                                                           .circular(
                                                                               3),
                                                                   child:
-                                                                      TextFormField(
-                                                                    controller:
-                                                                        bed3,
-                                                                    cursorColor:
-                                                                        Colors
-                                                                            .black,
+                                                                      Container(
+                                                                    padding: EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                            10),
                                                                     decoration:
-                                                                        InputDecoration(
-                                                                      //  hintText: label,
-                                                                      // labelText: label,
-                                                                      // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                                      filled:
-                                                                          true,
-                                                                      fillColor:
-                                                                          Colors
-                                                                              .white,
-                                                                      border:
-                                                                          OutlineInputBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(3),
-                                                                        borderSide:
-                                                                            BorderSide.none,
+                                                                        BoxDecoration(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              3),
+                                                                      border: Border.all(
+                                                                          color:
+                                                                              Color(0xFF8A95A8)),
+                                                                    ),
+                                                                    child:
+                                                                        DropdownButtonHideUnderline(
+                                                                      child: DropdownButton<
+                                                                          String>(
+                                                                        isExpanded:
+                                                                            true,
+                                                                        value: bed3.text.isNotEmpty
+                                                                            ? bed3.text
+                                                                            : null,
+                                                                        hint: Text(
+                                                                            'Select Bed'),
+                                                                        items: roomsArray.map((String
+                                                                            value) {
+                                                                          return DropdownMenuItem<
+                                                                              String>(
+                                                                            value:
+                                                                                value,
+                                                                            child:
+                                                                                Text(value),
+                                                                          );
+                                                                        }).toList(),
+                                                                        onChanged:
+                                                                            (String?
+                                                                                newValue) {
+                                                                          setState(
+                                                                              () {
+                                                                            bed3.text =
+                                                                                newValue ?? '';
+                                                                          });
+                                                                        },
                                                                       ),
-                                                                      enabledBorder:
-                                                                          OutlineInputBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(3),
-                                                                        borderSide:
-                                                                            const BorderSide(color: Color(0xFF8A95A8)),
-                                                                      ),
-                                                                      focusedBorder:
-                                                                          OutlineInputBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(3),
-                                                                        borderSide: const BorderSide(
-                                                                            color:
-                                                                                Color(0xFF8A95A8),
-                                                                            width: 2),
-                                                                      ),
-                                                                      contentPadding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              10.0,
-                                                                          horizontal:
-                                                                              10.0),
                                                                     ),
                                                                   ),
                                                                 ),
@@ -7152,7 +7186,7 @@ class _Summery_pageState extends State<Summery_page>
                                         Row(
                                           children: [
                                             Text(
-                                              "Unit Number",
+                                              "Unit Number *",
                                               style: TextStyle(
                                                   color: Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold),
@@ -7212,7 +7246,7 @@ class _Summery_pageState extends State<Summery_page>
                                         Row(
                                           children: [
                                             Text(
-                                              "Street Address",
+                                              "Street Address *",
                                               style: TextStyle(
                                                   color: Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold),
@@ -7269,7 +7303,7 @@ class _Summery_pageState extends State<Summery_page>
                                         Row(
                                           children: [
                                             Text(
-                                              "SQFT",
+                                              "SQFT *",
                                               style: TextStyle(
                                                   color: Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold),
@@ -7326,7 +7360,7 @@ class _Summery_pageState extends State<Summery_page>
                                         Row(
                                           children: [
                                             Text(
-                                              "bath",
+                                              "Bath",
                                               style: TextStyle(
                                                   color: Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold),
@@ -7340,39 +7374,41 @@ class _Summery_pageState extends State<Summery_page>
                                             elevation: 3,
                                             borderRadius:
                                                 BorderRadius.circular(3),
-                                            child: TextFormField(
-                                              controller: bath3,
-                                              cursorColor: Colors.black,
-                                              decoration: InputDecoration(
-                                                //  hintText: label,
-                                                // labelText: label,
-                                                // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                filled: true,
-                                                fillColor: Colors.white,
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: BorderSide.none,
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(3),
+                                                border: Border.all(
+                                                    color: Color(0xFF8A95A8)),
+                                              ),
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton<String>(
+                                                  isExpanded: true,
+                                                  value: bathArray
+                                                          .contains(bath3.text)
+                                                      ? bath3.text
+                                                      : null,
+                                                  hint: Text('Select Bath'),
+                                                  items: bathArray
+                                                      .map((String value) {
+                                                    return DropdownMenuItem<
+                                                        String>(
+                                                      value: value,
+                                                      child: Text(value),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged:
+                                                      (String? newValue) {
+                                                    setState(() {
+                                                      bath3.text =
+                                                          newValue ?? '';
+                                                    });
+                                                  },
                                                 ),
-                                                enabledBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
-                                                      color: Color(0xFF8A95A8)),
-                                                ),
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
-                                                      color: Color(0xFF8A95A8),
-                                                      width: 2),
-                                                ),
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                        vertical: 10.0,
-                                                        horizontal: 10.0),
                                               ),
                                             ),
                                           ),
@@ -7383,7 +7419,7 @@ class _Summery_pageState extends State<Summery_page>
                                         Row(
                                           children: [
                                             Text(
-                                              "bed",
+                                              "Bed",
                                               style: TextStyle(
                                                   color: Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold),
@@ -7397,39 +7433,41 @@ class _Summery_pageState extends State<Summery_page>
                                             elevation: 3,
                                             borderRadius:
                                                 BorderRadius.circular(3),
-                                            child: TextFormField(
-                                              controller: bed3,
-                                              cursorColor: Colors.black,
-                                              decoration: InputDecoration(
-                                                //  hintText: label,
-                                                // labelText: label,
-                                                // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                filled: true,
-                                                fillColor: Colors.white,
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: BorderSide.none,
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(3),
+                                                border: Border.all(
+                                                    color: Color(0xFF8A95A8)),
+                                              ),
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton<String>(
+                                                  isExpanded: true,
+                                                  value: roomsArray
+                                                          .contains(bed3.text)
+                                                      ? bed3.text
+                                                      : null,
+                                                  hint: Text('Select Bed'),
+                                                  items: roomsArray
+                                                      .map((String value) {
+                                                    return DropdownMenuItem<
+                                                        String>(
+                                                      value: value,
+                                                      child: Text(value),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged:
+                                                      (String? newValue) {
+                                                    setState(() {
+                                                      bed3.text =
+                                                          newValue ?? '';
+                                                    });
+                                                  },
                                                 ),
-                                                enabledBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
-                                                      color: Color(0xFF8A95A8)),
-                                                ),
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
-                                                      color: Color(0xFF8A95A8),
-                                                      width: 2),
-                                                ),
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                        vertical: 10.0,
-                                                        horizontal: 10.0),
                                               ),
                                             ),
                                           ),
@@ -9350,7 +9388,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                 Row(
                                                                                   children: [
                                                                                     Text(
-                                                                                      "bath",
+                                                                                      "Bath",
                                                                                       style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
                                                                                     ),
                                                                                   ],
@@ -9360,28 +9398,30 @@ class _Summery_pageState extends State<Summery_page>
                                                                                   child: Material(
                                                                                     elevation: 3,
                                                                                     borderRadius: BorderRadius.circular(3),
-                                                                                    child: TextFormField(
-                                                                                      controller: bath3,
-                                                                                      cursorColor: Colors.black,
-                                                                                      decoration: InputDecoration(
-                                                                                        //  hintText: label,
-                                                                                        // labelText: label,
-                                                                                        // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                                                        filled: true,
-                                                                                        fillColor: Colors.white,
-                                                                                        border: OutlineInputBorder(
-                                                                                          borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: BorderSide.none,
+                                                                                    child: Container(
+                                                                                      padding: EdgeInsets.symmetric(horizontal: 10),
+                                                                                      decoration: BoxDecoration(
+                                                                                        color: Colors.white,
+                                                                                        borderRadius: BorderRadius.circular(3),
+                                                                                        border: Border.all(color: Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      child: DropdownButtonHideUnderline(
+                                                                                        child: DropdownButton<String>(
+                                                                                          isExpanded: true,
+                                                                                          value: bath3.text.isNotEmpty ? bath3.text : null,
+                                                                                          hint: Text('Select Bath'),
+                                                                                          items: bathArray.map((String value) {
+                                                                                            return DropdownMenuItem<String>(
+                                                                                              value: value,
+                                                                                              child: Text(value),
+                                                                                            );
+                                                                                          }).toList(),
+                                                                                          onChanged: (String? newValue) {
+                                                                                            setState(() {
+                                                                                              bath3.text = newValue ?? '';
+                                                                                            });
+                                                                                          },
                                                                                         ),
-                                                                                        enabledBorder: OutlineInputBorder(
-                                                                                          borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8)),
-                                                                                        ),
-                                                                                        focusedBorder: OutlineInputBorder(
-                                                                                          borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
-                                                                                        ),
-                                                                                        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                                                                                       ),
                                                                                     ),
                                                                                   ),
@@ -9392,7 +9432,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                 Row(
                                                                                   children: [
                                                                                     Text(
-                                                                                      "bed",
+                                                                                      "Bed",
                                                                                       style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
                                                                                     ),
                                                                                   ],
@@ -9402,28 +9442,30 @@ class _Summery_pageState extends State<Summery_page>
                                                                                   child: Material(
                                                                                     elevation: 3,
                                                                                     borderRadius: BorderRadius.circular(3),
-                                                                                    child: TextFormField(
-                                                                                      controller: bed3,
-                                                                                      cursorColor: Colors.black,
-                                                                                      decoration: InputDecoration(
-                                                                                        //  hintText: label,
-                                                                                        // labelText: label,
-                                                                                        // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                                                        filled: true,
-                                                                                        fillColor: Colors.white,
-                                                                                        border: OutlineInputBorder(
-                                                                                          borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: BorderSide.none,
+                                                                                    child: Container(
+                                                                                      padding: EdgeInsets.symmetric(horizontal: 10),
+                                                                                      decoration: BoxDecoration(
+                                                                                        color: Colors.white,
+                                                                                        borderRadius: BorderRadius.circular(3),
+                                                                                        border: Border.all(color: Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      child: DropdownButtonHideUnderline(
+                                                                                        child: DropdownButton<String>(
+                                                                                          isExpanded: true,
+                                                                                          value: bed3.text.isNotEmpty ? bed3.text : null,
+                                                                                          hint: Text('Select Bed'),
+                                                                                          items: roomsArray.map((String value) {
+                                                                                            return DropdownMenuItem<String>(
+                                                                                              value: value,
+                                                                                              child: Text(value),
+                                                                                            );
+                                                                                          }).toList(),
+                                                                                          onChanged: (String? newValue) {
+                                                                                            setState(() {
+                                                                                              bed3.text = newValue ?? '';
+                                                                                            });
+                                                                                          },
                                                                                         ),
-                                                                                        enabledBorder: OutlineInputBorder(
-                                                                                          borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8)),
-                                                                                        ),
-                                                                                        focusedBorder: OutlineInputBorder(
-                                                                                          borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
-                                                                                        ),
-                                                                                        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                                                                                       ),
                                                                                     ),
                                                                                   ),
@@ -12407,9 +12449,9 @@ class _Summery_pageState extends State<Summery_page>
                           child: TextField(
                             style: TextStyle(
                                 fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 12
-                                    : 14),
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 12
+                                        : 14),
                             // onChanged: (value) {
                             //   setState(() {
                             //     cvverror = false;
@@ -12427,9 +12469,9 @@ class _Summery_pageState extends State<Summery_page>
                                 hintText: "Search here...",
                                 hintStyle: TextStyle(
                                   fontSize:
-                                  MediaQuery.of(context).size.width < 500
-                                      ? 14
-                                      : 18,
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 14
+                                          : 18,
                                   // fontWeight: FontWeight.bold,
                                   color: Color(0xFF8A95A8),
                                 ),
@@ -12468,17 +12510,17 @@ class _Summery_pageState extends State<Summery_page>
                       ),
                       items: items
                           .map((String item) => DropdownMenuItem<String>(
-                        value: item,
-                        child: Text(
-                          item,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ))
+                                value: item,
+                                child: Text(
+                                  item,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ))
                           .toList(),
                       value: selectedValue,
                       onChanged: (value) {
@@ -12488,7 +12530,7 @@ class _Summery_pageState extends State<Summery_page>
                       },
                       buttonStyleData: ButtonStyleData(
                         height:
-                        MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                            MediaQuery.of(context).size.width < 500 ? 45 : 50,
                         // width: 180,
                         width: MediaQuery.of(context).size.width < 500
                             ? MediaQuery.of(context).size.width * .38
@@ -12546,7 +12588,7 @@ class _Summery_pageState extends State<Summery_page>
                     Text(
                       "Show Completed Task",
                       style: TextStyle(
-                          color:Colors.black,
+                          color: Colors.black,
                           fontWeight: FontWeight.bold,
                           fontSize: MediaQuery.of(context).size.width > 500
                               ? 20
@@ -12577,10 +12619,10 @@ class _Summery_pageState extends State<Summery_page>
                 GestureDetector(
                   onTap: () async {
                     final result =
-                    await Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ResponsiveAddWorkOrder(
-                          rentalid: widget.properties.rentalId,
-                        )));
+                        await Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ResponsiveAddWorkOrder(
+                                  rentalid: widget.properties.rentalId,
+                                )));
                     if (result == true) {
                       setState(() {
                         futureworkordersummery = Properies_summery_Repo()
@@ -12741,16 +12783,14 @@ class _Summery_pageState extends State<Summery_page>
                                   propertiesworkData workOrder = entry.value;
                                   //return CustomExpansionTile(data: Data, index: index);
                                   return Container(
-                                    margin:
-                                    EdgeInsets.symmetric(vertical: 6),
+                                    margin: EdgeInsets.symmetric(vertical: 6),
                                     decoration: BoxDecoration(
                                       color: index % 2 != 0
                                           ? Color(0xFFF4F8FF)
                                           : Colors.white,
-                                      border: Border.all(
-                                          color: Color(0xFFDBE0E5)),
-                                      borderRadius:
-                                      BorderRadius.circular(10),
+                                      border:
+                                          Border.all(color: Color(0xFFDBE0E5)),
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: Column(
                                       children: <Widget>[
@@ -13129,8 +13169,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   ),
                                                   Row(
                                                     mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .end,
+                                                        MainAxisAlignment.end,
                                                     children: [
                                                       GestureDetector(
                                                         onTap: () {
@@ -13139,30 +13178,30 @@ class _Summery_pageState extends State<Summery_page>
                                                               MaterialPageRoute(
                                                                   builder:
                                                                       (context) =>
-                                                                      Workorder_summery(
-                                                                        workorder_id: workOrder.workOrderId,
-                                                                      )));
+                                                                          Workorder_summery(
+                                                                            workorder_id:
+                                                                                workOrder.workOrderId,
+                                                                          )));
                                                         },
                                                         child: Container(
                                                           height: 35,
                                                           width: 35,
                                                           decoration:
-                                                          BoxDecoration(
+                                                              BoxDecoration(
                                                             color: Colors
-                                                                .grey
-                                                                .shade200,
+                                                                .grey.shade200,
                                                             borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                8),
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
                                                           ),
                                                           child: Row(
                                                             mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
+                                                                MainAxisAlignment
+                                                                    .center,
                                                             crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
+                                                                CrossAxisAlignment
+                                                                    .center,
                                                             children: [
                                                               FaIcon(
                                                                 FontAwesomeIcons
@@ -13172,8 +13211,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                     .black,
                                                               ),
                                                               SizedBox(
-                                                                  width:
-                                                                  2),
+                                                                  width: 2),
                                                             ],
                                                           ),
                                                         ),
@@ -13186,7 +13224,6 @@ class _Summery_pageState extends State<Summery_page>
                                                   SizedBox(
                                                     height: 15,
                                                   ),
-
                                                 ],
                                               ),
                                             ),

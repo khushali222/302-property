@@ -211,7 +211,6 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
             SizedBox(
               height: 20,
             ),
-
             Dashboard_Policy_Table(),
             SizedBox(
               height: 20,

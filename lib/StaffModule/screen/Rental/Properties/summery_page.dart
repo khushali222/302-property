@@ -76,6 +76,32 @@ class Summery_page extends StatefulWidget {
 
 class _Summery_pageState extends State<Summery_page>
     with SingleTickerProviderStateMixin {
+  // Arrays for bed and bath dropdowns
+  static const List<String> roomsArray = [
+    "1 Bed",
+    "2 Bed",
+    "3 Bed",
+    "4 Bed",
+    "5 Bed",
+    "6 Bed",
+    "7 Bed",
+    "8 Bed",
+    "9 Bed",
+    "9+ Bed",
+  ];
+
+  static const List<String> bathArray = [
+    "1 Bath",
+    "1.5 Bath",
+    "2 Bath",
+    "2.5 Bath",
+    "3 Bath",
+    "3.5 Bath",
+    "4 Bath",
+    "4.5 Bath",
+    "5 Bath",
+    "5+ Bath",
+  ];
   TabController? _tabController;
   late Future<List<TenantData>> futurePropertysummery;
   late Future<Rentals> futureRentalDetails;
@@ -222,7 +248,6 @@ class _Summery_pageState extends State<Summery_page>
     // fetchAndSetCounts(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {});
   }
-
 
   // Scroll to previous tab
   void _scrollToPreviousTab() {
@@ -2253,7 +2278,7 @@ class _Summery_pageState extends State<Summery_page>
 
                                     return Container(
                                       margin:
-                                      EdgeInsets.symmetric(horizontal: 3),
+                                          EdgeInsets.symmetric(horizontal: 3),
                                       child: GestureDetector(
                                         onTap: () {
                                           setState(() {
@@ -2264,8 +2289,8 @@ class _Summery_pageState extends State<Summery_page>
                                               futureRentalDetails =
                                                   Properies_summery_Repo()
                                                       .fetchrentalDetails(widget
-                                                      .properties
-                                                      .rentalId!);
+                                                          .properties
+                                                          .rentalId!);
                                             }
                                           });
                                         },
@@ -2277,7 +2302,7 @@ class _Summery_pageState extends State<Summery_page>
                                                 ? blueColor
                                                 : Colors.grey.shade200,
                                             borderRadius:
-                                            BorderRadius.circular(6),
+                                                BorderRadius.circular(6),
                                             border: Border.all(
                                               color: _selectedIndex == tabIndex
                                                   ? blueColor
@@ -2285,23 +2310,23 @@ class _Summery_pageState extends State<Summery_page>
                                               width: 1,
                                             ),
                                             boxShadow:
-                                            _selectedIndex == tabIndex
-                                                ? [
-                                              BoxShadow(
-                                                color: blueColor
-                                                    .withOpacity(0.3),
-                                                blurRadius: 4,
-                                                offset: Offset(0, 2),
-                                              )
-                                            ]
-                                                : [
-                                              BoxShadow(
-                                                color: Colors.grey
-                                                    .withOpacity(0.1),
-                                                blurRadius: 2,
-                                                offset: Offset(0, 1),
-                                              )
-                                            ],
+                                                _selectedIndex == tabIndex
+                                                    ? [
+                                                        BoxShadow(
+                                                          color: blueColor
+                                                              .withOpacity(0.3),
+                                                          blurRadius: 4,
+                                                          offset: Offset(0, 2),
+                                                        )
+                                                      ]
+                                                    : [
+                                                        BoxShadow(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.1),
+                                                          blurRadius: 2,
+                                                          offset: Offset(0, 1),
+                                                        )
+                                                      ],
                                           ),
                                           child: Center(
                                             child: Text(
@@ -2310,9 +2335,9 @@ class _Summery_pageState extends State<Summery_page>
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w600,
                                                 color:
-                                                _selectedIndex == tabIndex
-                                                    ? Colors.white
-                                                    : blueColor,
+                                                    _selectedIndex == tabIndex
+                                                        ? Colors.white
+                                                        : blueColor,
                                                 fontSize: 15,
                                               ),
                                             ),
@@ -4095,13 +4120,13 @@ class _Summery_pageState extends State<Summery_page>
                             parcelNumberController.text =
                                 rentalDetails.parcelNumber ?? '';
                             selectedDate =
-                            (rentalDetails.purchaseDate != null &&
-                                rentalDetails.purchaseDate != 'N/A' &&
-                                rentalDetails.purchaseDate!.isNotEmpty)
-                                ? DateTime.tryParse(
-                                rentalDetails.purchaseDate!) ??
-                                null
-                                : null;
+                                (rentalDetails.purchaseDate != null &&
+                                        rentalDetails.purchaseDate != 'N/A' &&
+                                        rentalDetails.purchaseDate!.isNotEmpty)
+                                    ? DateTime.tryParse(
+                                            rentalDetails.purchaseDate!) ??
+                                        null
+                                    : null;
 
                             showDialog(
                               context: context,
@@ -4119,7 +4144,7 @@ class _Summery_pageState extends State<Summery_page>
                                         child: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               "Purchase Date",
@@ -4131,7 +4156,7 @@ class _Summery_pageState extends State<Summery_page>
                                             InkWell(
                                               onTap: () async {
                                                 final DateTime? picked =
-                                                await showDatePicker(
+                                                    await showDatePicker(
                                                   context: context,
                                                   initialDate: selectedDate ??
                                                       DateTime.now(),
@@ -4142,7 +4167,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   setState(() {
                                                     selectedDate = picked;
                                                     purchaseDateController
-                                                        .text =
+                                                            .text =
                                                         DateFormat('yyyy-MM-dd')
                                                             .format(picked);
                                                   });
@@ -4151,16 +4176,16 @@ class _Summery_pageState extends State<Summery_page>
                                               child: AbsorbPointer(
                                                 child: TextField(
                                                   controller:
-                                                  purchaseDateController,
+                                                      purchaseDateController,
                                                   decoration: InputDecoration(
                                                     hintText:
-                                                    'Enter purchase date',
+                                                        'Enter purchase date',
                                                     suffixIcon: Icon(
                                                         Icons.calendar_today),
                                                     border: OutlineInputBorder(
                                                       borderRadius:
-                                                      BorderRadius.circular(
-                                                          12),
+                                                          BorderRadius.circular(
+                                                              12),
                                                     ),
                                                   ),
                                                 ),
@@ -4176,15 +4201,15 @@ class _Summery_pageState extends State<Summery_page>
                                             SizedBox(height: 6),
                                             TextField(
                                               controller:
-                                              purchasePriceController,
+                                                  purchasePriceController,
                                               keyboardType:
-                                              TextInputType.number,
+                                                  TextInputType.number,
                                               decoration: InputDecoration(
                                                 hintText:
-                                                'Enter purchase price',
+                                                    'Enter purchase price',
                                                 border: OutlineInputBorder(
                                                   borderRadius:
-                                                  BorderRadius.circular(12),
+                                                      BorderRadius.circular(12),
                                                 ),
                                               ),
                                             ),
@@ -4198,12 +4223,12 @@ class _Summery_pageState extends State<Summery_page>
                                             SizedBox(height: 6),
                                             TextField(
                                               controller:
-                                              parcelNumberController,
+                                                  parcelNumberController,
                                               decoration: InputDecoration(
                                                 hintText: 'Enter parcel number',
                                                 border: OutlineInputBorder(
                                                   borderRadius:
-                                                  BorderRadius.circular(12),
+                                                      BorderRadius.circular(12),
                                                 ),
                                               ),
                                             ),
@@ -4222,13 +4247,14 @@ class _Summery_pageState extends State<Summery_page>
                                           ),
                                           onPressed: () async {
                                             SharedPreferences prefs =
-                                            await SharedPreferences
-                                                .getInstance();
+                                                await SharedPreferences
+                                                    .getInstance();
                                             String? token =
-                                            prefs.getString('token');
+                                                prefs.getString('token');
                                             // String? id =
                                             // prefs.getString('adminId');
-                                            String? id = prefs.getString("staff_id");
+                                            String? id =
+                                                prefs.getString("staff_id");
                                             try {
                                               final response = await http.put(
                                                 Uri.parse(
@@ -4237,19 +4263,19 @@ class _Summery_pageState extends State<Summery_page>
                                                   "authorization": "CRM $token",
                                                   "id": "CRM $id",
                                                   "Content-Type":
-                                                  "application/json",
+                                                      "application/json",
                                                 },
                                                 body: json.encode({
                                                   "purchase_date":
-                                                  purchaseDateController
-                                                      .text,
+                                                      purchaseDateController
+                                                          .text,
                                                   "purchase_price": double.tryParse(
-                                                      purchasePriceController
-                                                          .text) ??
+                                                          purchasePriceController
+                                                              .text) ??
                                                       0,
                                                   "parcel_number":
-                                                  parcelNumberController
-                                                      .text,
+                                                      parcelNumberController
+                                                          .text,
                                                 }),
                                               );
 
@@ -4258,26 +4284,26 @@ class _Summery_pageState extends State<Summery_page>
                                                 Navigator.pop(context);
                                                 Fluttertoast.showToast(
                                                   msg:
-                                                  "Purchase information updated successfully",
+                                                      "Purchase information updated successfully",
                                                   toastLength:
-                                                  Toast.LENGTH_LONG,
+                                                      Toast.LENGTH_LONG,
                                                 );
                                                 if (mounted) {
                                                   setState(() {
                                                     futureRentalDetails =
                                                         Properies_summery_Repo()
                                                             .fetchrentalDetails(
-                                                            widget
-                                                                .properties
-                                                                .rentalId!);
+                                                                widget
+                                                                    .properties
+                                                                    .rentalId!);
                                                   });
                                                 }
                                               } else {
                                                 Fluttertoast.showToast(
                                                   msg:
-                                                  "Failed to update purchase information",
+                                                      "Failed to update purchase information",
                                                   toastLength:
-                                                  Toast.LENGTH_LONG,
+                                                      Toast.LENGTH_LONG,
                                                 );
                                               }
                                             } catch (e) {
@@ -4285,7 +4311,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   'Error updating purchase info: $e');
                                               Fluttertoast.showToast(
                                                 msg:
-                                                "Error updating purchase information",
+                                                    "Error updating purchase information",
                                                 toastLength: Toast.LENGTH_LONG,
                                               );
                                             }
@@ -4293,7 +4319,7 @@ class _Summery_pageState extends State<Summery_page>
                                           child: Text(
                                             'Save',
                                             style:
-                                            TextStyle(color: Colors.white),
+                                                TextStyle(color: Colors.white),
                                           ),
                                         ),
                                       ],
@@ -4427,7 +4453,6 @@ class _Summery_pageState extends State<Summery_page>
                                       style: TextStyle(
                                           fontSize: 14, color: Colors.black),
                                     ),
-
                                   ],
                                 ),
                               ),
@@ -6607,16 +6632,7 @@ class _Summery_pageState extends State<Summery_page>
                                                 data[0].rentalunitadress!;
                                             unitnum.text = data[0].rentalunit!;
                                             //_image = data[0].p;
-                                            if (widget
-                                                        .properties
-                                                        .propertyTypeData!
-                                                        .isMultiunit! ==
-                                                    false &&
-                                                widget
-                                                        .properties
-                                                        .propertyTypeData!
-                                                        .propertyType ==
-                                                    'Residential') {
+                                            {
                                               showDialog(
                                                 context: context,
                                                 builder:
@@ -6773,63 +6789,34 @@ class _Summery_pageState extends State<Summery_page>
                                                                 ],
                                                               ),
                                                               Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .symmetric(
-                                                                        vertical:
-                                                                            1),
+                                                                padding: const EdgeInsets.symmetric(vertical: 1),
                                                                 child: Material(
                                                                   elevation: 3,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              3),
-                                                                  child:
-                                                                      TextFormField(
-                                                                    controller:
-                                                                        bath3,
-                                                                    cursorColor:
-                                                                        Colors
-                                                                            .black,
-                                                                    decoration:
-                                                                        InputDecoration(
-                                                                      //  hintText: label,
-                                                                      // labelText: label,
-                                                                      // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                                      filled:
-                                                                          true,
-                                                                      fillColor:
-                                                                          Colors
-                                                                              .white,
-                                                                      border:
-                                                                          OutlineInputBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(3),
-                                                                        borderSide:
-                                                                            BorderSide.none,
+                                                                  borderRadius: BorderRadius.circular(3),
+                                                                  child: Container(
+                                                                    padding: EdgeInsets.symmetric(horizontal: 10),
+                                                                    decoration: BoxDecoration(
+                                                                      color: Colors.white,
+                                                                      borderRadius: BorderRadius.circular(3),
+                                                                      border: Border.all(color: Color(0xFF8A95A8)),
+                                                                    ),
+                                                                    child: DropdownButtonHideUnderline(
+                                                                      child: DropdownButton<String>(
+                                                                        isExpanded: true,
+                                                                        value: bath3.text.isNotEmpty ? bath3.text : null,
+                                                                        hint: Text('Select Bath'),
+                                                                        items: bathArray.map((String value) {
+                                                                          return DropdownMenuItem<String>(
+                                                                            value: value,
+                                                                            child: Text(value),
+                                                                          );
+                                                                        }).toList(),
+                                                                        onChanged: (String? newValue) {
+                                                                          setState(() {
+                                                                            bath3.text = newValue ?? '';
+                                                                          });
+                                                                        },
                                                                       ),
-                                                                      enabledBorder:
-                                                                          OutlineInputBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(3),
-                                                                        borderSide:
-                                                                            const BorderSide(color: Color(0xFF8A95A8)),
-                                                                      ),
-                                                                      focusedBorder:
-                                                                          OutlineInputBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(3),
-                                                                        borderSide: const BorderSide(
-                                                                            color:
-                                                                                Color(0xFF8A95A8),
-                                                                            width: 2),
-                                                                      ),
-                                                                      contentPadding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              10.0,
-                                                                          horizontal:
-                                                                              10.0),
                                                                     ),
                                                                   ),
                                                                 ),
@@ -6850,63 +6837,34 @@ class _Summery_pageState extends State<Summery_page>
                                                                 ],
                                                               ),
                                                               Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .symmetric(
-                                                                        vertical:
-                                                                            1),
+                                                                padding: const EdgeInsets.symmetric(vertical: 1),
                                                                 child: Material(
                                                                   elevation: 3,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              3),
-                                                                  child:
-                                                                      TextFormField(
-                                                                    controller:
-                                                                        bed3,
-                                                                    cursorColor:
-                                                                        Colors
-                                                                            .black,
-                                                                    decoration:
-                                                                        InputDecoration(
-                                                                      //  hintText: label,
-                                                                      // labelText: label,
-                                                                      // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                                      filled:
-                                                                          true,
-                                                                      fillColor:
-                                                                          Colors
-                                                                              .white,
-                                                                      border:
-                                                                          OutlineInputBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(3),
-                                                                        borderSide:
-                                                                            BorderSide.none,
+                                                                  borderRadius: BorderRadius.circular(3),
+                                                                  child: Container(
+                                                                    padding: EdgeInsets.symmetric(horizontal: 10),
+                                                                    decoration: BoxDecoration(
+                                                                      color: Colors.white,
+                                                                      borderRadius: BorderRadius.circular(3),
+                                                                      border: Border.all(color: Color(0xFF8A95A8)),
+                                                                    ),
+                                                                    child: DropdownButtonHideUnderline(
+                                                                      child: DropdownButton<String>(
+                                                                        isExpanded: true,
+                                                                        value: bed3.text.isNotEmpty ? bed3.text : null,
+                                                                        hint: Text('Select Bed'),
+                                                                        items: roomsArray.map((String value) {
+                                                                          return DropdownMenuItem<String>(
+                                                                            value: value,
+                                                                            child: Text(value),
+                                                                          );
+                                                                        }).toList(),
+                                                                        onChanged: (String? newValue) {
+                                                                          setState(() {
+                                                                            bed3.text = newValue ?? '';
+                                                                          });
+                                                                        },
                                                                       ),
-                                                                      enabledBorder:
-                                                                          OutlineInputBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(3),
-                                                                        borderSide:
-                                                                            const BorderSide(color: Color(0xFF8A95A8)),
-                                                                      ),
-                                                                      focusedBorder:
-                                                                          OutlineInputBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(3),
-                                                                        borderSide: const BorderSide(
-                                                                            color:
-                                                                                Color(0xFF8A95A8),
-                                                                            width: 2),
-                                                                      ),
-                                                                      contentPadding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              10.0,
-                                                                          horizontal:
-                                                                              10.0),
                                                                     ),
                                                                   ),
                                                                 ),
@@ -8379,39 +8337,40 @@ class _Summery_pageState extends State<Summery_page>
                                             elevation: 3,
                                             borderRadius:
                                                 BorderRadius.circular(3),
-                                            child: TextFormField(
-                                              controller: bath3,
-                                              cursorColor: Colors.black,
-                                              decoration: InputDecoration(
-                                                //  hintText: label,
-                                                // labelText: label,
-                                                // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                filled: true,
-                                                fillColor: Colors.white,
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: BorderSide.none,
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(3),
+                                                border: Border.all(
+                                                    color: Color(0xFF8A95A8)),
+                                              ),
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton<String>(
+                                                  isExpanded: true,
+                                                  value: bath3.text.isNotEmpty
+                                                      ? bath3.text
+                                                      : null,
+                                                  hint: Text('Select Bath'),
+                                                  items: bathArray
+                                                      .map((String value) {
+                                                    return DropdownMenuItem<
+                                                        String>(
+                                                      value: value,
+                                                      child: Text(value),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged:
+                                                      (String? newValue) {
+                                                    setState(() {
+                                                      bath3.text =
+                                                          newValue ?? '';
+                                                    });
+                                                  },
                                                 ),
-                                                enabledBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
-                                                      color: Color(0xFF8A95A8)),
-                                                ),
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
-                                                      color: Color(0xFF8A95A8),
-                                                      width: 2),
-                                                ),
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                        vertical: 10.0,
-                                                        horizontal: 10.0),
                                               ),
                                             ),
                                           ),
@@ -8436,39 +8395,40 @@ class _Summery_pageState extends State<Summery_page>
                                             elevation: 3,
                                             borderRadius:
                                                 BorderRadius.circular(3),
-                                            child: TextFormField(
-                                              controller: bed3,
-                                              cursorColor: Colors.black,
-                                              decoration: InputDecoration(
-                                                //  hintText: label,
-                                                // labelText: label,
-                                                // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                filled: true,
-                                                fillColor: Colors.white,
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: BorderSide.none,
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(3),
+                                                border: Border.all(
+                                                    color: Color(0xFF8A95A8)),
+                                              ),
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton<String>(
+                                                  isExpanded: true,
+                                                  value: bed3.text.isNotEmpty
+                                                      ? bed3.text
+                                                      : null,
+                                                  hint: Text('Select Bed'),
+                                                  items: roomsArray
+                                                      .map((String value) {
+                                                    return DropdownMenuItem<
+                                                        String>(
+                                                      value: value,
+                                                      child: Text(value),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged:
+                                                      (String? newValue) {
+                                                    setState(() {
+                                                      bed3.text =
+                                                          newValue ?? '';
+                                                    });
+                                                  },
                                                 ),
-                                                enabledBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
-                                                      color: Color(0xFF8A95A8)),
-                                                ),
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
-                                                      color: Color(0xFF8A95A8),
-                                                      width: 2),
-                                                ),
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                        vertical: 10.0,
-                                                        horizontal: 10.0),
                                               ),
                                             ),
                                           ),
@@ -12177,28 +12137,30 @@ class _Summery_pageState extends State<Summery_page>
                                                                                   child: Material(
                                                                                     elevation: 3,
                                                                                     borderRadius: BorderRadius.circular(3),
-                                                                                    child: TextFormField(
-                                                                                      controller: bath3,
-                                                                                      cursorColor: Colors.black,
-                                                                                      decoration: InputDecoration(
-                                                                                        //  hintText: label,
-                                                                                        // labelText: label,
-                                                                                        // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                                                        filled: true,
-                                                                                        fillColor: Colors.white,
-                                                                                        border: OutlineInputBorder(
-                                                                                          borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: BorderSide.none,
+                                                                                    child: Container(
+                                                                                      padding: EdgeInsets.symmetric(horizontal: 10),
+                                                                                      decoration: BoxDecoration(
+                                                                                        color: Colors.white,
+                                                                                        borderRadius: BorderRadius.circular(3),
+                                                                                        border: Border.all(color: Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      child: DropdownButtonHideUnderline(
+                                                                                        child: DropdownButton<String>(
+                                                                                          isExpanded: true,
+                                                                                          value: bath3.text.isNotEmpty ? bath3.text : null,
+                                                                                          hint: Text('Select Bath'),
+                                                                                          items: bathArray.map((String value) {
+                                                                                            return DropdownMenuItem<String>(
+                                                                                              value: value,
+                                                                                              child: Text(value),
+                                                                                            );
+                                                                                          }).toList(),
+                                                                                          onChanged: (String? newValue) {
+                                                                                            setState(() {
+                                                                                              bath3.text = newValue ?? '';
+                                                                                            });
+                                                                                          },
                                                                                         ),
-                                                                                        enabledBorder: OutlineInputBorder(
-                                                                                          borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8)),
-                                                                                        ),
-                                                                                        focusedBorder: OutlineInputBorder(
-                                                                                          borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
-                                                                                        ),
-                                                                                        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                                                                                       ),
                                                                                     ),
                                                                                   ),
@@ -12219,28 +12181,30 @@ class _Summery_pageState extends State<Summery_page>
                                                                                   child: Material(
                                                                                     elevation: 3,
                                                                                     borderRadius: BorderRadius.circular(3),
-                                                                                    child: TextFormField(
-                                                                                      controller: bed3,
-                                                                                      cursorColor: Colors.black,
-                                                                                      decoration: InputDecoration(
-                                                                                        //  hintText: label,
-                                                                                        // labelText: label,
-                                                                                        // labelStyle: TextStyle(color: Colors.grey[700]),
-                                                                                        filled: true,
-                                                                                        fillColor: Colors.white,
-                                                                                        border: OutlineInputBorder(
-                                                                                          borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: BorderSide.none,
+                                                                                    child: Container(
+                                                                                      padding: EdgeInsets.symmetric(horizontal: 10),
+                                                                                      decoration: BoxDecoration(
+                                                                                        color: Colors.white,
+                                                                                        borderRadius: BorderRadius.circular(3),
+                                                                                        border: Border.all(color: Color(0xFF8A95A8)),
+                                                                                      ),
+                                                                                      child: DropdownButtonHideUnderline(
+                                                                                        child: DropdownButton<String>(
+                                                                                          isExpanded: true,
+                                                                                          value: bed3.text.isNotEmpty ? bed3.text : null,
+                                                                                          hint: Text('Select Bed'),
+                                                                                          items: roomsArray.map((String value) {
+                                                                                            return DropdownMenuItem<String>(
+                                                                                              value: value,
+                                                                                              child: Text(value),
+                                                                                            );
+                                                                                          }).toList(),
+                                                                                          onChanged: (String? newValue) {
+                                                                                            setState(() {
+                                                                                              bed3.text = newValue ?? '';
+                                                                                            });
+                                                                                          },
                                                                                         ),
-                                                                                        enabledBorder: OutlineInputBorder(
-                                                                                          borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8)),
-                                                                                        ),
-                                                                                        focusedBorder: OutlineInputBorder(
-                                                                                          borderRadius: BorderRadius.circular(3),
-                                                                                          borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
-                                                                                        ),
-                                                                                        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                                                                                       ),
                                                                                     ),
                                                                                   ),

@@ -123,10 +123,10 @@ class _Tenant_communicationState extends State<Tenant_communication> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Recipient",
+                        ? Text("Rental Address",
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold))
-                        : Text("Recipient",
+                        : Text("Rental Address",
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),

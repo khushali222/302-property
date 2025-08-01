@@ -50,6 +50,41 @@ class _AddApplienceState extends State<AddApplience> {
   TextEditingController _lastMaintenanceDate = TextEditingController();
   TextEditingController _maintenanceNotes = TextEditingController();
 
+  // Error messages for date validations
+  String? _warrantyExpiryError;
+  String? _lastMaintenanceDateError;
+
+  // Validate dates
+  bool validateDates() {
+    bool isValid = true;
+    setState(() {
+      _warrantyExpiryError = null;
+      _lastMaintenanceDateError = null;
+
+      if (_installedDate.text.isNotEmpty && _warrantyExpiry.text.isNotEmpty) {
+        DateTime installed = DateTime.parse(_installedDate.text);
+        DateTime warranty = DateTime.parse(_warrantyExpiry.text);
+        if (warranty.isBefore(installed)) {
+          _warrantyExpiryError =
+              "Warranty Expiration Date cannot be earlier than Installed Date.";
+          isValid = false;
+        }
+      }
+
+      if (_installedDate.text.isNotEmpty &&
+          _lastMaintenanceDate.text.isNotEmpty) {
+        DateTime installed = DateTime.parse(_installedDate.text);
+        DateTime maintenance = DateTime.parse(_lastMaintenanceDate.text);
+        if (maintenance.isBefore(installed)) {
+          _lastMaintenanceDateError =
+              "Last Maintenance Date cannot be earlier than Installed Date.";
+          isValid = false;
+        }
+      }
+    });
+    return isValid;
+  }
+
   String? _imageUrl; // Add this line
 
   final UnitData leaseRepository = UnitData();
@@ -950,6 +985,15 @@ class _AddApplienceState extends State<AddApplience> {
                                 _selectedDropdownCategory == null ||
                                 _selectedStatus == null) {
                               setState(() => iserror = true);
+                            } else if (!validateDates()) {
+                              // Show error if dates are invalid
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'Please correct the date validation errors'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
                             } else {
                               setState(() {
                                 isLoading = true;
@@ -1152,41 +1196,92 @@ class _AddApplienceState extends State<AddApplience> {
 
   Widget dateField(String label, TextEditingController controller,
       BuildContext context, StateSetter setState) {
-    return GestureDetector(
-      onTap: () {
-        showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime(2000),
-          lastDate: DateTime(2100),
-          builder: (context, child) {
-            return Theme(
-              data: ThemeData.light().copyWith(
-                colorScheme: ColorScheme.light(
-                  primary: blueColor,
-                  onSurface: Colors.black,
+    String? errorText;
+    if (label == 'Warranty Expiry') {
+      errorText = _warrantyExpiryError;
+    } else if (label == 'Last Maintenance Date') {
+      errorText = _lastMaintenanceDateError;
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: () {
+            // If installed date is empty and trying to set warranty or maintenance date
+            if (_installedDate.text.isEmpty &&
+                (label == 'Warranty Expiry' ||
+                    label == 'Last Maintenance Date')) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Please select Installed Date first'),
+                  backgroundColor: Colors.red,
                 ),
-              ),
-              child: child!,
-            );
-          },
-        ).then((date) {
-          if (date != null) {
-            setState(() {
-              controller.text = formatDate(date.toString());
+              );
+              return;
+            }
+
+            DateTime? initialDate;
+            DateTime? firstDate;
+
+            // Set minimum date based on installed date for warranty and maintenance
+            if (_installedDate.text.isNotEmpty &&
+                (label == 'Warranty Expiry' ||
+                    label == 'Last Maintenance Date')) {
+              firstDate = DateTime.parse(_installedDate.text);
+              initialDate = firstDate;
+            } else {
+              firstDate = DateTime(2000);
+              initialDate = DateTime.now();
+            }
+
+            showDatePicker(
+              context: context,
+              initialDate: initialDate,
+              firstDate: firstDate,
+              lastDate: DateTime(2100),
+              builder: (context, child) {
+                return Theme(
+                  data: ThemeData.light().copyWith(
+                    colorScheme: ColorScheme.light(
+                      primary: blueColor,
+                      onSurface: Colors.black,
+                    ),
+                  ),
+                  child: child!,
+                );
+              },
+            ).then((date) {
+              if (date != null) {
+                setState(() {
+                  controller.text = formatDate(date.toString());
+                  validateDates(); // Validate dates after selection
+                });
+              }
             });
-          }
-        });
-      },
-      child: AbsorbPointer(
-        child: CustomTextFormField(
-          labelText: label,
-          hintText: 'Select $label',
-          controller: controller,
-          keyboardType: TextInputType.datetime,
-          suffixIcon: Icon(Icons.calendar_today, color: Colors.grey),
+          },
+          child: AbsorbPointer(
+            child: CustomTextFormField(
+              labelText: label,
+              hintText: 'Select $label',
+              controller: controller,
+              keyboardType: TextInputType.datetime,
+              suffixIcon: Icon(Icons.calendar_today, color: Colors.grey),
+            ),
+          ),
         ),
-      ),
+        if (errorText != null)
+          Padding(
+            padding: const EdgeInsets.only(left: 12.0, top: 4.0),
+            child: Text(
+              errorText,
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 12,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
