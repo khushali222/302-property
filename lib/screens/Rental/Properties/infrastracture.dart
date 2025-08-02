@@ -33,14 +33,14 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
   final _description = TextEditingController();
   final _installedDate = TextEditingController();
   final UnitData leaseRepository = UnitData();
-  
+
   // Store appliances for each unit
   Map<String, List<unit_appliance>> unitAppliances = {};
   List<unit_appliance> allAppliances = [];
-  
+
   // Selected unit for filtering
   unit_properties? selectedUnit;
-  
+
   bool isLoading = false;
 
   Future<void> fetchLeasesForUnit(String unitId) async {
@@ -61,7 +61,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
 
   Future<void> fetchAllLeases() async {
     if (widget.units == null || widget.units!.isEmpty) return;
-    
+
     setState(() {
       isLoading = true;
     });
@@ -88,13 +88,12 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
   }
 
   void _filterAppliancesByUnit() {
-   
-      // Show only appliances for selected unit
-      allAppliances.clear();
-      String unitId = selectedUnit!.unitId!;
-      if (unitAppliances.containsKey(unitId)) {
-        allAppliances.addAll(unitAppliances[unitId]!);
-      }
+    // Show only appliances for selected unit
+    allAppliances.clear();
+    String unitId = selectedUnit!.unitId!;
+    if (unitAppliances.containsKey(unitId)) {
+      allAppliances.addAll(unitAppliances[unitId]!);
+    }
     // Update the future
     futureAppliences = Future.value(allAppliances);
   }
@@ -366,13 +365,18 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
         backgroundColor: Colors.white,
       ),
       buttons: [
-        DialogButton(
+         DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
-          color: Colors.grey,
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
         ),
         DialogButton(
           child: Text(
@@ -626,11 +630,14 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                         Container(
                           margin: EdgeInsets.only(left: 20),
                           height: 36, // Reduced height
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            border: Border.all(color: blueColor.withOpacity(0.3), width: 1.5),
-                            borderRadius: BorderRadius.circular(20), // More rounded corners
+                            border: Border.all(
+                                color: blueColor.withOpacity(0.3), width: 1.5),
+                            borderRadius: BorderRadius.circular(
+                                20), // More rounded corners
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.grey.withOpacity(0.1),
@@ -655,20 +662,25 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
                               ),
-                              items: widget.units!.map((unit) => DropdownMenuItem<unit_properties>(
-                                value: unit,
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 4),
-                                  child: Text(
-                                    unit.rentalunit ?? 'Unit ${unit.unitId}',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.grey.shade800,
-                                    ),
-                                  ),
-                                ),
-                              )).toList(),
+                              items: widget.units!
+                                  .map((unit) =>
+                                      DropdownMenuItem<unit_properties>(
+                                        value: unit,
+                                        child: Container(
+                                          padding:
+                                              EdgeInsets.symmetric(vertical: 4),
+                                          child: Text(
+                                            unit.rentalunit ??
+                                                'Unit ${unit.unitId}',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.grey.shade800,
+                                            ),
+                                          ),
+                                        ),
+                                      ))
+                                  .toList(),
                               onChanged: (unit) {
                                 setState(() {
                                   selectedUnit = unit;
@@ -680,28 +692,29 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                         ),
                     ],
                   ),
-                                      GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context, 
-                          MaterialPageRoute(
-                            builder: (context) => AddApplience(
-                              unit: selectedUnit,
-                              properties: widget.properties,
-                            ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddApplience(
+                            unit: selectedUnit,
+                            properties: widget.properties,
                           ),
-                        ).then((result) {
-                          // Refresh the data when returning from AddApplience
-                          if (result == true) {
-                            setState(() {
-                              fetchAllLeases();
-                              futureAppliences = _getAllAppliancesFuture();
-                            });
-                          }
-                        });
-                      },
+                        ),
+                      ).then((result) {
+                        // Refresh the data when returning from AddApplience
+                        if (result == true) {
+                          setState(() {
+                            fetchAllLeases();
+                            futureAppliences = _getAllAppliancesFuture();
+                          });
+                        }
+                      });
+                    },
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                       decoration: BoxDecoration(
                         color: blueColor,
                         borderRadius: BorderRadius.circular(10),
@@ -745,19 +758,23 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(
                             child: SpinKitFadingCircle(
-                              color: Colors.black,
-                              size: 40.0,
-                            ));
+                          color: Colors.black,
+                          size: 40.0,
+                        ));
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Center(child: Padding(
+                        return Center(
+                            child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 15.0),
-                          child: Text('You don\'t have any infrastructure for this unit right now ..'),
+                          child: Text(
+                              'You don\'t have any infrastructure for this unit right now ..'),
                         ));
                       } else {
                         var data = _currentFilteredData;
-                        if (searchValue != null && searchValue.isNotEmpty && searchValue != "All") {
+                        if (searchValue != null &&
+                            searchValue.isNotEmpty &&
+                            searchValue != "All") {
                           data = _currentFilteredData
                               .where((rentals) => rentals.applianceName!
                                   .toLowerCase()
@@ -765,20 +782,22 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                               .toList();
                         }
                         sortData(data);
-                        
+
                         final totalPages = (data.length / itemsPerPage).ceil();
                         final currentPageData = data
                             .skip(currentPage * itemsPerPage)
                             .take(itemsPerPage)
                             .toList();
 
-                            
                         return SingleChildScrollView(
                           child: Column(
                             children: [
                               SizedBox(height: 10),
                               Column(
-                                children: currentPageData.asMap().entries.map((entry) {
+                                children: currentPageData
+                                    .asMap()
+                                    .entries
+                                    .map((entry) {
                                   int index = entry.key;
                                   bool isExpanded = expandedIndex == index;
                                   unit_appliance rentals = entry.value;
@@ -788,7 +807,9 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(color: Colors.grey.shade200, width: 1),
+                                      border: Border.all(
+                                          color: Colors.grey.shade200,
+                                          width: 1),
                                       boxShadow: [
                                         BoxShadow(
                                           color: Colors.grey.withOpacity(0.08),
@@ -812,48 +833,54 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                     InkWell(
                                                       onTap: () {
                                                         setState(() {
-                                                          if (expandedIndex == index) {
-                                                            expandedIndex = null;
+                                                          if (expandedIndex ==
+                                                              index) {
+                                                            expandedIndex =
+                                                                null;
                                                           } else {
-                                                            expandedIndex = index;
+                                                            expandedIndex =
+                                                                index;
                                                           }
                                                         });
                                                       },
                                                       child: Container(
-                                                       margin:
-                                                              EdgeInsets.only(
-                                                                  left: 5,
-                                                                  right: 2),
-                                                          padding: !isExpanded
-                                                              ? EdgeInsets.only(
-                                                                  bottom: 10)
-                                                              : EdgeInsets.only(
-                                                                  top: 10),
-                                                        child:FaIcon(
-                                                            isExpanded
-                                                                ? FontAwesomeIcons
-                                                                    .sortUp
-                                                                : FontAwesomeIcons
-                                                                    .sortDown,
-                                                            size: 20,
-                                                            color: blueColor,
-                                                          ),
+                                                        margin: EdgeInsets.only(
+                                                            left: 5, right: 2),
+                                                        padding: !isExpanded
+                                                            ? EdgeInsets.only(
+                                                                bottom: 10)
+                                                            : EdgeInsets.only(
+                                                                top: 10),
+                                                        child: FaIcon(
+                                                          isExpanded
+                                                              ? FontAwesomeIcons
+                                                                  .sortUp
+                                                              : FontAwesomeIcons
+                                                                  .sortDown,
+                                                          size: 20,
+                                                          color: blueColor,
+                                                        ),
                                                       ),
                                                     ),
                                                     SizedBox(width: 16),
                                                     Expanded(
                                                       child: Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
                                                         children: [
                                                           Text(
-                                                            rentals.applianceName ?? 'N/A',
+                                                            rentals.applianceName ??
+                                                                'N/A',
                                                             style: TextStyle(
-                                                              color: Colors.grey.shade900,
-                                                              fontWeight: FontWeight.w700,
+                                                              color: Colors.grey
+                                                                  .shade900,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
                                                               fontSize: 16,
                                                             ),
                                                           ),
-                                                        
                                                         ],
                                                       ),
                                                     ),
@@ -861,29 +888,37 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                 ),
                                               ),
                                               // Right section with brand button
-                                              if(rentals.brand != null && rentals.brand != "")
-                                              Container(
-                                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                                decoration: BoxDecoration(
-                                                  color: blueColor.withOpacity(0.3),
-                                                  borderRadius: BorderRadius.circular(12),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: blueColor.withOpacity(0.3),
-                                                      blurRadius: 4,
-                                                      offset: Offset(0, 2),
+                                              if (rentals.brand != null &&
+                                                  rentals.brand != "")
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 8),
+                                                  decoration: BoxDecoration(
+                                                    color: blueColor
+                                                        .withOpacity(0.3),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: blueColor
+                                                            .withOpacity(0.3),
+                                                        blurRadius: 4,
+                                                        offset: Offset(0, 2),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: Text(
+                                                    '${rentals.brand}',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      fontSize: 14,
                                                     ),
-                                                  ],
-                                                ),
-                                                child: Text(
-                                                  '${rentals.brand}',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.w700,
-                                                    fontSize: 14,
                                                   ),
                                                 ),
-                                              ),
                                             ],
                                           ),
                                         ),
@@ -895,10 +930,13 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                               color: Colors.grey.shade50,
                                               borderRadius: BorderRadius.only(
                                                 bottomLeft: Radius.circular(16),
-                                                bottomRight: Radius.circular(16),
+                                                bottomRight:
+                                                    Radius.circular(16),
                                               ),
                                               border: Border(
-                                                top: BorderSide(color: Colors.grey.shade200, width: 1),
+                                                top: BorderSide(
+                                                    color: Colors.grey.shade200,
+                                                    width: 1),
                                               ),
                                             ),
                                             child: Column(
@@ -908,24 +946,33 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                   children: [
                                                     Expanded(
                                                       child: Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
                                                         children: [
                                                           Text(
                                                             'Category',
                                                             style: TextStyle(
-                                                              color: Colors.grey.shade600,
-                                                              fontWeight: FontWeight.w600,
+                                                              color: Colors.grey
+                                                                  .shade600,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
                                                               fontSize: 13,
-                                                              letterSpacing: 0.5,
+                                                              letterSpacing:
+                                                                  0.5,
                                                             ),
                                                           ),
                                                           SizedBox(height: 6),
                                                           Text(
                                                             '${rentals.categoryName}',
                                                             style: TextStyle(
-                                                              color: Colors.grey.shade800,
+                                                              color: Colors.grey
+                                                                  .shade800,
                                                               fontSize: 15,
-                                                              fontWeight: FontWeight.w500,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
                                                             ),
                                                           ),
                                                         ],
@@ -933,24 +980,35 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                     ),
                                                     Expanded(
                                                       child: Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
                                                         children: [
                                                           Text(
                                                             'Installed Date',
                                                             style: TextStyle(
-                                                              color: Colors.grey.shade600,
-                                                              fontWeight: FontWeight.w600,
+                                                              color: Colors.grey
+                                                                  .shade600,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
                                                               fontSize: 13,
-                                                              letterSpacing: 0.5,
+                                                              letterSpacing:
+                                                                  0.5,
                                                             ),
                                                           ),
                                                           SizedBox(height: 6),
                                                           Text(
-                                                            formatDate(rentals.installedDate ?? ''),
+                                                            formatDate(rentals
+                                                                    .installedDate ??
+                                                                ''),
                                                             style: TextStyle(
-                                                              color: Colors.grey.shade800,
+                                                              color: Colors.grey
+                                                                  .shade800,
                                                               fontSize: 15,
-                                                              fontWeight: FontWeight.w500,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
                                                             ),
                                                           ),
                                                         ],
@@ -961,7 +1019,8 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                 SizedBox(height: 20),
                                                 // Action buttons
                                                 Row(
-                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
                                                   children: [
                                                     // View button
                                                     GestureDetector(
@@ -969,24 +1028,36 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                         Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
-                                                            builder: (context) => ApplianceSummary(
-                                                              appliance: rentals,
-                                                              unit: selectedUnit,
-                                                              properties: widget.properties,
+                                                            builder: (context) =>
+                                                                ApplianceSummary(
+                                                              appliance:
+                                                                  rentals,
+                                                              unit:
+                                                                  selectedUnit,
+                                                              properties: widget
+                                                                  .properties,
                                                             ),
                                                           ),
                                                         );
                                                       },
                                                       child: Container(
-                                                        padding: EdgeInsets.all(12),
-                                                        decoration: BoxDecoration(
-                                                          color: Colors.grey.shade100,
-                                                          borderRadius: BorderRadius.circular(12),
-                                                          border: Border.all(color: Colors.grey.shade300),
+                                                        padding:
+                                                            EdgeInsets.all(12),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors
+                                                              .grey.shade100,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                          border: Border.all(
+                                                              color: Colors.grey
+                                                                  .shade300),
                                                         ),
                                                         child: Icon(
                                                           Icons.visibility,
-                                                          color: Colors.grey.shade700,
+                                                          color: Colors
+                                                              .grey.shade700,
                                                           size: 22,
                                                         ),
                                                       ),
@@ -995,29 +1066,51 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                     // Edit button
                                                     GestureDetector(
                                                       onTap: () {
-                                                         Navigator.push(
-                                                              context, 
-                                                              MaterialPageRoute(
-                                                                builder: (context) => AddApplience(
-                                                                  unit: selectedUnit,
-                                                                  properties: widget.properties,
-                                                                  appliance: rentals,
-                                                                ),
-                                                              ),
-                                                            );
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                AddApplience(
+                                                              unit:
+                                                                  selectedUnit,
+                                                              properties: widget
+                                                                  .properties,
+                                                              appliance:
+                                                                  rentals,
+                                                            ),
+                                                          ),
+                                                        ).then((result) {
+                                                          // Refresh the data when returning from AddApplience
+                                                          if (result == true) {
+                                                            setState(() {
+                                                              fetchAllLeases();
+                                                              futureAppliences =
+                                                                  _getAllAppliancesFuture();
+                                                            });
+                                                          }
+                                                        });
                                                       },
                                                       child: Container(
-                                                        padding: EdgeInsets.all(12),
-                                                        decoration: BoxDecoration(
-                                                          color: Colors.green.withOpacity(0.1),
-                                                          borderRadius: BorderRadius.circular(12),
-                                                          border: Border.all(color: Colors.green.withOpacity(0.3)),
+                                                        padding:
+                                                            EdgeInsets.all(12),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors.green
+                                                              .withOpacity(0.1),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                          border: Border.all(
+                                                              color: Colors
+                                                                  .green
+                                                                  .withOpacity(
+                                                                      0.3)),
                                                         ),
                                                         child: InkWell(
-                                                         
                                                           child: Icon(
                                                             Icons.edit,
-                                                            color: Colors.green.shade700,
+                                                            color: Colors
+                                                                .green.shade700,
                                                             size: 22,
                                                           ),
                                                         ),
@@ -1027,19 +1120,32 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                     // Delete button
                                                     GestureDetector(
                                                       onTap: () {
-                                                        print("Appliance ID ${rentals.applianceId}");
-                                                        _showDeleteAlert(context, rentals.applianceId!);
+                                                        print(
+                                                            "Appliance ID ${rentals.applianceId}");
+                                                        _showDeleteAlert(
+                                                            context,
+                                                            rentals
+                                                                .applianceId!);
                                                       },
                                                       child: Container(
-                                                        padding: EdgeInsets.all(12),
-                                                        decoration: BoxDecoration(
-                                                          color: Colors.red.withOpacity(0.1),
-                                                          borderRadius: BorderRadius.circular(12),
-                                                          border: Border.all(color: Colors.red.withOpacity(0.3)),
+                                                        padding:
+                                                            EdgeInsets.all(12),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors.red
+                                                              .withOpacity(0.1),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                          border: Border.all(
+                                                              color: Colors.red
+                                                                  .withOpacity(
+                                                                      0.3)),
                                                         ),
                                                         child: Icon(
                                                           Icons.delete,
-                                                          color: Colors.red.shade700,
+                                                          color: Colors
+                                                              .red.shade700,
                                                           size: 22,
                                                         ),
                                                       ),
@@ -1055,76 +1161,89 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                 }).toList(),
                               ),
                               SizedBox(height: 20),
-                              if(totalPages > 1)
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Row(
-                                    children: [
-                                      SizedBox(width: 10),
-                                      Material(
-                                        elevation: 3,
-                                        child: Container(
-                                          height: 40,
-                                          padding: EdgeInsets.symmetric(horizontal: 12.0),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(color: Colors.grey),
-                                          ),
-                                          child: DropdownButtonHideUnderline(
-                                            child: DropdownButton<int>(
-                                              value: itemsPerPage,
-                                              items: itemsPerPageOptions.map((int value) {
-                                                return DropdownMenuItem<int>(
-                                                  value: value,
-                                                  child: Text(value.toString()),
-                                                );
-                                              }).toList(),
-                                              onChanged: (newValue) {
-                                                setState(() {
-                                                  itemsPerPage = newValue!;
-                                                  currentPage = 0;
-                                                });
-                                              },
+                              if (totalPages > 1)
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        SizedBox(width: 10),
+                                        Material(
+                                          elevation: 3,
+                                          child: Container(
+                                            height: 40,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.grey),
+                                            ),
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<int>(
+                                                value: itemsPerPage,
+                                                items: itemsPerPageOptions
+                                                    .map((int value) {
+                                                  return DropdownMenuItem<int>(
+                                                    value: value,
+                                                    child:
+                                                        Text(value.toString()),
+                                                  );
+                                                }).toList(),
+                                                onChanged: (newValue) {
+                                                  setState(() {
+                                                    itemsPerPage = newValue!;
+                                                    currentPage = 0;
+                                                  });
+                                                },
+                                              ),
                                             ),
                                           ),
                                         ),
+                                      ],
+                                    ),
+                                    if (totalPages > 1)
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: FaIcon(
+                                              FontAwesomeIcons
+                                                  .circleChevronLeft,
+                                              color: currentPage == 0
+                                                  ? Colors.grey
+                                                  : blueColor,
+                                            ),
+                                            onPressed: currentPage == 0
+                                                ? null
+                                                : () {
+                                                    setState(() {
+                                                      currentPage--;
+                                                    });
+                                                  },
+                                          ),
+                                          Text(
+                                              'Page ${currentPage + 1} of $totalPages'),
+                                          IconButton(
+                                            icon: FaIcon(
+                                              FontAwesomeIcons
+                                                  .circleChevronRight,
+                                              color:
+                                                  currentPage < totalPages - 1
+                                                      ? blueColor
+                                                      : Colors.grey,
+                                            ),
+                                            onPressed:
+                                                currentPage < totalPages - 1
+                                                    ? () {
+                                                        setState(() {
+                                                          currentPage++;
+                                                        });
+                                                      }
+                                                    : null,
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                  if(totalPages > 1)
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        icon: FaIcon(
-                                          FontAwesomeIcons.circleChevronLeft,
-                                          color: currentPage == 0 ? Colors.grey : blueColor,
-                                        ),
-                                        onPressed: currentPage == 0
-                                            ? null
-                                            : () {
-                                                setState(() {
-                                                  currentPage--;
-                                                });
-                                              },
-                                      ),
-                                      Text('Page ${currentPage + 1} of $totalPages'),
-                                      IconButton(
-                                        icon: FaIcon(
-                                          FontAwesomeIcons.circleChevronRight,
-                                          color: currentPage < totalPages - 1 ? blueColor : Colors.grey,
-                                        ),
-                                        onPressed: currentPage < totalPages - 1
-                                            ? () {
-                                                setState(() {
-                                                  currentPage++;
-                                                });
-                                              }
-                                            : null,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                  ],
+                                ),
                             ],
                           ),
                         );
@@ -1139,13 +1258,15 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(
                           child: SpinKitFadingCircle(
-                            color: Colors.black,
-                            size: 40.0,
-                          ));
+                        color: Colors.black,
+                        size: 40.0,
+                      ));
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(child: Text('You don\'t have any infrastructure for this unit right now ..'));
+                      return Center(
+                          child: Text(
+                              'You don\'t have any infrastructure for this unit right now ..'));
                     } else {
                       List<unit_appliance>? filteredData = [];
                       _tableData = _currentFilteredData;
@@ -1179,19 +1300,30 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                   defaultColumnWidth: IntrinsicColumnWidth(),
                                   children: [
                                     TableRow(
-                                      decoration: BoxDecoration(border: Border.all()),
+                                      decoration:
+                                          BoxDecoration(border: Border.all()),
                                       children: [
-                                        _buildHeader('Name', 0, (rental) => rental.applianceName!),
-                                        _buildHeader('Description', 1, (rental) => rental.applianceDescription!),
-                                        _buildHeader('InstalledDate', 2, (rental) => rental.installedDate!),
+                                        _buildHeader('Name', 0,
+                                            (rental) => rental.applianceName!),
+                                        _buildHeader(
+                                            'Description',
+                                            1,
+                                            (rental) =>
+                                                rental.applianceDescription!),
+                                        _buildHeader('InstalledDate', 2,
+                                            (rental) => rental.installedDate!),
                                         _buildHeader('Actions', 3, null),
                                       ],
                                     ),
                                     TableRow(
                                       decoration: BoxDecoration(
-                                        border: Border.symmetric(horizontal: BorderSide.none),
+                                        border: Border.symmetric(
+                                            horizontal: BorderSide.none),
                                       ),
-                                      children: List.generate(4, (index) => TableCell(child: Container(height: 20))),
+                                      children: List.generate(
+                                          4,
+                                          (index) => TableCell(
+                                              child: Container(height: 20))),
                                     ),
                                     for (var i = 0; i < _pagedData.length; i++)
                                       TableRow(
@@ -1206,9 +1338,12 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                           ),
                                         ),
                                         children: [
-                                          _buildDataCell(_pagedData[i].applianceName!),
-                                          _buildDataCell(_pagedData[i].applianceDescription!),
-                                          _buildDataCell(formatDate(_pagedData[i].installedDate!)),
+                                          _buildDataCell(
+                                              _pagedData[i].applianceName!),
+                                          _buildDataCell(_pagedData[i]
+                                              .applianceDescription!),
+                                          _buildDataCell(formatDate(
+                                              _pagedData[i].installedDate!)),
                                           _buildActionsCell(_pagedData[i]),
                                         ],
                                       ),
@@ -1216,7 +1351,8 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                 ),
                               ),
                             ),
-                            if (_tableData.isEmpty) Text("No Search Records Found"),
+                            if (_tableData.isEmpty)
+                              Text("No Search Records Found"),
                             SizedBox(height: 25),
                             _buildPaginationControls(),
                           ],

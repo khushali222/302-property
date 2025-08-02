@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -262,8 +263,14 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                               child: TextFormField(
                                 controller: subtype,
                                 decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: "Townhome"),
+                                  border: InputBorder.none,
+                                  hintText: "Townhome",
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey
+                                        .withOpacity(0.6), // Light grey
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -376,9 +383,17 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                   });
                                 });
                               } else {
-                                Navigator.of(context).pop(false);
-                              }
+                               // Navigator.of(context).pop(false);
+                                Fluttertoast.showToast(
+                                  msg: "Please update at least one field before submitting.",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  backgroundColor: Colors.white,
+                                  textColor: Colors.red,
+                                  fontSize: 16.0,
+                                );
 
+                              }
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),

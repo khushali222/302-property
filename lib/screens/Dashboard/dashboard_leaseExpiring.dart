@@ -77,7 +77,7 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
           ),
           child: Center(
             child: Text(
-              "Leases Expiring in the next 60 days",
+              "Leases Expiring in the Next 60 Days",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
@@ -786,7 +786,7 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                             Padding(
                               padding: const EdgeInsets.only(left: 5),
                               child: Text(
-                                "Leases Expiring in the next 60 days",
+                                "Leases Expiring in the Next 60 Days",
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: blueColor,
@@ -860,7 +860,7 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 0.0),
                             child: Text(
-                              'Leases Expiring in the next 60 days',
+                              'Leases Expiring in the Next 60 Days',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: blueColor,

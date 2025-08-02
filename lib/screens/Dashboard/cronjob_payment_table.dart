@@ -545,10 +545,16 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
         DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
-          color: Colors.grey,
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
         ),
       ],
     ).show();
@@ -740,10 +746,16 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
         DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
-          color: Colors.grey,
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
         ),
       ],
     ).show();
@@ -1334,10 +1346,16 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
         DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
-          color: Colors.grey,
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
         ),
       ],
     ).show();
@@ -1519,7 +1537,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                               : null,
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                isReasonEntered ? blueColor : Colors.grey,
+                                isReasonEntered ? blueColor : Colors.grey.shade300,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8)),
@@ -1528,12 +1546,15 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                               style: TextStyle(color: Colors.white)),
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12),
                       Expanded(
                         child: DialogButton(
                           child: Text(
                             "Cancel",
-                            style: TextStyle(color: Colors.white, fontSize: 18),
+                            style: TextStyle(
+                                color: blueColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
                           ),
                           onPressed: () {
                             Alert(
@@ -1556,7 +1577,12 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                               ],
                             ).show();
                           },
-                          color: Colors.grey,
+                          color: Colors.white,
+                          radius: BorderRadius.circular(8), // Rounded corners
+                          border: Border.all(
+                            color: blueColor, // Blue border
+                            width: 1.5,
+                          ),
                         ),
                       ),
                     ],

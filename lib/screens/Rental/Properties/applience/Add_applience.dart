@@ -140,12 +140,16 @@ class _AddApplienceState extends State<AddApplience> {
       _model.text = widget.appliance?.model ?? '';
       _serialNumber.text = widget.appliance?.serialNumber ?? '';
       // filter out data from list of dropdown category
-      _dropdownCategories = _dropdownCategories
-          .where(
-              (category) => category.categoryId == widget.appliance?.categoryId)
-          .toList();
-      _selectedDropdownCategory = _dropdownCategories.first;
-      print("Selected category: ${_selectedDropdownCategory?.name}");
+      // _dropdownCategories = _dropdownCategories
+      //     .where(
+      //         (category) => category.categoryId == widget.appliance?.categoryId)
+      //     .toList();
+      // _selectedDropdownCategory = _dropdownCategories.first;
+      // print("Selected category: ${_selectedDropdownCategory?.name}");
+      _selectedDropdownCategory = _dropdownCategories.firstWhere(
+            (category) => category.categoryId == widget.appliance?.categoryId,
+        orElse: () => _dropdownCategories.first,
+      );
 
       brandList = _selectedDropdownCategory?.brands ?? [];
       _selectedBrand = widget.appliance?.brand ?? '';

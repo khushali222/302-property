@@ -323,7 +323,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                             width: 2,
                           ),
                           Text(
-                            "Personal information",
+                            "Personal Information",
                             style: TextStyle(
                                 color: Color(0xFF101828),
                                 fontWeight: FontWeight.bold,
@@ -608,7 +608,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                             width: 2,
                           ),
                           Text(
-                            "Merchant Id",
+                            "Merchant ID",
                             style: TextStyle(
                                 color: Color(0xFF152B51),
                                 fontWeight: FontWeight.bold,
@@ -1354,7 +1354,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                             width: 2,
                           ),
                           Text(
-                            "Contact information",
+                            "Contact Information",
                             style: TextStyle(
                                 color: Color(0xFF152B51),
                                 fontWeight: FontWeight.bold,
@@ -2602,7 +2602,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                             width: 2,
                           ),
                           Text(
-                            "Tax Payer Information ",
+                            "Taxpayer Information ",
                             style: TextStyle(
                                 color: Color(0xFF152B51),
                                 fontWeight: FontWeight.bold,
@@ -2630,7 +2630,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "Tax Identify Type",
+                                        "Tax ID Type",
                                         style: TextStyle(
                                             color: Color(0xFF101828),
                                             fontWeight: FontWeight.bold,
@@ -2669,7 +2669,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                   cursorColor: blueColor,
                                                   decoration: InputDecoration(
                                                     hintText:
-                                                        "Enter tax identify type",
+                                                        "Enter tax id type",
                                                     hintStyle: TextStyle(
                                                       fontSize:
                                                           MediaQuery.of(context)
@@ -2714,7 +2714,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "Tax PayerId",
+                                        "Taxpayer ID",
                                         style: TextStyle(
                                             // color: Colors.grey,
                                             color: Color(0xFF101828),
@@ -2852,6 +2852,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
           SizedBox(
             height: 15,
           ),
+          //Card Transaction Type Management
           Padding(
             padding: const EdgeInsets.only(left: 15, right: 15),
             child: Material(
@@ -3368,21 +3369,43 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           primaryemailerror = false;
                         });
                       }
+
                       if (alternativeemail.text.trim().isEmpty) {
                         setState(() {
                           alternativeerror = false;
                         });
-                      } else if (alternativeemail.text.trim() ==
-                          primaryemail.text.trim()) {
+                      } else if (!EmailValidator.validate(alternativeemail.text)) {
                         setState(() {
                           alternativeerror = true;
-                          alternativemessage = " email cannot be the same";
+                          alternativemessage = "Email is not valid";
+                        });
+                      } else if (alternativeemail.text.trim() == primaryemail.text.trim()) {
+                        setState(() {
+                          alternativeerror = true;
+                          alternativemessage = "Email cannot be the same as primary";
                         });
                       } else {
                         setState(() {
                           alternativeerror = false;
                         });
                       }
+
+                      //
+                      // if (alternativeemail.text.trim().isEmpty) {
+                      //   setState(() {
+                      //     alternativeerror = false;
+                      //   });
+                      // } else if (alternativeemail.text.trim() ==
+                      //     primaryemail.text.trim()) {
+                      //   setState(() {
+                      //     alternativeerror = true;
+                      //     alternativemessage = " email cannot be the same";
+                      //   });
+                      // } else {
+                      //   setState(() {
+                      //     alternativeerror = false;
+                      //   });
+                      // }
                 
                       String formattedPhoneNumber =
                           phonenum.text.replaceAll(RegExp(r'\D'), '');

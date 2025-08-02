@@ -364,12 +364,17 @@ class _Applicants_tableState extends State<Applicants_table> {
           color: blueColor,
         ),
         DialogButton(
-          child: const Text(
+          child: Text(
             "Cancel",
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
-          color: Colors.grey,
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
         ),
       ],
     ).show();
@@ -385,13 +390,18 @@ class _Applicants_tableState extends State<Applicants_table> {
         backgroundColor: Colors.white,
       ),
       buttons: [
-        DialogButton(
-          child: const Text(
+         DialogButton(
+          child: Text(
             "Cancel",
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
-          color: Colors.grey,
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
         ),
         DialogButton(
           child: const Text(

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../constant/constant.dart';
@@ -13,6 +14,7 @@ import '../../../Model/propertytype.dart';
 import '../../repository/Property_type.dart';
 import '../../widgets/drawer_tiles.dart';
 import '../../widgets/custom_drawer.dart';
+
 class Edit_property_type extends StatefulWidget {
   propertytype property;
   Edit_property_type({super.key, required this.property});
@@ -54,7 +56,10 @@ class _Edit_property_typeState extends State<Edit_property_type> {
     return Scaffold(
       appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawerStaff(currentpage: "Add Property Type",dropdown: false,),
+      drawer: CustomDrawerStaff(
+        currentpage: "Add Property Type",
+        dropdown: false,
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -69,7 +74,9 @@ class _Edit_property_typeState extends State<Edit_property_type> {
               height: 25,
             ),
             Padding(
-              padding:  EdgeInsets.only(left:  MediaQuery.of(context).size.width < 500 ? 25 :55, right:  MediaQuery.of(context).size.width < 500 ? 25 :55),
+              padding: EdgeInsets.only(
+                  left: MediaQuery.of(context).size.width < 500 ? 25 : 55,
+                  right: MediaQuery.of(context).size.width < 500 ? 25 : 55),
               child: Material(
                 elevation: 6,
                 borderRadius: BorderRadius.circular(10),
@@ -97,7 +104,10 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: blueColor,
-                                fontSize:  MediaQuery.of(context).size.width < 500 ? 17 : 22),
+                                fontSize:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 17
+                                        : 22),
                           ),
                         ],
                       ),
@@ -114,7 +124,10 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold,
-                                fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :18),
+                                fontSize:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 18),
                           ),
                         ],
                       ),
@@ -150,17 +163,17 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                               items: items
                                   .map(
                                       (String item) => DropdownMenuItem<String>(
-                                    value: item,
-                                    child: Text(
-                                      item,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ))
+                                            value: item,
+                                            child: Text(
+                                              item,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ))
                                   .toList(),
                               value: selectedValue,
                               onChanged: (value) {
@@ -172,7 +185,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                 height: 50,
                                 width: 160,
                                 padding:
-                                const EdgeInsets.only(left: 14, right: 14),
+                                    const EdgeInsets.only(left: 14, right: 14),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
@@ -194,7 +207,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                   radius: const Radius.circular(40),
                                   thickness: MaterialStateProperty.all(6),
                                   thumbVisibility:
-                                  MaterialStateProperty.all(true),
+                                      MaterialStateProperty.all(true),
                                 ),
                               ),
                               menuItemStyleData: const MenuItemStyleData(
@@ -218,7 +231,10 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold,
-                                fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :18),
+                                fontSize:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 15
+                                        : 18),
                           ),
                         ],
                       ),
@@ -234,7 +250,9 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                             elevation: 2,
                             borderRadius: BorderRadius.circular(10),
                             child: Container(
-                              width:  MediaQuery.of(context).size.width < 500 ? 160 : 160,
+                              width: MediaQuery.of(context).size.width < 500
+                                  ? 160
+                                  : 160,
                               padding: EdgeInsets.only(left: 10),
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -243,8 +261,14 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                               child: TextFormField(
                                 controller: subtype,
                                 decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: "Townhome"),
+                                  border: InputBorder.none,
+                                  hintText: "Townhome",
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey
+                                        .withOpacity(0.6), // Light grey
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -257,10 +281,12 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                         children: [
                           if (MediaQuery.of(context).size.width < 500)
                             SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.05),
+                                width:
+                                    MediaQuery.of(context).size.width * 0.05),
                           if (MediaQuery.of(context).size.width > 500)
                             SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.02),
+                                width:
+                                    MediaQuery.of(context).size.width * 0.02),
                           Container(
                             height: MediaQuery.of(context).size.height * 0.02,
                             width: MediaQuery.of(context).size.height * 0.02,
@@ -269,12 +295,10 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                               borderRadius: BorderRadius.circular(5),
                             ),
                             child: Checkbox(
-                              activeColor: isChecked
-                                  ? blueColor
-                                  : Colors.white,
+                              activeColor: isChecked ? blueColor : Colors.white,
                               checkColor: Colors.white,
                               value:
-                              isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
+                                  isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
                               onChanged: (value) {
                                 setState(() {
                                   isChecked = value ??
@@ -288,8 +312,9 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                           Text(
                             "Multi unit",
                             style: TextStyle(
-                              fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 15 :18,
+                              fontSize: MediaQuery.of(context).size.width < 500
+                                  ? 15
+                                  : 18,
                               color: Colors.grey,
                             ),
                           ),
@@ -304,10 +329,12 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                         children: [
                           if (MediaQuery.of(context).size.width < 500)
                             SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.05),
+                                width:
+                                    MediaQuery.of(context).size.width * 0.05),
                           if (MediaQuery.of(context).size.width > 500)
                             SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.02),
+                                width:
+                                    MediaQuery.of(context).size.width * 0.02),
                           GestureDetector(
                             onTap: () async {
                               bool hasChanges =
@@ -326,15 +353,15 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                   iserror = false;
                                 });
                                 SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
+                                    await SharedPreferences.getInstance();
                                 String? id = prefs.getString("adminId");
                                 PropertyTypeRepository()
                                     .EditPropertyType(
-                                    adminId: id!,
-                                    propertyType: selectedValue,
-                                    propertySubType: subtype.text.trim(),
-                                    isMultiUnit: isChecked,
-                                    id: widget.property.propertyId)
+                                        adminId: id!,
+                                        propertyType: selectedValue,
+                                        propertySubType: subtype.text.trim(),
+                                        isMultiUnit: isChecked,
+                                        id: widget.property.propertyId)
                                     .then((value) {
                                   setState(() {
                                     widget.property.propertyType =
@@ -356,15 +383,28 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                               } else {
                                 print(
                                     "No changes made, API call not necessary.");
-                                Navigator.of(context).pop(false);
+                                // Navigator.of(context).pop(false);
+                                Fluttertoast.showToast(
+                                  msg:
+                                      "Please update at least one field before submitting.",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  backgroundColor: Colors.white,
+                                  textColor: Colors.red,
+                                  fontSize: 16.0,
+                                );
                               }
                               print(selectedValue);
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),
                               child: Container(
-                                height: MediaQuery.of(context).size.width < 500 ? 40 :45,
-                                width:  MediaQuery.of(context).size.width < 500 ? 160 : 165,
+                                height: MediaQuery.of(context).size.width < 500
+                                    ? 40
+                                    : 45,
+                                width: MediaQuery.of(context).size.width < 500
+                                    ? 160
+                                    : 165,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
                                   color: blueColor,
@@ -379,21 +419,25 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                 child: Center(
                                   child: isLoading
                                       ? SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 25.0,
-                                  )
+                                          color: Colors.white,
+                                          size: 25.0,
+                                        )
                                       : Text(
-                                    "Edit Property Type",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:  MediaQuery.of(context).size.width < 500 ? 15 :15),
-                                  ),
+                                          "Edit Property Type",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                      500
+                                                  ? 15
+                                                  : 15),
+                                        ),
                                 ),
                               ),
                             ),
                           ),
-
                           SizedBox(
                             width: 15,
                           ),
@@ -404,8 +448,13 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                             child: Material(
                               elevation: 2,
                               child: Container(
-                                  width:  MediaQuery.of(context).size.width < 500 ? 90 : 100,
-                                  height:  MediaQuery.of(context).size.width < 500 ? 40 :40,
+                                  width: MediaQuery.of(context).size.width < 500
+                                      ? 90
+                                      : 100,
+                                  height:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 40
+                                          : 40,
                                   color: Colors.white,
                                   child: Center(child: Text("Cancel"))),
                             ),

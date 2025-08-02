@@ -439,13 +439,18 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
         backgroundColor: Colors.white,
       ),
       buttons: [
-        DialogButton(
-          child: const Text(
+         DialogButton(
+          child: Text(
             "Cancel",
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
-          color: Colors.grey,
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
         ),
         DialogButton(
           child: const Text(
@@ -1466,7 +1471,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                               Row(
                                 children: [
                                   Text(
-                                    'Rentals Insurance Policy',
+                                    'Renter’s Insurance Policy',
                                     style: TextStyle(
                                         color: blueColor,
                                         fontSize: 17,
@@ -2973,13 +2978,18 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
         backgroundColor: Colors.white,
       ),
       buttons: [
-        DialogButton(
-          child: const Text(
+         DialogButton(
+          child: Text(
             "Cancel",
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
-          color: Colors.grey,
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
         ),
         DialogButton(
           child: const Text(

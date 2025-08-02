@@ -228,7 +228,13 @@ class _Add_propertyState extends State<Add_property> {
                                 controller: subtype,
                                 decoration: InputDecoration(
                                     border: InputBorder.none,
-                                    hintText: "Townhome"),
+                                    hintText: "Townhome",
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey
+                                        .withOpacity(0.6), // Light grey
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
                               ),
                             ),
                           ),

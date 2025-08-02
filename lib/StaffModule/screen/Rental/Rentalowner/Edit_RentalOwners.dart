@@ -519,7 +519,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                             width: 2,
                           ),
                           Text(
-                            "Personal information",
+                            "Personal Information",
                             style: TextStyle(
                                 color: Color(0xFF152B51),
                                 fontWeight: FontWeight.bold,
@@ -804,7 +804,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                             width: 2,
                           ),
                           Text(
-                            "Merchant Id",
+                            "Merchant ID",
                             style: TextStyle(
                                 color: Color(0xFF152B51),
                                 fontWeight: FontWeight.bold,
@@ -1549,7 +1549,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                             width: 2,
                           ),
                           Text(
-                            "Contact information",
+                            "Contact Information",
                             style: TextStyle(
                                 color: Color(0xFF152B51),
                                 fontWeight: FontWeight.bold,
@@ -2797,7 +2797,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                             width: 2,
                           ),
                           Text(
-                            "Tax Payer Information ",
+                            "Taxpayer Information ",
                             style: TextStyle(
                                 color: Color(0xFF152B51),
                                 fontWeight: FontWeight.bold,
@@ -2825,7 +2825,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                     CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "Tax Identify Type",
+                                        "Tax ID Type",
                                         style: TextStyle(
                                             color: Color(0xFF101828),
                                             fontWeight: FontWeight.bold,
@@ -2864,7 +2864,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                                   cursorColor: blueColor,
                                                   decoration: InputDecoration(
                                                     hintText:
-                                                    "Enter tax identify type",
+                                                    "Enter tax id type",
                                                     hintStyle: TextStyle(
                                                       fontSize:
                                                       MediaQuery.of(context)
@@ -2909,7 +2909,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                     CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "Tax PayerId",
+                                        "Taxpayer ID",
                                         style: TextStyle(
                                           // color: Colors.grey,
                                             color: Color(0xFF101828),
@@ -3538,18 +3538,17 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       });
                     }
                     if (alternativeemail.text.trim().isNotEmpty) {
-                      if (alternativeemail.text == primaryemail.text) {
+                      if (alternativeemail.text.trim() == primaryemail.text.trim()) {
+                        isFormValid = false;
                         setState(() {
                           alternativeerror = true;
                           alternativemessage = "Email cannot be the same";
-                          isFormValid = false;
                         });
-                      } else if (!EmailValidator.validate(
-                          alternativeemail.text)) {
+                      } else if (!EmailValidator.validate(alternativeemail.text.trim())) {
+                        isFormValid = false;
                         setState(() {
                           alternativeerror = true;
                           alternativemessage = "Email is not valid";
-                          isFormValid = false;
                         });
                       } else {
                         setState(() {
@@ -3557,6 +3556,27 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                         });
                       }
                     }
+
+                    // if (alternativeemail.text.trim().isNotEmpty) {
+                    //   if (alternativeemail.text == primaryemail.text) {
+                    //     setState(() {
+                    //       alternativeerror = true;
+                    //       alternativemessage = "Email cannot be the same";
+                    //       isFormValid = false;
+                    //     });
+                    //   } else if (!EmailValidator.validate(
+                    //       alternativeemail.text)) {
+                    //     setState(() {
+                    //       alternativeerror = true;
+                    //       alternativemessage = "Email is not valid";
+                    //       isFormValid = false;
+                    //     });
+                    //   } else {
+                    //     setState(() {
+                    //       alternativeerror = false;
+                    //     });
+                    //   }
+                    // }
                     String formattedPhoneNumber =
                     phonenum.text.replaceAll(RegExp(r'\D'), '');
                     if (formattedPhoneNumber.isEmpty) {
