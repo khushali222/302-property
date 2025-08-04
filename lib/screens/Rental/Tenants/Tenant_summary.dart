@@ -193,7 +193,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                     Padding(
                       padding: EdgeInsets.only(left: 25.0),
                       child: Text("Company",
-                          style: TextStyle(color: blueColor,fontWeight: FontWeight.bold)),
+                          style: TextStyle(
+                              color: blueColor, fontWeight: FontWeight.bold)),
                     ),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
@@ -224,12 +225,15 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                     // Sorting logic here
                   });
                 },
-                child:  Row(
+                child: Row(
                   children: [
                     Padding(
                       padding: EdgeInsets.only(left: 5.0),
                       child: Text("Policy Id",
-                          style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold)),
+                          style: TextStyle(
+                              color: blueColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold)),
                     ),
                     SizedBox(width: 5),
                   ],
@@ -260,11 +264,14 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                     // Sorting logic here
                   });
                 },
-                child:  Row(
+                child: Row(
                   children: [
                     Text(
                       "Expiration\nDate",
-                      style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: blueColor,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(width: 5),
@@ -317,7 +324,10 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                     Padding(
                       padding: EdgeInsets.only(left: 30.0),
                       child: Text("Status",
-                          style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold)),
+                          style: TextStyle(
+                              color: blueColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold)),
                     ),
                     const SizedBox(width: 3),
                   ],
@@ -346,12 +356,15 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                     // Sorting logic here
                   });
                 },
-                child:  Row(
+                child: Row(
                   children: [
                     Padding(
                       padding: EdgeInsets.only(left: 5.0),
                       child: Text("Start Date",
-                          style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold)),
+                          style: TextStyle(
+                              color: blueColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold)),
                     ),
                     SizedBox(width: 5),
                   ],
@@ -381,11 +394,14 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                     // Sorting logic here
                   });
                 },
-                child:  Row(
+                child: Row(
                   children: [
                     Text(
                       "End Date",
-                      style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: blueColor,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(width: 5),
@@ -457,10 +473,11 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
         backgroundColor: Colors.white,
       ),
       buttons: [
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -508,10 +525,11 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
         backgroundColor: Colors.white,
       ),
       buttons: [
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -1189,8 +1207,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                             fontWeight: FontWeight.bold,
                                             // fontSize: 18
                                             fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width *
+                                                    .size
+                                                    .width *
                                                 .045),
                                       ),
                                       SizedBox(height: 16),
@@ -1205,7 +1223,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        color: Color(0xFF101828))),
+                                                        color:
+                                                            Color(0xFF101828))),
                                                 SizedBox(height: 4),
                                                 Text(
                                                   '${(widget.tenants?.tenantFirstName ?? '').isEmpty ? 'N/A' : widget.tenants?.tenantFirstName}',
@@ -1301,13 +1320,12 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
-
-                                                        color: Color(0xFF101828))),
+                                                        color:
+                                                            Color(0xFF101828))),
                                                 SizedBox(height: 4),
                                                 Text(
                                                   '${(widget.tenants?.tenantBirthDate ?? '').isEmpty ? 'N/A' : widget.tenants?.tenantBirthDate}',
                                                   style: TextStyle(
-
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: Colors.grey),
@@ -1325,13 +1343,12 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
-
-                                                        color: Color(0xFF101828))),
+                                                        color:
+                                                            Color(0xFF101828))),
                                                 SizedBox(height: 4),
                                                 Text(
                                                   '${(widget.tenants?.taxPayerId ?? '').isEmpty ? 'N/A' : widget.tenants?.taxPayerId}',
                                                   style: TextStyle(
-
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: Colors.grey),
@@ -1352,13 +1369,11 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                           Text('Comments',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
-
                                                   color: Color(0xFF101828))),
                                           SizedBox(height: 4),
                                           Text(
                                             '${(widget.tenants?.comments ?? '').isEmpty ? 'N/A' : widget.tenants?.comments}',
                                             style: TextStyle(
-
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.grey),
                                           ),
@@ -1406,13 +1421,12 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
-
-                                                        color:Color(0xFF101828))),
+                                                        color:
+                                                            Color(0xFF101828))),
                                                 SizedBox(height: 4),
                                                 Text(
                                                   '${(widget.tenants?.emergencyContact?.name ?? '').isEmpty ? 'N/A' : widget.tenants?.emergencyContact!.name}',
                                                   style: TextStyle(
-
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: Colors.grey),
@@ -1430,13 +1444,12 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
-
-                                                        color: Color(0xFF101828))),
+                                                        color:
+                                                            Color(0xFF101828))),
                                                 SizedBox(height: 4),
                                                 Text(
                                                   '${(widget.tenants?.emergencyContact?.relation ?? '').isEmpty ? 'N/A' : widget.tenants?.emergencyContact!.relation}',
                                                   style: TextStyle(
-
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: Colors.grey),
@@ -1459,13 +1472,12 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
-
-                                                        color:Color(0xFF101828))),
+                                                        color:
+                                                            Color(0xFF101828))),
                                                 SizedBox(height: 4),
                                                 Text(
                                                   '${(widget.tenants?.emergencyContact?.email ?? '').isEmpty ? 'N/A' : widget.tenants?.emergencyContact!.email}',
                                                   style: TextStyle(
-
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: Colors.grey),
@@ -1483,13 +1495,12 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
-
-                                                        color: Color(0xFF101828))),
+                                                        color:
+                                                            Color(0xFF101828))),
                                                 SizedBox(height: 4),
                                                 Text(
                                                   '${(widget.tenants?.emergencyContact?.phoneNumber ?? '').isEmpty ? 'N/A' : formatPhoneNumber(widget.tenants?.emergencyContact!.phoneNumber ?? "")}',
                                                   style: TextStyle(
-
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: Colors.grey),
@@ -1650,8 +1661,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                               if (snapshot.connectionState ==
                                                   ConnectionState.waiting) {
                                                 return const Center(
-                                                    child:
-                                                    SpinKitFadingCircle(
+                                                    child: SpinKitFadingCircle(
                                                   color: Colors.black,
                                                   size: 40.0,
                                                 ));
@@ -1742,19 +1752,26 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                 entry.value;
                                                             //return CustomExpansionTile(data: Propertytype, index: index);
                                                             return Container(
-                                                              margin:
-                                                              EdgeInsets.symmetric(vertical: 5),
+                                                              margin: EdgeInsets
+                                                                  .symmetric(
+                                                                      vertical:
+                                                                          5),
                                                               decoration:
                                                                   BoxDecoration(
                                                                 color: index %
                                                                             2 !=
                                                                         0
-                                                                    ? Color(0xFFF4F8FF)
-                                                                    : Colors.white,
-                                                                    border: Border.all(
-                                                                        color: Color(0xFFDBE0E5)),
-                                                                    borderRadius:
-                                                                    BorderRadius.circular(10),
+                                                                    ? Color(
+                                                                        0xFFF4F8FF)
+                                                                    : Colors
+                                                                        .white,
+                                                                border: Border.all(
+                                                                    color: Color(
+                                                                        0xFFDBE0E5)),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
                                                               ),
                                                               child: Column(
                                                                 children: <Widget>[
@@ -2001,41 +2018,24 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                               height: 10,
                                                                             ),
                                                                             Row(
-                                                                              mainAxisAlignment:
-                                                                              MainAxisAlignment
-                                                                                  .end,
+                                                                              mainAxisAlignment: MainAxisAlignment.end,
                                                                               children: [
                                                                                 GestureDetector(
                                                                                   onTap: () {
                                                                                     _showAlert(context, Propertytype.tenantInsuranceId!);
                                                                                   },
-                                                                                  child:
-                                                                                  Container(
+                                                                                  child: Container(
                                                                                     height: 35,
                                                                                     width: 35,
-                                                                                    decoration: BoxDecoration(
-                                                                                        borderRadius:
-                                                                                        BorderRadius
-                                                                                            .circular(
-                                                                                            8),
-                                                                                        color: Colors
-                                                                                            .red
-                                                                                            .shade50
-                                                                                    ),
+                                                                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.red.shade50),
                                                                                     child: Row(
-                                                                                      mainAxisAlignment:
-                                                                                      MainAxisAlignment
-                                                                                          .center,
-                                                                                      crossAxisAlignment:
-                                                                                      CrossAxisAlignment
-                                                                                          .center,
+                                                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                                                      crossAxisAlignment: CrossAxisAlignment.center,
                                                                                       children: [
                                                                                         FaIcon(
-                                                                                          FontAwesomeIcons
-                                                                                              .trashCan,
+                                                                                          FontAwesomeIcons.trashCan,
                                                                                           size: 15,
-                                                                                          color: Colors
-                                                                                              .red,
+                                                                                          color: Colors.red,
                                                                                         ),
                                                                                       ],
                                                                                     ),
@@ -2044,7 +2044,6 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                                 SizedBox(
                                                                                   width: 5,
                                                                                 ),
-
                                                                               ],
                                                                             ),
                                                                             SizedBox(
@@ -2455,19 +2454,26 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                               entry.value;
                                                           //return CustomExpansionTile(data: Propertytype, index: index);
                                                           return Container(
-                                                            margin:
-                                                            EdgeInsets.symmetric(vertical: 5),
+                                                            margin: EdgeInsets
+                                                                .symmetric(
+                                                                    vertical:
+                                                                        5),
                                                             decoration:
                                                                 BoxDecoration(
                                                               color: index %
                                                                           2 !=
                                                                       0
-                                                                  ? Color(0xFFF4F8FF)
-                                                                  : Colors.white,
-                                                                  border: Border.all(
-                                                                      color: Color(0xFFDBE0E5)),
-                                                                  borderRadius:
-                                                                  BorderRadius.circular(10),
+                                                                  ? Color(
+                                                                      0xFFF4F8FF)
+                                                                  : Colors
+                                                                      .white,
+                                                              border: Border.all(
+                                                                  color: Color(
+                                                                      0xFFDBE0E5)),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
                                                             ),
                                                             // decoration: BoxDecoration(
                                                             //   border: Border.all(
@@ -3021,10 +3027,11 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
         backgroundColor: Colors.white,
       ),
       buttons: [
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -4365,8 +4372,8 @@ String determineStatus(String? startDate, String? endDate) {
 
   if (today.isBefore(start)) {
     return 'Future';
-  } else if (today.isAfter(end)) {
-    return 'Expired';
+  } else if (end.isBefore(today)) {
+    return 'Past';
   } else {
     return 'Active';
   }

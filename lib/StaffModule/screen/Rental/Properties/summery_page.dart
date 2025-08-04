@@ -6549,7 +6549,91 @@ class _Summery_pageState extends State<Summery_page>
       ),
     );
   }
+// Add these helper functions to normalize and format values
+  String formatBedValue(String value) {
+    if (value.isEmpty) return '';
+    if (!value.toLowerCase().contains('bed')) {
+      return '$value Bed';
+    }
+    return value;
+  }
 
+  String formatBathValue(String value) {
+    if (value.isEmpty) return '';
+    if (!value.toLowerCase().contains('bath')) {
+      return '$value Bath';
+    }
+    return value;
+  }
+
+// Create a dropdown widget that safely handles any value
+  Widget buildSafeDropdown({
+    required TextEditingController controller,
+    required List<String> items,
+    required String label,
+    required Function(String?) onChanged,
+    required bool isBed,
+  }) {
+    // Get the current value from controller
+    String currentValue = controller.text;
+
+    // Format the current value if needed
+    if (currentValue.isNotEmpty) {
+      currentValue = isBed ? formatBedValue(currentValue) : formatBathValue(currentValue);
+    }
+
+    // Create a list of items including the current value if it's not in the list
+    List<String> dropdownItems = [...items];
+    if (currentValue.isNotEmpty && !dropdownItems.contains(currentValue)) {
+      dropdownItems.insert(0, currentValue);
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Material(
+          elevation: 3,
+          borderRadius: BorderRadius.circular(3),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(3),
+              border: Border.all(color: Color(0xFF8A95A8)),
+            ),
+            child: DropdownButtonFormField<String>(
+              value: currentValue.isEmpty ? null : currentValue,
+              items: dropdownItems.map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: onChanged,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(3),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(3),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(3),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+              isExpanded: true,
+              hint: Text('Select ${label}'),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
   Unit_page(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -6789,31 +6873,61 @@ class _Summery_pageState extends State<Summery_page>
                                                                 ],
                                                               ),
                                                               Padding(
-                                                                padding: const EdgeInsets.symmetric(vertical: 1),
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .symmetric(
+                                                                        vertical:
+                                                                            1),
                                                                 child: Material(
                                                                   elevation: 3,
-                                                                  borderRadius: BorderRadius.circular(3),
-                                                                  child: Container(
-                                                                    padding: EdgeInsets.symmetric(horizontal: 10),
-                                                                    decoration: BoxDecoration(
-                                                                      color: Colors.white,
-                                                                      borderRadius: BorderRadius.circular(3),
-                                                                      border: Border.all(color: Color(0xFF8A95A8)),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              3),
+                                                                  child:
+                                                                      Container(
+                                                                    padding: EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                            10),
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              3),
+                                                                      border: Border.all(
+                                                                          color:
+                                                                              Color(0xFF8A95A8)),
                                                                     ),
-                                                                    child: DropdownButtonHideUnderline(
-                                                                      child: DropdownButton<String>(
-                                                                        isExpanded: true,
-                                                                        value: bath3.text.isNotEmpty ? bath3.text : null,
-                                                                        hint: Text('Select Bath'),
-                                                                        items: bathArray.map((String value) {
-                                                                          return DropdownMenuItem<String>(
-                                                                            value: value,
-                                                                            child: Text(value),
+                                                                    child:
+                                                                        DropdownButtonHideUnderline(
+                                                                      child: DropdownButton<
+                                                                          String>(
+                                                                        isExpanded:
+                                                                            true,
+                                                                        value: bath3.text.isNotEmpty
+                                                                            ? bath3.text
+                                                                            : null,
+                                                                        hint: Text(
+                                                                            'Select Bath'),
+                                                                        items: bathArray.map((String
+                                                                            value) {
+                                                                          return DropdownMenuItem<
+                                                                              String>(
+                                                                            value:
+                                                                                value,
+                                                                            child:
+                                                                                Text(value),
                                                                           );
                                                                         }).toList(),
-                                                                        onChanged: (String? newValue) {
-                                                                          setState(() {
-                                                                            bath3.text = newValue ?? '';
+                                                                        onChanged:
+                                                                            (String?
+                                                                                newValue) {
+                                                                          setState(
+                                                                              () {
+                                                                            bath3.text =
+                                                                                newValue ?? '';
                                                                           });
                                                                         },
                                                                       ),
@@ -6837,31 +6951,61 @@ class _Summery_pageState extends State<Summery_page>
                                                                 ],
                                                               ),
                                                               Padding(
-                                                                padding: const EdgeInsets.symmetric(vertical: 1),
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .symmetric(
+                                                                        vertical:
+                                                                            1),
                                                                 child: Material(
                                                                   elevation: 3,
-                                                                  borderRadius: BorderRadius.circular(3),
-                                                                  child: Container(
-                                                                    padding: EdgeInsets.symmetric(horizontal: 10),
-                                                                    decoration: BoxDecoration(
-                                                                      color: Colors.white,
-                                                                      borderRadius: BorderRadius.circular(3),
-                                                                      border: Border.all(color: Color(0xFF8A95A8)),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              3),
+                                                                  child:
+                                                                      Container(
+                                                                    padding: EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                            10),
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              3),
+                                                                      border: Border.all(
+                                                                          color:
+                                                                              Color(0xFF8A95A8)),
                                                                     ),
-                                                                    child: DropdownButtonHideUnderline(
-                                                                      child: DropdownButton<String>(
-                                                                        isExpanded: true,
-                                                                        value: bed3.text.isNotEmpty ? bed3.text : null,
-                                                                        hint: Text('Select Bed'),
-                                                                        items: roomsArray.map((String value) {
-                                                                          return DropdownMenuItem<String>(
-                                                                            value: value,
-                                                                            child: Text(value),
+                                                                    child:
+                                                                        DropdownButtonHideUnderline(
+                                                                      child: DropdownButton<
+                                                                          String>(
+                                                                        isExpanded:
+                                                                            true,
+                                                                        value: bed3.text.isNotEmpty
+                                                                            ? bed3.text
+                                                                            : null,
+                                                                        hint: Text(
+                                                                            'Select Bed'),
+                                                                        items: roomsArray.map((String
+                                                                            value) {
+                                                                          return DropdownMenuItem<
+                                                                              String>(
+                                                                            value:
+                                                                                value,
+                                                                            child:
+                                                                                Text(value),
                                                                           );
                                                                         }).toList(),
-                                                                        onChanged: (String? newValue) {
-                                                                          setState(() {
-                                                                            bed3.text = newValue ?? '';
+                                                                        onChanged:
+                                                                            (String?
+                                                                                newValue) {
+                                                                          setState(
+                                                                              () {
+                                                                            bed3.text =
+                                                                                newValue ?? '';
                                                                           });
                                                                         },
                                                                       ),
@@ -8149,7 +8293,7 @@ class _Summery_pageState extends State<Summery_page>
                                         Row(
                                           children: [
                                             Text(
-                                              "Unit Number",
+                                              "Unit Number *",
                                               style: TextStyle(
                                                   color: Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold),
@@ -8209,7 +8353,7 @@ class _Summery_pageState extends State<Summery_page>
                                         Row(
                                           children: [
                                             Text(
-                                              "Street Address",
+                                              "Street Address *",
                                               style: TextStyle(
                                                   color: Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold),
@@ -8266,7 +8410,7 @@ class _Summery_pageState extends State<Summery_page>
                                         Row(
                                           children: [
                                             Text(
-                                              "SQFT",
+                                              "SQFT *",
                                               style: TextStyle(
                                                   color: Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold),
@@ -8570,9 +8714,7 @@ class _Summery_pageState extends State<Summery_page>
                                                     street3.text
                                                         .trim()
                                                         .isEmpty ||
-                                                    sqft3.text.trim().isEmpty ||
-                                                    bath3.text.trim().isEmpty ||
-                                                    bed3.text.trim().isEmpty) {
+                                                    sqft3.text.trim().isEmpty) {
                                                   setState(() {
                                                     iserror = true;
                                                   });
@@ -8765,7 +8907,7 @@ class _Summery_pageState extends State<Summery_page>
                                         Row(
                                           children: [
                                             Text(
-                                              "Unit Number",
+                                              "Unit Number *",
                                               style: TextStyle(
                                                   color: Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold),
@@ -8825,7 +8967,7 @@ class _Summery_pageState extends State<Summery_page>
                                         Row(
                                           children: [
                                             Text(
-                                              "Street Address",
+                                              "Street Address *",
                                               style: TextStyle(
                                                   color: Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold),
@@ -8882,7 +9024,7 @@ class _Summery_pageState extends State<Summery_page>
                                         Row(
                                           children: [
                                             Text(
-                                              "SQFT",
+                                              "SQFT *",
                                               style: TextStyle(
                                                   color: Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold),
@@ -11998,7 +12140,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                 Row(
                                                                                   children: [
                                                                                     Text(
-                                                                                      "Unit Number",
+                                                                                      "Unit Number *",
                                                                                       style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
                                                                                     ),
                                                                                   ],
@@ -12043,7 +12185,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                 Row(
                                                                                   children: [
                                                                                     Text(
-                                                                                      "Street Address",
+                                                                                      "Street Address *",
                                                                                       style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
                                                                                     ),
                                                                                   ],
@@ -12085,7 +12227,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                 Row(
                                                                                   children: [
                                                                                     Text(
-                                                                                      "SQFT",
+                                                                                      "SQFT *",
                                                                                       style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
                                                                                     ),
                                                                                   ],
@@ -12132,39 +12274,52 @@ class _Summery_pageState extends State<Summery_page>
                                                                                     ),
                                                                                   ],
                                                                                 ),
-                                                                                Padding(
-                                                                                  padding: const EdgeInsets.symmetric(vertical: 1),
-                                                                                  child: Material(
-                                                                                    elevation: 3,
-                                                                                    borderRadius: BorderRadius.circular(3),
-                                                                                    child: Container(
-                                                                                      padding: EdgeInsets.symmetric(horizontal: 10),
-                                                                                      decoration: BoxDecoration(
-                                                                                        color: Colors.white,
-                                                                                        borderRadius: BorderRadius.circular(3),
-                                                                                        border: Border.all(color: Color(0xFF8A95A8)),
-                                                                                      ),
-                                                                                      child: DropdownButtonHideUnderline(
-                                                                                        child: DropdownButton<String>(
-                                                                                          isExpanded: true,
-                                                                                          value: bath3.text.isNotEmpty ? bath3.text : null,
-                                                                                          hint: Text('Select Bath'),
-                                                                                          items: bathArray.map((String value) {
-                                                                                            return DropdownMenuItem<String>(
-                                                                                              value: value,
-                                                                                              child: Text(value),
-                                                                                            );
-                                                                                          }).toList(),
-                                                                                          onChanged: (String? newValue) {
-                                                                                            setState(() {
-                                                                                              bath3.text = newValue ?? '';
-                                                                                            });
-                                                                                          },
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                  ),
+                                                                                buildSafeDropdown(
+                                                                                  controller: bath3,
+                                                                                  items: bathArray,
+                                                                                  label: "Bath",
+                                                                                  isBed: false,
+                                                                                  onChanged: (String? newValue) {
+                                                                                    if (newValue != null) {
+                                                                                      setState(() {
+                                                                                        bath3.text = newValue;
+                                                                                      });
+                                                                                    }
+                                                                                  },
                                                                                 ),
+                                                                                // Padding(
+                                                                                //   padding: const EdgeInsets.symmetric(vertical: 1),
+                                                                                //   child: Material(
+                                                                                //     elevation: 3,
+                                                                                //     borderRadius: BorderRadius.circular(3),
+                                                                                //     child: Container(
+                                                                                //       padding: EdgeInsets.symmetric(horizontal: 10),
+                                                                                //       decoration: BoxDecoration(
+                                                                                //         color: Colors.white,
+                                                                                //         borderRadius: BorderRadius.circular(3),
+                                                                                //         border: Border.all(color: Color(0xFF8A95A8)),
+                                                                                //       ),
+                                                                                //       child: DropdownButtonHideUnderline(
+                                                                                //         child: DropdownButton<String>(
+                                                                                //           isExpanded: true,
+                                                                                //           value: bath3.text.isNotEmpty ? bath3.text : null,
+                                                                                //           hint: Text('Select Bath'),
+                                                                                //           items: bathArray.map((String value) {
+                                                                                //             return DropdownMenuItem<String>(
+                                                                                //               value: value,
+                                                                                //               child: Text(value),
+                                                                                //             );
+                                                                                //           }).toList(),
+                                                                                //           onChanged: (String? newValue) {
+                                                                                //             setState(() {
+                                                                                //               bath3.text = newValue ?? '';
+                                                                                //             });
+                                                                                //           },
+                                                                                //         ),
+                                                                                //       ),
+                                                                                //     ),
+                                                                                //   ),
+                                                                                // ),
                                                                                 SizedBox(
                                                                                   height: 10,
                                                                                 ),
@@ -12176,39 +12331,52 @@ class _Summery_pageState extends State<Summery_page>
                                                                                     ),
                                                                                   ],
                                                                                 ),
-                                                                                Padding(
-                                                                                  padding: const EdgeInsets.symmetric(vertical: 1),
-                                                                                  child: Material(
-                                                                                    elevation: 3,
-                                                                                    borderRadius: BorderRadius.circular(3),
-                                                                                    child: Container(
-                                                                                      padding: EdgeInsets.symmetric(horizontal: 10),
-                                                                                      decoration: BoxDecoration(
-                                                                                        color: Colors.white,
-                                                                                        borderRadius: BorderRadius.circular(3),
-                                                                                        border: Border.all(color: Color(0xFF8A95A8)),
-                                                                                      ),
-                                                                                      child: DropdownButtonHideUnderline(
-                                                                                        child: DropdownButton<String>(
-                                                                                          isExpanded: true,
-                                                                                          value: bed3.text.isNotEmpty ? bed3.text : null,
-                                                                                          hint: Text('Select Bed'),
-                                                                                          items: roomsArray.map((String value) {
-                                                                                            return DropdownMenuItem<String>(
-                                                                                              value: value,
-                                                                                              child: Text(value),
-                                                                                            );
-                                                                                          }).toList(),
-                                                                                          onChanged: (String? newValue) {
-                                                                                            setState(() {
-                                                                                              bed3.text = newValue ?? '';
-                                                                                            });
-                                                                                          },
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                  ),
+                                                                                buildSafeDropdown(
+                                                                                  controller: bed3,
+                                                                                  items: roomsArray,
+                                                                                  label: "Bed",
+                                                                                  isBed: true,
+                                                                                  onChanged: (String? newValue) {
+                                                                                    if (newValue != null) {
+                                                                                      setState(() {
+                                                                                        bed3.text = newValue;
+                                                                                      });
+                                                                                    }
+                                                                                  },
                                                                                 ),
+                                                                                // Padding(
+                                                                                //   padding: const EdgeInsets.symmetric(vertical: 1),
+                                                                                //   child: Material(
+                                                                                //     elevation: 3,
+                                                                                //     borderRadius: BorderRadius.circular(3),
+                                                                                //     child: Container(
+                                                                                //       padding: EdgeInsets.symmetric(horizontal: 10),
+                                                                                //       decoration: BoxDecoration(
+                                                                                //         color: Colors.white,
+                                                                                //         borderRadius: BorderRadius.circular(3),
+                                                                                //         border: Border.all(color: Color(0xFF8A95A8)),
+                                                                                //       ),
+                                                                                //       child: DropdownButtonHideUnderline(
+                                                                                //         child: DropdownButton<String>(
+                                                                                //           isExpanded: true,
+                                                                                //           value: bed3.text.isNotEmpty ? bed3.text : null,
+                                                                                //           hint: Text('Select Bed'),
+                                                                                //           items: roomsArray.map((String value) {
+                                                                                //             return DropdownMenuItem<String>(
+                                                                                //               value: value,
+                                                                                //               child: Text(value),
+                                                                                //             );
+                                                                                //           }).toList(),
+                                                                                //           onChanged: (String? newValue) {
+                                                                                //             setState(() {
+                                                                                //               bed3.text = newValue ?? '';
+                                                                                //             });
+                                                                                //           },
+                                                                                //         ),
+                                                                                //       ),
+                                                                                //     ),
+                                                                                //   ),
+                                                                                // ),
                                                                                 SizedBox(
                                                                                   height: 10,
                                                                                 ),
@@ -12366,7 +12534,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                     GestureDetector(
                                                                                       onTap: () async {
                                                                                         await _uploadAllImages();
-                                                                                        if (unitnum.text.isEmpty || street3.text.isEmpty || sqft3.text.isEmpty || bath3.text.isEmpty || bed3.text.isEmpty) {
+                                                                                        if (unitnum.text.isEmpty || street3.text.isEmpty || sqft3.text.isEmpty) {
                                                                                           setState(() {
                                                                                             iserror = true;
                                                                                           });
@@ -12937,7 +13105,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                 Row(
                                                                                   children: [
                                                                                     Text(
-                                                                                      "Unit Number",
+                                                                                      "Unit Number *",
                                                                                       style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
                                                                                     ),
                                                                                   ],
@@ -12982,7 +13150,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                 Row(
                                                                                   children: [
                                                                                     Text(
-                                                                                      "Street Address",
+                                                                                      "Street Address *",
                                                                                       style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
                                                                                     ),
                                                                                   ],
@@ -13024,7 +13192,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                 Row(
                                                                                   children: [
                                                                                     Text(
-                                                                                      "SQFT",
+                                                                                      "SQFT *",
                                                                                       style: TextStyle(color: Color(0xFF8A95A8), fontWeight: FontWeight.bold),
                                                                                     ),
                                                                                   ],
@@ -16462,10 +16630,11 @@ class _LeasesTableState extends State<LeasesTable> {
         backgroundColor: Colors.white,
       ),
       buttons: [
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -17582,10 +17751,11 @@ class _AppliancesPartState extends State<AppliancesPart> {
         backgroundColor: Colors.white,
       ),
       buttons: [
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
