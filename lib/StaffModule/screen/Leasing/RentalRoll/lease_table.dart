@@ -862,17 +862,18 @@ class _Lease_tableState extends State<Lease_table> {
 
 // Apply the search filter first
                             if (searchValue != null && searchValue.isNotEmpty && searchValue != "All") {
-                              data = data.where((lease) =>
-                              lease.rentalAddress!.toLowerCase().contains(searchValue.toLowerCase()) ||
-                                  lease.tenantNames.toString().toLowerCase().contains(searchValue.toLowerCase()) ||
-                                  lease.rentCycle.toString().toLowerCase().contains(searchValue.toLowerCase()) ||
-                                  lease.startDate.toString().toLowerCase().contains(searchValue.toLowerCase()) ||
-                                  lease.endDate.toString().toLowerCase().contains(searchValue.toLowerCase()) ||
-                                  lease.amount!.toStringAsFixed(2).toLowerCase().contains(searchValue.toLowerCase()) ||
-                                  lease.remainingDays.toString().toLowerCase().contains(searchValue.toLowerCase()) ||
-                                  lease.rentDueDate.toString().toLowerCase().contains(searchValue.toLowerCase()) ||
-                                  lease.totalBalance!.toStringAsFixed(2).toLowerCase().contains(searchValue.toLowerCase())
-                              ).toList();
+                              data = data.where((lease) {
+                                final searchLower = searchValue.toLowerCase();
+                                return (lease.rentalAddress?.toLowerCase().contains(searchLower) ?? false) ||
+                                    (lease.tenantNames?.toLowerCase().contains(searchLower) ?? false) ||
+                                    (lease.rentCycle?.toLowerCase().contains(searchLower) ?? false) ||
+                                    (lease.startDate?.toLowerCase().contains(searchLower) ?? false) ||
+                                    (lease.endDate?.toLowerCase().contains(searchLower) ?? false) ||
+                                    (lease.amount != null ? lease.amount!.toStringAsFixed(2).toLowerCase().contains(searchLower) : false) ||
+                                    (lease.remainingDays?.toLowerCase().contains(searchLower) ?? false) ||
+                                    (lease.rentDueDate?.toLowerCase().contains(searchLower) ?? false) ||
+                                    (lease.totalBalance != null ? lease.totalBalance!.toStringAsFixed(2).toLowerCase().contains(searchLower) : false);
+                              }).toList();
                             }
 
 // Apply the status filter next
@@ -1392,7 +1393,9 @@ class _Lease_tableState extends State<Lease_table> {
                             filteredData = snapshot.data;
                           } else if (searchValue.isNotEmpty) {
                             filteredData = snapshot.data!
-                                .where((lease) => lease.rentalAddress!.toLowerCase().contains(searchValue.toLowerCase()) || lease.tenantNames!.toLowerCase().contains(searchValue.toLowerCase()))
+                                .where((lease) => 
+                                    (lease.rentalAddress?.toLowerCase().contains(searchValue.toLowerCase()) ?? false) || 
+                                    (lease.tenantNames?.toLowerCase().contains(searchValue.toLowerCase()) ?? false))
                                 .toList();
                           }
                           filteredData = filteredData?.reversed.toList();

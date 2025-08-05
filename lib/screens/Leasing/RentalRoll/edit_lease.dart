@@ -41,7 +41,7 @@ import '../../../widgets/custom_drawer.dart';
 class Edit_lease extends StatefulWidget {
   Lease1? lease;
   final String leaseId;
-  Edit_lease({super.key,  this.lease, required this.leaseId});
+  Edit_lease({super.key, this.lease, required this.leaseId});
 
   @override
   State<Edit_lease> createState() => _Edit_leaseState();
@@ -941,7 +941,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                   state.didChange(
                                                       value); // Notify the FormField that the value has changed
                                                   renderId = value.toString();
-                                                 
+
                                                   _loadUnits(
                                                       value!); // Fetch units for the selected property
                                                 });
@@ -1195,7 +1195,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                   'Type',
                                                   style: TextStyle(
                                                     fontSize: 14,
-                                                 //   fontWeight: FontWeight.bold,
+                                                    //   fontWeight: FontWeight.bold,
                                                     color: Colors.black,
                                                   ),
                                                   overflow:
@@ -1233,7 +1233,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                   _selectedLeaseType!,
                                                   style: const TextStyle(
                                                     fontSize: 14,
-                                                  //  fontWeight: FontWeight.bold,
+                                                    //  fontWeight: FontWeight.bold,
                                                     color: Colors.black,
                                                   ),
                                                   overflow:
@@ -4840,7 +4840,6 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
         print(items);
         _isLoading = false;
         if (widget.initialData != null) {
-
           _selectedProperty = widget.initialData!['account'] ?? '';
           _amountController.text = widget.initialData!['amount'] ?? '';
           _memoController.text = widget.initialData!['memo'] ?? '';
@@ -5540,12 +5539,11 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       _amountController.text = widget.initialData!['amount'] ?? '';
       _memoController.text = widget.initialData!['memo'] ?? '';
 
-      startDateController.text = widget.initialData!["charge_start"]??"";
+      startDateController.text = widget.initialData!["charge_start"] ?? "";
       // selectedDay = widget.initialData!['date']??"";
       selectedDay = widget.initialData!['rent_cycle'] ?? "";
 
-
-        //selectedDay = ""; // Handle empty case
+      //selectedDay = ""; // Handle empty case
 
       print("entry id${widget.initialData}");
     }
@@ -5600,7 +5598,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         child: Material(
           child: Container(
             color: Colors.white,
-           //height: _isInvalid ? 460 : 475,
+            //height: _isInvalid ? 460 : 475,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -6136,17 +6134,17 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                 const SizedBox(
                   height: 20,
                 ),
-                if(MediaQuery.of(context).size.width < 500)
+                if (MediaQuery.of(context).size.width < 500)
                   Text('Charge Start From *',
                       style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
                           color: blueColor)),
-                if(MediaQuery.of(context).size.width < 500)
+                if (MediaQuery.of(context).size.width < 500)
                   const SizedBox(
                     height: 8,
                   ),
-                if(MediaQuery.of(context).size.width < 500)
+                if (MediaQuery.of(context).size.width < 500)
                   CustomTextField(
                     onTap: () async {
                       DateTime? pickedDate = await showDatePicker(
@@ -6156,24 +6154,19 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                         firstDate: DateTime(2000),
                         lastDate: DateTime(2101),
                         locale: const Locale('en', 'US'),
-                        builder: (BuildContext context,
-                            Widget? child) {
+                        builder: (BuildContext context, Widget? child) {
                           return Theme(
                             data: ThemeData.light().copyWith(
                               colorScheme: ColorScheme.light(
-                                primary:
-                                blueColor, // header background color
-                                onPrimary: Colors
-                                    .white, // header text color
-                                onSurface:
-                                blueColor, // body text color
+                                primary: blueColor, // header background color
+                                onPrimary: Colors.white, // header text color
+                                onSurface: blueColor, // body text color
                               ),
-                              textButtonTheme:
-                              TextButtonThemeData(
+                              textButtonTheme: TextButtonThemeData(
                                 style: TextButton.styleFrom(
                                   foregroundColor: Colors.white,
                                   backgroundColor:
-                                  blueColor, // button text color
+                                      blueColor, // button text color
                                 ),
                               ),
                             ),
@@ -6186,10 +6179,8 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                         //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                         String formattedStartDate =
                             "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                        DateTime endDate = DateTime(
-                            pickedDate.year + 1,
-                            pickedDate.month,
-                            pickedDate.day);
+                        DateTime endDate = DateTime(pickedDate.year + 1,
+                            pickedDate.month, pickedDate.day);
                         // String formattedEndDate =
                         //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
 
@@ -6197,9 +6188,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                             "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
                         print(formattedStartDate);
                         setState(() {
-                          startDateController.text =
-                              formattedStartDate;
-
+                          startDateController.text = formattedStartDate;
                         });
                       }
                     },
@@ -6219,7 +6208,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                     label: "select start date",
                     controller: startDateController,
                   ),
-                if(MediaQuery.of(context).size.width < 500)
+                if (MediaQuery.of(context).size.width < 500)
                   const SizedBox(
                     height: 15,
                   ),
@@ -6265,7 +6254,6 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                             )))
                   ],
                 ),
-
               ],
             ),
           ),
@@ -6286,16 +6274,16 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       // Construct the date using the selected day, current year, and month
       // int selectedDayInt = int.parse(selectedDay!);
 
-
       // Format date to always have two-digit months and days
 
-      String? id = widget.initialData != null ? widget.initialData!['entry_id'] : "";
+      String? id =
+          widget.initialData != null ? widget.initialData!['entry_id'] : "";
       final formData = {
         'account': _selectedProperty ?? '',
         'amount': _amountController.text.trim(),
         'memo': _memoController.text.trim(),
         'entry_id': id ?? "",
-        "rent_cycle":selectedDay ?? "",
+        "rent_cycle": selectedDay ?? "",
         'charge_type': 'Recurring Charge',
         'charge_start': startDateController.text,
       };
@@ -6840,8 +6828,12 @@ class _AddTenantState extends State<AddTenant> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType: TextInputType.text,
+                              keyboardType: TextInputType.name,
                               hintText: 'Enter first name',
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(
+                                    r"[a-zA-Z\s]")), // Allows letters and spaces
+                              ],
                               controller: firstName,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -6862,8 +6854,12 @@ class _AddTenantState extends State<AddTenant> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType: TextInputType.text,
+                              keyboardType: TextInputType.name,
                               hintText: 'Enter last name',
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(
+                                    r"[a-zA-Z\s]")), // Allows letters and spaces
+                              ],
                               controller: lastName,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -7326,7 +7322,11 @@ class _AddTenantState extends State<AddTenant> {
                                     height: 10,
                                   ),
                                   CustomTextField(
-                                    keyboardType: TextInputType.text,
+                                    keyboardType: TextInputType.name,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(RegExp(
+                                          r"[a-zA-Z\s]")), // Allows letters and spaces
+                                    ],
                                     hintText: 'Enter contact name',
                                     controller: contactName,
                                     optional: true,
@@ -7565,7 +7565,11 @@ class _AddCosignerState extends State<AddCosigner> {
                     height: 10,
                   ),
                   CustomTextField(
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.name,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r"[a-zA-Z\s]")), // Allows letters and spaces
+                    ],
                     hintText: 'Enter first name',
                     controller: firstName,
                     validator: (value) {
@@ -7587,7 +7591,11 @@ class _AddCosignerState extends State<AddCosigner> {
                     height: 10,
                   ),
                   CustomTextField(
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.name,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r"[a-zA-Z\s]")), // Allows letters and spaces
+                    ],
                     hintText: 'Enter last name',
                     controller: lastName,
                     validator: (value) {

@@ -98,11 +98,17 @@ class _Lease_tableState extends State<Lease_table> {
 
   void sortData(List<Lease1> data) {
     if (sorting1) {
-      data.sort((a, b) => ascending1 ? a.tenantNames!.compareTo(b.tenantNames!) : b.tenantNames!.compareTo(a.tenantNames!));
+      data.sort((a, b) => ascending1
+          ? a.tenantNames!.compareTo(b.tenantNames!)
+          : b.tenantNames!.compareTo(a.tenantNames!));
     } else if (sorting2) {
-      data.sort((a, b) => ascending2 ? a.startDate!.compareTo(b.startDate!) : b.startDate!.compareTo(a.startDate!));
+      data.sort((a, b) => ascending2
+          ? a.startDate!.compareTo(b.startDate!)
+          : b.startDate!.compareTo(a.startDate!));
     } else if (sorting3) {
-      data.sort((a, b) => ascending3 ? a.endDate!.compareTo(b.endDate!) : b.endDate!.compareTo(a.endDate!));
+      data.sort((a, b) => ascending3
+          ? a.endDate!.compareTo(b.endDate!)
+          : b.endDate!.compareTo(a.endDate!));
     }
   }
 
@@ -152,7 +158,9 @@ class _Lease_tableState extends State<Lease_table> {
                 },
                 child: Row(
                   children: [
-                    width < 400 ? Text("Lease", style: TextStyle(color: Colors.white)) : Text("Lease", style: TextStyle(color: Colors.white)),
+                    width < 400
+                        ? Text("Lease", style: TextStyle(color: Colors.white))
+                        : Text("Lease", style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
@@ -204,7 +212,9 @@ class _Lease_tableState extends State<Lease_table> {
                     Text("   Rent Cycle",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: MediaQuery.of(context).size.width < 350 ? 12.0 : 14.0,
+                          fontSize: MediaQuery.of(context).size.width < 350
+                              ? 12.0
+                              : 14.0,
                         )),
                     SizedBox(width: 5),
                     /*  ascending2
@@ -257,7 +267,9 @@ class _Lease_tableState extends State<Lease_table> {
                     Text("   Lease End",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: MediaQuery.of(context).size.width < 350 ? 12.0 : 14.0,
+                          fontSize: MediaQuery.of(context).size.width < 350
+                              ? 12.0
+                              : 14.0,
                         )),
                     SizedBox(width: 5),
                     /*  ascending3
@@ -321,7 +333,8 @@ class _Lease_tableState extends State<Lease_table> {
   List<Lease1> get _pagedData {
     int startIndex = _currentPage * _rowsPerPage;
     int endIndex = startIndex + _rowsPerPage;
-    return _tableData.sublist(startIndex, endIndex > _tableData.length ? _tableData.length : endIndex);
+    return _tableData.sublist(startIndex,
+        endIndex > _tableData.length ? _tableData.length : endIndex);
   }
 
   void _changeRowsPerPage(int selectedRowsPerPage) {
@@ -331,7 +344,8 @@ class _Lease_tableState extends State<Lease_table> {
     });
   }
 
-  void _sort<T>(Comparable<T> Function(Lease1 d) getField, int columnIndex, bool ascending) {
+  void _sort<T>(Comparable<T> Function(Lease1 d) getField, int columnIndex,
+      bool ascending) {
     setState(() {
       _sortColumnIndex = columnIndex;
       _sortAscending = ascending;
@@ -341,7 +355,10 @@ class _Lease_tableState extends State<Lease_table> {
 
         int result;
         if (aValue is String && bValue is String) {
-          result = aValue.toString().toLowerCase().compareTo(bValue.toString().toLowerCase());
+          result = aValue
+              .toString()
+              .toLowerCase()
+              .compareTo(bValue.toString().toLowerCase());
         } else {
           result = aValue.compareTo(bValue as T);
         }
@@ -354,7 +371,8 @@ class _Lease_tableState extends State<Lease_table> {
   void handleEdit(Lease1 lease) async {
     // Handle edit action
     print('Edit ${lease.leaseId}');
-    Provider.of<SelectedCosignersProvider>(context, listen: false).clearCosigner();
+    Provider.of<SelectedCosignersProvider>(context, listen: false)
+        .clearCosigner();
     Provider.of<SelectedTenantsProvider>(context, listen: false).clearTenant();
     var check = await Navigator.push(
         context,
@@ -394,7 +412,10 @@ class _Lease_tableState extends State<Lease_table> {
             height: 45,
             child: TextField(
               controller: reason,
-              decoration: InputDecoration(border: OutlineInputBorder(), hintText: 'Enter reason for deletion', contentPadding: EdgeInsets.only(top: 8, left: 15)),
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter reason for deletion',
+                  contentPadding: EdgeInsets.only(top: 8, left: 15)),
             ),
           ),
         ],
@@ -412,7 +433,8 @@ class _Lease_tableState extends State<Lease_table> {
             if (reason.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please enter a reason for deletion");
             } else {
-              await LeaseRepository().deleteLease(leaseId: id, companyName: companyName, reason: reason.text);
+              await LeaseRepository().deleteLease(
+                  leaseId: id, companyName: companyName, reason: reason.text);
               setState(() {
                 futureLease = LeaseRepository().fetchLease("");
               });
@@ -425,7 +447,8 @@ class _Lease_tableState extends State<Lease_table> {
         DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -446,7 +469,8 @@ class _Lease_tableState extends State<Lease_table> {
 
     if (adminId != null) {
       try {
-        String fetchedCompanyName = await LeaseRepository().fetchCompanyName(adminId);
+        String fetchedCompanyName =
+            await LeaseRepository().fetchCompanyName(adminId);
         setState(() {
           companyName = fetchedCompanyName;
         });
@@ -489,7 +513,8 @@ class _Lease_tableState extends State<Lease_table> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response = await http.get(Uri.parse('${Api_url}/api/leases/limitation/$id'), headers: {
+    final response = await http
+        .get(Uri.parse('${Api_url}/api/leases/limitation/$id'), headers: {
       "authorization": "CRM $token",
       "id": "CRM $id",
     });
@@ -514,8 +539,11 @@ class _Lease_tableState extends State<Lease_table> {
       context: context,
       type: AlertType.warning,
       title: "Plan Limitation",
-      desc: "The limit for adding lease according to the plan has been reached.",
-      style: AlertStyle(backgroundColor: Color.fromRGBO(255, 255, 255, 1), descStyle: TextStyle(fontSize: 14)
+      desc:
+          "The limit for adding lease according to the plan has been reached.",
+      style: AlertStyle(
+          backgroundColor: Color.fromRGBO(255, 255, 255, 1),
+          descStyle: TextStyle(fontSize: 14)
           //  overlayColor: Colors.black.withOpacity(.8)
           ),
       buttons: [
@@ -605,10 +633,18 @@ class _Lease_tableState extends State<Lease_table> {
                         ),
                         GestureDetector(
                           onTap: () async {
-                            Provider.of<SelectedTenantsProvider>(context, listen: false).clearTenant();
-                            Provider.of<SelectedCosignersProvider>(context, listen: false).clearCosigner();
-                            Provider.of<SelectedApplicantProvider>(context, listen: false).clearApplicant();
-                            final result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => addLease3()));
+                            Provider.of<SelectedTenantsProvider>(context,
+                                    listen: false)
+                                .clearTenant();
+                            Provider.of<SelectedCosignersProvider>(context,
+                                    listen: false)
+                                .clearCosigner();
+                            Provider.of<SelectedApplicantProvider>(context,
+                                    listen: false)
+                                .clearApplicant();
+                            final result = await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) => addLease3()));
                             if (result == true) {
                               setState(() {
                                 futureLease = LeaseRepository().fetchLease("");
@@ -631,8 +667,12 @@ class _Lease_tableState extends State<Lease_table> {
                             // }
                           },
                           child: Container(
-                            height: (MediaQuery.of(context).size.width < 500) ? 50 : MediaQuery.of(context).size.width * 0.063,
-                            width: (MediaQuery.of(context).size.width < 500) ? MediaQuery.of(context).size.width * 0.25 : MediaQuery.of(context).size.width * 0.2,
+                            height: (MediaQuery.of(context).size.width < 500)
+                                ? 50
+                                : MediaQuery.of(context).size.width * 0.063,
+                            width: (MediaQuery.of(context).size.width < 500)
+                                ? MediaQuery.of(context).size.width * 0.25
+                                : MediaQuery.of(context).size.width * 0.2,
                             decoration: BoxDecoration(
                               color: blueColor,
                               borderRadius: BorderRadius.circular(5),
@@ -643,14 +683,19 @@ class _Lease_tableState extends State<Lease_table> {
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 22,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 16
+                                          : 22,
                                 ),
                               ),
                             ),
                           ),
                         ),
-                        if (MediaQuery.of(context).size.width < 500) SizedBox(width: 6),
-                        if (MediaQuery.of(context).size.width > 500) SizedBox(width: 22),
+                        if (MediaQuery.of(context).size.width < 500)
+                          SizedBox(width: 6),
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 22),
                       ],
                     ),
                   ),
@@ -692,14 +737,20 @@ class _Lease_tableState extends State<Lease_table> {
                     padding: EdgeInsets.only(left: 11, right: 11),
                     child: Row(
                       children: [
-                        if (MediaQuery.of(context).size.width < 500) SizedBox(width: 2),
-                        if (MediaQuery.of(context).size.width > 500) SizedBox(width: 19),
+                        if (MediaQuery.of(context).size.width < 500)
+                          SizedBox(width: 2),
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 19),
                         Material(
                           elevation: 0,
                           borderRadius: BorderRadius.circular(8),
                           child: Container(
-                            height: (MediaQuery.of(context).size.width < 500) ? 45 : 50,
-                            width: MediaQuery.of(context).size.width < 500 ? MediaQuery.of(context).size.width * .52 : MediaQuery.of(context).size.width * .49,
+                            height: (MediaQuery.of(context).size.width < 500)
+                                ? 45
+                                : 50,
+                            width: MediaQuery.of(context).size.width < 500
+                                ? MediaQuery.of(context).size.width * .52
+                                : MediaQuery.of(context).size.width * .49,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
@@ -722,13 +773,14 @@ class _Lease_tableState extends State<Lease_table> {
                             ),
                           ),
                         ),
-                        SizedBox(width: 10,),
+                        SizedBox(
+                          width: 10,
+                        ),
                         Expanded(
                           child: DropdownButtonHideUnderline(
                             child: Material(
                               elevation: 0,
-                              borderRadius:
-                              BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(8),
                               child: DropdownButton2<String>(
                                 isExpanded: true,
                                 hint: const Text(
@@ -737,10 +789,8 @@ class _Lease_tableState extends State<Lease_table> {
                                     fontSize: 14,
                                     color: Color(0xFF8A95A8),
                                   ),
-                                  overflow:
-                                  TextOverflow.ellipsis,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                               
                                 value: selectedStatus,
                                 items: statusOptions.map((String status) {
                                   return DropdownMenuItem<String>(
@@ -748,25 +798,18 @@ class _Lease_tableState extends State<Lease_table> {
                                     child: Text(status),
                                   );
                                 }).toList(),
-                                buttonStyleData:
-                                ButtonStyleData(
-                                  height: MediaQuery.of(context)
-                                      .size
-                                      .width <
-                                      500
-                                      ? 45
-                                      : 50,
+                                buttonStyleData: ButtonStyleData(
+                                  height:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 45
+                                          : 50,
                                   width: double.infinity,
-                                  padding:
-                                  const EdgeInsets.only(
+                                  padding: const EdgeInsets.only(
                                       left: 14, right: 14),
                                   decoration: BoxDecoration(
-                                    borderRadius:
-                                    BorderRadius.circular(
-                                        8),
+                                    borderRadius: BorderRadius.circular(8),
                                     border: Border.all(
-                                      color: const Color(
-                                          0xFF8A95A8),
+                                      color: const Color(0xFF8A95A8),
                                     ),
                                     color: Colors.white,
                                   ),
@@ -779,39 +822,27 @@ class _Lease_tableState extends State<Lease_table> {
                                   });
                                   // widget.onStatusChanged(selectedStatus);
                                 },
-                                dropdownStyleData:
-                                DropdownStyleData(
+                                dropdownStyleData: DropdownStyleData(
                                   maxHeight: 250,
                                   decoration: BoxDecoration(
-                                    borderRadius:
-                                    BorderRadius.circular(
-                                        14),
+                                    borderRadius: BorderRadius.circular(14),
                                   ),
                                   offset: const Offset(0, 0),
-                                  scrollbarTheme:
-                                  ScrollbarThemeData(
-                                    radius:
-                                    const Radius.circular(
-                                        20),
-                                    thickness:
-                                    MaterialStateProperty
-                                        .all(6),
+                                  scrollbarTheme: ScrollbarThemeData(
+                                    radius: const Radius.circular(20),
+                                    thickness: MaterialStateProperty.all(6),
                                     thumbVisibility:
-                                    MaterialStateProperty
-                                        .all(true),
+                                        MaterialStateProperty.all(true),
                                   ),
                                 ),
-                                menuItemStyleData:
-                                const MenuItemStyleData(
+                                menuItemStyleData: const MenuItemStyleData(
                                   height: 40,
-                                  padding: EdgeInsets.only(
-                                      left: 14, right: 14),
+                                  padding: EdgeInsets.only(left: 14, right: 14),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                     
 
                         // Spacer(),
                         // Column(
@@ -842,23 +873,29 @@ class _Lease_tableState extends State<Lease_table> {
                         //     ),
                         //   ],
                         // ),
-                        if (MediaQuery.of(context).size.width < 500) SizedBox(width: 8),
-                        if (MediaQuery.of(context).size.width > 500) SizedBox(width: 25),
+                        if (MediaQuery.of(context).size.width < 500)
+                          SizedBox(width: 8),
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 25),
                       ],
                     ),
                   ),
-                  if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
+                  if (MediaQuery.of(context).size.width > 500)
+                    SizedBox(height: 25),
                   if (MediaQuery.of(context).size.width < 500)
                     Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: FutureBuilder<List<Lease1>>(
                         future: futureLease,
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
                             return ColabShimmerLoadingWidget();
                           } else if (snapshot.hasError) {
-                            return Center(child: Text('Error: ${snapshot.error}'));
-                          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                            return Center(
+                                child: Text('Error: ${snapshot.error}'));
+                          } else if (!snapshot.hasData ||
+                              snapshot.data!.isEmpty) {
                             return Container(
                               height: MediaQuery.of(context).size.height * .5,
                               child: Center(
@@ -876,7 +913,10 @@ class _Lease_tableState extends State<Lease_table> {
                                     ),
                                     Text(
                                       "No Data Available",
-                                      style: TextStyle(fontWeight: FontWeight.bold, color: blueColor, fontSize: 16),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                          fontSize: 16),
                                     )
                                   ],
                                 ),
@@ -886,18 +926,52 @@ class _Lease_tableState extends State<Lease_table> {
                             var data = snapshot.data!;
 
 // Apply the search filter first
-                            if (searchValue != null && searchValue.isNotEmpty && searchValue != "All") {
-                              data = data.where((lease) =>
-                              lease.rentalAddress!.toLowerCase().contains(searchValue.toLowerCase()) ||
-                                  lease.tenantNames.toString().toLowerCase().contains(searchValue.toLowerCase()) ||
-                                  lease.rentCycle.toString().toLowerCase().contains(searchValue.toLowerCase()) ||
-                                  lease.startDate.toString().toLowerCase().contains(searchValue.toLowerCase()) ||
-                                  lease.endDate.toString().toLowerCase().contains(searchValue.toLowerCase()) ||
-                                  lease.amount!.toStringAsFixed(2).toLowerCase().contains(searchValue.toLowerCase()) ||
-                                  lease.remainingDays.toString().toLowerCase().contains(searchValue.toLowerCase()) ||
-                                  lease.rentDueDate.toString().toLowerCase().contains(searchValue.toLowerCase()) ||
-                                  lease.totalBalance!.toStringAsFixed(2).toLowerCase().contains(searchValue.toLowerCase())
-                              ).toList();
+                            if (searchValue != null &&
+                                searchValue.isNotEmpty &&
+                                searchValue != "All") {
+                              data = data.where((lease) {
+                                final searchLower = searchValue.toLowerCase();
+                                return (lease.rentalAddress
+                                            ?.toLowerCase()
+                                            .contains(searchLower) ??
+                                        false) ||
+                                    (lease.tenantNames
+                                            ?.toLowerCase()
+                                            .contains(searchLower) ??
+                                        false) ||
+                                    (lease.rentCycle
+                                            ?.toLowerCase()
+                                            .contains(searchLower) ??
+                                        false) ||
+                                    (lease.startDate
+                                            ?.toLowerCase()
+                                            .contains(searchLower) ??
+                                        false) ||
+                                    (lease.endDate
+                                            ?.toLowerCase()
+                                            .contains(searchLower) ??
+                                        false) ||
+                                    (lease.amount != null
+                                        ? lease.amount!
+                                            .toStringAsFixed(2)
+                                            .toLowerCase()
+                                            .contains(searchLower)
+                                        : false) ||
+                                    (lease.remainingDays
+                                            ?.toLowerCase()
+                                            .contains(searchLower) ??
+                                        false) ||
+                                    (lease.rentDueDate
+                                            ?.toLowerCase()
+                                            .contains(searchLower) ??
+                                        false) ||
+                                    (lease.totalBalance != null
+                                        ? lease.totalBalance!
+                                            .toStringAsFixed(2)
+                                            .toLowerCase()
+                                            .contains(searchLower)
+                                        : false);
+                              }).toList();
                             }
 
 // Apply the status filter next
@@ -912,8 +986,10 @@ class _Lease_tableState extends State<Lease_table> {
                                 }
 
                                 // For "at will" or null end date, only check start date
-                                if (lease.endDate == null || lease.endDate!.toLowerCase() == "at will") {
-                                  return startDate.isBefore(now) || startDate.isAtSameMomentAs(now);
+                                if (lease.endDate == null ||
+                                    lease.endDate!.toLowerCase() == "at will") {
+                                  return startDate.isBefore(now) ||
+                                      startDate.isAtSameMomentAs(now);
                                 }
 
                                 // For regular end dates, check both start and end dates
@@ -923,13 +999,16 @@ class _Lease_tableState extends State<Lease_table> {
                                 } catch (e) {
                                   return false;
                                 }
-                                return (startDate.isBefore(now) || startDate.isAtSameMomentAs(now)) &&
-                                    (endDate.isAfter(now) || endDate.isAtSameMomentAs(now));
+                                return (startDate.isBefore(now) ||
+                                        startDate.isAtSameMomentAs(now)) &&
+                                    (endDate.isAfter(now) ||
+                                        endDate.isAtSameMomentAs(now));
                               }).toList();
                             } else if (selectedStatus == "Expired") {
                               data = data.where((lease) {
                                 // At will leases can't expire
-                                if (lease.endDate == null || lease.endDate!.toLowerCase() == "at will") {
+                                if (lease.endDate == null ||
+                                    lease.endDate!.toLowerCase() == "at will") {
                                   return false;
                                 }
                                 DateTime now = DateTime.now();
@@ -949,8 +1028,12 @@ class _Lease_tableState extends State<Lease_table> {
                             data = data.reversed.toList();
 
                             sortData(data);
-                            final totalPages = (data.length / itemsPerPage).ceil();
-                            final currentPageData = data.skip(currentPage * itemsPerPage).take(itemsPerPage).toList();
+                            final totalPages =
+                                (data.length / itemsPerPage).ceil();
+                            final currentPageData = data
+                                .skip(currentPage * itemsPerPage)
+                                .take(itemsPerPage)
+                                .toList();
 
                             return SingleChildScrollView(
                               child: Column(
@@ -959,22 +1042,35 @@ class _Lease_tableState extends State<Lease_table> {
                                   _buildHeaders(),
                                   SizedBox(height: 20),
                                   Container(
-                                    decoration: BoxDecoration(border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Color.fromRGBO(
+                                                152, 162, 179, .5))),
                                     // decoration: BoxDecoration(
                                     //     border: Border.all(color: blueColor)),
                                     child: Column(
-                                      children: currentPageData.asMap().entries.map((entry) {
+                                      children: currentPageData
+                                          .asMap()
+                                          .entries
+                                          .map((entry) {
                                         int index = entry.key;
-                                        bool isExpanded = expandedIndex == index;
+                                        bool isExpanded =
+                                            expandedIndex == index;
                                         Lease1 lease = entry.value;
-                                        final balance = lease.totalBalance ?? 0.0;
+                                        final balance =
+                                            lease.totalBalance ?? 0.0;
                                         final isNegative = balance < 0;
-                                        final formattedBalance = "${isNegative ? '-' : ''}\$${balance.abs().toStringAsFixed(2)}";
+                                        final formattedBalance =
+                                            "${isNegative ? '-' : ''}\$${balance.abs().toStringAsFixed(2)}";
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
                                           decoration: BoxDecoration(
-                                            color: index % 2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                            border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                                            color: index % 2 != 0
+                                                ? Colors.white
+                                                : blueColor.withOpacity(0.09),
+                                            border: Border.all(
+                                                color: Color.fromRGBO(
+                                                    152, 162, 179, .5)),
                                           ),
                                           // decoration: BoxDecoration(
                                           //   border: Border.all(color: blueColor),
@@ -984,42 +1080,67 @@ class _Lease_tableState extends State<Lease_table> {
                                               ListTile(
                                                 contentPadding: EdgeInsets.zero,
                                                 title: Padding(
-                                                  padding: const EdgeInsets.all(2.0),
+                                                  padding:
+                                                      const EdgeInsets.all(2.0),
                                                   child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
                                                     children: <Widget>[
                                                       InkWell(
                                                         onTap: () {
                                                           setState(() {
-                                                            if (expandedIndex == index) {
-                                                              expandedIndex = null;
+                                                            if (expandedIndex ==
+                                                                index) {
+                                                              expandedIndex =
+                                                                  null;
                                                             } else {
-                                                              expandedIndex = index;
+                                                              expandedIndex =
+                                                                  index;
                                                             }
                                                           });
                                                         },
                                                         child: Container(
-                                                          margin: EdgeInsets.only(left: 5, right: 5),
-                                                          padding: !isExpanded ? EdgeInsets.only(bottom: 10) : EdgeInsets.only(top: 10),
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  left: 5,
+                                                                  right: 5),
+                                                          padding: !isExpanded
+                                                              ? EdgeInsets.only(
+                                                                  bottom: 10)
+                                                              : EdgeInsets.only(
+                                                                  top: 10),
                                                           child: FaIcon(
-                                                            isExpanded ? FontAwesomeIcons.sortUp : FontAwesomeIcons.sortDown,
+                                                            isExpanded
+                                                                ? FontAwesomeIcons
+                                                                    .sortUp
+                                                                : FontAwesomeIcons
+                                                                    .sortDown,
                                                             size: 20,
                                                             color: blueColor,
                                                           ),
                                                         ),
                                                       ),
                                                       Expanded(
-                                                        flex: 4, // Larger size for the first field
+                                                        flex:
+                                                            4, // Larger size for the first field
                                                         child: Padding(
-                                                          padding: const EdgeInsets.only(left: 8.0),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  left: 8.0),
                                                           child: InkWell(
                                                             onTap: () {
                                                               setState(() {
-                                                                if (expandedIndex == index) {
-                                                                  expandedIndex = null;
+                                                                if (expandedIndex ==
+                                                                    index) {
+                                                                  expandedIndex =
+                                                                      null;
                                                                 } else {
-                                                                  expandedIndex = index;
+                                                                  expandedIndex =
+                                                                      index;
                                                                 }
                                                               });
                                                             },
@@ -1027,20 +1148,34 @@ class _Lease_tableState extends State<Lease_table> {
                                                               TextSpan(
                                                                 children: [
                                                                   TextSpan(
-                                                                    text: '${lease.rentalAddress}',
-                                                                    style: TextStyle(
-                                                                      color: blueColor,
-                                                                      fontWeight: FontWeight.bold,
-                                                                      fontSize: 13,
+                                                                    text:
+                                                                        '${lease.rentalAddress}',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color:
+                                                                          blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          13,
                                                                     ),
                                                                   ),
-                                                                  if (lease.tenantNames?.isNotEmpty ?? false)
+                                                                  if (lease
+                                                                          .tenantNames
+                                                                          ?.isNotEmpty ??
+                                                                      false)
                                                                     TextSpan(
-                                                                      text: "\n${lease.tenantNames}",
-                                                                      style: TextStyle(
-                                                                        color: Colors.lightBlue, // Light blue color for tenant names
-                                                                        fontWeight: FontWeight.bold,
-                                                                        fontSize: 11,
+                                                                      text:
+                                                                          "\n${lease.tenantNames}",
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: Colors
+                                                                            .lightBlue, // Light blue color for tenant names
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                        fontSize:
+                                                                            11,
                                                                       ),
                                                                     ),
                                                                 ],
@@ -1049,48 +1184,76 @@ class _Lease_tableState extends State<Lease_table> {
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(width: MediaQuery.of(context).size.width * .02),
+                                                      SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              .02),
                                                       Expanded(
-                                                        flex: 2, // Smaller size for the second field
+                                                        flex:
+                                                            2, // Smaller size for the second field
                                                         child: Text(
                                                           lease.rentCycle!,
                                                           style: TextStyle(
                                                             color: blueColor,
-                                                            fontWeight: FontWeight.bold,
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                             fontSize: 12,
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(width: MediaQuery.of(context).size.width * .03),
+                                                      SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              .03),
                                                       Expanded(
-                                                        flex: 2, // Smaller size for the third field
+                                                        flex:
+                                                            2, // Smaller size for the third field
                                                         child: Text(
-                                                          dateProvider.formatCurrentDate('${lease.endDate}'),
+                                                          dateProvider
+                                                              .formatCurrentDate(
+                                                                  '${lease.endDate}'),
                                                           style: TextStyle(
                                                             color: blueColor,
-                                                            fontWeight: FontWeight.bold,
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                             fontSize: 12,
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(width: MediaQuery.of(context).size.width * .02),
+                                                      SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              .02),
                                                     ],
                                                   ),
                                                 ),
                                               ),
                                               if (isExpanded)
                                                 Container(
-                                                  padding: EdgeInsets.symmetric(horizontal: 2.0),
-                                                  margin: EdgeInsets.only(bottom: 2),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 2.0),
+                                                  margin: EdgeInsets.only(
+                                                      bottom: 2),
                                                   child: SingleChildScrollView(
                                                     child: Column(
                                                       children: [
                                                         Row(
                                                           children: [
                                                             FaIcon(
-                                                              isExpanded ? FontAwesomeIcons.sortUp : FontAwesomeIcons.sortDown,
+                                                              isExpanded
+                                                                  ? FontAwesomeIcons
+                                                                      .sortUp
+                                                                  : FontAwesomeIcons
+                                                                      .sortDown,
                                                               size: 40,
-                                                              color: Colors.transparent,
+                                                              color: Colors
+                                                                  .transparent,
                                                             ),
                                                             Expanded(
                                                               child: Table(
@@ -1103,11 +1266,18 @@ class _Lease_tableState extends State<Lease_table> {
                                                                 children: [
                                                                   _buildTableRow(
                                                                     'Current Balance:',
-                                                                    _getDisplayValue("${formattedBalance}"),
+                                                                    _getDisplayValue(
+                                                                        "${formattedBalance}"),
                                                                     'Rent :',
-                                                                    _getDisplayValue("\$${lease.amount!.toStringAsFixed(2).toString()}"),
+                                                                    _getDisplayValue(
+                                                                        "\$${lease.amount!.toStringAsFixed(2).toString()}"),
                                                                   ),
-                                                                  _buildTableRow('Remaining Days:', _getDisplayValue(lease.remainingDays), '',
+                                                                  _buildTableRow(
+                                                                      'Remaining Days:',
+                                                                      _getDisplayValue(
+                                                                          lease
+                                                                              .remainingDays),
+                                                                      '',
                                                                       ''),
 //_buildTableRow('Current Balance:', _getDisplayValue("${formattedBalance}"), '', '')
                                                                 ],
@@ -1175,7 +1345,8 @@ class _Lease_tableState extends State<Lease_table> {
                                                           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
                                                             Expanded(
-                                                              child: GestureDetector(
+                                                              child:
+                                                                  GestureDetector(
                                                                 onTap: () {
                                                                   Navigator.push(
                                                                       context,
@@ -1185,24 +1356,37 @@ class _Lease_tableState extends State<Lease_table> {
                                                                                 enddate: lease.endDate,
                                                                               )));
                                                                 },
-                                                                child: Container(
+                                                                child:
+                                                                    Container(
                                                                   height: 40,
-                                                                  decoration: BoxDecoration( border: Border.all(color: blueColor, width: 1.5),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    border: Border.all(
+                                                                        color:
+                                                                            blueColor,
+                                                                        width:
+                                                                            1.5),
                                                                     borderRadius:
-                                                                    BorderRadius.circular(
-                                                                        8),
-
+                                                                        BorderRadius
+                                                                            .circular(8),
                                                                   ),
                                                                   child: Row(
-                                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
                                                                     children: [
                                                                       SizedBox(
-                                                                        width: 5,
+                                                                        width:
+                                                                            5,
                                                                       ),
-                                                                      Image.asset(
+                                                                      Image
+                                                                          .asset(
                                                                         'assets/icons/view.png',
-                                                                        color: blueColor,
+                                                                        color:
+                                                                            blueColor,
                                                                       ),
                                                                       // FaIcon(
                                                                       //   FontAwesomeIcons.trashCan,
@@ -1210,11 +1394,18 @@ class _Lease_tableState extends State<Lease_table> {
                                                                       //   color:blueColor,
                                                                       // ),
                                                                       SizedBox(
-                                                                        width: 8,
+                                                                        width:
+                                                                            8,
                                                                       ),
                                                                       Text(
                                                                         "View Summery",
-                                                                        style: TextStyle(fontSize: 11, color: blueColor, fontWeight: FontWeight.bold),
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                11,
+                                                                            color:
+                                                                                blueColor,
+                                                                            fontWeight:
+                                                                                FontWeight.bold),
                                                                       )
                                                                     ],
                                                                   ),
@@ -1225,10 +1416,20 @@ class _Lease_tableState extends State<Lease_table> {
                                                               width: 5,
                                                             ),
                                                             Expanded(
-                                                              child: GestureDetector(
-                                                                onTap: () async {
-                                                                  Provider.of<SelectedCosignersProvider>(context, listen: false).clearCosigner();
-                                                                  Provider.of<SelectedTenantsProvider>(context, listen: false).clearTenant();
+                                                              child:
+                                                                  GestureDetector(
+                                                                onTap:
+                                                                    () async {
+                                                                  Provider.of<SelectedCosignersProvider>(
+                                                                          context,
+                                                                          listen:
+                                                                              false)
+                                                                      .clearCosigner();
+                                                                  Provider.of<SelectedTenantsProvider>(
+                                                                          context,
+                                                                          listen:
+                                                                              false)
+                                                                      .clearTenant();
                                                                   // handleEdit(Propertytype);
                                                                   var check = await Navigator.push(
                                                                       context,
@@ -1237,36 +1438,57 @@ class _Lease_tableState extends State<Lease_table> {
                                                                                 lease: lease,
                                                                                 leaseId: lease.leaseId!,
                                                                               )));
-                                                                  if (check == true) {
-                                                                    setState(() {
-                                                                      futureLease = LeaseRepository().fetchLease("");
+                                                                  if (check ==
+                                                                      true) {
+                                                                    setState(
+                                                                        () {
+                                                                      futureLease =
+                                                                          LeaseRepository()
+                                                                              .fetchLease("");
                                                                       //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
                                                                     });
                                                                   }
                                                                 },
-                                                                child: Container(
+                                                                child:
+                                                                    Container(
                                                                   height: 40,
-                                                                  decoration: BoxDecoration( border: Border.all(color: Colors.green, width: 1.5),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    border: Border.all(
+                                                                        color: Colors
+                                                                            .green,
+                                                                        width:
+                                                                            1.5),
                                                                     borderRadius:
-                                                                    BorderRadius.circular(
-                                                                        8),
-
+                                                                        BorderRadius
+                                                                            .circular(8),
                                                                   ), // color:Colors.grey[100],
                                                                   child: Row(
-                                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
                                                                     children: [
                                                                       FaIcon(
-                                                                        FontAwesomeIcons.edit,
-                                                                        size: 15,
-                                                                        color: Colors.green,
+                                                                        FontAwesomeIcons
+                                                                            .edit,
+                                                                        size:
+                                                                            15,
+                                                                        color: Colors
+                                                                            .green,
                                                                       ),
                                                                       SizedBox(
-                                                                        width: 10,
+                                                                        width:
+                                                                            10,
                                                                       ),
                                                                       Text(
                                                                         "Edit",
-                                                                        style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.green,
+                                                                            fontWeight: FontWeight.bold),
                                                                       ),
                                                                     ],
                                                                   ),
@@ -1277,31 +1499,53 @@ class _Lease_tableState extends State<Lease_table> {
                                                               width: 5,
                                                             ),
                                                             Expanded(
-                                                              child: GestureDetector(
+                                                              child:
+                                                                  GestureDetector(
                                                                 onTap: () {
-                                                                  _attemptDeleteLease(context, lease);
+                                                                  _attemptDeleteLease(
+                                                                      context,
+                                                                      lease);
                                                                 },
-                                                                child: Container(
+                                                                child:
+                                                                    Container(
                                                                   height: 40,
-                                                                  decoration: BoxDecoration( border: Border.all(color: Colors.red, width: 1.5),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    border: Border.all(
+                                                                        color: Colors
+                                                                            .red,
+                                                                        width:
+                                                                            1.5),
                                                                     borderRadius:
-                                                                    BorderRadius.circular(
-                                                                        8),),
+                                                                        BorderRadius
+                                                                            .circular(8),
+                                                                  ),
                                                                   child: Row(
-                                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
                                                                     children: [
                                                                       FaIcon(
-                                                                        FontAwesomeIcons.trashCan,
-                                                                        size: 15,
-                                                                        color: Colors.red,
+                                                                        FontAwesomeIcons
+                                                                            .trashCan,
+                                                                        size:
+                                                                            15,
+                                                                        color: Colors
+                                                                            .red,
                                                                       ),
                                                                       SizedBox(
-                                                                        width: 10,
+                                                                        width:
+                                                                            10,
                                                                       ),
                                                                       Text(
                                                                         "Delete",
-                                                                        style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.red,
+                                                                            fontWeight: FontWeight.bold),
                                                                       )
                                                                     ],
                                                                   ),
@@ -1333,24 +1577,34 @@ class _Lease_tableState extends State<Lease_table> {
                                             elevation: 3,
                                             child: Container(
                                               height: 40,
-                                              padding: EdgeInsets.symmetric(horizontal: 12.0),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 12.0),
                                               decoration: BoxDecoration(
-                                                border: Border.all(color: Colors.grey),
+                                                border: Border.all(
+                                                    color: Colors.grey),
                                               ),
-                                              child: DropdownButtonHideUnderline(
+                                              child:
+                                                  DropdownButtonHideUnderline(
                                                 child: DropdownButton<int>(
                                                   value: itemsPerPage,
-                                                  items: itemsPerPageOptions.map((int value) {
-                                                    return DropdownMenuItem<int>(
+                                                  items: itemsPerPageOptions
+                                                      .map((int value) {
+                                                    return DropdownMenuItem<
+                                                        int>(
                                                       value: value,
-                                                      child: Text(value.toString()),
+                                                      child: Text(
+                                                          value.toString()),
                                                     );
                                                   }).toList(),
-                                                  onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                                  onChanged: data.length >
+                                                          itemsPerPageOptions
+                                                              .first // Condition to check if dropdown should be enabled
                                                       ? (newValue) {
                                                           setState(() {
-                                                            itemsPerPage = newValue!;
-                                                            currentPage = 0; // Reset to first page when items per page change
+                                                            itemsPerPage =
+                                                                newValue!;
+                                                            currentPage =
+                                                                0; // Reset to first page when items per page change
                                                           });
                                                         }
                                                       : null,
@@ -1364,8 +1618,11 @@ class _Lease_tableState extends State<Lease_table> {
                                         children: [
                                           IconButton(
                                             icon: FaIcon(
-                                              FontAwesomeIcons.circleChevronLeft,
-                                              color: currentPage == 0 ? Colors.grey : blueColor,
+                                              FontAwesomeIcons
+                                                  .circleChevronLeft,
+                                              color: currentPage == 0
+                                                  ? Colors.grey
+                                                  : blueColor,
                                             ),
                                             onPressed: currentPage == 0
                                                 ? null
@@ -1385,7 +1642,8 @@ class _Lease_tableState extends State<Lease_table> {
                                           //   }
                                           //       : null,
                                           // ),
-                                          Text('Page ${currentPage + 1} of $totalPages'),
+                                          Text(
+                                              'Page ${currentPage + 1} of $totalPages'),
                                           // IconButton(
                                           //   icon: Icon(Icons.arrow_forward),
                                           //   onPressed: currentPage < totalPages - 1
@@ -1398,16 +1656,21 @@ class _Lease_tableState extends State<Lease_table> {
                                           // ),
                                           IconButton(
                                             icon: FaIcon(
-                                              FontAwesomeIcons.circleChevronRight,
-                                              color: currentPage < totalPages - 1 ? blueColor : Colors.grey,
+                                              FontAwesomeIcons
+                                                  .circleChevronRight,
+                                              color:
+                                                  currentPage < totalPages - 1
+                                                      ? blueColor
+                                                      : Colors.grey,
                                             ),
-                                            onPressed: currentPage < totalPages - 1
-                                                ? () {
-                                                    setState(() {
-                                                      currentPage++;
-                                                    });
-                                                  }
-                                                : null,
+                                            onPressed:
+                                                currentPage < totalPages - 1
+                                                    ? () {
+                                                        setState(() {
+                                                          currentPage++;
+                                                        });
+                                                      }
+                                                    : null,
                                           ),
                                         ],
                                       ),
@@ -1424,11 +1687,14 @@ class _Lease_tableState extends State<Lease_table> {
                     FutureBuilder<List<Lease1>>(
                       future: futureLease,
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return ShimmerTabletTable();
                         } else if (snapshot.hasError) {
-                          return Center(child: Text('Error: ${snapshot.error}'));
-                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
                           return Container(
                             height: MediaQuery.of(context).size.height * .5,
                             child: Center(
@@ -1446,7 +1712,10 @@ class _Lease_tableState extends State<Lease_table> {
                                   ),
                                   Text(
                                     "No Data Available",
-                                    style: TextStyle(fontWeight: FontWeight.bold, color: blueColor, fontSize: 16),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
                                   )
                                 ],
                               ),
@@ -1461,14 +1730,23 @@ class _Lease_tableState extends State<Lease_table> {
                             filteredData = snapshot.data;
                           } else if (searchValue.isNotEmpty) {
                             filteredData = snapshot.data!
-                                .where((lease) => lease.rentalAddress!.toLowerCase().contains(searchValue.toLowerCase()) || lease.tenantNames!.toLowerCase().contains(searchValue.toLowerCase()))
+                                .where((lease) =>
+                                    (lease.rentalAddress
+                                            ?.toLowerCase()
+                                            .contains(
+                                                searchValue.toLowerCase()) ??
+                                        false) ||
+                                    (lease.tenantNames?.toLowerCase().contains(
+                                            searchValue.toLowerCase()) ??
+                                        false))
                                 .toList();
                           }
                           filteredData = filteredData?.reversed.toList();
                           _tableData = filteredData!;
                           totalrecords = _tableData.length;
                           return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 23.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 23.0),
                             child: Column(
                               children: [
                                 SingleChildScrollView(
@@ -1478,69 +1756,125 @@ class _Lease_tableState extends State<Lease_table> {
                                     child: Container(
                                       // width: MediaQuery.of(context).size.width * .91,
                                       child: Table(
-                                        defaultColumnWidth: IntrinsicColumnWidth(),
+                                        defaultColumnWidth:
+                                            IntrinsicColumnWidth(),
                                         children: [
                                           TableRow(
-                                            decoration: BoxDecoration(border: Border.all()),
+                                            decoration: BoxDecoration(
+                                                border: Border.all()),
                                             children: [
                                               //_buildHeader('FirstName', 0, (staff) => staff.rentalOwnerFirstName!),
                                               //  _buildHeader('LastName', 1, (staff) => staff.rentalOwnerLastName!),
                                               _buildHeader(
                                                   'Lease',
                                                   0,
-                                                  (lease) => '${lease.rentalAddress ?? ''}'
+                                                  (lease) =>
+                                                      '${lease.rentalAddress ?? ''}'
                                                       '${lease.tenantNames ?? ''}'),
                                               // _buildHeader('Lease', 0,
                                               //         (lease) => '${lease.rentalAddress!} '),
-                                              _buildHeader('Lease Start', 1, (lease) => lease.startDate!),
-                                              _buildHeader('Lease End', 2, (lease) => lease.endDate!),
-                                              _buildHeader('Rent Cycle', 3, (lease) => lease.rentCycle!),
-                                              _buildHeader('Balance Due', 4, (lease) => lease.rentDueDate!),
-                                              _buildHeader('Rent', 5, (lease) => lease.amount!),
-                                              _buildHeader('Deposit Held', 6, (lease) => lease.deposit!),
-                                              _buildHeader('Charges', 7, (lease) => lease.recurringCharge!),
-                                              _buildHeader('Created At', 8, (lease) => lease.createdAt!),
-                                              _buildHeader('Updated At', 9, (lease) => lease.updatedAt!),
+                                              _buildHeader('Lease Start', 1,
+                                                  (lease) => lease.startDate!),
+                                              _buildHeader('Lease End', 2,
+                                                  (lease) => lease.endDate!),
+                                              _buildHeader('Rent Cycle', 3,
+                                                  (lease) => lease.rentCycle!),
+                                              _buildHeader(
+                                                  'Balance Due',
+                                                  4,
+                                                  (lease) =>
+                                                      lease.rentDueDate!),
+                                              _buildHeader('Rent', 5,
+                                                  (lease) => lease.amount!),
+                                              _buildHeader('Deposit Held', 6,
+                                                  (lease) => lease.deposit!),
+                                              _buildHeader(
+                                                  'Charges',
+                                                  7,
+                                                  (lease) =>
+                                                      lease.recurringCharge!),
+                                              _buildHeader('Created At', 8,
+                                                  (lease) => lease.createdAt!),
+                                              _buildHeader('Updated At', 9,
+                                                  (lease) => lease.updatedAt!),
                                               _buildHeader('Actions', 10, null),
                                             ],
                                           ),
                                           TableRow(
                                             decoration: BoxDecoration(
-                                              border: Border.symmetric(horizontal: BorderSide.none),
+                                              border: Border.symmetric(
+                                                  horizontal: BorderSide.none),
                                             ),
-                                            children: List.generate(11, (index) => TableCell(child: Container(height: 20))),
+                                            children: List.generate(
+                                                11,
+                                                (index) => TableCell(
+                                                    child:
+                                                        Container(height: 20))),
                                           ),
-                                          for (var i = 0; i < _pagedData.length; i++)
+                                          for (var i = 0;
+                                              i < _pagedData.length;
+                                              i++)
                                             TableRow(
                                               decoration: BoxDecoration(
                                                 border: Border(
-                                                  left: BorderSide(color: blueColor),
-                                                  right: BorderSide(color: blueColor),
-                                                  top: BorderSide(color: blueColor),
-                                                  bottom: i == _pagedData.length - 1 ? BorderSide(color: blueColor) : BorderSide.none,
+                                                  left: BorderSide(
+                                                      color: blueColor),
+                                                  right: BorderSide(
+                                                      color: blueColor),
+                                                  top: BorderSide(
+                                                      color: blueColor),
+                                                  bottom:
+                                                      i == _pagedData.length - 1
+                                                          ? BorderSide(
+                                                              color: blueColor)
+                                                          : BorderSide.none,
                                                 ),
                                               ),
                                               children: [
                                                 //_buildDataCell(_pagedData[i].rentalOwnerFirstName!),
                                                 InkWell(
                                                   onTap: () {
-                                                    Navigator.push(context, MaterialPageRoute(builder: (context) => SummeryPageLease(leaseId: _pagedData[i].leaseId!)));
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                SummeryPageLease(
+                                                                    leaseId: _pagedData[
+                                                                            i]
+                                                                        .leaseId!)));
                                                   },
-                                                  child: _buildDataCell('${_pagedData[i].rentalAddress ?? ''}${_pagedData[i].tenantNames ?? ''}'),
+                                                  child: _buildDataCell(
+                                                      '${_pagedData[i].rentalAddress ?? ''}${_pagedData[i].tenantNames ?? ''}'),
                                                 ),
                                                 // _buildDataCell('${_pagedData[i].rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerLastName ?? ''}'),
-                                                _buildDataCell(_pagedData[i].startDate!),
-                                                _buildDataCell(_pagedData[i].endDate!),
-                                                _buildDataCell(_pagedData[i].rentCycle!),
-                                                _buildDataCell(_pagedData[i].totalBalance! < 0
+                                                _buildDataCell(
+                                                    _pagedData[i].startDate!),
+                                                _buildDataCell(
+                                                    _pagedData[i].endDate!),
+                                                _buildDataCell(
+                                                    _pagedData[i].rentCycle!),
+                                                _buildDataCell(_pagedData[i]
+                                                            .totalBalance! <
+                                                        0
                                                     ? ' - \$${_pagedData[i].totalBalance!.abs().toStringAsFixed(2)}'
                                                     : ' \$ ${_pagedData[i].totalBalance!.abs().toStringAsFixed(2)}'),
-                                                _buildDataCell(_pagedData[i].amount.toString()),
-                                                _buildDataCell((_pagedData[i].deposit?.toString() ?? "")),
-                                                _buildDataCell((_pagedData[i].recurringCharge?.toString() ?? "")),
-                                                _buildDataCell(formatDate(_pagedData[i].createdAt!)),
-                                                _buildDataCell(formatDate(_pagedData[i].updatedAt!)),
-                                                _buildActionsCell(_pagedData[i]),
+                                                _buildDataCell(_pagedData[i]
+                                                    .amount
+                                                    .toString()),
+                                                _buildDataCell((_pagedData[i]
+                                                        .deposit
+                                                        ?.toString() ??
+                                                    "")),
+                                                _buildDataCell((_pagedData[i]
+                                                        .recurringCharge
+                                                        ?.toString() ??
+                                                    "")),
+                                                _buildDataCell(formatDate(
+                                                    _pagedData[i].createdAt!)),
+                                                _buildDataCell(formatDate(
+                                                    _pagedData[i].updatedAt!)),
+                                                _buildActionsCell(
+                                                    _pagedData[i]),
                                               ],
                                             ),
                                         ],
@@ -1548,7 +1882,8 @@ class _Lease_tableState extends State<Lease_table> {
                                     ),
                                   ),
                                 ),
-                                if (_tableData.isEmpty) Text("No Search Records Found"),
+                                if (_tableData.isEmpty)
+                                  Text("No Search Records Found"),
                                 SizedBox(height: 25),
                                 _buildPaginationControls(),
                               ],
@@ -1586,7 +1921,8 @@ class _Lease_tableState extends State<Lease_table> {
     );
   }
 
-  TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel, String rightValue) {
+  TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel,
+      String rightValue) {
     return TableRow(
       children: [
         TableCell(
@@ -1597,7 +1933,8 @@ class _Lease_tableState extends State<Lease_table> {
               children: [
                 Text(
                   leftLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
                 SizedBox(height: 2.0), // Space between label and value
                 Text(
@@ -1616,7 +1953,8 @@ class _Lease_tableState extends State<Lease_table> {
               children: [
                 Text(
                   rightLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
                 SizedBox(height: 2.0), // Space between label and value
                 Text(
@@ -1636,7 +1974,8 @@ class _Lease_tableState extends State<Lease_table> {
     return (value == null || value.trim().isEmpty) ? 'N/A' : value;
   }
 
-  Widget _buildHeader<T>(String text, int columnIndex, Comparable<T> Function(Lease1 d)? getField) {
+  Widget _buildHeader<T>(String text, int columnIndex,
+      Comparable<T> Function(Lease1 d)? getField) {
     return TableCell(
       child: InkWell(
         onTap: getField != null
@@ -1648,8 +1987,13 @@ class _Lease_tableState extends State<Lease_table> {
           padding: const EdgeInsets.all(18.0),
           child: Row(
             children: [
-              Text(text, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              if (_sortColumnIndex == columnIndex) Icon(_sortAscending ? Icons.arrow_drop_down_outlined : Icons.arrow_drop_up_outlined),
+              Text(text,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18)),
+              if (_sortColumnIndex == columnIndex)
+                Icon(_sortAscending
+                    ? Icons.arrow_drop_down_outlined
+                    : Icons.arrow_drop_up_outlined),
             ],
           ),
         ),
@@ -1771,7 +2115,9 @@ class _Lease_tableState extends State<Lease_table> {
           icon: FaIcon(
             size: 30,
             FontAwesomeIcons.circleChevronRight,
-            color: (_currentPage + 1) * _rowsPerPage >= _tableData.length ? Colors.grey : blueColor, // Change color based on availability
+            color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
+                ? Colors.grey
+                : blueColor, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null

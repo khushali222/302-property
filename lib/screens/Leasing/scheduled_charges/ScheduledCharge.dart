@@ -38,7 +38,7 @@ import '../../../Model/profile.dart';
 
 class ScheduledChargeTable extends StatefulWidget {
   String? leaseID;
-  ScheduledChargeTable({super.key,this.leaseID});
+  ScheduledChargeTable({super.key, this.leaseID});
 
   @override
   State<ScheduledChargeTable> createState() => _ScheduledChargeTableState();
@@ -120,7 +120,9 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                 },
                 child: Row(
                   children: [
-                    width < 400 ? Text("Date ", style: TextStyle(color: Colors.white)) : Text("Date", style: TextStyle(color: Colors.white)),
+                    width < 400
+                        ? Text("Date ", style: TextStyle(color: Colors.white))
+                        : Text("Date", style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     // ascending1
@@ -229,7 +231,8 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
     });
     checkInternet();
     fetchDropdownData();
-    futurescheduledpayment = ScheduledChargesRepository().fetchScheduledCharges(leaseid: widget.leaseID);
+    futurescheduledpayment = ScheduledChargesRepository()
+        .fetchScheduledCharges(leaseid: widget.leaseID);
   }
 
   void checkInternet() async {
@@ -248,13 +251,13 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
       title: "Are you sure?",
       content: Column(
         children: <Widget>[
-          if(widget.leaseID == null)
+          if (widget.leaseID == null)
             Text(
               "You want to delete this scheduled charge for ${payment.rentalAddress} in the amount of \$${payment.amount} on ${payment.actionDate}?",
               textAlign: TextAlign.justify,
               style: TextStyle(fontSize: 16),
             ),
-          if(widget.leaseID != null)
+          if (widget.leaseID != null)
             Text(
               "You want to delete this scheduled charge for the amount of \$${payment.amount} on ${payment.actionDate}?",
               textAlign: TextAlign.justify,
@@ -284,19 +287,22 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data =  await ScheduledChargesRepository().deleteNote( noteid: id);
-            if(data != null)
+            var data =
+                await ScheduledChargesRepository().deleteNote(noteid: id);
+            if (data != null)
               setState(() {
-                futurescheduledpayment = ScheduledChargesRepository().fetchScheduledCharges(leaseid: widget.leaseID);
+                futurescheduledpayment = ScheduledChargesRepository()
+                    .fetchScheduledCharges(leaseid: widget.leaseID);
               });
             Navigator.pop(context);
           },
-          color:blueColor,
+          color: blueColor,
         ),
         DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -308,11 +314,9 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
         ),
       ],
     ).show();
-
   }
-  List<Map<String,dynamic>> accountOptions = [
 
-  ];
+  List<Map<String, dynamic>> accountOptions = [];
   Future<void> fetchDropdownData() async {
     // try {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -335,7 +339,6 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
       Map<String, List<String>> fetchedData = {};
       // Adding static items to the "LIABILITY ACCOUNT" category
 
-
       for (var item in jsonResponse) {
         String chargeType = item['charge_type'] ?? "One Time Charge";
         String account = item['account'];
@@ -345,17 +348,9 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
             "value": chargeType,
           });
         });
-
-
-
-
       }
-
-
     } else {
-      setState(() {
-
-      });
+      setState(() {});
     }
     // } catch (e) {
     //   print(e);
@@ -365,13 +360,14 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
     //   });
     // }
   }
-  EditCharge(){
 
+  EditCharge() {
     print(accountOptions);
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Edit Scheduled Charge',style: TextStyle(color: blueColor,fontWeight: FontWeight.bold)),
+        title: Text('Edit Scheduled Charge',
+            style: TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -380,7 +376,11 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Date",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                  Text(
+                    "Date",
+                    style: TextStyle(
+                        color: blueColor, fontWeight: FontWeight.bold),
+                  ),
                   CustomTextField(
                     onTap: _pickDate,
                     readOnnly: true,
@@ -407,7 +407,11 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Account",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                  Text(
+                    "Account",
+                    style: TextStyle(
+                        color: blueColor, fontWeight: FontWeight.bold),
+                  ),
                   DropdownButtonHideUnderline(
                     child: DropdownButtonFormField2<String>(
                       decoration: InputDecoration(
@@ -436,20 +440,22 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                         );
                       }).toList(),
                       value: selectedAccount != null &&
-                          accountOptions.any((account) => account["account"] == selectedAccount)
+                              accountOptions.any((account) =>
+                                  account["account"] == selectedAccount)
                           ? selectedAccount
                           : null,
                       onChanged: (value) {
                         setState(() {
                           // Find the selected account in the accountOptions list
                           var selectedOption = accountOptions.firstWhere(
-                                (account) => account["account"] == value,
+                            (account) => account["account"] == value,
                             // orElse: () => null,
                           );
 
                           if (selectedOption != null) {
                             // Extract the charge type from the selected account
-                            String chargeType = selectedOption["charge_type"] ?? "One Time Charge";
+                            String chargeType = selectedOption["charge_type"] ??
+                                "One Time Charge";
 
                             print("Selected Account: $value");
                             print("Charge Type: $chargeType");
@@ -493,7 +499,6 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                       ),
                     ),
                   ),
-
                 ],
               ),
               // Account Dropdown
@@ -505,7 +510,11 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Amount",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                  Text(
+                    "Amount",
+                    style: TextStyle(
+                        color: blueColor, fontWeight: FontWeight.bold),
+                  ),
                   CustomTextField(
                     // onTap: _pickDate,
                     readOnnly: false,
@@ -529,7 +538,11 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Memo",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                  Text(
+                    "Memo",
+                    style: TextStyle(
+                        color: blueColor, fontWeight: FontWeight.bold),
+                  ),
                   CustomTextField(
                     //  onTap: _pickDate,
                     readOnnly: false,
@@ -556,13 +569,19 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
           ),
           ElevatedButton(
             child: Text('Save'),
-            onPressed: ()async{
-              var response= await ScheduledChargesRepository().submitCharge(amount: amountController.text,account: selectedAccount,chargeType: selectedChargeType,action_date: dateController.text,description: memoController.text,charge_id: charge_id);
-              if(response != null)
-              {
+            onPressed: () async {
+              var response = await ScheduledChargesRepository().submitCharge(
+                  amount: amountController.text,
+                  account: selectedAccount,
+                  chargeType: selectedChargeType,
+                  action_date: dateController.text,
+                  description: memoController.text,
+                  charge_id: charge_id);
+              if (response != null) {
                 Fluttertoast.showToast(msg: "Charge updated successfully");
                 setState(() {
-                  futurescheduledpayment = ScheduledChargesRepository().fetchScheduledCharges(leaseid: widget.leaseID);
+                  futurescheduledpayment = ScheduledChargesRepository()
+                      .fetchScheduledCharges(leaseid: widget.leaseID);
                 });
                 Navigator.of(context).pop();
               }
@@ -572,6 +591,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
       ),
     );
   }
+
   void _pickDate() async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -650,7 +670,8 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                   pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.end,
                     children: [
-                      if (profileData?.companyName != null && profileData!.companyName!.isNotEmpty)
+                      if (profileData?.companyName != null &&
+                          profileData!.companyName!.isNotEmpty)
                         pw.Text(
                           profileData!.companyName!,
                           style: pw.TextStyle(
@@ -658,7 +679,8 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                             fontWeight: pw.FontWeight.bold,
                           ),
                         ),
-                      if (profileData?.companyAddress != null && profileData!.companyAddress!.isNotEmpty)
+                      if (profileData?.companyAddress != null &&
+                          profileData!.companyAddress!.isNotEmpty)
                         pw.Text(
                           profileData!.companyAddress!,
                           style: pw.TextStyle(
@@ -666,16 +688,22 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                             fontWeight: pw.FontWeight.bold,
                           ),
                         ),
-                      if ((profileData?.companyCity != null && profileData!.companyCity!.isNotEmpty) ||
-                          (profileData?.companyState != null && profileData!.companyState!.isNotEmpty) ||
-                          (profileData?.companyCountry != null && profileData!.companyCountry!.isNotEmpty))
+                      if ((profileData?.companyCity != null &&
+                              profileData!.companyCity!.isNotEmpty) ||
+                          (profileData?.companyState != null &&
+                              profileData!.companyState!.isNotEmpty) ||
+                          (profileData?.companyCountry != null &&
+                              profileData!.companyCountry!.isNotEmpty))
                         pw.Text(
                           [
-                            if (profileData?.companyCity != null && profileData!.companyCity!.isNotEmpty)
+                            if (profileData?.companyCity != null &&
+                                profileData!.companyCity!.isNotEmpty)
                               profileData!.companyCity!,
-                            if (profileData?.companyState != null && profileData!.companyState!.isNotEmpty)
+                            if (profileData?.companyState != null &&
+                                profileData!.companyState!.isNotEmpty)
                               profileData!.companyState!,
-                            if (profileData?.companyCountry != null && profileData!.companyCountry!.isNotEmpty)
+                            if (profileData?.companyCountry != null &&
+                                profileData!.companyCountry!.isNotEmpty)
                               profileData!.companyCountry!,
                           ].join(', '),
                           style: pw.TextStyle(
@@ -683,7 +711,8 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                             fontWeight: pw.FontWeight.bold,
                           ),
                         ),
-                      if (profileData?.companyPostalCode != null && profileData!.companyPostalCode!.isNotEmpty)
+                      if (profileData?.companyPostalCode != null &&
+                          profileData!.companyPostalCode!.isNotEmpty)
                         pw.Text(
                           profileData!.companyPostalCode!,
                           style: pw.TextStyle(
@@ -739,35 +768,35 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                   ),
                   // Data rows
                   ...data.map((charge) => pw.TableRow(
-                    decoration: const pw.BoxDecoration(),
-                    children: [
-                      pw.Padding(
-                        padding: const pw.EdgeInsets.all(6),
-                        child: pw.Text(charge.actionDate ?? ''),
-                      ),
-                      pw.Padding(
-                        padding: const pw.EdgeInsets.all(6),
-                        child: pw.Text(charge.rentalAddress ?? ''),
-                      ),
-                      pw.Padding(
-                        padding: const pw.EdgeInsets.all(6),
-                        child: pw.Text(charge.description ?? ''),
-                      ),
-                      pw.Padding(
-                        padding: const pw.EdgeInsets.all(6),
-                        child: pw.Text(charge.account ?? ''),
-                      ),
-                      pw.Padding(
-                        padding: const pw.EdgeInsets.all(6),
-                        child: pw.Align(
-                          alignment: pw.Alignment.centerRight,
-                          child: pw.Text(charge.amount != null
-                              ? '\$${charge.amount}'
-                              : ''),
-                        ),
-                      ),
-                    ],
-                  )),
+                        decoration: const pw.BoxDecoration(),
+                        children: [
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(6),
+                            child: pw.Text(charge.actionDate ?? ''),
+                          ),
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(6),
+                            child: pw.Text(charge.rentalAddress ?? ''),
+                          ),
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(6),
+                            child: pw.Text(charge.description ?? ''),
+                          ),
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(6),
+                            child: pw.Text(charge.account ?? ''),
+                          ),
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(6),
+                            child: pw.Align(
+                              alignment: pw.Alignment.centerRight,
+                              child: pw.Text(charge.amount != null
+                                  ? '\$${charge.amount}'
+                                  : ''),
+                            ),
+                          ),
+                        ],
+                      )),
                 ],
               ),
             ),
@@ -779,6 +808,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
   }
+
   Future<void> _exportCSV(List<ScheduledCharges> data) async {
     final StringBuffer csvBuffer = StringBuffer();
 
@@ -792,7 +822,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
         charge.rentalAddress ?? '',
         charge.description ?? '',
         charge.account ?? '',
-        "\$${charge.amount != null ? charge.amount.toString():""}"
+        "\$${charge.amount != null ? charge.amount.toString() : ""}"
       ].map((e) => '"${e.replaceAll('"', '""')}"').join(','));
     }
 
@@ -822,6 +852,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
     // Share the file
     await Share.shareXFiles([XFile(path)]);
   }
+
   Future<void> _exportExcel(List<ScheduledCharges> data) async {
     final workbook = syncXlsx.Workbook();
     final sheet = workbook.worksheets[0];
@@ -839,7 +870,9 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
       sheet.getRangeByIndex(row + 2, 2).setText(charge.rentalAddress ?? '');
       sheet.getRangeByIndex(row + 2, 3).setText(charge.description ?? '');
       sheet.getRangeByIndex(row + 2, 4).setText(charge.account ?? '');
-      sheet.getRangeByIndex(row + 2, 5).setText(charge.amount != null ? charge.amount.toString() : '');
+      sheet
+          .getRangeByIndex(row + 2, 5)
+          .setText(charge.amount != null ? charge.amount.toString() : '');
     }
 
     final List<int> bytes = workbook.saveAsStream();
@@ -869,6 +902,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
     // Share the file
     await Share.shareXFiles([XFile(path)]);
   }
+
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -881,225 +915,242 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
       ),
       body: _connectivityResult != ConnectivityResult.none
           ? SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20,
-            ),
-            //add propertytype
-            Padding(
-              padding: const EdgeInsets.only(left: 0, right: 0),
-              child: Row(
-                //mainAxisAlignment: MainAxisAlignment.end,
+              child: Column(
                 children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  //add propertytype
                   Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: titleBar(
-                      width: MediaQuery.of(context).size.width * .91,
-                      title: 'Scheduled Charges',
+                    padding: const EdgeInsets.only(left: 0, right: 0),
+                    child: Row(
+                      //mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: titleBar(
+                            width: MediaQuery.of(context).size.width * .91,
+                            title: 'Scheduled Charges',
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-            SizedBox(height: 10),
-            //search
-            Padding(
-              padding: const EdgeInsets.only(left: 15, right: 20),
-              child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-
-                  Material(
-                    elevation: 2,
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      // height: 40,
-                      height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
-                      width: MediaQuery.of(context).size.width < 500 ? MediaQuery.of(context).size.width * .52 : MediaQuery.of(context).size.width * .49,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
+                  SizedBox(height: 10),
+                  //search
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15, right: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Material(
+                          elevation: 2,
                           borderRadius: BorderRadius.circular(8),
-                          // border: Border.all(color: Colors.grey),
-                          border: Border.all(color: Color(0xFF8A95A8))),
-                      child: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: TextField(
-                              style: TextStyle(fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 14),
-                              // onChanged: (value) {
-                              //   setState(() {
-                              //     cvverror = false;
-                              //   });
-                              // },
-                              // controller: cvv,
-                              onChanged: (value) {
-                                setState(() {
-                                  searchvalue = value;
-                                  if(currentPage != 0)
-                                    currentPage = 0;
-                                });
-                              },
-                              cursorColor: blueColor,
-                              decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: "Search here...",
-                                  hintStyle: TextStyle(
-                                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
-                                    // fontWeight: FontWeight.bold,
-                                    color: Color(0xFF8A95A8),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            // height: 40,
+                            height: MediaQuery.of(context).size.width < 500
+                                ? 45
+                                : 50,
+                            width: MediaQuery.of(context).size.width < 500
+                                ? MediaQuery.of(context).size.width * .52
+                                : MediaQuery.of(context).size.width * .49,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                // border: Border.all(color: Colors.grey),
+                                border: Border.all(color: Color(0xFF8A95A8))),
+                            child: Stack(
+                              children: [
+                                Positioned.fill(
+                                  child: TextField(
+                                    style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 15
+                                                : 14),
+                                    // onChanged: (value) {
+                                    //   setState(() {
+                                    //     cvverror = false;
+                                    //   });
+                                    // },
+                                    // controller: cvv,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        searchvalue = value;
+                                        if (currentPage != 0) currentPage = 0;
+                                      });
+                                    },
+                                    cursorColor: blueColor,
+                                    decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: "Search here...",
+                                        hintStyle: TextStyle(
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 14
+                                              : 18,
+                                          // fontWeight: FontWeight.bold,
+                                          color: Color(0xFF8A95A8),
+                                        ),
+                                        contentPadding: EdgeInsets.only(
+                                            left: 5, bottom: 12, top: 5)),
                                   ),
-                                  contentPadding: EdgeInsets.only(left: 5, bottom: 12, top: 5)),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-
-                    height: 45,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: blueColor,
-                        foregroundColor: Colors.white,
-                      ),
-                      onPressed: ()  {
-
-                      },
-                      child:PopupMenuButton(
-                        onSelected: (value) async{
-                          print(value);
-                          if(value == 'Export PDF'){
-                            print(value);
-                            final data = await futurescheduledpayment;
-                            _exportPDF(data);
-                          }
-                          if(value == 'Export Excel'){
-                            final data = await futurescheduledpayment;
-                            _exportExcel(data);
-                          }
-                          if(value == 'Export CSV'){
-                            final data = await futurescheduledpayment;
-                            _exportCSV(data);
-                          }
-                        },
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            value: 'Export PDF',
-                            child: Text('Export PDF'),
-                          ),
-                          PopupMenuItem(
-                            value: 'Export Excel',
-                            child: Text('Export Excel'),
-                          ),
-                          PopupMenuItem(
-                            value: 'Export CSV',
-                            child: Text('Export CSV'),
-                          ),
-                        ],
-                        child: Row(
-                          children: [
-                            Text('Export'),
-                            Icon(Icons.arrow_drop_down),
-                          ],
                         ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
-            if (MediaQuery.of(context).size.width < 500)
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: FutureBuilder<List<ScheduledCharges>>(
-                  future: futurescheduledpayment,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return ColabShimmerLoadingWidget();
-                    }  else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Container(
-                        height: MediaQuery.of(context).size.height * .5,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/images/no_data.jpg",
-                                height: 200,
-                                width: 200,
+                        Container(
+                          height: 45,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: blueColor,
+                              foregroundColor: Colors.white,
+                            ),
+                            onPressed: () {},
+                            child: PopupMenuButton(
+                              onSelected: (value) async {
+                                print(value);
+                                if (value == 'Export PDF') {
+                                  print(value);
+                                  final data = await futurescheduledpayment;
+                                  _exportPDF(data);
+                                }
+                                if (value == 'Export Excel') {
+                                  final data = await futurescheduledpayment;
+                                  _exportExcel(data);
+                                }
+                                if (value == 'Export CSV') {
+                                  final data = await futurescheduledpayment;
+                                  _exportCSV(data);
+                                }
+                              },
+                              itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  value: 'Export PDF',
+                                  child: Text('Export PDF'),
+                                ),
+                                PopupMenuItem(
+                                  value: 'Export Excel',
+                                  child: Text('Export Excel'),
+                                ),
+                                PopupMenuItem(
+                                  value: 'Export CSV',
+                                  child: Text('Export CSV'),
+                                ),
+                              ],
+                              child: Row(
+                                children: [
+                                  Text('Export'),
+                                  Icon(Icons.arrow_drop_down),
+                                ],
                               ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "No Data Available",
-                                style: TextStyle(fontWeight: FontWeight.bold, color: blueColor, fontSize: 16),
-                              )
-                            ],
+                            ),
                           ),
                         ),
-                      );
-                    } else {
-                      var data = snapshot.data!;
-                      // if (selectedValue == null && searchvalue.isEmpty) {
-                      //   data = snapshot.data!;
-                      // } else if (selectedValue == "All") {
-                      //   data = snapshot.data!;
-                      // } else if (searchvalue.isNotEmpty) {
-                      //   data = snapshot.data!
-                      //       .where((applicant) =>
-                      //   applicant.rentalAddress!
-                      //       .toLowerCase()
-                      //       .contains(searchvalue.toLowerCase()) ||
-                      //       applicant.rentalAddress!.toString()
-                      //           .toLowerCase()
-                      //           .contains(searchvalue.toLowerCase()) ||
-                      //       applicant.tenant!.tenantName.toString()
-                      //           .toLowerCase()
-                      //           .contains(searchvalue.toLowerCase())||
-                      //       applicant.totalAmount.toString()
-                      //           .toLowerCase()
-                      //           .contains(searchvalue.toLowerCase())||
-                      //       applicant.date.toString()
-                      //           .toLowerCase()
-                      //           .contains(searchvalue.toLowerCase())
-                      //   )
-                      //       .toList();
-                      // } else {
-                      //   data = snapshot.data!.where((applicant) => applicant.rentalAddress == selectedValue).toList();
-                      // }
-                      if (data.isEmpty) {
-                        return Center(
-                          child:
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/images/no_data.jpg",
-                                height: 200,
-                                width: 200,
+                      ],
+                    ),
+                  ),
+                  if (MediaQuery.of(context).size.width > 500)
+                    SizedBox(height: 25),
+                  if (MediaQuery.of(context).size.width < 500)
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: FutureBuilder<List<ScheduledCharges>>(
+                        future: futurescheduledpayment,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return ColabShimmerLoadingWidget();
+                          } else if (!snapshot.hasData ||
+                              snapshot.data!.isEmpty) {
+                            return Container(
+                              height: MediaQuery.of(context).size.height * .5,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/no_data.jpg",
+                                      height: 200,
+                                      width: 200,
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      "No Data Available",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                          fontSize: 16),
+                                    )
+                                  ],
+                                ),
                               ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "No Data Available",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: blueColor,
-                                    fontSize: 16),
-                              )
-                            ],
-                          ),
-                        );
-                      }
-                      /* if (selectedValue == null && searchvalue!.isEmpty) {
+                            );
+                          } else {
+                            var data = snapshot.data!;
+                            if (searchvalue.isNotEmpty) {
+                              final searchLower = searchvalue.toLowerCase();
+                              data = data.where((charge) {
+                                return (charge.actionDate
+                                            ?.toLowerCase()
+                                            .contains(searchLower) ??
+                                        false) ||
+                                    (charge.account
+                                            ?.toLowerCase()
+                                            .contains(searchLower) ??
+                                        false) ||
+                                    (charge.amount
+                                            ?.toString()
+                                            .contains(searchLower) ??
+                                        false) ||
+                                    (charge.description
+                                            ?.toLowerCase()
+                                            .contains(searchLower) ??
+                                        false) ||
+                                    (charge.rentalAddress
+                                            ?.toLowerCase()
+                                            .contains(searchLower) ??
+                                        false) ||
+                                    (charge.chargeType
+                                            ?.toLowerCase()
+                                            .contains(searchLower) ??
+                                        false);
+                              }).toList();
+                            }
+                            if (data.isEmpty) {
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/no_data.jpg",
+                                      height: 200,
+                                      width: 200,
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      "No Data Available",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                          fontSize: 16),
+                                    )
+                                  ],
+                                ),
+                              );
+                            }
+                            /* if (selectedValue == null && searchvalue!.isEmpty) {
                         data = snapshot.data!;
                       } else if (selectedValue == "All") {
                         data = snapshot.data!;
@@ -1119,456 +1170,655 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                         property.propertyType == selectedValue)
                             .toList();
                       }*/
-                      //sortData(data);
-                      final totalPages = (data.length / itemsPerPage).ceil();
-                      final currentPageData = data.skip(currentPage * itemsPerPage).take(itemsPerPage).toList();
-                      print("data ${currentPageData.length}");
-                      print("data ${data.length}");
-                      return SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            SizedBox(height: 10),
-                            _buildHeaders(),
-                            SizedBox(height: 20),
-                            Container(
-                              decoration: BoxDecoration(border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
-                              // decoration: BoxDecoration(
-                              //     border: Border.all(color: blueColor)),
+                            //sortData(data);
+                            final totalPages =
+                                (data.length / itemsPerPage).ceil();
+                            final currentPageData = data
+                                .skip(currentPage * itemsPerPage)
+                                .take(itemsPerPage)
+                                .toList();
+                            print("data ${currentPageData.length}");
+                            print("data ${data.length}");
+                            return SingleChildScrollView(
                               child: Column(
-                                children: currentPageData.asMap().entries.map((entry) {
-                                  int index = entry.key;
-                                  bool isExpanded = expandedIndex == index;
-                                  ScheduledCharges Propertytype = entry.value;
-
-                                  //return CustomExpansionTile(data: Propertytype, index: index);
-                                  return Container(
+                                children: [
+                                  SizedBox(height: 10),
+                                  _buildHeaders(),
+                                  SizedBox(height: 20),
+                                  Container(
                                     decoration: BoxDecoration(
-                                      color: index % 2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
-                                    ),
+                                        border: Border.all(
+                                            color: Color.fromRGBO(
+                                                152, 162, 179, .5))),
                                     // decoration: BoxDecoration(
-                                    //   border: Border.all(color: blueColor),
-                                    // ),
+                                    //     border: Border.all(color: blueColor)),
                                     child: Column(
-                                      children: <Widget>[
-                                        ListTile(
-                                          contentPadding: EdgeInsets.zero,
-                                          title: Padding(
-                                            padding: const EdgeInsets.all(2.0),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                InkWell(
-                                                  onTap: () {
-                                                    // setState(() {
-                                                    //    isExpanded = !isExpanded;
-                                                    // //  expandedIndex = !expandedIndex;
-                                                    //
-                                                    // });
-                                                    // setState(() {
-                                                    //   if (isExpanded) {
-                                                    //     expandedIndex = null;
-                                                    //     isExpanded = !isExpanded;
-                                                    //   } else {
-                                                    //     expandedIndex = index;
-                                                    //   }
-                                                    // });
-                                                    setState(() {
-                                                      if (expandedIndex == index) {
-                                                        expandedIndex = null;
-                                                      } else {
-                                                        expandedIndex = index;
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    margin: EdgeInsets.only(left: 5, right: 5),
-                                                    padding: !isExpanded ? EdgeInsets.only(bottom: 10) : EdgeInsets.only(top: 10),
-                                                    child: FaIcon(
-                                                      isExpanded ? FontAwesomeIcons.sortUp : FontAwesomeIcons.sortDown,
-                                                      size: 20,
-                                                      color: blueColor,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        if (expandedIndex == index) {
-                                                          expandedIndex = null;
-                                                        } else {
-                                                          expandedIndex = index;
-                                                        }
-                                                      });
-                                                    },
-                                                    child: Text(
-                                                      '${Propertytype.actionDate}',
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize: 13,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(width: MediaQuery.of(context).size.width * .03),
-                                                Expanded(
-                                                  flex: 4,
-                                                  child: Text(
-                                                    '${Propertytype.account}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(width: MediaQuery.of(context).size.width * .03),
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.only(left: 10.0),
-                                                    child: Text(
-                                                      // '${widget.data.createdAt}',
-                                                      '${Propertytype.amount != null ? '\$${Propertytype.amount}' : 'N/A'}',
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize: 13,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(width: MediaQuery.of(context).size.width * .01),
-                                              ],
-                                            ),
+                                      children: currentPageData
+                                          .asMap()
+                                          .entries
+                                          .map((entry) {
+                                        int index = entry.key;
+                                        bool isExpanded =
+                                            expandedIndex == index;
+                                        ScheduledCharges Propertytype =
+                                            entry.value;
+
+                                        //return CustomExpansionTile(data: Propertytype, index: index);
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                            color: index % 2 != 0
+                                                ? Colors.white
+                                                : blueColor.withOpacity(0.09),
+                                            border: Border.all(
+                                                color: Color.fromRGBO(
+                                                    152, 162, 179, .5)),
                                           ),
-                                        ),
-                                        if (isExpanded)
-                                          Container(
-                                            padding: EdgeInsets.symmetric(horizontal: 2.0),
-                                            margin: EdgeInsets.only(bottom: 2),
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  // if (Propertytype
-                                                  //     .isRenewing !=
-                                                  //     false)
-
-                                                  Padding(
-                                                    padding: const EdgeInsets.only(left: 18.0),
-                                                    child: Text.rich(
-                                                      TextSpan(
-                                                        children: [
-                                                          if(widget.leaseID == null)
-                                                            TextSpan(
-                                                              text: 'Memo : ',
-                                                              style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
-                                                            ),
-                                                          if(widget.leaseID != null)
-                                                            TextSpan(
-                                                              text: 'Description : ',
-                                                              style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
-                                                            ),
-                                                          TextSpan(
-                                                            // text: formatDate(
-                                                            //     '${Propertytype.updatedAt}'),
-                                                            text: Propertytype.description ??"-",
-                                                            style: TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
+                                          // decoration: BoxDecoration(
+                                          //   border: Border.all(color: blueColor),
+                                          // ),
+                                          child: Column(children: <Widget>[
+                                            ListTile(
+                                              contentPadding: EdgeInsets.zero,
+                                              title: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(2.0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    InkWell(
+                                                      onTap: () {
+                                                        // setState(() {
+                                                        //    isExpanded = !isExpanded;
+                                                        // //  expandedIndex = !expandedIndex;
+                                                        //
+                                                        // });
+                                                        // setState(() {
+                                                        //   if (isExpanded) {
+                                                        //     expandedIndex = null;
+                                                        //     isExpanded = !isExpanded;
+                                                        //   } else {
+                                                        //     expandedIndex = index;
+                                                        //   }
+                                                        // });
+                                                        setState(() {
+                                                          if (expandedIndex ==
+                                                              index) {
+                                                            expandedIndex =
+                                                                null;
+                                                          } else {
+                                                            expandedIndex =
+                                                                index;
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        margin: EdgeInsets.only(
+                                                            left: 5, right: 5),
+                                                        padding: !isExpanded
+                                                            ? EdgeInsets.only(
+                                                                bottom: 10)
+                                                            : EdgeInsets.only(
+                                                                top: 10),
+                                                        child: FaIcon(
+                                                          isExpanded
+                                                              ? FontAwesomeIcons
+                                                                  .sortUp
+                                                              : FontAwesomeIcons
+                                                                  .sortDown,
+                                                          size: 20,
+                                                          color: blueColor,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            if (expandedIndex ==
+                                                                index) {
+                                                              expandedIndex =
+                                                                  null;
+                                                            } else {
+                                                              expandedIndex =
+                                                                  index;
+                                                            }
+                                                          });
+                                                        },
+                                                        child: Text(
+                                                          '${Propertytype.actionDate}',
+                                                          style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13,
                                                           ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  if(widget.leaseID == null)
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(left: 18.0),
-                                                      child: Text.rich(
-                                                        TextSpan(
-                                                          children: [
-                                                            TextSpan(
-                                                              text: 'Property : ',
-                                                              style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
-                                                            ),
-                                                            TextSpan(
-                                                              // text: formatDate(
-                                                              //     '${Propertytype.updatedAt}'),
-                                                              text: Propertytype.rentalAddress ??"-",
-                                                              style: TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
-                                                            ),
-                                                          ],
                                                         ),
                                                       ),
                                                     ),
-                                                  if(widget.leaseID != null)
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(left: 18.0),
-                                                      child: Text.rich(
-                                                        TextSpan(
-                                                          children: [
-                                                            TextSpan(
-                                                              text: 'Charge Type : ',
-                                                              style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
-                                                            ),
-                                                            TextSpan(
-                                                              // text: formatDate(
-                                                              //     '${Propertytype.updatedAt}'),
-                                                              text: Propertytype.chargeType ??"-",
-                                                              style: TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
-                                                            ),
-                                                          ],
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .03),
+                                                    Expanded(
+                                                      flex: 4,
+                                                      child: Text(
+                                                        '${Propertytype.account}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
                                                         ),
                                                       ),
                                                     ),
-                                                  SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Row(
-                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .03),
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 10.0),
+                                                        child: Text(
+                                                          // '${widget.data.createdAt}',
+                                                          '${Propertytype.amount != null ? '\$${Propertytype.amount}' : 'N/A'}',
+                                                          style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .01),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            if (isExpanded)
+                                              Container(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 2.0),
+                                                margin:
+                                                    EdgeInsets.only(bottom: 2),
+                                                child: SingleChildScrollView(
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
                                                     children: [
-                                                      if(widget.leaseID == null)
-                                                        Expanded(
-                                                          child: GestureDetector(
-                                                            onTap: () async {
-                                                              setState(() {
-                                                                dateController.text = Propertytype.actionDate!;
-                                                                amountController.text = Propertytype.amount!.toString();
-                                                                memoController.text = Propertytype.description ??"";
-                                                                selectedAccount = Propertytype.account!;
-                                                                if(!accountOptions.any((account) => account["account"] == selectedAccount)){
-                                                                  accountOptions.add({
-                                                                    "account":selectedAccount,
-                                                                    "value":selectedAccount,
-                                                                  });
-                                                                }
-                                                                charge_id = Propertytype.taskId;
-                                                              });
+                                                      // if (Propertytype
+                                                      //     .isRenewing !=
+                                                      //     false)
 
-
-                                                              EditCharge();
-                                                              // Navigator.push(
-                                                              //     context,
-                                                              //     MaterialPageRoute(
-                                                              //         builder: (context) => SummeryPageLease(
-                                                              //           leaseId: Propertytype.leaseId!,
-                                                              //           enddate: Propertytype.date,
-                                                              //           isredirectpayment: true,
-                                                              //         )));
-                                                            },
-                                                            child: Container(
-                                                              height: 40,
-                                                              decoration: BoxDecoration(border: Border.all(color: Colors.green, width: 1.5),
-                                                                borderRadius:
-                                                                BorderRadius.circular(
-                                                                    8),
-                                                              ), // color:Colors.grey[100],
-                                                              child: Row(
-                                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                                children: [
-                                                                  FaIcon(
-                                                                    FontAwesomeIcons.edit,
-                                                                    size: 15,
-                                                                    color: Colors.green,
-                                                                  ),
-                                                                  SizedBox(
-                                                                    width: 10,
-                                                                  ),
-                                                                  Text(
-                                                                    "Edit",
-                                                                    style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
-                                                                  ),
-                                                                ],
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 18.0),
+                                                        child: Text.rich(
+                                                          TextSpan(
+                                                            children: [
+                                                              if (widget
+                                                                      .leaseID ==
+                                                                  null)
+                                                                TextSpan(
+                                                                  text:
+                                                                      'Memo : ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color:
+                                                                          blueColor), // Bold and black
+                                                                ),
+                                                              if (widget
+                                                                      .leaseID !=
+                                                                  null)
+                                                                TextSpan(
+                                                                  text:
+                                                                      'Description : ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color:
+                                                                          blueColor), // Bold and black
+                                                                ),
+                                                              TextSpan(
+                                                                // text: formatDate(
+                                                                //     '${Propertytype.updatedAt}'),
+                                                                text: Propertytype
+                                                                        .description ??
+                                                                    "-",
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                    color:
+                                                                        grey), // Light and grey
                                                               ),
-                                                            ),
+                                                            ],
                                                           ),
                                                         ),
-                                                      if(widget.leaseID == null)
-                                                        SizedBox(
-                                                          width: 5,
-                                                        ),
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () async {
-                                                            _showAlert(context, Propertytype.taskId!, Propertytype);
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration: BoxDecoration(border: Border.all(color: Colors.red, width: 1.5),
-                                                              borderRadius:
-                                                              BorderRadius.circular(
-                                                                  8),), // color:Colors.grey[100],
-                                                            child: Row(
-                                                              mainAxisAlignment: MainAxisAlignment.center,
-                                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                                      ),
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      if (widget.leaseID ==
+                                                          null)
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  left: 18.0),
+                                                          child: Text.rich(
+                                                            TextSpan(
                                                               children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons.trashCan,
-                                                                  size: 15,
-                                                                  color: Colors.red,
+                                                                TextSpan(
+                                                                  text:
+                                                                      'Property : ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color:
+                                                                          blueColor), // Bold and black
                                                                 ),
-                                                                SizedBox(
-                                                                  width: 10,
-                                                                ),
-                                                                Text(
-                                                                  "Delete",
-                                                                  style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                                                                TextSpan(
+                                                                  // text: formatDate(
+                                                                  //     '${Propertytype.updatedAt}'),
+                                                                  text: Propertytype
+                                                                          .rentalAddress ??
+                                                                      "-",
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                      color:
+                                                                          grey), // Light and grey
                                                                 ),
                                                               ],
                                                             ),
                                                           ),
                                                         ),
+                                                      if (widget.leaseID !=
+                                                          null)
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  left: 18.0),
+                                                          child: Text.rich(
+                                                            TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                      'Charge Type : ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color:
+                                                                          blueColor), // Bold and black
+                                                                ),
+                                                                TextSpan(
+                                                                  // text: formatDate(
+                                                                  //     '${Propertytype.updatedAt}'),
+                                                                  text: Propertytype
+                                                                          .chargeType ??
+                                                                      "-",
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                      color:
+                                                                          grey), // Light and grey
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      Row(
+                                                        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                          if (widget.leaseID ==
+                                                              null)
+                                                            Expanded(
+                                                              child:
+                                                                  GestureDetector(
+                                                                onTap:
+                                                                    () async {
+                                                                  setState(() {
+                                                                    dateController
+                                                                            .text =
+                                                                        Propertytype
+                                                                            .actionDate!;
+                                                                    amountController
+                                                                            .text =
+                                                                        Propertytype
+                                                                            .amount!
+                                                                            .toString();
+                                                                    memoController
+                                                                            .text =
+                                                                        Propertytype.description ??
+                                                                            "";
+                                                                    selectedAccount =
+                                                                        Propertytype
+                                                                            .account!;
+                                                                    if (!accountOptions.any((account) =>
+                                                                        account[
+                                                                            "account"] ==
+                                                                        selectedAccount)) {
+                                                                      accountOptions
+                                                                          .add({
+                                                                        "account":
+                                                                            selectedAccount,
+                                                                        "value":
+                                                                            selectedAccount,
+                                                                      });
+                                                                    }
+                                                                    charge_id =
+                                                                        Propertytype
+                                                                            .taskId;
+                                                                  });
+
+                                                                  EditCharge();
+                                                                  // Navigator.push(
+                                                                  //     context,
+                                                                  //     MaterialPageRoute(
+                                                                  //         builder: (context) => SummeryPageLease(
+                                                                  //           leaseId: Propertytype.leaseId!,
+                                                                  //           enddate: Propertytype.date,
+                                                                  //           isredirectpayment: true,
+                                                                  //         )));
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                  height: 40,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    border: Border.all(
+                                                                        color: Colors
+                                                                            .green,
+                                                                        width:
+                                                                            1.5),
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(8),
+                                                                  ), // color:Colors.grey[100],
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      FaIcon(
+                                                                        FontAwesomeIcons
+                                                                            .edit,
+                                                                        size:
+                                                                            15,
+                                                                        color: Colors
+                                                                            .green,
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            10,
+                                                                      ),
+                                                                      Text(
+                                                                        "Edit",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.green,
+                                                                            fontWeight: FontWeight.bold),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          if (widget.leaseID ==
+                                                              null)
+                                                            SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                          Expanded(
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap: () async {
+                                                                _showAlert(
+                                                                    context,
+                                                                    Propertytype
+                                                                        .taskId!,
+                                                                    Propertytype);
+                                                              },
+                                                              child: Container(
+                                                                height: 40,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  border: Border.all(
+                                                                      color: Colors
+                                                                          .red,
+                                                                      width:
+                                                                          1.5),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                ), // color:Colors.grey[100],
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .trashCan,
+                                                                      size: 15,
+                                                                      color: Colors
+                                                                          .red,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: 10,
+                                                                    ),
+                                                                    Text(
+                                                                      "Delete",
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .red,
+                                                                          fontWeight:
+                                                                              FontWeight.bold),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ],
                                                   ),
-                                                ],
+                                                ),
+                                              ),
+                                            //SizedBox(height: 13,),
+                                          ]),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          // Text('Rows per page:'),
+                                          SizedBox(width: 10),
+                                          Material(
+                                            elevation: 3,
+                                            child: Container(
+                                              height: 40,
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 12.0),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.grey),
+                                              ),
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton<int>(
+                                                  value: itemsPerPage,
+                                                  items: itemsPerPageOptions
+                                                      .map((int value) {
+                                                    return DropdownMenuItem<
+                                                        int>(
+                                                      value: value,
+                                                      child: Text(
+                                                          value.toString()),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged: data.length >
+                                                          itemsPerPageOptions
+                                                              .first // Condition to check if dropdown should be enabled
+                                                      ? (newValue) {
+                                                          setState(() {
+                                                            itemsPerPage =
+                                                                newValue!;
+                                                            currentPage =
+                                                                0; // Reset to first page when items per page change
+                                                          });
+                                                        }
+                                                      : null,
+                                                ),
                                               ),
                                             ),
-
                                           ),
-                                        //SizedBox(height: 13,),
-                                    ]
-                                    ),
-                                  );
-                                }).toList(),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: FaIcon(
+                                              FontAwesomeIcons
+                                                  .circleChevronLeft,
+                                              color: currentPage == 0
+                                                  ? Colors.grey
+                                                  : blueColor,
+                                            ),
+                                            onPressed: currentPage == 0
+                                                ? null
+                                                : () {
+                                                    setState(() {
+                                                      currentPage--;
+                                                    });
+                                                  },
+                                          ),
+                                          // IconButton(
+                                          //   icon: Icon(Icons.arrow_back),
+                                          //   onPressed: currentPage > 0
+                                          //       ? () {
+                                          //     setState(() {
+                                          //       currentPage--;
+                                          //     });
+                                          //   }
+                                          //       : null,
+                                          // ),
+                                          Text(
+                                              'Page ${currentPage + 1} of $totalPages'),
+                                          // IconButton(
+                                          //   icon: Icon(Icons.arrow_forward),
+                                          //   onPressed: currentPage < totalPages - 1
+                                          //       ? () {
+                                          //     setState(() {
+                                          //       currentPage++;
+                                          //     });
+                                          //   }
+                                          //       : null,
+                                          // ),
+                                          IconButton(
+                                            icon: FaIcon(
+                                              FontAwesomeIcons
+                                                  .circleChevronRight,
+                                              color:
+                                                  currentPage < totalPages - 1
+                                                      ? blueColor
+                                                      : Colors.grey,
+                                            ),
+                                            onPressed:
+                                                currentPage < totalPages - 1
+                                                    ? () {
+                                                        setState(() {
+                                                          currentPage++;
+                                                        });
+                                                      }
+                                                    : null,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
-                            ),
-                            SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Row(
-                                  children: [
-                                    // Text('Rows per page:'),
-                                    SizedBox(width: 10),
-                                    Material(
-                                      elevation: 3,
-                                      child: Container(
-                                        height: 40,
-                                        padding: EdgeInsets.symmetric(horizontal: 12.0),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: Colors.grey),
-                                        ),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<int>(
-                                            value: itemsPerPage,
-                                            items: itemsPerPageOptions.map((int value) {
-                                              return DropdownMenuItem<int>(
-                                                value: value,
-                                                child: Text(value.toString()),
-                                              );
-                                            }).toList(),
-                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
-                                                ? (newValue) {
-                                              setState(() {
-                                                itemsPerPage = newValue!;
-                                                currentPage = 0; // Reset to first page when items per page change
-                                              });
-                                            }
-                                                : null,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronLeft,
-                                        color: currentPage == 0 ? Colors.grey : blueColor,
-                                      ),
-                                      onPressed: currentPage == 0
-                                          ? null
-                                          : () {
-                                        setState(() {
-                                          currentPage--;
-                                        });
-                                      },
-                                    ),
-                                    // IconButton(
-                                    //   icon: Icon(Icons.arrow_back),
-                                    //   onPressed: currentPage > 0
-                                    //       ? () {
-                                    //     setState(() {
-                                    //       currentPage--;
-                                    //     });
-                                    //   }
-                                    //       : null,
-                                    // ),
-                                    Text('Page ${currentPage + 1} of $totalPages'),
-                                    // IconButton(
-                                    //   icon: Icon(Icons.arrow_forward),
-                                    //   onPressed: currentPage < totalPages - 1
-                                    //       ? () {
-                                    //     setState(() {
-                                    //       currentPage++;
-                                    //     });
-                                    //   }
-                                    //       : null,
-                                    // ),
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronRight,
-                                        color: currentPage < totalPages - 1 ? blueColor : Colors.grey,
-                                      ),
-                                      onPressed: currentPage < totalPages - 1
-                                          ? () {
-                                        setState(() {
-                                          currentPage++;
-                                        });
-                                      }
-                                          : null,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                ),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+
+                  // Export PDF Button
+                ],
               ),
-
-            // Export PDF Button
-
-          ],
-        ),
-      )
+            )
           : SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Lottie.asset(
-              'assets/no_internet.json',
-              width: 200,
-              height: 200,
-              fit: BoxFit.fill,
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Lottie.asset(
+                    'assets/no_internet.json',
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.fill,
+                  ),
+                  Text(
+                    'No Internet',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'Check your internet connection',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
             ),
-            Text(
-              'No Internet',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Check your internet connection',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

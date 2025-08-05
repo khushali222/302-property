@@ -42,13 +42,16 @@ class addLease3 extends StatefulWidget {
   final String? unitId;
   String? leaseId;
 
-  addLease3({Key? key, this.applicantId, this.rentalId, this.unitId, this.leaseId}) : super(key: key);
+  addLease3(
+      {Key? key, this.applicantId, this.rentalId, this.unitId, this.leaseId})
+      : super(key: key);
 
   @override
   State<addLease3> createState() => _addLease3State();
 }
 
-class _addLease3State extends State<addLease3> with SingleTickerProviderStateMixin {
+class _addLease3State extends State<addLease3>
+    with SingleTickerProviderStateMixin {
   late Future<List<Rentals>> futureRentalOwners;
   String? errormessagefordateissue;
   List<String> applicantIds = [];
@@ -92,7 +95,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
   Future<void> fetchDetails(String leaseId) async {
     try {
       // Fetch lease details from the repository
-      LeaseDetails fetchedDetails = await LeaseRepository().fetchLeaseDetails(leaseId);
+      LeaseDetails fetchedDetails =
+          await LeaseRepository().fetchLeaseDetails(leaseId);
       print('Lease type: ${fetchedDetails.lease.leaseType}');
 
       // Optional delay for demonstration purposes
@@ -108,12 +112,16 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
           renderId = fetchedDetails.rental.rentalId ?? "";
           //_selectedLeaseType = fetchedDetails.lease.leaseType ?? "";
           print("calling stage 1");
-          if (fetchedDetails.lease.startDate != null) startDateController.text = formatDate(fetchedDetails.lease.startDate);
+          if (fetchedDetails.lease.startDate != null)
+            startDateController.text =
+                formatDate(fetchedDetails.lease.startDate);
           print("calling stage 2");
-          if (fetchedDetails.lease.endDate != null) endDateController.text = formatDate(fetchedDetails.lease.endDate);
+          if (fetchedDetails.lease.endDate != null)
+            endDateController.text = formatDate(fetchedDetails.lease.endDate);
           print("calling stage 3");
           // Calculate rent cycle items
-          if (fetchedDetails.lease.startDate != null && fetchedDetails.lease.startDate != null)
+          if (fetchedDetails.lease.startDate != null &&
+              fetchedDetails.lease.startDate != null)
             // rentCycleItemsDynamic(DateTime.parse(fetchedDetails.lease.endDate)
             //     .difference(DateTime.parse(fetchedDetails.lease.startDate))
             //     .inDays);
@@ -130,17 +138,21 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
           print(applicantIds);
 
           // Handle uploaded files
-          if (fetchedDetails.lease.uploadedFile != null && fetchedDetails.lease.uploadedFile.isNotEmpty) {
+          if (fetchedDetails.lease.uploadedFile != null &&
+              fetchedDetails.lease.uploadedFile.isNotEmpty) {
             _uploadedFileNames.add(fetchedDetails.lease.uploadedFile.first);
           }
 
-          Provider.of<SelectedTenantsProvider>(context, listen: false).clearTenant();
+          Provider.of<SelectedTenantsProvider>(context, listen: false)
+              .clearTenant();
 
           // Update tenants
           if (fetchedDetails.tenant != null) {
             for (int i = 0; i < fetchedDetails.tenant!.length; i++) {
-              fetchedDetails.tenant![i].tenantId = fetchedDetails.tenant![i].applicantId;
-              Provider.of<SelectedTenantsProvider>(context, listen: false).addTenant(fetchedDetails.tenant![i]);
+              fetchedDetails.tenant![i].tenantId =
+                  fetchedDetails.tenant![i].applicantId;
+              Provider.of<SelectedTenantsProvider>(context, listen: false)
+                  .addTenant(fetchedDetails.tenant![i]);
               // Provider.of<SelectedTenantsProvider>(context, listen: false)
               //     .rentShareControllers[i].text = fetchedDetails.tenant![i].rentshare.toString();
             }
@@ -149,7 +161,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
           // Update cosigners
           if (fetchedDetails.cosigner != null) {
             for (int i = 0; i < fetchedDetails.cosigner!.length; i++) {
-              Provider.of<SelectedCosignersProvider>(context, listen: false).addCosigner(fetchedDetails.cosigner![i]);
+              Provider.of<SelectedCosignersProvider>(context, listen: false)
+                  .addCosigner(fetchedDetails.cosigner![i]);
             }
           }
         });
@@ -210,7 +223,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
     });
 
     try {
-      final response = await http.get(Uri.parse('${Api_url}/api/rentals/rentals/$id'), headers: {
+      final response = await http
+          .get(Uri.parse('${Api_url}/api/rentals/rentals/$id'), headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });
@@ -251,10 +265,12 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
     try {
-      final response = await http.get(Uri.parse('$Api_url/api/unit/rental_unit_dropdown/$rentalId'), headers: {
-        "authorization": "CRM $token",
-        "id": "CRM $id",
-      });
+      final response = await http.get(
+          Uri.parse('$Api_url/api/unit/rental_unit_dropdown/$rentalId'),
+          headers: {
+            "authorization": "CRM $token",
+            "id": "CRM $id",
+          });
       print('$Api_url/api/unit/rental_unit_dropdown/$rentalId');
 
       if (response.statusCode == 200) {
@@ -301,7 +317,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-    final response = await http.get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {
+    final response = await http
+        .get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {
       "authorization": "CRM $token",
       "id": "CRM $id",
     });
@@ -309,7 +326,10 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       setState(() {
-        accounts = (data['data'] as List).where((item) => item['charge_type'] == "One Time Charge").map((item) => item['account'] as String).toList();
+        accounts = (data['data'] as List)
+            .where((item) => item['charge_type'] == "One Time Charge")
+            .map((item) => item['account'] as String)
+            .toList();
         _isLoading = false;
         print(accounts.length);
       });
@@ -328,7 +348,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
 
     if (adminId != null) {
       try {
-        String fetchedCompanyName = await TenantsRepository().fetchCompanyName(adminId);
+        String fetchedCompanyName =
+            await TenantsRepository().fetchCompanyName(adminId);
         setState(() {
           companyName = fetchedCompanyName;
         });
@@ -379,7 +400,16 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
     'Fixed w/rollover',
     'At-will(month to month)',
   ];
-  List<String> rentCycleitems = ['Daily', 'Weekly', 'Every two weeks', 'Monthly', 'Every two months', 'Quarterly', 'Yearly', 'Semi Monthly'];
+  List<String> rentCycleitems = [
+    'Daily',
+    'Weekly',
+    'Every two weeks',
+    'Monthly',
+    'Every two months',
+    'Quarterly',
+    'Yearly',
+    'Semi Monthly'
+  ];
 
   rentCycleItemsDynamic(int days) {
     print("days = $days");
@@ -456,8 +486,9 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
       case 'Yearly':
         return DateTime(startDate.year + 1, startDate.month, startDate.day);
       case 'Semi Monthly':
-      // Get the number of days in the current month
-        int lastDayOfMonth = DateTime(startDate.year, startDate.month + 1, 0).day;
+        // Get the number of days in the current month
+        int lastDayOfMonth =
+            DateTime(startDate.year, startDate.month + 1, 0).day;
         // Determine the middle of the month
         int middleOfMonth = (lastDayOfMonth / 2).floor();
 
@@ -521,11 +552,17 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
   // }
 
   void _updateProRatedRent(String frequency) {
-    if (isProRent && isAmountEntered && rentNextDueDate.text.isNotEmpty && startDateController.text.isNotEmpty && endDateController.text.isNotEmpty) {
+    if (isProRent &&
+        isAmountEntered &&
+        rentNextDueDate.text.isNotEmpty &&
+        startDateController.text.isNotEmpty &&
+        endDateController.text.isNotEmpty) {
       try {
         // Parse the start date from the TextField (instead of using current date)
-        DateTime currentDate = DateFormat('yyyy-MM-dd').parse(startDateController.text);
-        DateTime nextDueDate = DateFormat('yyyy-MM-dd').parse(rentNextDueDate.text);
+        DateTime currentDate =
+            DateFormat('yyyy-MM-dd').parse(startDateController.text);
+        DateTime nextDueDate =
+            DateFormat('yyyy-MM-dd').parse(rentNextDueDate.text);
 
         double totalRent = double.tryParse(rentAmount.text) ?? 0.0;
 
@@ -539,7 +576,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
           setState(() {
             proRatedRentController.text = "0.00";
           });
-          print("Validation failed: Either rent is <= 0 or next due date is not after start date.");
+          print(
+              "Validation failed: Either rent is <= 0 or next due date is not after start date.");
           return;
         }
 
@@ -551,7 +589,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
         double proRatedRent = 0.0;
 
         // Get total days in the current month
-        int totalDaysInMonth = _getDaysInMonth(nextDueDate.year, currentDate.month);
+        int totalDaysInMonth =
+            _getDaysInMonth(nextDueDate.year, currentDate.month);
         // print("Total Days in Month: $totalDaysInMonth");
 
         // Define total days in other periods
@@ -568,38 +607,47 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
           case 'Every two weeks':
             proRatedRent = (totalRent / 14) * daysLeft;
             break;
-        // case 'Monthly':
-        //   proRatedRent = (totalRent / totalDaysInMonth) * daysLeft;
-        //   break;
+          // case 'Monthly':
+          //   proRatedRent = (totalRent / totalDaysInMonth) * daysLeft;
+          //   break;
           case 'Monthly':
-            int totalDaysInMonth = _getDaysInMonth(currentDate.year, currentDate.month);
+            int totalDaysInMonth =
+                _getDaysInMonth(currentDate.year, currentDate.month);
             print("Total Days in Month: $totalDaysInMonth");
             proRatedRent = (totalRent / totalDaysInMonth) * daysLeft;
             break;
           case 'Every two months':
-          // Calculate total days in the 2-month period
-            int totalDaysInTwoMonths = _getDaysInMonth(currentDate.year, currentDate.month) + _getDaysInMonth(nextDueDate.year, nextDueDate.month);
+            // Calculate total days in the 2-month period
+            int totalDaysInTwoMonths =
+                _getDaysInMonth(currentDate.year, currentDate.month) +
+                    _getDaysInMonth(nextDueDate.year, nextDueDate.month);
             print("Total Days in Two Months: $totalDaysInTwoMonths");
 
             // Adjust the calculation to ensure rent remains at totalRent
             proRatedRent = totalRent;
             break;
           case 'Quarterly':
-          // Calculate total days in the quarter (3 months)
+            // Calculate total days in the quarter (3 months)
             int totalDaysInQuarter =
-                _getDaysInMonth(nextDueDate.year, nextDueDate.month) + _getDaysInMonth(nextDueDate.year, nextDueDate.month - 1) + _getDaysInMonth(nextDueDate.year, nextDueDate.month - 2);
+                _getDaysInMonth(nextDueDate.year, nextDueDate.month) +
+                    _getDaysInMonth(nextDueDate.year, nextDueDate.month - 1) +
+                    _getDaysInMonth(nextDueDate.year, nextDueDate.month - 2);
 
             // Calculate pro-rated rent
             if (totalDaysInQuarter > 0) {
               proRatedRent = (totalRent / totalDaysInQuarter) * daysLeft;
-              proRatedRent = proRatedRent.roundToDouble(); // Round to nearest whole number
+              proRatedRent =
+                  proRatedRent.roundToDouble(); // Round to nearest whole number
             } else {
               proRatedRent = 0.0; // Fallback in case of an error
             }
             break;
           case 'Semi Monthly':
-          // Calculate the semi-monthly due date
-            int midMonth = _getDaysInMonth(currentDate.year, currentDate.month) > 30 ? 15 : 14; // Handle shorter months like February
+            // Calculate the semi-monthly due date
+            int midMonth =
+                _getDaysInMonth(currentDate.year, currentDate.month) > 30
+                    ? 15
+                    : 14; // Handle shorter months like February
 
             // If today is before or on the mid-month date, calculate for the first half
             if (currentDate.day <= midMonth) {
@@ -607,7 +655,9 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
               proRatedRent = (totalRent / midMonth) * daysLeft;
             } else {
               // Second half of the month (after mid-month)
-              int remainingDays = _getDaysInMonth(currentDate.year, currentDate.month) - midMonth;
+              int remainingDays =
+                  _getDaysInMonth(currentDate.year, currentDate.month) -
+                      midMonth;
               proRatedRent = (totalRent / remainingDays) * daysLeft;
             }
             break;
@@ -698,16 +748,22 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
     } else {
       // Show validation error
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please provide either a drawn or typed signature.')),
+        const SnackBar(
+            content: Text('Please provide either a drawn or typed signature.')),
       );
     }
   }
 
-  Map<String, String> _popupFormOneTimeData = {'property': '', 'amount': '', 'memo': ''};
+  Map<String, String> _popupFormOneTimeData = {
+    'property': '',
+    'amount': '',
+    'memo': ''
+  };
 
   List<Map<String, String>> formDataOneTimeList = [];
 
-  void _showPopupForm(BuildContext context, String rent, {Map<String, String>? initialData, int? index}) async {
+  void _showPopupForm(BuildContext context, String rent,
+      {Map<String, String>? initialData, int? index}) async {
     final result = await showDialog<Map<String, String>>(
       context: context,
       builder: (context) {
@@ -724,13 +780,15 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                   if (index != null) {
                     // Update existing item
                     formDataOneTimeList[index] = data;
-                    Fluttertoast.showToast(msg: 'Recurring Charge Updated Sucessfully');
+                    Fluttertoast.showToast(
+                        msg: 'Recurring Charge Updated Sucessfully');
                     Navigator.pop(context);
                   } else {
                     // Add new item
                     formDataOneTimeList.add(data);
 
-                    Fluttertoast.showToast(msg: 'Recurring Charge Added Sucessfully');
+                    Fluttertoast.showToast(
+                        msg: 'Recurring Charge Added Sucessfully');
                     Navigator.pop(context);
                   }
                 });
@@ -758,9 +816,9 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
 
   List<Map<String, String>> formDataRecurringList = [];
 
-  void _showRecurringPopupForm(BuildContext context, String Rent, {Map<String, String>? initialData, int? index}) async {
+  void _showRecurringPopupForm(BuildContext context, String Rent,
+      {Map<String, String>? initialData, int? index}) async {
     final result = await showDialog<Map<String, String>>(
-
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -776,11 +834,13 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                   if (index != null) {
                     // Update existing item
                     formDataRecurringList[index] = data;
-                    Fluttertoast.showToast(msg: 'Recurring Charge Updated Sucessfully');
+                    Fluttertoast.showToast(
+                        msg: 'Recurring Charge Updated Sucessfully');
                   } else {
                     // Add new item
                     formDataRecurringList.add(data);
-                    Fluttertoast.showToast(msg: 'Recurring Charge Added Sucessfully');
+                    Fluttertoast.showToast(
+                        msg: 'Recurring Charge Added Sucessfully');
                   }
                   Navigator.pop(context);
                 });
@@ -818,7 +878,10 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
     );
 
     if (result != null) {
-      List<File> files = result.paths.where((path) => path != null).map((path) => File(path!)).toList();
+      List<File> files = result.paths
+          .where((path) => path != null)
+          .map((path) => File(path!))
+          .toList();
 
       if (files.length > 10) {
         Fluttertoast.showToast(msg: 'You can only select up to 10 files.');
@@ -877,7 +940,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     final cosigners = Provider.of<SelectedCosignersProvider>(context).cosigners;
-    Map<int, Map<String, String>> cosignersMap = cosigners.asMap().map((index, cosigner) {
+    Map<int, Map<String, String>> cosignersMap =
+        cosigners.asMap().map((index, cosigner) {
       return MapEntry(index, {
         'c_id': cosigner.c_id ?? '',
         'firstName': cosigner.firstName,
@@ -893,8 +957,10 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
       });
     });
 
-    final tenants = Provider.of<SelectedTenantsProvider>(context).selectedTenants;
-    Map<int, Map<String, String>> tenantsMap = tenants.asMap().map((index, tenant) {
+    final tenants =
+        Provider.of<SelectedTenantsProvider>(context).selectedTenants;
+    Map<int, Map<String, String>> tenantsMap =
+        tenants.asMap().map((index, tenant) {
       return MapEntry(index, {
         'tenantId': tenant.tenantId ?? "",
         'tenant_residentStatus': tenant.tenant_residentStatus.toString(),
@@ -920,11 +986,16 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
       });
     });
 
-    var selectedTenantsProvider = Provider.of<SelectedTenantsProvider>(context, listen: false);
+    var selectedTenantsProvider =
+        Provider.of<SelectedTenantsProvider>(context, listen: false);
     // var selectedCosignerProvider =
     // Provider.of<SelectedCosignersProvider>(context, listen: false);
-    bool hasSelectedTenants = Provider.of<SelectedTenantsProvider>(context).selectedTenants.isNotEmpty;
-    bool hasSelectedApplicants = Provider.of<SelectedApplicantProvider>(context).selectedApplicant.isNotEmpty;
+    bool hasSelectedTenants = Provider.of<SelectedTenantsProvider>(context)
+        .selectedTenants
+        .isNotEmpty;
+    bool hasSelectedApplicants = Provider.of<SelectedApplicantProvider>(context)
+        .selectedApplicant
+        .isNotEmpty;
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -976,7 +1047,9 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                 height: 5,
               ),
               Padding(
-                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width < 500 ? 15 : 35, right: MediaQuery.of(context).size.width < 500 ? 15 : 35),
+                padding: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.width < 500 ? 15 : 35,
+                    right: MediaQuery.of(context).size.width < 500 ? 15 : 35),
                 child: Container(
                   child: Column(
                     // crossAxisAlignment: CrossAxisAlignment.start,
@@ -996,7 +1069,11 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('Property *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                              const Text('Property *',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey)),
                               const SizedBox(
                                 height: 4,
                               ),
@@ -1013,10 +1090,12 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                     },
                                     builder: (FormFieldState<String> state) {
                                       return Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           DropdownButtonHideUnderline(
-                                            child: DropdownButtonFormField2<String>(
+                                            child: DropdownButtonFormField2<
+                                                String>(
                                               decoration: InputDecoration(
                                                 border: InputBorder.none,
                                               ),
@@ -1028,10 +1107,13 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                       'Select Property',
                                                       style: TextStyle(
                                                         fontSize: 14,
-                                                        fontWeight: FontWeight.w400,
-                                                        color: Color(0xFFb0b6c3),
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color:
+                                                            Color(0xFFb0b6c3),
                                                       ),
-                                                      overflow: TextOverflow.ellipsis,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                     ),
                                                   ),
                                                 ],
@@ -1043,10 +1125,12 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                     property['rental_adress']!,
                                                     style: const TextStyle(
                                                       fontSize: 14,
-                                                      fontWeight: FontWeight.w400,
+                                                      fontWeight:
+                                                          FontWeight.w400,
                                                       color: Colors.black87,
                                                     ),
-                                                    overflow: TextOverflow.ellipsis,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
                                                   ),
                                                 );
                                               }).toList(),
@@ -1054,11 +1138,12 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                               onChanged: (value) {
                                                 setState(() {
                                                   _selectedProperty = value;
-                                                  _selectedUnit = null; // Optionally reset _selectedUnit
+                                                  _selectedUnit =
+                                                      null; // Optionally reset _selectedUnit
                                                   _showUnitDropdown = false;
-                                                  state.didChange(value); // Notify the FormField that the value has changed
+                                                  state.didChange(
+                                                      value); // Notify the FormField that the value has changed
                                                   renderId = value.toString();
-
 
                                                   print("units $units");
                                                   _loadUnits(value!);
@@ -1068,41 +1153,56 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                               buttonStyleData: ButtonStyleData(
                                                 height: 45,
                                                 width: 160,
-                                                padding: const EdgeInsets.only(left: 14, right: 14),
+                                                padding: const EdgeInsets.only(
+                                                    left: 14, right: 14),
                                                 decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(6),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
                                                   color: Colors.white,
                                                 ),
                                                 elevation: 2,
                                               ),
-                                              iconStyleData: const IconStyleData(
+                                              iconStyleData:
+                                                  const IconStyleData(
                                                 icon: Icon(
                                                   Icons.arrow_drop_down,
                                                 ),
                                                 iconSize: 24,
-                                                iconEnabledColor: Color(0xFFb0b6c3),
+                                                iconEnabledColor:
+                                                    Color(0xFFb0b6c3),
                                                 iconDisabledColor: Colors.grey,
                                               ),
-                                              dropdownStyleData: DropdownStyleData(
+                                              dropdownStyleData:
+                                                  DropdownStyleData(
                                                 decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(6),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
                                                   color: Colors.white,
                                                 ),
-                                                scrollbarTheme: ScrollbarThemeData(
-                                                  radius: const Radius.circular(6),
-                                                  thickness: MaterialStateProperty.all(6),
-                                                  thumbVisibility: MaterialStateProperty.all(true),
+                                                scrollbarTheme:
+                                                    ScrollbarThemeData(
+                                                  radius:
+                                                      const Radius.circular(6),
+                                                  thickness:
+                                                      MaterialStateProperty.all(
+                                                          6),
+                                                  thumbVisibility:
+                                                      MaterialStateProperty.all(
+                                                          true),
                                                 ),
                                               ),
-                                              menuItemStyleData: const MenuItemStyleData(
+                                              menuItemStyleData:
+                                                  const MenuItemStyleData(
                                                 height: 40,
-                                                padding: EdgeInsets.only(left: 14, right: 14),
+                                                padding: EdgeInsets.only(
+                                                    left: 14, right: 14),
                                               ),
                                             ),
                                           ),
                                           if (state.hasError)
                                             Padding(
-                                              padding: const EdgeInsets.only(left: 14, top: 8),
+                                              padding: const EdgeInsets.only(
+                                                  left: 14, top: 8),
                                               child: Text(
                                                 state.errorText!,
                                                 style: const TextStyle(
@@ -1138,10 +1238,12 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                       },
                                       builder: (FormFieldState<String> state) {
                                         return Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             DropdownButtonHideUnderline(
-                                              child: DropdownButtonFormField2<String>(
+                                              child: DropdownButtonFormField2<
+                                                  String>(
                                                 decoration: InputDecoration(
                                                   border: InputBorder.none,
                                                 ),
@@ -1153,29 +1255,39 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                         'Select Unit',
                                                         style: TextStyle(
                                                           fontSize: 14,
-                                                          fontWeight: FontWeight.w400,
-                                                          color: Color(0xFFb0b6c3),
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          color:
+                                                              Color(0xFFb0b6c3),
                                                         ),
-                                                        overflow: TextOverflow.ellipsis,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                       ),
                                                     ),
                                                   ],
                                                 ),
                                                 items: units.map((unit) {
-                                                  return DropdownMenuItem<String>(
+                                                  return DropdownMenuItem<
+                                                      String>(
                                                     value: unit['unit_id']!,
                                                     child: Text(
                                                       unit['rental_unit']!,
                                                       style: const TextStyle(
                                                         fontSize: 14,
-                                                        fontWeight: FontWeight.w400,
+                                                        fontWeight:
+                                                            FontWeight.w400,
                                                         color: Colors.black87,
                                                       ),
-                                                      overflow: TextOverflow.ellipsis,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                     ),
                                                   );
                                                 }).toList(),
-                                                value: _selectedUnit != null && _selectedUnit!.isNotEmpty ? _selectedUnit : null,
+                                                value: _selectedUnit != null &&
+                                                        _selectedUnit!
+                                                            .isNotEmpty
+                                                    ? _selectedUnit
+                                                    : null,
                                                 onChanged: (value) {
                                                   setState(() {
                                                     _selectedUnit = value;
@@ -1183,44 +1295,65 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                   });
                                                   state.reset();
                                                 },
-                                                buttonStyleData: ButtonStyleData(
+                                                buttonStyleData:
+                                                    ButtonStyleData(
                                                   height: 45,
                                                   width: 160,
-                                                  padding: const EdgeInsets.only(left: 14, right: 14),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 14, right: 14),
                                                   decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(6),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            6),
                                                     color: Colors.white,
                                                   ),
                                                   elevation: 2,
                                                 ),
-                                                iconStyleData: const IconStyleData(
+                                                iconStyleData:
+                                                    const IconStyleData(
                                                   icon: Icon(
                                                     Icons.arrow_drop_down,
                                                   ),
                                                   iconSize: 24,
-                                                  iconEnabledColor: Color(0xFFb0b6c3),
-                                                  iconDisabledColor: Colors.grey,
+                                                  iconEnabledColor:
+                                                      Color(0xFFb0b6c3),
+                                                  iconDisabledColor:
+                                                      Colors.grey,
                                                 ),
-                                                dropdownStyleData: DropdownStyleData(
+                                                dropdownStyleData:
+                                                    DropdownStyleData(
                                                   decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(6),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            6),
                                                     color: Colors.white,
                                                   ),
-                                                  scrollbarTheme: ScrollbarThemeData(
-                                                    radius: const Radius.circular(6),
-                                                    thickness: MaterialStateProperty.all(6),
-                                                    thumbVisibility: MaterialStateProperty.all(true),
+                                                  scrollbarTheme:
+                                                      ScrollbarThemeData(
+                                                    radius:
+                                                        const Radius.circular(
+                                                            6),
+                                                    thickness:
+                                                        MaterialStateProperty
+                                                            .all(6),
+                                                    thumbVisibility:
+                                                        MaterialStateProperty
+                                                            .all(true),
                                                   ),
                                                 ),
-                                                menuItemStyleData: const MenuItemStyleData(
+                                                menuItemStyleData:
+                                                    const MenuItemStyleData(
                                                   height: 40,
-                                                  padding: EdgeInsets.only(left: 14, right: 14),
+                                                  padding: EdgeInsets.only(
+                                                      left: 14, right: 14),
                                                 ),
                                               ),
                                             ),
                                             if (state.hasError)
                                               Padding(
-                                                padding: const EdgeInsets.only(left: 14, top: 8),
+                                                padding: const EdgeInsets.only(
+                                                    left: 14, top: 8),
                                                 child: Text(
                                                   state.errorText!,
                                                   style: const TextStyle(
@@ -1238,7 +1371,11 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                               const SizedBox(
                                 height: 8,
                               ),
-                              const Text('Lease Type *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                              const Text('Lease Type *',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey)),
                               const SizedBox(
                                 height: 8,
                               ),
@@ -1261,7 +1398,12 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                               const SizedBox(
                                 height: 8,
                               ),
-                              if (MediaQuery.of(context).size.width < 500) const Text('Start Date *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                              if (MediaQuery.of(context).size.width < 500)
+                                const Text('Start Date *',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey)),
                               if (MediaQuery.of(context).size.width < 500)
                                 const SizedBox(
                                   height: 8,
@@ -1275,18 +1417,24 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                       firstDate: DateTime(2000),
                                       lastDate: DateTime(2101),
                                       locale: const Locale('en', 'US'),
-                                      builder: (BuildContext context, Widget? child) {
+                                      builder: (BuildContext context,
+                                          Widget? child) {
                                         return Theme(
                                           data: ThemeData.light().copyWith(
                                             colorScheme: ColorScheme.light(
-                                              primary: blueColor, // header background color
-                                              onPrimary: Colors.white, // header text color
-                                              onSurface: blueColor, // body text color
+                                              primary:
+                                                  blueColor, // header background color
+                                              onPrimary: Colors
+                                                  .white, // header text color
+                                              onSurface:
+                                                  blueColor, // body text color
                                             ),
-                                            textButtonTheme: TextButtonThemeData(
+                                            textButtonTheme:
+                                                TextButtonThemeData(
                                               style: TextButton.styleFrom(
                                                 foregroundColor: Colors.white,
-                                                backgroundColor: blueColor, // button text color
+                                                backgroundColor:
+                                                    blueColor, // button text color
                                               ),
                                             ),
                                           ),
@@ -1319,7 +1467,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                             .difference(_startDate!)
                                             .inDays);
                                         _selectedRent = null;
-                                        rentAmount.text = ''; // Reset amount entered status
+                                        rentAmount.text =
+                                            ''; // Reset amount entered status
                                         rentNextDueDate.text = '';
                                         startDateController.text.isNotEmpty;
                                         isProRent = false;
@@ -1343,13 +1492,23 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                   hintText: 'YYYY-MM-DD',
                                   controller: startDateController,
                                 ),
-                              if (MediaQuery.of(context).size.width < 500 && errormessagefordateissue != null)
-                                Text(errormessagefordateissue!, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.red)),
+                              if (MediaQuery.of(context).size.width < 500 &&
+                                  errormessagefordateissue != null)
+                                Text(errormessagefordateissue!,
+                                    style: const TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red)),
                               if (MediaQuery.of(context).size.width < 500)
                                 const SizedBox(
                                   height: 8,
                                 ),
-                              if (MediaQuery.of(context).size.width < 500) const Text('End Date *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                              if (MediaQuery.of(context).size.width < 500)
+                                const Text('End Date *',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey)),
                               if (MediaQuery.of(context).size.width < 500)
                                 const SizedBox(
                                   height: 8,
@@ -1360,21 +1519,29 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                     DateTime? pickedDate = await showDatePicker(
                                       context: context,
                                       initialDate: DateTime.now(),
-                                      firstDate: _startDate != null ? _startDate! : DateTime(1900),
+                                      firstDate: _startDate != null
+                                          ? _startDate!
+                                          : DateTime(1900),
                                       lastDate: DateTime(2101),
                                       locale: const Locale('en', 'US'),
-                                      builder: (BuildContext context, Widget? child) {
+                                      builder: (BuildContext context,
+                                          Widget? child) {
                                         return Theme(
                                           data: ThemeData.light().copyWith(
                                             colorScheme: ColorScheme.light(
-                                              primary: blueColor, // header background color
-                                              onPrimary: Colors.white, // header text color
-                                              onSurface: blueColor, // body text color
+                                              primary:
+                                                  blueColor, // header background color
+                                              onPrimary: Colors
+                                                  .white, // header text color
+                                              onSurface:
+                                                  blueColor, // body text color
                                             ),
-                                            textButtonTheme: TextButtonThemeData(
+                                            textButtonTheme:
+                                                TextButtonThemeData(
                                               style: TextButton.styleFrom(
                                                 foregroundColor: Colors.white,
-                                                backgroundColor: blueColor, // button text color
+                                                backgroundColor:
+                                                    blueColor, // button text color
                                               ),
                                             ),
                                           ),
@@ -1417,37 +1584,64 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                 ),
                               if (MediaQuery.of(context).size.width > 500)
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 5.0),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       // First Column
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Text('Start Date *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                                            Text('Start Date *',
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.grey)),
                                             SizedBox(height: 5),
                                             CustomTextField(
                                               onTap: () async {
-                                                DateTime? pickedDate = await showDatePicker(
+                                                DateTime? pickedDate =
+                                                    await showDatePicker(
                                                   context: context,
                                                   initialDate: DateTime.now(),
                                                   firstDate: DateTime(2000),
                                                   lastDate: DateTime(2101),
-                                                  locale: const Locale('en', 'US'),
-                                                  builder: (BuildContext context, Widget? child) {
+                                                  locale:
+                                                      const Locale('en', 'US'),
+                                                  builder:
+                                                      (BuildContext context,
+                                                          Widget? child) {
                                                     return Theme(
-                                                      data: ThemeData.light().copyWith(
-                                                        colorScheme: const ColorScheme.light(
-                                                          primary: Color.fromRGBO(21, 43, 83, 1), // header background color
-                                                          onPrimary: Colors.white, // header text color
-                                                          onSurface: Color.fromRGBO(21, 43, 83, 1), // body text color
+                                                      data: ThemeData.light()
+                                                          .copyWith(
+                                                        colorScheme:
+                                                            const ColorScheme
+                                                                .light(
+                                                          primary: Color.fromRGBO(
+                                                              21,
+                                                              43,
+                                                              83,
+                                                              1), // header background color
+                                                          onPrimary: Colors
+                                                              .white, // header text color
+                                                          onSurface: Color.fromRGBO(
+                                                              21,
+                                                              43,
+                                                              83,
+                                                              1), // body text color
                                                         ),
-                                                        textButtonTheme: TextButtonThemeData(
-                                                          style: TextButton.styleFrom(
-                                                            foregroundColor: Colors.white,
-                                                            backgroundColor: blueColor, // button text color
+                                                        textButtonTheme:
+                                                            TextButtonThemeData(
+                                                          style: TextButton
+                                                              .styleFrom(
+                                                            foregroundColor:
+                                                                Colors.white,
+                                                            backgroundColor:
+                                                                blueColor, // button text color
                                                           ),
                                                         ),
                                                       ),
@@ -1459,32 +1653,44 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                 if (pickedDate != null) {
                                                   // String formattedStartDate =
                                                   //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                                  String formattedStartDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                                                  DateTime endDate = DateTime(pickedDate.year, pickedDate.month + 2, pickedDate.day);
+                                                  String formattedStartDate =
+                                                      "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                                  DateTime endDate = DateTime(
+                                                      pickedDate.year,
+                                                      pickedDate.month + 2,
+                                                      pickedDate.day);
                                                   print(endDate);
-                                                  String formattedEndDate = "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+                                                  String formattedEndDate =
+                                                      "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
                                                   print(formattedEndDate);
 
                                                   // String formattedEndDate =
                                                   //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
                                                   setState(() {
-                                                    startDateController.text = formattedStartDate;
+                                                    startDateController.text =
+                                                        formattedStartDate;
                                                     _startDate = pickedDate;
-                                                    endDateController.text = formattedEndDate;
-                                                    startDateController.text.isNotEmpty;
+                                                    endDateController.text =
+                                                        formattedEndDate;
+                                                    startDateController
+                                                        .text.isNotEmpty;
                                                     isProRent = false;
 
-                                                    _updateProRatedRent(_selectedRent ?? 'Monthly');
+                                                    _updateProRatedRent(
+                                                        _selectedRent ??
+                                                            'Monthly');
                                                   });
                                                 }
                                               },
                                               readOnnly: true,
                                               suffixIcon: IconButton(
                                                 onPressed: () {},
-                                                icon: const Icon(Icons.date_range_rounded),
+                                                icon: const Icon(
+                                                    Icons.date_range_rounded),
                                               ),
                                               validator: (value) {
-                                                if (value == null || value.isEmpty) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
                                                   return 'Please select start date';
                                                 }
                                                 return null;
@@ -1500,30 +1706,55 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                       // Second Column
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Text('End Date *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                                            Text('End Date *',
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.grey)),
                                             SizedBox(height: 5),
                                             CustomTextField(
                                               onTap: () async {
-                                                DateTime? pickedDate = await showDatePicker(
+                                                DateTime? pickedDate =
+                                                    await showDatePicker(
                                                   context: context,
                                                   initialDate: DateTime.now(),
                                                   firstDate: DateTime(2000),
                                                   lastDate: DateTime(2101),
-                                                  locale: const Locale('en', 'US'),
-                                                  builder: (BuildContext context, Widget? child) {
+                                                  locale:
+                                                      const Locale('en', 'US'),
+                                                  builder:
+                                                      (BuildContext context,
+                                                          Widget? child) {
                                                     return Theme(
-                                                      data: ThemeData.light().copyWith(
-                                                        colorScheme: const ColorScheme.light(
-                                                          primary: Color.fromRGBO(21, 43, 83, 1), // header background color
-                                                          onPrimary: Colors.white, // header text color
-                                                          onSurface: Color.fromRGBO(21, 43, 83, 1), // body text color
+                                                      data: ThemeData.light()
+                                                          .copyWith(
+                                                        colorScheme:
+                                                            const ColorScheme
+                                                                .light(
+                                                          primary: Color.fromRGBO(
+                                                              21,
+                                                              43,
+                                                              83,
+                                                              1), // header background color
+                                                          onPrimary: Colors
+                                                              .white, // header text color
+                                                          onSurface: Color.fromRGBO(
+                                                              21,
+                                                              43,
+                                                              83,
+                                                              1), // body text color
                                                         ),
-                                                        textButtonTheme: TextButtonThemeData(
-                                                          style: TextButton.styleFrom(
-                                                            foregroundColor: Colors.white,
-                                                            backgroundColor: blueColor, // button text color
+                                                        textButtonTheme:
+                                                            TextButtonThemeData(
+                                                          style: TextButton
+                                                              .styleFrom(
+                                                            foregroundColor:
+                                                                Colors.white,
+                                                            backgroundColor:
+                                                                blueColor, // button text color
                                                           ),
                                                         ),
                                                       ),
@@ -1535,19 +1766,23 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                 if (pickedDate != null) {
                                                   // String formattedDate =
                                                   //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                                  String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                                  String formattedDate =
+                                                      "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                                                   setState(() {
-                                                    endDateController.text = formattedDate;
+                                                    endDateController.text =
+                                                        formattedDate;
                                                   });
                                                 }
                                               },
                                               readOnnly: true,
                                               suffixIcon: IconButton(
                                                 onPressed: () {},
-                                                icon: const Icon(Icons.date_range_rounded),
+                                                icon: const Icon(
+                                                    Icons.date_range_rounded),
                                               ),
                                               validator: (value) {
-                                                if (value == null || value.isEmpty) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
                                                   return 'Please select end date';
                                                 }
                                                 return null;
@@ -1586,7 +1821,11 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                               const SizedBox(
                                 height: 10,
                               ),
-                              Text('Add lease', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: blueColor)),
+                              Text('Add lease',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: blueColor)),
                               const SizedBox(
                                 height: 10,
                               ),
@@ -1599,13 +1838,19 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                         builder: (context) {
                                           return StatefulBuilder(
                                             builder: (context, setState) {
-                                              var cosignerProvider = Provider.of<SelectedCosignersProvider>(context);
+                                              var cosignerProvider = Provider
+                                                  .of<SelectedCosignersProvider>(
+                                                      context);
                                               Cosigner? existingCosigner;
                                               int? existingIndex;
 
-                                              if (cosignerProvider.cosigners.isNotEmpty) {
-                                                existingCosigner = cosignerProvider.cosigners.first; // Get the first cosigner
-                                                existingIndex = 0; // Assuming you want to edit the first cosigner
+                                              if (cosignerProvider
+                                                  .cosigners.isNotEmpty) {
+                                                existingCosigner = cosignerProvider
+                                                    .cosigners
+                                                    .first; // Get the first cosigner
+                                                existingIndex =
+                                                    0; // Assuming you want to edit the first cosigner
                                               }
                                               return AlertDialog(
                                                 backgroundColor: Colors.white,
@@ -1621,131 +1866,162 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                 content: Form(
                                                   key: _addRecurringFormKey,
                                                   child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
                                                     child: Container(
                                                       color: Colors.white,
                                                       width: double.infinity,
-                                                      child: SingleChildScrollView(
+                                                      child:
+                                                          SingleChildScrollView(
                                                         child: Padding(
-                                                          padding: const EdgeInsets.all(8.0),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
                                                           child: Column(
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
                                                             children: [
                                                               Row(
                                                                 children: [
                                                                   Expanded(
-                                                                    child: GestureDetector(
-                                                                      onTap: () {
-                                                                        setState(() {
-                                                                          isTenantSelected = true;
+                                                                    child:
+                                                                        GestureDetector(
+                                                                      onTap:
+                                                                          () {
+                                                                        setState(
+                                                                            () {
+                                                                          isTenantSelected =
+                                                                              true;
                                                                         });
                                                                       },
-                                                                      child: Container(
-                                                                        decoration: BoxDecoration(
+                                                                      child:
+                                                                          Container(
+                                                                        decoration:
+                                                                            BoxDecoration(
                                                                           border: isTenantSelected
                                                                               ? null
                                                                               : Border.all(
-                                                                            color: blueColor,
-                                                                            width: 1,
-                                                                          ),
+                                                                                  color: blueColor,
+                                                                                  width: 1,
+                                                                                ),
                                                                           gradient: isTenantSelected
                                                                               ? LinearGradient(
-                                                                            colors: [
-                                                                              blueColor,
-                                                                              blueColor,
-                                                                            ],
-                                                                          )
+                                                                                  colors: [
+                                                                                    blueColor,
+                                                                                    blueColor,
+                                                                                  ],
+                                                                                )
                                                                               : null,
-                                                                          borderRadius: const BorderRadius.only(
-                                                                            topLeft: Radius.circular(4),
-                                                                            bottomLeft: Radius.circular(4),
+                                                                          borderRadius:
+                                                                              const BorderRadius.only(
+                                                                            topLeft:
+                                                                                Radius.circular(4),
+                                                                            bottomLeft:
+                                                                                Radius.circular(4),
                                                                           ),
                                                                         ),
-                                                                        alignment: Alignment.center,
-                                                                        padding: isTenantSelected ? const EdgeInsets.symmetric(vertical: 13) : const EdgeInsets.symmetric(vertical: 12),
+                                                                        alignment:
+                                                                            Alignment.center,
+                                                                        padding: isTenantSelected
+                                                                            ? const EdgeInsets.symmetric(vertical: 13)
+                                                                            : const EdgeInsets.symmetric(vertical: 12),
                                                                         child: isTenantSelected
                                                                             ? Text(
-                                                                          "Tenant",
-                                                                          style: TextStyle(
-                                                                            color: !isTenantSelected ? Colors.transparent : Colors.white,
-                                                                            fontWeight: FontWeight.bold,
-                                                                          ),
-                                                                        )
+                                                                                "Tenant",
+                                                                                style: TextStyle(
+                                                                                  color: !isTenantSelected ? Colors.transparent : Colors.white,
+                                                                                  fontWeight: FontWeight.bold,
+                                                                                ),
+                                                                              )
                                                                             : ShaderMask(
-                                                                          shaderCallback: (bounds) {
-                                                                            return LinearGradient(
-                                                                              colors: [
-                                                                                blueColor,
-                                                                                blueColor,
-                                                                              ],
-                                                                            ).createShader(bounds);
-                                                                          },
-                                                                          child: Text(
-                                                                            "Tenant",
-                                                                            style: TextStyle(
-                                                                              color: isTenantSelected ? Colors.transparent : Colors.white,
-                                                                              fontWeight: FontWeight.bold,
-                                                                            ),
-                                                                          ),
-                                                                        ),
+                                                                                shaderCallback: (bounds) {
+                                                                                  return LinearGradient(
+                                                                                    colors: [
+                                                                                      blueColor,
+                                                                                      blueColor,
+                                                                                    ],
+                                                                                  ).createShader(bounds);
+                                                                                },
+                                                                                child: Text(
+                                                                                  "Tenant",
+                                                                                  style: TextStyle(
+                                                                                    color: isTenantSelected ? Colors.transparent : Colors.white,
+                                                                                    fontWeight: FontWeight.bold,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
                                                                       ),
                                                                     ),
                                                                   ),
                                                                   Expanded(
-                                                                    child: GestureDetector(
-                                                                      onTap: () {
-                                                                        setState(() {
-                                                                          isTenantSelected = false;
+                                                                    child:
+                                                                        GestureDetector(
+                                                                      onTap:
+                                                                          () {
+                                                                        setState(
+                                                                            () {
+                                                                          isTenantSelected =
+                                                                              false;
                                                                         });
                                                                       },
-                                                                      child: Container(
-                                                                        decoration: BoxDecoration(
+                                                                      child:
+                                                                          Container(
+                                                                        decoration:
+                                                                            BoxDecoration(
                                                                           border: isTenantSelected == false
                                                                               ? null
                                                                               : Border.all(
-                                                                            color: blueColor,
-                                                                            width: 1,
-                                                                          ),
+                                                                                  color: blueColor,
+                                                                                  width: 1,
+                                                                                ),
                                                                           gradient: isTenantSelected == false
                                                                               ? LinearGradient(
-                                                                            colors: [
-                                                                              blueColor,
-                                                                              blueColor,
-                                                                            ],
-                                                                          )
+                                                                                  colors: [
+                                                                                    blueColor,
+                                                                                    blueColor,
+                                                                                  ],
+                                                                                )
                                                                               : null,
-                                                                          borderRadius: const BorderRadius.only(
-                                                                            topRight: Radius.circular(4),
-                                                                            bottomRight: Radius.circular(4),
+                                                                          borderRadius:
+                                                                              const BorderRadius.only(
+                                                                            topRight:
+                                                                                Radius.circular(4),
+                                                                            bottomRight:
+                                                                                Radius.circular(4),
                                                                           ),
                                                                         ),
-                                                                        alignment: Alignment.center,
-                                                                        padding: isTenantSelected ? const EdgeInsets.symmetric(vertical: 12) : const EdgeInsets.symmetric(vertical: 13),
+                                                                        alignment:
+                                                                            Alignment.center,
+                                                                        padding: isTenantSelected
+                                                                            ? const EdgeInsets.symmetric(vertical: 12)
+                                                                            : const EdgeInsets.symmetric(vertical: 13),
                                                                         child: !isTenantSelected
                                                                             ? Text(
-                                                                          "Cosigner",
-                                                                          style: TextStyle(
-                                                                            color: isTenantSelected ? Colors.transparent : Colors.white,
-                                                                            fontWeight: FontWeight.bold,
-                                                                          ),
-                                                                        )
+                                                                                "Cosigner",
+                                                                                style: TextStyle(
+                                                                                  color: isTenantSelected ? Colors.transparent : Colors.white,
+                                                                                  fontWeight: FontWeight.bold,
+                                                                                ),
+                                                                              )
                                                                             : ShaderMask(
-                                                                          shaderCallback: (bounds) {
-                                                                            return LinearGradient(
-                                                                              colors: [
-                                                                                blueColor,
-                                                                                blueColor,
-                                                                              ],
-                                                                            ).createShader(bounds);
-                                                                          },
-                                                                          child: Text(
-                                                                            "Cosigner",
-                                                                            style: TextStyle(
-                                                                              color: !isTenantSelected ? Colors.transparent : Colors.white,
-                                                                              fontWeight: FontWeight.bold,
-                                                                            ),
-                                                                          ),
-                                                                        ),
+                                                                                shaderCallback: (bounds) {
+                                                                                  return LinearGradient(
+                                                                                    colors: [
+                                                                                      blueColor,
+                                                                                      blueColor,
+                                                                                    ],
+                                                                                  ).createShader(bounds);
+                                                                                },
+                                                                                child: Text(
+                                                                                  "Cosigner",
+                                                                                  style: TextStyle(
+                                                                                    color: !isTenantSelected ? Colors.transparent : Colors.white,
+                                                                                    fontWeight: FontWeight.bold,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
                                                                       ),
                                                                     ),
                                                                   ),
@@ -1754,9 +2030,11 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                               isTenantSelected
                                                                   ? AddTenant()
                                                                   : AddCosigner(
-                                                                cosigner: existingCosigner,
-                                                                index: existingIndex,
-                                                              )
+                                                                      cosigner:
+                                                                          existingCosigner,
+                                                                      index:
+                                                                          existingIndex,
+                                                                    )
                                                             ],
                                                           ),
                                                         ),
@@ -1782,15 +2060,21 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                 },
                               ),
                               SizedBox(height: 8.0),
-                              if (Provider.of<SelectedTenantsProvider>(context).selectedTenants.isNotEmpty)
+                              if (Provider.of<SelectedTenantsProvider>(context)
+                                  .selectedTenants
+                                  .isNotEmpty)
                                 Padding(
                                   padding: const EdgeInsets.only(left: 13),
                                   child: Text(
                                     'Tenants:',
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ),
-                              if (Provider.of<SelectedTenantsProvider>(context).selectedTenants.isNotEmpty)
+                              if (Provider.of<SelectedTenantsProvider>(context)
+                                  .selectedTenants
+                                  .isNotEmpty)
                                 SizedBox(
                                   height: 10,
                                 ),
@@ -2354,16 +2638,21 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                               //     ),
                               //   ),
 
-                              if (Provider.of<SelectedTenantsProvider>(context).selectedTenants.isNotEmpty)
+                              if (Provider.of<SelectedTenantsProvider>(context)
+                                  .selectedTenants
+                                  .isNotEmpty)
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 4, right: 4),
+                                  padding:
+                                      const EdgeInsets.only(left: 4, right: 4),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Table(
                                         border: TableBorder.all(
                                           width: 1,
-                                          color: const Color.fromRGBO(21, 43, 83, 1),
+                                          color: const Color.fromRGBO(
+                                              21, 43, 83, 1),
                                         ),
                                         columnWidths: const {
                                           0: FlexColumnWidth(2),
@@ -2377,41 +2666,68 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                             ),
                                             children: [
                                               Padding(
-                                                padding: const EdgeInsets.all(8.0),
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
                                                 child: Text(
                                                   'Name',
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,
-                                                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 20,
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 14
+                                                            : 20,
                                                   ),
                                                 ),
                                               ),
                                               Padding(
-                                                padding: const EdgeInsets.all(8.0),
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
                                                 child: Text(
                                                   'Rent share',
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,
-                                                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 20,
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 14
+                                                            : 20,
                                                   ),
                                                 ),
                                               ),
                                               Padding(
-                                                padding: const EdgeInsets.all(8.0),
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
                                                 child: Text(
                                                   'Action',
                                                   style: TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,
-                                                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 20,
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 14
+                                                            : 20,
                                                   ),
                                                 ),
                                               ),
                                             ],
                                           ),
-                                          ...Provider.of<SelectedTenantsProvider>(context).selectedTenants.asMap().entries.map((entry) {
+                                          ...Provider.of<
+                                                      SelectedTenantsProvider>(
+                                                  context)
+                                              .selectedTenants
+                                              .asMap()
+                                              .entries
+                                              .map((entry) {
                                             // final index = entry.key;
                                             // final tenant = entry.value;
                                             // final controller = Provider.of<
@@ -2421,84 +2737,182 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                             final index = entry.key;
                                             final tenant = entry.value;
 
-                                            print("Controller length:- ${Provider.of<SelectedTenantsProvider>(context).rentShareControllers.length}  $index");
-                                            final controller = Provider.of<SelectedTenantsProvider>(context).rentShareControllers[index];
+                                            print(
+                                                "Controller length:- ${Provider.of<SelectedTenantsProvider>(context).rentShareControllers.length}  $index");
+                                            final controller = Provider.of<
+                                                        SelectedTenantsProvider>(
+                                                    context)
+                                                .rentShareControllers[index];
                                             return TableRow(
                                               children: [
                                                 Padding(
-                                                  padding: const EdgeInsets.only(left: 10, top: 15),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 10, top: 15),
                                                   child: Text(
                                                     '${tenant.tenantFirstName} ${tenant.tenantLastName}',
                                                     style: TextStyle(
-                                                      fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
-                                                      fontWeight: FontWeight.w700,
+                                                      fontSize:
+                                                          MediaQuery.of(context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 14
+                                                              : 18,
+                                                      fontWeight:
+                                                          FontWeight.w700,
                                                       color: blueColor,
                                                     ),
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: const EdgeInsets.all(8.0),
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
                                                   child: Material(
                                                     elevation: 3,
-                                                    borderRadius: BorderRadius.circular(8),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
                                                     child: Container(
-                                                      height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
-                                                      width: MediaQuery.of(context).size.width < 500 ? 70 : 400,
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 45
+                                                              : 50,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 70
+                                                              : 400,
                                                       decoration: BoxDecoration(
                                                         color: Colors.white,
-                                                        borderRadius: BorderRadius.circular(8),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
                                                         border: Border.all(
-                                                          color: Colors.grey[300]!,
+                                                          color:
+                                                              Colors.grey[300]!,
                                                           width: 1,
                                                         ),
                                                       ),
                                                       child: Center(
                                                         child: Padding(
-                                                          padding: const EdgeInsets.only(left: 10, bottom: 7),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  left: 10,
+                                                                  bottom: 7),
                                                           child: TextField(
-                                                            controller: controller,
+                                                            controller:
+                                                                controller,
                                                             style: TextStyle(
-                                                              fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 16,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.black,
+                                                              fontSize: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width <
+                                                                      500
+                                                                  ? 16
+                                                                  : 16,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.black,
                                                             ),
                                                             onChanged: (value) {
-                                                              double enteredValue = double.tryParse(value) ?? 0;
-                                                              if (enteredValue > 100) {
-                                                                controller.text = '100';
-                                                                controller.selection = TextSelection.fromPosition(
-                                                                  TextPosition(offset: controller.text.length),
+                                                              double
+                                                                  enteredValue =
+                                                                  double.tryParse(
+                                                                          value) ??
+                                                                      0;
+                                                              if (enteredValue >
+                                                                  100) {
+                                                                controller
+                                                                        .text =
+                                                                    '100';
+                                                                controller
+                                                                        .selection =
+                                                                    TextSelection
+                                                                        .fromPosition(
+                                                                  TextPosition(
+                                                                      offset: controller
+                                                                          .text
+                                                                          .length),
                                                                 );
                                                               }
-                                                              Provider.of<SelectedTenantsProvider>(context, listen: false).validateRentShares();
+                                                              Provider.of<SelectedTenantsProvider>(
+                                                                      context,
+                                                                      listen:
+                                                                          false)
+                                                                  .validateRentShares();
 
-                                                              final provider = Provider.of<SelectedTenantsProvider>(context, listen: false);
-                                                              final rentShareControllers = provider.rentShareControllers;
-                                                              double totalRentShare = 0.0;
-                                                              for (var controller in rentShareControllers) {
-                                                                double rentShare = double.tryParse(controller.text) ?? 0.0;
-                                                                totalRentShare += rentShare;
+                                                              final provider =
+                                                                  Provider.of<
+                                                                          SelectedTenantsProvider>(
+                                                                      context,
+                                                                      listen:
+                                                                          false);
+                                                              final rentShareControllers =
+                                                                  provider
+                                                                      .rentShareControllers;
+                                                              double
+                                                                  totalRentShare =
+                                                                  0.0;
+                                                              for (var controller
+                                                                  in rentShareControllers) {
+                                                                double
+                                                                    rentShare =
+                                                                    double.tryParse(
+                                                                            controller.text) ??
+                                                                        0.0;
+                                                                totalRentShare +=
+                                                                    rentShare;
                                                               }
-                                                              if (totalRentShare != 100.0) {
+                                                              if (totalRentShare !=
+                                                                  100.0) {
                                                                 setState(() {
-                                                                  _errorMessage = 'Total rent share must equal 100';
+                                                                  _errorMessage =
+                                                                      'Total rent share must equal 100';
                                                                 });
                                                               } else {
                                                                 setState(() {
-                                                                  _errorMessage = null;
+                                                                  _errorMessage =
+                                                                      null;
                                                                 });
                                                               }
                                                             },
-                                                            keyboardType: TextInputType.number,
-                                                            decoration: InputDecoration(
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .number,
+                                                            decoration:
+                                                                InputDecoration(
                                                               hintText: "0",
-                                                              hintStyle: TextStyle(
-                                                                fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 16,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.black,
+                                                              hintStyle:
+                                                                  TextStyle(
+                                                                fontSize: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width <
+                                                                        500
+                                                                    ? 16
+                                                                    : 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: Colors
+                                                                    .black,
                                                               ),
-                                                              border: InputBorder.none,
-                                                              contentPadding: EdgeInsets.symmetric(vertical: 8),
+                                                              border:
+                                                                  InputBorder
+                                                                      .none,
+                                                              contentPadding:
+                                                                  EdgeInsets
+                                                                      .symmetric(
+                                                                          vertical:
+                                                                              8),
                                                             ),
                                                           ),
                                                         ),
@@ -2507,19 +2921,37 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: const EdgeInsets.only(top: 15),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 15),
                                                   child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
                                                     children: [
                                                       InkWell(
                                                         onTap: () {
-                                                          Provider.of<SelectedTenantsProvider>(context, listen: false).removeTenant(tenant);
+                                                          Provider.of<SelectedTenantsProvider>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .removeTenant(
+                                                                  tenant);
                                                         },
                                                         child: Icon(
                                                           Icons.delete,
-                                                          color: const Color.fromRGBO(21, 43, 83, 1),
-                                                          size: MediaQuery.of(context).size.width < 500 ? 18 : 25,
+                                                          color: const Color
+                                                              .fromRGBO(
+                                                              21, 43, 83, 1),
+                                                          size: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 18
+                                                              : 25,
                                                         ),
                                                       ),
                                                     ],
@@ -2566,39 +2998,56 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                     style: TextStyle(color: Colors.red),
                                   ),
                                 ),
-                              if (Provider.of<SelectedTenantsProvider>(context).selectedTenants.isNotEmpty)
+                              if (Provider.of<SelectedTenantsProvider>(context)
+                                  .selectedTenants
+                                  .isNotEmpty)
                                 SizedBox(
                                   height: 8,
                                 ),
                               SizedBox(height: 8.0),
-                              if (Provider.of<SelectedCosignersProvider>(context).cosigners.isNotEmpty)
+                              if (Provider.of<SelectedCosignersProvider>(
+                                      context)
+                                  .cosigners
+                                  .isNotEmpty)
                                 Padding(
                                   padding: const EdgeInsets.only(left: 13),
                                   child: Text(
                                     'Consigner:',
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ),
-                              if (Provider.of<SelectedCosignersProvider>(context).cosigners.isNotEmpty)
+                              if (Provider.of<SelectedCosignersProvider>(
+                                      context)
+                                  .cosigners
+                                  .isNotEmpty)
                                 SizedBox(
                                   height: 10,
                                 ),
-                              if (Provider.of<SelectedCosignersProvider>(context).cosigners.isNotEmpty)
+                              if (Provider.of<SelectedCosignersProvider>(
+                                      context)
+                                  .cosigners
+                                  .isNotEmpty)
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 5, right: 5),
+                                  padding:
+                                      const EdgeInsets.only(left: 5, right: 5),
                                   child: SingleChildScrollView(
                                     // scrollDirection: Axis.horizontal,
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Container(
                                           decoration: BoxDecoration(
-                                            border: Border.all(color: blueColor),
+                                            border:
+                                                Border.all(color: blueColor),
                                           ),
                                           child: Table(
                                             border: TableBorder.all(
                                               width: 1,
-                                              color: const Color.fromRGBO(21, 43, 83, 1),
+                                              color: const Color.fromRGBO(
+                                                  21, 43, 83, 1),
                                             ),
                                             columnWidths: const {
                                               0: FlexColumnWidth(2),
@@ -2612,91 +3061,167 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                 ),
                                                 children: [
                                                   Padding(
-                                                    padding: const EdgeInsets.all(8.0),
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
                                                     child: Text(
                                                       'Name',
                                                       style: TextStyle(
                                                         color: Colors.white,
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 13
+                                                            : 20,
                                                       ),
                                                     ),
                                                   ),
                                                   Padding(
-                                                    padding: const EdgeInsets.all(8.0),
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
                                                     child: Text(
                                                       'Phone number',
                                                       style: TextStyle(
                                                         color: Colors.white,
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 13
+                                                            : 20,
                                                       ),
                                                     ),
                                                   ),
                                                   Padding(
-                                                    padding: const EdgeInsets.all(8.0),
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
                                                     child: Text(
                                                       'Action',
                                                       style: TextStyle(
                                                         color: Colors.white,
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 13
+                                                            : 20,
                                                       ),
                                                     ),
                                                   ),
                                                 ],
                                               ),
-                                              ...Provider.of<SelectedCosignersProvider>(context).cosigners.asMap().entries.map((entry) {
+                                              ...Provider.of<
+                                                          SelectedCosignersProvider>(
+                                                      context)
+                                                  .cosigners
+                                                  .asMap()
+                                                  .entries
+                                                  .map((entry) {
                                                 int index = entry.key;
                                                 Cosigner cosigner = entry.value;
                                                 return TableRow(
                                                   children: [
                                                     Padding(
-                                                      padding: const EdgeInsets.all(8.0),
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
                                                       child: Text(
                                                         '${cosigner.firstName} ${cosigner.lastName}',
                                                         style: TextStyle(
-                                                          fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 20,
-                                                          fontWeight: FontWeight.w700,
+                                                          fontSize: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 13
+                                                              : 20,
+                                                          fontWeight:
+                                                              FontWeight.w700,
                                                           color: blueColor,
                                                         ),
                                                       ),
                                                     ),
                                                     Padding(
-                                                      padding: const EdgeInsets.all(8.0),
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
                                                       child: Text(
                                                         '${cosigner.phoneNumber}',
                                                         style: TextStyle(
-                                                          fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 20,
-                                                          fontWeight: FontWeight.w500,
-                                                          color: Colors.grey[500],
+                                                          fontSize: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 13
+                                                              : 20,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color:
+                                                              Colors.grey[500],
                                                         ),
                                                       ),
                                                     ),
                                                     Padding(
-                                                      padding: const EdgeInsets.only(left: 20, top: 10),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 20,
+                                                              top: 10),
                                                       child: Row(
                                                         children: [
                                                           InkWell(
                                                             onTap: () {
                                                               setState(() {
-                                                                isTenantSelected == true;
-                                                                tenent_popup(cosigner, index);
+                                                                isTenantSelected ==
+                                                                    true;
+                                                                tenent_popup(
+                                                                    cosigner,
+                                                                    index);
                                                               });
                                                             },
                                                             child: Icon(
                                                               Icons.edit,
-                                                              size: MediaQuery.of(context).size.width < 500 ? 15 : 20,
+                                                              size: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width <
+                                                                      500
+                                                                  ? 15
+                                                                  : 20,
                                                             ),
                                                           ),
-                                                          const SizedBox(width: 5),
+                                                          const SizedBox(
+                                                              width: 5),
                                                           InkWell(
                                                             onTap: () {
-                                                              Provider.of<SelectedCosignersProvider>(context, listen: false).removeConsigner(cosigner);
+                                                              Provider.of<SelectedCosignersProvider>(
+                                                                      context,
+                                                                      listen:
+                                                                          false)
+                                                                  .removeConsigner(
+                                                                      cosigner);
                                                             },
                                                             child: Icon(
                                                               Icons.delete,
-                                                              size: MediaQuery.of(context).size.width < 500 ? 15 : 20,
+                                                              size: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width <
+                                                                      500
+                                                                  ? 15
+                                                                  : 20,
                                                             ),
                                                           ),
                                                         ],
@@ -2735,22 +3260,33 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                               const SizedBox(
                                 height: 10,
                               ),
-                              Text('Rent', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: blueColor)),
+                              Text('Rent',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: blueColor)),
                               const SizedBox(
                                 height: 10,
                               ),
                               if (MediaQuery.of(context).size.width > 500)
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 2.0),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       // First Column
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Text('Rent Cycle *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                                            Text('Rent Cycle *',
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.grey)),
                                             SizedBox(height: 5),
                                             CustomDropdown(
                                               validator: (value) {
@@ -2766,7 +3302,9 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                 setState(() {
                                                   _selectedRent = value;
 
-                                                  _updateProRatedRent(_selectedRent ?? 'Monthly');
+                                                  _updateProRatedRent(
+                                                      _selectedRent ??
+                                                          'Monthly');
                                                 });
                                                 _updateNextDueDate();
                                               },
@@ -2779,30 +3317,55 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                       // Second Column
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Text('Next Due Date ', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                                            Text('Next Due Date ',
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.grey)),
                                             SizedBox(height: 5),
                                             CustomTextField(
                                               onTap: () async {
-                                                DateTime? pickedDate = await showDatePicker(
+                                                DateTime? pickedDate =
+                                                    await showDatePicker(
                                                   context: context,
                                                   initialDate: DateTime.now(),
                                                   firstDate: DateTime(2000),
                                                   lastDate: DateTime(2101),
-                                                  locale: const Locale('en', 'US'),
-                                                  builder: (BuildContext context, Widget? child) {
+                                                  locale:
+                                                      const Locale('en', 'US'),
+                                                  builder:
+                                                      (BuildContext context,
+                                                          Widget? child) {
                                                     return Theme(
-                                                      data: ThemeData.light().copyWith(
-                                                        colorScheme: const ColorScheme.light(
-                                                          primary: Color.fromRGBO(21, 43, 83, 1), // header background color
-                                                          onPrimary: Colors.white, // header text color
-                                                          onSurface: Color.fromRGBO(21, 43, 83, 1), // body text color
+                                                      data: ThemeData.light()
+                                                          .copyWith(
+                                                        colorScheme:
+                                                            const ColorScheme
+                                                                .light(
+                                                          primary: Color.fromRGBO(
+                                                              21,
+                                                              43,
+                                                              83,
+                                                              1), // header background color
+                                                          onPrimary: Colors
+                                                              .white, // header text color
+                                                          onSurface: Color.fromRGBO(
+                                                              21,
+                                                              43,
+                                                              83,
+                                                              1), // body text color
                                                         ),
-                                                        textButtonTheme: TextButtonThemeData(
-                                                          style: TextButton.styleFrom(
-                                                            foregroundColor: Colors.white,
-                                                            backgroundColor: blueColor, // button text color
+                                                        textButtonTheme:
+                                                            TextButtonThemeData(
+                                                          style: TextButton
+                                                              .styleFrom(
+                                                            foregroundColor:
+                                                                Colors.white,
+                                                            backgroundColor:
+                                                                blueColor, // button text color
                                                           ),
                                                         ),
                                                       ),
@@ -2811,15 +3374,25 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                   },
                                                 );
                                                 if (pickedDate != null) {
-                                                  String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
+                                                  String formattedDate =
+                                                      "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
 
-                                                  DateTime nextDueDate = calculateNextDueDate(pickedDate, _selectedRent ?? 'Daily');
-                                                  String formattedNextDueDate = "${nextDueDate.day.toString().padLeft(2, '0')}/${nextDueDate.month.toString().padLeft(2, '0')}/${nextDueDate.year}";
+                                                  DateTime nextDueDate =
+                                                      calculateNextDueDate(
+                                                          pickedDate,
+                                                          _selectedRent ??
+                                                              'Daily');
+                                                  String formattedNextDueDate =
+                                                      "${nextDueDate.day.toString().padLeft(2, '0')}/${nextDueDate.month.toString().padLeft(2, '0')}/${nextDueDate.year}";
 
                                                   setState(() {
-                                                    rentNextDueDate.text = formattedNextDueDate;
-                                                    rentNextDueDate.text = formattedDate;
-                                                    _updateProRatedRent(_selectedRent ?? 'Monthly');
+                                                    rentNextDueDate.text =
+                                                        formattedNextDueDate;
+                                                    rentNextDueDate.text =
+                                                        formattedDate;
+                                                    _updateProRatedRent(
+                                                        _selectedRent ??
+                                                            'Monthly');
                                                   });
 
                                                   print(rentNextDueDate.text);
@@ -2829,10 +3402,12 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                               optional: true,
                                               suffixIcon: IconButton(
                                                 onPressed: () {},
-                                                icon: const Icon(Icons.date_range_rounded),
+                                                icon: const Icon(
+                                                    Icons.date_range_rounded),
                                               ),
                                               validator: (value) {
-                                                if (value == null || value.isEmpty) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
                                                   return 'Please select Next Due Date';
                                                 }
                                                 return null;
@@ -2847,7 +3422,12 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                     ],
                                   ),
                                 ),
-                              if (MediaQuery.of(context).size.width < 500) const Text('Rent Cycle *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                              if (MediaQuery.of(context).size.width < 500)
+                                const Text('Rent Cycle *',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey)),
                               if (MediaQuery.of(context).size.width < 500)
                                 const SizedBox(
                                   height: 8,
@@ -2869,7 +3449,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                       _selectedRent = value;
                                       _selectedRent != null;
                                       isProRent = false;
-                                      _updateProRatedRent(_selectedRent ?? 'Monthly');
+                                      _updateProRatedRent(
+                                          _selectedRent ?? 'Monthly');
                                     });
                                     _updateNextDueDate();
                                   },
@@ -2877,7 +3458,11 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                               const SizedBox(
                                 height: 8,
                               ),
-                              const Text('Amount *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                              const Text('Amount *',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey)),
                               const SizedBox(
                                 height: 8,
                               ),
@@ -2892,7 +3477,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                   setState(() {
                                     isAmountEntered = value.isNotEmpty;
                                     isProRent = false;
-                                    _updateProRatedRent(_selectedRent ?? 'Monthly'); // Reset checkbox when amount changes
+                                    _updateProRatedRent(_selectedRent ??
+                                        'Monthly'); // Reset checkbox when amount changes
                                   });
                                 },
                                 keyboardType: TextInputType.number,
@@ -2902,7 +3488,12 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                               const SizedBox(
                                 height: 8,
                               ),
-                              if (MediaQuery.of(context).size.width < 500) const Text('Next Due Date', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                              if (MediaQuery.of(context).size.width < 500)
+                                const Text('Next Due Date',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey)),
                               if (MediaQuery.of(context).size.width < 500)
                                 const SizedBox(
                                   height: 8,
@@ -2916,18 +3507,24 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                       firstDate: DateTime(2000),
                                       lastDate: DateTime(2101),
                                       locale: const Locale('en', 'US'),
-                                      builder: (BuildContext context, Widget? child) {
+                                      builder: (BuildContext context,
+                                          Widget? child) {
                                         return Theme(
                                           data: ThemeData.light().copyWith(
                                             colorScheme: ColorScheme.light(
-                                              primary: blueColor, // header background color
-                                              onPrimary: Colors.white, // header text color
-                                              onSurface: blueColor, // body text color
+                                              primary:
+                                                  blueColor, // header background color
+                                              onPrimary: Colors
+                                                  .white, // header text color
+                                              onSurface:
+                                                  blueColor, // body text color
                                             ),
-                                            textButtonTheme: TextButtonThemeData(
+                                            textButtonTheme:
+                                                TextButtonThemeData(
                                               style: TextButton.styleFrom(
                                                 foregroundColor: Colors.white,
-                                                backgroundColor: blueColor, // button text color
+                                                backgroundColor:
+                                                    blueColor, // button text color
                                               ),
                                             ),
                                           ),
@@ -2936,17 +3533,23 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                       },
                                     );
                                     if (pickedDate != null) {
-                                      String formattedDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                      String formattedDate =
+                                          "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
 
-                                      DateTime nextDueDate = calculateNextDueDate(pickedDate, _selectedRent ?? 'Daily');
-                                      String formattedNextDueDate = "${nextDueDate.day.toString().padLeft(2, '0')}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.year}";
+                                      DateTime nextDueDate =
+                                          calculateNextDueDate(pickedDate,
+                                              _selectedRent ?? 'Daily');
+                                      String formattedNextDueDate =
+                                          "${nextDueDate.day.toString().padLeft(2, '0')}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.year}";
 
                                       setState(() {
-                                        rentNextDueDate.text = formattedNextDueDate;
+                                        rentNextDueDate.text =
+                                            formattedNextDueDate;
                                         rentNextDueDate.text = formattedDate;
                                         rentNextDueDate.text.isNotEmpty;
                                         isProRent = false;
-                                        _updateProRatedRent(_selectedRent ?? 'Monthly');
+                                        _updateProRatedRent(
+                                            _selectedRent ?? 'Monthly');
                                       });
 
                                       print(rentNextDueDate.text);
@@ -2971,7 +3574,11 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                               const SizedBox(
                                 height: 8,
                               ),
-                              const Text('Memo', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                              const Text('Memo',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey)),
                               const SizedBox(
                                 height: 8,
                               ),
@@ -3013,15 +3620,22 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                     height: 24.0,
                                     child: Checkbox(
                                       value: isProRent,
-                                      onChanged: isAmountEntered && rentNextDueDate.text.isNotEmpty && _selectedRent != null && startDateController.text.isNotEmpty && endDateController.text.isNotEmpty
+                                      onChanged: isAmountEntered &&
+                                              rentNextDueDate.text.isNotEmpty &&
+                                              _selectedRent != null &&
+                                              startDateController
+                                                  .text.isNotEmpty &&
+                                              endDateController.text.isNotEmpty
                                           ? (value) {
-                                        setState(() {
-                                          isProRent = value ?? false;
-                                          _updateProRatedRent(_selectedRent ?? 'Monthly');
-                                        });
-                                      }
+                                              setState(() {
+                                                isProRent = value ?? false;
+                                                _updateProRatedRent(
+                                                    _selectedRent ?? 'Monthly');
+                                              });
+                                            }
                                           : null,
-                                      activeColor: blueColor, // Disable checkbox if amount is not entered
+                                      activeColor:
+                                          blueColor, // Disable checkbox if amount is not entered
                                     ),
                                   ),
                                   SizedBox(
@@ -3029,21 +3643,47 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                   ),
                                   Text(
                                     "Charge pro-rated rent for current month",
-                                    style: TextStyle(color: blueColor, fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                        color: blueColor,
+                                        fontWeight: FontWeight.bold),
                                   )
                                 ],
                               ),
-                              if (isProRent && isAmountEntered && rentNextDueDate.text.isNotEmpty && _selectedRent != null && startDateController.text.isNotEmpty && endDateController.text.isNotEmpty)
+                              if (isProRent &&
+                                  isAmountEntered &&
+                                  rentNextDueDate.text.isNotEmpty &&
+                                  _selectedRent != null &&
+                                  startDateController.text.isNotEmpty &&
+                                  endDateController.text.isNotEmpty)
                                 const SizedBox(
                                   height: 10,
                                 ),
-                              if (isProRent && isAmountEntered && rentNextDueDate.text.isNotEmpty && _selectedRent != null && startDateController.text.isNotEmpty && endDateController.text.isNotEmpty)
-                                const Text('Pro-rated Rent', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
-                              if (isProRent && isAmountEntered && rentNextDueDate.text.isNotEmpty && _selectedRent != null && startDateController.text.isNotEmpty && endDateController.text.isNotEmpty)
+                              if (isProRent &&
+                                  isAmountEntered &&
+                                  rentNextDueDate.text.isNotEmpty &&
+                                  _selectedRent != null &&
+                                  startDateController.text.isNotEmpty &&
+                                  endDateController.text.isNotEmpty)
+                                const Text('Pro-rated Rent',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey)),
+                              if (isProRent &&
+                                  isAmountEntered &&
+                                  rentNextDueDate.text.isNotEmpty &&
+                                  _selectedRent != null &&
+                                  startDateController.text.isNotEmpty &&
+                                  endDateController.text.isNotEmpty)
                                 const SizedBox(
                                   height: 8,
                                 ),
-                              if (isProRent && isAmountEntered && rentNextDueDate.text.isNotEmpty && _selectedRent != null && startDateController.text.isNotEmpty && endDateController.text.isNotEmpty)
+                              if (isProRent &&
+                                  isAmountEntered &&
+                                  rentNextDueDate.text.isNotEmpty &&
+                                  _selectedRent != null &&
+                                  startDateController.text.isNotEmpty &&
+                                  endDateController.text.isNotEmpty)
                                 CustomTextField(
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -3111,7 +3751,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                   if (MediaQuery.of(context).size.width < 500)
                                     InkWell(
                                       onTap: () {
-                                        _showRecurringPopupForm(context, _selectedRent.toString());
+                                        _showRecurringPopupForm(
+                                            context, _selectedRent.toString());
                                       },
                                       child: const Text(
                                         ' + Add Recurring Charge',
@@ -3129,7 +3770,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                   if (MediaQuery.of(context).size.width < 500)
                                     InkWell(
                                       onTap: () {
-                                        _showPopupForm(context, _selectedRent.toString());
+                                        _showPopupForm(
+                                            context, _selectedRent.toString());
                                       },
                                       child: const Text(
                                         ' + Add One Time Charge',
@@ -3142,24 +3784,31 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                     ),
                                   if (MediaQuery.of(context).size.width > 500)
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 2.0),
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           // First Column
                                           Expanded(
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 InkWell(
                                                   onTap: () {
-                                                    _showRecurringPopupForm(context, _selectedRent.toString());
+                                                    _showRecurringPopupForm(
+                                                        context,
+                                                        _selectedRent
+                                                            .toString());
                                                   },
                                                   child: const Text(
                                                     ' + Add Recurring Charge',
                                                     style: TextStyle(
                                                       fontSize: 13,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       color: Color(0xFF2ec433),
                                                     ),
                                                   ),
@@ -3171,17 +3820,22 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                           // Second Column
                                           Expanded(
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 InkWell(
                                                   onTap: () {
-                                                    _showPopupForm(context, _selectedRent.toString());
+                                                    _showPopupForm(
+                                                        context,
+                                                        _selectedRent
+                                                            .toString());
                                                   },
                                                   child: const Text(
                                                     ' + Add One Time Charge',
                                                     style: TextStyle(
                                                       fontSize: 13,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       color: Color(0xFF2ec433),
                                                     ),
                                                   ),
@@ -3237,7 +3891,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                     'Account',
                                                     style: TextStyle(
                                                       color: Colors.white,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
                                                 ),
@@ -3247,7 +3902,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                     'Amount',
                                                     style: TextStyle(
                                                       color: Colors.white,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
                                                 ),
@@ -3257,17 +3913,22 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                     'Actions',
                                                     style: TextStyle(
                                                       color: Colors.white,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
                                                 ),
                                               ]),
-                                        ...formDataRecurringList.asMap().entries.map((entry) {
+                                        ...formDataRecurringList
+                                            .asMap()
+                                            .entries
+                                            .map((entry) {
                                           int index = entry.key;
                                           var item = entry.value;
                                           return TableRow(children: [
                                             Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
                                               child: Text(
                                                 '${item['account']}',
                                                 style: TextStyle(
@@ -3278,7 +3939,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
                                               child: Text(
                                                 '${item['amount']}',
                                                 style: TextStyle(
@@ -3289,11 +3951,17 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                               ),
                                             ),
                                             Padding(
-                                                padding: const EdgeInsets.all(8.0),
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
                                                 child: Row(children: [
                                                   InkWell(
                                                     onTap: () {
-                                                      _showRecurringPopupForm(context, _selectedRent.toString(), initialData: item, index: index);
+                                                      _showRecurringPopupForm(
+                                                          context,
+                                                          _selectedRent
+                                                              .toString(),
+                                                          initialData: item,
+                                                          index: index);
                                                     },
                                                     child: Icon(
                                                       Icons.edit,
@@ -3305,7 +3973,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                   InkWell(
                                                     onTap: () {
                                                       setState(() {
-                                                        formDataRecurringList.removeAt(index);
+                                                        formDataRecurringList
+                                                            .removeAt(index);
                                                       });
                                                     },
                                                     child: Icon(
@@ -3364,7 +4033,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                     'Account',
                                                     style: TextStyle(
                                                       color: Colors.white,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
                                                 ),
@@ -3374,7 +4044,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                     'Amount',
                                                     style: TextStyle(
                                                       color: Colors.white,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
                                                 ),
@@ -3384,17 +4055,22 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                     'Actions',
                                                     style: TextStyle(
                                                       color: Colors.white,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
                                                 ),
                                               ]),
-                                        ...formDataOneTimeList.asMap().entries.map((entry) {
+                                        ...formDataOneTimeList
+                                            .asMap()
+                                            .entries
+                                            .map((entry) {
                                           int index = entry.key;
                                           var item = entry.value;
                                           return TableRow(children: [
                                             Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
                                               child: Text(
                                                 '${item['account']}',
                                                 style: TextStyle(
@@ -3405,7 +4081,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
                                               child: Text(
                                                 '${item['amount']}',
                                                 style: TextStyle(
@@ -3416,11 +4093,17 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                               ),
                                             ),
                                             Padding(
-                                                padding: const EdgeInsets.all(8.0),
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
                                                 child: Row(children: [
                                                   InkWell(
                                                     onTap: () {
-                                                      _showPopupForm(context, _selectedRent.toString(), initialData: item, index: index);
+                                                      _showPopupForm(
+                                                          context,
+                                                          _selectedRent
+                                                              .toString(),
+                                                          initialData: item,
+                                                          index: index);
 
                                                       // Implement edit functionality here
                                                     },
@@ -3434,7 +4117,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                                   InkWell(
                                                     onTap: () {
                                                       setState(() {
-                                                        formDataOneTimeList.removeAt(index);
+                                                        formDataOneTimeList
+                                                            .removeAt(index);
                                                       });
                                                     },
                                                     child: Icon(
@@ -3472,11 +4156,19 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                               const SizedBox(
                                 height: 10,
                               ),
-                              Text('Security Deposit (Optional)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: blueColor)),
+                              Text('Security Deposit (Optional)',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: blueColor)),
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text('Amount', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                              const Text('Amount',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey)),
                               const SizedBox(
                                 height: 8,
                               ),
@@ -3494,8 +4186,12 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                               ),
                               const Padding(
                                 padding: EdgeInsets.all(10.0),
-                                child:
-                                Text('Don\'t forget to record the payment once you have connected the deposite', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.grey)),
+                                child: Text(
+                                    'Don\'t forget to record the payment once you have connected the deposite',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey)),
                               ),
                               const SizedBox(
                                 height: 8,
@@ -3523,7 +4219,11 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                               const SizedBox(
                                 height: 10,
                               ),
-                              Text('Upload Files (Maximum of 10)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: blueColor)),
+                              Text('Upload Files (Maximum of 10)',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: blueColor)),
                               const SizedBox(
                                 height: 20,
                               ),
@@ -3549,7 +4249,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                               SingleChildScrollView(
                                 child: Column(
                                   children: _uploadedFileNames.map((fileName) {
-                                    int index = _uploadedFileNames.indexOf(fileName);
+                                    int index =
+                                        _uploadedFileNames.indexOf(fileName);
                                     return ListTile(
                                       title: Text(
                                         fileName,
@@ -3606,9 +4307,14 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                 height: 10,
                               ),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  Text('Residents center Welcome Email', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: blueColor)),
+                                  Text('Residents center Welcome Email',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: blueColor)),
                                   const SizedBox(
                                     width: 5,
                                   ),
@@ -3626,7 +4332,12 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text('We send a welcome email to anyone without resident center access', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Color(0xFF748097))),
+                              const Text(
+                                  'We send a welcome email to anyone without resident center access',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xFF748097))),
                             ],
                           ),
                         ),
@@ -3638,21 +4349,32 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                             Container(
                                 height: 50,
                                 width: 150,
-                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8.0)),
                                 child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(backgroundColor: blueColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: blueColor,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0))),
                                   onPressed: () async {
-                                    if (_formKey.currentState?.validate() ?? false) {
+                                    if (_formKey.currentState?.validate() ??
+                                        false) {
                                       setState(() {
                                         isLoading = true; // Start loading
                                       });
-                                      final provider = Provider.of<SelectedTenantsProvider>(context, listen: false);
-                                      final rentShareControllers = provider.rentShareControllers;
+                                      final provider =
+                                          Provider.of<SelectedTenantsProvider>(
+                                              context,
+                                              listen: false);
+                                      final rentShareControllers =
+                                          provider.rentShareControllers;
 
                                       if (rentShareControllers.length < 1) {
                                         setState(() {
                                           _errorMessage = "required tenants";
-                                          isLoading = false; // Stop loading on error
+                                          isLoading =
+                                              false; // Stop loading on error
                                         });
                                         return;
                                       }
@@ -3662,63 +4384,98 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                       });
 
                                       double totalRentShare = 0.0;
-                                      for (var controller in rentShareControllers) {
-                                        double rentShare = double.tryParse(controller.text.trim()) ?? 0.0;
+                                      for (var controller
+                                          in rentShareControllers) {
+                                        double rentShare = double.tryParse(
+                                                controller.text.trim()) ??
+                                            0.0;
                                         totalRentShare += rentShare;
                                       }
                                       if (totalRentShare != 100.0) {
                                         setState(() {
-                                          _errorMessage = 'Total rent share must equal 100';
-                                          isLoading = false; // Stop loading when rent share is not 100
+                                          _errorMessage =
+                                              'Total rent share must equal 100';
+                                          isLoading =
+                                              false; // Stop loading when rent share is not 100
                                         });
                                         return;
                                       } else {
-                                        SharedPreferences prefs = await SharedPreferences.getInstance();
-                                        String adminId = prefs.getString("adminId")!;
+                                        SharedPreferences prefs =
+                                            await SharedPreferences
+                                                .getInstance();
+                                        String adminId =
+                                            prefs.getString("adminId")!;
                                         bool _isLeaseAdded = false;
                                         // // Printing ChargeData object
                                         //Changes
-                                        List<Map<String, String>> mergedFormDataList = [
+                                        List<Map<String, String>>
+                                            mergedFormDataList = [
                                           ...formDataOneTimeList,
                                           ...formDataRecurringList,
                                         ];
-                                        String leaseStartDate = startDateController.text;
-                                        String leaseEndDate = endDateController.text;
-                                        print('ends date : ${endDateController.text}');
+                                        String leaseStartDate =
+                                            startDateController.text;
+                                        String leaseEndDate =
+                                            endDateController.text;
+                                        print(
+                                            'ends date : ${endDateController.text}');
 
-                                        print('rent next due date ${reverseFormatDate(rentNextDueDate.text)}');
-                                        List<Entry> chargeEntries = mergedFormDataList.map((data) {
+                                        print(
+                                            'rent next due date ${reverseFormatDate(rentNextDueDate.text)}');
+                                        List<Entry> chargeEntries =
+                                            mergedFormDataList.map((data) {
                                           print(data['account']);
                                           print(data['rent_cycle']);
                                           return Entry(
                                             account: data['account'] ?? '',
-                                            amount: double.tryParse(data['amount'] ?? '0.0') ?? 0.0,
-                                            chargeType: data['charge_type'] ?? '',
-                                            date: data['charge_type'] == 'Recurring Charge'
-                                                ? (data['charge_start'] ?? '') // Ensuring data['date'] is not null
-                                                : data['charge_start'] != null ? (data['charge_start'] ?? '') : rentNextDueDate.text.trim(),
-                                            isRepeatable: data['is_repeatable']?.toLowerCase() == 'true',
+                                            amount: double.tryParse(
+                                                    data['amount'] ?? '0.0') ??
+                                                0.0,
+                                            chargeType:
+                                                data['charge_type'] ?? '',
+                                            date: data['charge_type'] ==
+                                                    'Recurring Charge'
+                                                ? (data['charge_start'] ??
+                                                    '') // Ensuring data['date'] is not null
+                                                : data['charge_start'] != null
+                                                    ? (data['charge_start'] ??
+                                                        '')
+                                                    : rentNextDueDate.text
+                                                        .trim(),
+                                            isRepeatable: data['is_repeatable']
+                                                    ?.toLowerCase() ==
+                                                'true',
                                             memo: data['memo'] ?? '',
-                                            rentCycle: data['rent_cycle'], // Assuming this field might be present
-                                            tenantId: data['tenant_id'], // Assuming this field might be present
+                                            rentCycle: data[
+                                                'rent_cycle'], // Assuming this field might be present
+                                            tenantId: data[
+                                                'tenant_id'], // Assuming this field might be present
                                           );
                                         }).toList();
                                         // print(ne)
                                         chargeEntries.add(Entry(
                                           account: "Rent Income",
-                                          amount: double.tryParse(rentAmount.text.trim()) ?? 0.0,
+                                          amount: double.tryParse(
+                                                  rentAmount.text.trim()) ??
+                                              0.0,
                                           chargeType: 'Rent',
                                           date: rentNextDueDate.text.trim(),
-                                          isRepeatable: false, // Set to false if it's not repeatable, adjust as needed
+                                          isRepeatable:
+                                              false, // Set to false if it's not repeatable, adjust as needed
                                           memo: rentMemo.text.trim(),
-                                          rentCycle: _selectedRent, // Set default value or adjust as needed
+                                          rentCycle:
+                                              _selectedRent, // Set default value or adjust as needed
                                         ));
                                         chargeEntries.add(Entry(
                                           account: "Security Deposit",
-                                          amount: double.tryParse(securityDepositeAmount.text.trim()) ?? 0.0,
+                                          amount: double.tryParse(
+                                                  securityDepositeAmount.text
+                                                      .trim()) ??
+                                              0.0,
                                           chargeType: 'Security Deposit',
                                           date: rentNextDueDate.text.trim(),
-                                          isRepeatable: false, // Set to false if it's not repeatable, adjust as needed
+                                          isRepeatable:
+                                              false, // Set to false if it's not repeatable, adjust as needed
                                           memo: 'Last Month\'s Rent',
                                           // rentCycle: _selectedRent, // Set default value or adjust as needed
                                         ));
@@ -3730,62 +4487,111 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                         print('${chargeEntries}');
                                         //Tenant
                                         List<TenantData> tenants = [];
-                                        Map<String, String>? firstCosigner = cosignersMap.isNotEmpty ? cosignersMap[0] : {};
-                                        print('tenant\'s length ${tenantsMap.length}');
-                                        String currentDate = DateTime.now().toString();
-                                        List<TenantData> tenantDataList = tenantsMap.entries.map((entry) {
+                                        Map<String, String>? firstCosigner =
+                                            cosignersMap.isNotEmpty
+                                                ? cosignersMap[0]
+                                                : {};
+                                        print(
+                                            'tenant\'s length ${tenantsMap.length}');
+                                        String currentDate =
+                                            DateTime.now().toString();
+                                        List<TenantData> tenantDataList =
+                                            tenantsMap.entries.map((entry) {
                                           int index = entry.key;
                                           final tenantMap = entry.value;
                                           print(tenantMap['firstName']);
                                           print(tenantMap['firstName']);
                                           return TenantData(
                                             adminId: adminId,
-                                            comments: tenantMap['comments'] ?? '',
+                                            comments:
+                                                tenantMap['comments'] ?? '',
                                             emergencyContact: EmergencyContacts(
-                                              name: tenantMap['emergencyContactName'] ?? '',
-                                              relation: tenantMap['emergencyRelation'] ?? '',
-                                              email: tenantMap['emergencyEmail'] ?? '',
-                                              phoneNumber: tenantMap['emergencyPhoneNumber'] ?? '',
+                                              name: tenantMap[
+                                                      'emergencyContactName'] ??
+                                                  '',
+                                              relation: tenantMap[
+                                                      'emergencyRelation'] ??
+                                                  '',
+                                              email:
+                                                  tenantMap['emergencyEmail'] ??
+                                                      '',
+                                              phoneNumber: tenantMap[
+                                                      'emergencyPhoneNumber'] ??
+                                                  '',
                                             ),
-                                            isDelete: tenantMap['isDelete'] == 'true',
-                                            taxPayerId: tenantMap['taxPayerId'] ?? '',
-                                            tenantAlternativeEmail: tenantMap['alterEmail'] ?? '',
-                                            tenantAlternativeNumber: tenantMap['workNumber'] ?? '',
-                                            tenantBirthDate: tenantMap['dob'].toString() ?? '',
-                                            tenantEmail: tenantMap['email'] ?? '',
-                                            tenantFirstName: tenantMap['firstName'] ?? '',
-                                            tenantId: tenantMap['tenantId'] ?? '',
-                                            tenantLastName: tenantMap['lastName'] ?? '',
-                                            tenantPassword: tenantMap['passWord'] ?? '',
-                                            tenantPhoneNumber: tenantMap['phoneNumber'] ?? '',
-                                            updatedAt: tenantMap['updatedAt'].toString() ?? '',
-                                            rentShare: rentShareControllers[index].text.trim(),
+                                            isDelete:
+                                                tenantMap['isDelete'] == 'true',
+                                            taxPayerId:
+                                                tenantMap['taxPayerId'] ?? '',
+                                            tenantAlternativeEmail:
+                                                tenantMap['alterEmail'] ?? '',
+                                            tenantAlternativeNumber:
+                                                tenantMap['workNumber'] ?? '',
+                                            tenantBirthDate:
+                                                tenantMap['dob'].toString() ??
+                                                    '',
+                                            tenantEmail:
+                                                tenantMap['email'] ?? '',
+                                            tenantFirstName:
+                                                tenantMap['firstName'] ?? '',
+                                            tenantId:
+                                                tenantMap['tenantId'] ?? '',
+                                            tenantLastName:
+                                                tenantMap['lastName'] ?? '',
+                                            tenantPassword:
+                                                tenantMap['passWord'] ?? '',
+                                            tenantPhoneNumber:
+                                                tenantMap['phoneNumber'] ?? '',
+                                            updatedAt: tenantMap['updatedAt']
+                                                    .toString() ??
+                                                '',
+                                            rentShare:
+                                                rentShareControllers[index]
+                                                    .text
+                                                    .trim(),
                                           );
                                         }).toList();
                                         print(tenantDataList.length);
                                         // Assuming tenantDataList is a List<TenantData>
-                                        List<String> tenantIds = tenantDataList.map((tenant) => tenant.tenantId ?? '').toList();
+                                        List<String> tenantIds = tenantDataList
+                                            .map((tenant) =>
+                                                tenant.tenantId ?? '')
+                                            .toList();
 
-                                        print('tenant ids :${tenantIds.length}');
+                                        print(
+                                            'tenant ids :${tenantIds.length}');
 
                                         //print all data
                                         print(firstCosigner);
                                         print('Tenant Data List:');
                                         for (var tenant in tenantDataList) {
                                           print('admin ID: ${tenant.adminId}');
-                                          print('Tenant First Name: ${tenant.tenantFirstName}');
-                                          print('Tenant Last Name: ${tenant.tenantLastName}');
-                                          print('Tenant Email: ${tenant.tenantEmail}');
-                                          print('Tenant Phone Number: ${tenant.tenantPhoneNumber}');
-                                          print('Tenant Birth Date: ${tenant.tenantBirthDate}');
-                                          print('Rental Address: ${tenant.rentalAddress}');
-                                          print('Rental Unit: ${tenant.rentalUnit}');
-                                          print('Tax Payer ID: ${tenant.taxPayerId}');
-                                          print('Tenant Alternative Email: ${tenant.tenantAlternativeEmail}');
-                                          print('Tenant Alternative Number: ${tenant.tenantAlternativeNumber}');
-                                          print('Created At: ${tenant.createdAt}');
-                                          print('Updated At: ${tenant.updatedAt}');
-                                          print('Is Delete: ${tenant.isDelete}');
+                                          print(
+                                              'Tenant First Name: ${tenant.tenantFirstName}');
+                                          print(
+                                              'Tenant Last Name: ${tenant.tenantLastName}');
+                                          print(
+                                              'Tenant Email: ${tenant.tenantEmail}');
+                                          print(
+                                              'Tenant Phone Number: ${tenant.tenantPhoneNumber}');
+                                          print(
+                                              'Tenant Birth Date: ${tenant.tenantBirthDate}');
+                                          print(
+                                              'Rental Address: ${tenant.rentalAddress}');
+                                          print(
+                                              'Rental Unit: ${tenant.rentalUnit}');
+                                          print(
+                                              'Tax Payer ID: ${tenant.taxPayerId}');
+                                          print(
+                                              'Tenant Alternative Email: ${tenant.tenantAlternativeEmail}');
+                                          print(
+                                              'Tenant Alternative Number: ${tenant.tenantAlternativeNumber}');
+                                          print(
+                                              'Created At: ${tenant.createdAt}');
+                                          print(
+                                              'Updated At: ${tenant.updatedAt}');
+                                          print(
+                                              'Is Delete: ${tenant.isDelete}');
                                           print('Comments: ${tenant.comments}');
                                           print('Admin ID: ${tenant.adminId}');
 
@@ -3803,20 +4609,38 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                           ),
                                           cosignerData: CosignerData(
                                             adminId: adminId,
-                                            cosignerFirstName: firstCosigner?['firstName'] ?? '',
-                                            cosignerLastName: firstCosigner?['lastName'] ?? '',
-                                            cosignerPhoneNumber: firstCosigner?['phoneNumber'] ?? '',
-                                            cosignerEmail: firstCosigner?['email'] ?? '',
-                                            cosignerAlternativeEmail: firstCosigner?['alterEmail'] ?? '',
-                                            cosignerAddress: firstCosigner?['streetAddress'] ?? '',
-                                            cosignerCity: firstCosigner?['city'] ?? '',
-                                            cosignerCountry: firstCosigner?['country'] ?? '',
-                                            cosignerPostalcode: firstCosigner?['postalCode'] ?? '',
+                                            cosignerFirstName:
+                                                firstCosigner?['firstName'] ??
+                                                    '',
+                                            cosignerLastName:
+                                                firstCosigner?['lastName'] ??
+                                                    '',
+                                            cosignerPhoneNumber:
+                                                firstCosigner?['phoneNumber'] ??
+                                                    '',
+                                            cosignerEmail:
+                                                firstCosigner?['email'] ?? '',
+                                            cosignerAlternativeEmail:
+                                                firstCosigner?['alterEmail'] ??
+                                                    '',
+                                            cosignerAddress: firstCosigner?[
+                                                    'streetAddress'] ??
+                                                '',
+                                            cosignerCity:
+                                                firstCosigner?['city'] ?? '',
+                                            cosignerCountry:
+                                                firstCosigner?['country'] ?? '',
+                                            cosignerPostalcode:
+                                                firstCosigner?['postalCode'] ??
+                                                    '',
                                           ),
                                           leaseData: LeaseData(
                                             adminId: adminId ?? "",
                                             isProRent: isProRent,
-                                            proRatedRent: isProRent ? proRatedRentController.text.trim() : null,
+                                            proRatedRent: isProRent
+                                                ? proRatedRentController.text
+                                                    .trim()
+                                                : null,
                                             companyName: companyName,
                                             endDate: leaseEndDate,
                                             entry: chargeEntries,
@@ -3824,19 +4648,27 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                             leaseType: _selectedLeaseType ?? "",
                                             rentalId: renderId,
                                             startDate: leaseStartDate,
-                                            tenantId: tenantDataList.map((tenant) => tenant.tenantId ?? '').toList(),
-                                            tenantResidentStatus: _selectedResidentsEmail,
+                                            tenantId: tenantDataList
+                                                .map((tenant) =>
+                                                    tenant.tenantId ?? '')
+                                                .toList(),
+                                            tenantResidentStatus:
+                                                _selectedResidentsEmail,
                                             unitId: _selectedUnit,
                                             uploadedFile: _uploadedFileNames,
                                           ),
                                           tenantData: tenantDataList,
                                         );
-                                        print("Pro-rated Rent Value: ${proRatedRentController.text.trim()}");
+                                        print(
+                                            "Pro-rated Rent Value: ${proRatedRentController.text.trim()}");
                                         print('lease data full ${lease}');
                                         lease.tenantData.forEach((tenant) {
-                                          print('  Tenant First Name: ${tenant.tenantFirstName}');
-                                          print('  Tenant Last Name: ${tenant.tenantLastName}');
-                                          print('  Tenant ID: ${tenant.tenantId}');
+                                          print(
+                                              '  Tenant First Name: ${tenant.tenantFirstName}');
+                                          print(
+                                              '  Tenant Last Name: ${tenant.tenantLastName}');
+                                          print(
+                                              '  Tenant ID: ${tenant.tenantId}');
                                         });
 
                                         await addLeaseAndNavigate(lease);
@@ -3844,9 +4676,12 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                         setState(() {
                                           isLoading = false; // Stop loading
                                         });
-                                        if (applicantIds != null && applicantIds!.isNotEmpty) {
-                                          print('applicant id is: ${widget.applicantId}');
-                                          ifApplicantMoveIn(widget.applicantId!, applicantIds);
+                                        if (applicantIds != null &&
+                                            applicantIds!.isNotEmpty) {
+                                          print(
+                                              'applicant id is: ${widget.applicantId}');
+                                          ifApplicantMoveIn(widget.applicantId!,
+                                              applicantIds);
                                         } else {
                                           print('No applicant id provided');
                                         }
@@ -3855,33 +4690,45 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                       }
                                     } else {
                                       print("faild");
-                                      String leaseStartDate = startDateController.text;
-                                      String leaseEndDate = endDateController.text;
+                                      String leaseStartDate =
+                                          startDateController.text;
+                                      String leaseEndDate =
+                                          endDateController.text;
 
-                                      SharedPreferences prefs = await SharedPreferences.getInstance();
-                                      String adminId = prefs.getString("adminId")!;
+                                      SharedPreferences prefs =
+                                          await SharedPreferences.getInstance();
+                                      String adminId =
+                                          prefs.getString("adminId")!;
 
                                       bool _isLeaseAdded = false;
 
                                       // // Printing ChargeData object
                                       //Changes
-                                      List<Map<String, String>> mergedFormDataList = [
+                                      List<Map<String, String>>
+                                          mergedFormDataList = [
                                         ...formDataOneTimeList,
                                         ...formDataRecurringList,
                                       ];
 
                                       // Creating Entry objects from the merged list
-                                      List<Entry> chargeEntries = mergedFormDataList.map((data) {
+                                      List<Entry> chargeEntries =
+                                          mergedFormDataList.map((data) {
                                         print(data['account']);
                                         return Entry(
                                           account: data['account'] ?? '',
-                                          amount: double.tryParse(data['amount'] ?? '0.0') ?? 0.0,
+                                          amount: double.tryParse(
+                                                  data['amount'] ?? '0.0') ??
+                                              0.0,
                                           chargeType: data['charge_type'] ?? '',
                                           date: rentNextDueDate.text,
-                                          isRepeatable: data['is_repeatable']?.toLowerCase() == 'true',
+                                          isRepeatable: data['is_repeatable']
+                                                  ?.toLowerCase() ==
+                                              'true',
                                           memo: data['memo'] ?? '',
-                                          rentCycle: data['rent_cycle'], // Assuming this field might be present
-                                          tenantId: data['tenant_id'], // Assuming this field might be present
+                                          rentCycle: data[
+                                              'rent_cycle'], // Assuming this field might be present
+                                          tenantId: data[
+                                              'tenant_id'], // Assuming this field might be present
                                         );
                                       }).toList();
                                       // Creating ChargeData object
@@ -3890,36 +4737,69 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                         entry: chargeEntries,
                                         isLeaseAdded: _isLeaseAdded,
                                       );
-                                      print('ChargeData: ${jsonEncode(chargeData.toJson())}');
+                                      print(
+                                          'ChargeData: ${jsonEncode(chargeData.toJson())}');
                                       //consiger
-                                      Map<String, String>? firstCosigner = cosignersMap.isNotEmpty ? cosignersMap[0] : {};
-                                      List<TenantData> tenantDataList = tenantsMap.entries.map((entry) {
+                                      Map<String, String>? firstCosigner =
+                                          cosignersMap.isNotEmpty
+                                              ? cosignersMap[0]
+                                              : {};
+                                      List<TenantData> tenantDataList =
+                                          tenantsMap.entries.map((entry) {
                                         final tenantMap = entry.value;
                                         return TenantData(
                                           adminId: tenantMap['adminId'] ?? '',
                                           comments: tenantMap['comments'] ?? '',
-                                          createdAt: tenantMap['createdAt'] ?? '',
+                                          createdAt:
+                                              tenantMap['createdAt'] ?? '',
                                           emergencyContact: EmergencyContacts(
-                                            name: tenantMap['emergencyContactName'] ?? '',
-                                            relation: tenantMap['emergencyContactRelation'] ?? '',
-                                            email: tenantMap['emergencyContactEmail'] ?? '',
-                                            phoneNumber: tenantMap['emergencyContactPhoneNumber'] ?? '',
+                                            name: tenantMap[
+                                                    'emergencyContactName'] ??
+                                                '',
+                                            relation: tenantMap[
+                                                    'emergencyContactRelation'] ??
+                                                '',
+                                            email: tenantMap[
+                                                    'emergencyContactEmail'] ??
+                                                '',
+                                            phoneNumber: tenantMap[
+                                                    'emergencyContactPhoneNumber'] ??
+                                                '',
                                           ),
-                                          isDelete: tenantMap['isDelete'] == 'true',
-                                          rentalAddress: tenantMap['rentalAddress'] ?? '',
-                                          rentalUnit: tenantMap['rentalUnit'] ?? '',
-                                          taxPayerId: tenantMap['taxPayerId'] ?? '',
-                                          tenantAlternativeEmail: tenantMap['tenantAlternativeEmail'] ?? '',
-                                          tenantAlternativeNumber: tenantMap['tenantAlternativeNumber'] ?? '',
-                                          tenantBirthDate: tenantMap['dob'] ?? '',
-                                          tenantEmail: tenantMap['tenantEmail'] ?? '',
-                                          tenantFirstName: tenantMap['tenantFirstName'] ?? '',
+                                          isDelete:
+                                              tenantMap['isDelete'] == 'true',
+                                          rentalAddress:
+                                              tenantMap['rentalAddress'] ?? '',
+                                          rentalUnit:
+                                              tenantMap['rentalUnit'] ?? '',
+                                          taxPayerId:
+                                              tenantMap['taxPayerId'] ?? '',
+                                          tenantAlternativeEmail: tenantMap[
+                                                  'tenantAlternativeEmail'] ??
+                                              '',
+                                          tenantAlternativeNumber: tenantMap[
+                                                  'tenantAlternativeNumber'] ??
+                                              '',
+                                          tenantBirthDate:
+                                              tenantMap['dob'] ?? '',
+                                          tenantEmail:
+                                              tenantMap['tenantEmail'] ?? '',
+                                          tenantFirstName:
+                                              tenantMap['tenantFirstName'] ??
+                                                  '',
                                           tenantId: tenantMap['tenantId'] ?? '',
-                                          tenantLastName: tenantMap['tenantLastName'] ?? '',
-                                          tenantPassword: tenantMap['tenantPassword'] ?? '',
-                                          tenantPhoneNumber: tenantMap['tenantPhoneNumber'] ?? '',
-                                          updatedAt: tenantMap['updatedAt'] ?? '',
-                                          v: int.tryParse(tenantMap['v'] ?? '0') ?? 0,
+                                          tenantLastName:
+                                              tenantMap['tenantLastName'] ?? '',
+                                          tenantPassword:
+                                              tenantMap['tenantPassword'] ?? '',
+                                          tenantPhoneNumber:
+                                              tenantMap['tenantPhoneNumber'] ??
+                                                  '',
+                                          updatedAt:
+                                              tenantMap['updatedAt'] ?? '',
+                                          v: int.tryParse(
+                                                  tenantMap['v'] ?? '0') ??
+                                              0,
                                           id: tenantMap['id'] ?? '',
                                         );
                                       }).toList();
@@ -3928,13 +4808,15 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                   child: Center(
                                       child: isLoading
                                           ? SpinKitFadingCircle(
-                                        color: Colors.white,
-                                        size: 25.0,
-                                      )
+                                              color: Colors.white,
+                                              size: 25.0,
+                                            )
                                           : Text(
-                                        'Create Lease',
-                                        style: TextStyle(color: Color(0xFFf7f8f9), fontSize: 16),
-                                      )),
+                                              'Create Lease',
+                                              style: TextStyle(
+                                                  color: Color(0xFFf7f8f9),
+                                                  fontSize: 16),
+                                            )),
                                 )),
                             const SizedBox(
                               width: 10,
@@ -3942,15 +4824,22 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                             Container(
                                 height: 50,
                                 width: 120,
-                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8.0)),
                                 child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFffffff), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            const Color(0xFFffffff),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0))),
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
                                     child: const Text(
                                       'Cancel',
-                                      style: TextStyle(color: Color(0xFF748097)),
+                                      style:
+                                          TextStyle(color: Color(0xFF748097)),
                                     )))
                           ],
                         ),
@@ -3981,7 +4870,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
       isLoading = true;
     });
     final url = Uri.parse('${Api_url}/api/leases/check_lease');
-    List<String?> tenantids = lease.tenantData.map((element) => element.tenantId).toList();
+    List<String?> tenantids =
+        lease.tenantData.map((element) => element.tenantId).toList();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
@@ -3999,7 +4889,11 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
     try {
       final response = await http.post(
         url,
-        headers: {"authorization": "CRM $token", "id": "CRM $id", 'Content-Type': 'application/json'},
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          'Content-Type': 'application/json'
+        },
         body: jsonEncode(checkdata),
       );
       print(response.body);
@@ -4013,7 +4907,8 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
             isLoading = false;
           });
           if (success) {
-            Navigator.pop(context, true); // Replace with the actual navigation logic
+            Navigator.pop(
+                context, true); // Replace with the actual navigation logic
           } else {
             // Handle the failure case, maybe show a message
           }
@@ -4024,12 +4919,14 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
             errormessagefordateissue = responseData['message'];
             isLoading = false;
           });
-          Fluttertoast.showToast(msg: responseData['message'] ?? 'Failed to add lease');
+          Fluttertoast.showToast(
+              msg: responseData['message'] ?? 'Failed to add lease');
           return false;
         }
       } else {
         print('Failed to add lease: ${responseData}');
-        Fluttertoast.showToast(msg: responseData['message'] ?? 'Failed to add lease');
+        Fluttertoast.showToast(
+            msg: responseData['message'] ?? 'Failed to add lease');
         return false;
       }
     } catch (error) {
@@ -4039,8 +4936,10 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
     }
   }
 
-  Future<void> ifApplicantMoveIn(String applicantId, List<String> apnt_Id) async {
-    bool success = await LeaseRepository().ifApplicantMoveInTrue(applicantId, apnt_Id);
+  Future<void> ifApplicantMoveIn(
+      String applicantId, List<String> apnt_Id) async {
+    bool success =
+        await LeaseRepository().ifApplicantMoveInTrue(applicantId, apnt_Id);
 
     if (success) {
       Navigator.pop(context); // Replace with the actual navigation logic
@@ -4104,7 +5003,11 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
             return AlertDialog(
               backgroundColor: Colors.white,
               contentPadding: EdgeInsets.zero,
-              title: Text('Add Tenant or Cosigner', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: blueColor)),
+              title: Text('Add Tenant or Cosigner',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: blueColor)),
               content: Form(
                 key: _addRecurringFormKey,
                 child: Padding(
@@ -4129,14 +5032,17 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
-                                        border: isTenantSelected ? null : Border.all(color: blueColor, width: 1),
+                                        border: isTenantSelected
+                                            ? null
+                                            : Border.all(
+                                                color: blueColor, width: 1),
                                         gradient: isTenantSelected
                                             ? LinearGradient(
-                                          colors: [
-                                            blueColor,
-                                            blueColor,
-                                          ],
-                                        )
+                                                colors: [
+                                                  blueColor,
+                                                  blueColor,
+                                                ],
+                                              )
                                             : null,
                                         borderRadius: const BorderRadius.only(
                                           topLeft: Radius.circular(4),
@@ -4144,32 +5050,43 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                         ),
                                       ),
                                       alignment: Alignment.center,
-                                      padding: isTenantSelected ? const EdgeInsets.symmetric(vertical: 13) : const EdgeInsets.symmetric(vertical: 12),
+                                      padding: isTenantSelected
+                                          ? const EdgeInsets.symmetric(
+                                              vertical: 13)
+                                          : const EdgeInsets.symmetric(
+                                              vertical: 12),
                                       child: isTenantSelected
                                           ? Text(
-                                        "Tenant",
-                                        style: TextStyle(
-                                          color: !isTenantSelected ? Colors.transparent : Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      )
+                                              "Tenant",
+                                              style: TextStyle(
+                                                color: !isTenantSelected
+                                                    ? Colors.transparent
+                                                    : Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            )
                                           : ShaderMask(
-                                        shaderCallback: (bounds) {
-                                          return LinearGradient(
-                                            // colors: [
-                                            //   blueColor,
-                                            // ],
-                                            colors: [blueColor, blueColor],
-                                          ).createShader(bounds);
-                                        },
-                                        child: Text(
-                                          "Tenant",
-                                          style: TextStyle(
-                                            color: isTenantSelected ? Colors.transparent : Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
+                                              shaderCallback: (bounds) {
+                                                return LinearGradient(
+                                                  // colors: [
+                                                  //   blueColor,
+                                                  // ],
+                                                  colors: [
+                                                    blueColor,
+                                                    blueColor
+                                                  ],
+                                                ).createShader(bounds);
+                                              },
+                                              child: Text(
+                                                "Tenant",
+                                                style: TextStyle(
+                                                  color: isTenantSelected
+                                                      ? Colors.transparent
+                                                      : Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
                                     ),
                                   ),
                                 ),
@@ -4182,14 +5099,17 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
-                                        border: isTenantSelected == false ? null : Border.all(color: blueColor, width: 1),
+                                        border: isTenantSelected == false
+                                            ? null
+                                            : Border.all(
+                                                color: blueColor, width: 1),
                                         gradient: isTenantSelected == false
                                             ? LinearGradient(
-                                          colors: [
-                                            blueColor,
-                                            blueColor,
-                                          ],
-                                        )
+                                                colors: [
+                                                  blueColor,
+                                                  blueColor,
+                                                ],
+                                              )
                                             : null,
                                         borderRadius: const BorderRadius.only(
                                           topRight: Radius.circular(4),
@@ -4197,29 +5117,40 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                                         ),
                                       ),
                                       alignment: Alignment.center,
-                                      padding: isTenantSelected ? const EdgeInsets.symmetric(vertical: 12) : const EdgeInsets.symmetric(vertical: 13),
+                                      padding: isTenantSelected
+                                          ? const EdgeInsets.symmetric(
+                                              vertical: 12)
+                                          : const EdgeInsets.symmetric(
+                                              vertical: 13),
                                       child: !isTenantSelected
                                           ? Text(
-                                        "Cosigner",
-                                        style: TextStyle(
-                                          color: isTenantSelected ? Colors.transparent : Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      )
+                                              "Cosigner",
+                                              style: TextStyle(
+                                                color: isTenantSelected
+                                                    ? Colors.transparent
+                                                    : Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            )
                                           : ShaderMask(
-                                        shaderCallback: (bounds) {
-                                          return LinearGradient(
-                                            colors: [blueColor, blueColor],
-                                          ).createShader(bounds);
-                                        },
-                                        child: Text(
-                                          "Cosigner",
-                                          style: TextStyle(
-                                            color: !isTenantSelected ? Colors.transparent : Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
+                                              shaderCallback: (bounds) {
+                                                return LinearGradient(
+                                                  colors: [
+                                                    blueColor,
+                                                    blueColor
+                                                  ],
+                                                ).createShader(bounds);
+                                              },
+                                              child: Text(
+                                                "Cosigner",
+                                                style: TextStyle(
+                                                  color: !isTenantSelected
+                                                      ? Colors.transparent
+                                                      : Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
                                     ),
                                   ),
                                 ),
@@ -4228,9 +5159,9 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
                             isTenantSelected
                                 ? const AddTenant()
                                 : AddCosigner(
-                              cosigner: person,
-                              index: index,
-                            ),
+                                    cosigner: person,
+                                    index: index,
+                                  ),
                           ],
                         ),
                       ),
@@ -4283,7 +5214,6 @@ class _addLease3State extends State<addLease3> with SingleTickerProviderStateMix
         });
   }
 }
-
 
 class OneTimeChargePopUp extends StatefulWidget {
   final Function(Map<String, String>) onSave;
@@ -4348,7 +5278,8 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-    final response = await http.get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {
+    final response = await http
+        .get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {
       "authorization": "CRM $token",
       "id": "CRM $id",
     });
@@ -4356,7 +5287,9 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       setState(() {
-        items = (data['data'] as List).map((item) => item['account'] as String).toList();
+        items = (data['data'] as List)
+            .map((item) => item['account'] as String)
+            .toList();
         _isLoading = false;
         print(items.length);
       });
@@ -4428,18 +5361,19 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                             ],
                           ),
                           items: [
-                            ...items.map((String item) => DropdownMenuItem<String>(
-                              value: item,
-                              child: Text(
-                                item,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.black87,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            )),
+                            ...items
+                                .map((String item) => DropdownMenuItem<String>(
+                                      value: item,
+                                      child: Text(
+                                        item,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.black87,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    )),
                             DropdownMenuItem<String>(
                               value: 'button_item',
                               child: GestureDetector(
@@ -4450,26 +5384,35 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                       return Dialog(
                                         backgroundColor: Colors.white,
                                         surfaceTintColor: Colors.white,
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10.0)),
                                         child: Container(
                                           constraints: BoxConstraints(
                                             maxWidth: 500,
-                                            maxHeight: MediaQuery.of(context).size.height * 0.8,
+                                            maxHeight: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.8,
                                           ),
                                           child: SingleChildScrollView(
                                             child: Padding(
-                                              padding: const EdgeInsets.all(16.0),
+                                              padding:
+                                                  const EdgeInsets.all(16.0),
                                               child: Form(
                                                 key: _subFormKey,
                                                 child: Column(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
                                                       'Add account',
                                                       style: TextStyle(
                                                         fontSize: 16,
-                                                        fontWeight: FontWeight.bold,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                         color: blueColor,
                                                       ),
                                                     ),
@@ -4478,45 +5421,56 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                                       'Account Name *',
                                                       style: TextStyle(
                                                         fontSize: 14,
-                                                        fontWeight: FontWeight.bold,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                         color: blueColor,
                                                       ),
                                                     ),
                                                     const SizedBox(height: 5),
                                                     CustomTextField(
                                                       validator: (value) {
-                                                        if (value == null || value.isEmpty) {
+                                                        if (value == null ||
+                                                            value.isEmpty) {
                                                           return 'Please enter Account Name';
                                                         }
                                                         return null;
                                                       },
-                                                      keyboardType: TextInputType.text,
-                                                      hintText: 'Enter Account Name',
-                                                      controller: _accountNameController,
+                                                      keyboardType:
+                                                          TextInputType.text,
+                                                      hintText:
+                                                          'Enter Account Name',
+                                                      controller:
+                                                          _accountNameController,
                                                     ),
                                                     const SizedBox(height: 10),
                                                     Text(
                                                       'Account Type',
                                                       style: TextStyle(
                                                         fontSize: 14,
-                                                        fontWeight: FontWeight.bold,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                         color: blueColor,
                                                       ),
                                                     ),
                                                     const SizedBox(height: 5),
                                                     CustomDropdown(
                                                       validator: (value) {
-                                                        if (value == null || value.isEmpty) {
+                                                        if (value == null ||
+                                                            value.isEmpty) {
                                                           return 'Please select a Account Type';
                                                         }
                                                         return null;
                                                       },
-                                                      labelText: 'Select Account Type',
+                                                      labelText:
+                                                          'Select Account Type',
                                                       items: accountTypeItems,
-                                                      selectedValue: _selectedAccountType,
-                                                      onChanged: (String? value) {
+                                                      selectedValue:
+                                                          _selectedAccountType,
+                                                      onChanged:
+                                                          (String? value) {
                                                         setState(() {
-                                                          _selectedAccountType = value;
+                                                          _selectedAccountType =
+                                                              value;
                                                         });
                                                       },
                                                     ),
@@ -4525,24 +5479,30 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                                       'Fund Type',
                                                       style: TextStyle(
                                                         fontSize: 14,
-                                                        fontWeight: FontWeight.bold,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                         color: blueColor,
                                                       ),
                                                     ),
                                                     const SizedBox(height: 5),
                                                     CustomDropdown(
                                                       validator: (value) {
-                                                        if (value == null || value.isEmpty) {
+                                                        if (value == null ||
+                                                            value.isEmpty) {
                                                           return 'Please select a Fund Type';
                                                         }
                                                         return null;
                                                       },
-                                                      labelText: 'Select Fund Type',
+                                                      labelText:
+                                                          'Select Fund Type',
                                                       items: fundTypeItems,
-                                                      selectedValue: _selectedFundType,
-                                                      onChanged: (String? value) {
+                                                      selectedValue:
+                                                          _selectedFundType,
+                                                      onChanged:
+                                                          (String? value) {
                                                         setState(() {
-                                                          _selectedFundType = value;
+                                                          _selectedFundType =
+                                                              value;
                                                         });
                                                       },
                                                     ),
@@ -4551,39 +5511,49 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                                       'Notes',
                                                       style: TextStyle(
                                                         fontSize: 14,
-                                                        fontWeight: FontWeight.bold,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                         color: blueColor,
                                                       ),
                                                     ),
                                                     const SizedBox(height: 5),
                                                     CustomTextField(
                                                       validator: (value) {
-                                                        if (value == null || value.isEmpty) {
+                                                        if (value == null ||
+                                                            value.isEmpty) {
                                                           return 'Please enter Notes';
                                                         }
                                                         return null;
                                                       },
-                                                      keyboardType: TextInputType.text,
+                                                      keyboardType:
+                                                          TextInputType.text,
                                                       hintText: 'Enter Notes',
-                                                      controller: _notesController,
+                                                      controller:
+                                                          _notesController,
                                                     ),
                                                     const SizedBox(height: 20),
                                                     RichText(
                                                       text: TextSpan(
                                                         children: <TextSpan>[
                                                           TextSpan(
-                                                            text: 'We stores this information ',
+                                                            text:
+                                                                'We stores this information ',
                                                             style: TextStyle(
                                                               fontSize: 12,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.grey,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.grey,
                                                             ),
                                                           ),
                                                           TextSpan(
                                                             text: ' Privately ',
                                                             style: TextStyle(
                                                               fontSize: 12,
-                                                              fontWeight: FontWeight.bold,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
                                                               color: blueColor,
                                                             ),
                                                           ),
@@ -4591,15 +5561,20 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                                             text: ' and ',
                                                             style: TextStyle(
                                                               fontSize: 12,
-                                                              fontWeight: FontWeight.normal,
-                                                              color: Colors.grey,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                              color:
+                                                                  Colors.grey,
                                                             ),
                                                           ),
                                                           TextSpan(
                                                             text: ' Securely ',
                                                             style: TextStyle(
                                                               fontSize: 12,
-                                                              fontWeight: FontWeight.bold,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
                                                               color: blueColor,
                                                             ),
                                                           ),
@@ -4608,47 +5583,74 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                                     ),
                                                     const SizedBox(height: 20),
                                                     Row(
-                                                      mainAxisAlignment: MainAxisAlignment.end,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
                                                       children: [
                                                         Container(
                                                             height: 50,
                                                             width: 90,
                                                             decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.circular(8.0)),
-                                                            child: ElevatedButton(
-                                                                style: ElevatedButton.styleFrom(
-                                                                    backgroundColor: blueColor,
-                                                                    shape: RoundedRectangleBorder(
-                                                                        borderRadius: BorderRadius.circular(8.0))),
-                                                                onPressed: () {
-                                                                  _submitSubForm();
-                                                                },
-                                                                child: const Text(
-                                                                  'Add',
-                                                                  style: TextStyle(color: Color(0xFFf7f8f9)),
-                                                                ))),
-                                                        const SizedBox(width: 10),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8.0)),
+                                                            child:
+                                                                ElevatedButton(
+                                                                    style: ElevatedButton.styleFrom(
+                                                                        backgroundColor:
+                                                                            blueColor,
+                                                                        shape: RoundedRectangleBorder(
+                                                                            borderRadius: BorderRadius.circular(
+                                                                                8.0))),
+                                                                    onPressed:
+                                                                        () {
+                                                                      _submitSubForm();
+                                                                    },
+                                                                    child:
+                                                                        const Text(
+                                                                      'Add',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Color(0xFFf7f8f9)),
+                                                                    ))),
+                                                        const SizedBox(
+                                                            width: 10),
                                                         Container(
                                                             height: 50,
                                                             width: 94,
                                                             decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.circular(8.0)),
-                                                            child: ElevatedButton(
-                                                                style: ElevatedButton.styleFrom(
-                                                                    backgroundColor: const Color(0xFFffffff),
-                                                                    shape: RoundedRectangleBorder(
-                                                                        borderRadius: BorderRadius.circular(8.0))),
-                                                                onPressed: () {
-                                                                  setState(() {
-                                                                    Navigator.pop(context);
-                                                                    _selectedProperty = null;
-                                                                  });
-                                                                  Navigator.pop(context);
-                                                                },
-                                                                child: const Text(
-                                                                  'Cancel',
-                                                                  style: TextStyle(color: Color(0xFF748097)),
-                                                                )))
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8.0)),
+                                                            child:
+                                                                ElevatedButton(
+                                                                    style: ElevatedButton.styleFrom(
+                                                                        backgroundColor:
+                                                                            const Color(
+                                                                                0xFFffffff),
+                                                                        shape: RoundedRectangleBorder(
+                                                                            borderRadius: BorderRadius.circular(
+                                                                                8.0))),
+                                                                    onPressed:
+                                                                        () {
+                                                                      setState(
+                                                                          () {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                        _selectedProperty =
+                                                                            null;
+                                                                      });
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    },
+                                                                    child:
+                                                                        const Text(
+                                                                      'Cancel',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Color(0xFF748097)),
+                                                                    )))
                                                       ],
                                                     ),
                                                   ],
@@ -4679,7 +5681,8 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                           onChanged: (value) {
                             setState(() {
                               _selectedProperty = value;
-                              _showAccountError = false; // clear error on change
+                              _showAccountError =
+                                  false; // clear error on change
                             });
                           },
                           buttonStyleData: ButtonStyleData(
@@ -4768,18 +5771,15 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                     keyboardType: TextInputType.text,
                     hintText: 'Enter Memo',
                     controller: _memoController,
-                   // optional: true,
+                    // optional: true,
                   ),
                   const SizedBox(height: 20),
-                  if(MediaQuery.of(context).size.width < 500) ...[
-                    Text(
-                        'Charge Date *',
+                  if (MediaQuery.of(context).size.width < 500) ...[
+                    Text('Charge Date *',
                         style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            color: blueColor
-                        )
-                    ),
+                            color: blueColor)),
                     const SizedBox(height: 8),
                     CustomTextField(
                       onTap: () async {
@@ -4810,7 +5810,8 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                           },
                         );
                         if (pickedDate != null) {
-                          String formattedStartDate = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                          String formattedStartDate =
+                              "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                           setState(() {
                             startDateController.text = formattedStartDate;
                           });
@@ -4841,47 +5842,39 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                           height: 50,
                           width: 90,
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0)
-                          ),
+                              borderRadius: BorderRadius.circular(8.0)),
                           child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: blueColor,
                                   shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0)
-                                  )
-                              ),
+                                      borderRadius:
+                                          BorderRadius.circular(8.0))),
                               onPressed: () {
                                 _submitForm();
                               },
                               child: const Text(
                                 'Add',
                                 style: TextStyle(color: Color(0xFFf7f8f9)),
-                              )
-                          )
-                      ),
+                              ))),
                       const SizedBox(width: 10),
                       Container(
                           height: 50,
                           width: 94,
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0)
-                          ),
+                              borderRadius: BorderRadius.circular(8.0)),
                           child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFFffffff),
                                   shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0)
-                                  )
-                              ),
+                                      borderRadius:
+                                          BorderRadius.circular(8.0))),
                               onPressed: () {
                                 Navigator.pop(context);
                               },
                               child: const Text(
                                 'Cancel',
                                 style: TextStyle(color: Color(0xFF748097)),
-                              )
-                          )
-                      )
+                              )))
                     ],
                   ),
                 ],
@@ -4978,6 +5971,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
     }
   }
 }
+
 class RecurringChargePopUp extends StatefulWidget {
   final Function(Map<String, String>) onSave;
   final Map<String, String>? initialData;
@@ -5048,7 +6042,8 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
 
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-    final response = await http.get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {
+    final response = await http
+        .get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {
       "authorization": "CRM $token",
       "id": "CRM $id",
     });
@@ -5057,7 +6052,9 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       final data = json.decode(response.body);
       setState(() {
         //items = (data['data'] as List).where((item) => item['charge_type'] == "Recurring Charge").map((item) => item['account'] as String).toList();
-        items = (data['data'] as List).map((item) => item['account'] as String).toList();
+        items = (data['data'] as List)
+            .map((item) => item['account'] as String)
+            .toList();
         _isLoading = false;
         print(items.length);
       });
@@ -5106,7 +6103,8 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                 SizedBox(height: 8),
                 FormField<String>(
                   validator: (value) {
-                    if (_selectedProperty == null || _selectedProperty!.isEmpty) {
+                    if (_selectedProperty == null ||
+                        _selectedProperty!.isEmpty) {
                       setState(() {
                         _showAccountError = true;
                       });
@@ -5140,18 +6138,19 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                               ],
                             ),
                             items: [
-                              ...items.map((String item) => DropdownMenuItem<String>(
-                                value: item,
-                                child: Text(
-                                  item,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.black87,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              )),
+                              ...items.map(
+                                  (String item) => DropdownMenuItem<String>(
+                                        value: item,
+                                        child: Text(
+                                          item,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.black87,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      )),
                               //updated
                               DropdownMenuItem<String>(
                                 value: 'button_item',
@@ -5160,27 +6159,37 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
-                                        return StatefulBuilder(builder: (context, setState) {
+                                        return StatefulBuilder(
+                                            builder: (context, setState) {
                                           return Dialog(
                                             backgroundColor: Colors.white,
                                             surfaceTintColor: Colors.white,
-                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        10.0)),
                                             child: SingleChildScrollView(
                                               child: Container(
                                                 // height: 450,
                                                 child: Padding(
-                                                  padding: const EdgeInsets.all(16.0),
+                                                  padding: const EdgeInsets.all(
+                                                      16.0),
                                                   child: Form(
                                                     key: _subFormKey,
                                                     child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
                                                         Text(
                                                           'Add account',
                                                           style: TextStyle(
                                                             fontSize: 16,
-                                                            fontWeight: FontWeight.bold,
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                             color: blueColor,
                                                           ),
                                                         ),
@@ -5191,94 +6200,130 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                                                           'Account Name *',
                                                           style: TextStyle(
                                                             fontSize: 14,
-                                                            fontWeight: FontWeight.bold,
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                             color: blueColor,
                                                           ),
                                                         ),
-                                                        const SizedBox(height: 5),
+                                                        const SizedBox(
+                                                            height: 5),
                                                         CustomTextField(
                                                           validator: (value) {
-                                                            if (value == null || value.isEmpty) {
+                                                            if (value == null ||
+                                                                value.isEmpty) {
                                                               return 'Please enter Account Name';
                                                             }
                                                             return null;
                                                           },
-                                                          keyboardType: TextInputType.text,
-                                                          hintText: 'Enter Account Name',
-                                                          controller: _accountNameController,
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .text,
+                                                          hintText:
+                                                              'Enter Account Name',
+                                                          controller:
+                                                              _accountNameController,
                                                         ),
-                                                        const SizedBox(height: 10),
+                                                        const SizedBox(
+                                                            height: 10),
                                                         Text(
                                                           'Account Type',
                                                           style: TextStyle(
                                                             fontSize: 14,
-                                                            fontWeight: FontWeight.bold,
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                             color: blueColor,
                                                           ),
                                                         ),
-                                                        const SizedBox(height: 5),
+                                                        const SizedBox(
+                                                            height: 5),
                                                         CustomDropdown(
                                                           validator: (value) {
-                                                            if (_selectedAccountType == null || _selectedAccountType!.isEmpty) {
+                                                            if (_selectedAccountType ==
+                                                                    null ||
+                                                                _selectedAccountType!
+                                                                    .isEmpty) {
                                                               return 'Please select a Account Type';
                                                             }
                                                             return null;
                                                           },
-                                                          labelText: 'Select Account Type',
-                                                          items: accountTypeItems,
-                                                          selectedValue: _selectedAccountType,
-                                                          onChanged: (String? value) {
+                                                          labelText:
+                                                              'Select Account Type',
+                                                          items:
+                                                              accountTypeItems,
+                                                          selectedValue:
+                                                              _selectedAccountType,
+                                                          onChanged:
+                                                              (String? value) {
                                                             setState(() {
-                                                              _selectedAccountType = value;
+                                                              _selectedAccountType =
+                                                                  value;
                                                             });
                                                           },
                                                         ),
-                                                        const SizedBox(height: 10),
+                                                        const SizedBox(
+                                                            height: 10),
                                                         Text(
                                                           'Fund Type',
                                                           style: TextStyle(
                                                             fontSize: 14,
-                                                            fontWeight: FontWeight.bold,
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                             color: blueColor,
                                                           ),
                                                         ),
-                                                        const SizedBox(height: 5),
+                                                        const SizedBox(
+                                                            height: 5),
                                                         CustomDropdown(
                                                           validator: (value) {
-                                                            if (_selectedFundType == null || _selectedFundType!.isEmpty) {
+                                                            if (_selectedFundType ==
+                                                                    null ||
+                                                                _selectedFundType!
+                                                                    .isEmpty) {
                                                               return 'Please select a Fund Type';
                                                             }
                                                             return null;
                                                           },
-                                                          labelText: 'Select Fund Type',
+                                                          labelText:
+                                                              'Select Fund Type',
                                                           items: fundTypeItems,
-                                                          selectedValue: _selectedFundType,
-                                                          onChanged: (String? value) {
+                                                          selectedValue:
+                                                              _selectedFundType,
+                                                          onChanged:
+                                                              (String? value) {
                                                             setState(() {
-                                                              _selectedFundType = value;
+                                                              _selectedFundType =
+                                                                  value;
                                                             });
                                                           },
                                                         ),
-                                                        const SizedBox(height: 10),
+                                                        const SizedBox(
+                                                            height: 10),
                                                         Text(
                                                           'Notes',
                                                           style: TextStyle(
                                                             fontSize: 14,
-                                                            fontWeight: FontWeight.bold,
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                             color: blueColor,
                                                           ),
                                                         ),
-                                                        const SizedBox(height: 5),
+                                                        const SizedBox(
+                                                            height: 5),
                                                         CustomTextField(
                                                           validator: (value) {
-                                                            if (value == null || value.isEmpty) {
+                                                            if (value == null ||
+                                                                value.isEmpty) {
                                                               return 'Please enter Notes';
                                                             }
                                                             return null;
                                                           },
-                                                          keyboardType: TextInputType.text,
-                                                          hintText: 'Enter Notes',
-                                                          controller: _notesController,
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .text,
+                                                          hintText:
+                                                              'Enter Notes',
+                                                          controller:
+                                                              _notesController,
                                                         ),
                                                         const SizedBox(
                                                           height: 20,
@@ -5287,35 +6332,54 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                                                           text: TextSpan(
                                                             children: <TextSpan>[
                                                               TextSpan(
-                                                                text: 'We stores this information ',
-                                                                style: TextStyle(
+                                                                text:
+                                                                    'We stores this information ',
+                                                                style:
+                                                                    TextStyle(
                                                                   fontSize: 12,
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color: Colors.grey,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .grey,
                                                                 ),
                                                               ),
                                                               TextSpan(
-                                                                text: ' Privately ',
-                                                                style: TextStyle(
+                                                                text:
+                                                                    ' Privately ',
+                                                                style:
+                                                                    TextStyle(
                                                                   fontSize: 12,
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color: blueColor,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color:
+                                                                      blueColor,
                                                                 ),
                                                               ),
                                                               TextSpan(
                                                                 text: ' and ',
-                                                                style: TextStyle(
+                                                                style:
+                                                                    TextStyle(
                                                                   fontSize: 12,
-                                                                  fontWeight: FontWeight.normal,
-                                                                  color: Colors.grey,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                  color: Colors
+                                                                      .grey,
                                                                 ),
                                                               ),
                                                               TextSpan(
-                                                                text: ' Securely ',
-                                                                style: TextStyle(
+                                                                text:
+                                                                    ' Securely ',
+                                                                style:
+                                                                    TextStyle(
                                                                   fontSize: 12,
-                                                                  fontWeight: FontWeight.bold,
-                                                                  color: blueColor,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color:
+                                                                      blueColor,
                                                                 ),
                                                               ),
                                                             ],
@@ -5325,42 +6389,71 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                                                           height: 20,
                                                         ),
                                                         Row(
-                                                          mainAxisAlignment: MainAxisAlignment.end,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .end,
                                                           children: [
                                                             Container(
                                                                 height: 50,
                                                                 width: 90,
-                                                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
-                                                                child: ElevatedButton(
-                                                                    style: ElevatedButton.styleFrom(backgroundColor: blueColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
-                                                                    onPressed: () {
-                                                                      _submitSubForm(context);
-                                                                    },
-                                                                    child: const Text(
-                                                                      'Add',
-                                                                      style: TextStyle(color: Color(0xFFf7f8f9)),
-                                                                    ))),
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0)),
+                                                                child:
+                                                                    ElevatedButton(
+                                                                        style: ElevatedButton.styleFrom(
+                                                                            backgroundColor:
+                                                                                blueColor,
+                                                                            shape: RoundedRectangleBorder(
+                                                                                borderRadius: BorderRadius.circular(
+                                                                                    8.0))),
+                                                                        onPressed:
+                                                                            () {
+                                                                          _submitSubForm(
+                                                                              context);
+                                                                        },
+                                                                        child:
+                                                                            const Text(
+                                                                          'Add',
+                                                                          style:
+                                                                              TextStyle(color: Color(0xFFf7f8f9)),
+                                                                        ))),
                                                             const SizedBox(
                                                               width: 10,
                                                             ),
                                                             Container(
                                                                 height: 50,
                                                                 width: 94,
-                                                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
-                                                                child: ElevatedButton(
-                                                                    style: ElevatedButton.styleFrom(
-                                                                        backgroundColor: const Color(0xFFffffff), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
-                                                                    onPressed: () {
-                                                                      setState(() {
-                                                                        Navigator.pop(context);
-                                                                        _selectedProperty = null;
-                                                                      });
-                                                                      Navigator.pop(context);
-                                                                    },
-                                                                    child: const Text(
-                                                                      'Cancel',
-                                                                      style: TextStyle(color: Color(0xFF748097)),
-                                                                    )))
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0)),
+                                                                child:
+                                                                    ElevatedButton(
+                                                                        style: ElevatedButton.styleFrom(
+                                                                            backgroundColor: const Color(
+                                                                                0xFFffffff),
+                                                                            shape: RoundedRectangleBorder(
+                                                                                borderRadius: BorderRadius.circular(
+                                                                                    8.0))),
+                                                                        onPressed:
+                                                                            () {
+                                                                          setState(
+                                                                              () {
+                                                                            Navigator.pop(context);
+                                                                            _selectedProperty =
+                                                                                null;
+                                                                          });
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                        },
+                                                                        child:
+                                                                            const Text(
+                                                                          'Cancel',
+                                                                          style:
+                                                                              TextStyle(color: Color(0xFF748097)),
+                                                                        )))
                                                           ],
                                                         ),
                                                       ],
@@ -5376,11 +6469,15 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                                   },
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       const Text(
                                         '+ Add New Account',
-                                        style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500),
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w500),
                                       ),
                                     ],
                                   ),
@@ -5397,7 +6494,8 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                             buttonStyleData: ButtonStyleData(
                               height: 45,
                               // width: 160,
-                              padding: const EdgeInsets.only(left: 0, right: 14),
+                              padding:
+                                  const EdgeInsets.only(left: 0, right: 14),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(6),
                                 color: Colors.white,
@@ -5420,7 +6518,8 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                               scrollbarTheme: ScrollbarThemeData(
                                 radius: const Radius.circular(6),
                                 thickness: MaterialStateProperty.all(6),
-                                thumbVisibility: MaterialStateProperty.all(true),
+                                thumbVisibility:
+                                    MaterialStateProperty.all(true),
                               ),
                             ),
                             menuItemStyleData: const MenuItemStyleData(
@@ -5485,7 +6584,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                   keyboardType: TextInputType.text,
                   hintText: 'Enter Memo',
                   controller: _memoController,
-                 // optional: true,
+                  // optional: true,
                 ),
                 const SizedBox(height: 10),
                 Text(
@@ -5531,7 +6630,8 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                             },
                             buttonStyleData: ButtonStyleData(
                               height: 45,
-                              padding: const EdgeInsets.only(left: 0, right: 14),
+                              padding:
+                                  const EdgeInsets.only(left: 0, right: 14),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(6),
                                 color: Colors.white,
@@ -5546,7 +6646,8 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                               scrollbarTheme: ScrollbarThemeData(
                                 radius: const Radius.circular(6),
                                 thickness: MaterialStateProperty.all(6),
-                                thumbVisibility: MaterialStateProperty.all(true),
+                                thumbVisibility:
+                                    MaterialStateProperty.all(true),
                               ),
                             ),
                           ),
@@ -5569,17 +6670,17 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                 const SizedBox(
                   height: 20,
                 ),
-                if(MediaQuery.of(context).size.width < 500)
+                if (MediaQuery.of(context).size.width < 500)
                   Text('Charge Start From *',
                       style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
                           color: blueColor)),
-                if(MediaQuery.of(context).size.width < 500)
+                if (MediaQuery.of(context).size.width < 500)
                   const SizedBox(
                     height: 8,
                   ),
-                if(MediaQuery.of(context).size.width < 500)
+                if (MediaQuery.of(context).size.width < 500)
                   CustomTextField(
                     onTap: () async {
                       DateTime? pickedDate = await showDatePicker(
@@ -5589,24 +6690,19 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                         firstDate: DateTime(2000),
                         lastDate: DateTime(2101),
                         locale: const Locale('en', 'US'),
-                        builder: (BuildContext context,
-                            Widget? child) {
+                        builder: (BuildContext context, Widget? child) {
                           return Theme(
                             data: ThemeData.light().copyWith(
                               colorScheme: ColorScheme.light(
-                                primary:
-                                blueColor, // header background color
-                                onPrimary: Colors
-                                    .white, // header text color
-                                onSurface:
-                                blueColor, // body text color
+                                primary: blueColor, // header background color
+                                onPrimary: Colors.white, // header text color
+                                onSurface: blueColor, // body text color
                               ),
-                              textButtonTheme:
-                              TextButtonThemeData(
+                              textButtonTheme: TextButtonThemeData(
                                 style: TextButton.styleFrom(
                                   foregroundColor: Colors.white,
                                   backgroundColor:
-                                  blueColor, // button text color
+                                      blueColor, // button text color
                                 ),
                               ),
                             ),
@@ -5619,10 +6715,8 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                         //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                         String formattedStartDate =
                             "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                        DateTime endDate = DateTime(
-                            pickedDate.year + 1,
-                            pickedDate.month,
-                            pickedDate.day);
+                        DateTime endDate = DateTime(pickedDate.year + 1,
+                            pickedDate.month, pickedDate.day);
                         // String formattedEndDate =
                         //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
 
@@ -5630,9 +6724,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                             "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
                         print(formattedStartDate);
                         setState(() {
-                          startDateController.text =
-                              formattedStartDate;
-
+                          startDateController.text = formattedStartDate;
                         });
                       }
                     },
@@ -5652,7 +6744,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                     label: "select start date",
                     controller: startDateController,
                   ),
-                if(MediaQuery.of(context).size.width < 500)
+                if (MediaQuery.of(context).size.width < 500)
                   const SizedBox(
                     height: 15,
                   ),
@@ -5662,9 +6754,13 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                     Container(
                         height: 50,
                         width: 90,
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0)),
                         child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: blueColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: blueColor,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0))),
                             onPressed: () {
                               _submitForm(context);
                             },
@@ -5678,9 +6774,13 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                     Container(
                         height: 50,
                         width: 94,
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0)),
                         child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFffffff), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFffffff),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0))),
                             onPressed: () {
                               Navigator.pop(context);
                             },
@@ -5710,16 +6810,16 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       // Construct the date using the selected day, current year, and month
       // int selectedDayInt = int.parse(selectedDay!);
 
-
       // Format date to always have two-digit months and days
 
-      String? id = widget.initialData != null ? widget.initialData!['entry_id'] : "";
+      String? id =
+          widget.initialData != null ? widget.initialData!['entry_id'] : "";
       final formData = {
         'account': _selectedProperty ?? '',
         'amount': _amountController.text.trim(),
         'memo': _memoController.text.trim(),
         'entry_id': id ?? "",
-        "rent_cycle":selectedDay ?? "",
+        "rent_cycle": selectedDay ?? "",
         'charge_type': 'Recurring Charge',
         'charge_start': startDateController.text,
       };
@@ -5754,7 +6854,11 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       String? token = prefs.getString('token');
       final response = await http.post(
         Uri.parse('$Api_url/api/accounts/accounts'),
-        headers: {"authorization": "CRM $token", "id": "CRM $id", 'Content-Type': 'application/json'},
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          'Content-Type': 'application/json'
+        },
         body: json.encode(formData),
       );
 
@@ -5946,7 +7050,8 @@ class _AddTenantState extends State<AddTenant> {
       String? token = prefs.getString('token');
 
       // Fetch tenants
-      final tenantResponse = await http.get(Uri.parse('${Api_url}/api/tenant/tenants/$id'), headers: {
+      final tenantResponse = await http
+          .get(Uri.parse('${Api_url}/api/tenant/tenants/$id'), headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });
@@ -5958,7 +7063,9 @@ class _AddTenantState extends State<AddTenant> {
           List<dynamic> applicantlist = tenantData['data']['applicants'];
 
           tenants = tenantList.map((item) => Tenant.fromJson(item)).toList();
-          tenants.addAll(applicantlist.map((item) => convertApplicantToTenant(Datum.fromJson(item))).toList());
+          tenants.addAll(applicantlist
+              .map((item) => convertApplicantToTenant(Datum.fromJson(item)))
+              .toList());
         } else {
           print("Unexpected tenant response structure: Missing 'data' key");
         }
@@ -6103,7 +7210,8 @@ class _AddTenantState extends State<AddTenant> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
       String? token = prefs.getString('token');
-      final response = await http.get(Uri.parse('${Api_url}/api/applicant/applicant/$id'), headers: {
+      final response = await http
+          .get(Uri.parse('${Api_url}/api/applicant/applicant/$id'), headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });
@@ -6115,7 +7223,9 @@ class _AddTenantState extends State<AddTenant> {
         if (responseData.containsKey('data')) {
           List<dynamic> data = responseData['data'];
           Applicant = data.map((item) => Datum.fromJson(item)).toList();
-          List<Tenant> tenants = Applicant.map((applicant) => convertApplicantToTenant(applicant)).toList();
+          List<Tenant> tenants =
+              Applicant.map((applicant) => convertApplicantToTenant(applicant))
+                  .toList();
           filteredApplicant = List.from(Applicant);
           select = List<bool>.filled(Applicant.length, false);
         } else {
@@ -6148,8 +7258,10 @@ class _AddTenantState extends State<AddTenant> {
   // }
   @override
   Widget build(BuildContext context) {
-    var selectedTenantsProvider = Provider.of<SelectedTenantsProvider>(context, listen: false);
-    var selectedApplicantProvider = Provider.of<SelectedApplicantProvider>(context, listen: false);
+    var selectedTenantsProvider =
+        Provider.of<SelectedTenantsProvider>(context, listen: false);
+    var selectedApplicantProvider =
+        Provider.of<SelectedApplicantProvider>(context, listen: false);
     return Container(
       child: Form(
         key: _formKey,
@@ -6186,686 +7298,831 @@ class _AddTenantState extends State<AddTenant> {
             ),
             isChecked
                 ? Column(
-              children: [
-                SizedBox(height: 10.0),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: Colors.grey),
-                  ),
-                  child: DataTable(
-                    columns: [
-                      DataColumn(label: Text('Tenant Name')),
-                      DataColumn(label: Text('Select')),
-                    ],
-                    rows: [
-                      // Add tenant rows
-                      ...filteredTenants.map((tenant) {
-                        final matchingTenants = Provider.of<SelectedTenantsProvider>(context)
-                            .selectedTenants
-                            .where((test) => tenant.tenantId != null ? test.tenantId == tenant.tenantId : test.applicantId == tenant.applicantId)
-                            .toList();
-                        print(matchingTenants);
-
-                        final isSelected = matchingTenants.length > 0 ? true : false;
-                        return DataRow(
-                          cells: [
-                            DataCell(
-                              Text('${tenant.tenantFirstName} ${tenant.tenantLastName}'),
-                            ),
-                            DataCell(
-                              Checkbox(
-                                // value: selectedTenantsProvider
-                                //     .selectedTenants
-                                //     .contains(tenant),
-                                value: isSelected,
-                                onChanged: (bool? value) {
-                                  if (value!) {
-                                    selectedTenantsProvider.addTenant(tenant);
-                                  } else {
-                                    selectedTenantsProvider.removeTenant(tenant);
-                                  }
-                                  setState(() {});
-                                },
-                              ),
-                            ),
+                    children: [
+                      SizedBox(height: 10.0),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(color: Colors.grey),
+                        ),
+                        child: DataTable(
+                          columns: [
+                            DataColumn(label: Text('Tenant Name')),
+                            DataColumn(label: Text('Select')),
                           ],
-                        );
-                      }).toList(),
-                      // Add applicant rows
-                      // ...filteredApplicant.map((applicant) {
-                      //   return DataRow(
-                      //     cells: [
-                      //       DataCell(
-                      //         Padding(
-                      //           padding: const EdgeInsets.only(
-                      //               left: 20.0), // Indent for applicants
-                      //           child: Text(
-                      //               '${applicant.applicantFirstName} ${applicant.applicantLastName}'),
-                      //         ),
-                      //       ),
-                      //       DataCell(
-                      //         Checkbox(
-                      //           value: selectedApplicantProvider
-                      //               .selectedApplicant
-                      //               .contains(applicant),
-                      //           onChanged: (bool? value) {
-                      //             if (value!) {
-                      //               selectedApplicantProvider
-                      //                   .addApplicant(applicant);
-                      //             } else {
-                      //               selectedApplicantProvider
-                      //                   .removeApplicant(applicant);
-                      //             }
-                      //             setState(() {});
-                      //           },
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   );
-                      // }).toList(),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 16.0),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 2,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        // When the Add button is clicked, update the provider with selected tenants
-                        setState(() {
-                          for (var tenant in selectedTenantsTemp) {
-                            selectedTenantsProvider.addTenant(tenant);
-                          }
-                          // Clear the temporary list after adding
-                          // selectedTenantsTemp.clear();
-                        });
-                        Navigator.pop(context); // Close the dialog or screen after adding
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5.0),
-                        child: Container(
-                          height: 40.0,
-                          width: 90,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5.0),
-                            color: blueColor,
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.grey,
-                                offset: Offset(0.0, 1.0), //(x,y)
-                                blurRadius: 6.0,
-                              ),
-                            ],
-                          ),
-                          child: Center(
-                            child: Text(
-                              "Add",
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-                            ),
-                          ),
+                          rows: [
+                            // Add tenant rows
+                            ...filteredTenants.map((tenant) {
+                              final matchingTenants =
+                                  Provider.of<SelectedTenantsProvider>(context)
+                                      .selectedTenants
+                                      .where((test) => tenant.tenantId != null
+                                          ? test.tenantId == tenant.tenantId
+                                          : test.applicantId ==
+                                              tenant.applicantId)
+                                      .toList();
+                              print(matchingTenants);
+
+                              final isSelected =
+                                  matchingTenants.length > 0 ? true : false;
+                              return DataRow(
+                                cells: [
+                                  DataCell(
+                                    Text(
+                                        '${tenant.tenantFirstName} ${tenant.tenantLastName}'),
+                                  ),
+                                  DataCell(
+                                    Checkbox(
+                                      // value: selectedTenantsProvider
+                                      //     .selectedTenants
+                                      //     .contains(tenant),
+                                      value: isSelected,
+                                      onChanged: (bool? value) {
+                                        if (value!) {
+                                          selectedTenantsProvider
+                                              .addTenant(tenant);
+                                        } else {
+                                          selectedTenantsProvider
+                                              .removeTenant(tenant);
+                                        }
+                                        setState(() {});
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }).toList(),
+                            // Add applicant rows
+                            // ...filteredApplicant.map((applicant) {
+                            //   return DataRow(
+                            //     cells: [
+                            //       DataCell(
+                            //         Padding(
+                            //           padding: const EdgeInsets.only(
+                            //               left: 20.0), // Indent for applicants
+                            //           child: Text(
+                            //               '${applicant.applicantFirstName} ${applicant.applicantLastName}'),
+                            //         ),
+                            //       ),
+                            //       DataCell(
+                            //         Checkbox(
+                            //           value: selectedApplicantProvider
+                            //               .selectedApplicant
+                            //               .contains(applicant),
+                            //           onChanged: (bool? value) {
+                            //             if (value!) {
+                            //               selectedApplicantProvider
+                            //                   .addApplicant(applicant);
+                            //             } else {
+                            //               selectedApplicantProvider
+                            //                   .removeApplicant(applicant);
+                            //             }
+                            //             setState(() {});
+                            //           },
+                            //         ),
+                            //       ),
+                            //     ],
+                            //   );
+                            // }).toList(),
+                          ],
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 16.0),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 2,
-                    ),
-                  ],
-                ),
-              ],
-            )
-                : Column(
-              children: [
-                //contact information
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      color: blueColor,
-                      border: Border.all(
-                        color: blueColor,
-                      ),
-                      borderRadius: BorderRadius.circular(10.0)),
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('Contact information tenant', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.white)),
-                  ),
-                ),
-                Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text('First Name *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        keyboardType: TextInputType.text,
-                        hintText: 'Enter first name',
-                        controller: firstName,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'please enter the first name';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text('Last Name *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        keyboardType: TextInputType.text,
-                        hintText: 'Enter last name',
-                        controller: lastName,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'please enter the last name';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text('Phone Number *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        keyboardType: TextInputType.number,
-                        hintText: 'Enter phone number',
-                        phone: true,
-                        otherController: workNumber,
-                        controller: phoneNumber,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'please enter the phone number';
-                          }
-                          return null;
-                        },
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(10),
-                          PhoneNumberFormatter(),
+                      SizedBox(height: 16.0),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 2,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              // When the Add button is clicked, update the provider with selected tenants
+                              setState(() {
+                                for (var tenant in selectedTenantsTemp) {
+                                  selectedTenantsProvider.addTenant(tenant);
+                                }
+                                // Clear the temporary list after adding
+                                // selectedTenantsTemp.clear();
+                              });
+                              Navigator.pop(
+                                  context); // Close the dialog or screen after adding
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(5.0),
+                              child: Container(
+                                height: 40.0,
+                                width: 90,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  color: blueColor,
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.grey,
+                                      offset: Offset(0.0, 1.0), //(x,y)
+                                      blurRadius: 6.0,
+                                    ),
+                                  ],
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Add",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
-                      const SizedBox(
-                        height: 20,
+                      SizedBox(height: 16.0),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 2,
+                          ),
+                        ],
                       ),
-                      _showalterNumber
-                          ? Container(
+                    ],
+                  )
+                : Column(
+                    children: [
+                      //contact information
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            color: blueColor,
+                            border: Border.all(
+                              color: blueColor,
+                            ),
+                            borderRadius: BorderRadius.circular(10.0)),
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Contact information tenant',
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.white)),
+                        ),
+                      ),
+                      Container(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(
                               height: 10,
                             ),
-                            const Text('Work Number', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                            const Text('First Name *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
                             const SizedBox(
                               height: 10,
                             ),
                             CustomTextField(
+                              keyboardType: TextInputType.name,
+                              hintText: 'Enter first name',
+                              controller: firstName,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(
+                                    r"[a-zA-Z\s]")), // Allows letters and spaces
+                              ],
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'please enter the first name';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text('Last Name *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              keyboardType: TextInputType.name,
+                              hintText: 'Enter last name',
+                              controller: lastName,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(
+                                    r"[a-zA-Z\s]")), // Allows letters and spaces
+                              ],
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'please enter the last name';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text('Phone Number *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              keyboardType: TextInputType.number,
+                              hintText: 'Enter phone number',
+                              phone: true,
+                              otherController: workNumber,
+                              controller: phoneNumber,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'please enter the phone number';
+                                }
+                                return null;
+                              },
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
                                 LengthLimitingTextInputFormatter(10),
                                 PhoneNumberFormatter(),
                               ],
-                              keyboardType: TextInputType.number,
-                              hintText: 'Enter work number',
-                              controller: workNumber,
-                              otherController: phoneNumber,
-                              phone: true,
-                              optional: true,
                             ),
-                          ],
-                        ),
-                      )
-                          : Container(),
-                      if (_showalterNumber == false)
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              _showalterNumber = !_showalterNumber;
-                            });
-                          },
-                          child: const Text('+Add alternative Phone', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF2ec433))),
-                        ),
-                      if (_showalterNumber == true)
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              _showalterNumber = !_showalterNumber;
-                            });
-                          },
-                          child: const Text('-Remove alternative Phone', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF2ec433))),
-                        ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text('Email *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        keyboardType: TextInputType.emailAddress,
-                        hintText: 'Enter Email',
-                        controller: email,
-                        email: true,
-                        alterController: alterEmail,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter an email';
-                          } else if (!isValidEmail(value)) {
-                            print('!isValidEmail(value) invalid');
-                            return 'Please enter a valid email';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      _showalterEmail
-                          ? Container(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            _showalterNumber
+                                ? Container(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        const Text('Work Number',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey)),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        CustomTextField(
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter
+                                                .digitsOnly,
+                                            LengthLimitingTextInputFormatter(
+                                                10),
+                                            PhoneNumberFormatter(),
+                                          ],
+                                          keyboardType: TextInputType.number,
+                                          hintText: 'Enter work number',
+                                          controller: workNumber,
+                                          otherController: phoneNumber,
+                                          phone: true,
+                                          optional: true,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Container(),
+                            if (_showalterNumber == false)
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _showalterNumber = !_showalterNumber;
+                                  });
+                                },
+                                child: const Text('+Add alternative Phone',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF2ec433))),
+                              ),
+                            if (_showalterNumber == true)
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _showalterNumber = !_showalterNumber;
+                                  });
+                                },
+                                child: const Text('-Remove alternative Phone',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF2ec433))),
+                              ),
                             const SizedBox(
                               height: 10,
                             ),
-                            const Text('Alternative Email', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                            const Text('Email *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
                             const SizedBox(
                               height: 10,
                             ),
                             CustomTextField(
                               keyboardType: TextInputType.emailAddress,
-                              hintText: 'Enter alternative email',
-                              controller: alterEmail,
+                              hintText: 'Enter Email',
+                              controller: email,
                               email: true,
-                              optional: true,
-                              alterController: email,
+                              alterController: alterEmail,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter an email';
+                                } else if (!isValidEmail(value)) {
+                                  print('!isValidEmail(value) invalid');
+                                  return 'Please enter a valid email';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            _showalterEmail
+                                ? Container(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        const Text('Alternative Email',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey)),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        CustomTextField(
+                                          keyboardType:
+                                              TextInputType.emailAddress,
+                                          hintText: 'Enter alternative email',
+                                          controller: alterEmail,
+                                          email: true,
+                                          optional: true,
+                                          alterController: email,
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Container(),
+                            if (_showalterEmail == false)
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _showalterEmail = !_showalterEmail;
+                                  });
+                                },
+                                child: const Text('+Add alternative Email',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF2ec433))),
+                              ),
+                            if (_showalterEmail == true)
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _showalterEmail = !_showalterEmail;
+                                  });
+                                },
+                                child: const Text('-Remove alternative Email',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF2ec433))),
+                              ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text('Password *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: CustomTextField(
+                                    keyboardType: TextInputType.text,
+                                    obscureText: !_obscureText,
+                                    hintText: 'Enter password',
+                                    controller: passWord,
+                                    optional: true,
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return 'please enter password';
+                                      }
+                                      return null;
+                                    },
+                                    pass: true,
+                                  ),
+                                ),
+                                const SizedBox(
+                                    width:
+                                        10), // Add some space between the widgets
+                                Container(
+                                  width: 38,
+                                  height: 40,
+                                  child: Center(
+                                    child: GestureDetector(
+                                      onTap: _toggleObscureText,
+                                      child: FaIcon(
+                                        _obscureText
+                                            ? FontAwesomeIcons.eyeSlash
+                                            : FontAwesomeIcons.eye,
+                                        size: 20,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      const BoxShadow(
+                                        color: Colors.black26,
+                                        offset: Offset(1.0, 1.0),
+                                        blurRadius: 8.0,
+                                        spreadRadius: 1.0,
+                                      ),
+                                    ],
+                                    border: Border.all(
+                                        width: 0, color: Colors.white),
+                                    borderRadius: BorderRadius.circular(6.0),
+                                  ),
+                                ),
+                              ],
                             ),
                             const SizedBox(
                               height: 10,
                             ),
                           ],
                         ),
-                      )
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _showPersonalDetail = !_showPersonalDetail;
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              color: blueColor,
+                              border: Border.all(
+                                color: blueColor,
+                              ),
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text('+    Personal Information',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white)),
+                          ),
+                        ),
+                      ),
+                      _showPersonalDetail
+                          ? Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                  const Text('Date of Birth',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Container(
+                                    height: 46,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12.0, vertical: 0),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        boxShadow: [
+                                          const BoxShadow(
+                                            color: Colors.black26,
+                                            offset: Offset(1.0,
+                                                1.0), // Shadow offset to the bottom right
+                                            blurRadius:
+                                                8.0, // How much to blur the shadow
+                                            spreadRadius:
+                                                0.0, // How much the shadow should spread
+                                          ),
+                                        ],
+                                        border: Border.all(
+                                            width: 0, color: Colors.white),
+                                        borderRadius:
+                                            BorderRadius.circular(6.0)),
+                                    child: TextFormField(
+                                      style: const TextStyle(
+                                        color: Color(0xFF8898aa), // Text color
+                                        fontSize: 16.0, // Text size
+                                        fontWeight:
+                                            FontWeight.w400, // Text weight
+                                      ),
+                                      controller: _dateController,
+                                      decoration: InputDecoration(
+                                        hintStyle: const TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 13,
+                                            color: Color(0xFFb0b6c3)),
+                                        border: InputBorder.none,
+                                        // labelText: 'Select Date',
+                                        hintText: 'yyyy-mm-dd',
+                                        suffixIcon: IconButton(
+                                          icon:
+                                              const Icon(Icons.calendar_today),
+                                          onPressed: () {
+                                            _selectDate(context);
+                                          },
+                                        ),
+                                      ),
+                                      readOnly: true,
+                                      onTap: () {
+                                        _selectDate(context);
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Text('TaxPayer ID',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  const SizedBox(height: 10),
+                                  CustomTextField(
+                                    keyboardType: TextInputType.text,
+                                    hintText: 'Enter contact name',
+                                    controller: taxPayerId,
+                                    optional: true,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Text('Comments',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Container(
+                                    height: 90,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12.0, vertical: 0),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        boxShadow: [
+                                          const BoxShadow(
+                                            color: Colors.black26,
+                                            offset: Offset(1.0,
+                                                1.0), // Shadow offset to the bottom right
+                                            blurRadius:
+                                                8.0, // How much to blur the shadow
+                                            spreadRadius:
+                                                0.0, // How much the shadow should spread
+                                          ),
+                                        ],
+                                        border: Border.all(
+                                            width: 0, color: Colors.white),
+                                        borderRadius:
+                                            BorderRadius.circular(6.0)),
+                                    child: TextFormField(
+                                        keyboardType: TextInputType.text,
+                                        controller: comments,
+                                        maxLines: 5,
+                                        decoration: const InputDecoration(
+                                          border: InputBorder.none,
+                                          hintStyle: TextStyle(
+                                              fontSize: 13,
+                                              color: Color(0xFFb0b6c3)),
+                                          hintText: 'Enter the comment',
+                                        )),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                ],
+                              ),
+                            )
                           : Container(),
-                      if (_showalterEmail == false)
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              _showalterEmail = !_showalterEmail;
-                            });
-                          },
-                          child: const Text('+Add alternative Email', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF2ec433))),
-                        ),
-                      if (_showalterEmail == true)
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              _showalterEmail = !_showalterEmail;
-                            });
-                          },
-                          child: const Text('-Remove alternative Email', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF2ec433))),
-                        ),
                       const SizedBox(
                         height: 10,
                       ),
-                      const Text('Password *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _showEmergancyDetail = !_showEmergancyDetail;
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              color: blueColor,
+                              border: Border.all(
+                                color: blueColor,
+                              ),
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text('+    Emergency Contact',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white)),
+                          ),
+                        ),
                       ),
+                      _showEmergancyDetail
+                          ? Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                  const Text('Contact Name',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomTextField(
+                                    keyboardType: TextInputType.name,
+                                    hintText: 'Enter contact name',
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(RegExp(
+                                          r"[a-zA-Z\s]")), // Allows letters and spaces
+                                    ],
+                                    controller: contactName,
+                                    optional: true,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Text('Relationship to Tenant',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomTextField(
+                                    keyboardType: TextInputType.text,
+                                    hintText: 'Enter relationship to tenant',
+                                    controller: relationToTenant,
+                                    optional: true,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Text('Email',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomTextField(
+                                    keyboardType: TextInputType.emailAddress,
+                                    hintText: 'Enter email',
+                                    controller: emergencyEmail,
+                                    alterController: email,
+                                    emrgencyController: alterEmail,
+                                    email: true,
+                                    optional: true,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Text('Phone Number ',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey)),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomTextField(
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                      LengthLimitingTextInputFormatter(10),
+                                      PhoneNumberFormatter(),
+                                    ],
+                                    keyboardType: TextInputType.number,
+                                    hintText: 'Enter phone number',
+                                    controller: emergencyPhoneNumber,
+                                    optional: true,
+                                    phone: true,
+                                    otherController: phoneNumber,
+                                    businessController: workNumber,
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Container(),
+                      const SizedBox(
+                        height: 30,
+                      ),
+
                       Row(
                         children: [
-                          Expanded(
-                            child: CustomTextField(
-                              keyboardType: TextInputType.text,
-                              obscureText: !_obscureText,
-                              hintText: 'Enter password',
-                              controller: passWord,
-                              optional: true,
-                              validator: (value) {
-                                if (value == null) {
-                                  return 'please enter password';
-                                }
-                                return null;
-                              },
-                              pass: true,
-                            ),
+                          SizedBox(
+                            width: 2,
                           ),
-                          const SizedBox(width: 10), // Add some space between the widgets
-                          Container(
-                            width: 38,
-                            height: 40,
-                            child: Center(
-                              child: GestureDetector(
-                                onTap: _toggleObscureText,
-                                child: FaIcon(
-                                  _obscureText ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye,
-                                  size: 20,
-                                  color: Colors.black,
+                          GestureDetector(
+                            onTap: () {
+                              if (_formKey.currentState!.validate()) {
+                                final tenant = Tenant(
+                                  tenantFirstName: firstName.text.trim(),
+                                  tenantLastName: lastName.text.trim(),
+                                  tenantPhoneNumber: phoneNumber.text.trim(),
+                                  tenantAlternativeNumber:
+                                      workNumber.text.trim(),
+                                  tenantEmail: email.text.trim(),
+                                  tenantAlternativeEmail:
+                                      alterEmail.text.trim(),
+                                  tenantPassword: passWord.text.trim(),
+                                  tenantBirthDate: _dateController.text.trim(),
+                                  taxPayerId: taxPayerId.text.trim(),
+                                  comments: comments.text.trim(),
+                                  rentshare: rentShareControllers.text.trim(),
+                                  emergencyContact: EmergencyContact(
+                                    name: contactName.text.trim(),
+                                    relation: relationToTenant.text.trim(),
+                                    email: emergencyEmail.text.trim(),
+                                    phoneNumber:
+                                        emergencyPhoneNumber.text.trim(),
+                                  ),
+                                );
+                                Provider.of<SelectedTenantsProvider>(context,
+                                        listen: false)
+                                    .addTenant(tenant);
+                                Navigator.of(context).pop();
+                              }
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(5.0),
+                              child: Container(
+                                height: 40.0,
+                                width: 90,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  color: blueColor,
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.grey,
+                                      offset: Offset(0.0, 1.0), //(x,y)
+                                      blurRadius: 6.0,
+                                    ),
+                                  ],
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Add",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16),
+                                  ),
                                 ),
                               ),
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              boxShadow: [
-                                const BoxShadow(
-                                  color: Colors.black26,
-                                  offset: Offset(1.0, 1.0),
-                                  blurRadius: 8.0,
-                                  spreadRadius: 1.0,
-                                ),
-                              ],
-                              border: Border.all(width: 0, color: Colors.white),
-                              borderRadius: BorderRadius.circular(6.0),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
                     ],
                   ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _showPersonalDetail = !_showPersonalDetail;
-                    });
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                        color: blueColor,
-                        border: Border.all(
-                          color: blueColor,
-                        ),
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text('+    Personal Information', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.white)),
-                    ),
-                  ),
-                ),
-                _showPersonalDetail
-                    ? Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      const Text('Date of Birth', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        height: 46,
-                        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            boxShadow: [
-                              const BoxShadow(
-                                color: Colors.black26,
-                                offset: Offset(1.0, 1.0), // Shadow offset to the bottom right
-                                blurRadius: 8.0, // How much to blur the shadow
-                                spreadRadius: 0.0, // How much the shadow should spread
-                              ),
-                            ],
-                            border: Border.all(width: 0, color: Colors.white),
-                            borderRadius: BorderRadius.circular(6.0)),
-                        child: TextFormField(
-                          style: const TextStyle(
-                            color: Color(0xFF8898aa), // Text color
-                            fontSize: 16.0, // Text size
-                            fontWeight: FontWeight.w400, // Text weight
-                          ),
-                          controller: _dateController,
-                          decoration: InputDecoration(
-                            hintStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13, color: Color(0xFFb0b6c3)),
-                            border: InputBorder.none,
-                            // labelText: 'Select Date',
-                            hintText: 'yyyy-mm-dd',
-                            suffixIcon: IconButton(
-                              icon: const Icon(Icons.calendar_today),
-                              onPressed: () {
-                                _selectDate(context);
-                              },
-                            ),
-                          ),
-                          readOnly: true,
-                          onTap: () {
-                            _selectDate(context);
-                          },
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text('TaxPayer ID', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
-                      const SizedBox(height: 10),
-                      CustomTextField(
-                        keyboardType: TextInputType.text,
-                        hintText: 'Enter contact name',
-                        controller: taxPayerId,
-                        optional: true,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text('Comments', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        height: 90,
-                        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            boxShadow: [
-                              const BoxShadow(
-                                color: Colors.black26,
-                                offset: Offset(1.0, 1.0), // Shadow offset to the bottom right
-                                blurRadius: 8.0, // How much to blur the shadow
-                                spreadRadius: 0.0, // How much the shadow should spread
-                              ),
-                            ],
-                            border: Border.all(width: 0, color: Colors.white),
-                            borderRadius: BorderRadius.circular(6.0)),
-                        child: TextFormField(
-                            keyboardType: TextInputType.text,
-                            controller: comments,
-                            maxLines: 5,
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              hintStyle: TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
-                              hintText: 'Enter the comment',
-                            )),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                    ],
-                  ),
-                )
-                    : Container(),
-                const SizedBox(
-                  height: 10,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _showEmergancyDetail = !_showEmergancyDetail;
-                    });
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                        color: blueColor,
-                        border: Border.all(
-                          color: blueColor,
-                        ),
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text('+    Emergency Contact', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.white)),
-                    ),
-                  ),
-                ),
-                _showEmergancyDetail
-                    ? Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      const Text('Contact Name', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        keyboardType: TextInputType.text,
-                        hintText: 'Enter contact name',
-                        controller: contactName,
-                        optional: true,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text('Relationship to Tenant', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        keyboardType: TextInputType.text,
-                        hintText: 'Enter relationship to tenant',
-                        controller: relationToTenant,
-                        optional: true,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text('Email', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        keyboardType: TextInputType.emailAddress,
-                        hintText: 'Enter email',
-                        controller: emergencyEmail,
-                        alterController: email,
-                        emrgencyController: alterEmail,
-                        email: true,
-                        optional: true,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text('Phone Number ', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      CustomTextField(
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(10),
-                          PhoneNumberFormatter(),
-                        ],
-                        keyboardType: TextInputType.number,
-                        hintText: 'Enter phone number',
-                        controller: emergencyPhoneNumber,
-                        optional: true,
-                        phone: true,
-                        otherController: phoneNumber,
-                        businessController: workNumber,
-                      ),
-                    ],
-                  ),
-                )
-                    : Container(),
-                const SizedBox(
-                  height: 30,
-                ),
-
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 2,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        if (_formKey.currentState!.validate()) {
-                          final tenant = Tenant(
-                            tenantFirstName: firstName.text.trim(),
-                            tenantLastName: lastName.text.trim(),
-                            tenantPhoneNumber: phoneNumber.text.trim(),
-                            tenantAlternativeNumber: workNumber.text.trim(),
-                            tenantEmail: email.text.trim(),
-                            tenantAlternativeEmail: alterEmail.text.trim(),
-                            tenantPassword: passWord.text.trim(),
-                            tenantBirthDate: _dateController.text.trim(),
-                            taxPayerId: taxPayerId.text.trim(),
-                            comments: comments.text.trim(),
-                            rentshare: rentShareControllers.text.trim(),
-                            emergencyContact: EmergencyContact(
-                              name: contactName.text.trim(),
-                              relation: relationToTenant.text.trim(),
-                              email: emergencyEmail.text.trim(),
-                              phoneNumber: emergencyPhoneNumber.text.trim(),
-                            ),
-                          );
-                          Provider.of<SelectedTenantsProvider>(context, listen: false).addTenant(tenant);
-                          Navigator.of(context).pop();
-                        }
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5.0),
-                        child: Container(
-                          height: 40.0,
-                          width: 90,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5.0),
-                            color: blueColor,
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.grey,
-                                offset: Offset(0.0, 1.0), //(x,y)
-                                blurRadius: 6.0,
-                              ),
-                            ],
-                          ),
-                          child: Center(
-                            child: Text(
-                              "Add",
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
             const SizedBox(
               height: 10,
             ),
@@ -6938,7 +8195,11 @@ class _AddCosignerState extends State<AddCosigner> {
                 borderRadius: BorderRadius.circular(10.0)),
             child: const Padding(
               padding: EdgeInsets.all(8.0),
-              child: Text('Contact information cosinger', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.white)),
+              child: Text('Contact information cosinger',
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white)),
             ),
           ),
           Container(
@@ -6950,13 +8211,21 @@ class _AddCosignerState extends State<AddCosigner> {
                   const SizedBox(
                     height: 10,
                   ),
-                  const Text('First Name *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                  const Text('First Name *',
+                      style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey)),
                   const SizedBox(
                     height: 10,
                   ),
                   CustomTextField(
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.name,
                     hintText: 'Enter first name',
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r"[a-zA-Z\s]")), // Allows letters and spaces
+                    ],
                     controller: firstName,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -6968,13 +8237,21 @@ class _AddCosignerState extends State<AddCosigner> {
                   const SizedBox(
                     height: 10,
                   ),
-                  const Text('Last Name *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                  const Text('Last Name *',
+                      style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey)),
                   const SizedBox(
                     height: 10,
                   ),
                   CustomTextField(
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.name,
                     hintText: 'Enter last name',
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r"[a-zA-Z\s]")), // Allows letters and spaces
+                    ],
                     controller: lastName,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -6986,7 +8263,11 @@ class _AddCosignerState extends State<AddCosigner> {
                   const SizedBox(
                     height: 10,
                   ),
-                  const Text('Phone Number *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                  const Text('Phone Number *',
+                      style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey)),
                   const SizedBox(
                     height: 10,
                   ),
@@ -7018,7 +8299,11 @@ class _AddCosignerState extends State<AddCosigner> {
                           _showalterNumber = !_showalterNumber;
                         });
                       },
-                      child: const Text('+Add alternative Phone', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF2ec433))),
+                      child: const Text('+Add alternative Phone',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF2ec433))),
                     ),
                   if (_showalterNumber == true)
                     InkWell(
@@ -7027,41 +8312,53 @@ class _AddCosignerState extends State<AddCosigner> {
                           _showalterNumber = !_showalterNumber;
                         });
                       },
-                      child: const Text('-Remove alternative Phone', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF2ec433))),
+                      child: const Text('-Remove alternative Phone',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF2ec433))),
                     ),
                   _showalterNumber
                       ? Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text('Work Number', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        CustomTextField(
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(10),
-                            PhoneNumberFormatter(),
-                          ],
-                          keyboardType: TextInputType.number,
-                          hintText: 'Enter work number',
-                          controller: workNumber,
-                          optional: true,
-                          otherController: phoneNumber,
-                          phone: true,
-                        ),
-                      ],
-                    ),
-                  )
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const Text('Work Number',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey)),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              CustomTextField(
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
+                                  PhoneNumberFormatter(),
+                                ],
+                                keyboardType: TextInputType.number,
+                                hintText: 'Enter work number',
+                                controller: workNumber,
+                                optional: true,
+                                otherController: phoneNumber,
+                                phone: true,
+                              ),
+                            ],
+                          ),
+                        )
                       : Container(),
                   const SizedBox(
                     height: 10,
                   ),
-                  const Text('Email *', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                  const Text('Email *',
+                      style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey)),
                   const SizedBox(
                     height: 10,
                   ),
@@ -7089,7 +8386,11 @@ class _AddCosignerState extends State<AddCosigner> {
                           _showalterEmail = !_showalterEmail;
                         });
                       },
-                      child: const Text('+Add alternative Email', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF2ec433))),
+                      child: const Text('+Add alternative Email',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF2ec433))),
                     ),
                   if (_showalterEmail == true)
                     InkWell(
@@ -7098,31 +8399,39 @@ class _AddCosignerState extends State<AddCosigner> {
                           _showalterEmail = !_showalterEmail;
                         });
                       },
-                      child: const Text('-Remove alternative Email', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF2ec433))),
+                      child: const Text('-Remove alternative Email',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF2ec433))),
                     ),
                   _showalterEmail
                       ? Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text('Alternative Email', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        CustomTextField(
-                          keyboardType: TextInputType.emailAddress,
-                          hintText: 'Enter alternative email',
-                          controller: alterEmail,
-                          alterController: email,
-                          optional: true,
-                          email: true,
-                        ),
-                      ],
-                    ),
-                  )
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const Text('Alternative Email',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey)),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              CustomTextField(
+                                keyboardType: TextInputType.emailAddress,
+                                hintText: 'Enter alternative email',
+                                controller: alterEmail,
+                                alterController: email,
+                                optional: true,
+                                email: true,
+                              ),
+                            ],
+                          ),
+                        )
                       : Container(),
                   const SizedBox(
                     height: 10,
@@ -7137,12 +8446,19 @@ class _AddCosignerState extends State<AddCosigner> {
               children: [
                 Text(
                   'Address',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: blueColor),
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: blueColor),
                 ),
                 const SizedBox(
                   height: 10,
                 ),
-                const Text('City', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                const Text('City',
+                    style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey)),
                 const SizedBox(
                   height: 10,
                 ),
@@ -7160,7 +8476,11 @@ class _AddCosignerState extends State<AddCosigner> {
                 const SizedBox(
                   height: 10,
                 ),
-                const Text('Country', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                const Text('Country',
+                    style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey)),
                 const SizedBox(
                   height: 10,
                 ),
@@ -7178,7 +8498,11 @@ class _AddCosignerState extends State<AddCosigner> {
                 const SizedBox(
                   height: 10,
                 ),
-                const Text('Zip code', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+                const Text('Zip code',
+                    style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey)),
                 const SizedBox(
                   height: 10,
                 ),
@@ -7227,7 +8551,9 @@ class _AddCosignerState extends State<AddCosigner> {
                               country: country.text.trim(),
                               postalCode: postalCode.text.trim(),
                             );
-                            Provider.of<SelectedCosignersProvider>(context, listen: false).addCosigner(cosigner);
+                            Provider.of<SelectedCosignersProvider>(context,
+                                    listen: false)
+                                .addCosigner(cosigner);
                             Navigator.pop(context);
                           } else {
                             final cosigner = Cosigner(
@@ -7243,7 +8569,9 @@ class _AddCosignerState extends State<AddCosigner> {
                               country: country.text.trim(),
                               postalCode: postalCode.text.trim(),
                             );
-                            Provider.of<SelectedCosignersProvider>(context, listen: false).updateCosigner(cosigner, widget.index!);
+                            Provider.of<SelectedCosignersProvider>(context,
+                                    listen: false)
+                                .updateCosigner(cosigner, widget.index!);
                             Navigator.pop(context);
                             // Navigator.push(
                             //   context,
@@ -7273,7 +8601,10 @@ class _AddCosignerState extends State<AddCosigner> {
                           child: Center(
                             child: Text(
                               "Add",
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16),
                             ),
                           ),
                         ),
@@ -7343,17 +8674,17 @@ class _CustomDropdownState extends State<CustomDropdown> {
                   ),
                   items: widget.items
                       .map((String item) => DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(
-                      item,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        // fontWeight: FontWeight.w400,
-                        color: Colors.black87,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ))
+                            value: item,
+                            child: Text(
+                              item,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                // fontWeight: FontWeight.w400,
+                                color: Colors.black87,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ))
                       .toList(),
                   value: state.value ?? widget.selectedValue,
                   onChanged: (value) {

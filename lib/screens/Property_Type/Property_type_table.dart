@@ -391,7 +391,8 @@ class _PropertyTableState extends State<PropertyTable> {
         DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -1344,7 +1345,11 @@ class _PropertyTableState extends State<PropertyTable> {
                                                                   if (check ==
                                                                       true) {
                                                                     setState(
-                                                                        () {});
+                                                                        () {
+                                                                      futurePropertyTypes =
+                                                                          PropertyTypeRepository()
+                                                                              .fetchPropertyTypes();
+                                                                    });
                                                                   }
                                                                 },
                                                                 child:

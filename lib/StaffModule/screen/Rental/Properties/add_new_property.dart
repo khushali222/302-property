@@ -909,6 +909,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                       selectedProperty = null;
                                                     });
                                                     // Show the dialog
+                                                    subtype.text = "";
+                                                    selectedValue = null;
                                                     showDialog(
                                                       context: context,
                                                       builder: (BuildContext

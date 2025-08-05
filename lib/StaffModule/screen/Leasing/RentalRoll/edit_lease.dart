@@ -41,7 +41,7 @@ import '../../../widgets/custom_drawer.dart';
 class Edit_lease extends StatefulWidget {
   Lease1? lease;
   final String leaseId;
-  Edit_lease({super.key,  this.lease, required this.leaseId});
+  Edit_lease({super.key, this.lease, required this.leaseId});
 
   @override
   State<Edit_lease> createState() => _Edit_leaseState();
@@ -294,8 +294,8 @@ class _Edit_leaseState extends State<Edit_lease>
       print('$Api_url/api/unit/rental_unit/$rentalId');
 
       if (response.statusCode == 200) {
-        Map<String,dynamic> responses = jsonDecode(response.body);
-        if(responses["statusCode"] == 200){
+        Map<String, dynamic> responses = jsonDecode(response.body);
+        if (responses["statusCode"] == 200) {
           List jsonResponse = json.decode(response.body)['data'];
 
           List<Map<String, String>> unitAddresses = jsonResponse.map((data) {
@@ -311,16 +311,13 @@ class _Edit_leaseState extends State<Edit_lease>
             //_showUnitDropdown = true;
             _showUnitDropdown = units.isNotEmpty;
           });
-        }
-        else{
+        } else {
           setState(() {
-
             _isLoading = false;
             //_showUnitDropdown = true;
             _showUnitDropdown = false;
           });
         }
-
       } else {
         throw Exception('Failed to load units');
       }
@@ -637,7 +634,7 @@ class _Edit_leaseState extends State<Edit_lease>
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
-    //  allowedExtensions: ['pdf'],
+      //  allowedExtensions: ['pdf'],
       allowMultiple: true,
     );
 
@@ -1679,13 +1676,19 @@ class _Edit_leaseState extends State<Edit_lease>
                                         builder: (context) {
                                           return StatefulBuilder(
                                             builder: (context, setState) {
-                                              var cosignerProvider = Provider.of<SelectedCosignersProvider>(context);
+                                              var cosignerProvider = Provider
+                                                  .of<SelectedCosignersProvider>(
+                                                      context);
                                               Cosigner? existingCosigner;
                                               int? existingIndex;
 
-                                              if (cosignerProvider.cosigners.isNotEmpty) {
-                                                existingCosigner = cosignerProvider.cosigners.first; // Get the first cosigner
-                                                existingIndex = 0; // Assuming you want to edit the first cosigner
+                                              if (cosignerProvider
+                                                  .cosigners.isNotEmpty) {
+                                                existingCosigner = cosignerProvider
+                                                    .cosigners
+                                                    .first; // Get the first cosigner
+                                                existingIndex =
+                                                    0; // Assuming you want to edit the first cosigner
                                               }
                                               return AlertDialog(
                                                 backgroundColor: Colors.white,
@@ -1864,7 +1867,12 @@ class _Edit_leaseState extends State<Edit_lease>
                                                               ),
                                                               isTenantSelected
                                                                   ? const AddTenant()
-                                                                  : AddCosigner(cosigner: existingCosigner,index: existingIndex,),
+                                                                  : AddCosigner(
+                                                                      cosigner:
+                                                                          existingCosigner,
+                                                                      index:
+                                                                          existingIndex,
+                                                                    ),
                                                             ],
                                                           ),
                                                         ),
@@ -2004,12 +2012,11 @@ class _Edit_leaseState extends State<Edit_lease>
                                             final index = entry.key;
                                             final tenant = entry.value;
 
-                                            print("Controller length:- ${Provider.of<
-                                                SelectedTenantsProvider>(context)
-                                                .rentShareControllers.length}  $index");
+                                            print(
+                                                "Controller length:- ${Provider.of<SelectedTenantsProvider>(context).rentShareControllers.length}  $index");
                                             final controller = Provider.of<
-                                                SelectedTenantsProvider>(
-                                                context)
+                                                        SelectedTenantsProvider>(
+                                                    context)
                                                 .rentShareControllers[index];
 
                                             return TableRow(
@@ -3677,9 +3684,9 @@ class _Edit_leaseState extends State<Edit_lease>
                                       double totalRentShare = 0.0;
                                       for (var controller
                                           in rentShareControllers) {
-                                        double rentShare =
-                                            double.tryParse(controller.text.trim()) ??
-                                                0.0;
+                                        double rentShare = double.tryParse(
+                                                controller.text.trim()) ??
+                                            0.0;
                                         totalRentShare += rentShare;
                                       }
                                       if (totalRentShare != 100.0) {
@@ -3718,8 +3725,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 0.0,
                                             chargeType:
                                                 data['charge_type'] ?? '',
-                                            date: data['charge_type'] == 'Recurring Charge'
-                                                ? (data['date'] ?? '')  // Ensuring data['date'] is not null
+                                            date: data['charge_type'] ==
+                                                    'Recurring Charge'
+                                                ? (data['date'] ??
+                                                    '') // Ensuring data['date'] is not null
                                                 : rentNextDueDate.text.trim(),
                                             isRepeatable: data['is_repeatable']
                                                     ?.toLowerCase() ==
@@ -3737,8 +3746,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                     rentAmount.text.trim()) ??
                                                 0.0,
                                             chargeType: 'Rent',
-                                            date:
-                                                rentNextDueDate.text.trim(),
+                                            date: rentNextDueDate.text.trim(),
                                             isRepeatable:
                                                 false, // Set to false if it's not repeatable, adjust as needed
                                             memo: 'Last Month\'s Rent',
@@ -3751,12 +3759,11 @@ class _Edit_leaseState extends State<Edit_lease>
                                           entry_id: rent_security_id,
                                           account: "Security Deposit",
                                           amount: double.tryParse(
-                                                  securityDepositeAmount
-                                                      .text.trim()) ??
+                                                  securityDepositeAmount.text
+                                                      .trim()) ??
                                               0.0,
                                           chargeType: 'Security Deposit',
-                                          date:
-                                              rentNextDueDate.text.trim(),
+                                          date: rentNextDueDate.text.trim(),
                                           isRepeatable:
                                               false, // Set to false if it's not repeatable, adjust as needed
                                           memo: 'Security Deposit',
@@ -5506,6 +5513,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       );
     }
   }
+
   String? selectedDay;
   @override
   Widget build(BuildContext context) {
@@ -6006,16 +6014,15 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                       value: selectedDay,
                       items: List.generate(28, (i) => i + 1)
                           .map((day) => DropdownMenuItem<String>(
-                        value: day.toString(),
-                        child: Text('$day'),
-                      ))
+                                value: day.toString(),
+                                child: Text('$day'),
+                              ))
                           .toList(),
                       onChanged: (value) {
                         setState(() {
                           selectedDay = value;
                         });
                       },
-
                     ),
                   ),
                 ),
@@ -6083,7 +6090,8 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
 
       // Construct the date using the selected day, current year, and month
       int selectedDayInt = int.parse(selectedDay!);
-      DateTime currentDate = DateTime(selectedYear, selectedMonth, selectedDayInt);
+      DateTime currentDate =
+          DateTime(selectedYear, selectedMonth, selectedDayInt);
 
       // Add one month
       DateTime nextMonthDate = DateTime(
@@ -6096,14 +6104,14 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       String formattedDate = "${nextMonthDate.year}-"
           "${nextMonthDate.month.toString().padLeft(2, '0')}-"
           "${nextMonthDate.day.toString().padLeft(2, '0')}";
-      String? id =  widget.initialData!['entry_id'] != "" ?
-      widget.initialData!['entry_id']
+      String? id = widget.initialData!['entry_id'] != ""
+          ? widget.initialData!['entry_id']
           : "";
       final formData = {
         'account': _selectedProperty ?? '',
         'amount': _amountController.text.trim(),
         'memo': _memoController.text.trim(),
-        'entry_id':id!,
+        'entry_id': id!,
         'charge_type': 'Recurring Charge',
         'date': formattedDate,
       };
@@ -6461,15 +6469,17 @@ class _AddTenantState extends State<AddTenant> {
                           ],
                           rows: filteredTenants.map((tenant) {
                             final matchingTenants =
-                            Provider.of<SelectedTenantsProvider>(context)
-                                .selectedTenants
-                                .where((test) => tenant.tenantId != null ?
-                            test.tenantId == tenant.tenantId : test.applicantId ==tenant.applicantId)
-                                .toList();
+                                Provider.of<SelectedTenantsProvider>(context)
+                                    .selectedTenants
+                                    .where((test) => tenant.tenantId != null
+                                        ? test.tenantId == tenant.tenantId
+                                        : test.applicantId ==
+                                            tenant.applicantId)
+                                    .toList();
                             print(matchingTenants);
 
                             final isSelected =
-                            matchingTenants.length > 0 ? true : false;
+                                matchingTenants.length > 0 ? true : false;
                             return DataRow(
                               cells: [
                                 DataCell(
@@ -6586,7 +6596,11 @@ class _AddTenantState extends State<AddTenant> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType: TextInputType.text,
+                              keyboardType: TextInputType.name,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(
+                                    r"[a-zA-Z\s]")), // Allows letters and spaces
+                              ],
                               hintText: 'Enter first name',
                               controller: firstName,
                               validator: (value) {
@@ -6608,7 +6622,11 @@ class _AddTenantState extends State<AddTenant> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType: TextInputType.text,
+                              keyboardType: TextInputType.name,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(
+                                    r"[a-zA-Z\s]")), // Allows letters and spaces
+                              ],
                               hintText: 'Enter last name',
                               controller: lastName,
                               validator: (value) {
@@ -6976,7 +6994,7 @@ class _AddTenantState extends State<AddTenant> {
                                   const SizedBox(height: 10),
                                   CustomTextField(
                                     keyboardType: TextInputType.text,
-                                    hintText: 'Enter contact name',
+                                    hintText: 'Enter TaxPayer ID',
                                     controller: taxPayerId,
                                     optional: true,
                                   ),
@@ -7075,7 +7093,11 @@ class _AddTenantState extends State<AddTenant> {
                                     height: 10,
                                   ),
                                   CustomTextField(
-                                    keyboardType: TextInputType.text,
+                                    keyboardType: TextInputType.name,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(RegExp(
+                                          r"[a-zA-Z\s]")), // Allows letters and spaces
+                                    ],
                                     hintText: 'Enter contact name',
                                     controller: contactName,
                                     optional: true,
@@ -7162,11 +7184,14 @@ class _AddTenantState extends State<AddTenant> {
                                     tenantFirstName: firstName.text.trim(),
                                     tenantLastName: lastName.text.trim(),
                                     tenantPhoneNumber: phoneNumber.text.trim(),
-                                    tenantAlternativeNumber: workNumber.text.trim(),
+                                    tenantAlternativeNumber:
+                                        workNumber.text.trim(),
                                     tenantEmail: email.text.trim(),
-                                    tenantAlternativeEmail: alterEmail.text.trim(),
+                                    tenantAlternativeEmail:
+                                        alterEmail.text.trim(),
                                     tenantPassword: passWord.text.trim(),
-                                    tenantBirthDate: _dateController.text.trim(),
+                                    tenantBirthDate:
+                                        _dateController.text.trim(),
                                     taxPayerId: taxPayerId.text.trim(),
                                     comments: comments.text.trim(),
                                     rentshare: "",
@@ -7174,7 +7199,8 @@ class _AddTenantState extends State<AddTenant> {
                                       name: contactName.text.trim(),
                                       relation: relationToTenant.text.trim(),
                                       email: emergencyEmail.text.trim(),
-                                      phoneNumber: emergencyPhoneNumber.text.trim(),
+                                      phoneNumber:
+                                          emergencyPhoneNumber.text.trim(),
                                     ),
                                   );
                                   Provider.of<SelectedTenantsProvider>(context,
@@ -7311,7 +7337,11 @@ class _AddCosignerState extends State<AddCosigner> {
                     height: 10,
                   ),
                   CustomTextField(
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.name,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r"[a-zA-Z\s]")), // Allows letters and spaces
+                    ],
                     hintText: 'Enter first name',
                     controller: firstName,
                     validator: (value) {
@@ -7333,7 +7363,11 @@ class _AddCosignerState extends State<AddCosigner> {
                     height: 10,
                   ),
                   CustomTextField(
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.name,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r"[a-zA-Z\s]")), // Allows letters and spaces
+                    ],
                     hintText: 'Enter last name',
                     controller: lastName,
                     validator: (value) {

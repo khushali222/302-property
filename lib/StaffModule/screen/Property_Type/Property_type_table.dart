@@ -1271,20 +1271,24 @@ class _PropertyTableState extends State<PropertyTable> {
                                                               Expanded(
                                                                 child:
                                                                     GestureDetector(
-                                                                  onTap:
-                                                                      () async {
-                                                                    var check = await Navigator.push(
-                                                                        context,
-                                                                        MaterialPageRoute(
-                                                                            builder: (context) => Edit_property_type(
+                                                                      onTap:
+                                                                          () async {
+                                                                        var check = await Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                                builder: (context) => Edit_property_type(
                                                                                   property: Propertytype,
                                                                                 )));
-                                                                    if (check ==
-                                                                        true) {
-                                                                      setState(
-                                                                          () {});
-                                                                    }
-                                                                  },
+                                                                        if (check ==
+                                                                            true) {
+                                                                          setState(
+                                                                                  () {
+                                                                                futurePropertyTypes =
+                                                                                    PropertyTypeRepository()
+                                                                                        .fetchPropertyTypes();
+                                                                              });
+                                                                        }
+                                                                      },
                                                                   child:
                                                                       Container(
                                                                     height: 40,

@@ -231,6 +231,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
   final FocusNode _nodeText3 = FocusNode();
   final FocusNode _nodeText4 = FocusNode();
   bool creditcard = false;
+  bool achaccepted = false;
   bool debitcard = false;
   KeyboardActionsConfig _buildConfig(BuildContext context) {
     return KeyboardActionsConfig(
@@ -2966,6 +2967,41 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                               ),
                             ),
                           ),
+
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Transform.scale(
+                                    scale: 1.2,
+                                    child: Checkbox(
+                                        value: achaccepted,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            achaccepted = value!;
+                                          });
+                                        },
+                                        activeColor: blueColor),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    "ACH",
+                                    style: TextStyle(
+                                        fontSize: 16, color: Color(0xFF101828)),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ],
@@ -3715,6 +3751,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
 
       final body = json.encode({
         "creditCardAccepted": creditcard,
+        "achAccepted": achaccepted,
         "debitCardAccepted": debitcard,
         "rentalOwnerId": rentalownerId ?? "",
       });
