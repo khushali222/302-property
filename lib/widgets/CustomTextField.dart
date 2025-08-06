@@ -454,41 +454,42 @@ class NewCustomTextField extends StatefulWidget {
   final TextEditingController? emailController;
   final bool? samephonenumber;
 
-  NewCustomTextField({
-    Key? key,
-    this.onChanged,
-    this.controller,
-    required this.hintText,
-    this.obscureText = false,
-    this.keyboardType = TextInputType.emailAddress,
-    this.readOnnly = false,
-    this.prefixIcon,
-    this.suffixIcon,
-    this.validator,
-    this.onSuffixIconPressed,
-    this.label,
-    this.onTap,
-    this.onChanged2,
-    this.amount_check,
-    this.max_amount,
-    this.error_mess,
-    this.optional = false,
-    this.email,
-    this.pass,
-    this.phone,
-    this.inputFormatters,
-    this.worknum,
-    this.phonenum,
-    this.businessnum,
-    this.otherController, // For work number comparison
-    this.businessController,
-    this.telephoneController,
-    this.alterController,
-    this.emrgencyController,
-    this.emailController,
-    this.samephonenumber=false
-    // Initialize onTap
-  }) : super(key: key);
+  NewCustomTextField(
+      {Key? key,
+      this.onChanged,
+      this.controller,
+      required this.hintText,
+      this.obscureText = false,
+      this.keyboardType = TextInputType.emailAddress,
+      this.readOnnly = false,
+      this.prefixIcon,
+      this.suffixIcon,
+      this.validator,
+      this.onSuffixIconPressed,
+      this.label,
+      this.onTap,
+      this.onChanged2,
+      this.amount_check,
+      this.max_amount,
+      this.error_mess,
+      this.optional = false,
+      this.email,
+      this.pass,
+      this.phone,
+      this.inputFormatters,
+      this.worknum,
+      this.phonenum,
+      this.businessnum,
+      this.otherController, // For work number comparison
+      this.businessController,
+      this.telephoneController,
+      this.alterController,
+      this.emrgencyController,
+      this.emailController,
+      this.samephonenumber = false
+      // Initialize onTap
+      })
+      : super(key: key);
 
   @override
   NewCustomTextFieldState createState() => NewCustomTextFieldState();
@@ -497,7 +498,7 @@ class NewCustomTextField extends StatefulWidget {
 class NewCustomTextFieldState extends State<NewCustomTextField> {
   String? _errorMessage;
   TextEditingController _textController =
-  TextEditingController(); // Add this line
+      TextEditingController(); // Add this line
   late FocusNode _focusNode;
   @override
   void dispose() {
@@ -519,7 +520,7 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
         KeyboardActionsItem(
           focusNode: _focusNode,
           toolbarButtons: [
-                (node) {
+            (node) {
               return GestureDetector(
                 onTap: () {
                   if (widget.onChanged2 != null) {
@@ -542,6 +543,7 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
       ],
     );
   }
+
   // void _validatePhoneNumber(String value) {
   //   String formattedPhoneNumber = value.replaceAll(RegExp(r'\D'), '');
   //
@@ -624,6 +626,7 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
       }
     }
   }
+
   void _validateEmail(String value) {
     // Validate email format using EmailValidator
     if (!EmailValidator.validate(value)) {
@@ -637,24 +640,24 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
         setState(() {
           _errorMessage = 'Email cannot be the same';
         });
-      }else if (widget.emrgencyController != null &&
+      } else if (widget.emrgencyController != null &&
           widget.emrgencyController?.text == value) {
         setState(() {
           _errorMessage = 'Email cannot be the same';
         });
-      }else if (widget.emailController != null &&
+      } else if (widget.emailController != null &&
           widget.emailController?.text == value) {
         setState(() {
           _errorMessage = 'Email cannot be the same';
         });
-      }
-      else {
+      } else {
         setState(() {
           _errorMessage = null; // Clear error message when email is valid
         });
       }
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final shouldUseKeyboardActions =
@@ -665,126 +668,119 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
         FormField<String>(
           validator: widget.optional!
               ? (value) {
-            print("work same callling  ${widget.samephonenumber}");
-            if (widget.controller!.text.isEmpty) {
-              return null;
-            }
-            else if (widget.phone != null) {
-              // String formattedPhoneNumber =
-              //     widget.controller!.text.replaceAll(RegExp(r'\D'), '');
-              //
-              // // Removed the empty check
-              // if (formattedPhoneNumber.length != 10) {
-              //   setState(() {
-              //     _errorMessage = "Phone number must be 10 digits";
-              //   });
-              //   return '';
-              // }
-              //   if (widget.samephonenumber != null && widget.samephonenumber ==true ) {
-              //       print("Same Work Number calling");
-              //       setState(() {
-              //         _errorMessage = ' number cannot be the same';
-              //       });
-              //
-              //
-              //   return '';
-              // }else {
-              //   // Clear error message if phone number is valid
-              //   setState(() {
-              //     _errorMessage = null;
-              //   });
-              // }
-              _validatePhoneNumber(widget.controller!.text);
-              return '';
-            }else if (widget.email != null) {
-              // if (!EmailValidator.validate(widget.controller!.text)) {
-              //   setState(() {
-              //     _errorMessage = "Email is not valid";
-              //   });
-              //   return '';
-              // }
-              _validateEmail(widget.controller!.text);
+                  print("work same callling  ${widget.samephonenumber}");
+                  if (widget.controller!.text.isEmpty) {
+                    return null;
+                  } else if (widget.phone != null) {
+                    // String formattedPhoneNumber =
+                    //     widget.controller!.text.replaceAll(RegExp(r'\D'), '');
+                    //
+                    // // Removed the empty check
+                    // if (formattedPhoneNumber.length != 10) {
+                    //   setState(() {
+                    //     _errorMessage = "Phone number must be 10 digits";
+                    //   });
+                    //   return '';
+                    // }
+                    //   if (widget.samephonenumber != null && widget.samephonenumber ==true ) {
+                    //       print("Same Work Number calling");
+                    //       setState(() {
+                    //         _errorMessage = ' number cannot be the same';
+                    //       });
+                    //
+                    //
+                    //   return '';
+                    // }else {
+                    //   // Clear error message if phone number is valid
+                    //   setState(() {
+                    //     _errorMessage = null;
+                    //   });
+                    // }
+                    _validatePhoneNumber(widget.controller!.text);
+                    return '';
+                  } else if (widget.email != null) {
+                    // if (!EmailValidator.validate(widget.controller!.text)) {
+                    //   setState(() {
+                    //     _errorMessage = "Email is not valid";
+                    //   });
+                    //   return '';
+                    // }
+                    _validateEmail(widget.controller!.text);
 
-              // Return an empty string or handle accordingly
-              return '';
-            }
-            else if (widget.amount_check != null &&
-                double.parse(widget.controller!.text) >
-                    double.parse(widget.max_amount!))
-              setState(() {
-                _errorMessage = '${widget.error_mess}';
-              });
-            return null;
-          }
+                    // Return an empty string or handle accordingly
+                    return '';
+                  } else if (widget.amount_check != null &&
+                      double.parse(widget.controller!.text) >
+                          double.parse(widget.max_amount!))
+                    setState(() {
+                      _errorMessage = '${widget.error_mess}';
+                    });
+                  return null;
+                }
               : (value) {
-            if (widget.controller!.text.isEmpty) {
-              setState(() {
-                if (widget.label == null)
-                  _errorMessage = 'Please ${widget.hintText}';
-                else
-                  _errorMessage = 'Please ${widget.label}';
-              });
-              return '';
-            }
+                  if (widget.controller!.text.isEmpty) {
+                    setState(() {
+                      if (widget.label == null)
+                        _errorMessage = 'Please ${widget.hintText}';
+                      else
+                        _errorMessage = 'Please ${widget.label}';
+                    });
+                    return '';
+                  } else if (widget.phone != null) {
+                    // Check if it's a phone number
+                    String formattedPhoneNumber =
+                        widget.controller!.text.replaceAll(RegExp(r'\D'), '');
 
-            else if (widget.phone != null) {
-              // Check if it's a phone number
-              String formattedPhoneNumber =
-              widget.controller!.text.replaceAll(RegExp(r'\D'), '');
-
-              if (formattedPhoneNumber.length != 10) {
-                setState(() {
-                  _errorMessage = "Phone number must be 10 digits";
-                });
-                return '';
-              }
-              if (widget.samephonenumber != null &&
-                  widget.samephonenumber!) {
-                setState(() {
-                  _errorMessage = 'Phone number and work number cannot be the same';
-                });
-                return '';
-              }else {
-                // Clear error message if phone number is valid
-                setState(() {
-                  _errorMessage = null;
-                });
-              }
-            }
-            else if (widget.email != null) {
-              if (!EmailValidator.validate(widget.controller!.text)) {
-                setState(() {
-                  _errorMessage = "Email is not valid";
-                });
-                return '';
-              }
-              //   _validateEmail(widget.controller!.text);
-              //
-              //   // Return an empty string or handle accordingly
-              //   return '';
-            }
-            else if (widget.pass != null) {
-              String? validationMessage =
-              ValidatePassword(widget.controller!.text);
-              if (validationMessage != null) {
-                setState(() {
-                  _errorMessage = validationMessage;
-                });
-                return '';
-              }
-            }
-
-
-            else if (widget.amount_check != null &&
-                double.parse(widget.controller!.text) >
-                    double.parse(widget.max_amount!))
-              setState(() {
-                _errorMessage = '${widget.error_mess}';
-              });
-            return null;
-          },
+                    if (formattedPhoneNumber.length != 10) {
+                      setState(() {
+                        _errorMessage = "Phone number must be 10 digits";
+                      });
+                      return '';
+                    }
+                    if (widget.samephonenumber != null &&
+                        widget.samephonenumber!) {
+                      setState(() {
+                        _errorMessage =
+                            'Phone number and work number cannot be the same';
+                      });
+                      return '';
+                    } else {
+                      // Clear error message if phone number is valid
+                      setState(() {
+                        _errorMessage = null;
+                      });
+                    }
+                  } else if (widget.email != null) {
+                    if (!EmailValidator.validate(widget.controller!.text)) {
+                      setState(() {
+                        _errorMessage = "Email is not valid";
+                      });
+                      return '';
+                    }
+                    //   _validateEmail(widget.controller!.text);
+                    //
+                    //   // Return an empty string or handle accordingly
+                    //   return '';
+                  } else if (widget.pass != null) {
+                    String? validationMessage =
+                        ValidatePassword(widget.controller!.text);
+                    if (validationMessage != null) {
+                      setState(() {
+                        _errorMessage = validationMessage;
+                      });
+                      return '';
+                    }
+                  } else if (widget.amount_check != null &&
+                      double.parse(widget.controller!.text) >
+                          double.parse(widget.max_amount!))
+                    setState(() {
+                      _errorMessage = '${widget.error_mess}';
+                    });
+                  return null;
+                },
           builder: (FormFieldState<String> state) {
             return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Material(
                   elevation: 2,
@@ -792,11 +788,16 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
                   child: Container(
                     height: 50,
                     padding:
-                    EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.0),
-                      //border: Border.all(color: blueColor),
+                      border: Border.all(
+                        color: _errorMessage != null
+                            ? Colors.red
+                            : Colors.transparent,
+                        width: 1.0,
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.2),
@@ -860,7 +861,7 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
                       decoration: InputDecoration(
                         suffixIcon: widget.suffixIcon,
                         hintStyle:
-                        TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                            TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                         border: InputBorder.none,
                         hintText: widget.hintText,
                       ),
@@ -879,25 +880,43 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
           Positioned(
             top: 60,
             left: 8,
-            child: Text(
-              _errorMessage!,
-              style: TextStyle(
-                color: Colors.red,
-                fontSize: 12.0,
-              ),
+            right: 8,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
+                  size: 16.0,
+                ),
+                SizedBox(width: 4.0),
+                Expanded(
+                  child: Text(
+                    _errorMessage!,
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 12.0,
+                    ),
+                    maxLines: (widget.pass ?? false) ? 3 : 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
           ),
       ],
     );
     return shouldUseKeyboardActions
         ? SizedBox(
-      height: _errorMessage != null ? 75 : 60,
-      width: MediaQuery.of(context).size.width * .98,
-      child: KeyboardActions(
-        config: _buildConfig(context),
-        child: textfield,
-      ),
-    )
+            height: _errorMessage != null
+                ? 95
+                : 60, // Increased height for multi-line errors
+            width: MediaQuery.of(context).size.width * .98,
+            child: KeyboardActions(
+              config: _buildConfig(context),
+              child: textfield,
+            ),
+          )
         : textfield;
   }
 }

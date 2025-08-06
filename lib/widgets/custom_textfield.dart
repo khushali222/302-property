@@ -29,6 +29,14 @@ class CustomTextField extends StatelessWidget {
   final Color? borderColor;
   final Color? focusedBorderColor;
   final Color? errorBorderColor;
+  final bool isInRow;
+  final bool showElevation;
+  final bool obscureText;
+  final bool showErrorInTooltip;
+  final String? Function(String?)? validator;
+  final bool wrapErrorText;
+  final int errorMaxLines;
+  final TextStyle? errorTextStyle;
 
   const CustomTextField({
     Key? key,
@@ -44,7 +52,7 @@ class CustomTextField extends StatelessWidget {
     this.readOnly = false,
     this.onTap,
     this.suffixIcon,
-    this.height = 50,
+    this.height,
     this.width,
     this.isRequired = false,
     this.showLabel = true,
@@ -58,10 +66,115 @@ class CustomTextField extends StatelessWidget {
     this.borderColor,
     this.focusedBorderColor,
     this.errorBorderColor,
+    this.isInRow = false,
+    this.showElevation = true,
+    this.obscureText = false,
+    this.showErrorInTooltip = false,
+    this.validator,
+    this.wrapErrorText = true,
+    this.errorMaxLines = 2,
+    this.errorTextStyle,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final formField = Form(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      child: TextFormField(
+        controller: controller,
+        onChanged: onChanged,
+        keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
+        focusNode: focusNode,
+        readOnly: readOnly,
+        onTap: onTap,
+        maxLines: maxLines,
+        obscureText: obscureText,
+        cursorColor: blueColor,
+        validator: validator,
+        decoration: InputDecoration(
+          hintText: hintText,
+          prefixText: prefixText,
+          hintStyle: hintStyle ??
+              TextStyle(
+                fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 19,
+                color: Color(0xFF8A95A8),
+              ),
+          enabledBorder: hasError
+              ? OutlineInputBorder(
+                  borderRadius: borderRadius ?? BorderRadius.circular(10),
+                  borderSide: BorderSide(
+                    color: errorBorderColor ?? Colors.red,
+                  ),
+                )
+              : InputBorder.none,
+          focusedBorder: OutlineInputBorder(
+            borderRadius: borderRadius ?? BorderRadius.circular(10),
+            borderSide: BorderSide(
+              color: focusedBorderColor ?? blueColor,
+              width: 2,
+            ),
+          ),
+          border: InputBorder.none,
+          contentPadding: contentPadding ??
+              EdgeInsets.all(MediaQuery.of(context).size.width < 500 ? 14 : 11),
+          suffixIcon: suffixIcon,
+          errorText: showErrorInTooltip ? null : errorMessage,
+        ),
+      ),
+    );
+
+    Widget textFieldWidget = Material(
+      elevation: showElevation ? elevation : 0,
+      borderRadius: borderRadius ?? BorderRadius.circular(10),
+      child: Container(
+        width: width,
+        constraints: height != null ? BoxConstraints(minHeight: height!) : null,
+        decoration: BoxDecoration(
+          borderRadius: borderRadius ?? BorderRadius.circular(10),
+          border: Border.all(
+            color: hasError
+                ? (errorBorderColor ?? Colors.red)
+                : (borderColor ?? Color(0xFF8A95A8)),
+          ),
+        ),
+        child: formField,
+      ),
+    );
+
+    // If showing error in tooltip, wrap the textfield in a tooltip
+    if (showErrorInTooltip && hasError && errorMessage.isNotEmpty) {
+      textFieldWidget = MouseRegion(
+        cursor: SystemMouseCursors.help,
+        child: Tooltip(
+          message: errorMessage,
+          preferBelow: true,
+          showDuration: const Duration(seconds: 3),
+          waitDuration: const Duration(milliseconds: 500),
+          triggerMode: TooltipTriggerMode.tap,
+          decoration: BoxDecoration(
+            color: errorBorderColor?.withOpacity(0.9) ?? Colors.red[700],
+            borderRadius: BorderRadius.circular(4),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          textStyle: errorTextStyle?.copyWith(color: Colors.white) ??
+              TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                height: 1.4,
+              ),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: textFieldWidget,
+        ),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -75,7 +188,8 @@ class CustomTextField extends StatelessWidget {
                     TextStyle(
                       color: Color(0xFF8A95A8),
                       fontWeight: FontWeight.bold,
-                      fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 20,
+                      fontSize:
+                          MediaQuery.of(context).size.width < 500 ? 15 : 20,
                     ),
               ),
               if (isRequired)
@@ -91,80 +205,34 @@ class CustomTextField extends StatelessWidget {
           ),
           SizedBox(height: 5),
         ],
-        
-        // Text Field
-        Material(
-          elevation: elevation,
-          borderRadius: borderRadius ?? BorderRadius.circular(10),
-          child: Container(
-            height: height,
-            width: width,
-            decoration: BoxDecoration(
-              borderRadius: borderRadius ?? BorderRadius.circular(10),
-              border: Border.all(
-                color: hasError
-                    ? (errorBorderColor ?? Colors.red)
-                    : (borderColor ?? Color(0xFF8A95A8)),
-              ),
+
+        // Text Field with optional tooltip
+        textFieldWidget,
+
+        // Error Message (only shown if not using tooltip)
+        if (!showErrorInTooltip && hasError && errorMessage.isNotEmpty) ...[
+          Container(
+            padding: EdgeInsets.only(
+              top: 4,
+              left: isInRow ? 0 : 4,
+              right: isInRow ? 0 : 4,
             ),
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: TextField(
-                    controller: controller,
-                    onChanged: onChanged,
-                    keyboardType: keyboardType,
-                    inputFormatters: inputFormatters,
-                    focusNode: focusNode,
-                    readOnly: readOnly,
-                    onTap: onTap,
-                    maxLines: maxLines,
-                    cursorColor: blueColor,
-                    decoration: InputDecoration(
-                      hintText: hintText,
-                      prefixText: prefixText,
-                      hintStyle: hintStyle ??
-                          TextStyle(
-                            fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 19,
-                            color: Color(0xFF8A95A8),
-                          ),
-                      enabledBorder: hasError
-                          ? OutlineInputBorder(
-                              borderRadius: borderRadius ?? BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: errorBorderColor ?? Colors.red,
-                              ),
-                            )
-                          : InputBorder.none,
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: borderRadius ?? BorderRadius.circular(10),
-                        borderSide: BorderSide(
-                          color: focusedBorderColor ?? blueColor,
-                          width: 2,
-                        ),
-                      ),
-                      border: InputBorder.none,
-                      contentPadding: contentPadding ??
-                          EdgeInsets.all(MediaQuery.of(context).size.width < 500 ? 14 : 11),
-                      suffixIcon: suffixIcon,
-                    ),
-                  ),
-                ),
-              ],
+            constraints: BoxConstraints(
+              minHeight: 20,
+              maxWidth: isInRow && wrapErrorText
+                  ? width ?? double.infinity
+                  : double.infinity,
             ),
-          ),
-        ),
-        
-        // Error Message
-        if (hasError && errorMessage.isNotEmpty) ...[
-          Padding(
-            padding: const EdgeInsets.only(top: 4),
             child: Text(
               errorMessage,
-              style: TextStyle(
-                color: Colors.red,
-                fontSize: MediaQuery.of(context).size.width * 0.035,
-              ),
+              style: errorTextStyle ??
+                  TextStyle(
+                    color: errorBorderColor ?? Colors.red,
+                    fontSize: 12,
+                  ),
+              maxLines: wrapErrorText ? errorMaxLines : 1,
+              overflow:
+                  wrapErrorText ? TextOverflow.ellipsis : TextOverflow.clip,
             ),
           ),
         ],
@@ -190,7 +258,8 @@ class PhoneNumberFormatter extends TextInputFormatter {
       );
     } else if (text.length <= 10) {
       return newValue.copyWith(
-        text: '${text.substring(0, 3)}-${text.substring(3, 6)}-${text.substring(6)}',
+        text:
+            '${text.substring(0, 3)}-${text.substring(3, 6)}-${text.substring(6)}',
         selection: TextSelection.collapsed(offset: text.length + 2),
       );
     } else {
@@ -321,7 +390,9 @@ class CustomInfoCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: row.value.isEmpty ? const Color(0xFF9CA3AF) : const Color(0xFF1F2937),
+                color: row.value.isEmpty
+                    ? const Color(0xFF9CA3AF)
+                    : const Color(0xFF1F2937),
               ),
             ),
           ),
@@ -355,7 +426,8 @@ class CustomSectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: margin ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      margin:
+          margin ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       decoration: BoxDecoration(
         color: backgroundColor ?? blueColor,
@@ -408,12 +480,13 @@ class CustomActionButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: isOutlined ? Colors.white : (backgroundColor ?? blueColor),
-          foregroundColor: isOutlined 
-              ? (backgroundColor ?? blueColor) 
+          backgroundColor:
+              isOutlined ? Colors.white : (backgroundColor ?? blueColor),
+          foregroundColor: isOutlined
+              ? (backgroundColor ?? blueColor)
               : (textColor ?? Colors.white),
           elevation: isOutlined ? 0 : 2,
-          side: isOutlined 
+          side: isOutlined
               ? BorderSide(color: backgroundColor ?? blueColor, width: 1.5)
               : null,
           shape: RoundedRectangleBorder(
@@ -590,15 +663,15 @@ class CustomAppHeader extends StatelessWidget {
 // Helper function for phone number formatting
 String formatPhoneNumber(String phoneNumber) {
   if (phoneNumber.isEmpty || phoneNumber == 'null') return 'N/A';
-  
+
   // Remove all non-digit characters
   String digitsOnly = phoneNumber.replaceAll(RegExp(r'[^\d]'), '');
-  
+
   if (digitsOnly.length == 10) {
     return '${digitsOnly.substring(0, 3)}-${digitsOnly.substring(3, 6)}-${digitsOnly.substring(6)}';
   } else if (digitsOnly.length == 11 && digitsOnly.startsWith('1')) {
     return '+1 ${digitsOnly.substring(1, 4)}-${digitsOnly.substring(4, 7)}-${digitsOnly.substring(7)}';
   }
-  
+
   return phoneNumber;
-} 
+}

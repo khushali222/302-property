@@ -1324,7 +1324,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                             Color(0xFF101828))),
                                                 SizedBox(height: 4),
                                                 Text(
-                                                  '${(widget.tenants?.tenantBirthDate ?? '').isEmpty ? 'N/A' : widget.tenants?.tenantBirthDate}',
+                                                  '${(widget.tenants?.tenantBirthDate ?? '').isEmpty ? 'N/A' :  dateProvider.formatCurrentDate('${widget.tenants?.tenantBirthDate}')}',
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold,

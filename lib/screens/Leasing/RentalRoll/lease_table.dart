@@ -116,12 +116,9 @@ class _Lease_tableState extends State<Lease_table> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
@@ -159,8 +156,8 @@ class _Lease_tableState extends State<Lease_table> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Lease", style: TextStyle(color: Colors.white))
-                        : Text("Lease", style: TextStyle(color: Colors.white)),
+                        ? Text("Lease", style: TextStyle(color: blueColor, fontWeight: FontWeight.bold))
+                        : Text("Lease", style: TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
@@ -211,7 +208,7 @@ class _Lease_tableState extends State<Lease_table> {
                   children: [
                     Text("   Rent Cycle",
                         style: TextStyle(
-                          color: Colors.white,
+                            color: blueColor, fontWeight: FontWeight.bold,
                           fontSize: MediaQuery.of(context).size.width < 350
                               ? 12.0
                               : 14.0,
@@ -266,7 +263,7 @@ class _Lease_tableState extends State<Lease_table> {
                   children: [
                     Text("   Lease End",
                         style: TextStyle(
-                          color: Colors.white,
+                            color: blueColor, fontWeight: FontWeight.bold,
                           fontSize: MediaQuery.of(context).size.width < 350
                               ? 12.0
                               : 14.0,
@@ -1040,14 +1037,8 @@ class _Lease_tableState extends State<Lease_table> {
                                 children: [
                                   SizedBox(height: 10),
                                   _buildHeaders(),
-                                  SizedBox(height: 20),
+                                  SizedBox(height: 10),
                                   Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Color.fromRGBO(
-                                                152, 162, 179, .5))),
-                                    // decoration: BoxDecoration(
-                                    //     border: Border.all(color: blueColor)),
                                     child: Column(
                                       children: currentPageData
                                           .asMap()
@@ -1064,17 +1055,17 @@ class _Lease_tableState extends State<Lease_table> {
                                             "${isNegative ? '-' : ''}\$${balance.abs().toStringAsFixed(2)}";
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
+                                          margin:
+                                          EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
-                                                ? Colors.white
-                                                : blueColor.withOpacity(0.09),
+                                                ? Color(0xFFF4F8FF)
+                                                : Colors.white,
                                             border: Border.all(
-                                                color: Color.fromRGBO(
-                                                    152, 162, 179, .5)),
+                                                color: Color(0xFFDBE0E5)),
+                                            borderRadius:
+                                            BorderRadius.circular(10),
                                           ),
-                                          // decoration: BoxDecoration(
-                                          //   border: Border.all(color: blueColor),
-                                          // ),
                                           child: Column(
                                             children: <Widget>[
                                               ListTile(
@@ -1338,221 +1329,315 @@ class _Lease_tableState extends State<Lease_table> {
                                                             // ),
                                                           ],
                                                         ),
-                                                        SizedBox(
-                                                          height: 15,
-                                                        ),
+
+                                                        // Row(
+                                                        //   //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        //   children: [
+                                                        //
+                                                        //     SizedBox(
+                                                        //       width: 5,
+                                                        //     ),
+                                                        //     Expanded(
+                                                        //       child:
+                                                        //           GestureDetector(
+                                                        //         onTap:
+                                                        //             () async {
+                                                        //           Provider.of<SelectedCosignersProvider>(
+                                                        //                   context,
+                                                        //                   listen:
+                                                        //                       false)
+                                                        //               .clearCosigner();
+                                                        //           Provider.of<SelectedTenantsProvider>(
+                                                        //                   context,
+                                                        //                   listen:
+                                                        //                       false)
+                                                        //               .clearTenant();
+                                                        //           // handleEdit(Propertytype);
+                                                        //           var check = await Navigator.push(
+                                                        //               context,
+                                                        //               MaterialPageRoute(
+                                                        //                   builder: (context) => Edit_lease(
+                                                        //                         lease: lease,
+                                                        //                         leaseId: lease.leaseId!,
+                                                        //                       )));
+                                                        //           if (check ==
+                                                        //               true) {
+                                                        //             setState(
+                                                        //                 () {
+                                                        //               futureLease =
+                                                        //                   LeaseRepository()
+                                                        //                       .fetchLease("");
+                                                        //               //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                                                        //             });
+                                                        //           }
+                                                        //         },
+                                                        //         child:
+                                                        //             Container(
+                                                        //           height: 40,
+                                                        //           decoration:
+                                                        //               BoxDecoration(
+                                                        //             border: Border.all(
+                                                        //                 color: Colors
+                                                        //                     .green,
+                                                        //                 width:
+                                                        //                     1.5),
+                                                        //             borderRadius:
+                                                        //                 BorderRadius
+                                                        //                     .circular(8),
+                                                        //           ), // color:Colors.grey[100],
+                                                        //           child: Row(
+                                                        //             mainAxisAlignment:
+                                                        //                 MainAxisAlignment
+                                                        //                     .center,
+                                                        //             crossAxisAlignment:
+                                                        //                 CrossAxisAlignment
+                                                        //                     .center,
+                                                        //             children: [
+                                                        //               FaIcon(
+                                                        //                 FontAwesomeIcons
+                                                        //                     .edit,
+                                                        //                 size:
+                                                        //                     15,
+                                                        //                 color: Colors
+                                                        //                     .green,
+                                                        //               ),
+                                                        //               SizedBox(
+                                                        //                 width:
+                                                        //                     10,
+                                                        //               ),
+                                                        //               Text(
+                                                        //                 "Edit",
+                                                        //                 style: TextStyle(
+                                                        //                     color:
+                                                        //                         Colors.green,
+                                                        //                     fontWeight: FontWeight.bold),
+                                                        //               ),
+                                                        //             ],
+                                                        //           ),
+                                                        //         ),
+                                                        //       ),
+                                                        //     ),
+                                                        //     SizedBox(
+                                                        //       width: 5,
+                                                        //     ),
+                                                        //     Expanded(
+                                                        //       child:
+                                                        //           GestureDetector(
+                                                        //         onTap: () {
+                                                        //           _attemptDeleteLease(
+                                                        //               context,
+                                                        //               lease);
+                                                        //         },
+                                                        //         child:
+                                                        //             Container(
+                                                        //           height: 40,
+                                                        //           decoration:
+                                                        //               BoxDecoration(
+                                                        //             border: Border.all(
+                                                        //                 color: Colors
+                                                        //                     .red,
+                                                        //                 width:
+                                                        //                     1.5),
+                                                        //             borderRadius:
+                                                        //                 BorderRadius
+                                                        //                     .circular(8),
+                                                        //           ),
+                                                        //           child: Row(
+                                                        //             mainAxisAlignment:
+                                                        //                 MainAxisAlignment
+                                                        //                     .center,
+                                                        //             crossAxisAlignment:
+                                                        //                 CrossAxisAlignment
+                                                        //                     .center,
+                                                        //             children: [
+                                                        //               FaIcon(
+                                                        //                 FontAwesomeIcons
+                                                        //                     .trashCan,
+                                                        //                 size:
+                                                        //                     15,
+                                                        //                 color: Colors
+                                                        //                     .red,
+                                                        //               ),
+                                                        //               SizedBox(
+                                                        //                 width:
+                                                        //                     10,
+                                                        //               ),
+                                                        //               Text(
+                                                        //                 "Delete",
+                                                        //                 style: TextStyle(
+                                                        //                     color:
+                                                        //                         Colors.red,
+                                                        //                     fontWeight: FontWeight.bold),
+                                                        //               )
+                                                        //             ],
+                                                        //           ),
+                                                        //         ),
+                                                        //       ),
+                                                        //     ),
+                                                        //   ],
+                                                        // ),
                                                         Row(
-                                                          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .end,
                                                           children: [
-                                                            Expanded(
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                _attemptDeleteLease(
+                                                                    context,
+                                                                    lease);
+                                                              },
                                                               child:
-                                                                  GestureDetector(
-                                                                onTap: () {
-                                                                  Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) => SummeryPageLease(
-                                                                                leaseId: lease.leaseId!,
-                                                                                enddate: lease.endDate,
-                                                                              )));
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  height: 40,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    border: Border.all(
-                                                                        color:
-                                                                            blueColor,
-                                                                        width:
-                                                                            1.5),
+                                                              Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration: BoxDecoration(
                                                                     borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(8),
-                                                                  ),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      SizedBox(
-                                                                        width:
-                                                                            5,
-                                                                      ),
-                                                                      Image
-                                                                          .asset(
-                                                                        'assets/icons/view.png',
-                                                                        color:
-                                                                            blueColor,
-                                                                      ),
-                                                                      // FaIcon(
-                                                                      //   FontAwesomeIcons.trashCan,
-                                                                      //   size: 15,
-                                                                      //   color:blueColor,
-                                                                      // ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            8,
-                                                                      ),
-                                                                      Text(
-                                                                        "View Summery",
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                11,
-                                                                            color:
-                                                                                blueColor,
-                                                                            fontWeight:
-                                                                                FontWeight.bold),
-                                                                      )
-                                                                    ],
-                                                                  ),
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                        8),
+                                                                    color: Colors
+                                                                        .red
+                                                                        .shade50
+                                                                ),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                                  crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .trashCan,
+                                                                      size: 15,
+                                                                      color: Colors
+                                                                          .red,
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                               ),
                                                             ),
                                                             SizedBox(
                                                               width: 5,
                                                             ),
-                                                            Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap:
-                                                                    () async {
-                                                                  Provider.of<SelectedCosignersProvider>(
-                                                                          context,
-                                                                          listen:
-                                                                              false)
-                                                                      .clearCosigner();
-                                                                  Provider.of<SelectedTenantsProvider>(
-                                                                          context,
-                                                                          listen:
-                                                                              false)
-                                                                      .clearTenant();
-                                                                  // handleEdit(Propertytype);
-                                                                  var check = await Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) => Edit_lease(
-                                                                                lease: lease,
-                                                                                leaseId: lease.leaseId!,
-                                                                              )));
-                                                                  if (check ==
-                                                                      true) {
-                                                                    setState(
-                                                                        () {
-                                                                      futureLease =
-                                                                          LeaseRepository()
-                                                                              .fetchLease("");
-                                                                      //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                                                                    });
-                                                                  }
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  height: 40,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    border: Border.all(
-                                                                        color: Colors
-                                                                            .green,
-                                                                        width:
-                                                                            1.5),
+                                                            GestureDetector(
+                                                              onTap: () async {
+                                                                Provider.of<SelectedCosignersProvider>(
+                                                                    context,
+                                                                    listen:
+                                                                    false)
+                                                                    .clearCosigner();
+                                                                Provider.of<SelectedTenantsProvider>(
+                                                                    context,
+                                                                    listen:
+                                                                    false)
+                                                                    .clearTenant();
+                                                                // handleEdit(Propertytype);
+                                                                var check = await Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) => Edit_lease(
+                                                                          lease: lease,
+                                                                          leaseId: lease.leaseId!,
+                                                                        )));
+                                                                if (check ==
+                                                                    true) {
+                                                                  setState(
+                                                                          () {
+                                                                        futureLease =
+                                                                            LeaseRepository()
+                                                                                .fetchLease("");
+                                                                        //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                                                                      });
+                                                                }
+                                                              },
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration: BoxDecoration(
                                                                     borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(8),
-                                                                  ), // color:Colors.grey[100],
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      FaIcon(
-                                                                        FontAwesomeIcons
-                                                                            .edit,
-                                                                        size:
-                                                                            15,
-                                                                        color: Colors
-                                                                            .green,
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            10,
-                                                                      ),
-                                                                      Text(
-                                                                        "Edit",
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.green,
-                                                                            fontWeight: FontWeight.bold),
-                                                                      ),
-                                                                    ],
-                                                                  ),
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                        8),
+                                                                    color: Colors
+                                                                        .green
+                                                                        .shade50), // color:Colors.grey[100],
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                                  crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .edit,
+                                                                      size: 15,
+                                                                      color: Colors
+                                                                          .green,
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                               ),
                                                             ),
                                                             SizedBox(
                                                               width: 5,
                                                             ),
-                                                            Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap: () {
-                                                                  _attemptDeleteLease(
-                                                                      context,
-                                                                      lease);
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  height: 40,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    border: Border.all(
-                                                                        color: Colors
-                                                                            .red,
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) => SummeryPageLease(
+                                                                          leaseId: lease.leaseId!,
+                                                                          enddate: lease.endDate,
+                                                                        )));
+                                                              },
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration:
+                                                                BoxDecoration(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .shade200,
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      8),
+                                                                ),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                                  crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .eye,
+                                                                      size: 15,
+                                                                      color: Colors
+                                                                          .black,
+                                                                    ),
+                                                                    SizedBox(
                                                                         width:
-                                                                            1.5),
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(8),
-                                                                  ),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      FaIcon(
-                                                                        FontAwesomeIcons
-                                                                            .trashCan,
-                                                                        size:
-                                                                            15,
-                                                                        color: Colors
-                                                                            .red,
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            10,
-                                                                      ),
-                                                                      Text(
-                                                                        "Delete",
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.red,
-                                                                            fontWeight: FontWeight.bold),
-                                                                      )
-                                                                    ],
-                                                                  ),
+                                                                        2),
+                                                                  ],
                                                                 ),
                                                               ),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 15,
                                                             ),
                                                           ],
+                                                        ),
+                                                        SizedBox(
+                                                          height: 15,
                                                         ),
                                                       ],
                                                     ),

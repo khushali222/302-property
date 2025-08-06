@@ -1872,7 +1872,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       ?.isEmpty ==
                                       true
                                       ? 'N/A'
-                                      : '${summery.workorderUpdates?.last.date}',
+                                      : dateProvider.formatCurrentDate(
+                                      '${summery.workorderUpdates?.last.date}'),
                                   style: valueStyle,
                                 ),
                               ],
@@ -2106,7 +2107,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       update.staffmemberName ?? "N/A",
                                       valueColor: blueColor),
                                   _buildLabelValue(
-                                      "Due Date", update.date ?? "N/A",
+                                      "Due Date", dateProvider.formatCurrentDate(update.date ?? "N/A"),
                                       valueColor: blueColor),
                                 ],
                               ),
@@ -2297,6 +2298,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
 
   Task(WorkOrderData_summery summery) {
     print(summery.workOrderImages);
+    final dateProvider = Provider.of<DateProvider>(context);
     double grandTotal = 0;
     // applicantChecklist = List<String>.from(summery.applicantCheckedChecklist!);
     return Padding(
@@ -2533,7 +2535,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       height: 4,
                                     ),
                                     Text(
-                                        '${summery.workorderUpdates!.last.date!.isEmpty == true ? "N/A" : summery.workorderUpdates?.last.date?.toString()}',
+                                        '${summery.workorderUpdates!.last.date!.isEmpty == true ? "N/A" : dateProvider.formatCurrentDate( '${summery.workorderUpdates?.last.date?.toString()}')}',
                                         style: TextStyle(
                                             color: blueColor,
                                             fontWeight: FontWeight.bold)),
@@ -2934,7 +2936,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     height: 4,
                                   ),
                                   Text(
-                                      '${summery.workorderUpdates!.last.date!.isEmpty == true ? "N/A" : summery.workorderUpdates?.last.date?.toString()}',
+                                      '${summery.workorderUpdates!.last.date!.isEmpty == true ? "N/A" : dateProvider.formatCurrentDate( '${summery.workorderUpdates?.last.date?.toString()}')}',
                                       style: TextStyle(
                                           color: blueColor,
                                           fontWeight: FontWeight.bold)),

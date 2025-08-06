@@ -1159,212 +1159,352 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                   ),
                                                 ),
                                                 const SizedBox(height: 20),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                // Row(
+                                                //   mainAxisAlignment:
+                                                //       MainAxisAlignment.start,
+                                                //   crossAxisAlignment:
+                                                //       CrossAxisAlignment.start,
+                                                //   children: [
+                                                //     Expanded(
+                                                //       flex: 3,
+                                                //       child: GestureDetector(
+                                                //         onTap: () async {
+                                                //           final value = await Navigator
+                                                //               .push(
+                                                //                   context,
+                                                //                   MaterialPageRoute(
+                                                //                       builder: (context) =>
+                                                //                           MakePayment(
+                                                //                             leaseId:
+                                                //                                 widget.leaseId,
+                                                //                             tenantId:
+                                                //                                 ' ${leasesummery.data?.tenantId}',
+                                                //                           )));
+                                                //           if (value == true) {
+                                                //             setState(() {
+                                                //               _leaseLedgerFuture =
+                                                //                   LeaseRepository()
+                                                //                       .fetchLeaseLedger(
+                                                //                           leaseId:
+                                                //                               widget.leaseId);
+                                                //             });
+                                                //           }
+                                                //         },
+                                                //         child: Container(
+                                                //             height: 52,
+                                                //             padding:
+                                                //                 EdgeInsets.all(
+                                                //                     2),
+                                                //             decoration: BoxDecoration(
+                                                //                 color:
+                                                //                     blueColor,
+                                                //                 border: Border.all(
+                                                //                     width: 1,
+                                                //                     color:
+                                                //                         blueColor),
+                                                //                 borderRadius:
+                                                //                     BorderRadius
+                                                //                         .circular(
+                                                //                             5.0)),
+                                                //             child: Center(
+                                                //               child: Text(
+                                                //                 'Make Payment',
+                                                //                 style: TextStyle(
+                                                //                     fontSize:
+                                                //                         MediaQuery.of(context).size.width <
+                                                //                                 500
+                                                //                             ? 14
+                                                //                             : 18,
+                                                //                     color: Colors
+                                                //                         .white,
+                                                //                     fontWeight:
+                                                //                         FontWeight
+                                                //                             .bold),
+                                                //               ),
+                                                //             )),
+                                                //       ),
+                                                //     ),
+                                                //     SizedBox(width: 10),
+                                                //     Expanded(
+                                                //       flex: 4,
+                                                //       child: GestureDetector(
+                                                //         onTap: () {
+                                                //           setState(() {
+                                                //             // if (_tabController !=
+                                                //             //     null) {
+                                                //             //   _tabController!
+                                                //             //       .animateTo(1);
+                                                //             // }
+                                                //             Navigator.of(context).push(
+                                                //                 MaterialPageRoute(
+                                                //                     builder:
+                                                //                         (context) =>
+                                                //                             RecurringPayment(
+                                                //                               leaseData: leasesummery.data!,
+                                                //                             )));
+                                                //           });
+                                                //         },
+                                                //         child: Container(
+                                                //             padding: EdgeInsets
+                                                //                 .symmetric(
+                                                //                     horizontal:
+                                                //                         6),
+                                                //             height: MediaQuery.of(context)
+                                                //                         .size
+                                                //                         .width <
+                                                //                     500
+                                                //                 ? 55
+                                                //                 : 45,
+                                                //             decoration: BoxDecoration(
+                                                //                 color: Colors
+                                                //                     .white,
+                                                //                 border: Border.all(
+                                                //                     width: 1,
+                                                //                     color: Colors
+                                                //                         .grey),
+                                                //                 borderRadius:
+                                                //                     BorderRadius
+                                                //                         .circular(
+                                                //                             5.0)),
+                                                //             child: Row(
+                                                //               children: [
+                                                //                 if (leaseTenants
+                                                //                     .any((tenant) =>
+                                                //                         tenant
+                                                //                             .recurring ==
+                                                //                         false))
+                                                //                   SizedBox(
+                                                //                     width: 12,
+                                                //                   ),
+                                                //                 Expanded(
+                                                //                   child: Text(
+                                                //                     'Configure Recurring Payment',
+                                                //                     style: TextStyle(
+                                                //                         fontSize: MediaQuery.of(context).size.width <
+                                                //                                 500
+                                                //                             ? 13
+                                                //                             : 18,
+                                                //                         color:
+                                                //                             blueColor,
+                                                //                         fontWeight:
+                                                //                             FontWeight.bold),
+                                                //                   ),
+                                                //                 ),
+                                                //                 if (leaseTenants
+                                                //                     .any((tenant) =>
+                                                //                         tenant
+                                                //                             .recurring!))
+                                                //                   Icon(
+                                                //                       CupertinoIcons
+                                                //                           .check_mark_circled_solid,
+                                                //                       color: Colors
+                                                //                           .green),
+                                                //               ],
+                                                //             )),
+                                                //       ),
+                                                //     ),
+                                                //
+                                                //     // Expanded(
+                                                //     //   child: Container(
+                                                //     //       height: MediaQuery.of(context)
+                                                //     //           .size
+                                                //     //           .width <
+                                                //     //           500
+                                                //     //           ? 45
+                                                //     //           : 45,
+                                                //     //       decoration: BoxDecoration(
+                                                //     //           color: Colors.white,
+                                                //     //           border: Border.all(
+                                                //     //               width: 1,
+                                                //     //               color: blueColor
+                                                //     //
+                                                //     //
+                                                //     //           ),
+                                                //     //           borderRadius:
+                                                //     //           BorderRadius.circular(
+                                                //     //               5.0)),
+                                                //     //       child: ElevatedButton(
+                                                //     //           style: ElevatedButton.styleFrom(
+                                                //     //               shape: RoundedRectangleBorder(
+                                                //     //                   borderRadius:
+                                                //     //                   BorderRadius.circular(5.0)),
+                                                //     //               elevation: 0,
+                                                //     //               backgroundColor: Colors.white),
+                                                //     //           onPressed: () async {
+                                                //     //             final value =
+                                                //     //             await Navigator.push(
+                                                //     //                 context,
+                                                //     //                 MaterialPageRoute(
+                                                //     //                     builder:
+                                                //     //                         (context) =>
+                                                //     //                         RecurringPayment(leaseId: widget.leaseId,)
+                                                //     //                 ));
+                                                //     //             // if (value == true) {
+                                                //     //             //   setState(() {
+                                                //     //             //     _leaseLedgerFuture =
+                                                //     //             //         LeaseRepository()
+                                                //     //             //             .fetchLeaseLedger(
+                                                //     //             //             widget
+                                                //     //             //                 .leaseId);
+                                                //     //             //   });
+                                                //     //             // }
+                                                //     //           },
+                                                //     //           child: Text(
+                                                //     //             'Configure Recurring Payment',
+                                                //     //             style: TextStyle(
+                                                //     //                 fontSize: MediaQuery.of(
+                                                //     //                     context)
+                                                //     //                     .size
+                                                //     //                     .width <
+                                                //     //                     500
+                                                //     //                     ? 14
+                                                //     //                     : 18,
+                                                //     //                 color: blueColor
+                                                //     //
+                                                //     //
+                                                //     //             ),
+                                                //     //           ))),
+                                                //     // ),
+                                                //   ],
+                                                // ),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    Expanded(
-                                                      flex: 3,
-                                                      child: GestureDetector(
-                                                        onTap: () async {
-                                                          final value = await Navigator
-                                                              .push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder: (context) =>
-                                                                          MakePayment(
-                                                                            leaseId:
-                                                                                widget.leaseId,
-                                                                            tenantId:
-                                                                                ' ${leasesummery.data?.tenantId}',
-                                                                          )));
-                                                          if (value == true) {
-                                                            setState(() {
-                                                              _leaseLedgerFuture =
-                                                                  LeaseRepository()
-                                                                      .fetchLeaseLedger(
-                                                                          leaseId:
-                                                                              widget.leaseId);
-                                                            });
-                                                          }
-                                                        },
-                                                        child: Container(
-                                                            height: 52,
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    2),
-                                                            decoration: BoxDecoration(
-                                                                color:
-                                                                    blueColor,
-                                                                border: Border.all(
-                                                                    width: 1,
-                                                                    color:
-                                                                        blueColor),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5.0)),
-                                                            child: Center(
-                                                              child: Text(
-                                                                'Make Payment',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        MediaQuery.of(context).size.width <
-                                                                                500
-                                                                            ? 14
-                                                                            : 18,
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            )),
-                                                      ),
-                                                    ),
-                                                    SizedBox(width: 10),
-                                                    Expanded(
-                                                      flex: 4,
-                                                      child: GestureDetector(
-                                                        onTap: () {
-                                                          setState(() {
-                                                            // if (_tabController !=
-                                                            //     null) {
-                                                            //   _tabController!
-                                                            //       .animateTo(1);
-                                                            // }
-                                                            Navigator.of(context).push(
+
+                                                    // First Row (Make Payment + Configure Recurring)
+                                                    Row(
+                                                      children: [
+
+                                                        // Make Payment
+                                                        Expanded(
+                                                          child: GestureDetector(
+                                                            onTap: () {
+                                                              Navigator.push(
+                                                                context,
                                                                 MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            RecurringPayment(
-                                                                              leaseData: leasesummery.data!,
-                                                                            )));
-                                                          });
-                                                        },
-                                                        child: Container(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        6),
-                                                            height: MediaQuery.of(context)
-                                                                        .size
-                                                                        .width <
-                                                                    500
-                                                                ? 55
-                                                                : 45,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .white,
-                                                                border: Border.all(
-                                                                    width: 1,
-                                                                    color: Colors
-                                                                        .grey),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5.0)),
-                                                            child: Row(
-                                                              children: [
-                                                                if (leaseTenants
-                                                                    .any((tenant) =>
-                                                                        tenant
-                                                                            .recurring ==
-                                                                        false))
-                                                                  SizedBox(
-                                                                    width: 12,
-                                                                  ),
-                                                                Expanded(
-                                                                  child: Text(
-                                                                    'Configure Recurring Payment',
-                                                                    style: TextStyle(
-                                                                        fontSize: MediaQuery.of(context).size.width <
-                                                                                500
-                                                                            ? 13
-                                                                            : 18,
-                                                                        color:
-                                                                            blueColor,
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
+                                                                  builder: (context) => MakePayment(
+                                                                    leaseId: widget.leaseId,
+                                                                    tenantId: '${leasesummery.data?.tenantId}',
                                                                   ),
                                                                 ),
-                                                                if (leaseTenants
-                                                                    .any((tenant) =>
-                                                                        tenant
-                                                                            .recurring!))
-                                                                  Icon(
-                                                                      CupertinoIcons
-                                                                          .check_mark_circled_solid,
-                                                                      color: Colors
-                                                                          .green),
-                                                              ],
-                                                            )),
-                                                      ),
+                                                              );
+                                                            },
+                                                            child: Container(
+                                                              height: 50,
+                                                              margin: EdgeInsets.all(5),
+                                                              decoration: BoxDecoration(
+                                                                color: blueColor,
+                                                                borderRadius: BorderRadius.circular(10),
+                                                              ),
+                                                              child: Center(
+                                                                child: Text(
+                                                                  'Make Payment',
+                                                                  style: TextStyle(
+                                                                    color: Colors.white,
+                                                                    fontWeight: FontWeight.bold,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+
+                                                        // Configure Recurring
+                                                        Expanded(
+                                                          child: GestureDetector(
+                                                            onTap: () {
+                                                              Navigator.of(context).push(
+                                                                MaterialPageRoute(
+                                                                  builder: (context) => RecurringPayment(leaseData: leasesummery.data!),
+                                                                ),
+                                                              );
+                                                            },
+                                                            child: Container(
+                                                              height: 50,
+                                                              margin: EdgeInsets.all(5),
+                                                              decoration: BoxDecoration(
+                                                                color: Colors.white,
+                                                                border: Border.all(color: Colors.grey),
+                                                                borderRadius: BorderRadius.circular(10),
+                                                              ),
+                                                              child: Center(
+                                                                child: Text(
+                                                                  'Configure Recurring',
+                                                                  style: TextStyle(
+                                                                    color: blueColor,
+                                                                    fontWeight: FontWeight.bold,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
 
-                                                    // Expanded(
-                                                    //   child: Container(
-                                                    //       height: MediaQuery.of(context)
-                                                    //           .size
-                                                    //           .width <
-                                                    //           500
-                                                    //           ? 45
-                                                    //           : 45,
-                                                    //       decoration: BoxDecoration(
-                                                    //           color: Colors.white,
-                                                    //           border: Border.all(
-                                                    //               width: 1,
-                                                    //               color: blueColor
-                                                    //
-                                                    //
-                                                    //           ),
-                                                    //           borderRadius:
-                                                    //           BorderRadius.circular(
-                                                    //               5.0)),
-                                                    //       child: ElevatedButton(
-                                                    //           style: ElevatedButton.styleFrom(
-                                                    //               shape: RoundedRectangleBorder(
-                                                    //                   borderRadius:
-                                                    //                   BorderRadius.circular(5.0)),
-                                                    //               elevation: 0,
-                                                    //               backgroundColor: Colors.white),
-                                                    //           onPressed: () async {
-                                                    //             final value =
-                                                    //             await Navigator.push(
-                                                    //                 context,
-                                                    //                 MaterialPageRoute(
-                                                    //                     builder:
-                                                    //                         (context) =>
-                                                    //                         RecurringPayment(leaseId: widget.leaseId,)
-                                                    //                 ));
-                                                    //             // if (value == true) {
-                                                    //             //   setState(() {
-                                                    //             //     _leaseLedgerFuture =
-                                                    //             //         LeaseRepository()
-                                                    //             //             .fetchLeaseLedger(
-                                                    //             //             widget
-                                                    //             //                 .leaseId);
-                                                    //             //   });
-                                                    //             // }
-                                                    //           },
-                                                    //           child: Text(
-                                                    //             'Configure Recurring Payment',
-                                                    //             style: TextStyle(
-                                                    //                 fontSize: MediaQuery.of(
-                                                    //                     context)
-                                                    //                     .size
-                                                    //                     .width <
-                                                    //                     500
-                                                    //                     ? 14
-                                                    //                     : 18,
-                                                    //                 color: blueColor
-                                                    //
-                                                    //
-                                                    //             ),
-                                                    //           ))),
-                                                    // ),
+                                                    // Second Row (Scheduled Charges + Scheduled Payments)
+                                                    Row(
+                                                      children: [
+
+                                                        // Scheduled Charges
+                                                        Expanded(
+                                                          child: GestureDetector(
+                                                            onTap: () {
+                                                              // Navigator.of(context).push(
+                                                              //   MaterialPageRoute(
+                                                              //     builder: (context) => ScheduledChargeTable(leaseID: widget.leaseId),
+                                                              //   ),
+                                                              // );
+                                                            },
+                                                            child: Container(
+                                                              height: 50,
+                                                              margin: EdgeInsets.all(5),
+                                                              decoration: BoxDecoration(
+                                                                color: Colors.white,
+                                                                border: Border.all(color: Colors.grey),
+                                                                borderRadius: BorderRadius.circular(10),
+                                                              ),
+                                                              child: Center(
+                                                                child: Text(
+                                                                  'Scheduled Charges',
+                                                                  style: TextStyle(
+                                                                    color: blueColor,
+                                                                    fontWeight: FontWeight.bold,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+
+                                                        // Scheduled Payments
+                                                        Expanded(
+                                                          child: GestureDetector(
+                                                            onTap: () {
+                                                              // Add your navigation here
+                                                            },
+                                                            child: Container(
+                                                              height: 50,
+                                                              margin: EdgeInsets.all(5),
+                                                              decoration: BoxDecoration(
+                                                                color: Colors.white,
+                                                                border: Border.all(color: Colors.grey),
+                                                                borderRadius: BorderRadius.circular(10),
+                                                              ),
+                                                              child: Center(
+                                                                child: Text(
+                                                                  'Scheduled Payments',
+                                                                  style: TextStyle(
+                                                                    color: blueColor,
+                                                                    fontWeight: FontWeight.bold,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ],
                                                 ),
                                               ],
@@ -1717,7 +1857,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
 
               Padding(
                 padding: const EdgeInsets.only(
-                    left: 25, right: 25, top: 25, bottom: 25),
+                    left: 15, right: 15, top: 10, bottom: 25),
                 child: Material(
                   //elevation: 6,
                   //borderRadius: BorderRadius.circular(10),
