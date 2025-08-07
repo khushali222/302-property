@@ -19,7 +19,6 @@ import 'package:three_zero_two_property/Model/RentPastDueModel.dart';
 import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
-import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
 import 'package:three_zero_two_property/repository/DelinquentTenantsService.dart';
@@ -29,6 +28,8 @@ import 'package:three_zero_two_property/repository/RentersInsuranceService.dart'
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
+import 'package:three_zero_two_property/screens/Rental/Properties/summery_page.dart';
+import '../../../model/properties.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -40,6 +41,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../repository/rentalownerreport.dart';
 import '../../../widgets/custom_drawer.dart';
+import '../Leasing/RentalRoll/SummeryPageLease.dart';
 
 class RentPastDueReports extends StatefulWidget {
   bool? isRentdue;
@@ -118,8 +120,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
   }
 
   Future<RentPastDue> fetchRentPastDueData(
-      {String? adminid, bool report = false}) async
-  {
+      {String? adminid, bool report = false}) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
@@ -1361,12 +1362,37 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                           }
                                         });
                                       },
-                                      child: Text(
-                                        '${item.rentalData != null ? item.rentalData!.address : "N/A" ?? '-'} ',
-                                        style: TextStyle(
-                                          color: blueColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14,
+                                      child: InkWell(
+                                        onTap: () {
+                                          if (item.rentalData != null) {
+                                            if (item.leaseId != null &&
+                                                item.leaseId!.isNotEmpty) {
+                                              Navigator.of(context)
+                                                  .pushReplacement(
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              SummeryPageLease(
+                                                                leaseId: item
+                                                                    .leaseId!,
+                                                              )));
+                                            } else {
+                                              Fluttertoast.showToast(
+                                                msg:
+                                                    "Could not find lease details",
+                                                toastLength: Toast.LENGTH_SHORT,
+                                              );
+                                            }
+                                          }
+                                        },
+                                        child: Text(
+                                          '${item.rentalData != null ? item.rentalData!.address : "N/A" ?? '-'} ',
+                                          style: TextStyle(
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            decoration:
+                                                TextDecoration.underline,
+                                          ),
                                         ),
                                       ),
                                     ),

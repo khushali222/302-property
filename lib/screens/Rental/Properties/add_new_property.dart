@@ -1962,15 +1962,18 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                 //     .numberWithOptions(
                                                 //         signed: true,
                                                 //         decimal: true),
-                                                 keyboardType: TextInputType.text,
-                                                 inputFormatters: [
-                                                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
-                                                  TextInputFormatter.withFunction((oldValue, newValue) {
-                                                    return TextEditingValue(
-                                                      text: newValue.text.toUpperCase(),
-                                                      selection: newValue.selection,
-                                                    );
-                                                  }),
+                                                 keyboardType: TextInputType.number,
+                                                //  inputFormatters: [
+                                                //   FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+                                                //   TextInputFormatter.withFunction((oldValue, newValue) {
+                                                //     return TextEditingValue(
+                                                //       text: newValue.text.toUpperCase(),
+                                                //       selection: newValue.selection,
+                                                //     );
+                                                //   }),
+                                                // ],
+                                                inputFormatters: [
+                                                  FilteringTextInputFormatter.digitsOnly,
                                                 ],
                                                 cursorColor: blueColor
 

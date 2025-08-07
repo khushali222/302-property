@@ -359,16 +359,40 @@ class _TabBarExampleState extends State<TabBarExample> {
           await latefeerepository.updateLatefeesData('$latefee_id', data);
 
       if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Latefee Updated Successfully')));
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //     SnackBar(content: Text('Latefee Updated Successfully')));
+        Fluttertoast.showToast(
+          msg: 'Late Fee Updated Successfully',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Failed to Update Latefee')));
+        // ScaffoldMessenger.of(context)
+        //     .showSnackBar(SnackBar(content: Text('Failed to Update Latefee')));
+        Fluttertoast.showToast(
+          msg: 'Failed to Update Late Fee',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          backgroundColor: Colors.redAccent,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
       }
     } catch (e) {
-      print('Failed to update surcharge data: $e');
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error: $e')));
+      print('Failed to update Late Fee data: $e');
+      // ScaffoldMessenger.of(context)
+      //     .showSnackBar(SnackBar(content: Text('Error: $e')));
+      Fluttertoast.showToast(
+        msg: 'Error: $e',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.TOP,
+        backgroundColor: Colors.redAccent,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     }
   }
 
@@ -421,16 +445,42 @@ class _TabBarExampleState extends State<TabBarExample> {
           await latefeerepository.AddLatefeesData('1714649182536', data);
 
       if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('late_fee Updated Successfully')));
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //     SnackBar(content: Text('late_fee Updated Successfully')));
+        Fluttertoast.showToast(
+          msg: 'Late Fee updated successfully',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          backgroundColor: Colors.black87,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to Update Surcharge')));
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //     SnackBar(content: Text('Failed to Update Surcharge')));
+        Fluttertoast.showToast(
+          msg: 'Failed to Update Late Fee',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          backgroundColor: Colors.black87,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+
       }
     } catch (e) {
-      print('Failed to update surcharge data: $e');
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error: $e')));
+      print('Failed to update Late Fee data: $e');
+      // ScaffoldMessenger.of(context)
+      //     .showSnackBar(SnackBar(content: Text('Error: $e')));
+      Fluttertoast.showToast(
+        msg: 'Error: $e',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.TOP,
+        backgroundColor: Colors.redAccent,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     }
   }
 
@@ -3605,11 +3655,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                             InputBorder.none,
                                                         contentPadding:
                                                             EdgeInsets.all(13),
-                                                        suffixIcon: Icon(
-                                                          Icons.percent,
-                                                          color: blueColor,
-                                                          size: 18,
-                                                        ),
+                                                        // suffixIcon: Icon(
+                                                        //   Icons.percent,
+                                                        //   color: blueColor,
+                                                        //   size: 18,
+                                                        // ),
                                                       ),
                                                     ),
                                                   ),
@@ -3689,11 +3739,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                             InputBorder.none,
                                                         contentPadding:
                                                             EdgeInsets.all(13),
-                                                        suffixIcon: Icon(
-                                                          Icons.percent,
-                                                          color: blueColor,
-                                                          size: 18,
-                                                        ),
+                                                        // suffixIcon: Icon(
+                                                        //   Icons.percent,
+                                                        //   color: blueColor,
+                                                        //   size: 18,
+                                                        // ),
                                                       ),
                                                     ),
                                                   ),
@@ -3980,11 +4030,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                           contentPadding:
                                                               EdgeInsets.all(
                                                                   13),
-                                                          suffixIcon: Icon(
-                                                            Icons.percent,
-                                                            color: blueColor,
-                                                            size: 18,
-                                                          ),
+                                                          // suffixIcon: Icon(
+                                                          //   Icons.percent,
+                                                          //   color: blueColor,
+                                                          //   size: 18,
+                                                          // ),
                                                         ),
                                                       ),
                                                     ),
@@ -4069,11 +4119,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                           contentPadding:
                                                               EdgeInsets.all(
                                                                   13),
-                                                          suffixIcon: Icon(
-                                                            Icons.percent,
-                                                            color: blueColor,
-                                                            size: 18,
-                                                          ),
+                                                          // suffixIcon: Icon(
+                                                          //   Icons.percent,
+                                                          //   color: blueColor,
+                                                          //   size: 18,
+                                                          // ),
                                                         ),
                                                       ),
                                                     ),

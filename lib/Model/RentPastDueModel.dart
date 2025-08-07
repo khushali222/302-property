@@ -565,13 +565,15 @@ class Charge {
     if (json == null) return Charge();
     List<TenantData> tenants = [];
     TenantData? firstTenant;
-    if (json['tenant_data'] is List && (json['tenant_data'] as List).isNotEmpty) {
+    if (json['tenant_data'] is List &&
+        (json['tenant_data'] as List).isNotEmpty) {
       tenants = (json['tenant_data'] as List)
           .map((e) => TenantData.fromJson(e as Map<String, dynamic>?))
           .toList();
       firstTenant = tenants[0];
     } else if (json['tenant_data'] is Map<String, dynamic>) {
-      firstTenant = TenantData.fromJson(json['tenant_data'] as Map<String, dynamic>?);
+      firstTenant =
+          TenantData.fromJson(json['tenant_data'] as Map<String, dynamic>?);
       tenants = [firstTenant];
     }
     return Charge(
@@ -697,28 +699,38 @@ class LastPayments {
 
 class Transaction {
   final String? paymentId;
+  final String? leaseId;
   final double? total;
   final RentalData? rentalData;
   final TenantData? tenantData;
   final List<TenantData>? tenantDataList;
 
-  Transaction({this.paymentId, this.total, this.rentalData, this.tenantData, this.tenantDataList});
+  Transaction(
+      {this.paymentId,
+      this.leaseId,
+      this.total,
+      this.rentalData,
+      this.tenantData,
+      this.tenantDataList});
 
   factory Transaction.fromJson(Map<String, dynamic>? json) {
     if (json == null) return Transaction();
     List<TenantData> tenants = [];
     TenantData? firstTenant;
-    if (json['tenant_data'] is List && (json['tenant_data'] as List).isNotEmpty) {
+    if (json['tenant_data'] is List &&
+        (json['tenant_data'] as List).isNotEmpty) {
       tenants = (json['tenant_data'] as List)
           .map((e) => TenantData.fromJson(e as Map<String, dynamic>?))
           .toList();
       firstTenant = tenants[0];
     } else if (json['tenant_data'] is Map<String, dynamic>) {
-      firstTenant = TenantData.fromJson(json['tenant_data'] as Map<String, dynamic>?);
+      firstTenant =
+          TenantData.fromJson(json['tenant_data'] as Map<String, dynamic>?);
       tenants = [firstTenant];
     }
     return Transaction(
       paymentId: json['payment_id'] as String?,
+      leaseId: json['lease_id'] as String?,
       total: (json['total'] as num?)?.toDouble(),
       rentalData: json['rental_data'] != null
           ? RentalData.fromJson(json['rental_data'] as Map<String, dynamic>?)
@@ -728,5 +740,3 @@ class Transaction {
     );
   }
 }
-
-

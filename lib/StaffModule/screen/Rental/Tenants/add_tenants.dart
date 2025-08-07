@@ -841,53 +841,55 @@ class _AddTenantState extends State<AddTenant> {
                                     ],
                                   ),
                                   enableOverrideFee
-                                      ?
-                                  Material(
-                                    elevation: 2,
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    child: Container(
-                                      height: 50,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 16.0, vertical: 0),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                        BorderRadius.circular(8.0),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                            Colors.black.withOpacity(0.2),
-                                            offset: Offset(4, 4),
-                                            blurRadius: 3,
+                                      ? Material(
+                                          elevation: 2,
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          child: Container(
+                                            height: 50,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 16.0, vertical: 0),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withOpacity(0.2),
+                                                  offset: Offset(4, 4),
+                                                  blurRadius: 3,
+                                                ),
+                                              ],
+                                            ),
+                                            child: TextField(
+                                              keyboardType: TextInputType
+                                                  .numberWithOptions(
+                                                      decimal: true),
+                                              decoration: InputDecoration(
+                                                hintStyle: TextStyle(
+                                                    fontSize: 13,
+                                                    color: Color(0xFFb0b6c3)),
+                                                border: InputBorder.none,
+                                                hintText:
+                                                    "Enter the amount to override fee",
+                                                suffix: Text(
+                                                  '%',
+                                                  style: TextStyle(
+                                                      fontSize: 18,
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              onChanged: (value) {
+                                                _validateInput();
+                                              },
+                                              controller: overrideFee,
+                                              cursorColor: blueColor,
+                                            ),
                                           ),
-                                        ],
-                                      ),
-                                      child: TextField(
-                                        keyboardType:
-                                        TextInputType.numberWithOptions(
-                                            decimal: true),
-                                        decoration: InputDecoration(
-                                          hintStyle: TextStyle(
-                                              fontSize: 13,
-                                              color: Color(0xFFb0b6c3)),
-                                          border: InputBorder.none,
-                                          hintText: "Enter the amount to override fee",
-                                          suffix: Text(
-                                            '%',
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                color: blueColor,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                        onChanged: (value) {
-                                          _validateInput();
-                                        },
-                                        controller: overrideFee,
-                                        cursorColor: blueColor,
-                                      ),
-                                    ),
-                                  )
+                                        )
                                       : Container(),
                                   overRideFeeError != null
                                       ? Padding(
@@ -1884,7 +1886,7 @@ class _AddTenantState extends State<AddTenant> {
                                                   color: Color(0xFF101828),
                                                 ),
                                               ),
-                                              SizedBox(width: 5),
+                                              SizedBox(width: 7),
                                               GestureDetector(
                                                 onTap: () {
                                                   _tooltipKey.currentState
@@ -1917,7 +1919,7 @@ class _AddTenantState extends State<AddTenant> {
                                             ],
                                           ),
                                           IconButton(
-                                            icon: Icon(Icons.refresh, size: 18),
+                                            icon: Icon(Icons.refresh, size: 20),
                                             padding: EdgeInsets.zero,
                                             constraints: BoxConstraints(),
                                             onPressed: () {
@@ -2034,7 +2036,7 @@ class _AddTenantState extends State<AddTenant> {
                                 ),
                               ],
                             ),
-                           //tax and comment
+                            //taxid and comment
                             Row(
                               children: [
                                 Expanded(
@@ -2123,7 +2125,7 @@ class _AddTenantState extends State<AddTenant> {
                               height: 20,
                             ),
                             Divider(
-                              color:Color(0xFFCED4DA),
+                              color: Color(0xFFCED4DA),
                             ),
                             SizedBox(
                               height: 10,
@@ -3074,24 +3076,24 @@ class _AddTenantState extends State<AddTenant> {
                                     borderRadius: BorderRadius.circular(8),
                                     color: Colors.white,
                                     border: Border.all(color: Color(0x80152B51))
-                                  // boxShadow: [
-                                  //   BoxShadow(
-                                  //     color: Colors.grey,
-                                  //     offset: Offset(0.0, 1.0), //(x,y)
-                                  //     blurRadius: 6.0,
-                                  //   ),
-                                  // ],
-                                ),
+                                    // boxShadow: [
+                                    //   BoxShadow(
+                                    //     color: Colors.grey,
+                                    //     offset: Offset(0.0, 1.0), //(x,y)
+                                    //     blurRadius: 6.0,
+                                    //   ),
+                                    // ],
+                                    ),
                                 child: Center(
                                   child: Text(
                                     "Cancel",
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize:
-                                        MediaQuery.of(context).size.width <
-                                            500
-                                            ? 15
-                                            : 18),
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 15
+                                                : 18),
                                   ),
                                 ),
                               )),
@@ -3136,21 +3138,21 @@ class _AddTenantState extends State<AddTenant> {
                                 child: Center(
                                   child: isLoading
                                       ? SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 25.0,
-                                  )
+                                          color: Colors.white,
+                                          size: 25.0,
+                                        )
                                       : Text(
-                                    "Add Tenant",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: MediaQuery.of(context)
-                                            .size
-                                            .width <
-                                            500
-                                            ? 15
-                                            : 18),
-                                  ),
+                                          "Add Tenant",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                      500
+                                                  ? 15
+                                                  : 18),
+                                        ),
                                 ),
                               ),
                             ),
@@ -3385,6 +3387,7 @@ class CustomTextField extends StatefulWidget {
   final Color? borderColor; // NEW PARAMETER FOR BORDER COLOR
   final double? borderWidth; // NEW PARAMETER FOR BORDER WIDTH
   final bool showElevation; // NEW PARAMETER TO CONTROL ELEVATION AND SHADOW
+  final int? errorMaxLines; // NEW PARAMETER FOR ERROR MESSAGE MAX LINES
 
   CustomTextField(
       {Key? key,
@@ -3422,8 +3425,9 @@ class CustomTextField extends StatefulWidget {
         this.customBorder, // CUSTOM BORDER PARAMETER
         this.borderColor, // BORDER COLOR PARAMETER
         this.borderWidth, // BORDER WIDTH PARAMETER
-        this.showElevation = true // DEFAULT TO TRUE TO MAINTAIN EXISTING BEHAVIOR
-        // Initialize onTap
+        this.showElevation =
+        true, // DEFAULT TO TRUE TO MAINTAIN EXISTING BEHAVIOR
+        this.errorMaxLines // PARAMETER FOR ERROR MESSAGE MAX LINES
       })
       : super(key: key);
 
@@ -3717,40 +3721,52 @@ class CustomTextFieldState extends State<CustomTextField> {
                     ),
                   ),
                 ),
-
                 hasError
                     ? Padding(
-                  padding: const EdgeInsets.only(top: 4),
+                  padding: const EdgeInsets.only(top: 4, right: 8),
                   child: Container(
                     alignment: Alignment.centerLeft,
-                    child: Text(
-                      _errorMessage!,
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: widget.isInRow == true
-                            ? MediaQuery.of(context).size.width *
-                            0.025 // Smaller font for row fields
-                            : MediaQuery.of(context).size.width * 0.035,
-                      ),
-                      maxLines: 1, // Single line for compact row display
-                      overflow: TextOverflow.ellipsis,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (widget.pass == true) SizedBox(width: 4),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(1.0),
+                            child: Text(
+                              _errorMessage!,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 11.0, // Even smaller font size
+                                height: 1.1, // Even tighter line height
+                                letterSpacing:
+                                -0.2, // Slightly tighter letter spacing
+                              ),
+                              maxLines: widget.pass == true
+                                  ? 6
+                                  : 1, // Increased to 6 lines for very long messages
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 )
-                    : SizedBox
-                    .shrink(), // NO SPACE WHEN NO ERROR - LIKE YOUR STAFF FILE
+                    : SizedBox.shrink(),
               ],
             );
           },
         ),
       ],
     );
-
     return shouldUseKeyboardActions
         ? SizedBox(
       height: widget.isInRow == true
           ? 70
-          : (hasError ? 74 : 54), // Compact height for rows
+          : (hasError
+          ? (widget.pass == true ? 150 : 74)
+          : 54), // Increased height for password errors with icon
       child: KeyboardActions(
         config: _buildConfig(context),
         child: textfield,
@@ -3759,7 +3775,7 @@ class CustomTextFieldState extends State<CustomTextField> {
         : widget.isInRow == true
         ? SizedBox(
       height:
-      72, // Compact height for row alignment with minimal space
+      82, // Compact height for row alignment with minimal space
       child: textfield,
     )
         : textfield; // Dynamic shrink only for single column fields

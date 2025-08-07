@@ -374,7 +374,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                         _buildDetailCell('-'),
                       ],
                     ));
-                  } else {
+                    } else {
                     rows.addAll(
                       unit.appliances!.map((appliance) => pw.TableRow(
                             children: [
@@ -420,7 +420,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
               level: 0,
               child: pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [
+                    children: [
                   pw.Image(image, width: 40, height: 40),
                   pw.Column(
                     children: [
@@ -478,7 +478,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                     ),
                   ),
                   pw.Expanded(
-                    flex: 3,
+              flex: 3,
                     child: pw.Text(
                       'Work Subject',
                       style: pw.TextStyle(
@@ -493,7 +493,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
             ...data.units!
                 .map((unit) => pw.Column(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
+                  children: [
                         pw.Container(
                           padding: const pw.EdgeInsets.all(10),
                           child: pw.Column(
@@ -527,9 +527,9 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                           color: PdfColors.grey700,
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ),
+                  ],
+                ),
+              ),
                               ] else if (unit.appliances != null)
                                 ...unit.appliances!.map((appliance) {
                                   return pw.Column(
@@ -602,9 +602,9 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                         ],
                                                       ))
                                                   .toList(),
-                                            ],
-                                          ),
-                                        ),
+          ],
+        ),
+      ),
                                       ],
                                       // Notes Section
                                       if (appliance.notes?.isNotEmpty ==
@@ -996,7 +996,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
             List.filled(detailHeaders.length - 1, '""').join(','));
       } else {
         for (var appliance in unit.appliances!) {
-          final row = [
+        final row = [
             appliance.applianceName ?? '-',
             appliance.applianceDescription ?? '-',
             appliance.category ?? '-',
@@ -1008,10 +1008,10 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
             appliance.warrantyExpiry ?? '-',
             appliance.lastMaintenanceDate ?? '-',
             appliance.status ?? '-'
-          ];
-          csvBuffer.writeln(row
-              .map((cell) => '"${cell.toString().replaceAll('"', '""')}"')
-              .join(','));
+        ];
+        csvBuffer.writeln(row
+            .map((cell) => '"${cell.toString().replaceAll('"', '""')}"')
+            .join(','));
         }
       }
     }
@@ -1035,15 +1035,15 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
             csvBuffer.writeln('"Maintenance History"');
             csvBuffer.writeln('"Date","Performed By","Work Subject"');
             for (var history in appliance.maintenanceHistory!) {
-              final row = [
+          final row = [
                 history.timestamp ?? 'N/A',
                 history.adminName ?? history.staffmemberName ?? 'N/A',
                 history.workSubject ?? 'N/A'
-              ];
-              csvBuffer.writeln(row
-                  .map((cell) => '"${cell.toString().replaceAll('"', '""')}"')
-                  .join(','));
-            }
+          ];
+          csvBuffer.writeln(row
+              .map((cell) => '"${cell.toString().replaceAll('"', '""')}"')
+              .join(','));
+        }
             csvBuffer.writeln();
           }
 
@@ -1061,7 +1061,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                   .map((cell) => '"${cell.toString().replaceAll('"', '""')}"')
                   .join(','));
             }
-            csvBuffer.writeln();
+    csvBuffer.writeln();
           }
         }
       }
@@ -1750,64 +1750,64 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                       bool isRowExpanded = expandedRowIndex == rowIndex;
 
                       return Container(
-                        decoration: BoxDecoration(
-                          color: rowIndex % 2 != 0
-                              ? Colors.white
-                              : blueColor.withOpacity(0.09),
-                          border: Border.all(
-                              color: Color.fromRGBO(152, 162, 179, .5)),
-                        ),
-                        child: Column(
-                          children: [
-                            // Main row showing unit info
-                            ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              title: Row(
+                              decoration: BoxDecoration(
+                                color: rowIndex % 2 != 0
+                                    ? Colors.white
+                                    : blueColor.withOpacity(0.09),
+                                border: Border.all(
+                                    color: Color.fromRGBO(152, 162, 179, .5)),
+                              ),
+                              child: Column(
                                 children: [
-                                  // Expand/Collapse icon
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        if (expandedRowIndex == rowIndex) {
-                                          expandedRowIndex = null;
-                                        } else {
-                                          expandedRowIndex = rowIndex;
-                                        }
-                                      });
-                                    },
-                                    child: Container(
-                                      margin: const EdgeInsets.only(left: 5),
-                                      padding: !isRowExpanded
-                                          ? const EdgeInsets.only(bottom: 10)
-                                          : const EdgeInsets.only(top: 10),
-                                      child: FaIcon(
-                                        isRowExpanded
-                                            ? FontAwesomeIcons.sortUp
-                                            : FontAwesomeIcons.sortDown,
-                                        size: 20,
-                                        color: blueColor,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  // Unit info
+                                  // Main row showing unit info
+                                  ListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    title: Row(
+                                      children: [
+                                        // Expand/Collapse icon
+                                        InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              if (expandedRowIndex == rowIndex) {
+                                                expandedRowIndex = null;
+                                              } else {
+                                                expandedRowIndex = rowIndex;
+                                              }
+                                            });
+                                          },
+                                          child: Container(
+                                            margin: const EdgeInsets.only(left: 5),
+                                            padding: !isRowExpanded
+                                                ? const EdgeInsets.only(bottom: 10)
+                                                : const EdgeInsets.only(top: 10),
+                                            child: FaIcon(
+                                              isRowExpanded
+                                                  ? FontAwesomeIcons.sortUp
+                                                  : FontAwesomeIcons.sortDown,
+                                              size: 20,
+                                              color: blueColor,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(width: 8),
+                                        // Unit info
                                   Expanded(
                                     child: Padding(
-                                      padding: const EdgeInsets.all(16),
-                                      child: Text(
-                                        'Unit: ${unit.unitNumber} - ${unit.unitAddress}',
-                                        style: TextStyle(
+                                          padding: const EdgeInsets.all(16),
+                                          child: Text(
+                                            'Unit: ${unit.unitNumber} - ${unit.unitAddress}',
+                                            style: TextStyle(
                                           fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor,
                                         ),
-                                      ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                            // Expanded section showing appliances
+                                  // Expanded section showing appliances
                             if (isRowExpanded)
                               if (unit.appliances == null ||
                                   unit.appliances!.isEmpty)
@@ -1848,20 +1848,20 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                       expandedTenantIndex[rowIndex] ==
                                           applianceIndex;
 
-                                  return Container(
+                                      return Container(
                                     margin: const EdgeInsets.only(left: 2),
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                              bottom: BorderSide(
                                             color: Colors.grey.shade200),
                                       ),
-                                    ),
-                                    child: Column(
-                                      children: [
+                                        ),
+                                        child: Column(
+                                          children: [
                                         // Appliance header row
                                         ListTile(
                                           title: Row(
-                                            children: [
+                                              children: [
                                               InkWell(
                                                 onTap: () {
                                                   setState(() {
@@ -1895,49 +1895,49 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                 ),
                                               ),
                                               SizedBox(width: 8),
-                                              Expanded(
+                                                Expanded(
                                                 flex: 1,
-                                                child: Text(
+                                                  child: Text(
                                                   appliance.applianceName ??
                                                       '-',
-                                                  style: TextStyle(
+                                                    style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
                                                           FontWeight.bold),
+                                                  ),
                                                 ),
-                                              ),
-                                              Expanded(
-                                                child: Container(
-                                                  padding: EdgeInsets.symmetric(
+                                                Expanded(
+                                                  child: Container(
+                                                    padding: EdgeInsets.symmetric(
                                                       horizontal: 8,
                                                       vertical: 4),
-                                                  decoration: BoxDecoration(
-                                                    color: appliance.status ==
-                                                            'Working'
-                                                        ? Colors.green
-                                                            .withOpacity(0.1)
-                                                        : Colors.red
-                                                            .withOpacity(0.1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            4),
-                                                  ),
-                                                  child: Text(
-                                                    appliance.status ?? '-',
-                                                    style: TextStyle(
+                                                    decoration: BoxDecoration(
                                                       color: appliance.status ==
                                                               'Working'
                                                           ? Colors.green
-                                                          : Colors.red,
+                                                              .withOpacity(0.1)
+                                                          : Colors.red
+                                                              .withOpacity(0.1),
+                                                      borderRadius:
+                                                        BorderRadius.circular(
+                                                            4),
+                                                    ),
+                                                    child: Text(
+                                                      appliance.status ?? '-',
+                                                      style: TextStyle(
+                                                        color: appliance.status ==
+                                                                'Working'
+                                                            ? Colors.green
+                                                            : Colors.red,
                                                       fontWeight:
                                                           FontWeight.w500,
+                                                      ),
+                                                      textAlign: TextAlign.center,
                                                     ),
-                                                    textAlign: TextAlign.center,
                                                   ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
+                                              ],
+                                            ),
                                         ),
                                         // Expanded appliance details
                                         if (isApplianceExpanded)
@@ -1959,8 +1959,8 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                 Row(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
-                                                  children: [
-                                                    Expanded(
+                                              children: [
+                                                Expanded(
                                                       child: RichText(
                                                         text: TextSpan(
                                                           children: [
@@ -1986,7 +1986,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                         ),
                                                       ),
                                                     ),
-                                                    Expanded(
+                                                Expanded(
                                                       child: RichText(
                                                         text: TextSpan(
                                                           children: [
@@ -2015,9 +2015,9 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                   ],
                                                 ),
                                                 SizedBox(height: 10),
-                                                Row(
-                                                  children: [
-                                                    Expanded(
+                                            Row(
+                                              children: [
+                                                Expanded(
                                                       child: RichText(
                                                         text: TextSpan(
                                                           children: [
@@ -2042,7 +2042,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                         ),
                                                       ),
                                                     ),
-                                                    Expanded(
+                                                Expanded(
                                                       child: RichText(
                                                         text: TextSpan(
                                                           children: [
@@ -2071,9 +2071,9 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                   ],
                                                 ),
                                                 SizedBox(height: 10),
-                                                Row(
-                                                  children: [
-                                                    Expanded(
+                                            Row(
+                                              children: [
+                                                Expanded(
                                                       child: RichText(
                                                         text: TextSpan(
                                                           children: [
@@ -2091,14 +2091,14 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                             TextSpan(
                                                               text:
                                                                   "\n${appliance.installedDate ?? '-'}",
-                                                              style: TextStyle(
+                                                  style: TextStyle(
                                                                 color: Colors
                                                                     .black,
                                                               ),
                                                             ),
-                                                          ],
-                                                        ),
-                                                      ),
+                                ],
+                              ),
+                            ),
                                                     ),
                                                     Expanded(
                                                       child: RichText(
@@ -2121,18 +2121,18 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                               style: TextStyle(
                                                                 color: Colors
                                                                     .black,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
+              ),
+            ),
+          ],
+        ),
+      ),
                                                     ),
                                                   ],
                                                 ),
                                                 SizedBox(height: 10),
                                                 Row(
-                                                  children: [
-                                                    Expanded(
+        children: [
+          Expanded(
                                                       child: RichText(
                                                         text: TextSpan(
                                                           children: [
@@ -2150,7 +2150,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                             TextSpan(
                                                               text:
                                                                   "\n${appliance.lastMaintenanceDate ?? '-'}",
-                                                              style: TextStyle(
+                style: TextStyle(
                                                                 color: Colors
                                                                     .black,
                                                               ),
@@ -2190,15 +2190,15 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                 ),
                                                 SizedBox(height: 10),
                                                 Row(
-                                                  children: [
+          children: [
                                                     Expanded(
                                                       child: RichText(
                                                         text: TextSpan(
-                                                          children: [
+              children: [
                                                             TextSpan(
                                                               text:
                                                                   "Description : ",
-                                                              style: TextStyle(
+                  style: TextStyle(
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
@@ -2212,14 +2212,14 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                               style: TextStyle(
                                                                 color: Colors
                                                                     .black,
-                                                              ),
-                                                            ),
-                                                          ],
+                  ),
+                ),
+              ],
                                                         ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
+            ),
+          ],
+        ),
                                                 // if (appliance.maintenanceNotes
                                                 //         ?.isNotEmpty ==
                                                 //     true) ...[
@@ -2361,7 +2361,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
             children: [
               // Run Button
               Container(
-                height: 45,
+            height: 45,
                 width: 45,
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -2370,38 +2370,38 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                 ),
                 child: IconButton(
                   padding: EdgeInsets.zero,
-                  onPressed: () {
-                    if (_selectedPropertyId != null) {
-                      setState(() {
-                        isLoading = true;
-                        _futureRentersInsurance =
-                            fetchRentersInsuranceData(id: _selectedPropertyId!);
-                      });
-                    } else {
-                      Fluttertoast.showToast(
-                        msg: "Please select a property first",
-                        toastLength: Toast.LENGTH_SHORT,
-                      );
-                    }
-                  },
+              onPressed: () {
+                if (_selectedPropertyId != null) {
+                  setState(() {
+                    isLoading = true;
+                    _futureRentersInsurance =
+                        fetchRentersInsuranceData(id: _selectedPropertyId!);
+                  });
+                } else {
+                  Fluttertoast.showToast(
+                    msg: "Please select a property first",
+                    toastLength: Toast.LENGTH_SHORT,
+                  );
+                }
+              },
                   icon: const FaIcon(FontAwesomeIcons.circlePlay, size: 20),
                 ),
               ),
               const SizedBox(width: 10),
               // Export Button
               Container(
-                height: 45,
+            height: 45,
                 width: 75,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade300),
                   borderRadius: BorderRadius.circular(0),
-                  color: Colors.white,
-                ),
-                child: PopupMenuButton<String>(
+                color: Colors.white,
+              ),
+              child: PopupMenuButton<String>(
                   offset: Offset(5, 50),
                   onSelected: handleDownload,
-                  icon: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                icon: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       FaIcon(FontAwesomeIcons.download), // Download icon
                       SizedBox(width: 5),
@@ -2409,33 +2409,33 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                     ],
                   ),
                   tooltip: "Download",
-                  itemBuilder: (BuildContext context) {
-                    return downloadOptions.map((String option) {
-                      return PopupMenuItem<String>(
-                        value: option,
-                        onTap: () async {
-                          if (_futureRentersInsurance == null) {
-                            Fluttertoast.showToast(
-                              msg: "Please run the report first",
-                              toastLength: Toast.LENGTH_SHORT,
-                            );
-                            return;
-                          }
-                          final data = await _futureRentersInsurance;
-                          if (option == "PDF") {
-                            generaterentersInsurancePdf(data!);
-                          } else if (option == "Excel") {
-                            generateRentersInsuranceExcel(data!);
-                          } else if (option == "CSV") {
-                            generateRentersInsuranceCSV(data!);
-                          }
-                        },
+                itemBuilder: (BuildContext context) {
+                  return downloadOptions.map((String option) {
+                    return PopupMenuItem<String>(
+                      value: option,
+                      onTap: () async {
+                        if (_futureRentersInsurance == null) {
+                          Fluttertoast.showToast(
+                            msg: "Please run the report first",
+                            toastLength: Toast.LENGTH_SHORT,
+                          );
+                          return;
+                        }
+                        final data = await _futureRentersInsurance;
+                        if (option == "PDF") {
+                          generaterentersInsurancePdf(data!);
+                        } else if (option == "Excel") {
+                          generateRentersInsuranceExcel(data!);
+                        } else if (option == "CSV") {
+                          generateRentersInsuranceCSV(data!);
+                        }
+                      },
                         child: Text("Download as $option"),
-                      );
-                    }).toList();
-                  },
-                ),
+                    );
+                  }).toList();
+                },
               ),
+            ),
             ],
           ),
         ],

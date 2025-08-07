@@ -1974,21 +1974,9 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                   });
                                                 },
                                                 keyboardType:
-                                                    TextInputType.text,
+                                                    TextInputType.number,
                                                 inputFormatters: [
-                                                  FilteringTextInputFormatter
-                                                      .allow(RegExp(
-                                                          r'[a-zA-Z0-9]')),
-                                                  TextInputFormatter
-                                                      .withFunction(
-                                                          (oldValue, newValue) {
-                                                    return TextEditingValue(
-                                                      text: newValue.text
-                                                          .toUpperCase(),
-                                                      selection:
-                                                          newValue.selection,
-                                                    );
-                                                  }),
+                                                  FilteringTextInputFormatter.digitsOnly,
                                                 ],
                                                 cursorColor: blueColor,
                                                 decoration: InputDecoration(

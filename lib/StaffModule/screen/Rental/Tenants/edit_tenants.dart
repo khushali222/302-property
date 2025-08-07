@@ -1522,7 +1522,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                   color: Color(0xFF101828),
                                                 ),
                                               ),
-                                              SizedBox(width: 5),
+                                              SizedBox(width: 7),
                                               GestureDetector(
                                                 onTap: () {
                                                   _tooltipKey.currentState
@@ -1555,7 +1555,7 @@ class _EditTenantsState extends State<EditTenants> {
                                             ],
                                           ),
                                           IconButton(
-                                            icon: Icon(Icons.refresh, size: 18),
+                                            icon: Icon(Icons.refresh, size: 20),
                                             padding: EdgeInsets.zero,
                                             constraints: BoxConstraints(),
                                             onPressed: () {
@@ -1672,7 +1672,7 @@ class _EditTenantsState extends State<EditTenants> {
                                 ),
                               ],
                             ),
-                            //tax and comment
+                            //taxid and comment
                             Row(
                               children: [
                                 Expanded(
@@ -1761,7 +1761,7 @@ class _EditTenantsState extends State<EditTenants> {
                               height: 20,
                             ),
                             Divider(
-                              color:Color(0xFFCED4DA),
+                              color: Color(0xFFCED4DA),
                             ),
                             SizedBox(
                               height: 10,
@@ -2324,6 +2324,7 @@ class CustomTextField extends StatefulWidget {
   final Color? borderColor; // NEW PARAMETER FOR BORDER COLOR
   final double? borderWidth; // NEW PARAMETER FOR BORDER WIDTH
   final bool showElevation; // NEW PARAMETER TO CONTROL ELEVATION AND SHADOW
+  final int? errorMaxLines; // NEW PARAMETER FOR ERROR MESSAGE MAX LINES
 
   CustomTextField(
       {Key? key,
@@ -2361,8 +2362,9 @@ class CustomTextField extends StatefulWidget {
         this.customBorder, // CUSTOM BORDER PARAMETER
         this.borderColor, // BORDER COLOR PARAMETER
         this.borderWidth, // BORDER WIDTH PARAMETER
-        this.showElevation = true // DEFAULT TO TRUE TO MAINTAIN EXISTING BEHAVIOR
-        // Initialize onTap
+        this.showElevation =
+        true, // DEFAULT TO TRUE TO MAINTAIN EXISTING BEHAVIOR
+        this.errorMaxLines // PARAMETER FOR ERROR MESSAGE MAX LINES
       })
       : super(key: key);
 
@@ -2656,40 +2658,52 @@ class CustomTextFieldState extends State<CustomTextField> {
                     ),
                   ),
                 ),
-                // EXACTLY LIKE YOUR Add_staffmember.dart - SHRINK WHEN NO ERROR
                 hasError
                     ? Padding(
-                  padding: const EdgeInsets.only(top: 4),
+                  padding: const EdgeInsets.only(top: 4, right: 8),
                   child: Container(
                     alignment: Alignment.centerLeft,
-                    child: Text(
-                      _errorMessage!,
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: widget.isInRow == true
-                            ? MediaQuery.of(context).size.width *
-                            0.025 // Smaller font for row fields
-                            : MediaQuery.of(context).size.width * 0.035,
-                      ),
-                      maxLines: 1, // Single line for compact row display
-                      overflow: TextOverflow.ellipsis,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (widget.pass == true) SizedBox(width: 4),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(1.0),
+                            child: Text(
+                              _errorMessage!,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 11.0, // Even smaller font size
+                                height: 1.1, // Even tighter line height
+                                letterSpacing:
+                                -0.2, // Slightly tighter letter spacing
+                              ),
+                              maxLines: widget.pass == true
+                                  ? 6
+                                  : 1, // Increased to 6 lines for very long messages
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 )
-                    : SizedBox
-                    .shrink(), // NO SPACE WHEN NO ERROR - LIKE YOUR STAFF FILE
+                    : SizedBox.shrink(),
               ],
             );
           },
         ),
       ],
     );
-
     return shouldUseKeyboardActions
         ? SizedBox(
       height: widget.isInRow == true
           ? 70
-          : (hasError ? 74 : 54), // Compact height for rows
+          : (hasError
+          ? (widget.pass == true ? 150 : 74)
+          : 54), // Increased height for password errors with icon
       child: KeyboardActions(
         config: _buildConfig(context),
         child: textfield,
@@ -2698,7 +2712,7 @@ class CustomTextFieldState extends State<CustomTextField> {
         : widget.isInRow == true
         ? SizedBox(
       height:
-      72, // Compact height for row alignment with minimal space
+      82, // Compact height for row alignment with minimal space
       child: textfield,
     )
         : textfield; // Dynamic shrink only for single column fields

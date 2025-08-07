@@ -3105,7 +3105,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                               if (widget.pass == true) SizedBox(width: 4),
                               Expanded(
                                 child: Padding(
-                                  padding: const EdgeInsets.all(2.0),
+                                  padding: const EdgeInsets.all(1.0),
                                   child: Text(
                                     _errorMessage!,
                                     style: TextStyle(

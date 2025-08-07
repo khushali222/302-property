@@ -2577,21 +2577,9 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                                   },
                                                   controller: code2,
                                                   keyboardType:
-                                                      TextInputType.text,
+                                                      TextInputType.number,
                                                   inputFormatters: [
-                                                    FilteringTextInputFormatter
-                                                        .allow(RegExp(
-                                                            r'[a-zA-Z0-9]')),
-                                                    TextInputFormatter
-                                                        .withFunction((oldValue,
-                                                            newValue) {
-                                                      return TextEditingValue(
-                                                        text: newValue.text
-                                                            .toUpperCase(),
-                                                        selection:
-                                                            newValue.selection,
-                                                      );
-                                                    }),
+                                                    FilteringTextInputFormatter.digitsOnly,
                                                   ],
                                                   cursorColor: blueColor,
                                                   decoration: InputDecoration(

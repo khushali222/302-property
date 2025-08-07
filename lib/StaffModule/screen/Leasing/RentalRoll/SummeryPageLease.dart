@@ -635,11 +635,25 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   }
 
   String determineStatusrenew(
-      String? startDate, String? endDate, bool isRenewed) {
-    if (startDate == null || endDate == null) return 'Unknown';
+      String? startDate, String? endDate, bool? isRenewed) {
+    if (startDate == null ||
+        endDate == null ||
+        startDate.isEmpty ||
+        endDate.isEmpty) {
+      return 'Unknown';
+    }
+    if (isRenewed == null) {
+      isRenewed = false;
+    }
 
-    DateTime start = formatDates(startDate);
-    DateTime end = formatDates(endDate);
+    DateTime start;
+    DateTime end;
+    try {
+      start = formatDates(startDate);
+      end = formatDates(endDate);
+    } catch (e) {
+      return 'Unknown';
+    }
     DateTime today = DateTime.now();
 
     if (isRenewed) {
@@ -1368,40 +1382,54 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 //   ],
                                                 // ),
                                                 Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
-
                                                     // First Row (Make Payment + Configure Recurring)
                                                     Row(
                                                       children: [
-
                                                         // Make Payment
                                                         Expanded(
-                                                          child: GestureDetector(
+                                                          child:
+                                                              GestureDetector(
                                                             onTap: () {
                                                               Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(
-                                                                  builder: (context) => MakePayment(
-                                                                    leaseId: widget.leaseId,
-                                                                    tenantId: '${leasesummery.data?.tenantId}',
+                                                                  builder:
+                                                                      (context) =>
+                                                                          MakePayment(
+                                                                    leaseId: widget
+                                                                        .leaseId,
+                                                                    tenantId:
+                                                                        '${leasesummery.data?.tenantId}',
                                                                   ),
                                                                 ),
                                                               );
                                                             },
                                                             child: Container(
                                                               height: 50,
-                                                              margin: EdgeInsets.all(5),
-                                                              decoration: BoxDecoration(
-                                                                color: blueColor,
-                                                                borderRadius: BorderRadius.circular(10),
+                                                              margin: EdgeInsets
+                                                                  .all(5),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color:
+                                                                    blueColor,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
                                                               ),
                                                               child: Center(
                                                                 child: Text(
                                                                   'Make Payment',
-                                                                  style: TextStyle(
-                                                                    color: Colors.white,
-                                                                    fontWeight: FontWeight.bold,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
                                                                   ),
                                                                 ),
                                                               ),
@@ -1411,28 +1439,46 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
 
                                                         // Configure Recurring
                                                         Expanded(
-                                                          child: GestureDetector(
+                                                          child:
+                                                              GestureDetector(
                                                             onTap: () {
-                                                              Navigator.of(context).push(
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .push(
                                                                 MaterialPageRoute(
-                                                                  builder: (context) => RecurringPayment(leaseData: leasesummery.data!),
+                                                                  builder: (context) =>
+                                                                      RecurringPayment(
+                                                                          leaseData:
+                                                                              leasesummery.data!),
                                                                 ),
                                                               );
                                                             },
                                                             child: Container(
                                                               height: 50,
-                                                              margin: EdgeInsets.all(5),
-                                                              decoration: BoxDecoration(
-                                                                color: Colors.white,
-                                                                border: Border.all(color: Colors.grey),
-                                                                borderRadius: BorderRadius.circular(10),
+                                                              margin: EdgeInsets
+                                                                  .all(5),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .white,
+                                                                border: Border.all(
+                                                                    color: Colors
+                                                                        .grey),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
                                                               ),
                                                               child: Center(
                                                                 child: Text(
                                                                   'Configure Recurring',
-                                                                  style: TextStyle(
-                                                                    color: blueColor,
-                                                                    fontWeight: FontWeight.bold,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color:
+                                                                        blueColor,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
                                                                   ),
                                                                 ),
                                                               ),
@@ -1445,10 +1491,10 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                     // Second Row (Scheduled Charges + Scheduled Payments)
                                                     Row(
                                                       children: [
-
                                                         // Scheduled Charges
                                                         Expanded(
-                                                          child: GestureDetector(
+                                                          child:
+                                                              GestureDetector(
                                                             onTap: () {
                                                               // Navigator.of(context).push(
                                                               //   MaterialPageRoute(
@@ -1458,18 +1504,30 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                             },
                                                             child: Container(
                                                               height: 50,
-                                                              margin: EdgeInsets.all(5),
-                                                              decoration: BoxDecoration(
-                                                                color: Colors.white,
-                                                                border: Border.all(color: Colors.grey),
-                                                                borderRadius: BorderRadius.circular(10),
+                                                              margin: EdgeInsets
+                                                                  .all(5),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .white,
+                                                                border: Border.all(
+                                                                    color: Colors
+                                                                        .grey),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
                                                               ),
                                                               child: Center(
                                                                 child: Text(
                                                                   'Scheduled Charges',
-                                                                  style: TextStyle(
-                                                                    color: blueColor,
-                                                                    fontWeight: FontWeight.bold,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color:
+                                                                        blueColor,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
                                                                   ),
                                                                 ),
                                                               ),
@@ -1479,24 +1537,37 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
 
                                                         // Scheduled Payments
                                                         Expanded(
-                                                          child: GestureDetector(
+                                                          child:
+                                                              GestureDetector(
                                                             onTap: () {
                                                               // Add your navigation here
                                                             },
                                                             child: Container(
                                                               height: 50,
-                                                              margin: EdgeInsets.all(5),
-                                                              decoration: BoxDecoration(
-                                                                color: Colors.white,
-                                                                border: Border.all(color: Colors.grey),
-                                                                borderRadius: BorderRadius.circular(10),
+                                                              margin: EdgeInsets
+                                                                  .all(5),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .white,
+                                                                border: Border.all(
+                                                                    color: Colors
+                                                                        .grey),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
                                                               ),
                                                               child: Center(
                                                                 child: Text(
                                                                   'Scheduled Payments',
-                                                                  style: TextStyle(
-                                                                    color: blueColor,
-                                                                    fontWeight: FontWeight.bold,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color:
+                                                                        blueColor,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
                                                                   ),
                                                                 ),
                                                               ),

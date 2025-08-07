@@ -1901,24 +1901,27 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                         focusNode: _nodeText4,
                                                         controller: code2,
                                                         keyboardType:
-                                                            TextInputType.text,
+                                                            TextInputType.number,
                                                         inputFormatters: [
-                                                          FilteringTextInputFormatter
-                                                              .allow(RegExp(
-                                                                  r'[a-zA-Z0-9]')),
-                                                          TextInputFormatter
-                                                              .withFunction(
-                                                                  (oldValue,
-                                                                      newValue) {
-                                                            return TextEditingValue(
-                                                              text: newValue
-                                                                  .text
-                                                                  .toUpperCase(),
-                                                              selection: newValue
-                                                                  .selection,
-                                                            );
-                                                          }),
+                                                          FilteringTextInputFormatter.digitsOnly,
                                                         ],
+                                                        // inputFormatters: [
+                                                        //   FilteringTextInputFormatter
+                                                        //       .allow(RegExp(
+                                                        //           r'[a-zA-Z0-9]')),
+                                                        //   TextInputFormatter
+                                                        //       .withFunction(
+                                                        //           (oldValue,
+                                                        //               newValue) {
+                                                        //     return TextEditingValue(
+                                                        //       text: newValue
+                                                        //           .text
+                                                        //           .toUpperCase(),
+                                                        //       selection: newValue
+                                                        //           .selection,
+                                                        //     );
+                                                        //   }),
+                                                        // ],
                                                         style: TextStyle(
                                                           color: Colors.black,
                                                           fontSize: MediaQuery.of(

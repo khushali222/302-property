@@ -547,6 +547,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           hintText: 'Postal Code',
                                           controller:
                                               _applicantPostalCodeController,
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.digitsOnly,
+                                          ],
                                         ),
                                         const SizedBox(height: 16),
                                       ],
@@ -812,6 +816,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           optional: true,
                                           hintText: 'Postcode',
                                           controller: _rentalPostcodeController,
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.digitsOnly,
+                                          ],
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -1158,6 +1166,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           optional: true,
                                           controller:
                                               _employmentPostalCodeController,
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.digitsOnly,
+                                          ],
                                         ),
                                         const SizedBox(
                                           height: 12,
@@ -2339,6 +2351,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       hintText: 'Postal Code',
                                                       controller:
                                                           _applicantPostalCodeController,
+                                                      keyboardType: TextInputType.number,
+                                                      inputFormatters: [
+                                                        FilteringTextInputFormatter.digitsOnly,
+                                                      ],
                                                     ),
                                                     const SizedBox(height: 16),
                                                   ],
@@ -2605,6 +2621,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       hintText: 'Postcode',
                                                       controller:
                                                           _rentalPostcodeController,
+                                                      keyboardType: TextInputType.number,
+                                                      inputFormatters: [
+                                                        FilteringTextInputFormatter.digitsOnly,
+                                                      ],
                                                     ),
                                                     const SizedBox(
                                                       height: 12,
@@ -2951,6 +2971,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       hintText: 'Postal Code',
                                                       controller:
                                                           _employmentPostalCodeController,
+                                                      keyboardType: TextInputType.number,
+                                                      inputFormatters: [
+                                                        FilteringTextInputFormatter.digitsOnly,
+                                                      ],
                                                     ),
                                                     const SizedBox(
                                                       height: 12,

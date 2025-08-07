@@ -2266,7 +2266,7 @@ class _Summery_pageState extends State<Summery_page>
                               ),
 
                             // Scrollable tab content
-                            Expanded(
+                              Expanded(
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 controller: _scrollController,
@@ -2279,9 +2279,9 @@ class _Summery_pageState extends State<Summery_page>
                                     return Container(
                                       margin:
                                           EdgeInsets.symmetric(horizontal: 3),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
                                             _selectedIndex = tabIndex;
                                             // Refresh data when switching to Purchase Info tab
                                             if (tabIndex == 1) {
@@ -2292,20 +2292,20 @@ class _Summery_pageState extends State<Summery_page>
                                                           .properties
                                                           .rentalId!);
                                             }
-                                          });
-                                        },
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
                                               vertical: 0, horizontal: 16),
-                                          decoration: BoxDecoration(
+                                    decoration: BoxDecoration(
                                             color: _selectedIndex == tabIndex
-                                                ? blueColor
-                                                : Colors.grey.shade200,
+                                          ? blueColor
+                                          : Colors.grey.shade200,
                                             borderRadius:
                                                 BorderRadius.circular(6),
                                             border: Border.all(
                                               color: _selectedIndex == tabIndex
-                                                  ? blueColor
+                                            ? blueColor
                                                   : Colors.grey.shade300,
                                               width: 1,
                                             ),
@@ -2327,23 +2327,23 @@ class _Summery_pageState extends State<Summery_page>
                                                           offset: Offset(0, 1),
                                                         )
                                                       ],
-                                          ),
-                                          child: Center(
-                                            child: Text(
+                                  ),
+                                  child: Center(
+                                    child: Text(
                                               title,
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w600,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
                                                 color:
                                                     _selectedIndex == tabIndex
-                                                        ? Colors.white
-                                                        : blueColor,
+                                            ? Colors.white
+                                            : blueColor,
                                                 fontSize: 15,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
                                       ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                                     );
                                   }).toList(),
                                 ),
@@ -2369,8 +2369,8 @@ class _Summery_pageState extends State<Summery_page>
                                   ),
                                   padding: EdgeInsets.zero,
                                   constraints: BoxConstraints(),
-                                ),
                               ),
+                            ),
                           ],
                         );
                       },
@@ -4126,7 +4126,7 @@ class _Summery_pageState extends State<Summery_page>
                                     ? DateTime.tryParse(
                                             rentalDetails.purchaseDate!) ??
                                         null
-                                    : null;
+                                : null;
 
                             showDialog(
                               context: context,
@@ -4144,7 +4144,7 @@ class _Summery_pageState extends State<Summery_page>
                                         child: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               "Purchase Date",
@@ -4156,7 +4156,7 @@ class _Summery_pageState extends State<Summery_page>
                                             InkWell(
                                               onTap: () async {
                                                 final DateTime? picked =
-                                                    await showDatePicker(
+                                                await showDatePicker(
                                                   context: context,
                                                   initialDate: selectedDate ??
                                                       DateTime.now(),
@@ -4167,7 +4167,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   setState(() {
                                                     selectedDate = picked;
                                                     purchaseDateController
-                                                            .text =
+                                                        .text =
                                                         DateFormat('yyyy-MM-dd')
                                                             .format(picked);
                                                   });
@@ -4176,16 +4176,16 @@ class _Summery_pageState extends State<Summery_page>
                                               child: AbsorbPointer(
                                                 child: TextField(
                                                   controller:
-                                                      purchaseDateController,
+                                                  purchaseDateController,
                                                   decoration: InputDecoration(
                                                     hintText:
-                                                        'Enter purchase date',
+                                                    'Enter purchase date',
                                                     suffixIcon: Icon(
                                                         Icons.calendar_today),
                                                     border: OutlineInputBorder(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
+                                                      BorderRadius.circular(
+                                                          12),
                                                     ),
                                                   ),
                                                 ),
@@ -4201,15 +4201,15 @@ class _Summery_pageState extends State<Summery_page>
                                             SizedBox(height: 6),
                                             TextField(
                                               controller:
-                                                  purchasePriceController,
+                                              purchasePriceController,
                                               keyboardType:
-                                                  TextInputType.number,
+                                              TextInputType.number,
                                               decoration: InputDecoration(
                                                 hintText:
-                                                    'Enter purchase price',
+                                                'Enter purchase price',
                                                 border: OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(12),
+                                                  BorderRadius.circular(12),
                                                 ),
                                               ),
                                             ),
@@ -4223,12 +4223,12 @@ class _Summery_pageState extends State<Summery_page>
                                             SizedBox(height: 6),
                                             TextField(
                                               controller:
-                                                  parcelNumberController,
+                                              parcelNumberController,
                                               decoration: InputDecoration(
                                                 hintText: 'Enter parcel number',
                                                 border: OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(12),
+                                                  BorderRadius.circular(12),
                                                 ),
                                               ),
                                             ),
@@ -4247,10 +4247,10 @@ class _Summery_pageState extends State<Summery_page>
                                           ),
                                           onPressed: () async {
                                             SharedPreferences prefs =
-                                                await SharedPreferences
-                                                    .getInstance();
+                                            await SharedPreferences
+                                                .getInstance();
                                             String? token =
-                                                prefs.getString('token');
+                                            prefs.getString('token');
                                             // String? id =
                                             // prefs.getString('adminId');
                                             String? id =
@@ -4263,19 +4263,19 @@ class _Summery_pageState extends State<Summery_page>
                                                   "authorization": "CRM $token",
                                                   "id": "CRM $id",
                                                   "Content-Type":
-                                                      "application/json",
+                                                  "application/json",
                                                 },
                                                 body: json.encode({
                                                   "purchase_date":
-                                                      purchaseDateController
-                                                          .text,
+                                                  purchaseDateController
+                                                      .text,
                                                   "purchase_price": double.tryParse(
-                                                          purchasePriceController
-                                                              .text) ??
+                                                      purchasePriceController
+                                                          .text) ??
                                                       0,
                                                   "parcel_number":
-                                                      parcelNumberController
-                                                          .text,
+                                                  parcelNumberController
+                                                      .text,
                                                 }),
                                               );
 
@@ -4284,9 +4284,9 @@ class _Summery_pageState extends State<Summery_page>
                                                 Navigator.pop(context);
                                                 Fluttertoast.showToast(
                                                   msg:
-                                                      "Purchase information updated successfully",
+                                                  "Purchase information updated successfully",
                                                   toastLength:
-                                                      Toast.LENGTH_LONG,
+                                                  Toast.LENGTH_LONG,
                                                 );
                                                 if (mounted) {
                                                   setState(() {
@@ -4301,9 +4301,9 @@ class _Summery_pageState extends State<Summery_page>
                                               } else {
                                                 Fluttertoast.showToast(
                                                   msg:
-                                                      "Failed to update purchase information",
+                                                  "Failed to update purchase information",
                                                   toastLength:
-                                                      Toast.LENGTH_LONG,
+                                                  Toast.LENGTH_LONG,
                                                 );
                                               }
                                             } catch (e) {
@@ -4311,7 +4311,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   'Error updating purchase info: $e');
                                               Fluttertoast.showToast(
                                                 msg:
-                                                    "Error updating purchase information",
+                                                "Error updating purchase information",
                                                 toastLength: Toast.LENGTH_LONG,
                                               );
                                             }
@@ -4319,7 +4319,7 @@ class _Summery_pageState extends State<Summery_page>
                                           child: Text(
                                             'Save',
                                             style:
-                                                TextStyle(color: Colors.white),
+                                            TextStyle(color: Colors.white),
                                           ),
                                         ),
                                       ],
@@ -4448,8 +4448,8 @@ class _Summery_pageState extends State<Summery_page>
                                       (rentalDetails.parcelNumber == null ||
                                               rentalDetails
                                                   .parcelNumber!.isEmpty)
-                                          ? "N/A"
-                                          : rentalDetails.parcelNumber!,
+                                      ? "N/A"
+                                      : rentalDetails.parcelNumber!,
                                       style: TextStyle(
                                           fontSize: 14, color: Colors.black),
                                     ),
@@ -6549,6 +6549,7 @@ class _Summery_pageState extends State<Summery_page>
       ),
     );
   }
+
 // Add these helper functions to normalize and format values
   String formatBedValue(String value) {
     if (value.isEmpty) return '';
@@ -6579,7 +6580,8 @@ class _Summery_pageState extends State<Summery_page>
 
     // Format the current value if needed
     if (currentValue.isNotEmpty) {
-      currentValue = isBed ? formatBedValue(currentValue) : formatBathValue(currentValue);
+      currentValue =
+          isBed ? formatBedValue(currentValue) : formatBathValue(currentValue);
     }
 
     // Create a list of items including the current value if it's not in the list
@@ -6612,7 +6614,8 @@ class _Summery_pageState extends State<Summery_page>
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white,
-                contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(3),
                   borderSide: BorderSide.none,
@@ -6634,6 +6637,7 @@ class _Summery_pageState extends State<Summery_page>
       ],
     );
   }
+
   Unit_page(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -6892,12 +6896,12 @@ class _Summery_pageState extends State<Summery_page>
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       color: Colors
-                                                                          .white,
-                                                                      borderRadius:
+                                                                              .white,
+                                                                        borderRadius:
                                                                           BorderRadius.circular(
                                                                               3),
                                                                       border: Border.all(
-                                                                          color:
+                                                                            color:
                                                                               Color(0xFF8A95A8)),
                                                                     ),
                                                                     child:
@@ -6970,12 +6974,12 @@ class _Summery_pageState extends State<Summery_page>
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       color: Colors
-                                                                          .white,
-                                                                      borderRadius:
+                                                                              .white,
+                                                                        borderRadius:
                                                                           BorderRadius.circular(
                                                                               3),
                                                                       border: Border.all(
-                                                                          color:
+                                                                            color:
                                                                               Color(0xFF8A95A8)),
                                                                     ),
                                                                     child:
@@ -8486,11 +8490,11 @@ class _Summery_pageState extends State<Summery_page>
                                                   horizontal: 10),
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(3),
+                                                  borderRadius:
+                                                      BorderRadius.circular(3),
                                                 border: Border.all(
-                                                    color: Color(0xFF8A95A8)),
-                                              ),
+                                                      color: Color(0xFF8A95A8)),
+                                                ),
                                               child:
                                                   DropdownButtonHideUnderline(
                                                 child: DropdownButton<String>(
@@ -8544,11 +8548,11 @@ class _Summery_pageState extends State<Summery_page>
                                                   horizontal: 10),
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(3),
+                                                  borderRadius:
+                                                      BorderRadius.circular(3),
                                                 border: Border.all(
-                                                    color: Color(0xFF8A95A8)),
-                                              ),
+                                                      color: Color(0xFF8A95A8)),
+                                                ),
                                               child:
                                                   DropdownButtonHideUnderline(
                                                 child: DropdownButton<String>(
@@ -12275,7 +12279,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                   ],
                                                                                 ),
                                                                                 buildSafeDropdown(
-                                                                                  controller: bath3,
+                                                                                      controller: bath3,
                                                                                   items: bathArray,
                                                                                   label: "Bath",
                                                                                   isBed: false,
@@ -12332,7 +12336,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                   ],
                                                                                 ),
                                                                                 buildSafeDropdown(
-                                                                                  controller: bed3,
+                                                                                      controller: bed3,
                                                                                   items: roomsArray,
                                                                                   label: "Bed",
                                                                                   isBed: true,

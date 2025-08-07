@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 //import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -14,12 +15,10 @@ import 'package:three_zero_two_property/StaffModule/repository/setting.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
 
-
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/model/setting.dart';
 import 'package:three_zero_two_property/provider/color_theme.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
-
 
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 
@@ -46,7 +45,6 @@ class _TabBarExampleState extends State<TabBarExample> {
 
   bool rentDueReminderEmail = false;
 
-
   String surge_id = "";
   String latefee_id = "";
   bool isupdate = false;
@@ -59,7 +57,6 @@ class _TabBarExampleState extends State<TabBarExample> {
   bool isLoading = false;
   bool isdateformate = false;
 
-
   @override
   void initState() {
     // TODO: implement initState
@@ -70,7 +67,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     fetchMailData();
     accountname = TextEditingController();
     note = TextEditingController();
-   // _loadColorPreference();
+    // _loadColorPreference();
   }
 
   @override
@@ -79,6 +76,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     note.dispose();
     super.dispose();
   }
+
   void _refreshAccounts() {
     setState(() {
       futureaccount = accountRepository().fetchAccounts();
@@ -90,7 +88,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   final latefeeRepository latefeerepository =
       latefeeRepository(baseUrl: '${Api_url}');
   final mailserviceRepository mailrepository =
-  mailserviceRepository(baseUrl: '${Api_url}');
+      mailserviceRepository(baseUrl: '${Api_url}');
 
   Future<void> fetchSurchargeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -110,7 +108,14 @@ class _TabBarExampleState extends State<TabBarExample> {
               ? surcharges.surchargeFlatACH.toString()
               : "";
           surge_id = surcharges.surchargeId.toString();
-          _selectedRadio = surcharges.surchargePercentACH != 0.0 && surcharges.surchargeFlatACH != 0.0 ? 3 : surcharges.surchargePercentACH != 0.0 ?  1:surcharges.surchargeFlatACH != 0.0?2:0;
+          _selectedRadio = surcharges.surchargePercentACH != 0.0 &&
+                  surcharges.surchargeFlatACH != 0.0
+              ? 3
+              : surcharges.surchargePercentACH != 0.0
+                  ? 1
+                  : surcharges.surchargeFlatACH != 0.0
+                      ? 2
+                      : 0;
         });
       }
     } catch (e) {
@@ -140,12 +145,13 @@ class _TabBarExampleState extends State<TabBarExample> {
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? id = prefs.getString('adminId');
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
-        "surcharge_percent":
-            credit.text.trim().isNotEmpty ? int.parse(credit.text.trim()) : null,
+        "surcharge_percent": credit.text.trim().isNotEmpty
+            ? int.parse(credit.text.trim())
+            : null,
         "surcharge_percent_debit":
             debit.text.trim().isNotEmpty ? int.parse(debit.text.trim()) : null,
         "surcharge_percent_ACH": percent.text.trim().isNotEmpty
@@ -176,14 +182,15 @@ class _TabBarExampleState extends State<TabBarExample> {
   Future<void> AddSurgedata() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? id = prefs.getString('adminId');
     print("calling");
 
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
-        "surcharge_percent":
-            credit.text.trim().isNotEmpty ? int.parse(credit.text.trim()) : null,
+        "surcharge_percent": credit.text.trim().isNotEmpty
+            ? int.parse(credit.text.trim())
+            : null,
         "surcharge_percent_debit":
             debit.text.trim().isNotEmpty ? int.parse(debit.text.trim()) : null,
         "surcharge_percent_ACH": percent.text.trim().isNotEmpty
@@ -215,32 +222,53 @@ class _TabBarExampleState extends State<TabBarExample> {
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? id = prefs.getString('adminId');
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
-        "duration":
-            duration.text.trim().isNotEmpty ? double.parse(duration.text.trim()) : null,
-        "late_fee":
-            late_fee.text.trim().isNotEmpty ? double.parse(late_fee.text.trim()) : null,
+        "duration": duration.text.trim().isNotEmpty
+            ? double.parse(duration.text.trim())
+            : null,
+        "late_fee": late_fee.text.trim().isNotEmpty
+            ? double.parse(late_fee.text.trim())
+            : null,
       };
 
       bool success =
           await latefeerepository.updateLatefeesData('$latefee_id', data);
 
       if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Latefee Updated Successfully')));
+        Fluttertoast.showToast(
+          msg: 'Late Fee Updated Successfully',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Failed to Update Latefee')));
+        Fluttertoast.showToast(
+          msg: 'Failed to Update Late Fee',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          backgroundColor: Colors.redAccent,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
       }
     } catch (e) {
       print('Failed to update surcharge data: $e');
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error: $e')));
+      Fluttertoast.showToast(
+        msg: 'Error: $e',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.TOP,
+        backgroundColor: Colors.redAccent,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     }
   }
+
   // Future<void> updatemailreminder() async {
   //   print("calling");
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -271,32 +299,53 @@ class _TabBarExampleState extends State<TabBarExample> {
   //   }
   // }
   Future<void> AddLatefeedata() async {
-
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? id = prefs.getString('adminId');
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
-        "duration": duration.text.trim().isNotEmpty ? int.parse(duration.text.trim()) : null,
-        "late_fee": late_fee.text.trim().isNotEmpty ? int.parse(late_fee.text.trim()) : null,
+        "duration": duration.text.trim().isNotEmpty
+            ? int.parse(duration.text.trim())
+            : null,
+        "late_fee": late_fee.text.trim().isNotEmpty
+            ? int.parse(late_fee.text.trim())
+            : null,
       };
 
       bool success =
           await latefeerepository.AddLatefeesData('1714649182536', data);
 
       if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('late_fee Updated Successfully')));
+        Fluttertoast.showToast(
+          msg: 'Late Fee updated successfully',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          backgroundColor: Colors.black87,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to Update Surcharge')));
+        Fluttertoast.showToast(
+          msg: 'Failed to Update Late Fee',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          backgroundColor: Colors.black87,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
       }
     } catch (e) {
-      print('Failed to update surcharge data: $e');
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error: $e')));
+      print('Failed to update Late Fee data: $e');
+      Fluttertoast.showToast(
+        msg: 'Error: $e',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.TOP,
+        backgroundColor: Colors.redAccent,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     }
   }
 
@@ -314,7 +363,7 @@ class _TabBarExampleState extends State<TabBarExample> {
           mailupdate = true;
           print(latefee.duration);
           durationmail.text = latefee.duration.toString();
-        //  rentDueReminderEmail = true;
+          //  rentDueReminderEmail = true;
           if (latefee.remindermail != null) {
             rentDueReminderEmail = latefee.remindermail!;
           }
@@ -325,26 +374,26 @@ class _TabBarExampleState extends State<TabBarExample> {
       print('Failed to load surcharge data: $e');
     }
   }
+
   Future<void> updateMail() async {
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? id = prefs.getString('adminId');
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
-        "replyToEmail":replyToEmail.text.trim(),
-        "duration":
-        durationmail.text.trim().isNotEmpty ? double.parse(durationmail.text.trim()) : null,
-
+        "replyToEmail": replyToEmail.text.trim(),
+        "duration": durationmail.text.trim().isNotEmpty
+            ? double.parse(durationmail.text.trim())
+            : null,
       };
 
-      bool success =
-      await mailrepository.updateMailData(data);
+      bool success = await mailrepository.updateMailData(data);
 
       if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('mail Updated Successfully')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('mail Updated Successfully')));
       } else {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Failed to Update mail')));
@@ -355,29 +404,29 @@ class _TabBarExampleState extends State<TabBarExample> {
           .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
-  Future<void> Addmail() async {
 
+  Future<void> Addmail() async {
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? id = prefs.getString('adminId');
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
-        "replyToEmail":replyToEmail.text.trim(),
-        "duration": durationmail.text.trim().isNotEmpty ? int.parse(durationmail.text.trim()) : null,
-
+        "replyToEmail": replyToEmail.text.trim(),
+        "duration": durationmail.text.trim().isNotEmpty
+            ? int.parse(durationmail.text.trim())
+            : null,
       };
 
-      bool success =
-      await mailrepository.AddMailData(id, data);
+      bool success = await mailrepository.AddMailData(id, data);
 
       if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('mail Updated Successfully')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('mail Updated Successfully')));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to Update ,ail')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Failed to Update ,ail')));
       }
     } catch (e) {
       print('Failed to update mail data: $e');
@@ -475,10 +524,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                   children: [
                     width < 400
                         ? Text("Account", style: TextStyle(color: Colors.white))
-                        : Text("Account", style: TextStyle(color: Colors.white)),
+                        : Text("Account",
+                            style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
-
                   ],
                 ),
               ),
@@ -507,8 +556,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                 },
                 child: Row(
                   children: [
-                    Text("    Type", style: TextStyle(color: Colors.white,)),
-
+                    Text("    Type",
+                        style: TextStyle(
+                          color: Colors.white,
+                        )),
                   ],
                 ),
               ),
@@ -540,8 +591,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                   children: [
                     // SizedBox(width: 3),
                     Text("Fund Type", style: TextStyle(color: Colors.white)),
-
-
                   ],
                 ),
               ),
@@ -551,13 +600,14 @@ class _TabBarExampleState extends State<TabBarExample> {
       ),
     );
   }
+
   int dateformateselect = 0;
   int? expandedIndex;
   Set<int> expandedIndices = {};
-  String? dateformate1 ;
-  String? dateformate2 ;
-  String? dateformate3 ;
-  String? customdate ;
+  String? dateformate1;
+  String? dateformate2;
+  String? dateformate3;
+  String? customdate;
   int totalrecords = 0;
   List<Setting4> _tableData = [];
   int _rowsPerPage = 10;
@@ -579,8 +629,8 @@ class _TabBarExampleState extends State<TabBarExample> {
     });
   }
 
-  void _sort<T>(Comparable<T> Function(Setting4 d) getField,
-      int columnIndex, bool ascending) {
+  void _sort<T>(Comparable<T> Function(Setting4 d) getField, int columnIndex,
+      bool ascending) {
     setState(() {
       _sortColumnIndex = columnIndex;
       _sortAscending = ascending;
@@ -611,10 +661,11 @@ class _TabBarExampleState extends State<TabBarExample> {
         backgroundColor: Colors.white,
       ),
       buttons: [
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -636,12 +687,11 @@ class _TabBarExampleState extends State<TabBarExample> {
             });
             Navigator.pop(context);
           },
-          color:blueColor,
+          color: blueColor,
         ),
       ],
     ).show();
   }
-
 
   void handleDelete(Setting4 staff) {
     _showDeleteAlert(context, staff.accountId!);
@@ -649,8 +699,6 @@ class _TabBarExampleState extends State<TabBarExample> {
     // Handle delete action
     print('Delete ${staff.accountId}');
   }
-
-
 
   //for teblet
 
@@ -660,8 +708,8 @@ class _TabBarExampleState extends State<TabBarExample> {
       child: InkWell(
         onTap: getField != null
             ? () {
-          _sort(getField, columnIndex, !_sortAscending);
-        }
+                _sort(getField, columnIndex, !_sortAscending);
+              }
             : null,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -670,7 +718,6 @@ class _TabBarExampleState extends State<TabBarExample> {
               Text(text,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 18)),
-
               if (_sortColumnIndex == columnIndex)
                 Icon(_sortAscending
                     ? Icons.arrow_drop_down_outlined
@@ -767,16 +814,15 @@ class _TabBarExampleState extends State<TabBarExample> {
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
             size: 30,
-            color:
-            _currentPage == 0 ? Colors.grey : blueColor,
+            color: _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
               : () {
-            setState(() {
-              _currentPage--;
-            });
-          },
+                  setState(() {
+                    _currentPage--;
+                  });
+                },
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
@@ -789,15 +835,15 @@ class _TabBarExampleState extends State<TabBarExample> {
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
                 : Color.fromRGBO(
-                21, 43, 83, 1), // Change color based on availability
+                    21, 43, 83, 1), // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
               : () {
-            setState(() {
-              _currentPage++;
-            });
-          },
+                  setState(() {
+                    _currentPage++;
+                  });
+                },
         ),
       ],
     );
@@ -805,10 +851,6 @@ class _TabBarExampleState extends State<TabBarExample> {
 
   Color _selectedColor = Colors.blue;
   Color _selectedLabelColor = Colors.grey; // Default label color
-
-
-
-
 
   // void _showColorPicker() {
   //   showDialog(
@@ -936,8 +978,6 @@ class _TabBarExampleState extends State<TabBarExample> {
   //   );
   // }
 
-
-
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -946,7 +986,10 @@ class _TabBarExampleState extends State<TabBarExample> {
       child: Scaffold(
         appBar: widget_302_Staff.App_Bar(context: context),
         backgroundColor: Colors.white,
-        drawer:CustomDrawerStaff(currentpage: "Settings",dropdown: false,),
+        drawer: CustomDrawerStaff(
+          currentpage: "Settings",
+          dropdown: false,
+        ),
         body: ListView(children: [
           SizedBox(
             height: 25,
@@ -996,10 +1039,8 @@ class _TabBarExampleState extends State<TabBarExample> {
               child: Column(
                 children: [
                   SizedBox(
-                    height:
-                        MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                    width:
-                        MediaQuery.of(context).size.width < 500 ? 850 : 900,
+                    height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                    width: MediaQuery.of(context).size.width < 500 ? 850 : 900,
                     child: Row(
                       children: [
                         Expanded(
@@ -1014,37 +1055,32 @@ class _TabBarExampleState extends State<TabBarExample> {
                               });
                             },
                             child: Container(
-                              height:
-                                  MediaQuery.of(context).size.width < 500
-                                      ? 40
-                                      : 50,
+                              height: MediaQuery.of(context).size.width < 500
+                                  ? 40
+                                  : 50,
                               decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: blueColor),
-                                color: !issurge
-                                    ? Colors.white
-                                    : blueColor,
+                                border: Border.all(color: blueColor),
+                                color: !issurge ? Colors.white : blueColor,
                               ),
                               child: Center(
                                 child: Text(
                                   "Surcharge",
                                   style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                      color: issurge
-                                          ? Colors.white
-                                          : blueColor,
-                                      fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width <
-                                              500
-                                          ? 15
-                                          : 20),
+                                      fontWeight: FontWeight.bold,
+                                      color: issurge ? Colors.white : blueColor,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 20),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                       SizedBox(width: 10,),
+                        SizedBox(
+                          width: 10,
+                        ),
                         Expanded(
                           child: InkWell(
                             onTap: () {
@@ -1058,41 +1094,35 @@ class _TabBarExampleState extends State<TabBarExample> {
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: blueColor),
-                                color: !islatefee
-                                    ? Colors.white
-                                    : blueColor,
+                                border: Border.all(color: blueColor),
+                                color: !islatefee ? Colors.white : blueColor,
                               ),
                               child: Center(
                                 child: Text(
                                   "Late Fee",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: islatefee
-                                          ? Colors.white
-                                          : blueColor,
-                                      fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width <
-                                              500
-                                          ? 15
-                                          : 20),
+                                      color:
+                                          islatefee ? Colors.white : blueColor,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 20),
                                 ),
                               ),
                             ),
                           ),
                         ),
-
                       ],
                     ),
                   ),
-                  SizedBox(height: 10,),
                   SizedBox(
-                    height:
-                    MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                    width:
-                    MediaQuery.of(context).size.width < 500 ? 850 : 900,
+                    height: 10,
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                    width: MediaQuery.of(context).size.width < 500 ? 850 : 900,
                     child: Row(
                       children: [
                         Expanded(
@@ -1108,32 +1138,28 @@ class _TabBarExampleState extends State<TabBarExample> {
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: blueColor),
-                                color:  !ismail
-                                    ? Colors.white
-                                    : blueColor,
+                                border: Border.all(color: blueColor),
+                                color: !ismail ? Colors.white : blueColor,
                               ),
                               child: Center(
                                 child: Text(
                                   "Mail Service",
                                   style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                      color: ismail
-                                          ? Colors.white
-                                          : blueColor,
-                                      fontSize: MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 20),
+                                      fontWeight: FontWeight.bold,
+                                      color: ismail ? Colors.white : blueColor,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 20),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(width: 10,),
+                        SizedBox(
+                          width: 10,
+                        ),
                         Expanded(
                           child: InkWell(
                             onTap: () {
@@ -1147,36 +1173,29 @@ class _TabBarExampleState extends State<TabBarExample> {
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: blueColor),
-                                color: !isaccounts
-                                    ? Colors.white
-                                    : blueColor,
+                                border: Border.all(color: blueColor),
+                                color: !isaccounts ? Colors.white : blueColor,
                               ),
                               child: Center(
                                 child: Text(
                                   "Manage Accounts",
                                   style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                      color: isaccounts
-                                          ? Colors.white
-                                          : blueColor,
-                                      fontSize: MediaQuery.of(context)
-                                          .size
-                                          .width <
-                                          500
-                                          ? 15
-                                          : 20),
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          isaccounts ? Colors.white : blueColor,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 20),
                                 ),
                               ),
                             ),
                           ),
                         ),
-
                       ],
                     ),
                   ),
-
                   if (issurge)
                     Column(
                       children: [
@@ -1208,8 +1227,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 "You can set default surcharge percentage from here",
                                 style: TextStyle(
                                     fontSize:
-                                        MediaQuery.of(context).size.width <
-                                                500
+                                        MediaQuery.of(context).size.width < 500
                                             ? 15
                                             : 20,
                                     color: Color(0xFF8A95A8),
@@ -1410,24 +1428,23 @@ class _TabBarExampleState extends State<TabBarExample> {
                         if (MediaQuery.of(context).size.width < 500)
                           Padding(
                             padding:
-                            const EdgeInsets.symmetric(horizontal: 2.0),
+                                const EdgeInsets.symmetric(horizontal: 2.0),
                             child: Row(
-                              mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 // First Column
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "Credit Card Surcharge Percent",
                                         style: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
+                                                        .size
+                                                        .width <
+                                                    500
                                                 ? 15
                                                 : 20,
                                             color: blueColor,
@@ -1436,15 +1453,14 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       SizedBox(height: 8),
                                       Container(
                                         height: 50,
-                                        width: MediaQuery.of(context)
-                                            .size
-                                            .width *
-                                            .5,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .5,
                                         decoration: BoxDecoration(
                                           border: Border.all(color: grey),
                                           color: Colors.white,
                                           borderRadius:
-                                          BorderRadius.circular(5),
+                                              BorderRadius.circular(5),
                                         ),
                                         child: Stack(
                                           children: [
@@ -1456,22 +1472,16 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   });
                                                 },
                                                 controller: credit,
-                                                cursorColor:
-                                                blueColor
-
-
-,
-                                                decoration:
-                                                InputDecoration(
+                                                cursorColor: blueColor,
+                                                decoration: InputDecoration(
                                                   // hintText: "Enter password",
                                                   hintStyle: TextStyle(
-                                                    fontSize: MediaQuery.of(
-                                                        context)
-                                                        .size
-                                                        .width *
-                                                        .037,
-                                                    color:
-                                                    Color(0xFF8A95A8),
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .037,
+                                                    color: Color(0xFF8A95A8),
                                                   ),
                                                   // enabledBorder: passworderror
                                                   //     ? OutlineInputBorder(
@@ -1482,16 +1492,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   //   ),
                                                   // )
                                                   //     : InputBorder.none,
-                                                  border:
-                                                  InputBorder.none,
+                                                  border: InputBorder.none,
                                                   contentPadding:
-                                                  EdgeInsets.all(13),
+                                                      EdgeInsets.all(13),
                                                   suffixIcon: Icon(
                                                     Icons.percent,
-                                                    color: blueColor
-
-
-,
+                                                    color: blueColor,
                                                     size: 18,
                                                   ),
                                                 ),
@@ -1508,15 +1514,15 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "Debit Card Surcharge Percent",
                                         style: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
+                                                        .size
+                                                        .width <
+                                                    500
                                                 ? 15
                                                 : 20,
                                             color: blueColor,
@@ -1525,15 +1531,14 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       SizedBox(height: 8),
                                       Container(
                                         height: 50,
-                                        width: MediaQuery.of(context)
-                                            .size
-                                            .width *
-                                            .5,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .5,
                                         decoration: BoxDecoration(
                                           border: Border.all(color: grey),
                                           color: Colors.white,
                                           borderRadius:
-                                          BorderRadius.circular(5),
+                                              BorderRadius.circular(5),
                                         ),
                                         child: Stack(
                                           children: [
@@ -1545,22 +1550,16 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   });
                                                 },
                                                 controller: debit,
-                                                cursorColor:
-                                                blueColor
-
-
-,
-                                                decoration:
-                                                InputDecoration(
+                                                cursorColor: blueColor,
+                                                decoration: InputDecoration(
                                                   // hintText: "Enter password",
                                                   hintStyle: TextStyle(
-                                                    fontSize: MediaQuery.of(
-                                                        context)
-                                                        .size
-                                                        .width *
-                                                        .037,
-                                                    color:
-                                                    Color(0xFF8A95A8),
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .037,
+                                                    color: Color(0xFF8A95A8),
                                                   ),
                                                   // enabledBorder: passworderror
                                                   //     ? OutlineInputBorder(
@@ -1571,16 +1570,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   //   ),
                                                   // )
                                                   //     : InputBorder.none,
-                                                  border:
-                                                  InputBorder.none,
+                                                  border: InputBorder.none,
                                                   contentPadding:
-                                                  EdgeInsets.all(13),
+                                                      EdgeInsets.all(13),
                                                   suffixIcon: Icon(
                                                     Icons.percent,
-                                                    color: blueColor
-
-
-,
+                                                    color: blueColor,
                                                     size: 18,
                                                   ),
                                                 ),
@@ -1603,8 +1598,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 2.0),
                             child: Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 // First Column
                                 Expanded(
@@ -1627,8 +1621,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       SizedBox(height: 8),
                                       Material(
                                         elevation: 4,
-                                        borderRadius:
-                                            BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(10),
                                         child: Container(
                                           height: 50,
                                           width: MediaQuery.of(context)
@@ -1650,22 +1643,16 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                     });
                                                   },
                                                   controller: credit,
-                                                  cursorColor:
-                                                      blueColor
-
-
-,
-                                                  decoration:
-                                                      InputDecoration(
+                                                  cursorColor: blueColor,
+                                                  decoration: InputDecoration(
                                                     // hintText: "Enter password",
                                                     hintStyle: TextStyle(
-                                                      fontSize: MediaQuery.of(
-                                                                  context)
-                                                              .size
-                                                              .width *
-                                                          .037,
-                                                      color:
-                                                          Color(0xFF8A95A8),
+                                                      fontSize:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .037,
+                                                      color: Color(0xFF8A95A8),
                                                     ),
                                                     // enabledBorder: passworderror
                                                     //     ? OutlineInputBorder(
@@ -1676,16 +1663,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                     //   ),
                                                     // )
                                                     //     : InputBorder.none,
-                                                    border:
-                                                        InputBorder.none,
+                                                    border: InputBorder.none,
                                                     contentPadding:
                                                         EdgeInsets.all(13),
                                                     suffixIcon: Icon(
                                                       Icons.percent,
-                                                      color: blueColor
-
-
-,
+                                                      color: blueColor,
                                                       size: 18,
                                                     ),
                                                   ),
@@ -1720,8 +1703,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       SizedBox(height: 8),
                                       Material(
                                         elevation: 4,
-                                        borderRadius:
-                                            BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(10),
                                         child: Container(
                                           height: 50,
                                           width: MediaQuery.of(context)
@@ -1743,22 +1725,16 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                     });
                                                   },
                                                   controller: debit,
-                                                  cursorColor:
-                                                      blueColor
-
-
-,
-                                                  decoration:
-                                                      InputDecoration(
+                                                  cursorColor: blueColor,
+                                                  decoration: InputDecoration(
                                                     // hintText: "Enter password",
                                                     hintStyle: TextStyle(
-                                                      fontSize: MediaQuery.of(
-                                                                  context)
-                                                              .size
-                                                              .width *
-                                                          .037,
-                                                      color:
-                                                          Color(0xFF8A95A8),
+                                                      fontSize:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .037,
+                                                      color: Color(0xFF8A95A8),
                                                     ),
                                                     // enabledBorder: passworderror
                                                     //     ? OutlineInputBorder(
@@ -1769,16 +1745,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                     //   ),
                                                     // )
                                                     //     : InputBorder.none,
-                                                    border:
-                                                        InputBorder.none,
+                                                    border: InputBorder.none,
                                                     contentPadding:
                                                         EdgeInsets.all(13),
                                                     suffixIcon: Icon(
                                                       Icons.percent,
-                                                      color: blueColor
-
-
-,
+                                                      color: blueColor,
                                                       size: 18,
                                                     ),
                                                   ),
@@ -1804,8 +1776,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 "You can set default ACH percentage or ACH flat fee or both from here",
                                 style: TextStyle(
                                     fontSize:
-                                        MediaQuery.of(context).size.width <
-                                                500
+                                        MediaQuery.of(context).size.width < 500
                                             ? 15
                                             : 20,
                                     color: Color(0xFF8A95A8),
@@ -1885,8 +1856,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 'Add ACH Surcharge Percentage',
                                 style: TextStyle(
                                     fontSize:
-                                        MediaQuery.of(context).size.width <
-                                                500
+                                        MediaQuery.of(context).size.width < 500
                                             ? 15
                                             : 20,
                                     color: blueColor,
@@ -1907,14 +1877,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                               Expanded(
                                 child: Container(
                                   height: 50,
-                                  width:
-                                      MediaQuery.of(context).size.width *
-                                          .5,
+                                  width: MediaQuery.of(context).size.width * .5,
                                   decoration: BoxDecoration(
-                                      border: Border.all(color: grey),
+                                    border: Border.all(color: grey),
                                     color: Colors.white,
-                                    borderRadius:
-                                        BorderRadius.circular(5),
+                                    borderRadius: BorderRadius.circular(5),
                                   ),
                                   child: Stack(
                                     children: [
@@ -1926,18 +1893,14 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             });
                                           },
                                           controller: percent,
-                                          cursorColor: blueColor
-
-
-,
+                                          cursorColor: blueColor,
                                           decoration: InputDecoration(
                                             // hintText: "Enter password",
                                             hintStyle: TextStyle(
-                                              fontSize:
-                                                  MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .037,
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .037,
                                               color: Color(0xFF8A95A8),
                                             ),
                                             // enabledBorder: passworderror
@@ -1950,12 +1913,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             // )
                                             //     : InputBorder.none,
                                             border: InputBorder.none,
-                                            contentPadding:
-                                                EdgeInsets.all(13),
+                                            contentPadding: EdgeInsets.all(13),
                                             suffixIcon: Icon(
                                               Icons.percent,
-                                              color: Color.fromRGBO(
-                                                  21, 43, 81, 1),
+                                              color:
+                                                  Color.fromRGBO(21, 43, 81, 1),
                                               size: 18,
                                             ),
                                           ),
@@ -1966,7 +1928,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 ),
                               ),
                               if (MediaQuery.of(context).size.width < 500)
-                                SizedBox(width:190),
+                                SizedBox(width: 190),
                               if (MediaQuery.of(context).size.width > 500)
                                 SizedBox(width: 380),
                             ],
@@ -1981,8 +1943,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 'Add ACH Flat Fee',
                                 style: TextStyle(
                                     fontSize:
-                                        MediaQuery.of(context).size.width <
-                                                500
+                                        MediaQuery.of(context).size.width < 500
                                             ? 15
                                             : 20,
                                     color: blueColor,
@@ -2003,14 +1964,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                               Expanded(
                                 child: Container(
                                   height: 50,
-                                  width:
-                                      MediaQuery.of(context).size.width *
-                                          .5,
+                                  width: MediaQuery.of(context).size.width * .5,
                                   decoration: BoxDecoration(
                                     border: Border.all(color: grey),
                                     color: Colors.white,
-                                    borderRadius:
-                                        BorderRadius.circular(5),
+                                    borderRadius: BorderRadius.circular(5),
                                   ),
                                   child: Stack(
                                     children: [
@@ -2022,18 +1980,14 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             });
                                           },
                                           controller: flat,
-                                          cursorColor: blueColor
-
-
-,
+                                          cursorColor: blueColor,
                                           decoration: InputDecoration(
                                             // hintText: "Enter password",
                                             hintStyle: TextStyle(
-                                              fontSize:
-                                                  MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .037,
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .037,
                                               color: Color(0xFF8A95A8),
                                             ),
                                             // enabledBorder: passworderror
@@ -2046,12 +2000,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             // )
                                             //     : InputBorder.none,
                                             border: InputBorder.none,
-                                            contentPadding:
-                                                EdgeInsets.all(13),
+                                            contentPadding: EdgeInsets.all(13),
                                             suffixIcon: Icon(
                                               Icons.percent,
-                                              color: Color.fromRGBO(
-                                                  21, 43, 81, 1),
+                                              color:
+                                                  Color.fromRGBO(21, 43, 81, 1),
                                               size: 18,
                                             ),
                                           ),
@@ -2062,7 +2015,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 ),
                               ),
                               if (MediaQuery.of(context).size.width < 500)
-                                SizedBox(width:190),
+                                SizedBox(width: 190),
                               if (MediaQuery.of(context).size.width > 500)
                                 SizedBox(width: 380),
                             ],
@@ -2085,17 +2038,14 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 borderRadius: BorderRadius.circular(5.0),
                                 child: Container(
                                   height:
-                                      MediaQuery.of(context).size.width <
-                                              500
+                                      MediaQuery.of(context).size.width < 500
                                           ? 35
                                           : 50,
-                                  width: MediaQuery.of(context).size.width <
-                                          500
+                                  width: MediaQuery.of(context).size.width < 500
                                       ? 100
                                       : 150,
                                   decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.circular(5.0),
+                                    borderRadius: BorderRadius.circular(5.0),
                                     color: blueColor,
                                     boxShadow: [
                                       BoxShadow(
@@ -2111,12 +2061,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width <
-                                                500
-                                            ? 15
-                                            : 20,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 15
+                                                : 20,
                                       ),
                                     ),
                                   ),
@@ -2135,12 +2084,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                               },
                               child: Container(
                                   height:
-                                      MediaQuery.of(context).size.width <
-                                              500
+                                      MediaQuery.of(context).size.width < 500
                                           ? 35
                                           : 50,
-                                  width: MediaQuery.of(context).size.width <
-                                          500
+                                  width: MediaQuery.of(context).size.width < 500
                                       ? 100
                                       : 100,
                                   decoration: BoxDecoration(
@@ -2153,12 +2100,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       child: Text(
                                     "Reset",
                                     style: TextStyle(
-                                        fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width <
-                                                500
-                                            ? 15
-                                            : 20,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 15
+                                                : 20,
                                         fontWeight: FontWeight.bold),
                                   ))),
                             ),
@@ -2180,9 +2126,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 18
-                                    : 25,
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 18
+                                        : 25,
                               ),
                             ),
                           ],
@@ -2199,12 +2145,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                               "Add Your Reply to Address",
                               style: TextStyle(
                                   fontSize:
-                                  MediaQuery.of(context)
-                                      .size
-                                      .width <
-                                      500
-                                      ? 15
-                                      : 20,
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 15
+                                          : 20,
                                   color: blueColor,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -2219,14 +2162,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                             Expanded(
                               child: Container(
                                 height: 50,
-                                width:
-                                MediaQuery.of(context).size.width *
-                                    .5,
+                                width: MediaQuery.of(context).size.width * .5,
                                 decoration: BoxDecoration(
                                   border: Border.all(color: grey),
                                   color: Colors.white,
-                                  borderRadius:
-                                  BorderRadius.circular(5),
+                                  borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Stack(
                                   children: [
@@ -2239,23 +2179,19 @@ class _TabBarExampleState extends State<TabBarExample> {
                                           });
                                         },
                                         //  controller: password,
-                                        cursorColor: Color.fromRGBO(
-                                            21, 43, 81, 1),
+                                        cursorColor:
+                                            Color.fromRGBO(21, 43, 81, 1),
                                         decoration: InputDecoration(
                                           hintText: "Enter email",
                                           hintStyle: TextStyle(
-                                            fontSize:
-                                            MediaQuery.of(context)
-                                                .size
-                                                .width *
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
                                                 .037,
                                             color: Color(0xFF8A95A8),
                                           ),
-
                                           border: InputBorder.none,
-                                          contentPadding:
-                                          EdgeInsets.all(13),
-
+                                          contentPadding: EdgeInsets.all(13),
                                         ),
                                       ),
                                     ),
@@ -2270,7 +2206,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                           height: 10,
                         ),
                         _buildRentDueReminderSwitch(),
-                      /*  SizedBox(
+                        /*  SizedBox(
                           height: 10,
                         ),*/
                         if (rentDueReminderEmail)
@@ -2282,9 +2218,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     child: Text(
                                       "You can set a duration for send reminder email before rent due date to tenant",
                                       style: TextStyle(
-                                          fontSize:
-                                          MediaQuery.of(context).size.width <
-                                              500
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
                                               ? 15
                                               : 20,
                                           color: Color(0xFF8A95A8),
@@ -2305,12 +2242,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     "Duration",
                                     style: TextStyle(
                                         fontSize:
-                                        MediaQuery.of(context)
-                                            .size
-                                            .width <
-                                            500
-                                            ? 15
-                                            : 20,
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 15
+                                                : 20,
                                         color: blueColor,
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -2325,14 +2260,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   Expanded(
                                     child: Container(
                                       height: 50,
-                                      width:
-                                      MediaQuery.of(context).size.width *
+                                      width: MediaQuery.of(context).size.width *
                                           .5,
                                       decoration: BoxDecoration(
                                         border: Border.all(color: grey),
                                         color: Colors.white,
-                                        borderRadius:
-                                        BorderRadius.circular(5),
+                                        borderRadius: BorderRadius.circular(5),
                                       ),
                                       child: Stack(
                                         children: [
@@ -2345,23 +2278,22 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 });
                                               },
                                               //  controller: password,
-                                              cursorColor: Color.fromRGBO(
-                                                  21, 43, 81, 1),
+                                              cursorColor:
+                                                  Color.fromRGBO(21, 43, 81, 1),
                                               decoration: InputDecoration(
                                                 // hintText: "Enter password",
                                                 hintStyle: TextStyle(
                                                   fontSize:
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                      .037,
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .037,
                                                   color: Color(0xFF8A95A8),
                                                 ),
 
                                                 border: InputBorder.none,
                                                 contentPadding:
-                                                EdgeInsets.all(13),
-
+                                                    EdgeInsets.all(13),
                                               ),
                                             ),
                                           ),
@@ -2373,7 +2305,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 ],
                               ),
                             ],
-                          ), SizedBox(height: 20),
+                          ),
+                        SizedBox(height: 20),
                         Row(
                           children: [
                             if (MediaQuery.of(context).size.width < 500)
@@ -2391,17 +2324,14 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 borderRadius: BorderRadius.circular(5.0),
                                 child: Container(
                                   height:
-                                  MediaQuery.of(context).size.width <
-                                      500
-                                      ? 35
-                                      : 50,
-                                  width: MediaQuery.of(context).size.width <
-                                      500
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 35
+                                          : 50,
+                                  width: MediaQuery.of(context).size.width < 500
                                       ? 100
                                       : 150,
                                   decoration: BoxDecoration(
-                                    borderRadius:
-                                    BorderRadius.circular(5.0),
+                                    borderRadius: BorderRadius.circular(5.0),
                                     color: blueColor,
                                     boxShadow: [
                                       BoxShadow(
@@ -2418,9 +2348,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
                                           fontSize: MediaQuery.of(context)
-                                              .size
-                                              .width <
-                                              500
+                                                      .size
+                                                      .width <
+                                                  500
                                               ? 16
                                               : 20),
                                     ),
@@ -2437,12 +2367,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                               },
                               child: Container(
                                   height:
-                                  MediaQuery.of(context).size.width <
-                                      500
-                                      ? 35
-                                      : 50,
-                                  width: MediaQuery.of(context).size.width <
-                                      500
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 35
+                                          : 50,
+                                  width: MediaQuery.of(context).size.width < 500
                                       ? 100
                                       : 120,
                                   decoration: BoxDecoration(
@@ -2453,16 +2381,15 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   ),
                                   child: Center(
                                       child: Text(
-                                        "Reset",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
+                                    "Reset",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
                                                 ? 16
                                                 : 20),
-                                      ))),
+                                  ))),
                             ),
                           ],
                         ),
@@ -2499,8 +2426,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 "You can set default Late fee charge from here",
                                 style: TextStyle(
                                     fontSize:
-                                        MediaQuery.of(context).size.width <
-                                                500
+                                        MediaQuery.of(context).size.width < 500
                                             ? 15
                                             : 20,
                                     color: Color(0xFF8A95A8),
@@ -2515,24 +2441,23 @@ class _TabBarExampleState extends State<TabBarExample> {
                         if (MediaQuery.of(context).size.width < 500)
                           Padding(
                             padding:
-                            const EdgeInsets.symmetric(horizontal: 2.0),
+                                const EdgeInsets.symmetric(horizontal: 2.0),
                             child: Row(
-                              mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 // First Column
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "Percentage",
                                         style: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
+                                                        .size
+                                                        .width <
+                                                    500
                                                 ? 15
                                                 : 20,
                                             color: blueColor,
@@ -2541,15 +2466,14 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       SizedBox(height: 5),
                                       Container(
                                         height: 50,
-                                        width: MediaQuery.of(context)
-                                            .size
-                                            .width *
-                                            .5,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .5,
                                         decoration: BoxDecoration(
                                           border: Border.all(color: grey),
                                           color: Colors.white,
                                           borderRadius:
-                                          BorderRadius.circular(5),
+                                              BorderRadius.circular(5),
                                         ),
                                         child: Stack(
                                           children: [
@@ -2562,22 +2486,16 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   });
                                                 },
                                                 //  controller: password,
-                                                cursorColor:
-                                                blueColor
-
-
-,
-                                                decoration:
-                                                InputDecoration(
+                                                cursorColor: blueColor,
+                                                decoration: InputDecoration(
                                                   // hintText: "Enter password",
                                                   hintStyle: TextStyle(
-                                                    fontSize: MediaQuery.of(
-                                                        context)
-                                                        .size
-                                                        .width *
-                                                        .037,
-                                                    color:
-                                                    Color(0xFF8A95A8),
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .037,
+                                                    color: Color(0xFF8A95A8),
                                                   ),
                                                   // enabledBorder: passworderror
                                                   //     ? OutlineInputBorder(
@@ -2588,18 +2506,17 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   //   ),
                                                   // )
                                                   //     : InputBorder.none,
-                                                  border:
-                                                  InputBorder.none,
+                                                  border: InputBorder.none,
                                                   contentPadding:
-                                                  EdgeInsets.all(13),
-                                                  suffixIcon: Icon(
-                                                    Icons.percent,
-                                                    color: blueColor
-
-
-,
-                                                    size: 18,
-                                                  ),
+                                                      EdgeInsets.all(13),
+//                                                   suffixIcon: Icon(
+//                                                     Icons.percent,
+//                                                     color: blueColor
+//
+//
+// ,
+//                                                     size: 18,
+//                                                   ),
                                                 ),
                                               ),
                                             ),
@@ -2614,15 +2531,15 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "Duration",
                                         style: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
+                                                        .size
+                                                        .width <
+                                                    500
                                                 ? 15
                                                 : 20,
                                             color: blueColor,
@@ -2631,15 +2548,14 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       SizedBox(height: 5),
                                       Container(
                                         height: 50,
-                                        width: MediaQuery.of(context)
-                                            .size
-                                            .width *
-                                            .5,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .5,
                                         decoration: BoxDecoration(
                                           border: Border.all(color: grey),
                                           color: Colors.white,
                                           borderRadius:
-                                          BorderRadius.circular(5),
+                                              BorderRadius.circular(5),
                                         ),
                                         child: Stack(
                                           children: [
@@ -2652,22 +2568,16 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   });
                                                 },
                                                 //  controller: password,
-                                                cursorColor:
-                                                blueColor
-
-
-,
-                                                decoration:
-                                                InputDecoration(
+                                                cursorColor: blueColor,
+                                                decoration: InputDecoration(
                                                   // hintText: "Enter password",
                                                   hintStyle: TextStyle(
-                                                    fontSize: MediaQuery.of(
-                                                        context)
-                                                        .size
-                                                        .width *
-                                                        .037,
-                                                    color:
-                                                    Color(0xFF8A95A8),
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .037,
+                                                    color: Color(0xFF8A95A8),
                                                   ),
                                                   // enabledBorder: passworderror
                                                   //     ? OutlineInputBorder(
@@ -2678,18 +2588,17 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   //   ),
                                                   // )
                                                   //     : InputBorder.none,
-                                                  border:
-                                                  InputBorder.none,
+                                                  border: InputBorder.none,
                                                   contentPadding:
-                                                  EdgeInsets.all(13),
-                                                  suffixIcon: Icon(
-                                                    Icons.percent,
-                                                    color: blueColor
-
-
-,
-                                                    size: 18,
-                                                  ),
+                                                      EdgeInsets.all(13),
+//                                                   suffixIcon: Icon(
+//                                                     Icons.percent,
+//                                                     color: blueColor
+//
+//
+// ,
+//                                                     size: 18,
+//                                                   ),
                                                 ),
                                               ),
                                             ),
@@ -2900,8 +2809,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 2.0),
                             child: Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 // First Column
                                 Expanded(
@@ -2924,8 +2832,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       SizedBox(height: 5),
                                       Material(
                                         elevation: 4,
-                                        borderRadius:
-                                            BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(10),
                                         child: Container(
                                           height: 50,
                                           width: MediaQuery.of(context)
@@ -2948,22 +2855,16 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                     });
                                                   },
                                                   //  controller: password,
-                                                  cursorColor:
-                                                      blueColor
-
-
-,
-                                                  decoration:
-                                                      InputDecoration(
+                                                  cursorColor: blueColor,
+                                                  decoration: InputDecoration(
                                                     // hintText: "Enter password",
                                                     hintStyle: TextStyle(
-                                                      fontSize: MediaQuery.of(
-                                                                  context)
-                                                              .size
-                                                              .width *
-                                                          .037,
-                                                      color:
-                                                          Color(0xFF8A95A8),
+                                                      fontSize:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .037,
+                                                      color: Color(0xFF8A95A8),
                                                     ),
                                                     // enabledBorder: passworderror
                                                     //     ? OutlineInputBorder(
@@ -2974,18 +2875,17 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                     //   ),
                                                     // )
                                                     //     : InputBorder.none,
-                                                    border:
-                                                        InputBorder.none,
+                                                    border: InputBorder.none,
                                                     contentPadding:
                                                         EdgeInsets.all(13),
-                                                    suffixIcon: Icon(
-                                                      Icons.percent,
-                                                      color: blueColor
-
-
-,
-                                                      size: 18,
-                                                    ),
+//                                                     suffixIcon: Icon(
+//                                                       Icons.percent,
+//                                                       color: blueColor
+//
+//
+// ,
+//                                                       size: 18,
+//                                                     ),
                                                   ),
                                                 ),
                                               ),
@@ -3018,8 +2918,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       SizedBox(height: 5),
                                       Material(
                                         elevation: 4,
-                                        borderRadius:
-                                            BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(10),
                                         child: Container(
                                           height: 50,
                                           width: MediaQuery.of(context)
@@ -3042,22 +2941,16 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                     });
                                                   },
                                                   //  controller: password,
-                                                  cursorColor:
-                                                      blueColor
-
-
-,
-                                                  decoration:
-                                                      InputDecoration(
+                                                  cursorColor: blueColor,
+                                                  decoration: InputDecoration(
                                                     // hintText: "Enter password",
                                                     hintStyle: TextStyle(
-                                                      fontSize: MediaQuery.of(
-                                                                  context)
-                                                              .size
-                                                              .width *
-                                                          .037,
-                                                      color:
-                                                          Color(0xFF8A95A8),
+                                                      fontSize:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .037,
+                                                      color: Color(0xFF8A95A8),
                                                     ),
                                                     // enabledBorder: passworderror
                                                     //     ? OutlineInputBorder(
@@ -3068,18 +2961,17 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                     //   ),
                                                     // )
                                                     //     : InputBorder.none,
-                                                    border:
-                                                        InputBorder.none,
+                                                    border: InputBorder.none,
                                                     contentPadding:
                                                         EdgeInsets.all(13),
-                                                    suffixIcon: Icon(
-                                                      Icons.percent,
-                                                      color: blueColor
-
-
-,
-                                                      size: 18,
-                                                    ),
+//                                                     suffixIcon: Icon(
+//                                                       Icons.percent,
+//                                                       color: blueColor
+//
+//
+// ,
+//                                                       size: 18,
+//                                                     ),
                                                   ),
                                                 ),
                                               ),
@@ -3111,17 +3003,14 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 borderRadius: BorderRadius.circular(5.0),
                                 child: Container(
                                   height:
-                                      MediaQuery.of(context).size.width <
-                                              500
+                                      MediaQuery.of(context).size.width < 500
                                           ? 35
                                           : 50,
-                                  width: MediaQuery.of(context).size.width <
-                                          500
+                                  width: MediaQuery.of(context).size.width < 500
                                       ? 100
                                       : 150,
                                   decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.circular(5.0),
+                                    borderRadius: BorderRadius.circular(5.0),
                                     color: blueColor,
                                     boxShadow: [
                                       BoxShadow(
@@ -3193,111 +3082,139 @@ class _TabBarExampleState extends State<TabBarExample> {
                         ),
                       ],
                     ),
-                  if(isaccounts)
+                  if (isaccounts)
                     Column(
-                        children: [
-                          SizedBox(
-                              height:15
-                          ),
-                          Row(
-                            children: [
-                              Text("Manage Account",style: TextStyle(
+                      children: [
+                        SizedBox(height: 15),
+                        Row(
+                          children: [
+                            Text(
+                              "Manage Account",
+                              style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                  color: blueColor,
-                                fontSize: MediaQuery.of(context).size.width < 500
-                                    ? 18
-                                    : 25,
-                              ),),
-                              Spacer(),
-                              GestureDetector(
-                                onTap: () async {
-                                  _showAccount(
-                                      context);
-                                },
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  child: Container(
-                                    height:
-                                    MediaQuery.of(context).size.height * .045,
-                                    width: MediaQuery.of(context).size.width < 500 ? 120 : 180,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5.0),
-                                      color: blueColor,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey,
-                                          offset: Offset(0.0, 1.0), //(x,y)
-                                          blurRadius: 6.0,
-                                        ),
-                                      ],
-                                    ),
-                                    child: Center(
-                                      child: isLoading
-                                          ? SpinKitFadingCircle(
-                                        color: Colors.white,
-                                        size: 25.0,
-                                      )
-                                          : Text(
-                                        "Add Account",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 18),
+                                color: blueColor,
+                                fontSize:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 18
+                                        : 25,
+                              ),
+                            ),
+                            Spacer(),
+                            GestureDetector(
+                              onTap: () async {
+                                _showAccount(context);
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(5.0),
+                                child: Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * .045,
+                                  width: MediaQuery.of(context).size.width < 500
+                                      ? 120
+                                      : 180,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    color: blueColor,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey,
+                                        offset: Offset(0.0, 1.0), //(x,y)
+                                        blurRadius: 6.0,
                                       ),
-                                    ),
+                                    ],
+                                  ),
+                                  child: Center(
+                                    child: isLoading
+                                        ? SpinKitFadingCircle(
+                                            color: Colors.white,
+                                            size: 25.0,
+                                          )
+                                        : Text(
+                                            "Add Account",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: MediaQuery.of(context)
+                                                            .size
+                                                            .width <
+                                                        500
+                                                    ? 15
+                                                    : 18),
+                                          ),
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                          SizedBox(
-                              height:15
-                          ),
-                          if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
-                          if (MediaQuery.of(context).size.width < 500)
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 15),
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(height: 25),
+                        if (MediaQuery.of(context).size.width < 500)
                           if (MediaQuery.of(context).size.width < 500)
                             FutureBuilder<List<Setting4>>(
                               future: futureaccount,
                               builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
                                   return ColabShimmerLoadingWidget();
                                 } else if (snapshot.hasError) {
-                                  return Center(child: Text('Error: ${snapshot.error}'));
-                                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                  return Center(
+                                      child: Text('Error: ${snapshot.error}'));
+                                } else if (!snapshot.hasData ||
+                                    snapshot.data!.isEmpty) {
                                   return Container(
-                                    height: MediaQuery.of(context).size.height * .5,
+                                    height:
+                                        MediaQuery.of(context).size.height * .5,
                                     child: Center(
                                       child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
                                         children: [
-                                          Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
-                                          SizedBox(height: 10,),
-                                          Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                                          Image.asset(
+                                            "assets/images/no_data.jpg",
+                                            height: 200,
+                                            width: 200,
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            "No Data Available",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: blueColor,
+                                                fontSize: 16),
+                                          )
                                         ],
                                       ),
                                     ),
                                   );
                                 } else {
                                   var data = snapshot.data!;
-                                  if (searchValue == null || searchValue!.isEmpty) {
+                                  if (searchValue == null ||
+                                      searchValue!.isEmpty) {
                                     data = snapshot.data!;
                                   } else if (searchValue == "All") {
                                     data = snapshot.data!;
                                   } else if (searchValue!.isNotEmpty) {
                                     data = snapshot.data!
                                         .where((staff) => staff.account!
-                                        .toLowerCase()
-                                        .contains(searchValue!.toLowerCase()))
+                                            .toLowerCase()
+                                            .contains(
+                                                searchValue!.toLowerCase()))
                                         .toList();
                                   } else {
                                     data = snapshot.data!
-                                        .where(
-                                            (staff) => staff.accountType == searchValue)
+                                        .where((staff) =>
+                                            staff.accountType == searchValue)
                                         .toList();
                                   }
                                   sortData(data);
-                                  final totalPages = (data.length / itemsPerPage).ceil();
+                                  final totalPages =
+                                      (data.length / itemsPerPage).ceil();
                                   final currentPageData = data
                                       .skip(currentPage * itemsPerPage)
                                       .take(itemsPerPage)
@@ -3310,11 +3227,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                         SizedBox(height: 20),
                                         Container(
                                           decoration: BoxDecoration(
-                                              border: Border.all(color:  Color.fromRGBO(
-                                                  152, 162, 179, .5)
-
-
-)),
+                                              border: Border.all(
+                                                  color: Color.fromRGBO(
+                                                      152, 162, 179, .5))),
                                           // decoration: BoxDecoration(
                                           //     border: Border.all(color: blueColor)),
                                           child: Column(
@@ -3323,17 +3238,19 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 .entries
                                                 .map((entry) {
                                               int index = entry.key;
-                                              bool isExpanded = expandedIndex == index;
+                                              bool isExpanded =
+                                                  expandedIndex == index;
                                               Setting4 account = entry.value;
                                               //return CustomExpansionTile(data: Propertytype, index: index);
                                               return Container(
                                                 decoration: BoxDecoration(
-                                                  color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                                  border: Border.all(color:  Color.fromRGBO(
-                                                      152, 162, 179, .5)
-
-
-),
+                                                  color: index % 2 != 0
+                                                      ? Colors.white
+                                                      : blueColor
+                                                          .withOpacity(0.09),
+                                                  border: Border.all(
+                                                      color: Color.fromRGBO(
+                                                          152, 162, 179, .5)),
                                                 ),
                                                 // decoration: BoxDecoration(
                                                 //   border: Border.all(color: blueColor),
@@ -3341,14 +3258,19 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 child: Column(
                                                   children: <Widget>[
                                                     ListTile(
-                                                      contentPadding: EdgeInsets.zero,
+                                                      contentPadding:
+                                                          EdgeInsets.zero,
                                                       title: Padding(
-                                                        padding: const EdgeInsets.all(2.0),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(2.0),
                                                         child: Row(
                                                           mainAxisAlignment:
-                                                          MainAxisAlignment.start,
+                                                              MainAxisAlignment
+                                                                  .start,
                                                           crossAxisAlignment:
-                                                          CrossAxisAlignment.center,
+                                                              CrossAxisAlignment
+                                                                  .center,
                                                           children: <Widget>[
                                                             InkWell(
                                                               onTap: () {
@@ -3368,133 +3290,161 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                 setState(() {
                                                                   if (expandedIndex ==
                                                                       index) {
-                                                                    expandedIndex = null;
+                                                                    expandedIndex =
+                                                                        null;
                                                                   } else {
-                                                                    expandedIndex = index;
+                                                                    expandedIndex =
+                                                                        index;
                                                                   }
                                                                 });
                                                               },
                                                               child: Container(
-                                                                margin: EdgeInsets.only(
-                                                                    left: 5,right: 5),
+                                                                margin: EdgeInsets
+                                                                    .only(
+                                                                        left: 5,
+                                                                        right:
+                                                                            5),
                                                                 padding: !isExpanded
                                                                     ? EdgeInsets.only(
-                                                                    bottom: 10)
-                                                                    : EdgeInsets.only(
-                                                                    top: 10),
+                                                                        bottom:
+                                                                            10)
+                                                                    : EdgeInsets
+                                                                        .only(
+                                                                            top:
+                                                                                10),
                                                                 child: FaIcon(
                                                                   isExpanded
                                                                       ? FontAwesomeIcons
-                                                                      .sortUp
+                                                                          .sortUp
                                                                       : FontAwesomeIcons
-                                                                      .sortDown,
+                                                                          .sortDown,
                                                                   size: 20,
-                                                                  color: blueColor
-
-
-,
+                                                                  color:
+                                                                      blueColor,
                                                                 ),
                                                               ),
                                                             ),
                                                             Expanded(
                                                               child: InkWell(
-                                                                onTap:(){
+                                                                onTap: () {
                                                                   setState(() {
                                                                     if (expandedIndex ==
                                                                         index) {
-                                                                      expandedIndex = null;
+                                                                      expandedIndex =
+                                                                          null;
                                                                     } else {
-                                                                      expandedIndex = index;
+                                                                      expandedIndex =
+                                                                          index;
                                                                     }
                                                                   });
                                                                 },
                                                                 child: Text(
                                                                   '${account.account}',
-                                                                  style: TextStyle(
-                                                                    color: blueColor,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color:
+                                                                        blueColor,
                                                                     fontWeight:
-                                                                    FontWeight.bold,
-                                                                    fontSize: 13,
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize:
+                                                                        13,
                                                                   ),
                                                                 ),
                                                               ),
                                                             ),
                                                             SizedBox(
-                                                                width:
-                                                                MediaQuery.of(context)
-                                                                    .size
-                                                                    .width *
+                                                                width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
                                                                     .08),
                                                             Expanded(
                                                               child: Text(
                                                                 '${account.accountType}',
-                                                                style: TextStyle(
-                                                                  color: blueColor,
+                                                                style:
+                                                                    TextStyle(
+                                                                  color:
+                                                                      blueColor,
                                                                   fontWeight:
-                                                                  FontWeight.bold,
+                                                                      FontWeight
+                                                                          .bold,
                                                                   fontSize: 13,
                                                                 ),
                                                               ),
                                                             ),
                                                             SizedBox(
-                                                                width:
-                                                                MediaQuery.of(context)
-                                                                    .size
-                                                                    .width *
+                                                                width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
                                                                     .08),
                                                             Expanded(
                                                               child: Text(
                                                                 '${account.fundType}',
-                                                                style: TextStyle(
-                                                                  color: blueColor,
+                                                                style:
+                                                                    TextStyle(
+                                                                  color:
+                                                                      blueColor,
                                                                   fontWeight:
-                                                                  FontWeight.bold,
+                                                                      FontWeight
+                                                                          .bold,
                                                                   fontSize: 13,
                                                                 ),
                                                               ),
                                                             ),
                                                             SizedBox(
-                                                                width:
-                                                                MediaQuery.of(context)
-                                                                    .size
-                                                                    .width *
+                                                                width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
                                                                     .02),
                                                           ],
                                                         ),
                                                       ),
                                                     ),
-
                                                     if (isExpanded)
                                                       Container(
-                                                        padding: EdgeInsets.only(left: 2,right: 2),
-                                                        margin: EdgeInsets.only(bottom: 2),
-                                                        child: SingleChildScrollView(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 2,
+                                                                right: 2),
+                                                        margin: EdgeInsets.only(
+                                                            bottom: 2),
+                                                        child:
+                                                            SingleChildScrollView(
                                                           child: Container(
                                                             //color: Colors.blue,
                                                             child: Column(
                                                               children: [
                                                                 Row(
-                                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
                                                                   children: [
                                                                     Row(
                                                                       mainAxisAlignment:
-                                                                      MainAxisAlignment.start,
+                                                                          MainAxisAlignment
+                                                                              .start,
                                                                       children: [
                                                                         FaIcon(
                                                                           isExpanded
-                                                                              ? FontAwesomeIcons
-                                                                              .sortUp
-                                                                              : FontAwesomeIcons
-                                                                              .sortDown,
-                                                                          size: 50,
+                                                                              ? FontAwesomeIcons.sortUp
+                                                                              : FontAwesomeIcons.sortDown,
+                                                                          size:
+                                                                              50,
                                                                           color:
-                                                                          Colors.transparent,
+                                                                              Colors.transparent,
                                                                         ),
                                                                       ],
                                                                     ),
                                                                     Column(
-                                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .start,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
                                                                       children: [
                                                                         Text.rich(
                                                                           TextSpan(
@@ -3518,8 +3468,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                         ),
                                                                         SizedBox(
                                                                             height:
-                                                                            5),
-
+                                                                                5),
                                                                       ],
                                                                     ),
                                                                     Spacer(),
@@ -3560,7 +3509,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                     //     ],
                                                                     //   ),
                                                                     // ),
-                                                                    SizedBox(width: 5),
+                                                                    SizedBox(
+                                                                        width:
+                                                                            5),
                                                                   ],
                                                                 ),
                                                                 SizedBox(
@@ -3570,35 +3521,44 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                   //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                   children: [
                                                                     Expanded(
-                                                                      child: GestureDetector(
-                                                                        onTap:(){
-                                                                          _showDeleteAlert(context, account.accountId!);
+                                                                      child:
+                                                                          GestureDetector(
+                                                                        onTap:
+                                                                            () {
+                                                                          _showDeleteAlert(
+                                                                              context,
+                                                                              account.accountId!);
                                                                         },
-                                                                        child: Container(
-                                                                          height:40,
-                                                                          decoration: BoxDecoration(
-                                                                              color: Colors.grey[350]
-                                                                          ),
-                                                                          child: Row(
+                                                                        child:
+                                                                            Container(
+                                                                          height:
+                                                                              40,
+                                                                          decoration:
+                                                                              BoxDecoration(color: Colors.grey[350]),
+                                                                          child:
+                                                                              Row(
                                                                             mainAxisAlignment:
-                                                                            MainAxisAlignment.center,
+                                                                                MainAxisAlignment.center,
                                                                             crossAxisAlignment:
-                                                                            CrossAxisAlignment.center,
+                                                                                CrossAxisAlignment.center,
                                                                             children: [
                                                                               FaIcon(
                                                                                 FontAwesomeIcons.trashCan,
                                                                                 size: 15,
-                                                                                color:blueColor,
+                                                                                color: blueColor,
                                                                               ),
-                                                                              SizedBox(width: 10,),
-                                                                              Text("Delete",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
+                                                                              SizedBox(
+                                                                                width: 10,
+                                                                              ),
+                                                                              Text(
+                                                                                "Delete",
+                                                                                style: TextStyle(color: blueColor, fontWeight: FontWeight.bold),
+                                                                              )
                                                                             ],
                                                                           ),
                                                                         ),
                                                                       ),
                                                                     ),
-
-
                                                                   ],
                                                                 ),
                                                               ],
@@ -3614,7 +3574,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                         ),
                                         SizedBox(height: 20),
                                         Row(
-                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
                                           children: [
                                             Row(
                                               children: [
@@ -3624,29 +3585,40 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   elevation: 3,
                                                   child: Container(
                                                     height: 40,
-                                                    padding: EdgeInsets.symmetric(
-                                                        horizontal: 12.0),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 12.0),
                                                     decoration: BoxDecoration(
-                                                      border:
-                                                      Border.all(color: Colors.grey),
+                                                      border: Border.all(
+                                                          color: Colors.grey),
                                                     ),
-                                                    child: DropdownButtonHideUnderline(
-                                                      child: DropdownButton<int>(
+                                                    child:
+                                                        DropdownButtonHideUnderline(
+                                                      child:
+                                                          DropdownButton<int>(
                                                         value: itemsPerPage,
-                                                        items: itemsPerPageOptions
-                                                            .map((int value) {
-                                                          return DropdownMenuItem<int>(
+                                                        items:
+                                                            itemsPerPageOptions
+                                                                .map((int
+                                                                    value) {
+                                                          return DropdownMenuItem<
+                                                              int>(
                                                             value: value,
-                                                            child: Text(value.toString()),
+                                                            child: Text(value
+                                                                .toString()),
                                                           );
                                                         }).toList(),
-                                                        onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                                        onChanged: data.length >
+                                                                itemsPerPageOptions
+                                                                    .first // Condition to check if dropdown should be enabled
                                                             ? (newValue) {
-                                                          setState(() {
-                                                            itemsPerPage = newValue!;
-                                                            currentPage = 0; // Reset to first page when items per page change
-                                                          });
-                                                        }
+                                                                setState(() {
+                                                                  itemsPerPage =
+                                                                      newValue!;
+                                                                  currentPage =
+                                                                      0; // Reset to first page when items per page change
+                                                                });
+                                                              }
                                                             : null,
                                                       ),
                                                     ),
@@ -3658,7 +3630,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                               children: [
                                                 IconButton(
                                                   icon: FaIcon(
-                                                    FontAwesomeIcons.circleChevronLeft,
+                                                    FontAwesomeIcons
+                                                        .circleChevronLeft,
                                                     color: currentPage == 0
                                                         ? Colors.grey
                                                         : blueColor,
@@ -3666,10 +3639,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   onPressed: currentPage == 0
                                                       ? null
                                                       : () {
-                                                    setState(() {
-                                                      currentPage--;
-                                                    });
-                                                  },
+                                                          setState(() {
+                                                            currentPage--;
+                                                          });
+                                                        },
                                                 ),
                                                 // IconButton(
                                                 //   icon: Icon(Icons.arrow_back),
@@ -3695,17 +3668,20 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 // ),
                                                 IconButton(
                                                   icon: FaIcon(
-                                                    FontAwesomeIcons.circleChevronRight,
-                                                    color: currentPage < totalPages - 1
+                                                    FontAwesomeIcons
+                                                        .circleChevronRight,
+                                                    color: currentPage <
+                                                            totalPages - 1
                                                         ? blueColor
                                                         : Colors.grey,
                                                   ),
-                                                  onPressed: currentPage < totalPages - 1
+                                                  onPressed: currentPage <
+                                                          totalPages - 1
                                                       ? () {
-                                                    setState(() {
-                                                      currentPage++;
-                                                    });
-                                                  }
+                                                          setState(() {
+                                                            currentPage++;
+                                                          });
+                                                        }
                                                       : null,
                                                 ),
                                               ],
@@ -3718,141 +3694,179 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 }
                               },
                             ),
-                          if (MediaQuery.of(context).size.width > 500)
-                            FutureBuilder<List<Setting4>>(
-                              future: futureaccount,
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return ShimmerTabletTable();
-                                } else if (snapshot.hasError) {
-                                  return Center(child: Text('Error: ${snapshot.error}'));
-                                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                  return Container(
-                                    height: MediaQuery.of(context).size.height * .5,
-                                    child: Center(
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
-                                          SizedBox(height: 10,),
-                                          Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  List<Setting4>? filteredData = [];
-                                  if (selectedRole == null && searchValue == "") {
-                                    filteredData = snapshot.data;
-                                  } else if (selectedRole == "All") {
-                                    filteredData = snapshot.data;
-                                  } else if (searchValue.isNotEmpty) {
-                                    filteredData = snapshot.data!
-                                        .where((staff) =>
-                                    staff.account!
-                                        .toLowerCase()
-                                        .contains(searchValue.toLowerCase()) ||
-                                        staff.accountType!
-                                            .toLowerCase()
-                                            .contains(searchValue.toLowerCase()))
-                                        .toList();
-                                  } else {
-                                    filteredData = snapshot.data!
-                                        .where((staff) =>
-                                    staff.accountType == selectedRole)
-                                        .toList();
-                                  }
-                                  //_tableData = snapshot.data!;
-                                  // _tableData = snapshot.data!;
-                                  _tableData = filteredData!;
-                                  totalrecords = _tableData.length;
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 5.0, vertical: 5),
+                        if (MediaQuery.of(context).size.width > 500)
+                          FutureBuilder<List<Setting4>>(
+                            future: futureaccount,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return ShimmerTabletTable();
+                              } else if (snapshot.hasError) {
+                                return Center(
+                                    child: Text('Error: ${snapshot.error}'));
+                              } else if (!snapshot.hasData ||
+                                  snapshot.data!.isEmpty) {
+                                return Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * .5,
+                                  child: Center(
                                     child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
-                                        SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          child: Container(
-                                            width: MediaQuery.of(context).size.width * .91,
-                                            child: Table(
-                                              defaultColumnWidth: IntrinsicColumnWidth(),
-                                              children: [
-                                                TableRow(
-                                                  decoration:
-                                                  BoxDecoration(border: Border.all()),
-                                                  children: [
-                                                    _buildHeader('Account', 0,
-                                                            (staff) => staff.account!),
-                                                    _buildHeader(
-                                                        'Type',
-                                                        1,
-                                                            (staff) =>
-                                                        staff.accountType!),
-                                                    _buildHeader('ChargeType', 2, null),
-                                                    _buildHeader('FundType', 3, null),
-                                                    _buildHeader('Actions', 4, null),
-                                                  ],
-                                                ),
-                                                TableRow(
-                                                  decoration: BoxDecoration(
-                                                    border: Border.symmetric(
-                                                        horizontal: BorderSide.none),
-                                                  ),
-                                                  children: List.generate(
-                                                      5,
-                                                          (index) => TableCell(
-                                                          child: Container(height: 20))),
-                                                ),
-                                                for (var i = 0; i < _pagedData.length; i++)
-                                                  TableRow(
-                                                    decoration: BoxDecoration(
-                                                      border: Border(
-                                                        left: BorderSide(
-                                                            color: Color.fromRGBO(
-                                                                21, 43, 81, 1)),
-                                                        right: BorderSide(
-                                                            color: Color.fromRGBO(
-                                                                21, 43, 81, 1)),
-                                                        top: BorderSide(
-                                                            color: Color.fromRGBO(
-                                                                21, 43, 81, 1)),
-                                                        bottom: i == _pagedData.length - 1
-                                                            ? BorderSide(
-                                                            color: Color.fromRGBO(
-                                                                21, 43, 81, 1))
-                                                            : BorderSide.none,
-                                                      ),
-                                                    ),
-                                                    children: [
-                                                      _buildDataCell(
-                                                          _pagedData[i].account!),
-                                                      _buildDataCell(_pagedData[i]
-                                                          .accountType!),
-                                                      _buildDataCell(
-                                                          _pagedData[i].chargeType!),
-                                                      _buildDataCell(_pagedData[i]
-                                                          .fundType!),
-                                                      _buildActionsCell(_pagedData[i]),
-                                                    ],
-                                                  ),
-                                              ],
-                                            ),
-                                          ),
+                                        Image.asset(
+                                          "assets/images/no_data.jpg",
+                                          height: 200,
+                                          width: 200,
                                         ),
-                                        SizedBox(height: 25),
-                                        _buildPaginationControls(),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text(
+                                          "No Data Available",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor,
+                                              fontSize: 16),
+                                        )
                                       ],
                                     ),
-                                  );
+                                  ),
+                                );
+                              } else {
+                                List<Setting4>? filteredData = [];
+                                if (selectedRole == null && searchValue == "") {
+                                  filteredData = snapshot.data;
+                                } else if (selectedRole == "All") {
+                                  filteredData = snapshot.data;
+                                } else if (searchValue.isNotEmpty) {
+                                  filteredData = snapshot.data!
+                                      .where((staff) =>
+                                          staff.account!.toLowerCase().contains(
+                                              searchValue.toLowerCase()) ||
+                                          staff.accountType!
+                                              .toLowerCase()
+                                              .contains(
+                                                  searchValue.toLowerCase()))
+                                      .toList();
+                                } else {
+                                  filteredData = snapshot.data!
+                                      .where((staff) =>
+                                          staff.accountType == selectedRole)
+                                      .toList();
                                 }
-                              },
-                            ),
-
-                        ],
+                                //_tableData = snapshot.data!;
+                                // _tableData = snapshot.data!;
+                                _tableData = filteredData!;
+                                totalrecords = _tableData.length;
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 5.0, vertical: 5),
+                                  child: Column(
+                                    children: [
+                                      SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .91,
+                                          child: Table(
+                                            defaultColumnWidth:
+                                                IntrinsicColumnWidth(),
+                                            children: [
+                                              TableRow(
+                                                decoration: BoxDecoration(
+                                                    border: Border.all()),
+                                                children: [
+                                                  _buildHeader(
+                                                      'Account',
+                                                      0,
+                                                      (staff) =>
+                                                          staff.account!),
+                                                  _buildHeader(
+                                                      'Type',
+                                                      1,
+                                                      (staff) =>
+                                                          staff.accountType!),
+                                                  _buildHeader(
+                                                      'ChargeType', 2, null),
+                                                  _buildHeader(
+                                                      'FundType', 3, null),
+                                                  _buildHeader(
+                                                      'Actions', 4, null),
+                                                ],
+                                              ),
+                                              TableRow(
+                                                decoration: BoxDecoration(
+                                                  border: Border.symmetric(
+                                                      horizontal:
+                                                          BorderSide.none),
+                                                ),
+                                                children: List.generate(
+                                                    5,
+                                                    (index) => TableCell(
+                                                        child: Container(
+                                                            height: 20))),
+                                              ),
+                                              for (var i = 0;
+                                                  i < _pagedData.length;
+                                                  i++)
+                                                TableRow(
+                                                  decoration: BoxDecoration(
+                                                    border: Border(
+                                                      left: BorderSide(
+                                                          color: Color.fromRGBO(
+                                                              21, 43, 81, 1)),
+                                                      right: BorderSide(
+                                                          color: Color.fromRGBO(
+                                                              21, 43, 81, 1)),
+                                                      top: BorderSide(
+                                                          color: Color.fromRGBO(
+                                                              21, 43, 81, 1)),
+                                                      bottom: i ==
+                                                              _pagedData
+                                                                      .length -
+                                                                  1
+                                                          ? BorderSide(
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                      21,
+                                                                      43,
+                                                                      81,
+                                                                      1))
+                                                          : BorderSide.none,
+                                                    ),
+                                                  ),
+                                                  children: [
+                                                    _buildDataCell(
+                                                        _pagedData[i].account!),
+                                                    _buildDataCell(_pagedData[i]
+                                                        .accountType!),
+                                                    _buildDataCell(_pagedData[i]
+                                                        .chargeType!),
+                                                    _buildDataCell(_pagedData[i]
+                                                        .fundType!),
+                                                    _buildActionsCell(
+                                                        _pagedData[i]),
+                                                  ],
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 25),
+                                      _buildPaginationControls(),
+                                    ],
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                      ],
                     ),
-
                 ],
               ),
             ),
@@ -3861,6 +3875,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       ),
     );
   }
+
   Widget _buildRentDueReminderSwitch() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -3876,7 +3891,9 @@ class _TabBarExampleState extends State<TabBarExample> {
             activeColor: blueColor, // Color when switch is on
             inactiveThumbColor: Colors.grey, // Color when switch is off
           ),
-          SizedBox(width: 10,),
+          SizedBox(
+            width: 10,
+          ),
           Text(
             'Rent Due Reminder Email',
             style: TextStyle(
@@ -3885,12 +3902,11 @@ class _TabBarExampleState extends State<TabBarExample> {
               color: blueColor,
             ),
           ),
-
-
         ],
       ),
     );
   }
+
   final List<String> accountitems = [
     'Liability Account',
     'Recurring Charge',
@@ -3898,7 +3914,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   ];
   final List<String> accounttypeitems = [
     'Income',
-  'Non Operating Income',
+    'Non Operating Income',
     'Liability Account',
   ];
   final List<String> fundtypeitems = [
@@ -3911,8 +3927,8 @@ class _TabBarExampleState extends State<TabBarExample> {
   String? _selectedFundtype;
   bool isError = false;
 
-   TextEditingController accountname = TextEditingController();
-   TextEditingController note = TextEditingController();
+  TextEditingController accountname = TextEditingController();
+  TextEditingController note = TextEditingController();
 
   // void _showAccountType(BuildContext context) {
   //   showDialog(
@@ -4021,7 +4037,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                   Navigator.pop(context);
                 },
                 child: Container(
-                   height: 40,
+                  height: 40,
                   decoration: BoxDecoration(
                     color: blueColor,
                     borderRadius: BorderRadius.circular(3),
@@ -4053,7 +4069,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                     SizedBox(height: 20),
                     CustomDropdown(
                       validator: (value) {
-                        if (_selectedAccount == null ) {
+                        if (_selectedAccount == null) {
                           return 'Please select an account';
                         }
                         return null;
@@ -4404,7 +4420,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                   SizedBox(height: 10),
                   CustomDropdown(
                     validator: (value) {
-                      if (_selectedFundtype == null ) {
+                      if (_selectedFundtype == null) {
                         return 'Please select a fund type';
                       }
                       return null;
@@ -4457,7 +4473,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 isError = false;
                               });
 
-                              SharedPreferences prefs = await SharedPreferences.getInstance();
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
                               String? id = prefs.getString("adminId");
 
                               try {
@@ -4491,12 +4508,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                             child: Center(
                               child: isLoading
                                   ? CircularProgressIndicator(
-                                color: Colors.white,
-                              )
+                                      color: Colors.white,
+                                    )
                                   : Text(
-                                'Add',
-                                style: TextStyle(color: Colors.white),
-                              ),
+                                      'Add',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                             ),
                           ),
                         ),
@@ -4540,6 +4557,4 @@ class _TabBarExampleState extends State<TabBarExample> {
       },
     );
   }
-
-
 }
