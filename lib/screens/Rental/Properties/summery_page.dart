@@ -91,8 +91,8 @@ class _Summery_pageState extends State<Summery_page>
   ScrollController _scrollController = ScrollController();
   late Future<List<TenantData>> futurePropertysummery;
   late Future<Rentals> futureRentalDetails;
-  late Future<List<Properties_lease_model>> futureLeaseDetails;
-  late Future<List<Properties_Revenu_model>> futureLeaseRevenueDetails;
+  Future<List<Properties_lease_model>>? futureLeaseDetails;
+  Future<List<Properties_Revenu_model>>? futureLeaseRevenueDetails;
   late Future<List<unit_properties>> futureUnitsummery;
   late Future<List<Rentals>> futurerentalowners;
   int _selectedIndex = 0;
@@ -169,14 +169,14 @@ class _Summery_pageState extends State<Summery_page>
         _connectivityResult = result;
       });
     });
-    
+
     // Add scroll listener to update UI when scrolling
     _scrollController.addListener(() {
       setState(() {
         // This will trigger a rebuild to update arrow colors
       });
     });
-    
+
     checkInternet();
     _fetchData();
     futureUnitsummery =
@@ -1813,17 +1813,17 @@ class _Summery_pageState extends State<Summery_page>
                         final bool isMultiUnit =
                             snapshot.data?.propertyTypeData?.isMultiunit ??
                                 false;
-                        
+
                         // Create list of tab items
                         List<Map<String, dynamic>> tabItems = [
                           {"title": "Summary", "index": 0},
                         ];
-                        
+
                         if (isMultiUnit) {
                           tabItems
                               .add({"title": "Unit ($unitCount)", "index": 1});
                         }
-                        
+
                         tabItems.addAll([
                           {
                             "title": "Tenant ($tenentCount)",
@@ -1863,7 +1863,7 @@ class _Summery_pageState extends State<Summery_page>
                                   constraints: BoxConstraints(),
                                 ),
                               ),
-                            
+
                             // Scrollable tab content
                             Expanded(
                               child: SingleChildScrollView(
@@ -1874,7 +1874,7 @@ class _Summery_pageState extends State<Summery_page>
                                   children: tabItems.map((tab) {
                                     int tabIndex = tab["index"];
                                     String title = tab["title"];
-                                    
+
                                     return Container(
                                       margin:
                                           EdgeInsets.symmetric(horizontal: 3),
@@ -1910,22 +1910,22 @@ class _Summery_pageState extends State<Summery_page>
                                             ),
                                             boxShadow:
                                                 _selectedIndex == tabIndex
-                                                ? [
-                                                    BoxShadow(
+                                                    ? [
+                                                        BoxShadow(
                                                           color: blueColor
                                                               .withOpacity(0.3),
-                                                      blurRadius: 4,
-                                                      offset: Offset(0, 2),
-                                                    )
-                                                  ]
-                                                : [
-                                                    BoxShadow(
+                                                          blurRadius: 4,
+                                                          offset: Offset(0, 2),
+                                                        )
+                                                      ]
+                                                    : [
+                                                        BoxShadow(
                                                           color: Colors.grey
                                                               .withOpacity(0.1),
-                                                      blurRadius: 2,
-                                                      offset: Offset(0, 1),
-                                                    )
-                                                  ],
+                                                          blurRadius: 2,
+                                                          offset: Offset(0, 1),
+                                                        )
+                                                      ],
                                           ),
                                           child: Center(
                                             child: Text(
@@ -1935,8 +1935,8 @@ class _Summery_pageState extends State<Summery_page>
                                                 fontWeight: FontWeight.w600,
                                                 color:
                                                     _selectedIndex == tabIndex
-                                                    ? Colors.white
-                                                    : blueColor,
+                                                        ? Colors.white
+                                                        : blueColor,
                                                 fontSize: 15,
                                               ),
                                             ),
@@ -1948,9 +1948,9 @@ class _Summery_pageState extends State<Summery_page>
                                 ),
                               ),
                             ),
-                            
+
                             // Right arrow button - only show if not at the end
-                            if (_scrollController.hasClients && 
+                            if (_scrollController.hasClients &&
                                 _scrollController.offset <
                                     _scrollController.position.maxScrollExtent)
                               Container(
@@ -2082,7 +2082,7 @@ class _Summery_pageState extends State<Summery_page>
           Padding(
             padding: const EdgeInsets.all(5.0),
             child: FutureBuilder<List<Properties_lease_model>>(
-              future: futureLeaseDetails,
+              future: futureLeaseDetails ?? Future.value([]),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
@@ -2324,7 +2324,7 @@ class _Summery_pageState extends State<Summery_page>
           Padding(
             padding: const EdgeInsets.all(5.0),
             child: FutureBuilder<List<Properties_Revenu_model>>(
-              future: futureLeaseRevenueDetails,
+              future: futureLeaseRevenueDetails ?? Future.value([]),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
@@ -2513,7 +2513,7 @@ class _Summery_pageState extends State<Summery_page>
         }
         final bool isMultiUnit =
             snapshot.data?.propertyTypeData?.isMultiunit ?? false;
-       
+
         if (_selectedIndex == 0) {
           return Summary_page();
         } else if (_selectedIndex == 1) {
@@ -2530,7 +2530,7 @@ class _Summery_pageState extends State<Summery_page>
           } else {
             return Workorder(context);
           }
-                } else if (_selectedIndex == 3) {
+        } else if (_selectedIndex == 3) {
           if (isMultiUnit) {
             return Workorder(context);
           } else {
@@ -3054,7 +3054,7 @@ class _Summery_pageState extends State<Summery_page>
                                             color: Color(
                                                 0x4D636363), // Translucent gray border
                                             width: 1.0,
-                                        ),
+                                          ),
                                         ),
                                         child: Column(
                                           children: <Widget>[
@@ -3117,10 +3117,10 @@ class _Summery_pageState extends State<Summery_page>
                                                     SizedBox(width: 8),
                                                     Text(
                                                       'Rental Owner',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                         fontSize: 14,
                                                       ),
                                                     ),
@@ -3565,8 +3565,8 @@ class _Summery_pageState extends State<Summery_page>
                                         ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: blueColor,
-                          ),
-                          onPressed: () async {
+                                          ),
+                                          onPressed: () async {
                                             SharedPreferences prefs =
                                                 await SharedPreferences
                                                     .getInstance();
@@ -3986,7 +3986,7 @@ class _Summery_pageState extends State<Summery_page>
                   height: 10,
                 ),
                 Container(
-                          decoration: BoxDecoration(
+                  decoration: BoxDecoration(
                     color: Color(0xFFEAF1FB),
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(16),
@@ -4027,14 +4027,14 @@ class _Summery_pageState extends State<Summery_page>
                                         ? FontAwesomeIcons.sortUp
                                         : FontAwesomeIcons.sortDown,
                                     size: 20,
-                            color: blueColor,
+                                    color: blueColor,
                                   ),
                                 ),
                               ),
                               SizedBox(width: 8),
                               Text(
                                 'Staff Details',
-                                  style: TextStyle(
+                                style: TextStyle(
                                   color: blueColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
@@ -4048,16 +4048,16 @@ class _Summery_pageState extends State<Summery_page>
                         Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
-                                      color: Colors.white,
+                            color: Colors.white,
                             border: Border(
                               top: BorderSide(
                                 color: Color(0x4D636363),
                                 width: 1.0,
-                                ),
                               ),
                             ),
+                          ),
                           child: SingleChildScrollView(
-                          child: Padding(
+                            child: Padding(
                               padding: const EdgeInsets.only(
                                   left: 25, right: 25, top: 10, bottom: 10),
                               child: Column(
@@ -4074,20 +4074,20 @@ class _Summery_pageState extends State<Summery_page>
                                   Text(
                                     rentalDetails.staffMemberData
                                                     ?.staffmemberName !=
-                                          null &&
-                                      rentalDetails.staffMemberData!
-                                          .staffmemberName!.isNotEmpty
+                                                null &&
+                                            rentalDetails.staffMemberData!
+                                                .staffmemberName!.isNotEmpty
                                         ? rentalDetails
                                             .staffMemberData!.staffmemberName!
-                                  : 'N/A',
-                              style: TextStyle(
+                                        : 'N/A',
+                                    style: TextStyle(
                                         fontWeight: FontWeight.w700,
                                         color: Colors.grey),
                                   ),
                                 ],
+                              ),
                             ),
                           ),
-                        ),
                         ),
                       //SizedBox(height: 13,),
                     ],
@@ -5682,9 +5682,9 @@ class _Summery_pageState extends State<Summery_page>
                                         child: ElevatedButton(
                                           onPressed: () {
                                             setState(() {
-                                            sqft3.text = data[0].rentalsqft!;
-                                            bath3.text = data[0].rentalbath!;
-                                            bed3.text = data[0].rentalbed!;
+                                              sqft3.text = data[0].rentalsqft!;
+                                              bath3.text = data[0].rentalbath!;
+                                              bed3.text = data[0].rentalbed!;
                                               // Normalize the values to match available options
                                               normalizeBathValue();
                                               normalizeBedValue();
@@ -5886,12 +5886,12 @@ class _Summery_pageState extends State<Summery_page>
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       color: Colors
-                                                                              .white,
-                                                                        borderRadius:
+                                                                          .white,
+                                                                      borderRadius:
                                                                           BorderRadius.circular(
                                                                               3),
                                                                       border: Border.all(
-                                                                            color:
+                                                                          color:
                                                                               Color(0xFF8A95A8)),
                                                                     ),
                                                                     child:
@@ -5964,12 +5964,12 @@ class _Summery_pageState extends State<Summery_page>
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       color: Colors
-                                                                              .white,
-                                                                        borderRadius:
+                                                                          .white,
+                                                                      borderRadius:
                                                                           BorderRadius.circular(
                                                                               3),
                                                                       border: Border.all(
-                                                                            color:
+                                                                          color:
                                                                               Color(0xFF8A95A8)),
                                                                     ),
                                                                     child:
@@ -7517,11 +7517,11 @@ class _Summery_pageState extends State<Summery_page>
                                                   horizontal: 10),
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(3),
+                                                borderRadius:
+                                                    BorderRadius.circular(3),
                                                 border: Border.all(
-                                                      color: Color(0xFF8A95A8)),
-                                                ),
+                                                    color: Color(0xFF8A95A8)),
+                                              ),
                                               child:
                                                   DropdownButtonHideUnderline(
                                                 child: DropdownButton<String>(
@@ -7576,11 +7576,11 @@ class _Summery_pageState extends State<Summery_page>
                                                   horizontal: 10),
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(3),
+                                                borderRadius:
+                                                    BorderRadius.circular(3),
                                                 border: Border.all(
-                                                      color: Color(0xFF8A95A8)),
-                                                ),
+                                                    color: Color(0xFF8A95A8)),
+                                              ),
                                               child:
                                                   DropdownButtonHideUnderline(
                                                 child: DropdownButton<String>(
@@ -9530,7 +9530,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                   ],
                                                                                 ),
                                                                                 buildSafeDropdown(
-                                                                                      controller: bath3,
+                                                                                  controller: bath3,
                                                                                   items: bathArray,
                                                                                   label: "Bath",
                                                                                   isBed: false,
@@ -9587,7 +9587,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                   ],
                                                                                 ),
                                                                                 buildSafeDropdown(
-                                                                                      controller: bed3,
+                                                                                  controller: bed3,
                                                                                   items: roomsArray,
                                                                                   label: "Bed",
                                                                                   isBed: true,
@@ -13334,37 +13334,37 @@ class _Summery_pageState extends State<Summery_page>
                                                         MainAxisAlignment.end,
                                                     children: [
                                                       GestureDetector(
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            Workorder_summery(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          Workorder_summery(
                                                                             workorder_id:
                                                                                 workOrder.workOrderId,
-                                                                            )));
-                                                          },
-                                                          child: Container(
+                                                                          )));
+                                                        },
+                                                        child: Container(
                                                           height: 35,
                                                           width: 35,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                    color: Colors
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors
                                                                 .grey.shade200,
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
                                                                         8),
                                                           ),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
                                                               FaIcon(
                                                                 FontAwesomeIcons
                                                                     .eye,
@@ -13372,12 +13372,12 @@ class _Summery_pageState extends State<Summery_page>
                                                                 color: Colors
                                                                     .black,
                                                               ),
-                                                                SizedBox(
+                                                              SizedBox(
                                                                   width: 2),
-                                                              ],
-                                                            ),
+                                                            ],
                                                           ),
                                                         ),
+                                                      ),
                                                       SizedBox(
                                                         width: 20,
                                                       ),
