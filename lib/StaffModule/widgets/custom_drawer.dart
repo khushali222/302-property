@@ -78,30 +78,7 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                 "Dashboard",
                 widget.currentpage == "Dashboard",
               ),
-              buildListTile(
-                context,
-                Icon(
-                  CupertinoIcons.person,
-                  color: widget.currentpage == "Profile"
-                      ? Colors.white
-                      : blueColor,
-                ),
-                "Profile",
-                widget.currentpage == "Profile",
-              ),
-              if (permissions!.propertytypeView == true)
-                buildListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.house,
-                    size: 20,
-                    color: widget.currentpage == "Add Property Type"
-                        ? Colors.white
-                        : blueColor,
-                  ),
-                  "Property Type",
-                  widget.currentpage == "Add Property Type",
-                ),
+
               /*buildListTile(
                 context,
                 FaIcon(
@@ -121,12 +98,13 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                   size: 20,
                   color: blueColor,
                 ),
-                "Rental",
+                "Rentals",
                 // Filter the options based on permissions
                 [
                   if (permissions!.propertyView == true) "Properties",
                   if (permissions!.rentalownerView == true) "Rental Owner",
                   if (permissions!.tenantView == true) "Tenants",
+                  if (permissions!.propertytypeView == true) "Property Type",
                 ],
                 // Filter the icons based on permissions in the same order
                 [
@@ -149,6 +127,14 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                         color: widget.currentpage == "Tenants"
                             ? Colors.white
                             : blueColor), // Icon for Tenants
+                  if (permissions!.propertytypeView == true)
+                    FaIcon(
+                      FontAwesomeIcons.house,
+                      size: 20,
+                      color: widget.currentpage == "Property Type"
+                          ? Colors.white
+                          : blueColor,
+                    ),
                 ],
                 selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
               ),

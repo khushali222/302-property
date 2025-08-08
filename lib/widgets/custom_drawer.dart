@@ -103,30 +103,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 "Dashboard",
                 widget.currentpage == "Dashboard",
               ),
-              buildListTile(
-                context,
-                FaIcon(
-                  FontAwesomeIcons.house,
-                  size: 20,
-                  color: widget.currentpage == "Add Property Type"
-                      ? Colors.white
-                      : blueColor,
-                ),
-                "Property Type",
-                widget.currentpage == "Add Property Type",
-              ),
-              buildListTile(
-                context,
-                FaIcon(
-                  FontAwesomeIcons.userClock,
-                  size: 20,
-                  color: widget.currentpage == "Add Staff Member"
-                      ? Colors.white
-                      : blueColor,
-                ),
-                "Staff Member",
-                widget.currentpage == "Add Staff Member",
-              ),
+
               buildDropdownListTile(
                 context,
                 FaIcon(
@@ -134,8 +111,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   size: 20,
                   color: blueColor,
                 ),
-                "Rental",
-                ["Properties", "Rental Owner", "Tenants"],
+                "Rentals",
+                ["Properties", "Rental Owner", "Tenants","Property Type"],
                 [
                   FaIcon(
                     FontAwesomeIcons.buildingUser,
@@ -157,7 +134,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     color: widget.currentpage == "Tenants"
                         ? Colors.white
                         : blueColor,
-                  ), // Icon for Tenants
+                  ),
+                  FaIcon(
+                    FontAwesomeIcons.house,
+                    size: 20,
+                    color: widget.currentpage == "Property Type"
+                        ? Colors.white
+                        : blueColor,
+                  ),
+                  // Icon for Tenants
                 ],
                 selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
               ),
@@ -309,6 +294,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 ),
                 "Reports",
                 widget.currentpage == "Reports",
+              ),
+              buildListTile(
+                context,
+                FaIcon(
+                  FontAwesomeIcons.userClock,
+                  size: 20,
+                  color: widget.currentpage == "Staff"
+                      ? Colors.white
+                      : blueColor,
+                ),
+                "Staff",
+                widget.currentpage == "Staff",
               ),
               buildListTile(
                 context,

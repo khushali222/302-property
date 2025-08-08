@@ -37,7 +37,7 @@ class _Add_propertyState extends State<Add_property> {
       Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Add Property Type",dropdown: false,),
+      drawer:CustomDrawer(currentpage: "Property Type",dropdown: true,),
       body:
       SingleChildScrollView(
         child: Column(

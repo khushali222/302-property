@@ -59,8 +59,8 @@ class _Edit_property_typeState extends State<Edit_property_type> {
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "Add Property Type",
-        dropdown: false,
+        currentpage: "Property Type",
+        dropdown: true,
       ),
       body: SingleChildScrollView(
         child: Column(

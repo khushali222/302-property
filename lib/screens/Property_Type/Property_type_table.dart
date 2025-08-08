@@ -723,8 +723,8 @@ class _PropertyTableState extends State<PropertyTable> {
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "Add Property Type",
-        dropdown: false,
+        currentpage: "Property Type",
+        dropdown: true,
       ),
       body: _connectivityResult != ConnectivityResult.none
           ? SingleChildScrollView(

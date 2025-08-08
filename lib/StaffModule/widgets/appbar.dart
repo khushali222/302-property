@@ -2,19 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/StaffModule/screen/Settings/Settings_screen.dart';
 import 'package:three_zero_two_property/StaffModule/screen/change_password.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
-import 'package:three_zero_two_property/screens/Profile/Profile_screen.dart';
 import 'package:three_zero_two_property/screens/Login/login_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/screens/Profile/Profile_screen.dart';
-import 'package:three_zero_two_property/screens/Login/login_screen.dart';
-import 'package:three_zero_two_property/screens/Plans/plan_screen.dart';
-
-import 'package:three_zero_two_property/widgets/test.dart';
 import 'package:badges/badges.dart' as badges;
 import '../../provider/notification_provider.dart';
+import '../screen/profile.dart';
 import '../model/staffpermission.dart';
 import '../repository/staffpermission_provider.dart';
 import '../screen/notifications/notifications.dart';
@@ -189,6 +182,28 @@ class widget_302_Staff {
                           "WELCOME",
                           style: TextStyle(color: blueColor),
                         ),
+                      ),
+                      PopupMenuItem(
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.person,
+                              color: blueColor,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              "My Profile",
+                              style: TextStyle(color: blueColor),
+                            ),
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => Profile_screen()));
+
+                        },
                       ),
                       PopupMenuItem(
                         child: Row(

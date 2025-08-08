@@ -21,7 +21,6 @@ import '../screen/dashboard.dart';
 import '../screen/profile.dart';
 import '../screen/upcoming_renewal/upcoming_renewal.dart';
 
-
 Widget buildListTile(
     BuildContext context,
     Widget leadingIcon,
@@ -40,13 +39,7 @@ Widget buildListTile(
         if (title == "Dashboard" && active != true) {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => Dashboard_staff()));
-        } else if (title == "Property Type" && active != true) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => PropertyTable()));
-        } else if (title == "Reports" && active != true) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ReportsMainScreen()));
-        } else if (title == "Profile") {
+        }else if (title == "Profile") {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => Profile_screen()));
         } else if (title == "Settings") {
@@ -72,6 +65,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Properties": (context) => PropertiesTable(),
     "Rental Owner": (context) => Rentalowner_table(),
     "Tenants": (context) => Tenants_table(),
+    "Property Type": (context) => PropertyTable(),
     "Vendor": (context) => Vendor_table(),
     "Work Order": (context) => Workorder_table(),
     "Rent Roll": (context) => Lease_table(),

@@ -123,7 +123,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "Add Staff Member",
+        currentpage: "Staff",
         dropdown: false,
       ),
       body: ListView(

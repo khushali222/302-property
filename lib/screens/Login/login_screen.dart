@@ -211,7 +211,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                   // Login text
                   Center(
                     child: Text(
-                      "Please login here...",
+                      "Sign In",
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: MediaQuery.of(context).size.width * 0.03),
@@ -276,7 +276,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                         color: Colors.grey[600],
                                       ),
                                     ),
-                                    hintText: "Business Email",
+                                    hintText: "Email Address",
                                     hintStyle: TextStyle(
                                         color: Colors.grey[600], fontSize: 20),
                                   ),
@@ -765,7 +765,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                   // Login text
                   Center(
                     child: Text(
-                      "Please login here...",
+                      "Sign In",
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: MediaQuery.of(context).size.width * 0.036),
@@ -829,7 +829,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                         color: Colors.grey[600],
                                       ),
                                     ),
-                                    hintText: "Business Email",
+                                    hintText: "Email Address",
                                     hintStyle: TextStyle(
                                         color: Colors.grey[600], fontSize: 15),
                                   ),

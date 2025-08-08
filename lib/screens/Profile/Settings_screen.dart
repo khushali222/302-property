@@ -1987,6 +1987,50 @@ class _TabBarExampleState extends State<TabBarExample> {
                             children: [
                               Expanded(
                                 child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      issurge = false;
+                                      isaccounts = false;
+                                      ismail = false;
+                                      isdateformate = false;
+                                      islatefee = false;
+                                      isworkorder = false;
+                                      ismanagetemplate = true;
+                                      iscategories = false;
+                                      //dateformate1 = DateFormat('mm/dd/yyyy').parse(DateTime.now().toString()).toString();
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: blueColor),
+                                      color: !ismanagetemplate
+                                          ? Colors.white
+                                          : blueColor,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Manage Template",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: ismanagetemplate
+                                                ? Colors.white
+                                                : blueColor,
+                                            fontSize: MediaQuery.of(context)
+                                                .size
+                                                .width <
+                                                500
+                                                ? 15
+                                                : 20),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: InkWell(
                                   onTap: () async {
                                     setState(() {
                                       issurge = false;
@@ -2019,9 +2063,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   ? Colors.white
                                                   : blueColor,
                                               fontSize: MediaQuery.of(context)
-                                                          .size
-                                                          .width <
-                                                      500
+                                                  .size
+                                                  .width <
+                                                  500
                                                   ? 15
                                                   : 20),
                                         ),
@@ -2030,50 +2074,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   ),
                                 ),
                               ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      issurge = false;
-                                      isaccounts = false;
-                                      ismail = false;
-                                      isdateformate = false;
-                                      islatefee = false;
-                                      isworkorder = false;
-                                      ismanagetemplate = true;
-                                      iscategories = false;
-                                      //dateformate1 = DateFormat('mm/dd/yyyy').parse(DateTime.now().toString()).toString();
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
-                                      color: !ismanagetemplate
-                                          ? Colors.white
-                                          : blueColor,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Manage Template",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: ismanagetemplate
-                                                ? Colors.white
-                                                : blueColor,
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
+
 
                               // Expanded(
                               //   child: InkWell(

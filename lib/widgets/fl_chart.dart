@@ -264,7 +264,7 @@ class _FlChartAppState extends State<FlChartApp> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16, vertical: 4),
                   child: Text(
-                    '${leases} of ${rentals} Units currently occupied -   ${occupancy} \%',
+                    '${leases} of ${rentals} Units Currently Occupied -   ${occupancy} \%',
                     style: TextStyle(
                         fontSize: 14,color: Color.fromRGBO(21, 43, 81, 0.8), fontWeight: FontWeight.bold),
                   ),

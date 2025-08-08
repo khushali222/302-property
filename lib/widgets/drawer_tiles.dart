@@ -49,10 +49,7 @@ Widget buildListTile(
         if (title == "Dashboard" && active != true) {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => Dashboard()));
-        } else if (title == "Property Type" && active != true) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => PropertyTable()));
-        } else if (title == "Staff Member" && active != true) {
+        } else if (title == "Staff" && active != true) {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => StaffTable()));
         } else if (title == "Reports" && active != true) {
@@ -81,6 +78,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Properties": (context) => PropertiesTable(),
     "Rental Owner": (context) => Rentalowner_table(),
     "Tenants": (context) => Tenants_table(),
+    "Property Type": (context) => PropertyTable(),
     "Vendor": (context) => Vendor_table(),
     "Work Order": (context) => Workorder_table(),
     "Rent Roll": (context) => Lease_table(),

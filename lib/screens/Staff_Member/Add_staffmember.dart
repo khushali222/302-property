@@ -67,7 +67,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "Add Staff Member",
+        currentpage: "Staff",
         dropdown: false,
       ),
       body: ListView(

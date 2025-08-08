@@ -711,7 +711,7 @@ class _StaffTableState extends State<StaffTable> {
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "Add Staff Member",
+        currentpage: "Staff",
         dropdown: false,
       ),
       body: _connectivityResult != ConnectivityResult.none

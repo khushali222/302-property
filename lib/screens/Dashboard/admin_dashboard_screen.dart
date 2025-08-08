@@ -343,22 +343,13 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                   padding: const EdgeInsets.fromLTRB(24, 10, 24, 0),
                   child: Row(
                     children: [
-                      Expanded(
-                        child: Text(
-                          'Rent Data',
-                          style: TextStyle(
-                            fontSize: titleFont,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF1A2746),
-                          ),
-                        ),
-                      ),
+
                       GestureDetector(
                         key: _dropdownKey,
                         onTap: () => _showRentTypeMenu(context),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 18, vertical: 8),
+                              horizontal: 18, vertical: 10),
                           decoration: BoxDecoration(
                             border: Border.all(
                                 color: const Color(0xFFE5E5E5), width: 2),
@@ -680,7 +671,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Leases Expiring in the next 60 days',
+        Text('Leases Expiring In The Next 60 Days',
             style: TextStyle(
                 fontWeight: FontWeight.bold, color: blueColor, fontSize: 18)),
         const SizedBox(height: 10),

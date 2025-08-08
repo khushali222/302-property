@@ -52,7 +52,6 @@ class widget_302 {
         titleSpacing: 00,
         bottom: PreferredSize(
             preferredSize: Size.fromHeight(20), // Height of the bottom section
-
             child: FutureBuilder<String>(
               future: _getCompanyNameFromSharedPreferences(),
               builder: (context, snapshot) {
@@ -286,7 +285,7 @@ class widget_302 {
                               width: 13,
                             ),
                             Text(
-                              " Activity",
+                              " Activities",
                               style: TextStyle(color: blueColor),
                             ),
                           ],

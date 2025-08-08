@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,8 +9,6 @@ import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/Model/profile.dart';
-
-
 import '../../constant/constant.dart';
 import '../../repository/profile_repository.dart';
 import '../widgets/drawer_tiles.dart';
@@ -21,7 +18,6 @@ import '../../widgets/titleBar.dart';
 
 class Profile_screen extends StatefulWidget {
   const Profile_screen({Key? key}) : super(key: key);
-
   @override
   State<Profile_screen> createState() => _Profile_screenState();
 }
@@ -116,7 +112,7 @@ class _Profile_screenState extends State<Profile_screen> {
     return Scaffold(
       appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawerStaff(currentpage: 'Profile',dropdown: false,),
+      //drawer: CustomDrawerStaff(currentpage: 'Profile',dropdown: false,),
       body: _connectivityResult !=ConnectivityResult.none ?
       _isLoading
           ? Center(
