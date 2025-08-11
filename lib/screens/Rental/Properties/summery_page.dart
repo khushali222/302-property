@@ -91,8 +91,8 @@ class _Summery_pageState extends State<Summery_page>
   ScrollController _scrollController = ScrollController();
   late Future<List<TenantData>> futurePropertysummery;
   late Future<Rentals> futureRentalDetails;
-  Future<List<Properties_lease_model>>? futureLeaseDetails;
-  Future<List<Properties_Revenu_model>>? futureLeaseRevenueDetails;
+  late Future<List<Properties_lease_model>> futureLeaseDetails;
+  late Future<List<Properties_Revenu_model>> futureLeaseRevenueDetails;
   late Future<List<unit_properties>> futureUnitsummery;
   late Future<List<Rentals>> futurerentalowners;
   int _selectedIndex = 0;
@@ -2082,7 +2082,7 @@ class _Summery_pageState extends State<Summery_page>
           Padding(
             padding: const EdgeInsets.all(5.0),
             child: FutureBuilder<List<Properties_lease_model>>(
-              future: futureLeaseDetails ?? Future.value([]),
+              future: futureLeaseDetails,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
@@ -2324,7 +2324,7 @@ class _Summery_pageState extends State<Summery_page>
           Padding(
             padding: const EdgeInsets.all(5.0),
             child: FutureBuilder<List<Properties_Revenu_model>>(
-              future: futureLeaseRevenueDetails ?? Future.value([]),
+              future: futureLeaseRevenueDetails,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(

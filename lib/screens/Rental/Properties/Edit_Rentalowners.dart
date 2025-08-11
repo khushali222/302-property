@@ -77,12 +77,14 @@ class _EditRentalownersState extends State<EditRentalowners> {
       alternativeemail.text =
           fetchedDetails.rentalOwnerData!.rentalOwnerAlternativeEmail!;
       print(alternativeemail);
-      phonenum.text = formatPhoneNumberedit(fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber!);
+      phonenum.text = formatPhoneNumberedit(
+          fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber!);
       print(phonenum);
-      homenum.text = formatPhoneNumberedit(fetchedDetails.rentalOwnerData!.rentalOwnerHomeNumber!);
+      homenum.text = formatPhoneNumberedit(
+          fetchedDetails.rentalOwnerData!.rentalOwnerHomeNumber!);
       print(homenum);
-      businessnum.text =
-          formatPhoneNumberedit(fetchedDetails.rentalOwnerData!.rentalOwnerBuisinessNumber!);
+      businessnum.text = formatPhoneNumberedit(
+          fetchedDetails.rentalOwnerData!.rentalOwnerBuisinessNumber!);
 
       street2.text = fetchedDetails.rentalOwnerData!.Address!;
       city2.text = fetchedDetails.rentalOwnerData!.city!;
@@ -311,9 +313,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                             isChecked = value ?? false;
                           });
                         },
-                        activeColor: isChecked
-                            ? blueColor
-                            : Colors.black,
+                        activeColor: isChecked ? blueColor : Colors.black,
                       ),
                     ),
                     SizedBox(
@@ -380,8 +380,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                 }
                                               });
                                             },
-                                            cursorColor:
-                                                blueColor,
+                                            cursorColor: blueColor,
                                             decoration: InputDecoration(
                                               border: InputBorder.none,
                                               contentPadding: EdgeInsets.only(
@@ -591,10 +590,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                     }
                                                   });
                                                 },
-                                                activeColor: blueColor
-
-
-,
+                                                activeColor: blueColor,
                                               ),
                                             ),
                                           ),
@@ -615,8 +611,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                                color: blueColor),
+                            border: Border.all(color: blueColor),
                           ),
                           child: Padding(
                               padding: const EdgeInsets.only(
@@ -686,10 +681,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                     });
                                                   },
                                                   controller: firstname,
-                                                  cursorColor: blueColor
-
-
-,
+                                                  cursorColor: blueColor,
                                                   decoration: InputDecoration(
                                                     enabledBorder: firstnameerror
                                                         ? OutlineInputBorder(
@@ -798,10 +790,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                     });
                                                   },
                                                   controller: comname,
-                                                  cursorColor: blueColor
-
-
-,
+                                                  cursorColor: blueColor,
                                                   decoration: InputDecoration(
                                                     enabledBorder: comnameerror
                                                         ? OutlineInputBorder(
@@ -912,10 +901,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                   },
 
                                                   controller: primaryemail,
-                                                  cursorColor: blueColor
-
-
-,
+                                                  cursorColor: blueColor,
                                                   decoration: InputDecoration(
                                                     enabledBorder:
                                                         primaryemailerror
@@ -1026,10 +1012,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                     });
                                                   },
                                                   controller: alternativeemail,
-                                                  cursorColor: blueColor
-
-
-,
+                                                  cursorColor: blueColor,
                                                   decoration: InputDecoration(
                                                     enabledBorder:
                                                         alternativeerror
@@ -1123,8 +1106,10 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                               Positioned.fill(
                                                 child: TextField(
                                                   inputFormatters: [
-                                                    FilteringTextInputFormatter.digitsOnly,
-                                                    LengthLimitingTextInputFormatter(10),
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
+                                                    LengthLimitingTextInputFormatter(
+                                                        10),
                                                     PhoneNumberFormatter(),
                                                   ],
                                                   focusNode: _nodeText1,
@@ -1138,7 +1123,8 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                             ? 14
                                                             : 15,
                                                   ),
-                                                  keyboardType: TextInputType.number,
+                                                  keyboardType:
+                                                      TextInputType.number,
                                                   // keyboardType: TextInputType
                                                   //     .numberWithOptions(
                                                   //         signed: true,
@@ -1150,10 +1136,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                     });
                                                   },
                                                   controller: phonenum,
-                                                  cursorColor: blueColor
-
-
-,
+                                                  cursorColor: blueColor,
                                                   decoration: InputDecoration(
                                                     enabledBorder: phonenumerror
                                                         ? OutlineInputBorder(
@@ -1224,8 +1207,10 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                               Positioned.fill(
                                                 child: TextField(
                                                   inputFormatters: [
-                                                    FilteringTextInputFormatter.digitsOnly,
-                                                    LengthLimitingTextInputFormatter(10),
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
+                                                    LengthLimitingTextInputFormatter(
+                                                        10),
                                                     PhoneNumberFormatter(),
                                                   ],
                                                   focusNode: _nodeText2,
@@ -1244,17 +1229,15 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                   //         signed: true,
                                                   //         decimal:
                                                   //             true), // Adjust as needed
-                                                  keyboardType: TextInputType.number,
+                                                  keyboardType:
+                                                      TextInputType.number,
                                                   onChanged: (value) {
                                                     setState(() {
                                                       homenumerror = false;
                                                     });
                                                   },
                                                   controller: homenum,
-                                                  cursorColor: blueColor
-
-
-,
+                                                  cursorColor: blueColor,
                                                   decoration: InputDecoration(
                                                     enabledBorder: homenumerror
                                                         ? OutlineInputBorder(
@@ -1325,8 +1308,10 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                               Positioned.fill(
                                                 child: TextField(
                                                   inputFormatters: [
-                                                    FilteringTextInputFormatter.digitsOnly,
-                                                    LengthLimitingTextInputFormatter(10),
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
+                                                    LengthLimitingTextInputFormatter(
+                                                        10),
                                                     PhoneNumberFormatter(),
                                                   ],
                                                   focusNode: _nodeText3,
@@ -1345,17 +1330,15 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                   //         signed: true,
                                                   //         decimal:
                                                   //             true), // Adjust as needed
-                                                  keyboardType: TextInputType.number,
+                                                  keyboardType:
+                                                      TextInputType.number,
                                                   onChanged: (value) {
                                                     setState(() {
                                                       businessnumerror = false;
                                                     });
                                                   },
                                                   controller: businessnum,
-                                                  cursorColor: blueColor
-
-
-,
+                                                  cursorColor: blueColor,
                                                   decoration: InputDecoration(
                                                     enabledBorder:
                                                         businessnumerror
@@ -1466,10 +1449,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                     });
                                                   },
                                                   controller: street2,
-                                                  cursorColor: blueColor
-
-
-,
+                                                  cursorColor: blueColor,
                                                   decoration: InputDecoration(
                                                     enabledBorder: street2error
                                                         ? OutlineInputBorder(
@@ -1560,7 +1540,8 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                   children: [
                                                     Positioned.fill(
                                                       child: TextField(
-                                                        keyboardType: TextInputType.text,
+                                                        keyboardType:
+                                                            TextInputType.text,
                                                         controller: city2,
                                                         style: TextStyle(
                                                           color: Colors.black,
@@ -1665,7 +1646,8 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                   children: [
                                                     Positioned.fill(
                                                       child: TextField(
-                                                        keyboardType: TextInputType.text,
+                                                        keyboardType:
+                                                            TextInputType.text,
                                                         controller: state2,
                                                         style: TextStyle(
                                                           color: Colors.black,
@@ -1782,7 +1764,8 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                   children: [
                                                     Positioned.fill(
                                                       child: TextField(
-                                                        keyboardType: TextInputType.text,
+                                                        keyboardType:
+                                                            TextInputType.text,
                                                         controller: county2,
                                                         style: TextStyle(
                                                           color: Colors.black,
@@ -1890,9 +1873,12 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                                       child: TextField(
                                                         focusNode: _nodeText4,
                                                         controller: code2,
-                                                        keyboardType: TextInputType.number,
+                                                        keyboardType:
+                                                            TextInputType
+                                                                .number,
                                                         inputFormatters: [
-                                                          FilteringTextInputFormatter.digitsOnly,
+                                                          FilteringTextInputFormatter
+                                                              .digitsOnly,
                                                         ],
                                                         style: TextStyle(
                                                           color: Colors.black,
