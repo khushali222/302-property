@@ -212,7 +212,8 @@ class _MakePaymentState extends State<MakePayment> {
           selectedTenantId = tenants.first["tenant_id"];
           fetchChargesForSelectedTenant(selectedTenantId!);
           fetchcreditcard(selectedTenantId!);
-        }else if (tenants.length > 1) {
+          fetchPaymentSettings();
+        } else if (tenants.length > 1) {
           // If there are multiple tenants, select the first tenant and fetch their charges
           selectedTenantId = tenants.first["tenant_id"];
           tenantname = tenants.first["tenant_name"]!;
@@ -256,7 +257,7 @@ class _MakePaymentState extends State<MakePayment> {
     print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body)['data'];
-     // log("accounts data $jsonResponse");
+      // log("accounts data $jsonResponse");
       Map<String, List<String>> fetchedData = {};
       // Adding static items to the "LIABILITY ACCOUNT" category
       fetchedData["Rent"] = ["Rent Income"];
@@ -273,8 +274,6 @@ class _MakePaymentState extends State<MakePayment> {
         }
 
         fetchedData[chargeType]!.add(account);
-
-
       }
 
       setState(() {
@@ -296,6 +295,7 @@ class _MakePaymentState extends State<MakePayment> {
     //   });
     // }
   }
+
   List<Map<String, dynamic>> rows = [];
 
   List<double> charges_balances = [0];
@@ -430,15 +430,31 @@ class _MakePaymentState extends State<MakePayment> {
 
   String? _selectedHoldertype;
   double? surchage_percent;
-   List<String> _paymentMethods = [
-    'Card',
-    'Check',
-    'Cash',
-    'ACH',
-    'Cashier \'s Check',
-    'Money Order',
-    'Manual'
-  ];
+  // Payment methods list
+  List<String> _paymentMethods = [];
+
+  // Initialize payment methods
+  void _initializePaymentMethods({bool isExternal = false}) {
+    if (isExternal) {
+      _paymentMethods = ['Cash', 'Money Order', 'Manual'];
+    } else {
+      _paymentMethods = [
+        'Card',
+        'Check',
+        'Cash',
+        'ACH',
+        'Cashier \'s Check',
+        'Money Order',
+        'Manual'
+      ].map((method) {
+        if (method == 'ACH' && !achaccepted) {
+          return 'ACH (not available)';
+        }
+        return method;
+      }).toList();
+    }
+  }
+
   final List<String> _paymentMethodsforfree = ['Check', 'Cash'];
   final List<String> _selecttype = ['Checking', 'Savings'];
   final List<String> _selectholder = ['Business', 'Personal'];
@@ -449,14 +465,87 @@ class _MakePaymentState extends State<MakePayment> {
   bool showCashiersFields = false;
   bool showMoneyorderFields = false;
   bool showMenualFields = false;
+
+  // Helper function to check if a card type is accepted
+  bool isCardTypeAccepted(String cardType) {
+    cardType = cardType.toUpperCase();
+    if (cardType == 'CREDIT') {
+      return creditcard;
+    } else if (cardType == 'DEBIT') {
+      return debitcard;
+    }
+    return false;
+  }
+
+  // Payment acceptance flags
+  bool creditcard = false;
+  bool achaccepted = false;
+  bool debitcard = false;
+
+  Future<void> fetchPaymentSettings() async {
+    if (selectedTenantId == null || selectedTenantId!.isEmpty) {
+      print("No tenant selected, skipping payment settings fetch");
+      return;
+    }
+
+    print("calling payment card check");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // String? id = prefs.getString("adminId");
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
+    String? token = prefs.getString('token');
+
+    try {
+      final response = await http.get(
+        Uri.parse(
+            '${Api_url}/api/tenant/payment_settings/$selectedTenantId/${widget.leaseId}'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
+
+      final jsonData = json.decode(response.body);
+      print(' rental added ${jsonData}');
+      print(
+          ' rental url ${Api_url}/api/tenant/payment_settings/$selectedTenantId/${widget.leaseId}');
+      print("lease id ${widget.leaseId}");
+      print("tenant id $selectedTenantId");
+
+      if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
+        setState(() {
+          achaccepted = jsonData['data']['achAccepted'];
+          creditcard = jsonData['data']['creditCardAccepted'];
+          debitcard = jsonData['data']['debitCardAccepted'];
+          print(' credit card accepted ${creditcard}');
+          // Update payment methods to reflect availability
+          _initializePaymentMethods();
+        });
+      } else {
+        print("Failed to fetch payment settings: ${jsonData["message"]}");
+      }
+    } catch (e) {
+      print("Error fetching payment settings: $e");
+    }
+  }
+
   void AddFields() {
     setState(() {
       showCardNumberField = _selectedPaymentMethod == 'Card';
       showCheckNumberField = _selectedPaymentMethod == 'Check';
-      showACHFields = _selectedPaymentMethod == 'ACH';
+      showACHFields = _selectedPaymentMethod == 'ACH' && achaccepted;
       showCashiersFields = _selectedPaymentMethod == 'Cashier \'s Check';
       showMoneyorderFields = _selectedPaymentMethod == 'Money Order';
       showMenualFields = _selectedPaymentMethod == 'Manual';
+
+      // Show toast if payment method is not accepted
+      if (_selectedPaymentMethod == 'ACH' && !achaccepted) {
+        Fluttertoast.showToast(
+          msg: "ACH payments are not accepted by the rental owner",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+        );
+      }
     });
   }
 
@@ -486,6 +575,7 @@ class _MakePaymentState extends State<MakePayment> {
       groupedCharges = categorizedData;
     });
   }
+
   double balance = 0.00;
   Future<void> fetchChargesAndBalance(String leaseId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -504,7 +594,8 @@ class _MakePaymentState extends State<MakePayment> {
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = json.decode(response.body);
 
-        if (jsonResponse.containsKey('totalCharges') && jsonResponse['totalCharges'] is List) {
+        if (jsonResponse.containsKey('totalCharges') &&
+            jsonResponse['totalCharges'] is List) {
           List<dynamic> totalCharges = jsonResponse['totalCharges'];
           double balanceValue = jsonResponse['balance']?.toDouble() ?? 0.00;
 
@@ -585,9 +676,11 @@ class _MakePaymentState extends State<MakePayment> {
       hasError = false;
     });
     try {
-      List<Entrycharge>? charges = await ChargeRepositorys().fetchChargesTable(widget.leaseId);
+      List<Entrycharge>? charges =
+          await ChargeRepositorys().fetchChargesTable(widget.leaseId);
       print('charge details ${charges!.length}');
-      List<Entrycharge> filteredCharges = charges?.where((entry) => entry.chargeAmount! > 0).toList() ?? [];
+      List<Entrycharge> filteredCharges =
+          charges?.where((entry) => entry.chargeAmount! > 0).toList() ?? [];
       print("charges length:- ${charges!.length}");
       print('leaseid ${widget.leaseId}');
 
@@ -596,37 +689,42 @@ class _MakePaymentState extends State<MakePayment> {
 
       setState(() {
         rows = charges?.where((entry) => entry.chargeAmount! > 0).map((entry) {
-          // String chargeType = categorizedData.entries.firstWhere(
-          //       (entryData) => entryData.value.contains(entry.account),
-          //   orElse: () => MapEntry("Unknown", []), // Default if not found
-          // ).key;
-          String? chargeType = (entry.account == "Late Fee Income" || entry.account == "Pre-payments" || entry.account == "Security Deposit")
-              ? entry.account
-              : entry.account == "Rent Income"
-              ? "Rent"
-              : categorizedData.entries
-              .firstWhere(
-                (entryData) => entryData.value.contains(entry.account),
-            orElse: () {
-              // If the chargeType is not found, add it dynamically
-              categorizedData[entry.chargeType!] = [...(categorizedData[entry.chargeType!] ?? []), entry.account!];
-              return MapEntry(entry.chargeType!, []);
-            },
-          )
-              .key;
-          print(chargeType);
-          return {
-            'entry_id': entry.entryId,
-            'account': entry.account,
-            'amount': 0.0,
-            'charge_amount': entry.chargeAmount,
-            'memo': entry.memo?.isNotEmpty == true ? entry.memo : "Payment",
-            'date': entry.date,
-            'charge_type': chargeType, // Set matched charge type libity
-            'sub_charge_type': entry.chargeType, // Set original charge type onetime
-            'newfield': false,
-          };
-        }).toList() ??
+              // String chargeType = categorizedData.entries.firstWhere(
+              //       (entryData) => entryData.value.contains(entry.account),
+              //   orElse: () => MapEntry("Unknown", []), // Default if not found
+              // ).key;
+              String? chargeType = (entry.account == "Late Fee Income" ||
+                      entry.account == "Pre-payments" ||
+                      entry.account == "Security Deposit")
+                  ? entry.account
+                  : entry.account == "Rent Income"
+                      ? "Rent"
+                      : categorizedData.entries.firstWhere(
+                          (entryData) =>
+                              entryData.value.contains(entry.account),
+                          orElse: () {
+                            // If the chargeType is not found, add it dynamically
+                            categorizedData[entry.chargeType!] = [
+                              ...(categorizedData[entry.chargeType!] ?? []),
+                              entry.account!
+                            ];
+                            return MapEntry(entry.chargeType!, []);
+                          },
+                        ).key;
+              print(chargeType);
+              return {
+                'entry_id': entry.entryId,
+                'account': entry.account,
+                'amount': 0.0,
+                'charge_amount': entry.chargeAmount,
+                'memo': entry.memo?.isNotEmpty == true ? entry.memo : "Payment",
+                'date': entry.date,
+                'charge_type': chargeType, // Set matched charge type libity
+                'sub_charge_type':
+                    entry.chargeType, // Set original charge type onetime
+                'newfield': false,
+              };
+            }).toList() ??
             [];
 
         for (var i = 0; i < filteredCharges!.length; i++) {
@@ -651,7 +749,8 @@ class _MakePaymentState extends State<MakePayment> {
           return TextEditingController(text: "".toString());
         }).toList();
         print(rows);
-        totalAmount = rows.fold(0.0, (sum, row) => sum + (row[amountController.text] ?? 0));
+        totalAmount = rows.fold(
+            0.0, (sum, row) => sum + (row[amountController.text] ?? 0));
         isLoading = false;
       });
     } catch (e) {
@@ -669,7 +768,7 @@ class _MakePaymentState extends State<MakePayment> {
         'account': null,
         'charge_type': null,
         'amount': 0.0,
-        'memo':  Memo.text.isNotEmpty ? Memo.text : "Payment",
+        'memo': Memo.text.isNotEmpty ? Memo.text : "Payment",
         'charge_amount': 0.0,
         'date': _startDate.text,
         'newfield': true
@@ -788,8 +887,8 @@ class _MakePaymentState extends State<MakePayment> {
         print('Billing ID: ${cardDetail['billing_id']}');
       }
 
-      CustomerData? customerData =
-          await postBillingCustomerVault(customervaultid.toString(),cardDetailsList);
+      CustomerData? customerData = await postBillingCustomerVault(
+          customervaultid.toString(), cardDetailsList);
 
       if (customerData != null) {
         setState(() {
@@ -829,7 +928,8 @@ class _MakePaymentState extends State<MakePayment> {
     }
   }
 
-  Future<CustomerData?> postBillingCustomerVault(String customerVaultId ,List<dynamic> cardDetailsList) async {
+  Future<CustomerData?> postBillingCustomerVault(
+      String customerVaultId, List<dynamic> cardDetailsList) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? adminid = prefs.getString("adminId");
@@ -877,7 +977,6 @@ class _MakePaymentState extends State<MakePayment> {
       for (int i = 0; i < customerData.billing.length; i++) {
         customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
       }
-
 
       return customerData;
     } else {
@@ -1102,17 +1201,16 @@ class _MakePaymentState extends State<MakePayment> {
                                             ...tenants.map((tenant) {
                                               return DropdownMenuItem<String>(
                                                 value: tenant['tenant_id'],
-                                                child: Text(tenant['tenant_name']!),
+                                                child: Text(
+                                                    tenant['tenant_name']!),
                                               );
                                             }).toList(),
                                             // Add a special menu item for "Add New Tenant"
                                             DropdownMenuItem<String>(
                                               value: 'external_source',
-                                              child:  Text(
+                                              child: Text(
                                                 'External Source',
-                                                style: TextStyle(
-
-                                                ),
+                                                style: TextStyle(),
                                               ),
                                             ),
                                           ],
@@ -1124,27 +1222,21 @@ class _MakePaymentState extends State<MakePayment> {
                                                 // Fetch all charges if "Add New Tenant" is selected
                                                 fetchChargesForSelectedTenant(
                                                     value!);
-                                                _paymentMethods = [
-                                                  'Cash',
-                                                  'Money Order',
-                                                  'Manual'
-                                                ];
+                                                // Update available payment methods
+                                                setState(() {
+                                                  _initializePaymentMethods(
+                                                      isExternal: true);
+                                                });
                                               } else {
                                                 tenantname = tenants.firstWhere(
-                                                        (tenant) =>
-                                                    tenant['tenant_id'] ==
+                                                    (tenant) =>
+                                                        tenant['tenant_id'] ==
                                                         value)['tenant_name']!;
                                                 fetchChargesForSelectedTenant(
                                                     value!);
-                                                _paymentMethods = [
-                                                  'Card',
-                                                  'Check',
-                                                  'Cash',
-                                                  'ACH',
-                                                  'Cashier\'s Check',
-                                                  'Money Order',
-                                                  'Manual'
-                                                ];
+                                                setState(() {
+                                                  _initializePaymentMethods();
+                                                });
                                               }
 
                                               // tenantname = tenants.firstWhere(
@@ -1360,6 +1452,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                       });
                                                       await fetchcreditcard(
                                                           value!);
+                                                      await fetchPaymentSettings();
                                                       print(
                                                           'Selected tenant_id: $selectedTenantId');
                                                     },
@@ -1545,7 +1638,6 @@ class _MakePaymentState extends State<MakePayment> {
                               controller: amountController,
                               onChanged: (value) => validateAmounts(),
                             ),
-
                             const SizedBox(
                               height: 12,
                             ),
@@ -1658,10 +1750,35 @@ class _MakePaymentState extends State<MakePayment> {
                                             );
                                           }).toList(),
                                           onChanged: (String? newValue) {
+                                            if (newValue == null) return;
+
+                                            // Strip "(not available)" from the selection if present
+                                            String cleanValue =
+                                                newValue.replaceAll(
+                                                    ' (not available)', '');
+
+                                            // Check if the method is available
+                                            bool isAvailable = true;
+                                            if (cleanValue == 'ACH' &&
+                                                !achaccepted) {
+                                              isAvailable = false;
+                                            }
+
+                                            if (!isAvailable) {
+                                              Fluttertoast.showToast(
+                                                msg:
+                                                    "$cleanValue payments are not accepted by the rental owner",
+                                                toastLength: Toast.LENGTH_LONG,
+                                                gravity: ToastGravity.BOTTOM,
+                                              );
+                                              return;
+                                            }
+
                                             state.didChange(
-                                                newValue); // Update FormField state
+                                                cleanValue); // Update FormField state
                                             setState(() {
-                                              _selectedPaymentMethod = newValue;
+                                              _selectedPaymentMethod =
+                                                  cleanValue;
                                               AddFields(); // Call your method to add fields
                                             });
                                             state.reset();
@@ -1892,21 +2009,48 @@ class _MakePaymentState extends State<MakePayment> {
                                                                   color: Colors
                                                                       .red))
                                                           : Checkbox(
+                                                              fillColor: !isCardTypeAccepted(
+                                                                      item.binResult ??
+                                                                          '')
+                                                                  ? MaterialStateProperty
+                                                                      .all(Colors
+                                                                              .grey[
+                                                                          300])
+                                                                  : null,
                                                               value:
                                                                   selectedcardindex ==
-                                                                          index
-                                                                      ? true
-                                                                      : false,
+                                                                      index,
                                                               onChanged: (bool?
                                                                   value) async {
+                                                                String
+                                                                    cardType =
+                                                                    item.binResult
+                                                                            ?.toUpperCase() ??
+                                                                        '';
+                                                                bool
+                                                                    isAccepted =
+                                                                    isCardTypeAccepted(
+                                                                        cardType);
+
+                                                                if (!isAccepted) {
+                                                                  Fluttertoast
+                                                                      .showToast(
+                                                                    msg:
+                                                                        "$cardType card payments are not accepted by the rental owner",
+                                                                    toastLength:
+                                                                        Toast
+                                                                            .LENGTH_LONG,
+                                                                    gravity:
+                                                                        ToastGravity
+                                                                            .BOTTOM,
+                                                                  );
+                                                                  return;
+                                                                }
+
                                                                 setState(() {
-                                                                  state.didChange(
-                                                                      index
-                                                                          .toString());
                                                                   selectedcardindex =
                                                                       index;
                                                                 });
-                                                                state.reset();
                                                                 await fetchSurcharge();
                                                               },
                                                             ),
@@ -2461,14 +2605,15 @@ class _MakePaymentState extends State<MakePayment> {
                                       builder: (FormFieldState<String> state) {
                                         return Column(
                                           crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                           children: [
                                             DropdownButton2<String>(
                                               isExpanded: true,
-                                              hint:
-                                              const Text('Select Account Holder Type'),
+                                              hint: const Text(
+                                                  'Select Account Holder Type'),
                                               value: _selectedHoldertype,
-                                              items: _selectholder.map((method) {
+                                              items:
+                                                  _selectholder.map((method) {
                                                 return DropdownMenuItem<String>(
                                                   value: method,
                                                   child: Text(method),
@@ -2476,7 +2621,8 @@ class _MakePaymentState extends State<MakePayment> {
                                               }).toList(),
                                               onChanged: (String? newValue) {
                                                 setState(() {
-                                                  _selectedHoldertype = newValue;
+                                                  _selectedHoldertype =
+                                                      newValue;
                                                 });
                                                 state.reset();
                                                 print(
@@ -2484,47 +2630,47 @@ class _MakePaymentState extends State<MakePayment> {
                                               },
                                               buttonStyleData: ButtonStyleData(
                                                 height: 45,
-                                              //  width: 200,
+                                                //  width: 200,
                                                 padding: const EdgeInsets.only(
                                                     left: 14, right: 14),
                                                 decoration: BoxDecoration(
                                                   borderRadius:
-                                                  BorderRadius.circular(6),
+                                                      BorderRadius.circular(6),
                                                   color: Colors.white,
                                                 ),
                                                 elevation: 2,
                                               ),
                                               iconStyleData:
-                                              const IconStyleData(
+                                                  const IconStyleData(
                                                 icon: Icon(
                                                   Icons.arrow_drop_down,
                                                 ),
                                                 iconSize: 24,
                                                 iconEnabledColor:
-                                                Color(0xFFb0b6c3),
+                                                    Color(0xFFb0b6c3),
                                                 iconDisabledColor: Colors.grey,
                                               ),
                                               dropdownStyleData:
-                                              DropdownStyleData(
+                                                  DropdownStyleData(
                                                 decoration: BoxDecoration(
                                                   borderRadius:
-                                                  BorderRadius.circular(6),
+                                                      BorderRadius.circular(6),
                                                   color: Colors.white,
                                                 ),
                                                 scrollbarTheme:
-                                                ScrollbarThemeData(
+                                                    ScrollbarThemeData(
                                                   radius:
-                                                  const Radius.circular(6),
+                                                      const Radius.circular(6),
                                                   thickness:
-                                                  MaterialStateProperty.all(
-                                                      6),
+                                                      MaterialStateProperty.all(
+                                                          6),
                                                   thumbVisibility:
-                                                  MaterialStateProperty.all(
-                                                      true),
+                                                      MaterialStateProperty.all(
+                                                          true),
                                                 ),
                                               ),
                                               menuItemStyleData:
-                                              const MenuItemStyleData(
+                                                  const MenuItemStyleData(
                                                 height: 40,
                                                 padding: EdgeInsets.only(
                                                     left: 14, right: 14),
@@ -2547,106 +2693,106 @@ class _MakePaymentState extends State<MakePayment> {
                                     ),
                                   ),
                                 ),
-                                // Padding(
-                                //   padding: const EdgeInsets.all(4.0),
-                                //   child: FormField<String>(
-                                //     validator: (value) {
-                                //       if (value == null || value.isEmpty) {
-                                //         return 'Please select an account holder type';
-                                //       }
-                                //       return null;
-                                //     },
-                                //     builder: (FormFieldState<String> state) {
-                                //       return Column(
-                                //         crossAxisAlignment:
-                                //             CrossAxisAlignment.start,
-                                //         children: [
-                                //           DropdownButtonHideUnderline(
-                                //             child: DropdownButton2<String>(
-                                //               isExpanded: true,
-                                //               hint: const Text(
-                                //                   'Select Account Holder Type'),
-                                //               value: _selectedHoldertype,
-                                //               items: _selectholder
-                                //                   .map((holderType) {
-                                //                 return DropdownMenuItem<String>(
-                                //                   value: holderType,
-                                //                   child: Text(holderType),
-                                //                 );
-                                //               }).toList(),
-                                //               onChanged: (String? newValue) {
-                                //                 setState(() {
-                                //                   _selectedHoldertype =
-                                //                       newValue;
-                                //                   state.didChange(
-                                //                       newValue); // Notify FormField of change
-                                //                 });
-                                //                 state.reset();
-                                //               },
-                                //               buttonStyleData: ButtonStyleData(
-                                //                 height: 45,
-                                //                 padding: const EdgeInsets.only(
-                                //                     left: 0, right: 14),
-                                //                 decoration: BoxDecoration(
-                                //                   borderRadius:
-                                //                       BorderRadius.circular(6),
-                                //                   color: Colors.white,
-                                //                 ),
-                                //                 elevation: 3,
-                                //               ),
-                                //               iconStyleData:
-                                //                   const IconStyleData(
-                                //                 icon:
-                                //                     Icon(Icons.arrow_drop_down),
-                                //                 iconSize: 24,
-                                //                 iconEnabledColor:
-                                //                     Color(0xFFb0b6c3),
-                                //                 iconDisabledColor: Colors.grey,
-                                //               ),
-                                //               dropdownStyleData:
-                                //                   DropdownStyleData(
-                                //                 decoration: BoxDecoration(
-                                //                   borderRadius:
-                                //                       BorderRadius.circular(6),
-                                //                   color: Colors.white,
-                                //                 ),
-                                //                 scrollbarTheme:
-                                //                     ScrollbarThemeData(
-                                //                   radius:
-                                //                       const Radius.circular(6),
-                                //                   thickness:
-                                //                       MaterialStateProperty.all(
-                                //                           6),
-                                //                   thumbVisibility:
-                                //                       MaterialStateProperty.all(
-                                //                           true),
-                                //                 ),
-                                //               ),
-                                //               menuItemStyleData:
-                                //                   const MenuItemStyleData(
-                                //                 height: 40,
-                                //                 padding: EdgeInsets.only(
-                                //                     left: 14, right: 14),
-                                //               ),
-                                //             ),
-                                //           ),
-                                //           if (state.hasError)
-                                //             Padding(
-                                //               padding:
-                                //                   const EdgeInsets.only(top: 5),
-                                //               child: Text(
-                                //                 state.errorText ?? '',
-                                //                 style: const TextStyle(
-                                //                   color: Colors.red,
-                                //                   fontSize: 12,
-                                //                 ),
-                                //               ),
-                                //             ),
-                                //         ],
-                                //       );
-                                //     },
-                                //   ),
-                                // ),
+                              // Padding(
+                              //   padding: const EdgeInsets.all(4.0),
+                              //   child: FormField<String>(
+                              //     validator: (value) {
+                              //       if (value == null || value.isEmpty) {
+                              //         return 'Please select an account holder type';
+                              //       }
+                              //       return null;
+                              //     },
+                              //     builder: (FormFieldState<String> state) {
+                              //       return Column(
+                              //         crossAxisAlignment:
+                              //             CrossAxisAlignment.start,
+                              //         children: [
+                              //           DropdownButtonHideUnderline(
+                              //             child: DropdownButton2<String>(
+                              //               isExpanded: true,
+                              //               hint: const Text(
+                              //                   'Select Account Holder Type'),
+                              //               value: _selectedHoldertype,
+                              //               items: _selectholder
+                              //                   .map((holderType) {
+                              //                 return DropdownMenuItem<String>(
+                              //                   value: holderType,
+                              //                   child: Text(holderType),
+                              //                 );
+                              //               }).toList(),
+                              //               onChanged: (String? newValue) {
+                              //                 setState(() {
+                              //                   _selectedHoldertype =
+                              //                       newValue;
+                              //                   state.didChange(
+                              //                       newValue); // Notify FormField of change
+                              //                 });
+                              //                 state.reset();
+                              //               },
+                              //               buttonStyleData: ButtonStyleData(
+                              //                 height: 45,
+                              //                 padding: const EdgeInsets.only(
+                              //                     left: 0, right: 14),
+                              //                 decoration: BoxDecoration(
+                              //                   borderRadius:
+                              //                       BorderRadius.circular(6),
+                              //                   color: Colors.white,
+                              //                 ),
+                              //                 elevation: 3,
+                              //               ),
+                              //               iconStyleData:
+                              //                   const IconStyleData(
+                              //                 icon:
+                              //                     Icon(Icons.arrow_drop_down),
+                              //                 iconSize: 24,
+                              //                 iconEnabledColor:
+                              //                     Color(0xFFb0b6c3),
+                              //                 iconDisabledColor: Colors.grey,
+                              //               ),
+                              //               dropdownStyleData:
+                              //                   DropdownStyleData(
+                              //                 decoration: BoxDecoration(
+                              //                   borderRadius:
+                              //                       BorderRadius.circular(6),
+                              //                   color: Colors.white,
+                              //                 ),
+                              //                 scrollbarTheme:
+                              //                     ScrollbarThemeData(
+                              //                   radius:
+                              //                       const Radius.circular(6),
+                              //                   thickness:
+                              //                       MaterialStateProperty.all(
+                              //                           6),
+                              //                   thumbVisibility:
+                              //                       MaterialStateProperty.all(
+                              //                           true),
+                              //                 ),
+                              //               ),
+                              //               menuItemStyleData:
+                              //                   const MenuItemStyleData(
+                              //                 height: 40,
+                              //                 padding: EdgeInsets.only(
+                              //                     left: 14, right: 14),
+                              //               ),
+                              //             ),
+                              //           ),
+                              //           if (state.hasError)
+                              //             Padding(
+                              //               padding:
+                              //                   const EdgeInsets.only(top: 5),
+                              //               child: Text(
+                              //                 state.errorText ?? '',
+                              //                 style: const TextStyle(
+                              //                   color: Colors.red,
+                              //                   fontSize: 12,
+                              //                 ),
+                              //               ),
+                              //             ),
+                              //         ],
+                              //       );
+                              //     },
+                              //   ),
+                              // ),
                               SizedBox(height: 10),
                             ],
                             if (showCashiersFields) ...[
@@ -2769,8 +2915,9 @@ class _MakePaymentState extends State<MakePayment> {
                         height: 10,
                       ),
                       Padding(
-                        padding:  EdgeInsets.only(left: 10, right: 10),
-                        child:  Text('Current Balances : ${balance.toStringAsFixed(2)}',
+                        padding: EdgeInsets.only(left: 10, right: 10),
+                        child: Text(
+                            'Current Balances : ${balance.toStringAsFixed(2)}',
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
@@ -2797,11 +2944,11 @@ class _MakePaymentState extends State<MakePayment> {
                                   padding: const EdgeInsets.all(15.0),
                                   child: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.stretch,
+                                        CrossAxisAlignment.stretch,
                                     children: [
                                       Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text('Charge ${index + 1}',
                                               style: TextStyle(
@@ -2836,16 +2983,21 @@ class _MakePaymentState extends State<MakePayment> {
                                         child: DropdownButtonHideUnderline(
                                           child: FormField<String>(
                                             validator: (value) {
-                                              if (rows[index]['account'] == null) {
+                                              if (rows[index]['account'] ==
+                                                  null) {
                                                 return 'Please select an account';
                                               }
                                               return null;
                                             },
-                                            builder: (FormFieldState<String> state) {
-                                              String? selectedAccount = row['account'];
+                                            builder:
+                                                (FormFieldState<String> state) {
+                                              String? selectedAccount =
+                                                  row['account'];
 
                                               // List of all dropdown items, including missing ones
-                                              Map<String, List<String>> categorizedDataCopy = Map.from(categorizedData);
+                                              Map<String, List<String>>
+                                                  categorizedDataCopy =
+                                                  Map.from(categorizedData);
 
                                               // Ensure the selected value is present in the list
                                               // if (selectedAccount != null && !categorizedData.values.expand((list) => list).contains(selectedAccount)) {
@@ -2854,15 +3006,26 @@ class _MakePaymentState extends State<MakePayment> {
                                               //   }
                                               //   categorizedDataCopy['Other']!.add(selectedAccount);
                                               // }
-                                              print("categoriezed Data ${categorizedDataCopy}");
+                                              print(
+                                                  "categoriezed Data ${categorizedDataCopy}");
                                               print(row);
-                                              if (row['charge_type'] == "Rent") {}
-                                              List<String> liabilityAccounts = ["Late Fee Income", "Pre-payments", "Security Deposit", 'Rent Income'];
-                                              print("${row['account']}_${row['charge_type']}");
-                                              print(categorizedDataCopy.values.expand((v) => v).contains(row['account']));
+                                              if (row['charge_type'] ==
+                                                  "Rent") {}
+                                              List<String> liabilityAccounts = [
+                                                "Late Fee Income",
+                                                "Pre-payments",
+                                                "Security Deposit",
+                                                'Rent Income'
+                                              ];
+                                              print(
+                                                  "${row['account']}_${row['charge_type']}");
+                                              print(categorizedDataCopy.values
+                                                  .expand((v) => v)
+                                                  .contains(row['account']));
                                               print(categorizedDataCopy.values);
                                               return Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   DropdownButton2<String>(
                                                     isExpanded: true,
@@ -2876,11 +3039,19 @@ class _MakePaymentState extends State<MakePayment> {
                                                     //                 'account'])
                                                     //         ? ""
                                                     //         : "${row['account']}_${row['charge_type']}",
-                                                    value: (row['account'] == null || row['account'].isEmpty || row['charge_type'] == null || row['charge_type'].isEmpty)
+                                                    value: (row['account'] == null ||
+                                                            row['account']
+                                                                .isEmpty ||
+                                                            row['charge_type'] ==
+                                                                null ||
+                                                            row['charge_type']
+                                                                .isEmpty)
                                                         ? null // Default value that is part of the items
                                                         : "${row['account']}_${row['charge_type']}",
                                                     items: [
-                                                      ...categorizedDataCopy.entries.expand((entry) {
+                                                      ...categorizedDataCopy
+                                                          .entries
+                                                          .expand((entry) {
                                                         return [
                                                           // DropdownMenuItem<
                                                           //     String>(
@@ -2901,16 +3072,27 @@ class _MakePaymentState extends State<MakePayment> {
                                                           //     ),
                                                           //   ),
                                                           // ),
-                                                          ...entry.value.map((item) {
-                                                            return DropdownMenuItem<String>(
-                                                              value: "${item}_${entry.key}",
+                                                          ...entry.value
+                                                              .map((item) {
+                                                            return DropdownMenuItem<
+                                                                String>(
+                                                              value:
+                                                                  "${item}_${entry.key}",
                                                               child: Padding(
-                                                                padding: const EdgeInsets.only(left: 16.0),
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            16.0),
                                                                 child: Text(
                                                                   item,
-                                                                  style: const TextStyle(
-                                                                    color: Colors.black,
-                                                                    fontWeight: FontWeight.w400,
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
                                                                   ),
                                                                 ),
                                                               ),
@@ -2921,66 +3103,113 @@ class _MakePaymentState extends State<MakePayment> {
                                                     ],
                                                     onChanged: (value) {
                                                       dynamic? chargeType;
-                                                      for (var entry in categorizedData.entries) {
-                                                        if (entry.value.contains(value)) {
-                                                          chargeType = entry.key;
+                                                      for (var entry
+                                                          in categorizedData
+                                                              .entries) {
+                                                        if (entry.value
+                                                            .contains(value)) {
+                                                          chargeType =
+                                                              entry.key;
                                                           break;
                                                         }
                                                       }
                                                       setState(() {
-                                                        final parts = value!.split('_');
-                                                        final chargeType = parts[0];
-                                                        final selectedValue = parts.sublist(1).join('_');
-                                                        print("account chargetype ${selectedValue}   $value");
-                                                        bool isDuplicate = rows.any((row) => row['account'] == chargeType && rows.indexOf(row) != index);
-                                                        print("Duplicate Entry $isDuplicate");
-                                                        if(isDuplicate) {
-                                                          validationMessage = "**Each account must be unique";
-
+                                                        final parts =
+                                                            value!.split('_');
+                                                        final chargeType =
+                                                            parts[0];
+                                                        final selectedValue =
+                                                            parts
+                                                                .sublist(1)
+                                                                .join('_');
+                                                        print(
+                                                            "account chargetype ${selectedValue}   $value");
+                                                        bool isDuplicate =
+                                                            rows.any((row) =>
+                                                                row['account'] ==
+                                                                    chargeType &&
+                                                                rows.indexOf(
+                                                                        row) !=
+                                                                    index);
+                                                        print(
+                                                            "Duplicate Entry $isDuplicate");
+                                                        if (isDuplicate) {
+                                                          validationMessage =
+                                                              "**Each account must be unique";
                                                         }
-                                                        rows[index]['account'] = chargeType;
-                                                        rows[index]['charge_type'] = selectedValue;
+                                                        rows[index]['account'] =
+                                                            chargeType;
+                                                        rows[index][
+                                                                'charge_type'] =
+                                                            selectedValue;
 
-                                                        state.didChange(value); // Update the FormField state
+                                                        state.didChange(
+                                                            value); // Update the FormField state
                                                       });
                                                       state.reset();
                                                     },
-                                                    buttonStyleData: ButtonStyleData(
+                                                    buttonStyleData:
+                                                        ButtonStyleData(
                                                       height: 45,
                                                       // width: 220,
-                                                      padding: const EdgeInsets.only(left: 0, right: 14),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 0,
+                                                              right: 14),
                                                       decoration: BoxDecoration(
-                                                        borderRadius: BorderRadius.circular(6),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(6),
                                                         color: Colors.white,
                                                       ),
                                                       elevation: 2,
                                                     ),
-                                                    iconStyleData: const IconStyleData(
-                                                      icon: Icon(Icons.arrow_drop_down),
+                                                    iconStyleData:
+                                                        const IconStyleData(
+                                                      icon: Icon(Icons
+                                                          .arrow_drop_down),
                                                       iconSize: 24,
-                                                      iconEnabledColor: Color(0xFFb0b6c3),
-                                                      iconDisabledColor: Colors.grey,
+                                                      iconEnabledColor:
+                                                          Color(0xFFb0b6c3),
+                                                      iconDisabledColor:
+                                                          Colors.grey,
                                                     ),
-                                                    dropdownStyleData: DropdownStyleData(
+                                                    dropdownStyleData:
+                                                        DropdownStyleData(
                                                       width: 250,
                                                       decoration: BoxDecoration(
-                                                        borderRadius: BorderRadius.circular(6),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(6),
                                                         color: Colors.white,
                                                       ),
-                                                      scrollbarTheme: ScrollbarThemeData(
-                                                        radius: const Radius.circular(6),
-                                                        thickness: MaterialStateProperty.all(6),
-                                                        thumbVisibility: MaterialStateProperty.all(true),
+                                                      scrollbarTheme:
+                                                          ScrollbarThemeData(
+                                                        radius: const Radius
+                                                            .circular(6),
+                                                        thickness:
+                                                            MaterialStateProperty
+                                                                .all(6),
+                                                        thumbVisibility:
+                                                            MaterialStateProperty
+                                                                .all(true),
                                                       ),
                                                     ),
                                                     hint: Padding(
-                                                      padding: const EdgeInsets.only(left: 10),
-                                                      child: const Text('Select an account'),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 10),
+                                                      child: const Text(
+                                                          'Select an account'),
                                                     ),
                                                   ),
-                                                  if (state.hasError) // Display the validation error
+                                                  if (state
+                                                      .hasError) // Display the validation error
                                                     Padding(
-                                                      padding: const EdgeInsets.only(left: 16.0, top: 5.0),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 16.0,
+                                                              top: 5.0),
                                                       child: Text(
                                                         state.errorText ?? '',
                                                         style: const TextStyle(
@@ -3025,10 +3254,10 @@ class _MakePaymentState extends State<MakePayment> {
                                               ? true
                                               : null,
                                           max_amount: rows[index]
-                                          ["charge_amount"]
+                                                  ["charge_amount"]
                                               .toString(),
                                           error_mess:
-                                          "Amount must be less than or equal to balance",
+                                              "Amount must be less than or equal to balance",
                                           keyboardType: TextInputType.number,
                                           hintText: 'Enter Amount',
                                           controller: controllers[index],
@@ -3056,13 +3285,13 @@ class _MakePaymentState extends State<MakePayment> {
                                         child: Material(
                                           elevation: 3,
                                           borderRadius:
-                                          BorderRadius.circular(10),
+                                              BorderRadius.circular(10),
                                           child: Container(
                                             height: 50,
                                             decoration: BoxDecoration(
                                               color: Color(0xFFb0b6c3),
                                               borderRadius:
-                                              BorderRadius.circular(10),
+                                                  BorderRadius.circular(10),
                                             ),
                                             child: Row(
                                               children: [
@@ -3072,14 +3301,14 @@ class _MakePaymentState extends State<MakePayment> {
                                                 Text("Balance :",
                                                     style: TextStyle(
                                                         fontWeight:
-                                                        FontWeight.bold)),
+                                                            FontWeight.bold)),
                                                 SizedBox(width: 12.0),
                                                 Text(
                                                     charges_balances[index]
                                                         .toStringAsFixed(2),
                                                     style: TextStyle(
                                                         fontWeight:
-                                                        FontWeight.bold)),
+                                                            FontWeight.bold)),
                                               ],
                                             ),
                                           ),
@@ -3256,7 +3485,8 @@ class _MakePaymentState extends State<MakePayment> {
                                                 MaterialStateProperty.all(true),
                                           ),
                                         ),
-                                        hint: const Text('   Select an account'),
+                                        hint:
+                                            const Text('   Select an account'),
                                       ),
                                     ),
                                   ),
@@ -3648,7 +3878,8 @@ class _MakePaymentState extends State<MakePayment> {
                                       {
                                         ...entry,
                                         'date': reverseFormatDate(_startDate
-                                            .text.trim()), // Set the date to the desired date
+                                            .text
+                                            .trim()), // Set the date to the desired date
                                         'balance': charges_balances[
                                             index], // Add balance from charges_balances list
                                       },
@@ -3844,7 +4075,9 @@ class _MakePaymentState extends State<MakePayment> {
                                 // Map<String, String> selectedTenant =
                                 //     filteredTenants.first;
                                 Map<String, String>? selectedTenant =
-                                filteredTenants.isNotEmpty ? filteredTenants.first : null;
+                                    filteredTenants.isNotEmpty
+                                        ? filteredTenants.first
+                                        : null;
                                 final DateFormat formatter =
                                     DateFormat('yyyy-MM-dd HH:mm:ss');
                                 String notificationTime =
@@ -3852,14 +4085,17 @@ class _MakePaymentState extends State<MakePayment> {
                                 await PaymentService()
                                     .makePaymentfornormal(
                                   adminId: id ?? "",
-                                  firstName: selectedTenant?["first_name"] ?? "",
+                                  firstName:
+                                      selectedTenant?["first_name"] ?? "",
                                   lastName: selectedTenant?["last_name"] ?? "",
                                   emailName: selectedTenant?["email"] ?? "",
                                   surcharge:
                                       "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
                                   amount:
                                       "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
-                                  tenantId: selectedTenant != null ? selectedTenantId! : "",
+                                  tenantId: selectedTenant != null
+                                      ? selectedTenantId!
+                                      : "",
                                   date: _startDate.text.trim(),
                                   address1: "",
                                   processorId: "",
@@ -3896,7 +4132,9 @@ class _MakePaymentState extends State<MakePayment> {
                                 // Map<String, String> selectedTenant =
                                 //     filteredTenants.first;
                                 Map<String, String>? selectedTenant =
-                                filteredTenants.isNotEmpty ? filteredTenants.first : null;
+                                    filteredTenants.isNotEmpty
+                                        ? filteredTenants.first
+                                        : null;
                                 final DateFormat formatter =
                                     DateFormat('yyyy-MM-dd HH:mm:ss');
                                 String notificationTime =
@@ -3904,14 +4142,19 @@ class _MakePaymentState extends State<MakePayment> {
                                 await PaymentService()
                                     .makePaymentfornormal(
                                         adminId: id ?? "",
-                                    firstName: selectedTenant?["first_name"] ?? "",
-                                    lastName: selectedTenant?["last_name"] ?? "",
-                                    emailName: selectedTenant?["email"] ?? "",
+                                        firstName:
+                                            selectedTenant?["first_name"] ?? "",
+                                        lastName:
+                                            selectedTenant?["last_name"] ?? "",
+                                        emailName:
+                                            selectedTenant?["email"] ?? "",
                                         surcharge:
                                             "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
                                         amount:
                                             "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
-                                        tenantId:selectedTenant != null ? selectedTenantId! : "",
+                                        tenantId: selectedTenant != null
+                                            ? selectedTenantId!
+                                            : "",
                                         date: _startDate.text.trim(),
                                         address1: "",
                                         processorId: "",

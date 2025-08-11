@@ -540,6 +540,15 @@ class _MakePaymentState extends State<MakePayment> {
       showCashiersFields = _selectedPaymentMethod == 'Cashier \'s Check';
       showMoneyorderFields = _selectedPaymentMethod == 'Money Order';
       showMenualFields = _selectedPaymentMethod == 'Manual';
+
+      // Show toast if ACH is selected but not accepted
+      if (_selectedPaymentMethod == 'ACH' && !achaccepted) {
+        Fluttertoast.showToast(
+          msg: "ACH payments are not accepted by the rental owner",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+        );
+      }
     });
   }
 
@@ -1755,6 +1764,20 @@ class _MakePaymentState extends State<MakePayment> {
                                             );
                                           }).toList(),
                                           onChanged: (String? newValue) {
+                                            if (newValue == null) return;
+
+                                            // Check if trying to select unavailable ACH
+                                            if (newValue
+                                                .contains('(not available)')) {
+                                              Fluttertoast.showToast(
+                                                msg:
+                                                    "ACH payments are not accepted by the rental owner",
+                                                toastLength: Toast.LENGTH_LONG,
+                                                gravity: ToastGravity.BOTTOM,
+                                              );
+                                              return;
+                                            }
+
                                             state.didChange(
                                                 newValue); // Update FormField state
                                             setState(() {
@@ -1762,8 +1785,6 @@ class _MakePaymentState extends State<MakePayment> {
                                               AddFields(); // Call your method to add fields
                                             });
                                             state.reset();
-                                            print(_selectedPaymentMethod ==
-                                                "Card");
                                             print(
                                                 'Selected payment method: $_selectedPaymentMethod');
                                             surge_count(); // Your method call

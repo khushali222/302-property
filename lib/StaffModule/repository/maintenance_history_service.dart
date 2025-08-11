@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../constant/constant.dart';
+import '../../constant/constant.dart';
+
 
 class MaintenanceHistoryService {
 
   Future<bool> addMaintenanceHistory({
     required String applianceId,
-    required String adminId,
+    required String staffId,
     required String token,
     required String vendor,
     required String event,
@@ -24,13 +25,13 @@ class MaintenanceHistoryService {
       // Add headers
       request.headers.addAll({
         'authorization': 'CRM $token',
-        'id': 'CRM $adminId',
+        'id': 'CRM $staffId',
         'Content-Type': 'multipart/form-data',
       });
 
       // Add form fields
       request.fields['appliance_id'] = applianceId;
-      request.fields['admin_id'] = adminId;
+      request.fields['staff_id'] = staffId;
       request.fields['vendor'] = vendor;
       request.fields['event'] = event;
 

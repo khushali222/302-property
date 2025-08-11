@@ -42,6 +42,9 @@ Widget buildListTile(
         }else if (title == "Profile") {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => Profile_screen()));
+        } else if (title == "Reports" && active != true) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ReportsMainScreen()));
         } else if (title == "Settings") {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => TabBarExample()));
