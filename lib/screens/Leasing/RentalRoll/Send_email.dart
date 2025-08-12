@@ -790,8 +790,8 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
-        currentpage: "Rent Roll",
+     drawer: CustomDrawer(
+        currentpage: "Leases",
         dropdown: true,
       ),
       appBar: widget_302.App_Bar(context: context),

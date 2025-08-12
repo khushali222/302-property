@@ -81,7 +81,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Property Type": (context) => PropertyTable(),
     "Vendor": (context) => Vendor_table(),
     "Work Order": (context) => Workorder_table(),
-    "Rent Roll": (context) => Lease_table(),
+    "Leases": (context) => Lease_table(),
     "Templates": (context) => TempletTable(),
     "E-mail Logs": (context) => Email_log_tablee(),
     "Send E-mail": (context) => Send_Email_table(),

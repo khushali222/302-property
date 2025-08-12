@@ -147,7 +147,7 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                 ),
                 "Leasing",
                 [
-                  "Rent Roll",
+                  "Leases",
                   "Applicants",
                   "Upcoming renewal",
                   "Scheduled Payment"
@@ -156,7 +156,7 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                   FaIcon(
                     FontAwesomeIcons.wallet,
                     size: 20,
-                    color: widget.currentpage == "Rent Roll"
+                    color: widget.currentpage == "Leases"
                         ? Colors.white
                         : blueColor,
                   ), // Icon for Properties

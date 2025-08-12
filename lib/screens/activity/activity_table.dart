@@ -649,14 +649,14 @@ class _ActivityTableState extends State<ActivityTable> {
             ),
             //add Activity_model
             Padding(
-              padding: const EdgeInsets.only(left: 0, right: 0),
+              padding: const EdgeInsets.only(left: 2, right: 0),
               child: Row(
                 //mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: titleBar(
-                      width: MediaQuery.of(context).size.width * .93,
+                      width: MediaQuery.of(context).size.width * .92,
                       title: 'Activity',
                     ),
                   ),

@@ -4087,420 +4087,468 @@ class _Workorder_summeryState extends State<Workorder_summery>
                 width: MediaQuery.of(context).size.width * 0.99,
                 child: Padding(
                   padding: const EdgeInsets.all(20),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      // Header with title and close button
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Update Work Order',
-                            style: TextStyle(
-                              color: Color(0xFF101828),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        // Header with title and close button
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Update Work Order',
+                              style: TextStyle(
+                                color: Color(0xFF101828),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
                             ),
-                          ),
-                          GestureDetector(
-                            onTap: () => Navigator.of(context).pop(),
-                            child: Container(
-                                height: 40,
-                                width: 40,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: blueColor),
-                                ),
-                                child: Icon(Icons.close, color: blueColor)),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      //assined and Due date
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Assigned',
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
+                            GestureDetector(
+                              onTap: () => Navigator.of(context).pop(),
+                              child: Container(
+                                  height: 40,
+                                  width: 40,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(color: blueColor),
                                   ),
-                                ),
-                                _isLoadingstaff
-                                    ? const Center(
-                                  child: SpinKitFadingCircle(
-                                    color: Colors.black,
-                                    size: 50.0,
+                                  child: Icon(Icons.close, color: blueColor)),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        //assined and Due date
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Assigned',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14,
+                                    ),
                                   ),
-                                )
-                                    : Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                                  children: [
-                                    DropdownButtonHideUnderline(
-                                      child: DropdownButtonFormField2<
-                                          String>(
-                                        decoration: InputDecoration(
-                                            border: InputBorder.none),
-                                        isExpanded: true,
-                                        hint: const Row(
-                                          children: [
-                                            Expanded(
+                                  _isLoadingstaff
+                                      ? const Center(
+                                    child: SpinKitFadingCircle(
+                                      color: Colors.black,
+                                      size: 50.0,
+                                    ),
+                                  )
+                                      : Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      DropdownButtonHideUnderline(
+                                        child: DropdownButtonFormField2<
+                                            String>(
+                                          decoration: InputDecoration(
+                                              border: InputBorder.none),
+                                          isExpanded: true,
+                                          hint: const Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  'Select here',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                    FontWeight.w400,
+                                                    color:
+                                                    Color(0xFFb0b6c3),
+                                                  ),
+                                                  overflow:
+                                                  TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          items: staffs.keys
+                                              .map((staffmember_id) {
+                                            return DropdownMenuItem<String>(
+                                              value: staffmember_id,
                                               child: Text(
-                                                'Select here',
-                                                style: TextStyle(
+                                                staffs[staffmember_id]!,
+                                                style: const TextStyle(
                                                   fontSize: 14,
                                                   fontWeight:
                                                   FontWeight.w400,
-                                                  color:
-                                                  Color(0xFFb0b6c3),
+                                                  color: Colors.black87,
                                                 ),
                                                 overflow:
                                                 TextOverflow.ellipsis,
                                               ),
+                                            );
+                                          }).toList(),
+                                          value: _selectedstaffId,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              // _selectedUnitId = null;
+                                              _selectedstaffId = value;
+                                              _selectedStaffs = staffs[
+                                              value]; // Store selected rental_adress
+                    
+                                              //StaffId = value.toString();
+                                              print(
+                                                  'Selected Staffs: $_selectedStaffs');
+                                              // Fetch units for the selected property
+                                            });
+                                          },
+                                          buttonStyleData: ButtonStyleData(
+                                            height: 50,
+                                            width: 160,
+                                            padding: const EdgeInsets.only(
+                                                left: 14, right: 14),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                              BorderRadius.circular(8),
+                                              border: Border.all(
+                                                  color:
+                                                  Colors.grey.shade300),
+                                              color: Colors.white,
                                             ),
-                                          ],
-                                        ),
-                                        items: staffs.keys
-                                            .map((staffmember_id) {
-                                          return DropdownMenuItem<String>(
-                                            value: staffmember_id,
-                                            child: Text(
-                                              staffs[staffmember_id]!,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight:
-                                                FontWeight.w400,
-                                                color: Colors.black87,
-                                              ),
-                                              overflow:
-                                              TextOverflow.ellipsis,
+                                            elevation: 0,
+                                          ),
+                                          iconStyleData:
+                                          const IconStyleData(
+                                            icon: Icon(
+                                              Icons.arrow_drop_down,
                                             ),
-                                          );
-                                        }).toList(),
-                                        value: _selectedstaffId,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            // _selectedUnitId = null;
-                                            _selectedstaffId = value;
-                                            _selectedStaffs = staffs[
-                                            value]; // Store selected rental_adress
-
-                                            //StaffId = value.toString();
-                                            print(
-                                                'Selected Staffs: $_selectedStaffs');
-                                            // Fetch units for the selected property
-                                          });
-                                        },
-                                        buttonStyleData: ButtonStyleData(
-                                          height: 50,
-                                          width: 160,
-                                          padding: const EdgeInsets.only(
-                                              left: 14, right: 14),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                            BorderRadius.circular(8),
-                                            border: Border.all(
-                                                color:
-                                                Colors.grey.shade300),
-                                            color: Colors.white,
+                                            iconSize: 24,
+                                            iconEnabledColor:
+                                            Color(0xFFb0b6c3),
+                                            iconDisabledColor: Colors.grey,
                                           ),
-                                          elevation: 0,
-                                        ),
-                                        iconStyleData:
-                                        const IconStyleData(
-                                          icon: Icon(
-                                            Icons.arrow_drop_down,
+                                          dropdownStyleData:
+                                          DropdownStyleData(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                              BorderRadius.circular(6),
+                                              color: Colors.white,
+                                            ),
+                                            scrollbarTheme:
+                                            ScrollbarThemeData(
+                                              radius:
+                                              const Radius.circular(6),
+                                              thickness:
+                                              MaterialStateProperty.all(
+                                                  6),
+                                              thumbVisibility:
+                                              MaterialStateProperty.all(
+                                                  true),
+                                            ),
                                           ),
-                                          iconSize: 24,
-                                          iconEnabledColor:
-                                          Color(0xFFb0b6c3),
-                                          iconDisabledColor: Colors.grey,
-                                        ),
-                                        dropdownStyleData:
-                                        DropdownStyleData(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                            BorderRadius.circular(6),
-                                            color: Colors.white,
+                                          menuItemStyleData:
+                                          const MenuItemStyleData(
+                                            height: 40,
+                                            padding: EdgeInsets.only(
+                                                left: 14, right: 14),
                                           ),
-                                          scrollbarTheme:
-                                          ScrollbarThemeData(
-                                            radius:
-                                            const Radius.circular(6),
-                                            thickness:
-                                            MaterialStateProperty.all(
-                                                6),
-                                            thumbVisibility:
-                                            MaterialStateProperty.all(
-                                                true),
-                                          ),
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return 'Please select an option';
+                                            }
+                                            return null;
+                                          },
                                         ),
-                                        menuItemStyleData:
-                                        const MenuItemStyleData(
-                                          height: 40,
-                                          padding: EdgeInsets.only(
-                                              left: 14, right: 14),
-                                        ),
-                                        validator: (value) {
-                                          if (value == null ||
-                                              value.isEmpty) {
-                                            return 'Please select an option';
-                                          }
-                                          return null;
-                                        },
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Due Date',
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Due Date',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: 11),
-                                Container(
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    border:
-                                    Border.all(color: Colors.grey.shade300),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: TextFormField(
-                                    controller: selectedDate,
-                                    readOnly: true,
-                                    onTap: () async {
-                                      DateTime? pickedDate =
-                                      await showDatePicker(
-                                        context: context,
-                                        initialDate: DateTime.now(),
-                                        firstDate: DateTime(2000),
-                                        lastDate: DateTime(2101),
-                                        locale: const Locale('en', 'US'),
-                                        builder: (BuildContext context,
-                                            Widget? child) {
-                                          return Theme(
-                                            data: ThemeData.light().copyWith(
-                                              colorScheme: ColorScheme.light(
-                                                primary:
-                                                blueColor, // header background color
-                                                onPrimary: Colors
-                                                    .white, // header text color
-                                                onSurface:
-                                                blueColor, // body text color
-                                              ),
-                                              textButtonTheme:
-                                              TextButtonThemeData(
-                                                style: TextButton.styleFrom(
-                                                  foregroundColor: Colors.white,
-                                                  backgroundColor:
-                                                  blueColor, // button text color
+                                  SizedBox(height: 11),
+                                  Container(
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      border:
+                                      Border.all(color: Colors.grey.shade300),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: TextFormField(
+                                      controller: selectedDate,
+                                      readOnly: true,
+                                      onTap: () async {
+                                        DateTime? pickedDate =
+                                        await showDatePicker(
+                                          context: context,
+                                          initialDate: DateTime.now(),
+                                          firstDate: DateTime(2000),
+                                          lastDate: DateTime(2101),
+                                          locale: const Locale('en', 'US'),
+                                          builder: (BuildContext context,
+                                              Widget? child) {
+                                            return Theme(
+                                              data: ThemeData.light().copyWith(
+                                                colorScheme: ColorScheme.light(
+                                                  primary:
+                                                  blueColor, // header background color
+                                                  onPrimary: Colors
+                                                      .white, // header text color
+                                                  onSurface:
+                                                  blueColor, // body text color
+                                                ),
+                                                textButtonTheme:
+                                                TextButtonThemeData(
+                                                  style: TextButton.styleFrom(
+                                                    foregroundColor: Colors.white,
+                                                    backgroundColor:
+                                                    blueColor, // button text color
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                            child: child!,
-                                          );
-                                        },
-                                      );
-                                      if (pickedDate != null) {
-                                        setState(() {
-                                          selectedDate.text =
-                                          "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                                        });
-                                      }
-                                    },
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      contentPadding: EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 16),
-                                      hintText: "dd-mm-yyyy",
-                                      hintStyle:
-                                      TextStyle(color: Colors.grey[400]),
-                                      suffixIcon: Icon(Icons.calendar_today,
-                                          size: 20, color: Colors.grey),
+                                              child: child!,
+                                            );
+                                          },
+                                        );
+                                        if (pickedDate != null) {
+                                          setState(() {
+                                            selectedDate.text =
+                                            "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                          });
+                                        }
+                                      },
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 16),
+                                        hintText: "dd-mm-yyyy",
+                                        hintStyle:
+                                        TextStyle(color: Colors.grey[400]),
+                                        suffixIcon: Icon(Icons.calendar_today,
+                                            size: 20, color: Colors.grey),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Status',
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Status',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14,
+                                    ),
                                   ),
-                                ),
-                                DropdownButtonHideUnderline(
-                                  child: DropdownButtonFormField2<String>(
-                                    decoration: InputDecoration(
-                                        border: InputBorder.none),
-                                    isExpanded: true,
-                                    hint: const Row(
-                                      children: [
-                                        Expanded(
+                                  DropdownButtonHideUnderline(
+                                    child: DropdownButtonFormField2<String>(
+                                      decoration: InputDecoration(
+                                          border: InputBorder.none),
+                                      isExpanded: true,
+                                      hint: const Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              'Select Status',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400,
+                                                color: Color(0xFFb0b6c3),
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      items: [
+                                        'New',
+                                        'In Progress',
+                                        'On Hold',
+                                        'Completed'
+                                      ].map((status) {
+                                        return DropdownMenuItem<String>(
+                                          value: status,
                                           child: Text(
-                                            'Select Status',
-                                            style: TextStyle(
+                                            status,
+                                            style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w400,
-                                              color: Color(0xFFb0b6c3),
+                                              color: Colors.black87,
                                             ),
                                             overflow: TextOverflow.ellipsis,
                                           ),
+                                        );
+                                      }).toList(),
+                                      value: selectedStatus,
+                                      onChanged: (value) {
+                                        selectedStatus = value;
+                                      },
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 50,
+                                        width: 160,
+                                        padding: const EdgeInsets.only(
+                                            left: 14, right: 14),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(8),
+                                          border: Border.all(
+                                              color: Colors.grey.shade300),
+                                          color: Colors.white,
                                         ),
-                                      ],
-                                    ),
-                                    items: [
-                                      'New',
-                                      'In Progress',
-                                      'On Hold',
-                                      'Completed'
-                                    ].map((status) {
-                                      return DropdownMenuItem<String>(
-                                        value: status,
-                                        child: Text(
-                                          status,
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400,
-                                            color: Colors.black87,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
+                                        elevation: 0,
+                                      ),
+                                      iconStyleData: const IconStyleData(
+                                        icon: Icon(Icons.arrow_drop_down),
+                                        iconSize: 24,
+                                        iconEnabledColor: Color(0xFFb0b6c3),
+                                        iconDisabledColor: Colors.grey,
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(6),
+                                          color: Colors.white,
                                         ),
-                                      );
-                                    }).toList(),
-                                    value: selectedStatus,
-                                    onChanged: (value) {
-                                      selectedStatus = value;
-                                    },
-                                    buttonStyleData: ButtonStyleData(
-                                      height: 50,
-                                      width: 160,
-                                      padding: const EdgeInsets.only(
-                                          left: 14, right: 14),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                            color: Colors.grey.shade300),
-                                        color: Colors.white,
+                                        scrollbarTheme: ScrollbarThemeData(
+                                          radius: const Radius.circular(6),
+                                          thickness: MaterialStateProperty.all(6),
+                                          thumbVisibility:
+                                          MaterialStateProperty.all(true),
+                                        ),
                                       ),
-                                      elevation: 0,
-                                    ),
-                                    iconStyleData: const IconStyleData(
-                                      icon: Icon(Icons.arrow_drop_down),
-                                      iconSize: 24,
-                                      iconEnabledColor: Color(0xFFb0b6c3),
-                                      iconDisabledColor: Colors.grey,
-                                    ),
-                                    dropdownStyleData: DropdownStyleData(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(6),
-                                        color: Colors.white,
+                                      menuItemStyleData: const MenuItemStyleData(
+                                        height: 40,
+                                        padding:
+                                        EdgeInsets.only(left: 14, right: 14),
                                       ),
-                                      scrollbarTheme: ScrollbarThemeData(
-                                        radius: const Radius.circular(6),
-                                        thickness: MaterialStateProperty.all(6),
-                                        thumbVisibility:
-                                        MaterialStateProperty.all(true),
-                                      ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please select an option';
+                                        }
+                                        return null;
+                                      },
                                     ),
-                                    menuItemStyleData: const MenuItemStyleData(
-                                      height: 40,
-                                      padding:
-                                      EdgeInsets.only(left: 14, right: 14),
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please select an option';
-                                      }
-                                      return null;
-                                    },
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
+                            ),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Message',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  SizedBox(height: 11),
+                                  Container(
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      border:
+                                      Border.all(color: Colors.grey.shade300),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: TextFormField(
+                                      controller: message,
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 12, vertical: 16),
+                                        hintText: "Some description here",
+                                        hintStyle: TextStyle(
+                                            color: Colors.grey[400],
+                                            fontSize: 14),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        // Upload Photo Section
+                        if (_images.isEmpty)
+                          GestureDetector(
+                            onTap: () {
+                              _pickImage().then((_) {
+                                setState(() {});
+                              });
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.grey.shade300,
+                                    style: BorderStyle.solid),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Column(
+                                children: [
+                                  // Icon(Icons.upload,
+                                  //     size: 40, color: Colors.grey[600]),
+                                  Image.asset(
+                                    'assets/icons/Upload.png',
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                  SizedBox(height: 8),
+                                  Text(
+                                    'Upload your Photo here',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    'Maximum File Size is 20MB',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.grey),
+                                  ),
+                                  Text(
+                                    'Supported File Types are .png, .jpeg, .pdf, .csv',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.grey),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                          SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Message',
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                SizedBox(height: 11),
-                                Container(
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    border:
-                                    Border.all(color: Colors.grey.shade300),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: TextFormField(
-                                    controller: message,
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      contentPadding: EdgeInsets.symmetric(
-                                          horizontal: 12, vertical: 16),
-                                      hintText: "Some description here",
-                                      hintStyle: TextStyle(
-                                          color: Colors.grey[400],
-                                          fontSize: 14),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      // Upload Photo Section
-                      if (_images.isEmpty)
-                        GestureDetector(
-                          onTap: () {
-                            _pickImage().then((_) {
-                              setState(() {});
-                            });
-                          },
-                          child: Container(
+                        if (_images.isEmpty) SizedBox(height: 16),
+                        if (_images.isNotEmpty) ...[
+                          Container(
                             width: double.infinity,
-                            padding: EdgeInsets.all(16),
+                            padding: EdgeInsets.all(10),
                             decoration: BoxDecoration(
                               border: Border.all(
                                   color: Colors.grey.shade300,
@@ -4508,256 +4556,210 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Icon(Icons.upload,
-                                //     size: 40, color: Colors.grey[600]),
-                                Image.asset(
-                                  'assets/icons/Upload.png',
-                                  height: 50,
-                                  width: 50,
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  // crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    GestureDetector(
+                                        onTap: () {
+                                          _pickImage().then((_) {
+                                            setState(() {});
+                                          });
+                                        },
+                                        child: Container(
+                                            height: 20,
+                                            width: 20,
+                                            decoration: BoxDecoration(
+                                              color: blueColor,
+                                              borderRadius:
+                                              BorderRadius.circular(7),
+                                            ),
+                                            child: Icon(
+                                              Icons.add,
+                                              color: Colors.white,
+                                              size: 15,
+                                            ))),
+                                  ],
                                 ),
-                                SizedBox(height: 8),
-                                Text(
-                                  'Upload your Photo here',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.grey[700],
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(top: 10, right: 10),
+                                    child: Wrap(
+                                      alignment: WrapAlignment.start,
+                                      crossAxisAlignment:
+                                      WrapCrossAlignment.start,
+                                      spacing: 8,
+                                      runSpacing: 8,
+                                      children:
+                                      List.generate(_images.length, (index) {
+                                        return Stack(
+                                          clipBehavior: Clip.none, //
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.all(4.0),
+                                              child: Container(
+                                                width: 80,
+                                                height: 80,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                  BorderRadius.circular(8),
+                                                  border: Border.all(
+                                                      color:
+                                                      Colors.grey.shade300),
+                                                ),
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                  BorderRadius.circular(8),
+                                                  child: Image.file(
+                                                    _images[index],
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Positioned(
+                                              top: 0, //
+                                              right: 0, //
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    _images.removeAt(index);
+                                                  });
+                                                },
+                                                child: Container(
+                                                  width: 18,
+                                                  height: 18,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    shape: BoxShape.circle,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.black,
+                                                        blurRadius: 4,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: Icon(
+                                                    Icons.close,
+                                                    size: 14,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      }),
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  'Maximum File Size is 20MB',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 12, color: Colors.grey),
-                                ),
-                                Text(
-                                  'Supported File Types are .png, .jpeg, .pdf, .csv',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 12, color: Colors.grey),
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                      if (_images.isEmpty) SizedBox(height: 16),
-                      if (_images.isNotEmpty) ...[
-                        Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Colors.grey.shade300,
-                                style: BorderStyle.solid),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                // crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  GestureDetector(
-                                      onTap: () {
-                                        _pickImage().then((_) {
-                                          setState(() {});
-                                        });
-                                      },
-                                      child: Container(
-                                          height: 20,
-                                          width: 20,
-                                          decoration: BoxDecoration(
-                                            color: blueColor,
-                                            borderRadius:
-                                            BorderRadius.circular(7),
-                                          ),
-                                          child: Icon(
-                                            Icons.add,
-                                            color: Colors.white,
-                                            size: 15,
-                                          ))),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Padding(
-                                  padding: EdgeInsets.only(top: 10, right: 10),
-                                  child: Wrap(
-                                    alignment: WrapAlignment.start,
-                                    crossAxisAlignment:
-                                    WrapCrossAlignment.start,
-                                    spacing: 8,
-                                    runSpacing: 8,
-                                    children:
-                                    List.generate(_images.length, (index) {
-                                      return Stack(
-                                        clipBehavior: Clip.none, //
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.all(4.0),
-                                            child: Container(
-                                              width: 80,
-                                              height: 80,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                BorderRadius.circular(8),
-                                                border: Border.all(
-                                                    color:
-                                                    Colors.grey.shade300),
-                                              ),
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                BorderRadius.circular(8),
-                                                child: Image.file(
-                                                  _images[index],
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Positioned(
-                                            top: 0, //
-                                            right: 0, //
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  _images.removeAt(index);
-                                                });
-                                              },
-                                              child: Container(
-                                                width: 18,
-                                                height: 18,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  shape: BoxShape.circle,
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.black,
-                                                      blurRadius: 4,
-                                                    ),
-                                                  ],
-                                                ),
-                                                child: Icon(
-                                                  Icons.close,
-                                                  size: 14,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    }),
+                        ],
+                        SizedBox(height: 24),
+                        // Buttons
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    side: BorderSide(color: blueColor),
+                                  ),
+                                ),
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                    color: blueColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                    
+                                  SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                                  final DateFormat formatter =
+                                  DateFormat('yyyy-MM-dd HH:mm:ss');
+                                  String notificationTime =
+                                  formatter.format(DateTime.now());
+                    
+                                  Map<String, dynamic> values = {
+                                    "date": reverseFormatDate(
+                                        selectedDate.text.trim()),
+                                    "message": message.text.trim(),
+                                    "status": selectedStatus,
+                                    "statusUpdatedBy": "Admin",
+                                    "staffmember_name": _selectedStaffs,
+                                    "staffmember_id": _selectedstaffId,
+                                    "workOrderUpdate_images": _uploadedFileNames!,
+                                    'notificationTime': notificationTime,
+                                  };
+                    
+                                  await WorkOrderRepository
+                                      .updateworkorderSummary(
+                                      values, widget.workorder_id!)
+                                      .then((value) {
+                                    setState(() {
+                                      futureworkorderSummary =
+                                          WorkOrderRepository.getworkorderSummary(
+                                              widget.workorder_id!);
+                                    });
+                                  });
+                    
+                                  Navigator.of(context).pop();
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: blueColor,
+                                  padding: EdgeInsets.symmetric(vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                child: isLoading
+                                    ? SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                                    : Text(
+                                  'Save',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
-                      SizedBox(height: 24),
-                      // Buttons
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              style: TextButton.styleFrom(
-                                padding: EdgeInsets.symmetric(vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  side: BorderSide(color: blueColor),
-                                ),
-                              ),
-                              child: Text(
-                                'Cancel',
-                                style: TextStyle(
-                                  color: blueColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 12),
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                setState(() {
-                                  isLoading = true;
-                                });
-
-                                SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
-                                final DateFormat formatter =
-                                DateFormat('yyyy-MM-dd HH:mm:ss');
-                                String notificationTime =
-                                formatter.format(DateTime.now());
-
-                                Map<String, dynamic> values = {
-                                  "date": reverseFormatDate(
-                                      selectedDate.text.trim()),
-                                  "message": message.text.trim(),
-                                  "status": selectedStatus,
-                                  "statusUpdatedBy": "Admin",
-                                  "staffmember_name": _selectedStaffs,
-                                  "staffmember_id": _selectedstaffId,
-                                  "workOrderUpdate_images": _uploadedFileNames!,
-                                  'notificationTime': notificationTime,
-                                };
-
-                                await WorkOrderRepository
-                                    .updateworkorderSummary(
-                                    values, widget.workorder_id!)
-                                    .then((value) {
-                                  setState(() {
-                                    futureworkorderSummary =
-                                        WorkOrderRepository.getworkorderSummary(
-                                            widget.workorder_id!);
-                                  });
-                                });
-
-                                Navigator.of(context).pop();
-                                setState(() {
-                                  isLoading = false;
-                                });
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: blueColor,
-                                padding: EdgeInsets.symmetric(vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: isLoading
-                                  ? SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2,
-                                ),
-                              )
-                                  : Text(
-                                'Save',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),

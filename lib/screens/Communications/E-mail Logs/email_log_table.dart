@@ -769,7 +769,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: titleBar(
-                      width: MediaQuery.of(context).size.width * .91,
+                      width: MediaQuery.of(context).size.width * .90,
                       title: 'Email Logs',
                     ),
                   ),
@@ -780,8 +780,11 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                 ],
               ),
             ),
+            SizedBox(
+              height: 8,
+            ),
             Padding(
-              padding: const EdgeInsets.only(left: 11, right: 11),
+              padding: const EdgeInsets.only(left: 12, right: 12),
               child: Row(
                 children: [
                   if (MediaQuery.of(context).size.width < 500)

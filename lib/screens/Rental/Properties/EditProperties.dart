@@ -1013,28 +1013,28 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                         context,
                                                                     StateSetter
                                                                         setState) {
-                                                                  return AlertDialog(
+                                                                  return Dialog(
                                                                     backgroundColor:
                                                                         Colors
                                                                             .white,
                                                                     surfaceTintColor:
                                                                         Colors
                                                                             .white,
-                                                                    content:
+                                                                    child:
                                                                         SingleChildScrollView(
                                                                       child:
                                                                           Column(
                                                                         children: [
                                                                           Container(
                                                                             // height: MediaQuery.of(context).size.height * .43,
-                                                                            width:
-                                                                                MediaQuery.of(context).size.width * .99,
-                                                                            decoration: BoxDecoration(
-                                                                                color: Colors.white,
-                                                                                borderRadius: BorderRadius.circular(10),
-                                                                                border: Border.all(
-                                                                                  color: Color.fromRGBO(21, 43, 81, 1),
-                                                                                )),
+                                                                            // width:
+                                                                            //     MediaQuery.of(context).size.width * .99,
+                                                                            // decoration: BoxDecoration(
+                                                                            //     color: Colors.white,
+                                                                            //     borderRadius: BorderRadius.circular(10),
+                                                                            //     border: Border.all(
+                                                                            //       color: Color.fromRGBO(21, 43, 81, 1),
+                                                                            //     )),
                                                                             child:
                                                                                 Column(
                                                                               children: [
@@ -1050,6 +1050,23 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                       "New Property Type",
                                                                                       style: TextStyle(fontWeight: FontWeight.bold, color: blueColor, fontSize: MediaQuery.of(context).size.width < 500 ? 17 : 22),
                                                                                     ),
+                                                                                    Spacer(),
+                                                                                    InkWell(
+                                                                                      onTap: () {
+                                                                                        Navigator.pop(context);
+                                                                                      },
+                                                                                      child: Material(
+                                                                                        child: Container(
+                                                                                          // height: 30,
+                                                                                          // width: 30,
+                                                                                          // decoration: BoxDecoration(
+                                                                                          //   border: Border.all(color: blueColor),
+                                                                                          //   borderRadius: BorderRadius.circular(20)
+                                                                                          // ),
+                                                                                            child: Center(child: Icon(Icons.close))),
+                                                                                      ),
+                                                                                    ),
+                                                                                    SizedBox(width: 8,),
                                                                                   ],
                                                                                 ),
                                                                                 SizedBox(
@@ -1296,19 +1313,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                         ),
                                                                                       ),
                                                                                     ),
-                                                                                    Spacer(),
-                                                                                    InkWell(
-                                                                                      onTap: () {
-                                                                                        Navigator.pop(context);
-                                                                                      },
-                                                                                      child: Material(
-                                                                                        elevation: 2,
-                                                                                        child: Container(width: MediaQuery.of(context).size.width < 500 ? 90 : 90, height: MediaQuery.of(context).size.width < 500 ? 40 : 40, color: Colors.white, child: Center(child: Text("Cancel"))),
-                                                                                      ),
-                                                                                    ),
-                                                                                    SizedBox(
-                                                                                      width: 2,
-                                                                                    ),
+
                                                                                   ],
                                                                                 ),
                                                                                 SizedBox(
@@ -2160,16 +2165,18 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                 SizedBox(
                                   width: 15,
                                 ),
-                                Text(
-                                  "Who is the property owner ? (Required)",
-                                  style: TextStyle(
-                                      color: Color(0xFF8A95A8),
-                                      //  fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 14.5
-                                              : 18),
+                                Expanded(
+                                  child: Text(
+                                    "Who is the property owner ? (Required)",
+                                    style: TextStyle(
+                                        color: Color(0xFF8A95A8),
+                                        //  fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 14.5
+                                                : 18),
+                                  ),
                                 ),
                               ],
                             ),
@@ -2720,7 +2727,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                         height:
                                                                             50,
                                                                         width: MediaQuery.of(context).size.width *
-                                                                            .65,
+                                                                            .63,
                                                                         decoration:
                                                                             BoxDecoration(
                                                                           borderRadius:
@@ -2826,7 +2833,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                         height:
                                                                             50,
                                                                         width: MediaQuery.of(context).size.width *
-                                                                            .65,
+                                                                            .63,
                                                                         decoration:
                                                                             BoxDecoration(
                                                                           borderRadius:
@@ -2932,7 +2939,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                         height:
                                                                             50,
                                                                         width: MediaQuery.of(context).size.width *
-                                                                            .65,
+                                                                            .63,
                                                                         decoration:
                                                                             BoxDecoration(
                                                                           borderRadius:
@@ -3044,7 +3051,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                         height:
                                                                             50,
                                                                         width: MediaQuery.of(context).size.width *
-                                                                            .65,
+                                                                            .63,
                                                                         decoration:
                                                                             BoxDecoration(
                                                                           borderRadius:
@@ -3150,7 +3157,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                         height:
                                                                             50,
                                                                         width: MediaQuery.of(context).size.width *
-                                                                            .65,
+                                                                            .63,
                                                                         decoration:
                                                                             BoxDecoration(
                                                                           borderRadius:
@@ -3698,17 +3705,17 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                   Icons.add,
                                                   size: 16,
                                                 ),
-                                                SizedBox(width: 4),
+                                                SizedBox(width: 3),
                                                 Text(
                                                   'Add New Staffmember',
                                                   style: TextStyle(
                                                       fontSize:
-                                                          MediaQuery.of(context)
-                                                                      .size
-                                                                      .width <
-                                                                  500
-                                                              ? 13
-                                                              : 18),
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                          500
+                                                          ? 13
+                                                          : 15),
                                                 ),
                                               ],
                                             ),

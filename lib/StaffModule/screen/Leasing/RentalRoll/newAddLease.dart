@@ -967,7 +967,7 @@ class _addLease3State extends State<addLease3>
       appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawerStaff(
-        currentpage: "Rent Roll",
+        currentpage: "Leases",
         dropdown: true,
       ),
       body: Form(

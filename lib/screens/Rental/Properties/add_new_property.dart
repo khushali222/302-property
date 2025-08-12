@@ -925,31 +925,31 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                   context,
                                                               StateSetter
                                                                   setState) {
-                                                            return AlertDialog(
+                                                            return Dialog(
                                                               backgroundColor:
                                                                   Colors.white,
                                                               surfaceTintColor:
                                                                   Colors.white,
-                                                              content:
+                                                              child:
                                                                   SingleChildScrollView(
                                                                 child: Column(
                                                                   children: [
                                                                     Container(
                                                                       // height: MediaQuery.of(context).size.height * .43,
-                                                                      width: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width *
-                                                                          .99,
-                                                                      decoration: BoxDecoration(
-                                                                          color: Colors.white,
-                                                                          borderRadius: BorderRadius.circular(10),
-                                                                          border: Border.all(
-                                                                            color: Color.fromRGBO(
-                                                                                21,
-                                                                                43,
-                                                                                81,
-                                                                                1),
-                                                                          )),
+                                                                      // width: MediaQuery.of(context)
+                                                                      //         .size
+                                                                      //         .width *
+                                                                      //     .99,
+                                                                      // decoration: BoxDecoration(
+                                                                      //     color: Colors.white,
+                                                                      //     borderRadius: BorderRadius.circular(10),
+                                                                      //     border: Border.all(
+                                                                      //       color: Color.fromRGBO(
+                                                                      //           21,
+                                                                      //           43,
+                                                                      //           81,
+                                                                      //           1),
+                                                                      //     )),
                                                                       child:
                                                                           Column(
                                                                         children: [
@@ -966,6 +966,23 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 "New Property Type",
                                                                                 style: TextStyle(fontWeight: FontWeight.bold, color: blueColor, fontSize: MediaQuery.of(context).size.width < 500 ? 17 : 22),
                                                                               ),
+                                                                              Spacer(),
+                                                                              InkWell(
+                                                                                onTap: () {
+                                                                                  Navigator.pop(context);
+                                                                                },
+                                                                                child: Material(
+                                                                                  child: Container(
+                                                                                    // height: 30,
+                                                                                    // width: 30,
+                                                                                    // decoration: BoxDecoration(
+                                                                                    //   border: Border.all(color: blueColor),
+                                                                                    //   borderRadius: BorderRadius.circular(20)
+                                                                                    // ),
+                                                                                      child: Center(child: Icon(Icons.close))),
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(width: 8,),
                                                                             ],
                                                                           ),
                                                                           SizedBox(
@@ -1226,17 +1243,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                   ),
                                                                                 ),
                                                                               ),
-                                                                             Spacer(),
-                                                                              InkWell(
-                                                                                onTap: () {
-                                                                                  Navigator.pop(context);
-                                                                                },
-                                                                                child: Material(
-                                                                                  elevation: 2,
-                                                                                  child: Container(width: MediaQuery.of(context).size.width < 500 ? 90 : 90, height: MediaQuery.of(context).size.width < 500 ? 40 : 40, color: Colors.white, child: Center(child: Text("Cancel"))),
-                                                                                ),
-                                                                              ),
-                                                                              SizedBox(width: 2,),
+
                                                                             ],
                                                                           ),
                                                                           SizedBox(
@@ -2091,16 +2098,18 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 SizedBox(
                                   width: 15,
                                 ),
-                                Text(
-                                  "Who is the property owner ? (Required)",
-                                  style: TextStyle(
-                                      color: Color(0xFF8A95A8),
-                                      //  fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 14.5
-                                              : 18),
+                                Expanded(
+                                  child: Text(
+                                    "Who is the property owner ? (Required)",
+                                    style: TextStyle(
+                                        color: Color(0xFF8A95A8),
+                                        //  fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 14.5
+                                                : 18),
+                                  ),
                                 ),
                               ],
                             ),
@@ -2662,7 +2671,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         width: MediaQuery.of(context)
                                                                             .size
                                                                             .width *
-                                                                            .65,
+                                                                            .63,
                                                                         decoration:
                                                                         BoxDecoration(
                                                                           borderRadius:
@@ -2766,7 +2775,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         width: MediaQuery.of(context)
                                                                             .size
                                                                             .width *
-                                                                            .65,
+                                                                            .63,
                                                                         decoration:
                                                                         BoxDecoration(
                                                                           borderRadius:
@@ -2870,7 +2879,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         width: MediaQuery.of(context)
                                                                             .size
                                                                             .width *
-                                                                            .65,
+                                                                            .63,
                                                                         decoration:
                                                                         BoxDecoration(
                                                                           borderRadius:
@@ -2980,7 +2989,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         width: MediaQuery.of(context)
                                                                             .size
                                                                             .width *
-                                                                            .65,
+                                                                            .63,
                                                                         decoration:
                                                                         BoxDecoration(
                                                                           borderRadius:
@@ -3084,7 +3093,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         width: MediaQuery.of(context)
                                                                             .size
                                                                             .width *
-                                                                            .65,
+                                                                            .63,
                                                                         decoration:
                                                                         BoxDecoration(
                                                                           borderRadius:

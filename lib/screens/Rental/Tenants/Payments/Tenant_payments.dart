@@ -2454,7 +2454,7 @@ class _FinancialTableState extends State<FinancialTable> {
                             ),
                             if (data.isEmpty)
                               Container(
-                                height: MediaQuery.of(context).size.height * .3,
+                               // height: MediaQuery.of(context).size.height * .3,
                                 child: Center(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,

@@ -2714,7 +2714,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                             ? 45
                             : 50,
                         width: MediaQuery.of(context).size.width < 500
-                            ? MediaQuery.of(context).size.width * .45
+                            ? MediaQuery.of(context).size.width * .44
                             : MediaQuery.of(context).size.width * .4,
                         decoration: BoxDecoration(
                           color: Colors.white,

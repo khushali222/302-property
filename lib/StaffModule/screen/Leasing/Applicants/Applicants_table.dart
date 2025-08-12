@@ -182,7 +182,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                 },
                 child: Row(
                   children: [
-                     Text("    Phone Number", style: TextStyle(color: Colors.white,fontSize: 14)),
+                     Text("   Phone Number", style: TextStyle(color: Colors.white,fontSize: 14)),
                      SizedBox(width: 5),
                     ascending2
                         ? const Padding(
@@ -1369,7 +1369,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                   //   size: 15,
                                                                   //   color:blueColor,
                                                                   // ),
-                                                                  SizedBox(width: 8,),
+                                                                  SizedBox(width: 1,),
                                                                   Text("View Summery",style: TextStyle(fontSize: 11,color: blueColor,fontWeight: FontWeight.bold),)
                                                                 ],
                                                               ),

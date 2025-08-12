@@ -2378,7 +2378,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       value: selectedrenatalownerid,
-                      padding: EdgeInsets.symmetric(horizontal: 5),
+                      padding: EdgeInsets.symmetric(horizontal: 4),
                       hint: Text(
                         "Rental Owner",
                         style: TextStyle(fontSize: 14, color: Colors.black),

@@ -3525,7 +3525,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       value: chargeType,
-                      padding: EdgeInsets.symmetric(horizontal: 5),
+                      padding: EdgeInsets.symmetric(horizontal: 3),
                       hint: Text(
                         "Charge type",
                         style: TextStyle(fontSize: 14, color: Colors.black),

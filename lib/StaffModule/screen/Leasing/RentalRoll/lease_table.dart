@@ -560,7 +560,7 @@ class _Lease_tableState extends State<Lease_table> {
       appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawerStaff(
-        currentpage: "Rent Roll",
+        currentpage: "Leases",
         dropdown: true,
       ),
       body: _connectivityResult != ConnectivityResult.none

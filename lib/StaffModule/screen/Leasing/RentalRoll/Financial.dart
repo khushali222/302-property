@@ -1575,7 +1575,7 @@ class _FinancialTableState extends State<FinancialTable> {
               height: 5,
             ),
             Padding(
-              padding: const EdgeInsets.only(right: 16.0),
+              padding: const EdgeInsets.only(right: 15.0),
               child: Row(
                 children: [
                   Spacer(), // 👈 Always push everything else to the right
@@ -1651,8 +1651,9 @@ class _FinancialTableState extends State<FinancialTable> {
                       child: Text(
                         'Make Payment',
                         style: TextStyle(
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 12 : 18,
+                          fontSize: MediaQuery.of(context).size.width <= 360
+                              ? 11
+                              : 12,
                           color: Colors.white,
                         ),
                       ),
@@ -1693,9 +1694,9 @@ class _FinancialTableState extends State<FinancialTable> {
                         child: Text(
                           'Enter Charge',
                           style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width < 500
-                                ? 12
-                                : 18,
+                            fontSize: MediaQuery.of(context).size.width <= 360
+                                ? 11
+                                : 12,
                             color: Colors.white,
                           ),
                         ),

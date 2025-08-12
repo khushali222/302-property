@@ -182,7 +182,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                 },
                 child: Row(
                   children: [
-                    Text("    Phone Number",
+                    Text("   Phone Number",
                         style: TextStyle(color: Colors.white, fontSize: 14)),
                     SizedBox(width: 5),
                     ascending2
@@ -1441,7 +1441,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                 // ),
                                                                 SizedBox(
                                                                   width:
-                                                                  8,
+                                                                  1,
                                                                 ),
                                                                 Text(
                                                                   "View Summery",

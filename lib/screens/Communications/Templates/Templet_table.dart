@@ -391,237 +391,206 @@ class _TempletTableState extends State<TempletTable> {
         currentpage: "Templates",
         dropdown: true,
       ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 20,
-          ),
-          //add propertytype
-          Padding(
-            padding: const EdgeInsets.only(left: 0, right: 0),
-            child: Row(
-              //mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: titleBar(
-                    width: MediaQuery.of(context).size.width * .65,
-                    title: 'Templates',
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () async {
-                    final result = await Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => Add_Email_templet()));
-                    if (result == true) {
-                      setState(() {
-                        futureTemplet = TempletRepository().fetchTemplets();
-                      });
-                    }
-                  },
-                  child: Container(
-                    height: (MediaQuery.of(context).size.width < 500)
-                        ? 50
-                        : MediaQuery.of(context).size.width * 0.062,
-
-                    // height:  MediaQuery.of(context).size.width * 0.07,
-                    // height:  40,
-                    width: (MediaQuery.of(context).size.width < 500)
-                        ? MediaQuery.of(context).size.width * 0.25
-                        : MediaQuery.of(context).size.width * 0.25,
-                    decoration: BoxDecoration(
-                      color: blueColor,
-                      borderRadius: BorderRadius.circular(5),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey,
-                          offset: Offset(0.0, 4.0),
-                          blurRadius: 6.0,
-                        ),
-                      ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 20,
+            ),
+            //add propertytype
+            Padding(
+              padding: const EdgeInsets.only(left: 0, right: 0),
+              child: Row(
+                //mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: titleBar(
+                      width: MediaQuery.of(context).size.width * .65,
+                      title: 'Templates',
                     ),
-                    child: Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "+ Add",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: MediaQuery.of(context).size.width < 500
-                                  ? 16
-                                  : 20,
-                            ),
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      final result = await Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) => Add_Email_templet()));
+                      if (result == true) {
+                        setState(() {
+                          futureTemplet = TempletRepository().fetchTemplets();
+                        });
+                      }
+                    },
+                    child: Container(
+                      height: (MediaQuery.of(context).size.width < 500)
+                          ? 50
+                          : MediaQuery.of(context).size.width * 0.062,
+        
+                      // height:  MediaQuery.of(context).size.width * 0.07,
+                      // height:  40,
+                      width: (MediaQuery.of(context).size.width < 500)
+                          ? MediaQuery.of(context).size.width * 0.25
+                          : MediaQuery.of(context).size.width * 0.25,
+                      decoration: BoxDecoration(
+                        color: blueColor,
+                        borderRadius: BorderRadius.circular(5),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey,
+                            offset: Offset(0.0, 4.0),
+                            blurRadius: 6.0,
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                ),
-                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 6),
-                if (MediaQuery.of(context).size.width > 500)
-                  SizedBox(width: 22),
-              ],
-            ),
-          ),
-          if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
-          if (MediaQuery.of(context).size.width < 500)
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: FutureBuilder<List<EmailTemplate>>(
-                future: futureTemplet,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return ColabShimmerLoadingWidget();
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Container(
-                      height: MediaQuery.of(context).size.height * .5,
                       child: Center(
-                        child: Column(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Image.asset(
-                              "assets/images/no_data.jpg",
-                              height: 200,
-                              width: 200,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
                             Text(
-                              "No Data Available",
+                              "+ Add",
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: blueColor,
-                                  fontSize: 16),
-                            )
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: MediaQuery.of(context).size.width < 500
+                                    ? 16
+                                    : 20,
+                              ),
+                            ),
                           ],
                         ),
                       ),
-                    );
-                  } else {
-                    var data = snapshot.data!;
-                    if (searchValue == null || searchValue!.isEmpty) {
-                      data = snapshot.data!;
-                    } else if (searchValue == "All") {
-                      data = snapshot.data!;
-                    } else if (searchValue!.isNotEmpty) {
-                      data = snapshot.data!
-                          .where((rentals) =>
-                              rentals.name!
-                                  .toLowerCase()
-                                  .contains(searchValue!.toLowerCase()) ||
-                              rentals.subject!
-                                  .toLowerCase()
-                                  .contains(searchValue!.toLowerCase()))
-                          .toList();
+                    ),
+                  ),
+                  if (MediaQuery.of(context).size.width < 500) SizedBox(width: 6),
+                  if (MediaQuery.of(context).size.width > 500)
+                    SizedBox(width: 22),
+                ],
+              ),
+            ),
+            if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
+            if (MediaQuery.of(context).size.width < 500)
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: FutureBuilder<List<EmailTemplate>>(
+                  future: futureTemplet,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return ColabShimmerLoadingWidget();
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Container(
+                        height: MediaQuery.of(context).size.height * .5,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                "assets/images/no_data.jpg",
+                                height: 200,
+                                width: 200,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                "No Data Available",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                    fontSize: 16),
+                              )
+                            ],
+                          ),
+                        ),
+                      );
                     } else {
-                      data = snapshot.data!
-                          .where((rentals) => rentals.name == searchValue)
+                      var data = snapshot.data!;
+                      if (searchValue == null || searchValue!.isEmpty) {
+                        data = snapshot.data!;
+                      } else if (searchValue == "All") {
+                        data = snapshot.data!;
+                      } else if (searchValue!.isNotEmpty) {
+                        data = snapshot.data!
+                            .where((rentals) =>
+                                rentals.name!
+                                    .toLowerCase()
+                                    .contains(searchValue!.toLowerCase()) ||
+                                rentals.subject!
+                                    .toLowerCase()
+                                    .contains(searchValue!.toLowerCase()))
+                            .toList();
+                      } else {
+                        data = snapshot.data!
+                            .where((rentals) => rentals.name == searchValue)
+                            .toList();
+                      }
+                      sortData(data);
+                      final totalPages = (data.length / itemsPerPage).ceil();
+                      final currentPageData = data
+                          .skip(currentPage * itemsPerPage)
+                          .take(itemsPerPage)
                           .toList();
-                    }
-                    sortData(data);
-                    final totalPages = (data.length / itemsPerPage).ceil();
-                    final currentPageData = data
-                        .skip(currentPage * itemsPerPage)
-                        .take(itemsPerPage)
-                        .toList();
-                    return SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          SizedBox(height: 10),
-                          _buildHeaders(),
-                          SizedBox(height: 20),
-                          Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Color.fromRGBO(152, 162, 179, .5))),
-                            // decoration: BoxDecoration(
-                            //     border: Border.all(color: blueColor)),
-                            child: Column(
-                              children:
-                                  currentPageData.asMap().entries.map((entry) {
-                                int index = entry.key;
-                                bool isExpanded = expandedIndex == index;
-                                EmailTemplate rentals = entry.value;
-                              //  print(rentals.body);
-                                //return CustomExpansionTile(data: Propertytype, index: index);
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    color: index % 2 != 0
-                                        ? Colors.white
-                                        : blueColor.withOpacity(0.09),
-                                    border: Border.all(
-                                        color:
-                                            Color.fromRGBO(152, 162, 179, .5)),
-                                  ),
-                                  // decoration: BoxDecoration(
-                                  //   border: Border.all(color: blueColor),
-                                  // ),
-                                  child: Column(
-                                    children: <Widget>[
-                                      ListTile(
-                                        contentPadding: EdgeInsets.zero,
-                                        title: Padding(
-                                          padding: const EdgeInsets.all(2.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: <Widget>[
-                                              InkWell(
-                                                onTap: () {
-                                                  // setState(() {
-                                                  //    isExpanded = !isExpanded;
-                                                  // //  expandedIndex = !expandedIndex;
-                                                  //
-                                                  // });
-                                                  // setState(() {
-                                                  //   if (isExpanded) {
-                                                  //     expandedIndex = null;
-                                                  //     isExpanded = !isExpanded;
-                                                  //   } else {
-                                                  //     expandedIndex = index;
-                                                  //   }
-                                                  // });
-                                                  setState(() {
-                                                    if (expandedIndex ==
-                                                        index) {
-                                                      expandedIndex = null;
-                                                    } else {
-                                                      expandedIndex = index;
-                                                    }
-                                                  });
-                                                },
-                                                child: Container(
-                                                  margin: EdgeInsets.only(
-                                                      left: 5, right: 5),
-                                                  padding: !isExpanded
-                                                      ? EdgeInsets.only(
-                                                          bottom: 10)
-                                                      : EdgeInsets.only(
-                                                          top: 10),
-                                                  child: FaIcon(
-                                                    isExpanded
-                                                        ? FontAwesomeIcons
-                                                            .sortUp
-                                                        : FontAwesomeIcons
-                                                            .sortDown,
-                                                    size: 20,
-                                                    color: blueColor,
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 3,
-                                                child: InkWell(
+                      return SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            SizedBox(height: 10),
+                            _buildHeaders(),
+                            SizedBox(height: 20),
+                            Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Color.fromRGBO(152, 162, 179, .5))),
+                              // decoration: BoxDecoration(
+                              //     border: Border.all(color: blueColor)),
+                              child: Column(
+                                children:
+                                    currentPageData.asMap().entries.map((entry) {
+                                  int index = entry.key;
+                                  bool isExpanded = expandedIndex == index;
+                                  EmailTemplate rentals = entry.value;
+                                //  print(rentals.body);
+                                  //return CustomExpansionTile(data: Propertytype, index: index);
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      color: index % 2 != 0
+                                          ? Colors.white
+                                          : blueColor.withOpacity(0.09),
+                                      border: Border.all(
+                                          color:
+                                              Color.fromRGBO(152, 162, 179, .5)),
+                                    ),
+                                    // decoration: BoxDecoration(
+                                    //   border: Border.all(color: blueColor),
+                                    // ),
+                                    child: Column(
+                                      children: <Widget>[
+                                        ListTile(
+                                          contentPadding: EdgeInsets.zero,
+                                          title: Padding(
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                InkWell(
                                                   onTap: () {
+                                                    // setState(() {
+                                                    //    isExpanded = !isExpanded;
+                                                    // //  expandedIndex = !expandedIndex;
+                                                    //
+                                                    // });
+                                                    // setState(() {
+                                                    //   if (isExpanded) {
+                                                    //     expandedIndex = null;
+                                                    //     isExpanded = !isExpanded;
+                                                    //   } else {
+                                                    //     expandedIndex = index;
+                                                    //   }
+                                                    // });
                                                     setState(() {
                                                       if (expandedIndex ==
                                                           index) {
@@ -631,401 +600,434 @@ class _TempletTableState extends State<TempletTable> {
                                                       }
                                                     });
                                                   },
-                                                  child: Text(
-                                                    rentals.name!.isEmpty
-                                                        ? 'N/A'
-                                                        : '${rentals.name}',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 15,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .08),
-                                              Expanded(
-                                                flex: 3,
-                                                child: Text(
-                                                  rentals.type!.isEmpty
-                                                      ? 'N/A'
-                                                      : '${rentals.type}',
-                                                  // rentals.rentalOwnerPhoneNumber!.isEmpty ? 'N/A' :
-                                                  // '${rentals.rentalOwnerPhoneNumber}',
-                                                  style: TextStyle(
-                                                    color: blueColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 15,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      if (isExpanded)
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 2),
-                                          margin: EdgeInsets.only(bottom: 2),
-                                          child: SingleChildScrollView(
-                                            child: Column(
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  children: [
-                                                    FaIcon(
+                                                  child: Container(
+                                                    margin: EdgeInsets.only(
+                                                        left: 5, right: 5),
+                                                    padding: !isExpanded
+                                                        ? EdgeInsets.only(
+                                                            bottom: 10)
+                                                        : EdgeInsets.only(
+                                                            top: 10),
+                                                    child: FaIcon(
                                                       isExpanded
                                                           ? FontAwesomeIcons
                                                               .sortUp
                                                           : FontAwesomeIcons
                                                               .sortDown,
-                                                      size: 40,
-                                                      color: Colors.transparent,
+                                                      size: 20,
+                                                      color: blueColor,
                                                     ),
-                                                    Expanded(
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: <Widget>[
-                                                          Text.rich(
-                                                            TextSpan(
-                                                              children: [
-                                                                TextSpan(
-                                                                  text:
-                                                                      'Subject : ',
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color:
-                                                                          blueColor), // Bold and black
-                                                                ),
-                                                                TextSpan(
-                                                                  text: rentals
-                                                                          .subject!
-                                                                          .isEmpty
-                                                                      ? 'N/A'
-                                                                      : '${rentals.subject}',
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w700,
-                                                                      color:
-                                                                          grey), // Light and grey
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            height: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .height *
-                                                                .01,
-                                                          ),
-                                                          Text.rich(
-                                                            TextSpan(
-                                                              children: [
-                                                                TextSpan(
-                                                                  text:
-                                                                      'Body : ',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color:
-                                                                        blueColor, // Bold and black
-                                                                  ),
-                                                                ),
-                                                                TextSpan(
-                                                                  text: rentals
-                                                                          .body!
-                                                                          .isEmpty
-                                                                      ? 'N/A'
-                                                                      : extractText(
-                                                                          rentals
-                                                                              .body!),
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                    color:
-                                                                        grey, // Light and grey
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            maxLines:
-                                                                1, // Restrict to 2 lines
-                                                            overflow: TextOverflow
-                                                                .ellipsis, // Show "..." if the text is too long
-                                                          ),
-                                                          SizedBox(
-                                                            height: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .height *
-                                                                .01,
-                                                          ),
-                                                        ],
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  flex: 3,
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        if (expandedIndex ==
+                                                            index) {
+                                                          expandedIndex = null;
+                                                        } else {
+                                                          expandedIndex = index;
+                                                        }
+                                                      });
+                                                    },
+                                                    child: Text(
+                                                      rentals.name!.isEmpty
+                                                          ? 'N/A'
+                                                          : '${rentals.name}',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 15,
                                                       ),
                                                     ),
-                                                    SizedBox(
-                                                      width: 2,
-                                                    ),
-                                                  ],
+                                                  ),
                                                 ),
                                                 SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Row(
-                                                  //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Expanded(
-                                                      child: GestureDetector(
-                                                        onTap: () async {
-                                                          var check = await Navigator
-                                                                  .of(context)
-                                                              .push(
-                                                                  MaterialPageRoute(
-                                                                      builder: (context) =>
-                                                                          Add_Email_templet(
-                                                                            templetid:
-                                                                                rentals.templateId,
-                                                                          )));
-                                                          if (check == true) {
-                                                            setState(() {
-                                                              futureTemplet =
-                                                                  TempletRepository()
-                                                                      .fetchTemplets();
-                                                            });
-                                                          }
-                                                        },
-                                                        child: Container(
-                                                          height: 40,
-                                                          decoration: BoxDecoration(
-                                                            border: Border.all(color: Colors.green, width: 1.5),
-                                                            borderRadius:
-                                                            BorderRadius.circular(
-                                                                8),
-                                                          ), // color:Colors.grey[100],
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .edit,
-                                                                size: 15,
-                                                                color:
-                                                                    Colors.green,
-                                                              ),
-                                                              SizedBox(
-                                                                width: 10,
-                                                              ),
-                                                              Text(
-                                                                "Edit",
-                                                                style: TextStyle(
-                                                                    color:
-                                                                        Colors.green,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
+                                                    width: MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        .08),
+                                                Expanded(
+                                                  flex: 3,
+                                                  child: Text(
+                                                    rentals.type!.isEmpty
+                                                        ? 'N/A'
+                                                        : '${rentals.type}',
+                                                    // rentals.rentalOwnerPhoneNumber!.isEmpty ? 'N/A' :
+                                                    // '${rentals.rentalOwnerPhoneNumber}',
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 15,
                                                     ),
-                                                    SizedBox(
-                                                      width: 5,
-                                                    ),
-                                                    Expanded(
-                                                      child: GestureDetector(
-                                                        onTap: () {
-                                                          _showDeleteAlert(
-                                                              context,
-                                                              rentals
-                                                                  .templateId!);
-                                                        },
-                                                        child: Container(
-                                                          height: 40,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                                border: Border.all(color: Colors.red, width: 1.5),
-                                                                borderRadius:
-                                                                BorderRadius.circular(
-                                                                    8),
-                                                              ),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .trashCan,
-                                                                size: 15,
-                                                                color:
-                                                                    Colors.red,
-                                                              ),
-                                                              SizedBox(
-                                                                width: 10,
-                                                              ),
-                                                              Text(
-                                                                "Delete",
-                                                                style: TextStyle(
-                                                                    color:
-                                                                        Colors.red,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
+                                                  ),
                                                 ),
                                               ],
                                             ),
                                           ),
                                         ),
-                                      //SizedBox(height: 13,),
-                                    ],
-                                  ),
-                                );
-                              }).toList(),
+                                        if (isExpanded)
+                                          Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 2),
+                                            margin: EdgeInsets.only(bottom: 2),
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      FaIcon(
+                                                        isExpanded
+                                                            ? FontAwesomeIcons
+                                                                .sortUp
+                                                            : FontAwesomeIcons
+                                                                .sortDown,
+                                                        size: 40,
+                                                        color: Colors.transparent,
+                                                      ),
+                                                      Expanded(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: <Widget>[
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                        'Subject : ',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        color:
+                                                                            blueColor), // Bold and black
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text: rentals
+                                                                            .subject!
+                                                                            .isEmpty
+                                                                        ? 'N/A'
+                                                                        : '${rentals.subject}',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w700,
+                                                                        color:
+                                                                            grey), // Light and grey
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .height *
+                                                                  .01,
+                                                            ),
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                        'Body : ',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color:
+                                                                          blueColor, // Bold and black
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text: rentals
+                                                                            .body!
+                                                                            .isEmpty
+                                                                        ? 'N/A'
+                                                                        : extractText(
+                                                                            rentals
+                                                                                .body!),
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                      color:
+                                                                          grey, // Light and grey
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              maxLines:
+                                                                  1, // Restrict to 2 lines
+                                                              overflow: TextOverflow
+                                                                  .ellipsis, // Show "..." if the text is too long
+                                                            ),
+                                                            SizedBox(
+                                                              height: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .height *
+                                                                  .01,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 2,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap: () async {
+                                                            var check = await Navigator
+                                                                    .of(context)
+                                                                .push(
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) =>
+                                                                            Add_Email_templet(
+                                                                              templetid:
+                                                                                  rentals.templateId,
+                                                                            )));
+                                                            if (check == true) {
+                                                              setState(() {
+                                                                futureTemplet =
+                                                                    TempletRepository()
+                                                                        .fetchTemplets();
+                                                              });
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            height: 40,
+                                                            decoration: BoxDecoration(
+                                                              border: Border.all(color: Colors.green, width: 1.5),
+                                                              borderRadius:
+                                                              BorderRadius.circular(
+                                                                  8),
+                                                            ), // color:Colors.grey[100],
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .edit,
+                                                                  size: 15,
+                                                                  color:
+                                                                      Colors.green,
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                Text(
+                                                                  "Edit",
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                          Colors.green,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      Expanded(
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            _showDeleteAlert(
+                                                                context,
+                                                                rentals
+                                                                    .templateId!);
+                                                          },
+                                                          child: Container(
+                                                            height: 40,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                  border: Border.all(color: Colors.red, width: 1.5),
+                                                                  borderRadius:
+                                                                  BorderRadius.circular(
+                                                                      8),
+                                                                ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .trashCan,
+                                                                  size: 15,
+                                                                  color:
+                                                                      Colors.red,
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                Text(
+                                                                  "Delete",
+                                                                  style: TextStyle(
+                                                                      color:
+                                                                          Colors.red,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                )
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        //SizedBox(height: 13,),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Row(
-                                children: [
-                                  // Text('Rows per page:'),
-                                  SizedBox(width: 10),
-                                  Material(
-                                    elevation: 3,
-                                    child: Container(
-                                      height: 40,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 12.0),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<int>(
-                                          value: itemsPerPage,
-                                          items: itemsPerPageOptions
-                                              .map((int value) {
-                                            return DropdownMenuItem<int>(
-                                              value: value,
-                                              child: Text(value.toString()),
-                                            );
-                                          }).toList(),
-                                          onChanged: data.length >
-                                                  itemsPerPageOptions
-                                                      .first // Condition to check if dropdown should be enabled
-                                              ? (newValue) {
-                                                  setState(() {
-                                                    itemsPerPage = newValue!;
-                                                    currentPage =
-                                                        0; // Reset to first page when items per page change
-                                                  });
-                                                }
-                                              : null,
+                            SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Row(
+                                  children: [
+                                    // Text('Rows per page:'),
+                                    SizedBox(width: 10),
+                                    Material(
+                                      elevation: 3,
+                                      child: Container(
+                                        height: 40,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 12.0),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: Colors.grey),
+                                        ),
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<int>(
+                                            value: itemsPerPage,
+                                            items: itemsPerPageOptions
+                                                .map((int value) {
+                                              return DropdownMenuItem<int>(
+                                                value: value,
+                                                child: Text(value.toString()),
+                                              );
+                                            }).toList(),
+                                            onChanged: data.length >
+                                                    itemsPerPageOptions
+                                                        .first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
+                                                    setState(() {
+                                                      itemsPerPage = newValue!;
+                                                      currentPage =
+                                                          0; // Reset to first page when items per page change
+                                                    });
+                                                  }
+                                                : null,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronLeft,
-                                      color: currentPage == 0
-                                          ? Colors.grey
-                                          : blueColor,
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.circleChevronLeft,
+                                        color: currentPage == 0
+                                            ? Colors.grey
+                                            : blueColor,
+                                      ),
+                                      onPressed: currentPage == 0
+                                          ? null
+                                          : () {
+                                              setState(() {
+                                                currentPage--;
+                                              });
+                                            },
                                     ),
-                                    onPressed: currentPage == 0
-                                        ? null
-                                        : () {
-                                            setState(() {
-                                              currentPage--;
-                                            });
-                                          },
-                                  ),
-                                  // IconButton(
-                                  //   icon: Icon(Icons.arrow_back),
-                                  //   onPressed: currentPage > 0
-                                  //       ? () {
-                                  //     setState(() {
-                                  //       currentPage--;
-                                  //     });
-                                  //   }
-                                  //       : null,
-                                  // ),
-                                  Text(
-                                      'Page ${currentPage + 1} of $totalPages'),
-                                  // IconButton(
-                                  //   icon: Icon(Icons.arrow_forward),
-                                  //   onPressed: currentPage < totalPages - 1
-                                  //       ? () {
-                                  //     setState(() {
-                                  //       currentPage++;
-                                  //     });
-                                  //   }
-                                  //       : null,
-                                  // ),
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronRight,
-                                      color: currentPage < totalPages - 1
-                                          ? blueColor
-                                          : Colors.grey,
+                                    // IconButton(
+                                    //   icon: Icon(Icons.arrow_back),
+                                    //   onPressed: currentPage > 0
+                                    //       ? () {
+                                    //     setState(() {
+                                    //       currentPage--;
+                                    //     });
+                                    //   }
+                                    //       : null,
+                                    // ),
+                                    Text(
+                                        'Page ${currentPage + 1} of $totalPages'),
+                                    // IconButton(
+                                    //   icon: Icon(Icons.arrow_forward),
+                                    //   onPressed: currentPage < totalPages - 1
+                                    //       ? () {
+                                    //     setState(() {
+                                    //       currentPage++;
+                                    //     });
+                                    //   }
+                                    //       : null,
+                                    // ),
+                                    IconButton(
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.circleChevronRight,
+                                        color: currentPage < totalPages - 1
+                                            ? blueColor
+                                            : Colors.grey,
+                                      ),
+                                      onPressed: currentPage < totalPages - 1
+                                          ? () {
+                                              setState(() {
+                                                currentPage++;
+                                              });
+                                            }
+                                          : null,
                                     ),
-                                    onPressed: currentPage < totalPages - 1
-                                        ? () {
-                                            setState(() {
-                                              currentPage++;
-                                            });
-                                          }
-                                        : null,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                },
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

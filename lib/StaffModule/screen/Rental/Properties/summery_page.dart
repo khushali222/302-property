@@ -3168,97 +3168,77 @@ class _Summery_pageState extends State<Summery_page>
                               SizedBox(
                                 width: 25,
                               ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                    child: Text(
                                       'Property Details',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 14
-                                                : 22,
-                                        color: blueColor,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 5),
-                                Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text('Address',
-                                        style: TextStyle(
-                                          color: Color(0xFF8A95A8),
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 13
-                                              : 18,
-                                        )),
-                                  ],
-                                ),
-                                SizedBox(height: 5),
-                                Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                        '${rentalDetails.propertyTypeData?.propertyType}',
-                                        style: TextStyle(
-                                          color: blueColor,
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 13
-                                              : 18,
-                                        )),
-                                  ],
-                                ),
-                                SizedBox(height: 5),
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width > 500
-                                      ? 200
-                                      : 160,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 10),
-                                    child: Text(
-                                      '${rentalDetails.rentalAddress}',
-                                      maxLines:
-                                          4, // Set maximum number of lines
-                                      overflow: TextOverflow
-                                          .ellipsis, // Handle overflow with ellipsis
-                                      style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 13
-                                                : 18,
+                                        MediaQuery.of(context).size.width <
+                                            500
+                                            ? 14
+                                            : 22,
                                         color: blueColor,
                                       ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(height: 5),
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width > 500
-                                      ? 200
-                                      : 173,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 10),
+                                  SizedBox(height: 5),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                    child: Text('Address',
+                                        style: TextStyle(
+                                          color: Color(0xFF8A95A8),
+                                          fontSize: MediaQuery.of(context)
+                                              .size
+                                              .width <
+                                              500
+                                              ? 13
+                                              : 18,
+                                        )),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                    child: Text(
+                                      '${rentalDetails.propertyTypeData?.propertyType}',
+                                      style: TextStyle(
+                                        color: blueColor,
+                                        fontSize: MediaQuery.of(context)
+                                            .size
+                                            .width <
+                                            500
+                                            ? 13
+                                            : 18,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 7),
+                                    child: Text(
+                                      '${rentalDetails.rentalAddress}',
+                                      maxLines: 4,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize:
+                                        MediaQuery.of(context).size.width <
+                                            500
+                                            ? 13
+                                            : 18,
+                                        color: blueColor,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10),
                                     child: Text(
                                       [
                                         rentalDetails.rentalCity,
@@ -3267,54 +3247,54 @@ class _Summery_pageState extends State<Summery_page>
                                         rentalDetails.rentalPostcode,
                                       ]
                                           .where((element) =>
-                                              element != null &&
-                                              element
-                                                  .isNotEmpty) // Filter out null or empty elements
+                                      element != null &&
+                                          element.isNotEmpty)
                                           .map((element) =>
-                                              element!) // Ensure non-null elements
+                                      element!)
                                           .join(' , '),
                                       style: TextStyle(
                                         color: blueColor,
                                         fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 13
-                                                : 18,
+                                        MediaQuery.of(context).size.width <
+                                            500
+                                            ? 13
+                                            : 18,
                                       ),
                                       maxLines: 6,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                ),
-                                SizedBox(height: 5),
-                                // Row(
-                                //   children: [
-                                //     SizedBox(
-                                //       width: 10,
-                                //     ),
-                                //     Text(
-                                //       '${widget.properties.rentalCountry},',
-                                //       style: TextStyle(
-                                //         color: blueColor,
-                                //         fontSize:
-                                //             MediaQuery.of(context).size.width < 500
-                                //                 ? 13
-                                //                 : 18,
-                                //       ),
-                                //     ),
-                                //     SizedBox(width: 3),
-                                //     Text(
-                                //       '${widget.properties.rentalPostcode}',
-                                //       style: TextStyle(
-                                //         color: blueColor,
-                                //         fontSize:
-                                //             MediaQuery.of(context).size.width < 500
-                                //                 ? 13
-                                //                 : 18,
-                                //       ),
-                                //     ),
-                                //   ],
-                                // ),
-                              ],
+
+                                  // Row(
+                                  //   children: [
+                                  //     SizedBox(
+                                  //       width: 10,
+                                  //     ),
+                                  //     Text(
+                                  //       '${widget.properties.rentalCountry},',
+                                  //       style: TextStyle(
+                                  //         color: blueColor,
+                                  //         fontSize:
+                                  //             MediaQuery.of(context).size.width < 500
+                                  //                 ? 13
+                                  //                 : 18,
+                                  //       ),
+                                  //     ),
+                                  //     SizedBox(width: 3),
+                                  //     Text(
+                                  //       '${widget.properties.rentalPostcode}',
+                                  //       style: TextStyle(
+                                  //         color: blueColor,
+                                  //         fontSize:
+                                  //             MediaQuery.of(context).size.width < 500
+                                  //                 ? 13
+                                  //                 : 18,
+                                  //       ),
+                                  //     ),
+                                  //   ],
+                                  // ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -5997,7 +5977,7 @@ class _Summery_pageState extends State<Summery_page>
                   ],
                 ),
               ),
-            const SizedBox(width: 15),
+            const SizedBox(width: 8),
           ],
         ),
         const SizedBox(height: 15),

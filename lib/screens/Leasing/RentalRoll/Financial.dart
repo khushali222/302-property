@@ -1544,11 +1544,14 @@ class _FinancialTableState extends State<FinancialTable> {
             const SizedBox(
               height: 0,
             ),
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              padding: EdgeInsets.symmetric(
+                  horizontal:
+                      MediaQuery.of(context).size.width <= 360 ? 4.0 : 11.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Spacer(), // 👈 Always push everything else to the right
                   if (!isFreePlan &&
                       (widget.status == 'Active' || widget.status == 'Future'))
                     Container(
@@ -1576,11 +1579,11 @@ class _FinancialTableState extends State<FinancialTable> {
                           );
                         },
                         child: Text(
-                          ' Add Cards ',
+                          'Add Cards',
                           style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width < 500
-                                ? 12
-                                : 18,
+                            fontSize: MediaQuery.of(context).size.width <= 360
+                                ? 11
+                                : 12,
                             color: Colors.white,
                           ),
                         ),
@@ -1621,8 +1624,9 @@ class _FinancialTableState extends State<FinancialTable> {
                       child: Text(
                         'Make Payment',
                         style: TextStyle(
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 12 : 18,
+                          fontSize: MediaQuery.of(context).size.width <= 360
+                              ? 11
+                              : 12,
                           color: Colors.white,
                         ),
                       ),
@@ -1663,9 +1667,9 @@ class _FinancialTableState extends State<FinancialTable> {
                         child: Text(
                           'Enter Charge',
                           style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width < 500
-                                ? 12
-                                : 18,
+                            fontSize: MediaQuery.of(context).size.width <= 360
+                                ? 11
+                                : 12,
                             color: Colors.white,
                           ),
                         ),
@@ -4143,10 +4147,11 @@ class _FinancialTableState extends State<FinancialTable> {
           },
           color: blueColor,
         ),
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,

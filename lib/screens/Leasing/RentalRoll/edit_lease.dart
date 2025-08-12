@@ -800,7 +800,7 @@ class _Edit_leaseState extends State<Edit_lease>
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "Rent Roll",
+        currentpage: "Leases",
         dropdown: true,
       ),
       body: Form(

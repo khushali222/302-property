@@ -607,8 +607,8 @@ class _Lease_tableState extends State<Lease_table> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
-        currentpage: "Rent Roll",
+     drawer: CustomDrawer(
+        currentpage: "Leases",
         dropdown: true,
       ),
       body: _connectivityResult != ConnectivityResult.none

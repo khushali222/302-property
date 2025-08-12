@@ -270,7 +270,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
     {"month": "Aug", "rentals": 8, "leases": 1, "occupiedPercentage": 12.5},
     {"month": "Sep", "rentals": 8, "leases": 9, "occupiedPercentage": 102.5},
   ];
-  static Widget _dashboardCard(
+   Widget _dashboardCard(
       IconData icon, String number, String label, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
@@ -283,14 +283,14 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                 color: Colors.black12, blurRadius: 6, offset: Offset(0, 2))
           ],
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 5, vertical: 10),
         child: Row(
           children: [
             CircleAvatar(
               backgroundColor: Colors.blue[50],
               child: Icon(icon, color: blueColor),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -301,8 +301,8 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                         fontSize: 16,
                         color: blueColor)),
                 Text(label,
-                    style: const TextStyle(
-                        fontSize: 14,
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width < 400 ? 13 : 14,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87)),
               ],
@@ -343,7 +343,6 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                   padding: const EdgeInsets.fromLTRB(24, 10, 24, 0),
                   child: Row(
                     children: [
-
                       GestureDetector(
                         key: _dropdownKey,
                         onTap: () => _showRentTypeMenu(context),

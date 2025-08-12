@@ -827,7 +827,7 @@ class _PropertyTableState extends State<PropertyTable> {
                     child: Row(
                       children: [
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 1),
+                          SizedBox(width: 2),
                         if (MediaQuery.of(context).size.width > 500)
                           SizedBox(width: 24),
                         Material(
@@ -943,7 +943,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                     : 50,
                                 // width: 180,
                                 width: MediaQuery.of(context).size.width < 500
-                                    ? MediaQuery.of(context).size.width * .39
+                                    ? MediaQuery.of(context).size.width * .38
                                     : MediaQuery.of(context).size.width * .4,
                                 padding:
                                     const EdgeInsets.only(left: 14, right: 14),

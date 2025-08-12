@@ -482,8 +482,8 @@ class _RenewleaseState extends State<Renewlease> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
-        currentpage: "Rent Roll",
+     drawer: CustomDrawer(
+        currentpage: "Leases",
         dropdown: true,
       ),
       body: ListView(

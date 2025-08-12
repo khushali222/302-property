@@ -419,7 +419,7 @@ class _AddCardState extends State<AddCard> {
       appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawerStaff(
-        currentpage: "Rent Roll",
+        currentpage: "Leases",
         dropdown: true,
       ),
       body: LayoutBuilder(

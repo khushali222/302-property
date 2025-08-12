@@ -567,7 +567,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: titleBar(
-                            width: MediaQuery.of(context).size.width * .93,
+                            width: MediaQuery.of(context).size.width * .92,
                             title: 'Upcoming Renewal',
                           ),
                         ),

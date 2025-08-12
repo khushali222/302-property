@@ -71,7 +71,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Property Type": (context) => PropertyTable(),
     "Vendor": (context) => Vendor_table(),
     "Work Order": (context) => Workorder_table(),
-    "Rent Roll": (context) => Lease_table(),
+    "Leases": (context) => Lease_table(),
     "Applicants": (context) => Applicants_table(),
     //"Vendor": (context) => Vendor_table(),
     "Upcoming renewal": (context) => Upcomingrenewal(),

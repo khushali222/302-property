@@ -213,12 +213,13 @@ class _Add_new_propertyState extends State<Add_new_property> {
     fetchOwners();
   }
 
-  reload_Screen(){
+  reload_Screen() {
     setState(() {
       futureProperties = PropertyTypeRepository().fetchPropertyTypes();
       futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
     });
   }
+
   @override
   void dispose() {
     searchController.dispose();
@@ -508,21 +509,38 @@ class _Add_new_propertyState extends State<Add_new_property> {
       },
     );
   }
+
   static const List<String> roomsArray = [
-    "1 Bed", "2 Bed", "3 Bed", "4 Bed", "5 Bed",
-    "6 Bed", "7 Bed", "8 Bed", "9 Bed", "9+ Bed",
+    "1 Bed",
+    "2 Bed",
+    "3 Bed",
+    "4 Bed",
+    "5 Bed",
+    "6 Bed",
+    "7 Bed",
+    "8 Bed",
+    "9 Bed",
+    "9+ Bed",
   ];
 
   static const List<String> bathArray = [
-    "1 Bath", "1.5 Bath", "2 Bath", "2.5 Bath", "3 Bath",
-    "3.5 Bath", "4 Bath", "4.5 Bath", "5 Bath", "5+ Bath",
+    "1 Bath",
+    "1.5 Bath",
+    "2 Bath",
+    "2.5 Bath",
+    "3 Bath",
+    "3.5 Bath",
+    "4 Bath",
+    "4.5 Bath",
+    "5 Bath",
+    "5+ Bath",
   ];
 
   Widget customDropdownField(
-      String hint,
-      List<String> items,
-      TextEditingController controller,
-      ) {
+    String hint,
+    List<String> items,
+    TextEditingController controller,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(top: 8, bottom: 8),
       child: DropdownButtonFormField<String>(
@@ -542,7 +560,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
           controller.text = newValue ?? '';
         },
         validator: (value) =>
-        value == null || value.isEmpty ? 'Required' : null,
+            value == null || value.isEmpty ? 'Required' : null,
       ),
     );
   }
@@ -922,7 +940,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                   context,
                                                               StateSetter
                                                                   setState) {
-                                                            return AlertDialog(
+                                                            return Dialog(
                                                               backgroundColor:
                                                                   Colors.white,
                                                               surfaceTintColor:
@@ -941,7 +959,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                               //               1),
                                                               //       fontSize: 15),
                                                               // ),
-                                                              content:
+                                                              child:
                                                                   SingleChildScrollView(
                                                                 child: Column(
                                                                   children: [
@@ -951,16 +969,20 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                               .size
                                                                               .width *
                                                                           .99,
-                                                                      decoration: BoxDecoration(
-                                                                          color: Colors.white,
-                                                                          borderRadius: BorderRadius.circular(10),
-                                                                          border: Border.all(
-                                                                            color: Color.fromRGBO(
-                                                                                21,
-                                                                                43,
-                                                                                81,
-                                                                                1),
-                                                                          )),
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(10),
+                                                                        // border: Border.all(
+                                                                        //   color: Color.fromRGBO(
+                                                                        //       21,
+                                                                        //       43,
+                                                                        //       81,
+                                                                        //       1),
+                                                                        // )
+                                                                      ),
                                                                       child:
                                                                           Column(
                                                                         children: [
@@ -977,6 +999,23 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 "New Property Type",
                                                                                 style: TextStyle(fontWeight: FontWeight.bold, color: blueColor, fontSize: MediaQuery.of(context).size.width < 500 ? 17 : 22),
                                                                               ),
+                                                                              Spacer(),
+                                                                              InkWell(
+                                                                                onTap: () {
+                                                                                  Navigator.pop(context);
+                                                                                },
+                                                                                child: Material(
+                                                                                  child: Container(
+                                                                                    // height: 30,
+                                                                                    // width: 30,
+                                                                                    // decoration: BoxDecoration(
+                                                                                    //   border: Border.all(color: blueColor),
+                                                                                    //   borderRadius: BorderRadius.circular(20)
+                                                                                    // ),
+                                                                                      child: Center(child: Icon(Icons.close))),
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(width: 8,),
                                                                             ],
                                                                           ),
                                                                           SizedBox(
@@ -1035,8 +1074,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                                 color: Colors.black,
                                                                                               ),
                                                                                               overflow: TextOverflow.ellipsis,
-                                                                               ),
-                                                                                                       ))
+                                                                                            ),
+                                                                                          ))
                                                                                       .toList(),
                                                                                   value: selectedValue,
                                                                                   onChanged: (value) {
@@ -1183,7 +1222,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                     });
                                                                                     SharedPreferences prefs = await SharedPreferences.getInstance();
                                                                                     String? id = prefs.getString("adminId");
-                                                                                  await  PropertyTypeRepository()
+                                                                                    await PropertyTypeRepository()
                                                                                         .addPropertyType(
                                                                                       adminId: id!,
                                                                                       propertyType: selectedValue,
@@ -1196,7 +1235,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                       });
                                                                                       reload_Screen();
                                                                                       Navigator.pop(context, true);
-
                                                                                     }).catchError((e) {
                                                                                       setState(() {
                                                                                         isLoading = false;
@@ -1233,16 +1271,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                             ),
                                                                                     ),
                                                                                   ),
-                                                                                ),
-                                                                              ),
-                                                                              Spacer(),
-                                                                              InkWell(
-                                                                                onTap: () {
-                                                                                  Navigator.pop(context);
-                                                                                },
-                                                                                child: Material(
-                                                                                  elevation: 2,
-                                                                                  child: Container(width: MediaQuery.of(context).size.width < 500 ? 90 : 90, height: MediaQuery.of(context).size.width < 500 ? 40 : 40, color: Colors.white, child: Center(child: Text("Cancel"))),
                                                                                 ),
                                                                               ),
                                                                               SizedBox(
@@ -1976,7 +2004,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                 keyboardType:
                                                     TextInputType.number,
                                                 inputFormatters: [
-                                                  FilteringTextInputFormatter.digitsOnly,
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly,
                                                 ],
                                                 cursorColor: blueColor,
                                                 decoration: InputDecoration(
@@ -2091,16 +2120,18 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 SizedBox(
                                   width: 15,
                                 ),
-                                Text(
-                                  "Who is the property owner ? (Required)",
-                                  style: TextStyle(
-                                      color: Color(0xFF8A95A8),
-                                      //  fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 14.5
-                                              : 18),
+                                Expanded(
+                                  child: Text(
+                                    "Who is the property owner ? (Required)",
+                                    style: TextStyle(
+                                        color: Color(0xFF8A95A8),
+                                        //  fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 14.5
+                                                : 18),
+                                  ),
                                 ),
                               ],
                             ),
@@ -2660,7 +2691,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         height:
                                                                             50,
                                                                         width: MediaQuery.of(context).size.width *
-                                                                            .65,
+                                                                            .63,
                                                                         decoration:
                                                                             BoxDecoration(
                                                                           borderRadius:
@@ -2766,7 +2797,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         height:
                                                                             50,
                                                                         width: MediaQuery.of(context).size.width *
-                                                                            .65,
+                                                                            .63,
                                                                         decoration:
                                                                             BoxDecoration(
                                                                           borderRadius:
@@ -2872,7 +2903,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         height:
                                                                             50,
                                                                         width: MediaQuery.of(context).size.width *
-                                                                            .65,
+                                                                            .63,
                                                                         decoration:
                                                                             BoxDecoration(
                                                                           borderRadius:
@@ -2984,7 +3015,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         height:
                                                                             50,
                                                                         width: MediaQuery.of(context).size.width *
-                                                                            .65,
+                                                                            .63,
                                                                         decoration:
                                                                             BoxDecoration(
                                                                           borderRadius:
@@ -3090,7 +3121,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         height:
                                                                             50,
                                                                         width: MediaQuery.of(context).size.width *
-                                                                            .65,
+                                                                            .63,
                                                                         decoration:
                                                                             BoxDecoration(
                                                                           borderRadius:
@@ -3842,14 +3873,21 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                               //   ),
                                               // ),
                                               Align(
-                                                alignment: Alignment.centerRight,
+                                                alignment:
+                                                    Alignment.centerRight,
                                                 child: Visibility(
-                                                  visible: !(selectedpropertytype == 'Residential' &&
-                                                      selectedIsMultiUnit == false &&
-                                                      index == 0),
+                                                  visible:
+                                                      !(selectedpropertytype ==
+                                                              'Residential' &&
+                                                          selectedIsMultiUnit ==
+                                                              false &&
+                                                          index == 0),
                                                   child: InkWell(
-                                                    onTap: () => removePropertyGroup(index),
-                                                    child: Icon(Icons.close, color: Colors.black),
+                                                    onTap: () =>
+                                                        removePropertyGroup(
+                                                            index),
+                                                    child: Icon(Icons.close,
+                                                        color: Colors.black),
                                                   ),
                                                 ),
                                               ),
@@ -3993,14 +4031,21 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                 //   ),
                                                 // ),
                                                 Align(
-                                                  alignment: Alignment.centerRight,
+                                                  alignment:
+                                                      Alignment.centerRight,
                                                   child: Visibility(
-                                                    visible: !(selectedpropertytype == 'Commercial' &&
-                                                        selectedIsMultiUnit == false &&
-                                                        index == 0),
+                                                    visible:
+                                                        !(selectedpropertytype ==
+                                                                'Commercial' &&
+                                                            selectedIsMultiUnit ==
+                                                                false &&
+                                                            index == 0),
                                                     child: InkWell(
-                                                      onTap: () => removePropertyGroup(index),
-                                                      child: Icon(Icons.close, color: Colors.black),
+                                                      onTap: () =>
+                                                          removePropertyGroup(
+                                                              index),
+                                                      child: Icon(Icons.close,
+                                                          color: Colors.black),
                                                     ),
                                                   ),
                                                 ),

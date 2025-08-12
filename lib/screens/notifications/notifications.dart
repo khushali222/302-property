@@ -281,7 +281,7 @@ class _notificationsState extends State<notifications> {
                                           Text(
                                             notification['notification_title'],
                                             style: TextStyle(
-                                                fontSize: 16.0,
+                                                fontSize:  14,
                                                 fontWeight: FontWeight.bold,
                                                 color: blueColor
                                             ),

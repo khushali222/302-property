@@ -122,9 +122,9 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Tenant Name",
+                        ? Text("Tenant\n Name",
                             style: TextStyle(color: Colors.white))
-                        : Text("Tenant Name",
+                        : Text("Tenant \nName",
                             style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     // SizedBox(width: 3),
@@ -173,7 +173,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                 },
                 child: Row(
                   children: [
-                    Text("       Rental \n     Address",
+                    Text("      Rental \n     Address",
                         style: TextStyle(color: Colors.white)),
                     // SizedBox(width: 5),
                     // ascending2
@@ -778,7 +778,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: titleBar(
-                            width: MediaQuery.of(context).size.width * .91,
+                            width: MediaQuery.of(context).size.width * .90,
                             title: 'Email Logs',
                           ),
                         ),
