@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/model/properties.dart';
 
 import '../constant/constant.dart';
-import 'package:http/http.dart'as http;
+import 'package:http/http.dart' as http;
 
 import '../model/add_property.dart';
 
@@ -18,8 +18,13 @@ class PropertiesRepository {
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
 
-    final response = await http.get(Uri.parse('${Api_url}/api/rentals/rentals/$id'),
-      headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    final response = await http.get(
+      Uri.parse('${Api_url}/api/rentals/rentals/$id'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+      },
+    );
     print('${Api_url}/api/rentals/rentals/$id');
     print('properties ${response.body}');
     if (response.statusCode == 200) {
@@ -28,10 +33,9 @@ class PropertiesRepository {
     } else {
       print('Failed to fetch properties: ${response.body}');
       return [];
-     // throw Exception('Failed to load data');
+      // throw Exception('Failed to load data');
     }
   }
-
 
   Future<Map<String, dynamic>> editTenant({
     required String tenantId,
@@ -76,12 +80,12 @@ class PropertiesRepository {
     print('$apiUrl/$tenantId');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String? id = prefs.getString('adminId');
     final http.Response response = await http.put(
       Uri.parse('$Api_url/api/tenant/tenants/$tenantId'),
       headers: <String, String>{
-        "authorization" : "CRM $token",
-        "id":"CRM $id",
+        "authorization": "CRM $token",
+        "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -92,16 +96,15 @@ class PropertiesRepository {
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
-
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to add property type');
     }
   }
 
-
   Future<void> updateRental1(Rentals rentalRequest) async {
-    final url = Uri.parse('${Api_url}/api/rentals/rentals/${rentalRequest.rentalId}');
+    final url =
+        Uri.parse('${Api_url}/api/rentals/rentals/${rentalRequest.rentalId}');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("token");
     String? id = prefs.getString('adminId');
@@ -115,16 +118,21 @@ class PropertiesRepository {
       "admin_id": rentalRequest.adminId,
       "rentalowner_id": rentalRequest.rentalOwnerData?.rentalOwnerId,
       "rentalOwner_name": rentalRequest.rentalOwnerData?.rentalOwnerName,
-      "rentalOwner_companyName": rentalRequest.rentalOwnerData?.rentalOwnerCompanyName,
-      "rentalOwner_primaryEmail": rentalRequest.rentalOwnerData?.rentalOwnerPrimaryEmail,
-      "rentalOwner_phoneNumber": rentalRequest.rentalOwnerData?.rentalOwnerPhoneNumber,
-      "rentalOwner_homeNumber":rentalRequest.rentalOwnerData?.rentalOwnerHomeNumber??"",
-      "rentalOwner_businessNumber":rentalRequest.rentalOwnerData?.rentalOwnerBuisinessNumber??"",
+      "rentalOwner_companyName":
+          rentalRequest.rentalOwnerData?.rentalOwnerCompanyName,
+      "rentalOwner_primaryEmail":
+          rentalRequest.rentalOwnerData?.rentalOwnerPrimaryEmail,
+      "rentalOwner_phoneNumber":
+          rentalRequest.rentalOwnerData?.rentalOwnerPhoneNumber,
+      "rentalOwner_homeNumber":
+          rentalRequest.rentalOwnerData?.rentalOwnerHomeNumber ?? "",
+      "rentalOwner_businessNumber":
+          rentalRequest.rentalOwnerData?.rentalOwnerBuisinessNumber ?? "",
       "city": rentalRequest.rentalOwnerData?.city,
       "state": rentalRequest.rentalOwnerData?.state,
       "country": rentalRequest.rentalOwnerData?.country,
       "postal_code": rentalRequest.rentalOwnerData?.postalCode,
-    //  "processor_list":rentalRequest.rentalOwnerData!.processorList
+      //  "processor_list":rentalRequest.rentalOwnerData!.processorList
     };
 
     final body = jsonEncode({
@@ -133,24 +141,23 @@ class PropertiesRepository {
         "company_name": rentalRequest.rentalOwnerData?.rentalOwnerCompanyName,
         "rental_id": rentalRequest.rentalId,
         "property_id": rentalRequest.propertyId,
-        "rentalowner_id":rentalRequest.rentalOwnerId,
+        "rentalowner_id": rentalRequest.rentalOwnerId,
         "rental_adress": rentalRequest.rentalAddress,
         "rental_city": rentalRequest.rentalCity,
         "rental_state": rentalRequest.rentalState,
         "rental_country": rentalRequest.rentalCountry,
         "rental_postcode": rentalRequest.rentalPostcode,
         "staffmember_id": rentalRequest.staffMemberId,
-       // "processor_id":rentalRequest.processor_id
-
+        // "processor_id":rentalRequest.processor_id
       },
     });
 
     final response = await http.put(url, headers: headers, body: body);
     final responseBody = jsonDecode(response.body);
 
-
     final rentalOwnerResponse = responseBody['data']['rentalOwner'];
-    print('Rental Owner Data from Response: ${jsonEncode(rentalOwnerResponse)}');
+    print(
+        'Rental Owner Data from Response: ${jsonEncode(rentalOwnerResponse)}');
     print('update Rental: ${response.body}');
 
     if (response.statusCode == 200) {
@@ -160,34 +167,34 @@ class PropertiesRepository {
     }
   }
 
-  Future<Map<String, dynamic>> DeleteProperties({
-    required String? id,
-    String? reason
-   // required String? companyName,
-  }) async {
-
+  Future<Map<String, dynamic>> DeleteProperties(
+      {required String? id, String? reason
+      // required String? companyName,
+      }) async {
     // print('$apiUrl/$id');
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String?  adminid = prefs.getString('adminId');
+    String? adminid = prefs.getString('adminId');
     String? token = prefs.getString('token');
     String? companyName = prefs.getString('companyName');
     print('company name $companyName');
     print(adminid);
     final http.Response response = await http.delete(
-      Uri.parse('${Api_url}/api/rentals/rental/$id').replace(queryParameters: {
-        'company_name': companyName,
-      }),
-      headers: <String, String>{
-        "authorization" : "CRM $token",
-        "id":"CRM $adminid",
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-        body: jsonEncode({"reason":reason})
-      // body: jsonEncode(<String, String>{
-      //   'company_name': companyName??"",
-      // }),
-    );
-    print( Uri.parse('${Api_url}/api/rentals/rental/$id').replace(queryParameters: {
+        Uri.parse('${Api_url}/api/rentals/rental/$id')
+            .replace(queryParameters: {
+          'company_name': companyName,
+        }),
+        headers: <String, String>{
+          "authorization": "CRM $token",
+          "id": "CRM $adminid",
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({"reason": reason})
+        // body: jsonEncode(<String, String>{
+        //   'company_name': companyName??"",
+        // }),
+        );
+    print(Uri.parse('${Api_url}/api/rentals/rental/$id')
+        .replace(queryParameters: {
       'company_name': companyName,
     }));
     print('delete ${Api_url}/api/rentals/rental/$id');
@@ -197,7 +204,6 @@ class PropertiesRepository {
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
-
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to delete property type');

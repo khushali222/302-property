@@ -27,7 +27,7 @@ import '../../../repository/Property_type.dart';
 import '../../../repository/properties.dart';
 import '../../../repository/properties_summery.dart';
 import 'package:http/http.dart' as http;
-
+import '../../../model/unitsummery_propeties.dart';
 import '../../../widgets/custom_drawer.dart';
 
 class Edit_properties extends StatefulWidget {
@@ -217,12 +217,13 @@ class _Edit_propertiesState extends State<Edit_properties> {
   String? initialrentalOwnercountry;
   String? initialselectedpropertytype;
   String? initialselectedselectedStaff;
+
   @override
   void initState() {
     super.initState();
     filteredOwners = owners;
     selected = List<bool>.generate(owners.length, (index) => false);
-
+    fetchunits1();
     futureProperties = PropertyTypeRepository().fetchPropertyTypes();
     futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
     propertyGroups = [];
@@ -262,8 +263,182 @@ class _Edit_propertiesState extends State<Edit_properties> {
       }
     });
     isEditable = false;
-    // print(widget.rentalId);
-    fetchDetails1(widget.rentalId);
+    fetchDetails1(widget.rentalId).then((_) {
+      // Load unit data after property details are set
+      fetchunits1();
+    });
+  }
+
+  List<unit_properties> data = [];
+  final Properies_summery_Repo unit1Repository = Properies_summery_Repo();
+  Future<void> fetchunits1() async {
+    try {
+      final fetchedunit1 =
+          await unit1Repository.fetchunit(widget.properties.rentalId ?? "");
+      setState(() {
+        data = fetchedunit1;
+        isLoading = false;
+
+        // Clear existing property groups
+        propertyGroups.clear();
+        propertyGroupControllers.clear();
+        propertyGroupImages.clear();
+        propertyGroupImagenames.clear();
+
+        // Create property groups for each unit
+        for (var unit in data) {
+          List<TextEditingController> controllers = [];
+          List<Widget> fields = [];
+
+          print("Property Type: ${selectedpropertytypedata?.propertyType}");
+          print("Is Multi Unit: ${selectedpropertytypedata?.isMultiunit}");
+
+          // First check if it's a single unit property
+          if (selectedpropertytypedata?.isMultiunit == false) {
+            if (selectedpropertytypedata?.propertyType == 'Commercial') {
+              // Single Commercial unit - only SQft
+              var sqftController = TextEditingController(text: unit.rentalsqft);
+
+              controllers = [sqftController];
+              fields = [
+                customTextField('SQft', sqftController),
+                SizedBox(height: 10),
+                photo(propertyGroups.length),
+              ];
+            } else {
+              // Single Residential unit
+              var sqftController = TextEditingController(text: unit.rentalsqft);
+              var bathController = TextEditingController(text: unit.rentalbath);
+              var bedController = TextEditingController(text: unit.rentalbed);
+
+              controllers = [sqftController, bathController, bedController];
+              fields = [
+                customTextField('SQft', sqftController),
+                customDropdownField('Bath', bathArray, bathController),
+                customDropdownField('Bed', roomsArray, bedController),
+                SizedBox(height: 10),
+                photo(propertyGroups.length),
+              ];
+            }
+          } else {
+            // Multi-unit properties
+            if (selectedpropertytypedata?.propertyType == 'Commercial') {
+              // Commercial multi-unit
+              var unitController = TextEditingController(text: unit.rentalunit);
+              var unitAddressController =
+                  TextEditingController(text: unit.rentalunitadress);
+              var sqftController = TextEditingController(text: unit.rentalsqft);
+
+              controllers = [
+                unitController,
+                unitAddressController,
+                sqftController
+              ];
+              fields = [
+                customTextField('Unit', unitController),
+                customTextField('Unit Address', unitAddressController),
+                customTextField('SQft', sqftController),
+                SizedBox(height: 10),
+                photo(propertyGroups.length),
+              ];
+            } else {
+              // Residential multi-unit
+              var unitController = TextEditingController(text: unit.rentalunit);
+              var unitAddressController =
+                  TextEditingController(text: unit.rentalunitadress);
+              var sqftController = TextEditingController(text: unit.rentalsqft);
+              var bathController = TextEditingController(text: unit.rentalbath);
+              var bedController = TextEditingController(text: unit.rentalbed);
+
+              controllers = [
+                unitController,
+                unitAddressController,
+                sqftController,
+                bathController,
+                bedController
+              ];
+              fields = [
+                customTextField('Unit', unitController),
+                customTextField('Unit Address', unitAddressController),
+                customTextField('SQft', sqftController),
+                customDropdownField('Bath', bathArray, bathController),
+                customDropdownField('Bed', roomsArray, bedController),
+                SizedBox(height: 10),
+                photo(propertyGroups.length),
+              ];
+            }
+          }
+
+          propertyGroups.add(fields);
+          propertyGroupControllers.add(controllers);
+
+          // Handle existing images
+          if (unit.rentalImages != null && unit.rentalImages!.isNotEmpty) {
+            // Create a row of images
+            List<Widget> imageWidgets = [];
+            for (String imageName in unit.rentalImages!) {
+              imageWidgets.add(
+                Container(
+                  width: 100,
+                  height: 100,
+                  margin: EdgeInsets.only(right: 10),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      'YOUR_BASE_URL/uploads/$imageName', // Replace with your actual image URL
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Center(child: Icon(Icons.error));
+                      },
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            // Add the image row to fields
+            fields.add(
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: imageWidgets,
+                ),
+              ),
+            );
+            fields.add(SizedBox(height: 10));
+
+            // Keep track of image names for editing
+            propertyGroupImagenames.add(unit.rentalImages![0]);
+            propertyGroupImages.add(null);
+          } else {
+            propertyGroupImagenames.add(null);
+            propertyGroupImages.add(null);
+          }
+        }
+
+        selectedIsMultiUnit = data.length > 1;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print('Failed to load units: $e');
+    }
   }
 
   Future<void> fetchDetails1(String rentalId) async {
@@ -273,10 +448,15 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
       await Future.delayed(const Duration(seconds: 1));
       setState(() {
-        // print(fetchedDetails.rentalAddress);
-        // selectedpropertytype = fetchedDetails.propertyTypeData?.propertyType;
+        // Set property type data
+        selectedpropertytypedata = propertytype(
+            propertyType: fetchedDetails.propertyTypeData?.propertyType ?? "",
+            propertysubType:
+                fetchedDetails.propertyTypeData?.propertySubType ?? "",
+            isMultiunit: fetchedDetails.propertyTypeData?.isMultiunit ?? false,
+            propertyId: fetchedDetails.propertyTypeData?.propertyId ?? "");
+
         selectedpropertytype = fetchedDetails.propertyTypeData?.propertyType;
-        selectedpropertytype = fetchedDetails.propertyTypeData?.propertySubType;
         address.text = fetchedDetails.rentalAddress!;
         city.text = fetchedDetails.rentalCity!;
         state.text = fetchedDetails.rentalState!;
@@ -560,6 +740,61 @@ class _Edit_propertiesState extends State<Edit_properties> {
     );
   }
 
+  Widget customDropdownField(
+    String hint,
+    List<String> items,
+    TextEditingController controller,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8, bottom: 8),
+      child: DropdownButtonFormField<String>(
+        value: controller.text.isNotEmpty ? controller.text : null,
+        decoration: InputDecoration(
+          border: OutlineInputBorder(),
+          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        ),
+        hint: Text(hint),
+        items: items.map((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+        onChanged: (String? newValue) {
+          controller.text = newValue ?? '';
+        },
+        validator: (value) =>
+            value == null || value.isEmpty ? 'Required' : null,
+      ),
+    );
+  }
+
+  static const List<String> roomsArray = [
+    "1 Bed",
+    "2 Bed",
+    "3 Bed",
+    "4 Bed",
+    "5 Bed",
+    "6 Bed",
+    "7 Bed",
+    "8 Bed",
+    "9 Bed",
+    "9+ Bed",
+  ];
+
+  static const List<String> bathArray = [
+    "1 Bath",
+    "1.5 Bath",
+    "2 Bath",
+    "2.5 Bath",
+    "3 Bath",
+    "3.5 Bath",
+    "4 Bath",
+    "4.5 Bath",
+    "5 Bath",
+    "5+ Bath",
+  ];
+
   Widget photo(int index) {
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setState) {
@@ -578,23 +813,23 @@ class _Edit_propertiesState extends State<Edit_properties> {
             ),
             SizedBox(height: 8.0),
             if (propertyGroupImages[index] == null)
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    getImage(index).then((_) {
-                      setState(
-                          () {}); // Rebuild the widget after selecting the image
-                    });
-                  },
-                  child: Image.asset(
-                    'assets/images/addimage.png',
-                    height: 40,
-                    width: 40,
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      getImage(index).then((_) {
+                        setState(
+                            () {}); // Rebuild the widget after selecting the image
+                      });
+                    },
+                    child: Image.asset(
+                      'assets/images/addimage.png',
+                      height: 40,
+                      width: 40,
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
             SizedBox(height: 10),
             if (propertyGroupImages[index] != null)
               Column(
@@ -675,9 +910,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
         customTextField('Unit', unitController),
         customTextField('Unit Address', unitAddressController),
         customTextField('SQft', sqftController),
-        customTextField('Bath', bathController),
-        customTextField('Bed', bedController),
-
+        customDropdownField('Bath', bathArray, bathController),
+        customDropdownField('Bed', roomsArray, bedController),
         SizedBox(
           height: 10,
         ),
@@ -698,9 +932,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
       fields = [
         customTextField('SQft', sqftController),
-        customTextField('Bath', bathController),
-        customTextField('Bed', bedController),
-
+        customDropdownField('Bath', bathArray, bathController),
+        customDropdownField('Bed', roomsArray, bedController),
         SizedBox(
           height: 10,
         ),
@@ -1057,16 +1290,18 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                       },
                                                                                       child: Material(
                                                                                         child: Container(
-                                                                                          // height: 30,
-                                                                                          // width: 30,
-                                                                                          // decoration: BoxDecoration(
-                                                                                          //   border: Border.all(color: blueColor),
-                                                                                          //   borderRadius: BorderRadius.circular(20)
-                                                                                          // ),
+                                                                                            // height: 30,
+                                                                                            // width: 30,
+                                                                                            // decoration: BoxDecoration(
+                                                                                            //   border: Border.all(color: blueColor),
+                                                                                            //   borderRadius: BorderRadius.circular(20)
+                                                                                            // ),
                                                                                             child: Center(child: Icon(Icons.close))),
                                                                                       ),
                                                                                     ),
-                                                                                    SizedBox(width: 8,),
+                                                                                    SizedBox(
+                                                                                      width: 8,
+                                                                                    ),
                                                                                   ],
                                                                                 ),
                                                                                 SizedBox(
@@ -1313,7 +1548,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                                                         ),
                                                                                       ),
                                                                                     ),
-
                                                                                   ],
                                                                                 ),
                                                                                 SizedBox(
@@ -2047,7 +2281,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                 keyboardType:
                                                     TextInputType.number,
                                                 inputFormatters: [
-                                                  FilteringTextInputFormatter.digitsOnly,
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly,
                                                 ],
                                                 cursorColor: blueColor,
                                                 decoration: InputDecoration(
@@ -3710,12 +3945,12 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                   'Add New Staffmember',
                                                   style: TextStyle(
                                                       fontSize:
-                                                      MediaQuery.of(context)
-                                                          .size
-                                                          .width <
-                                                          500
-                                                          ? 13
-                                                          : 15),
+                                                          MediaQuery.of(context)
+                                                                      .size
+                                                                      .width <
+                                                                  500
+                                                              ? 13
+                                                              : 15),
                                                 ),
                                               ],
                                             ),
@@ -3903,15 +4138,34 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
+                                              // Align(
+                                              //   alignment:
+                                              //       Alignment.centerRight,
+                                              //   child: InkWell(
+                                              //     onTap: () =>
+                                              //         removePropertyGroup(
+                                              //             index),
+                                              //     child: Icon(Icons.close,
+                                              //         color: Colors.black),
+                                              //   ),
+                                              // ),
                                               Align(
                                                 alignment:
                                                     Alignment.centerRight,
-                                                child: InkWell(
-                                                  onTap: () =>
-                                                      removePropertyGroup(
-                                                          index),
-                                                  child: Icon(Icons.close,
-                                                      color: Colors.black),
+                                                child: Visibility(
+                                                  visible:
+                                                      !(selectedpropertytype ==
+                                                              'Residential' &&
+                                                          selectedIsMultiUnit ==
+                                                              false &&
+                                                          index == 0),
+                                                  child: InkWell(
+                                                    onTap: () =>
+                                                        removePropertyGroup(
+                                                            index),
+                                                    child: Icon(Icons.close,
+                                                        color: Colors.black),
+                                                  ),
                                                 ),
                                               ),
                                               SizedBox(height: 5),
@@ -3924,37 +4178,40 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                   ),
                                 ],
                               ),
-                            GestureDetector(
-                              onTap: () {
-                                // if (selectedProperty != null) {
-                                //   addPropertyGroup();
-                                // }
-                                addPropertyGroup();
-                              },
-                              child: Row(
-                                children: [
-                                  SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.02),
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                    //  border: Border.all(color:  blueColor),
-                                    child: Container(
+                            SizedBox(
+                              height: 15,
+                            ),
+                            if (selectedpropertytypedata?.isMultiunit == true)
+                              GestureDetector(
+                                onTap: () {
+                                  // if (selectedProperty != null) {
+                                  //   addPropertyGroup();
+                                  // }
+                                  addPropertyGroup();
+                                },
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.02),
+                                    Container(
                                       height: 40,
                                       width: MediaQuery.of(context).size.width *
                                           .38,
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         // borderRadius: BorderRadius.circular(3),
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
                                         border: Border.all(color: blueColor),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey,
-                                            offset: Offset(0.0, 1.0), //(x,y)
-                                            blurRadius: 6.0,
-                                          ),
-                                        ],
+                                        // boxShadow: [
+                                        //   BoxShadow(
+                                        //     color: Colors.grey,
+                                        //     offset: Offset(0.0, 1.0), //(x,y)
+                                        //     blurRadius: 6.0,
+                                        //   ),
+                                        // ],
                                       ),
                                       child: Center(
                                         child: Text(
@@ -3966,10 +4223,9 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
                           ],
                         ),
                       ),
@@ -4024,90 +4280,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                   ),
                                 ],
                               ),
-                              //SizedBox(height: 16.0),
-                              // Column(
-                              //   children: [
-                              //     Row(
-                              //       children: [
-                              //         Spacer(),
-                              //         IconButton(
-                              //           icon: Icon(Icons.close),
-                              //           onPressed: () {
-                              //             // setState(() {
-                              //             //   units.removeAt(index);
-                              //             // });
-                              //           },
-                              //         ),
-                              //         SizedBox(
-                              //           width: 10,
-                              //         ),
-                              //       ],
-                              //     ),
-                              //     Row(
-                              //       children: [
-                              //         SizedBox(
-                              //           width: 10,
-                              //         ),
-                              //         Expanded(
-                              //           child: TextFormField(
-                              //             decoration: InputDecoration(
-                              //               labelText: 'SQft *',
-                              //               border: OutlineInputBorder(),
-                              //             ),
-                              //             validator: (value) {
-                              //               if (value == null ||
-                              //                   value.isEmpty) {
-                              //                 return 'Please enter the unit';
-                              //               }
-                              //               return null;
-                              //             },
-                              //           ),
-                              //         ),
-                              //         SizedBox(
-                              //           width: 10,
-                              //         ),
-                              //       ],
-                              //     ),
-                              //   ],
-                              // ),
-                              //SizedBox(height: 16.0),
-                              //  if (selectedIsMultiUnit?.isMultiunit == true)
-                              //   Visibility(
-                              //     visible: selectedIsMultiUnit == true,
-                              //     child: Row(
-                              //       children: [
-                              //         Expanded(
-                              //           child: TextFormField(
-                              //             decoration: InputDecoration(
-                              //               labelText: 'Unit Address',
-                              //               border: OutlineInputBorder(),
-                              //             ),
-                              //             validator: (value) {
-                              //               if (value == null || value.isEmpty) {
-                              //                 return 'Please enter the unit address';
-                              //               }
-                              //               return null;
-                              //             },
-                              //           ),
-                              //         ),
-                              //         SizedBox(width: 16.0),
-                              //         Expanded(
-                              //           child: TextFormField(
-                              //             decoration: InputDecoration(
-                              //               labelText: 'SQFT *',
-                              //               border: OutlineInputBorder(),
-                              //             ),
-                              //             validator: (value) {
-                              //               if (value == null || value.isEmpty) {
-                              //                 return 'Please enter the square footage';
-                              //               }
-                              //               return null;
-                              //             },
-                              //           ),
-                              //         ),
-                              //       ],
-                              //     ),
-                              //   ),
                               if (propertyGroups.isNotEmpty)
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -4124,15 +4296,34 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
+                                                // Align(
+                                                //   alignment:
+                                                //       Alignment.centerRight,
+                                                //   child: InkWell(
+                                                //     onTap: () =>
+                                                //         removePropertyGroup(
+                                                //             index),
+                                                //     child: Icon(Icons.close,
+                                                //         color: Colors.black),
+                                                //   ),
+                                                // ),
                                                 Align(
                                                   alignment:
                                                       Alignment.centerRight,
-                                                  child: InkWell(
-                                                    onTap: () =>
-                                                        removePropertyGroup(
-                                                            index),
-                                                    child: Icon(Icons.close,
-                                                        color: Colors.black),
+                                                  child: Visibility(
+                                                    visible:
+                                                        !(selectedpropertytype ==
+                                                                'Commercial' &&
+                                                            selectedIsMultiUnit ==
+                                                                false &&
+                                                            index == 0),
+                                                    child: InkWell(
+                                                      onTap: () =>
+                                                          removePropertyGroup(
+                                                              index),
+                                                      child: Icon(Icons.close,
+                                                          color: Colors.black),
+                                                    ),
                                                   ),
                                                 ),
                                                 SizedBox(height: 5),
@@ -4145,20 +4336,20 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                     ),
                                   ],
                                 ),
-                              GestureDetector(
-                                onTap: () {
-                                  addPropertyGroup();
-                                },
-                                child: Row(
-                                  children: [
-                                    SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.01),
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(5.0),
-                                      //  border: Border.all(color:  blueColor),
-                                      child: Container(
+                              SizedBox(height: 15),
+                              if (selectedpropertytypedata?.isMultiunit == true)
+                                GestureDetector(
+                                  onTap: () {
+                                    addPropertyGroup();
+                                  },
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.02),
+                                      Container(
                                         height: 40,
                                         width:
                                             MediaQuery.of(context).size.width *
@@ -4167,32 +4358,29 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                           color: Colors.white,
                                           // borderRadius: BorderRadius.circular(3),
                                           borderRadius:
-                                              BorderRadius.circular(8.0),
-                                          border: Border.all(
-                                              color: Color.fromRGBO(
-                                                  21, 43, 81, 1)),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.grey,
-                                              offset: Offset(0.0, 1.0), //(x,y)
-                                              blurRadius: 6.0,
-                                            ),
-                                          ],
+                                              BorderRadius.circular(8),
+                                          border: Border.all(color: blueColor),
+                                          // boxShadow: [
+                                          //   BoxShadow(
+                                          //     color: Colors.grey,
+                                          //     offset: Offset(0.0, 1.0), //(x,y)
+                                          //     blurRadius: 6.0,
+                                          //   ),
+                                          // ],
                                         ),
                                         child: Center(
                                           child: Text(
                                             "Add another unit",
                                             style: TextStyle(
                                                 color: blueColor,
-                                                // fontWeight: FontWeight.bold,
+                                                fontWeight: FontWeight.bold,
                                                 fontSize: 14),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
                             ],
                           )),
                     ),
@@ -4643,8 +4831,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                         if (propertyGroupControllers.isNotEmpty) {
                           List<TextEditingController> firstControllers =
                               propertyGroupControllers[0];
-                          bool isFirstBlank = firstControllers
-                              .every((controller) => controller.text.trim().isEmpty);
+                          bool isFirstBlank = firstControllers.every(
+                              (controller) => controller.text.trim().isEmpty);
                           if (isFirstBlank) {
                             propertyGroupControllers.removeAt(0);
                           }
@@ -4748,8 +4936,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
                         final updatedOwner = RentalOwner(
                           rentalOwnerName: firstnameController.text.trim(),
                           rentalOwnerCompanyName: comnameController.text.trim(),
-                          rentalOwnerPrimaryEmail: primaryemailController.text.trim(),
-                          rentalOwnerPhoneNumber: phonenumController.text.trim(),
+                          rentalOwnerPrimaryEmail:
+                              primaryemailController.text.trim(),
+                          rentalOwnerPhoneNumber:
+                              phonenumController.text.trim(),
                           city: cityController.text.trim(),
                           state: stateController.text.trim(),
                           country: countyController.text.trim(),
@@ -4772,6 +4962,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                         }).toList();
 
                         Rentals properties = Rentals(
+                          //units:units,
                           adminId: id,
                           rentalOwnerData: RentalOwnerData(
                             adminId: widget.properties.adminId,
