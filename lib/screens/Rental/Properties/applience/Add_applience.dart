@@ -147,7 +147,7 @@ class _AddApplienceState extends State<AddApplience> {
       // _selectedDropdownCategory = _dropdownCategories.first;
       // print("Selected category: ${_selectedDropdownCategory?.name}");
       _selectedDropdownCategory = _dropdownCategories.firstWhere(
-            (category) => category.categoryId == widget.appliance?.categoryId,
+        (category) => category.categoryId == widget.appliance?.categoryId,
         orElse: () => _dropdownCategories.first,
       );
 
@@ -524,7 +524,8 @@ class _AddApplienceState extends State<AddApplience> {
                     keyboardType: TextInputType.name,
                   ),
                   SizedBox(height: 8),
-                  if (brandList.isNotEmpty) ...[
+                  if (!['Electrical', 'Exterior', 'Roof']
+                      .contains(_selectedDropdownCategory?.name)) ...[
                     Padding(
                       padding: EdgeInsets.only(left: 10),
                       child: Text(
@@ -1183,7 +1184,7 @@ class _AddApplienceState extends State<AddApplience> {
                   ),
                   if (iserror)
                     const Padding(
-                      padding: EdgeInsets.only(top: 8.0),
+                      padding: EdgeInsets.only(top: 8.0,left: 10,right: 10,bottom: 20),
                       child: Text(
                         "Please fill in all fields correctly.",
                         style: TextStyle(color: Colors.redAccent),

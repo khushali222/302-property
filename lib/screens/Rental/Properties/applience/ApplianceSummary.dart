@@ -11,6 +11,7 @@ import '../../../../constant/constant.dart';
 import '../../../../model/properties.dart';
 import '../../../../model/unitsummery_propeties.dart';
 import '../../../../repository/appliance_details_service.dart';
+import '../summery_page.dart';
 import 'AddMaintenanceHistoryDialog.dart';
 import 'AddNoteDialog.dart';
 
@@ -236,7 +237,21 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => Navigator.pop(context),
+                    onTap: () {
+                      if (widget.properties != null) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Summery_page(
+                              properties: widget.properties!,
+                              unit: widget.unit,
+                            ),
+                          ),
+                        );
+                      } else {
+                        Navigator.pop(context, true);
+                      }
+                    }, // Pass true back to refresh parent page
                     child: Container(
                       padding:
                           EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -271,9 +286,13 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(blueColor),
+                          // CircularProgressIndicator(
+                          //   valueColor:
+                          //       AlwaysStoppedAnimation<Color>(blueColor),
+                          // ),
+                          SpinKitFadingCircle(
+                            color: Colors.black,
+                            size: 40.0,
                           ),
                           SizedBox(height: 16),
                           Text(
@@ -508,12 +527,27 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                     if (showEdit)
                       GestureDetector(
                         onTap: () {
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) =>
+                          //             AddApplience(appliance: appliance)));
+                          //Edit functionality
+
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      AddApplience(appliance: appliance)));
-                          // Edit functionality
+                                builder: (context) => AddApplience(
+                                  unit: widget.unit,
+                                  properties: widget.properties,
+                                  appliance: appliance,
+                                ),
+                              )).then((value) {
+                            if (value == true) {
+                              // Refresh the data when returning from edit screen
+                              _refreshApplianceData();
+                            }
+                          });
                         },
                         child: Text(
                           'Edit',

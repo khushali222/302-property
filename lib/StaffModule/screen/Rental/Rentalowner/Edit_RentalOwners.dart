@@ -262,14 +262,86 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
   //     });
   //   }
   // }
+  // Future<void> _startDate(BuildContext context) async {
+  //   DateTime initialDate = startdateController.text.isNotEmpty
+  //       ? DateFormat('dd-MM-yyyy').parse(startdateController.text)
+  //       : DateTime.now();
+  //   final DateTime? picked = await showDatePicker(
+  //     context: context,
+  //     initialDate: initialDate,
+  //     //  initialDate: startdate ?? DateTime.now(),
+  //     firstDate: DateTime(2015, 8),
+  //     lastDate: DateTime(2101),
+  //     builder: (BuildContext context, Widget? child) {
+  //       return Theme(
+  //         data: ThemeData.light().copyWith(
+  //           primaryColor: blueColor, // Header background color
+  //           // accentColor: Colors.white, // Button text color
+  //           colorScheme: ColorScheme.light(
+  //             primary: blueColor, // Selection color
+  //             onPrimary: Colors.white, // Text color
+  //             surface: Colors.white, // Calendar background color
+  //             onSurface: Colors.black, // Calendar text color
+  //           ),
+  //           dialogBackgroundColor: Colors.white, // Background color
+  //         ),
+  //         child: child!,
+  //       );
+  //     },
+  //   );
+  //   if (picked != null && picked != startdate) {
+  //     setState(() {
+  //       startdate = picked;
+  //       // startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
+  //       startdateController.text = DateFormat('dd-MM-yyyy').format(picked);
+  //       // Use this format (yyyy-MM-dd) when passing it to your API or saving it
+  //       String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
+  //       print(dateForApi);
+  //     });
+  //   }
+  // }
+  //
+  // Future<void> _endDate(BuildContext context) async {
+  //   DateTime initialDate = startdateController.text.isNotEmpty
+  //       ? DateFormat('dd-MM-yyyy').parse(startdateController.text)
+  //       : DateTime.now();
+  //
+  //   final DateTime? picked = await showDatePicker(
+  //     context: context,
+  //     initialDate: initialDate,
+  //     firstDate: initialDate, // Dynamically set based on startdate
+  //     //firstDate: DateTime(2015, 8), // Dynamically set based on startdate
+  //     lastDate: DateTime(2101), // Far future date as upper limit
+  //     builder: (BuildContext context, Widget? child) {
+  //       return Theme(
+  //         data: ThemeData.light().copyWith(
+  //           primaryColor: blueColor, // Header background color
+  //           colorScheme: ColorScheme.light(
+  //             primary: blueColor, // Selection color
+  //             onPrimary: Colors.white, // Text color
+  //             surface: Colors.white, // Calendar background color
+  //             onSurface: Colors.black, // Calendar text color
+  //           ),
+  //           dialogBackgroundColor: Colors.white, // Background color
+  //         ),
+  //         child: child!,
+  //       );
+  //     },
+  //   );
+  //
+  //   if (picked != null && picked != enddate) {
+  //     setState(() {
+  //       enddate = picked;
+  //       enddateController.text = DateFormat('dd-MM-yyyy').format(picked);
+  //       String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
+  //       print(dateForApi); // For API usage
+  //     });
+  //   }
+  // }
   Future<void> _startDate(BuildContext context) async {
-    DateTime initialDate = startdateController.text.isNotEmpty
-        ? DateFormat('dd-MM-yyyy').parse(startdateController.text)
-        : DateTime.now();
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: initialDate,
-      //  initialDate: startdate ?? DateTime.now(),
+      initialDate: startdate ?? DateTime.now(),
       firstDate: DateTime(2015, 8),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
@@ -293,7 +365,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
       setState(() {
         startdate = picked;
         // startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-        startdateController.text = DateFormat('dd-MM-yyyy').format(picked);
+        startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
         // Use this format (yyyy-MM-dd) when passing it to your API or saving it
         String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
         print(dateForApi);
@@ -302,20 +374,17 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
   }
 
   Future<void> _endDate(BuildContext context) async {
-    DateTime initialDate = startdateController.text.isNotEmpty
-        ? DateFormat('dd-MM-yyyy').parse(startdateController.text)
-        : DateTime.now();
-
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: initialDate,
-      firstDate: initialDate, // Dynamically set based on startdate
-      //firstDate: DateTime(2015, 8), // Dynamically set based on startdate
-      lastDate: DateTime(2101), // Far future date as upper limit
+      initialDate: enddate ?? DateTime.now(),
+      firstDate: startdate!,
+      // firstDate: DateTime(2015, 8),
+      lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
             primaryColor: blueColor, // Header background color
+            // accentColor: Colors.white, // Button text color
             colorScheme: ColorScheme.light(
               primary: blueColor, // Selection color
               onPrimary: Colors.white, // Text color
@@ -328,17 +397,16 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
         );
       },
     );
-
     if (picked != null && picked != enddate) {
       setState(() {
         enddate = picked;
-        enddateController.text = DateFormat('dd-MM-yyyy').format(picked);
+        //birthdateController.text = DateFormat('yyyy-MM-dd').format(picked);
+        //startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
+        enddateController.text = DateFormat('yyyy-MM-dd').format(picked);
         String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
-        print(dateForApi); // For API usage
       });
     }
   }
-
   final FocusNode _nodeText1 = FocusNode();
   final FocusNode _nodeText2 = FocusNode();
   final FocusNode _nodeText3 = FocusNode();
@@ -490,7 +558,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                   ],
                 ),
                 child: Text(
-                  "Add Rental Owners ",
+                  "Edit Rental Owner ",
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -3532,17 +3600,17 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       });
                     }
 
-                    if (comname.text.trim().isEmpty) {
-                      setState(() {
-                        comnameerror = true;
-                        comnamemessage = "required";
-                        isFormValid = false;
-                      });
-                    } else {
-                      setState(() {
-                        comnameerror = false;
-                      });
-                    }
+                    // if (comname.text.trim().isEmpty) {
+                    //   setState(() {
+                    //     comnameerror = true;
+                    //     comnamemessage = "required";
+                    //     isFormValid = false;
+                    //   });
+                    // } else {
+                    //   setState(() {
+                    //     comnameerror = false;
+                    //   });
+                    // }
 
                     if (primaryemail.text.trim().isEmpty) {
                       setState(() {
@@ -3737,10 +3805,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                         rentalOwnerPhoneNumber: phonenum.text.trim(),
                         rentalOwnerHomeNumber: homenum.text.trim(),
                         rentalOwnerBusinessNumber: officenum.text.trim(),
-                        startDate:
-                            reverseFormatDate(startdateController.text.trim()),
-                        endDate:
-                            reverseFormatDate(enddateController.text.trim()),
+                        startDate: startdateController.text.trim(),
+                        endDate: enddateController.text.trim(),
                         texpayerId: taxid.text.trim(),
                         textIdentityType: taxtype.text.trim(),
                         city: city2.text.trim(),

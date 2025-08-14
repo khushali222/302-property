@@ -18,6 +18,7 @@ import '../../../../Model/unit.dart';
 import 'package:http/http.dart' as http;
 import 'ApplianceSummary.dart';
 import 'edit_appliences.dart';
+import '../summery_page.dart';
 
 class AppliancesPart extends StatefulWidget {
   Rentals? properties;
@@ -350,10 +351,11 @@ class _AppliancesPartState extends State<AppliancesPart> {
         backgroundColor: Colors.white,
       ),
       buttons: [
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -1987,7 +1989,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                         futureAppliences =
                                                                             UnitData().fetchApplianceData(widget.unit?.unitId ??
                                                                                 "");
-                                                                          });
+                                                                      });
                                                                     }
                                                                   },
                                                                   child:
@@ -2041,7 +2043,17 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                               widget.properties,
                                                                         ),
                                                                       ),
-                                                                    );
+                                                                    ).then(
+                                                                        (value) {
+                                                                      if (value ==
+                                                                          true) {
+                                                                        setState(
+                                                                            () {
+                                                                          futureAppliences =
+                                                                              UnitData().fetchApplianceData(widget.unit?.unitId ?? "");
+                                                                        });
+                                                                      }
+                                                                    });
                                                                   },
                                                                   child:
                                                                       Container(

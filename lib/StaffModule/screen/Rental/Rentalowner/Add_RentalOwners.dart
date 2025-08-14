@@ -183,7 +183,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
       setState(() {
         startdate = picked;
         // startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-        startdateController.text = DateFormat('dd-MM-yyyy').format(picked);
+        startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
         // Use this format (yyyy-MM-dd) when passing it to your API or saving it
         String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
         print(dateForApi);
@@ -195,8 +195,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: enddate ?? DateTime.now(),
-      // firstDate: DateTime(2015, 8),
       firstDate: startdate!,
+      // firstDate: DateTime(2015, 8),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(
@@ -220,7 +220,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
         enddate = picked;
         //birthdateController.text = DateFormat('yyyy-MM-dd').format(picked);
         //startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-        enddateController.text = DateFormat('dd-MM-yyyy').format(picked);
+        enddateController.text = DateFormat('yyyy-MM-dd').format(picked);
         String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
       });
     }
@@ -2382,7 +2382,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                   keyboardType:
                                                       TextInputType.number,
                                                   inputFormatters: [
-                                                    FilteringTextInputFormatter.digitsOnly,
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
                                                   ],
                                                   cursorColor: blueColor,
                                                   decoration: InputDecoration(
@@ -3336,16 +3337,16 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           nameerror = false;
                         });
                       }
-                      if (comname.text.trim().isEmpty) {
-                        setState(() {
-                          comnameerror = true;
-                          comnamemessage = "required";
-                        });
-                      } else {
-                        setState(() {
-                          comnameerror = false;
-                        });
-                      }
+                      // if (comname.text.trim().isEmpty) {
+                      //   setState(() {
+                      //     comnameerror = true;
+                      //     comnamemessage = "required";
+                      //   });
+                      // } else {
+                      //   setState(() {
+                      //     comnameerror = false;
+                      //   });
+                      //}
                       // if (birthdateController.text.isEmpty) {
                       //   setState(() {
                       //     birthdateerror = true;
@@ -3600,7 +3601,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                     });
                   }*/
                       if (!nameerror &&
-                              !comnameerror &&
+                              // !comnameerror &&
                               !primaryemailerror &&
                               !alternativeerror &&
                               !phonenumerror &&
@@ -3645,10 +3646,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           rentalOwnername: name.text.trim(),
                           rentalOwnerLastName: lastname.text.trim(),
                           rentalOwnerCompanyName: comname.text.trim(),
-                          startDate: reverseFormatDate(
-                              startdateController.text.trim()),
-                          endDate:
-                              reverseFormatDate(enddateController.text.trim()),
+                          // startDate: reverseFormatDate(
+                          //     startdateController.text.trim()),
+                          startDate: startdateController.text.trim(),
+                          endDate: enddateController.text.trim(),
                           rentalOwnerPrimaryEmail: primaryemail.text.trim(),
                           rentalOwnerAlternateEmail: alternativeemail.text,
                           rentalOwnerPhoneNumber: phonenum.text.trim(),

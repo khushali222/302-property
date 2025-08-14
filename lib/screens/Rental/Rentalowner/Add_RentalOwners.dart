@@ -3571,7 +3571,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                         });
                       }*/
                       if (!nameerror &&
-                              !comnameerror &&
+                              //!comnameerror &&
                               !primaryemailerror &&
                               !alternativeerror &&
                               !phonenumerror &&
