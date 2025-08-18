@@ -132,12 +132,51 @@ class PropertiesRepository {
       "state": rentalRequest.rentalOwnerData?.state,
       "country": rentalRequest.rentalOwnerData?.country,
       "postal_code": rentalRequest.rentalOwnerData?.postalCode,
-      //  "processor_list":rentalRequest.rentalOwnerData!.processorList
+      "processor_list": rentalRequest.rentalOwnerData?.processorList
     };
 
+    // Format units data according to API requirements
+    print('Formatting units for API request:');
+    print('Raw units data: ${rentalRequest.units}');
+
+    final List<Map<String, dynamic>> formattedUnits =
+        rentalRequest.units?.map((unit) {
+              print('Processing unit for API request:');
+              print('Raw unit data: $unit');
+
+              // For Commercial single unit, ensure sqft is in the correct field
+              var formattedUnit = {
+                "admin_id": rentalRequest.adminId,
+                "unit_id": unit["unit_id"] ??
+                    DateTime.now().millisecondsSinceEpoch.toString(),
+                "rental_unit": unit["rental_unit"] ??
+                    "Unit 1", // Default to "Unit 1" if empty
+                "rental_unit_adress": unit["rental_unit_adress"] ?? "",
+                "rental_sqft": unit["rental_sqft"] ??
+                    unit["rental_unit"] ??
+                    "", // Try to get sqft from rental_unit if rental_sqft is empty
+                "rental_bath": unit["rental_bath"] ?? "",
+                "rental_bed": unit["rental_bed"] ?? "",
+                "rental_images": unit["rental_images"] ?? []
+              };
+
+              print('Formatted unit data:');
+              print('- Unit ID: ${formattedUnit["unit_id"]}');
+              print('- Unit Name: ${formattedUnit["rental_unit"]}');
+              print('- Unit Address: ${formattedUnit["rental_unit_adress"]}');
+              print('- Unit Sqft: ${formattedUnit["rental_sqft"]}');
+              print('- Bath: ${formattedUnit["rental_bath"]}');
+              print('- Bed: ${formattedUnit["rental_bed"]}');
+
+              return formattedUnit;
+            }).toList() ??
+            [];
+    print('Formatted units: $formattedUnits');
+    print("api unit reponce $formattedUnits");
     final body = jsonEncode({
       "rentalOwner": rentalOwnerData,
       "rental": {
+        "admin_id": rentalRequest.adminId,
         "company_name": rentalRequest.rentalOwnerData?.rentalOwnerCompanyName,
         "rental_id": rentalRequest.rentalId,
         "property_id": rentalRequest.propertyId,
@@ -148,17 +187,24 @@ class PropertiesRepository {
         "rental_country": rentalRequest.rentalCountry,
         "rental_postcode": rentalRequest.rentalPostcode,
         "staffmember_id": rentalRequest.staffMemberId,
-        // "processor_id":rentalRequest.processor_id
+        "processor_id": rentalRequest.processor_id
       },
+      "units": formattedUnits // Add units to the request
     });
+
+    print('Request URL: $url');
+    print('Request Headers: $headers');
+    print('Request Body: $body');
 
     final response = await http.put(url, headers: headers, body: body);
     final responseBody = jsonDecode(response.body);
 
+    print('Response Status Code: ${response.statusCode}');
+    print('Response Body: ${response.body}');
+
     final rentalOwnerResponse = responseBody['data']['rentalOwner'];
     print(
         'Rental Owner Data from Response: ${jsonEncode(rentalOwnerResponse)}');
-    print('update Rental: ${response.body}');
 
     if (response.statusCode == 200) {
       Fluttertoast.showToast(msg: "Properties updated successfully");

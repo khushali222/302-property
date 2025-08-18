@@ -34,6 +34,7 @@ class Rentals {
   PropertyTypeData? propertyTypeData;
   StaffMemberData? staffMemberData;
   List<TenantPropertiesData>? tenantsData;
+  List<Map<String, dynamic>>? units;
 
   Rentals(
       {this.id,
@@ -62,7 +63,8 @@ class Rentals {
       this.publishedRentAmount,
       this.parcelNumber,
       this.purchaseDate,
-      this.purchasePrice});
+      this.purchasePrice,
+      this.units});
 
   // Define the fromJson method within the Rental class
   factory Rentals.fromJson(Map<String, dynamic> json) {
@@ -103,6 +105,9 @@ class Rentals {
       staffMemberData: StaffMemberData.fromJson(json['staffmember_data'] ?? {}),
       tenantsData: (json['tenants_data'] as List<dynamic>?)
           ?.map((e) => TenantPropertiesData.fromJson(e))
+          .toList(),
+      units: (json['units'] as List<dynamic>?)
+          ?.map((e) => Map<String, dynamic>.from(e))
           .toList(),
     );
   }
