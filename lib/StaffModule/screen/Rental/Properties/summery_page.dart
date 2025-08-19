@@ -514,6 +514,7 @@ class _Summery_pageState extends State<Summery_page>
   final Properies_summery_Repo unitRepository = Properies_summery_Repo();
   //int unitCount = 0;
   int tenentCount = 0;
+  int unitTenantCount = 0; // New variable for tenant count from unit API
   int count = 0;
   int complete_count = 0;
 
@@ -578,13 +579,24 @@ class _Summery_pageState extends State<Summery_page>
   final Properies_summery_Repo unit1Repository = Properies_summery_Repo();
   Future<void> fetchunits1() async {
     //  try {
-    final fetchedunit1 = await unit1Repository.fetchunit(widget.unit!.unitId!);
-    print(widget.unit!.unitId!);
+    final fetchedunit1 =
+        await unit1Repository.fetchunit(widget.properties.rentalId ?? "");
+    print(widget.properties.rentalId ?? "");
     print('hello');
     setState(() {
-      print(widget.unit!.unitId!);
+      print(widget.unit?.unitId ?? "");
       print('hello');
       data = fetchedunit1;
+
+      // Calculate tenant count from unit API response
+      unitTenantCount = 0;
+      for (var unit in fetchedunit1) {
+        if (unit.tenantCount != null) {
+          unitTenantCount += unit.tenantCount!;
+        }
+      }
+      print('Unit Tenant Count: $unitTenantCount');
+
       isLoading = false;
     });
     //} catch (e) {
@@ -3174,71 +3186,75 @@ class _Summery_pageState extends State<Summery_page>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
                                     child: Text(
                                       'Property Details',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize:
-                                        MediaQuery.of(context).size.width <
-                                            500
-                                            ? 14
-                                            : 22,
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 14
+                                                : 22,
                                         color: blueColor,
                                       ),
                                     ),
                                   ),
                                   SizedBox(height: 5),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
                                     child: Text('Address',
                                         style: TextStyle(
                                           color: Color(0xFF8A95A8),
                                           fontSize: MediaQuery.of(context)
-                                              .size
-                                              .width <
-                                              500
+                                                      .size
+                                                      .width <
+                                                  500
                                               ? 13
                                               : 18,
                                         )),
                                   ),
                                   SizedBox(height: 5),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
                                     child: Text(
                                       '${rentalDetails.propertyTypeData?.propertyType}',
                                       style: TextStyle(
                                         color: blueColor,
-                                        fontSize: MediaQuery.of(context)
-                                            .size
-                                            .width <
-                                            500
-                                            ? 13
-                                            : 18,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 13
+                                                : 18,
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                   SizedBox(height: 5),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 7),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 7),
                                     child: Text(
                                       '${rentalDetails.rentalAddress}',
                                       maxLines: 4,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         fontSize:
-                                        MediaQuery.of(context).size.width <
-                                            500
-                                            ? 13
-                                            : 18,
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 13
+                                                : 18,
                                         color: blueColor,
                                       ),
                                     ),
                                   ),
                                   SizedBox(height: 5),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
                                     child: Text(
                                       [
                                         rentalDetails.rentalCity,
@@ -3247,18 +3263,17 @@ class _Summery_pageState extends State<Summery_page>
                                         rentalDetails.rentalPostcode,
                                       ]
                                           .where((element) =>
-                                      element != null &&
-                                          element.isNotEmpty)
-                                          .map((element) =>
-                                      element!)
+                                              element != null &&
+                                              element.isNotEmpty)
+                                          .map((element) => element!)
                                           .join(' , '),
                                       style: TextStyle(
                                         color: blueColor,
                                         fontSize:
-                                        MediaQuery.of(context).size.width <
-                                            500
-                                            ? 13
-                                            : 18,
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 13
+                                                : 18,
                                       ),
                                       maxLines: 6,
                                       overflow: TextOverflow.ellipsis,
@@ -10594,7 +10609,11 @@ class _Summery_pageState extends State<Summery_page>
                                                   ),
                                                   Expanded(
                                                     child: Text(
-                                                      '${Propertytype.rentalunitadress}',
+                                                      Propertytype.rentalunitadress
+                                                                  ?.isNotEmpty ==
+                                                              true
+                                                          ? '${Propertytype.rentalunitadress}'
+                                                          : 'N/A',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
@@ -10651,7 +10670,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                     ),
                                                                     TextSpan(
                                                                       text:
-                                                                          ' ${tenentCount}',
+                                                                          ' ${unitTenantCount}',
                                                                       style: TextStyle(
                                                                           fontWeight: FontWeight
                                                                               .w700,

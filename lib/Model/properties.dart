@@ -75,7 +75,7 @@ class Rentals {
       rentalOwnerId: json['rentalowner_id'] ?? "",
       propertyId: json['property_id'] ?? "",
       rentalAddress: json['rental_adress'] ?? "",
-      isRentOn: json['is_rent_on'] ?? "",
+      isRentOn: json['is_rent_on'] ?? false,
       rentalCity: json['rental_city'] ?? "",
       rentalState: json['rental_state'] ?? "",
       rentalCountry: json['rental_country'] ?? "",
@@ -88,7 +88,7 @@ class Rentals {
       rentalImages: (json['rental_images'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
-      isDelete: json['is_delete'] ?? "",
+      isDelete: json['is_delete'] ?? false,
       is_available: json["is_available"] ?? false,
       publishedRentAmount: (json['published_rent_amount'] is int)
           ? (json['published_rent_amount'] as int).toDouble()

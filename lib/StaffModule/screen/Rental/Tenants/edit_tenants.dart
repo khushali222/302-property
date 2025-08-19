@@ -163,22 +163,27 @@ class _EditTenantsState extends State<EditTenants> {
   void initState() {
     overrideFee.addListener(_validateInput);
     // TODO: implement initState
-    firstName.text = widget.tenants.tenantFirstName!;
-    lastName.text = widget.tenants.tenantLastName!;
-    phoneNumber.text = formatPhoneNumberedit(widget.tenants.tenantPhoneNumber!);
-    workNumber.text =
-        formatPhoneNumberedit(widget.tenants.tenantAlternativeNumber!);
-    email.text = widget.tenants.tenantEmail!;
-    alterEmail.text = widget.tenants.tenantAlternativeEmail!;
-    passWord.text = widget.tenants.tenantPassword!;
+    firstName.text = widget.tenants.tenantFirstName ?? "";
+    lastName.text = widget.tenants.tenantLastName ?? "";
+    phoneNumber.text = widget.tenants.tenantPhoneNumber != null
+        ? formatPhoneNumberedit(widget.tenants.tenantPhoneNumber!)
+        : "";
+    workNumber.text = widget.tenants.tenantAlternativeNumber != null
+        ? formatPhoneNumberedit(widget.tenants.tenantAlternativeNumber!)
+        : "";
+    email.text = widget.tenants.tenantEmail ?? "";
+    alterEmail.text = widget.tenants.tenantAlternativeEmail ?? "";
+    passWord.text = widget.tenants.tenantPassword ?? "";
     _dateController.text = formatDate(widget.tenants.tenantBirthDate ?? "");
-    taxPayerId.text = widget.tenants.taxPayerId!;
-    comments.text = widget.tenants.comments!;
+    taxPayerId.text = widget.tenants.taxPayerId ?? "";
+    comments.text = widget.tenants.comments ?? "";
     contactName.text = widget.tenants.emergencyContact?.name ?? "";
-    relationToTenant.text = widget.tenants.emergencyContact!.relation ?? "";
-    emergencyPhoneNumber.text = formatPhoneNumberedit(
-        widget.tenants.emergencyContact!.phoneNumber ?? "");
-    emergencyEmail.text = widget.tenants.emergencyContact!.email ?? "";
+    relationToTenant.text = widget.tenants.emergencyContact?.relation ?? "";
+    emergencyPhoneNumber.text = widget.tenants.emergencyContact?.phoneNumber !=
+            null
+        ? formatPhoneNumberedit(widget.tenants.emergencyContact!.phoneNumber!)
+        : "";
+    emergencyEmail.text = widget.tenants.emergencyContact?.email ?? "";
     // _dateController.text = widget.tenants.tenantBirthDate!;
     //print(widget.tenants.tenantBirthDate);
     // enableOverrideFee = widget.tenants.enableoverrideFee!;
@@ -205,6 +210,7 @@ class _EditTenantsState extends State<EditTenants> {
   }
 
   bool isLoading = false;
+  bool isInitialLoading = true; // Add this to track initial loading
   String? errorMessage;
   bool formValid = false;
   String companyName = '';
@@ -274,9 +280,24 @@ class _EditTenantsState extends State<EditTenants> {
         overrideFee.text = tenantData['override_fee'] != null
             ? tenantData['override_fee'].toString()
             : '';
-        passWord.text = tenantData['tenant_password'];
+        passWord.text = tenantData['tenant_password'] ?? '';
+
+        // Handle null values for phone numbers and other fields
+        workNumber.text = tenantData['tenant_alternativeNumber'] != null
+            ? formatPhoneNumberedit(tenantData['tenant_alternativeNumber'])
+            : '';
+        emergencyPhoneNumber.text =
+            tenantData['emergency_contact']?['phoneNumber'] != null
+                ? formatPhoneNumberedit(
+                    tenantData['emergency_contact']['phoneNumber'])
+                : '';
+
+        isInitialLoading = false; // Mark initial loading as complete
       });
     } else {
+      setState(() {
+        isInitialLoading = false; // Mark loading as complete even on error
+      });
       throw Exception('Failed to load tenant override fee data');
     }
   }
@@ -292,291 +313,438 @@ class _EditTenantsState extends State<EditTenants> {
         currentpage: "Tenants",
         dropdown: true,
       ),
-      body: Form(
-        key: _formkey,
-        child: Container(
-          color: Colors.white,
-          child: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-            if (constraints.maxWidth > 600) {
-              return SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: 25,
-                    ),
-                    titleBar(
-                      width: MediaQuery.of(context).size.width * .91,
-                      title: 'Edit Tenant',
-                    ),
-                    SizedBox(
-                      height: 25,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(context).size.width * .04),
-                      child: Container(
-                        width: double.infinity,
-                        // height: !form_valid ? 860 : 830,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            border: Border.all(
-                              color: Color.fromRGBO(21, 43, 103, 1),
-                            )),
-                        child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+      body: isInitialLoading
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SpinKitFadingCircle(
+                    color: Colors.black,
+                    size: 40.0,
+                  ),
+                  // SizedBox(height: 20),
+                  // Text(
+                  //   'Loading tenant data...',
+                  //   style: TextStyle(
+                  //     fontSize: 16,
+                  //     color: Colors.grey[600],
+                  //   ),
+                  // ),
+                ],
+              ),
+            )
+          : Form(
+              key: _formkey,
+              child: Container(
+                color: Colors.white,
+                child: LayoutBuilder(builder:
+                    (BuildContext context, BoxConstraints constraints) {
+                  if (constraints.maxWidth > 600) {
+                    return SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 25,
+                          ),
+                          titleBar(
+                            width: MediaQuery.of(context).size.width * .91,
+                            title: 'Edit Tenant',
+                          ),
+                          SizedBox(
+                            height: 25,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal:
+                                    MediaQuery.of(context).size.width * .04),
+                            child: Container(
+                              width: double.infinity,
+                              // height: !form_valid ? 860 : 830,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  border: Border.all(
+                                    color: Color.fromRGBO(21, 43, 103, 1),
+                                  )),
+                              child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
                                         children: [
-                                          Text('First Name *',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(height: 10),
-                                          CustomTextField(
-                                            keyboardType: TextInputType.text,
-                                            hintText: 'Enter first name',
-                                            controller: firstName,
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'please enter the first name';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(width: 20),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Last Name *',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(height: 10),
-                                          CustomTextField(
-                                            keyboardType: TextInputType.text,
-                                            hintText: 'Enter last name',
-                                            controller: lastName,
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'please enter the last name';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 20),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Phone Number *',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(height: 10),
-                                          CustomTextField(
-                                            keyboardType: TextInputType.number,
-                                            inputFormatters: [
-                                              FilteringTextInputFormatter
-                                                  .digitsOnly,
-                                              LengthLimitingTextInputFormatter(
-                                                  10),
-                                              PhoneNumberFormatter(),
-                                            ],
-                                            // keyboardType:
-                                            //     TextInputType.numberWithOptions(
-                                            //         signed: true,
-                                            //         decimal: true),
-                                            hintText: 'Enter phone number',
-                                            controller: phoneNumber,
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'please enter the phone number';
-                                              }
-                                              return null;
-                                            },
-                                            phone: true,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(width: 20),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Work Number',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(height: 10),
-                                          CustomTextField(
-                                            keyboardType: TextInputType.number,
-                                            inputFormatters: [
-                                              FilteringTextInputFormatter
-                                                  .digitsOnly,
-                                              LengthLimitingTextInputFormatter(
-                                                  10),
-                                              PhoneNumberFormatter(),
-                                            ],
-                                            // keyboardType:
-                                            //     TextInputType.numberWithOptions(
-                                            //         signed: true,
-                                            //         decimal: true),
-                                            hintText: 'Enter work number',
-                                            controller: workNumber,
-                                            optional: true,
-                                            phone: true,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 20),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Email *',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(height: 10),
-                                          CustomTextField(
-                                            keyboardType:
-                                                TextInputType.emailAddress,
-                                            hintText: 'Enter Email',
-                                            controller: email,
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'please enter email';
-                                              }
-                                              return null;
-                                            },
-                                            email: true,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(width: 20),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Alternative Email',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(height: 10),
-                                          CustomTextField(
-                                            keyboardType:
-                                                TextInputType.emailAddress,
-                                            hintText: 'Enter alternative email',
-                                            controller: alterEmail,
-                                            optional: true,
-                                            email: true,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 20),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Password *',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
-                                          SizedBox(height: 10),
-                                          /*  CustomTextField(
-                                          keyboardType: TextInputType.emailAddress,
-                                          hintText: 'Enter alternative email',
-                                          controller: alterEmail,
-                                        ),*/
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: CustomTextField(
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text('First Name *',
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey)),
+                                                SizedBox(height: 10),
+                                                CustomTextField(
                                                   keyboardType:
                                                       TextInputType.text,
-                                                  obscureText: obsecure,
-                                                  hintText: 'Enter password',
-                                                  controller: passWord,
+                                                  hintText: 'Enter first name',
+                                                  controller: firstName,
                                                   validator: (value) {
                                                     if (value == null ||
                                                         value.isEmpty) {
-                                                      return 'please enter password';
+                                                      return 'please enter the first name';
                                                     }
                                                     return null;
                                                   },
                                                 ),
-                                              ),
-                                              SizedBox(width: 10),
-                                              InkWell(
-                                                onTap: () {
-                                                  setState(() {
-                                                    obsecure = !obsecure;
-                                                  });
-                                                },
-                                                child: Container(
-                                                  width: 38,
-                                                  height: 50,
-                                                  child: Center(
-                                                    child: FaIcon(
-                                                      !obsecure
-                                                          ? FontAwesomeIcons
-                                                              .eyeSlash
-                                                          : FontAwesomeIcons
-                                                              .eye,
-                                                      size: 20,
-                                                      color: Colors.black,
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(width: 20),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text('Last Name *',
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey)),
+                                                SizedBox(height: 10),
+                                                CustomTextField(
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  hintText: 'Enter last name',
+                                                  controller: lastName,
+                                                  validator: (value) {
+                                                    if (value == null ||
+                                                        value.isEmpty) {
+                                                      return 'please enter the last name';
+                                                    }
+                                                    return null;
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 20),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text('Phone Number *',
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey)),
+                                                SizedBox(height: 10),
+                                                CustomTextField(
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
+                                                    LengthLimitingTextInputFormatter(
+                                                        10),
+                                                    PhoneNumberFormatter(),
+                                                  ],
+                                                  // keyboardType:
+                                                  //     TextInputType.numberWithOptions(
+                                                  //         signed: true,
+                                                  //         decimal: true),
+                                                  hintText:
+                                                      'Enter phone number',
+                                                  controller: phoneNumber,
+                                                  validator: (value) {
+                                                    if (value == null ||
+                                                        value.isEmpty) {
+                                                      return 'please enter the phone number';
+                                                    }
+                                                    return null;
+                                                  },
+                                                  phone: true,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(width: 20),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text('Work Number',
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey)),
+                                                SizedBox(height: 10),
+                                                CustomTextField(
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
+                                                    LengthLimitingTextInputFormatter(
+                                                        10),
+                                                    PhoneNumberFormatter(),
+                                                  ],
+                                                  // keyboardType:
+                                                  //     TextInputType.numberWithOptions(
+                                                  //         signed: true,
+                                                  //         decimal: true),
+                                                  hintText: 'Enter work number',
+                                                  controller: workNumber,
+                                                  optional: true,
+                                                  phone: true,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 20),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text('Email *',
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey)),
+                                                SizedBox(height: 10),
+                                                CustomTextField(
+                                                  keyboardType: TextInputType
+                                                      .emailAddress,
+                                                  hintText: 'Enter Email',
+                                                  controller: email,
+                                                  validator: (value) {
+                                                    if (value == null ||
+                                                        value.isEmpty) {
+                                                      return 'please enter email';
+                                                    }
+                                                    return null;
+                                                  },
+                                                  email: true,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(width: 20),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text('Alternative Email',
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey)),
+                                                SizedBox(height: 10),
+                                                CustomTextField(
+                                                  keyboardType: TextInputType
+                                                      .emailAddress,
+                                                  hintText:
+                                                      'Enter alternative email',
+                                                  controller: alterEmail,
+                                                  optional: true,
+                                                  email: true,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 20),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text('Password *',
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey)),
+                                                SizedBox(height: 10),
+                                                /*  CustomTextField(
+                                          keyboardType: TextInputType.emailAddress,
+                                          hintText: 'Enter alternative email',
+                                          controller: alterEmail,
+                                        ),*/
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: CustomTextField(
+                                                        keyboardType:
+                                                            TextInputType.text,
+                                                        obscureText: obsecure,
+                                                        hintText:
+                                                            'Enter password',
+                                                        controller: passWord,
+                                                        validator: (value) {
+                                                          if (value == null ||
+                                                              value.isEmpty) {
+                                                            return 'please enter password';
+                                                          }
+                                                          return null;
+                                                        },
+                                                      ),
                                                     ),
+                                                    SizedBox(width: 10),
+                                                    InkWell(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          obsecure = !obsecure;
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        width: 38,
+                                                        height: 50,
+                                                        child: Center(
+                                                          child: FaIcon(
+                                                            !obsecure
+                                                                ? FontAwesomeIcons
+                                                                    .eyeSlash
+                                                                : FontAwesomeIcons
+                                                                    .eye,
+                                                            size: 20,
+                                                            color: Colors.black,
+                                                          ),
+                                                        ),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors.white,
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                              color: Colors
+                                                                  .black26,
+                                                              offset: Offset(
+                                                                  1.2, 1.2),
+                                                              blurRadius: 3.0,
+                                                              spreadRadius: 1.0,
+                                                            ),
+                                                          ],
+                                                          border: Border.all(
+                                                              width: 0,
+                                                              color:
+                                                                  Colors.white),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      6.0),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(width: 20),
+                                          Expanded(
+                                            child: Visibility(
+                                              visible: false,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text('Alternative Email',
+                                                      style: TextStyle(
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.grey)),
+                                                  SizedBox(height: 10),
+                                                  CustomTextField(
+                                                    keyboardType: TextInputType
+                                                        .emailAddress,
+                                                    hintText:
+                                                        'Enter alternative email',
+                                                    controller: alterEmail,
+                                                    optional: true,
+                                                    email: true,
                                                   ),
-                                                  decoration: BoxDecoration(
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 10),
+                                    ],
+                                  )),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal:
+                                    MediaQuery.of(context).size.width * .04),
+                            child: Container(
+                              width: double.infinity,
+                              // height: 410,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  border: Border.all(
+                                    color: Color.fromRGBO(21, 43, 103, 1),
+                                  )),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Personal Information',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color: blueColor)),
+                                    SizedBox(
+                                      height: 15,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Date of Birth',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.grey)),
+                                              SizedBox(height: 10),
+                                              Container(
+                                                height: 50,
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 12.0,
+                                                    vertical: 0),
+                                                decoration: BoxDecoration(
                                                     color: Colors.white,
                                                     boxShadow: [
                                                       BoxShadow(
@@ -592,953 +760,908 @@ class _EditTenantsState extends State<EditTenants> {
                                                         color: Colors.white),
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                            6.0),
+                                                            6.0)),
+                                                child: TextFormField(
+                                                  style: TextStyle(
+                                                    color: Color(0xFF8898aa),
+                                                    fontSize: 16.0,
+                                                    fontWeight: FontWeight.w400,
                                                   ),
+                                                  controller: _dateController,
+                                                  decoration: InputDecoration(
+                                                    hintStyle: TextStyle(
+                                                        fontSize: 13,
+                                                        color:
+                                                            Color(0xFFb0b6c3)),
+                                                    border: InputBorder.none,
+                                                    hintText: 'Select Date',
+                                                    suffixIcon: IconButton(
+                                                      icon: Icon(
+                                                          Icons.calendar_today),
+                                                      onPressed: () {
+                                                        _selectDate(context);
+                                                      },
+                                                    ),
+                                                  ),
+                                                  readOnly: true,
+                                                  onTap: () {
+                                                    _selectDate(context);
+                                                  },
                                                 ),
                                               ),
                                             ],
                                           ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(width: 20),
-                                    Expanded(
-                                      child: Visibility(
-                                        visible: false,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text('Alternative Email',
-                                                style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.grey)),
-                                            SizedBox(height: 10),
-                                            CustomTextField(
-                                              keyboardType:
-                                                  TextInputType.emailAddress,
-                                              hintText:
-                                                  'Enter alternative email',
-                                              controller: alterEmail,
-                                              optional: true,
-                                              email: true,
-                                            ),
-                                          ],
                                         ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 10),
-                              ],
-                            )),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(context).size.width * .04),
-                      child: Container(
-                        width: double.infinity,
-                        // height: 410,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            border: Border.all(
-                              color: Color.fromRGBO(21, 43, 103, 1),
-                            )),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Personal Information',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w400,
-                                      color: blueColor)),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Date of Birth',
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.grey)),
-                                        SizedBox(height: 10),
-                                        Container(
-                                          height: 50,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 12.0, vertical: 0),
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.black26,
-                                                  offset: Offset(1.2, 1.2),
-                                                  blurRadius: 3.0,
-                                                  spreadRadius: 1.0,
-                                                ),
-                                              ],
-                                              border: Border.all(
-                                                  width: 0,
-                                                  color: Colors.white),
-                                              borderRadius:
-                                                  BorderRadius.circular(6.0)),
-                                          child: TextFormField(
-                                            style: TextStyle(
-                                              color: Color(0xFF8898aa),
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                            controller: _dateController,
-                                            decoration: InputDecoration(
-                                              hintStyle: TextStyle(
-                                                  fontSize: 13,
-                                                  color: Color(0xFFb0b6c3)),
-                                              border: InputBorder.none,
-                                              hintText: 'Select Date',
-                                              suffixIcon: IconButton(
-                                                icon:
-                                                    Icon(Icons.calendar_today),
-                                                onPressed: () {
-                                                  _selectDate(context);
-                                                },
+                                        SizedBox(width: 10),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('TaxPayer ID',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.grey)),
+                                              SizedBox(height: 10),
+                                              CustomTextField(
+                                                keyboardType:
+                                                    TextInputType.text,
+                                                hintText: 'Enter taxpayer ID',
+                                                controller: taxPayerId,
+                                                optional: true,
                                               ),
-                                            ),
-                                            readOnly: true,
-                                            onTap: () {
-                                              _selectDate(context);
-                                            },
+                                            ],
                                           ),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text('TaxPayer ID',
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.grey)),
-                                        SizedBox(height: 10),
-                                        CustomTextField(
-                                          keyboardType: TextInputType.text,
-                                          hintText: 'Enter taxpayer ID',
-                                          controller: taxPayerId,
-                                          optional: true,
-                                        ),
-                                      ],
+                                    SizedBox(
+                                      height: 10,
                                     ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text('Comments',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Container(
-                                height: 90,
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 12.0, vertical: 0),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black26,
-                                        offset: Offset(1.2,
-                                            1.2), // Shadow offset to the bottom right
-                                        blurRadius:
-                                            3.0, // How much to blur the shadow
-                                        spreadRadius:
-                                            1.0, // How much the shadow should spread
-                                      ),
-                                    ],
-                                    border: Border.all(
-                                        width: 0, color: Colors.white),
-                                    borderRadius: BorderRadius.circular(6.0)),
-                                child: TextFormField(
-                                    keyboardType: TextInputType.text,
-                                    controller: comments,
-                                    maxLines: 5,
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      hintStyle: TextStyle(
-                                          fontSize: 13,
-                                          color: Color(0xFFb0b6c3)),
-                                      hintText: 'Enter the comment',
-                                    )),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(context).size.width * .04),
-                      child: Container(
-                        width: double.infinity,
-                        // height: form_valid ? 520 : 430,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            border: Border.all(
-                              color: Color.fromRGBO(21, 43, 103, 1),
-                            )),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Emergency Contact',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w400,
-                                      color: blueColor)),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Contact Name',
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.grey)),
-                                        SizedBox(height: 10),
-                                        CustomTextField(
-                                          keyboardType: TextInputType.text,
-                                          hintText: 'Enter contact name',
-                                          controller: contactName,
-                                          optional: true,
-                                        ),
-                                      ],
+                                    Text('Comments',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey)),
+                                    SizedBox(
+                                      height: 10,
                                     ),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Relationship to Tenant',
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.grey)),
-                                        SizedBox(height: 10),
-                                        CustomTextField(
-                                          keyboardType: TextInputType.text,
-                                          hintText:
-                                              'Enter relationship to tenant',
-                                          controller: relationToTenant,
-                                          optional: true,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 10),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text('E-Mail',
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.grey)),
-                                        SizedBox(height: 10),
-                                        CustomTextField(
-                                          keyboardType:
-                                              TextInputType.emailAddress,
-                                          hintText: 'Enter email',
-                                          controller: emergencyEmail,
-                                          optional: true,
-                                          email: true,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Phone Number',
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.grey)),
-                                        SizedBox(height: 10),
-                                        CustomTextField(
-                                          keyboardType: TextInputType.number,
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter
-                                                .digitsOnly,
-                                            LengthLimitingTextInputFormatter(
-                                                10),
-                                            PhoneNumberFormatter(),
+                                    Container(
+                                      height: 90,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 12.0, vertical: 0),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black26,
+                                              offset: Offset(1.2,
+                                                  1.2), // Shadow offset to the bottom right
+                                              blurRadius:
+                                                  3.0, // How much to blur the shadow
+                                              spreadRadius:
+                                                  1.0, // How much the shadow should spread
+                                            ),
                                           ],
-                                          // keyboardType:
-                                          //     TextInputType.numberWithOptions(
-                                          //         signed: true, decimal: true),
-                                          hintText: 'Enter phone number',
-                                          controller: emergencyPhoneNumber,
-                                          optional: true,
-                                          phone: true,
-                                        ),
-                                      ],
+                                          border: Border.all(
+                                              width: 0, color: Colors.white),
+                                          borderRadius:
+                                              BorderRadius.circular(6.0)),
+                                      child: TextFormField(
+                                          keyboardType: TextInputType.text,
+                                          controller: comments,
+                                          maxLines: 5,
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintStyle: TextStyle(
+                                                fontSize: 13,
+                                                color: Color(0xFFb0b6c3)),
+                                            hintText: 'Enter the comment',
+                                          )),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(context).size.width * .04),
-                      child: Container(
-                        width: double.infinity,
-                        // height: form_valid ? 520 : 430,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            border: Border.all(
-                              color: Color.fromRGBO(21, 43, 103, 1),
-                            )),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Override Debit Card Fee',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  Checkbox(
-                                      activeColor: blueColor,
-                                      value: enableOverrideFee,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          enableOverrideFee = value!;
-                                          if (!enableOverrideFee) {
-                                            overrideFee.clear();
-                                            overRideFeeError = '';
-                                          }
-                                        });
-                                      }),
-                                  Text('Enable Debit Card Fee',
-                                      style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey)),
-                                ],
-                              ),
-                              enableOverrideFee
-                                  ?
-                              Material(
-                                elevation: 2,
-                                borderRadius: BorderRadius.circular(8.0),
-                                child: Container(
-                                  height: 50,
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16.0, vertical: 0),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius:
-                                    BorderRadius.circular(8.0),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color:
-                                        Colors.black.withOpacity(0.2),
-                                        offset: Offset(4, 4),
-                                        blurRadius: 3,
-                                      ),
-                                    ],
-                                  ),
-                                  child: TextField(
-                                    keyboardType:
-                                    TextInputType.numberWithOptions(
-                                        decimal: true),
-                                    decoration: InputDecoration(
-                                      hintStyle: TextStyle(
-                                          fontSize: 13,
-                                          color: Color(0xFFb0b6c3)),
-                                      border: InputBorder.none,
-                                      hintText: "Enter the amount to override fee",
-                                      suffix: Text(
-                                        '%',
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            color: blueColor,
-                                            fontWeight: FontWeight.bold),
-                                      ),
+                                    SizedBox(
+                                      height: 10,
                                     ),
-                                    onChanged: (value) {
-                                      _validateInput();
-                                    },
-                                    controller: overrideFee,
-                                    cursorColor: blueColor,
-                                  ),
-                                ),
-                              )
-                                  : Container(),
-                              overRideFeeError != null
-                                  ? Padding(
-                                      padding: const EdgeInsets.all(0.0),
-                                      child: Text(
-                                        overRideFeeError!,
-                                        style: TextStyle(
-                                            color: Colors.red,
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.023),
-                                      ),
-                                    )
-                                  : Container(),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        children: [
-                          Container(
-                            height: 50,
-                            width: 150,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: blueColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
+                                  ],
                                 ),
                               ),
-                              onPressed: () async {
-                                setState(() {
-                                  formValid = true;
-                                });
-
-                                if (_formkey.currentState!.validate()) {
-                                  setState(() {
-                                    formValid = false;
-                                  });
-
-                                  setState(() {
-                                    isLoading = true;
-                                    errorMessage = null;
-                                  });
-                                  SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
-                                  String? adminId = prefs.getString("adminId");
-                                  if (adminId != null) {
-                                    try {
-                                      await TenantsRepository().editTenant(
-                                        tenantId: widget.tenants.tenantId ?? "",
-                                        adminId: adminId,
-                                        tenantFirstName: firstName.text,
-                                        tenantLastName: lastName.text,
-                                        tenantPhoneNumber: phoneNumber.text,
-                                        tenantAlternativeNumber:
-                                            workNumber.text,
-                                        tenantEmail: email.text,
-                                        tenantAlternativeEmail: alterEmail.text,
-                                        tenantPassword: passWord.text,
-                                        tenantBirthDate: _dateController.text,
-                                        taxPayerId: taxPayerId.text,
-                                        comments: comments.text,
-                                        emergencyContactName: contactName.text,
-                                        emergencyContactRelation:
-                                            relationToTenant.text,
-                                        emergencyContactEmail:
-                                            emergencyEmail.text,
-                                        emergencyContactPhoneNumber:
-                                            emergencyPhoneNumber.text,
-                                        companyName: companyName,
-                                        overRideFee: overrideFee.text,
-                                        enableOverRideFee:
-                                            enableOverrideFee.toString(),
-                                      );
-                                      Fluttertoast.showToast(
-                                          msg: "Tenant updated successfully");
-                                      setState(() {
-                                        isLoading = false;
-                                        errorMessage = null;
-                                        widget.tenants.tenantFirstName =
-                                            firstName.text;
-                                        widget.tenants.tenantLastName =
-                                            lastName.text;
-                                      });
-                                      Navigator.of(context).pop(true);
-                                    } catch (e) {
-                                      Fluttertoast.showToast(
-                                          msg: "Failed to update tenant");
-                                      setState(() {
-                                        isLoading = false;
-                                        errorMessage = e.toString();
-                                      });
-
-                                      // Handle error
-
-                                      print(e.toString());
-                                    }
-                                  } else {
-                                    setState(() {
-                                      isLoading = false;
-                                      errorMessage = "Admin ID not found";
-                                    });
-                                  }
-
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                } else {
-                                  print('Form is invalid');
-                                }
-                              },
-                              child: isLoading
-                                  ? Center(
-                                      child: SpinKitFadingCircle(
-                                        color: Colors.white,
-                                        size: 55.0,
-                                      ),
-                                    )
-                                  : Text(
-                                      'Edit Tenant',
-                                      style:
-                                          TextStyle(color: Color(0xFFf7f8f9)),
-                                    ),
                             ),
                           ),
                           SizedBox(
-                            width: 8,
+                            height: 20,
                           ),
-                          Container(
-                              height: 50,
-                              width: 120,
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal:
+                                    MediaQuery.of(context).size.width * .04),
+                            child: Container(
+                              width: double.infinity,
+                              // height: form_valid ? 520 : 430,
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.0)),
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: Color(0xFFffffff),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  border: Border.all(
+                                    color: Color.fromRGBO(21, 43, 103, 1),
+                                  )),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Emergency Contact',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color: blueColor)),
+                                    SizedBox(
+                                      height: 15,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Contact Name',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.grey)),
+                                              SizedBox(height: 10),
+                                              CustomTextField(
+                                                keyboardType:
+                                                    TextInputType.text,
+                                                hintText: 'Enter contact name',
+                                                controller: contactName,
+                                                optional: true,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(width: 10),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Relationship to Tenant',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.grey)),
+                                              SizedBox(height: 10),
+                                              CustomTextField(
+                                                keyboardType:
+                                                    TextInputType.text,
+                                                hintText:
+                                                    'Enter relationship to tenant',
+                                                controller: relationToTenant,
+                                                optional: true,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 10),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('E-Mail',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.grey)),
+                                              SizedBox(height: 10),
+                                              CustomTextField(
+                                                keyboardType:
+                                                    TextInputType.emailAddress,
+                                                hintText: 'Enter email',
+                                                controller: emergencyEmail,
+                                                optional: true,
+                                                email: true,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(width: 10),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Phone Number',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.grey)),
+                                              SizedBox(height: 10),
+                                              CustomTextField(
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                inputFormatters: [
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly,
+                                                  LengthLimitingTextInputFormatter(
+                                                      10),
+                                                  PhoneNumberFormatter(),
+                                                ],
+                                                // keyboardType:
+                                                //     TextInputType.numberWithOptions(
+                                                //         signed: true, decimal: true),
+                                                hintText: 'Enter phone number',
+                                                controller:
+                                                    emergencyPhoneNumber,
+                                                optional: true,
+                                                phone: true,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal:
+                                    MediaQuery.of(context).size.width * .04),
+                            child: Container(
+                              width: double.infinity,
+                              // height: form_valid ? 520 : 430,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  border: Border.all(
+                                    color: Color.fromRGBO(21, 43, 103, 1),
+                                  )),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Override Debit Card Fee',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey)),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Checkbox(
+                                            activeColor: blueColor,
+                                            value: enableOverrideFee,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                enableOverrideFee = value!;
+                                                if (!enableOverrideFee) {
+                                                  overrideFee.clear();
+                                                  overRideFeeError = '';
+                                                }
+                                              });
+                                            }),
+                                        Text('Enable Debit Card Fee',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey)),
+                                      ],
+                                    ),
+                                    enableOverrideFee
+                                        ? Material(
+                                            elevation: 2,
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                            child: Container(
+                                              height: 50,
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 16.0,
+                                                  vertical: 0),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.black
+                                                        .withOpacity(0.2),
+                                                    offset: Offset(4, 4),
+                                                    blurRadius: 3,
+                                                  ),
+                                                ],
+                                              ),
+                                              child: TextField(
+                                                keyboardType: TextInputType
+                                                    .numberWithOptions(
+                                                        decimal: true),
+                                                decoration: InputDecoration(
+                                                  hintStyle: TextStyle(
+                                                      fontSize: 13,
+                                                      color: Color(0xFFb0b6c3)),
+                                                  border: InputBorder.none,
+                                                  hintText:
+                                                      "Enter the amount to override fee",
+                                                  suffix: Text(
+                                                    '%',
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ),
+                                                onChanged: (value) {
+                                                  _validateInput();
+                                                },
+                                                controller: overrideFee,
+                                                cursorColor: blueColor,
+                                              ),
+                                            ),
+                                          )
+                                        : Container(),
+                                    overRideFeeError != null
+                                        ? Padding(
+                                            padding: const EdgeInsets.all(0.0),
+                                            child: Text(
+                                              overRideFeeError!,
+                                              style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.023),
+                                            ),
+                                          )
+                                        : Container(),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Row(
+                              children: [
+                                Container(
+                                  height: 50,
+                                  width: 150,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: blueColor,
                                       shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8.0))),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(
-                                    'Cancel',
-                                    style: TextStyle(color: Color(0xFF748097)),
-                                  ))),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      setState(() {
+                                        formValid = true;
+                                      });
+
+                                      if (_formkey.currentState!.validate()) {
+                                        setState(() {
+                                          formValid = false;
+                                        });
+
+                                        setState(() {
+                                          isLoading = true;
+                                          errorMessage = null;
+                                        });
+                                        SharedPreferences prefs =
+                                            await SharedPreferences
+                                                .getInstance();
+                                        String? adminId =
+                                            prefs.getString("adminId");
+                                        if (adminId != null) {
+                                          try {
+                                            await TenantsRepository()
+                                                .editTenant(
+                                              tenantId:
+                                                  widget.tenants.tenantId ?? "",
+                                              adminId: adminId,
+                                              tenantFirstName: firstName.text,
+                                              tenantLastName: lastName.text,
+                                              tenantPhoneNumber:
+                                                  phoneNumber.text,
+                                              tenantAlternativeNumber:
+                                                  workNumber.text,
+                                              tenantEmail: email.text,
+                                              tenantAlternativeEmail:
+                                                  alterEmail.text,
+                                              tenantPassword: passWord.text,
+                                              tenantBirthDate:
+                                                  _dateController.text,
+                                              taxPayerId: taxPayerId.text,
+                                              comments: comments.text,
+                                              emergencyContactName:
+                                                  contactName.text,
+                                              emergencyContactRelation:
+                                                  relationToTenant.text,
+                                              emergencyContactEmail:
+                                                  emergencyEmail.text,
+                                              emergencyContactPhoneNumber:
+                                                  emergencyPhoneNumber.text,
+                                              companyName: companyName,
+                                              overRideFee: overrideFee.text,
+                                              enableOverRideFee:
+                                                  enableOverrideFee.toString(),
+                                            );
+                                            Fluttertoast.showToast(
+                                                msg:
+                                                    "Tenant updated successfully");
+                                            setState(() {
+                                              isLoading = false;
+                                              errorMessage = null;
+                                              widget.tenants.tenantFirstName =
+                                                  firstName.text;
+                                              widget.tenants.tenantLastName =
+                                                  lastName.text;
+                                            });
+                                            Navigator.of(context).pop(true);
+                                          } catch (e) {
+                                            Fluttertoast.showToast(
+                                                msg: "Failed to update tenant");
+                                            setState(() {
+                                              isLoading = false;
+                                              errorMessage = e.toString();
+                                            });
+
+                                            // Handle error
+
+                                            print(e.toString());
+                                          }
+                                        } else {
+                                          setState(() {
+                                            isLoading = false;
+                                            errorMessage = "Admin ID not found";
+                                          });
+                                        }
+
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                      } else {
+                                        print('Form is invalid');
+                                      }
+                                    },
+                                    child: isLoading
+                                        ? Center(
+                                            child: SpinKitFadingCircle(
+                                              color: Colors.white,
+                                              size: 55.0,
+                                            ),
+                                          )
+                                        : Text(
+                                            'Edit Tenant',
+                                            style: TextStyle(
+                                                color: Color(0xFFf7f8f9)),
+                                          ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Container(
+                                    height: 50,
+                                    width: 120,
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0)),
+                                    child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: Color(0xFFffffff),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        8.0))),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          'Cancel',
+                                          style: TextStyle(
+                                              color: Color(0xFF748097)),
+                                        ))),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
                         ],
                       ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                  ],
-                ),
-              );
-            }
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 25,
-                  ),
-                  titleBar(
-                    width: MediaQuery.of(context).size.width * .99,
-                    title: 'Edit Tenant',
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10, right: 10),
-                    child: Container(
-                      width: double.infinity,
-                      // height: !form_valid ? 860 : 830,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          border: Border.all(
-                            color: Color(0xFFDBE0E5),
-                          )),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: 4,
-                            ),
-                            Text('Personal Information',
-                                style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF152B51))),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            //firstname and last name
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Text('First Name *',
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xFF101828))),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        CustomTextField(
-                                          keyboardType: TextInputType.text,
-                                          hintText: 'Enter first name',
-                                          controller: firstName,
-                                          showElevation: false,
-                                          isInRow:
-                                          true, // ADD FOR ROW ALIGNMENT
-                                          borderColor: Color(
-                                              0xFFCED4DA), // ADD BORDER COLOR
-                                          borderWidth: 1.5, // ADD BORDER WIDTH
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'please enter the first name';
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ],
-                                    ),
+                    );
+                  }
+                  return SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 25,
+                        ),
+                        titleBar(
+                          width: MediaQuery.of(context).size.width * .99,
+                          title: 'Edit Tenant',
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10, right: 10),
+                          child: Container(
+                            width: double.infinity,
+                            // height: !form_valid ? 860 : 830,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                border: Border.all(
+                                  color: Color(0xFFDBE0E5),
+                                )),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    height: 4,
                                   ),
-                                ),
-                                SizedBox(
-                                  width: 12,
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Last Name *',
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xFF101828))),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        CustomTextField(
-                                          keyboardType: TextInputType.text,
-                                          hintText: 'Enter last name',
-                                          controller: lastName,
-                                          borderColor: Color(0xFFCED4DA),
-                                          isInRow:
-                                          true, // ADD FOR ROW ALIGNMENT
-                                          showElevation: false,
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'please enter the last name';
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ],
-                                    ),
+                                  Text('Personal Information',
+                                      style: TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF152B51))),
+                                  SizedBox(
+                                    height: 20,
                                   ),
-                                ),
-                              ],
-                            ),
-                            //phone and work number
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Phone Number *',
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xFF101828))),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        CustomTextField(
-                                          keyboardType: TextInputType.number,
-                                          // keyboardType: TextInputType.numberWithOptions(
-                                          //     signed: true, decimal: true),
-                                          hintText: 'Enter phone number',
-                                          controller: phoneNumber,
-                                          borderColor: Color(0xFFCED4DA),
-                                          isInRow:
-                                          true, // ADD FOR ROW ALIGNMENT
-                                          showElevation: false,
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter
-                                                .digitsOnly,
-                                            LengthLimitingTextInputFormatter(
-                                                10),
-                                            PhoneNumberFormatter(),
-                                          ],
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'please enter the phone number';
-                                            }
-                                            if (phoneNumber.text.isNotEmpty &&
-                                                value == phoneNumber.text) {
-                                              return "Work number and phone number cannot be the same";
-                                            }
-                                            return null;
-                                          },
-                                          phonenum: true,
-                                          phone: true,
-                                          worknum: false,
-                                          otherController: workNumber,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Work Number ',
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xFF101828))),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        CustomTextField(
-                                          keyboardType: TextInputType.number,
-                                          // keyboardType: TextInputType.numberWithOptions(
-                                          //     signed: true, decimal: true),
-                                          hintText: 'Enter work number',
-                                          controller: workNumber,
-                                          borderColor: Color(0xFFCED4DA),
-                                          isInRow:
-                                          true, // ADD FOR ROW ALIGNMENT
-                                          showElevation: false,
-                                          optional: true,
-                                          phone: true,
-                                          worknum: true,
-                                          phonenum: true,
-                                          //   samephonenumber: phoneNumber.text.isNotEmpty ? phoneNumber.text == workNumber.text : false,
-                                          otherController: phoneNumber,
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter
-                                                .digitsOnly,
-                                            LengthLimitingTextInputFormatter(
-                                                10),
-                                            PhoneNumberFormatter(),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            //email and alteremail
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Email *',
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xFF101828))),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        CustomTextField(
-                                          keyboardType:
-                                          TextInputType.emailAddress,
-                                          hintText: 'Enter Email',
-                                          controller: email,
-                                          isInRow: true,
-                                          alterController: alterEmail,
-                                          borderColor: Color(0xFFCED4DA),
-                                          showElevation: false,
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'please enter email';
-                                            }
-
-                                            // else if(!EmailValidator.validate(email.text)){
-                                            //   return 'please enter valid email';
-                                            // }
-                                            return null;
-                                          },
-                                          email: true,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Alternative Email',
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xFF101828))),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        CustomTextField(
-                                          keyboardType:
-                                          TextInputType.emailAddress,
-                                          hintText: 'Enter alternative email',
-                                          controller: alterEmail,
-                                          isInRow: true,
-                                          showElevation: false,
-                                          borderColor: Color(0xFFCED4DA),
-                                          alterController: email,
-                                          optional: true,
-                                          email: true,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            //pass and date of birth
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                  //firstname and last name
+                                  Row(
                                     children: [
-                                      // Label + Tooltip + Refresh aligned horizontally
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
+                                      Expanded(
+                                        child: Container(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
-                                              Text(
-                                                'Password *',
-                                                style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Color(0xFF101828),
-                                                ),
+                                              Text('First Name *',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color:
+                                                          Color(0xFF101828))),
+                                              SizedBox(
+                                                height: 10,
                                               ),
-                                              SizedBox(width: 7),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  _tooltipKey.currentState
-                                                      ?.ensureTooltipVisible();
+                                              CustomTextField(
+                                                keyboardType:
+                                                    TextInputType.text,
+                                                hintText: 'Enter first name',
+                                                controller: firstName,
+                                                showElevation: false,
+                                                isInRow:
+                                                    true, // ADD FOR ROW ALIGNMENT
+                                                borderColor: Color(
+                                                    0xFFCED4DA), // ADD BORDER COLOR
+                                                borderWidth:
+                                                    1.5, // ADD BORDER WIDTH
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return 'please enter the first name';
+                                                  }
+                                                  return null;
                                                 },
-                                                child: Tooltip(
-                                                  key: _tooltipKey,
-                                                  verticalOffset: 16.0,
-                                                  textStyle: TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.white,
-                                                  ),
-                                                  margin: EdgeInsets.symmetric(
-                                                      horizontal: 42),
-                                                  message:
-                                                  '''• At least one uppercase letter (A-Z).
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 12,
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Last Name *',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color:
+                                                          Color(0xFF101828))),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              CustomTextField(
+                                                keyboardType:
+                                                    TextInputType.text,
+                                                hintText: 'Enter last name',
+                                                controller: lastName,
+                                                borderColor: Color(0xFFCED4DA),
+                                                isInRow:
+                                                    true, // ADD FOR ROW ALIGNMENT
+                                                showElevation: false,
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return 'please enter the last name';
+                                                  }
+                                                  return null;
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  //phone and work number
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Phone Number *',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color:
+                                                          Color(0xFF101828))),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              CustomTextField(
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                // keyboardType: TextInputType.numberWithOptions(
+                                                //     signed: true, decimal: true),
+                                                hintText: 'Enter phone number',
+                                                controller: phoneNumber,
+                                                borderColor: Color(0xFFCED4DA),
+                                                isInRow:
+                                                    true, // ADD FOR ROW ALIGNMENT
+                                                showElevation: false,
+                                                inputFormatters: [
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly,
+                                                  LengthLimitingTextInputFormatter(
+                                                      10),
+                                                  PhoneNumberFormatter(),
+                                                ],
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return 'please enter the phone number';
+                                                  }
+                                                  if (phoneNumber
+                                                          .text.isNotEmpty &&
+                                                      value ==
+                                                          phoneNumber.text) {
+                                                    return "Work number and phone number cannot be the same";
+                                                  }
+                                                  return null;
+                                                },
+                                                phonenum: true,
+                                                phone: true,
+                                                worknum: false,
+                                                otherController: workNumber,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Work Number ',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color:
+                                                          Color(0xFF101828))),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              CustomTextField(
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                // keyboardType: TextInputType.numberWithOptions(
+                                                //     signed: true, decimal: true),
+                                                hintText: 'Enter work number',
+                                                controller: workNumber,
+                                                borderColor: Color(0xFFCED4DA),
+                                                isInRow:
+                                                    true, // ADD FOR ROW ALIGNMENT
+                                                showElevation: false,
+                                                optional: true,
+                                                phone: true,
+                                                worknum: true,
+                                                phonenum: true,
+                                                //   samephonenumber: phoneNumber.text.isNotEmpty ? phoneNumber.text == workNumber.text : false,
+                                                otherController: phoneNumber,
+                                                inputFormatters: [
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly,
+                                                  LengthLimitingTextInputFormatter(
+                                                      10),
+                                                  PhoneNumberFormatter(),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  //email and alteremail
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Email *',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color:
+                                                          Color(0xFF101828))),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              CustomTextField(
+                                                keyboardType:
+                                                    TextInputType.emailAddress,
+                                                hintText: 'Enter Email',
+                                                controller: email,
+                                                isInRow: true,
+                                                alterController: alterEmail,
+                                                borderColor: Color(0xFFCED4DA),
+                                                showElevation: false,
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return 'please enter email';
+                                                  }
+
+                                                  // else if(!EmailValidator.validate(email.text)){
+                                                  //   return 'please enter valid email';
+                                                  // }
+                                                  return null;
+                                                },
+                                                email: true,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Alternative Email',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color:
+                                                          Color(0xFF101828))),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              CustomTextField(
+                                                keyboardType:
+                                                    TextInputType.emailAddress,
+                                                hintText:
+                                                    'Enter alternative email',
+                                                controller: alterEmail,
+                                                isInRow: true,
+                                                showElevation: false,
+                                                borderColor: Color(0xFFCED4DA),
+                                                alterController: email,
+                                                optional: true,
+                                                email: true,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  //pass and date of birth
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            // Label + Tooltip + Refresh aligned horizontally
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      'Password *',
+                                                      style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color:
+                                                            Color(0xFF101828),
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 7),
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        _tooltipKey.currentState
+                                                            ?.ensureTooltipVisible();
+                                                      },
+                                                      child: Tooltip(
+                                                        key: _tooltipKey,
+                                                        verticalOffset: 16.0,
+                                                        textStyle: TextStyle(
+                                                          fontSize: 14,
+                                                          color: Colors.white,
+                                                        ),
+                                                        margin: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 42),
+                                                        message:
+                                                            '''• At least one uppercase letter (A-Z).
     • At least one lowercase letter (a-z).
     • At least one number (0-9).
     • At least one special character (e.g., @ # etc.).
@@ -1547,743 +1670,819 @@ class _EditTenantsState extends State<EditTenants> {
     • Avoid strictly sequential patterns (e.g.,Akl 2345678!).
     • Don't use birthdays, names, addresses, or other personal information.
                                                 ''',
-                                                  child: Icon(
-                                                      Icons.info_outline,
-                                                      size: 18),
+                                                        child: Icon(
+                                                            Icons.info_outline,
+                                                            size: 18),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
+                                                IconButton(
+                                                  icon: Icon(Icons.refresh,
+                                                      size: 20),
+                                                  padding: EdgeInsets.zero,
+                                                  constraints: BoxConstraints(),
+                                                  onPressed: () {
+                                                    String generatedPassword =
+                                                        generateRandomPassword();
+                                                    setState(() {
+                                                      passWord.text =
+                                                          generatedPassword;
+                                                    });
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 6),
+                                            // Password Field
+                                            CustomTextField(
+                                              keyboardType: TextInputType.text,
+                                              obscureText: obsecure,
+                                              hintText: 'Enter password',
+                                              controller: passWord,
+                                              isInRow: true,
+                                              showElevation: false,
+                                              borderColor: Color(0xFFCED4DA),
+                                              suffixIcon: GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    obsecure = !obsecure;
+                                                  });
+                                                },
+                                                child: Icon(
+                                                  !obsecure
+                                                      ? CupertinoIcons
+                                                          .eye_slash_fill
+                                                      : CupertinoIcons.eye_fill,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                              validator: (value) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
+                                                  return 'Please enter password';
+                                                }
+                                                return null;
+                                              },
+                                              pass: true,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(width: 10),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Date of Birth',
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(0xFF101828),
+                                              ),
+                                            ),
+                                            SizedBox(height: 11),
+                                            Material(
+                                              // elevation: 2,
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              child: Container(
+                                                height: 50,
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 16.0),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  border: Border.all(
+                                                    color: Color(0xFFCED4DA),
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                  // boxShadow: [
+                                                  //   BoxShadow(
+                                                  //     color: Colors.black
+                                                  //         .withOpacity(0.2),
+                                                  //     offset: Offset(2, 2),
+                                                  //     blurRadius: 3,
+                                                  //   ),
+                                                  // ],
+                                                ),
+                                                child: TextFormField(
+                                                  controller: _dateController,
+                                                  readOnly: true,
+                                                  onTap: () =>
+                                                      _selectDate(context),
+                                                  style: TextStyle(
+                                                    color: Color(0xFF8898aa),
+                                                    fontSize: 16.0,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                  decoration: InputDecoration(
+                                                    hintText: 'Select Date',
+                                                    hintStyle: TextStyle(
+                                                        fontSize: 13,
+                                                        color:
+                                                            Color(0xFFb0b6c3)),
+                                                    border: InputBorder.none,
+                                                    suffixIcon: IconButton(
+                                                      icon: Icon(
+                                                          Icons.calendar_today),
+                                                      onPressed: () =>
+                                                          _selectDate(context),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  //taxid and comment
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('TaxPayer ID',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color:
+                                                          Color(0xFF101828))),
+                                              SizedBox(height: 10),
+                                              CustomTextField(
+                                                keyboardType:
+                                                    TextInputType.text,
+                                                hintText: 'Enter tax payer id',
+                                                controller: taxPayerId,
+                                                showElevation: false,
+                                                borderColor: Color(0xFFCED4DA),
+                                                optional: true,
                                               ),
                                             ],
                                           ),
-                                          IconButton(
-                                            icon: Icon(Icons.refresh, size: 20),
-                                            padding: EdgeInsets.zero,
-                                            constraints: BoxConstraints(),
-                                            onPressed: () {
-                                              String generatedPassword =
-                                              generateRandomPassword();
-                                              setState(() {
-                                                passWord.text =
-                                                    generatedPassword;
-                                              });
-                                            },
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Comments',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color:
+                                                          Color(0xFF101828))),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Container(
+                                                height: 50,
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 12.0,
+                                                    vertical: 0),
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    // boxShadow: [
+                                                    //   BoxShadow(
+                                                    //     color: Colors.black26,
+                                                    //     offset: Offset(1.2,
+                                                    //         1.2), // Shadow offset to the bottom right
+                                                    //     blurRadius:
+                                                    //         3.0, // How much to blur the shadow
+                                                    //     spreadRadius:
+                                                    //         1.0, // How much the shadow should spread
+                                                    //   ),
+                                                    // ],
+                                                    border: Border.all(
+                                                      width: 0,
+                                                      color: Color(0xFFCED4DA),
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0)),
+                                                child: TextFormField(
+                                                    keyboardType:
+                                                        TextInputType.text,
+                                                    controller: comments,
+                                                    maxLines: 5,
+                                                    decoration: InputDecoration(
+                                                      border: InputBorder.none,
+                                                      hintStyle: TextStyle(
+                                                          fontSize: 13,
+                                                          color: Color(
+                                                              0xFFb0b6c3)),
+                                                      hintText:
+                                                          'Enter the comment',
+                                                    )),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Divider(
+                                    color: Color(0xFFCED4DA),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  //emergency con
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Emergency Contact',
+                                          style: TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xFF152B51))),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Container(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text('Contact Name',
+                                                      style: TextStyle(
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Color(
+                                                              0xFF101828))),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  CustomTextField(
+                                                    keyboardType:
+                                                        TextInputType.text,
+                                                    hintText:
+                                                        'Enter contact name',
+                                                    controller: contactName,
+                                                    showElevation: false,
+                                                    borderColor:
+                                                        Color(0xFFCED4DA),
+                                                    optional: true,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Expanded(
+                                            child: Container(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text('Relationship to Tenant',
+                                                      style: TextStyle(
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Color(
+                                                              0xFF101828))),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  CustomTextField(
+                                                    keyboardType:
+                                                        TextInputType.text,
+                                                    hintText:
+                                                        'Enter relationship to tenant',
+                                                    controller:
+                                                        relationToTenant,
+                                                    showElevation: false,
+                                                    borderColor:
+                                                        Color(0xFFCED4DA),
+                                                    optional: true,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 6),
-                                      // Password Field
-                                      CustomTextField(
-                                        keyboardType: TextInputType.text,
-                                        obscureText: obsecure,
-                                        hintText: 'Enter password',
-                                        controller: passWord,
-                                        isInRow: true,
-                                        showElevation: false,
-                                        borderColor: Color(0xFFCED4DA),
-                                        suffixIcon: GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              obsecure = !obsecure;
-                                            });
-                                          },
-                                          child: Icon(
-                                            !obsecure
-                                                ? CupertinoIcons.eye_slash_fill
-                                                : CupertinoIcons.eye_fill,
-                                            color: Colors.grey,
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Container(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text('E-Mail',
+                                                      style: TextStyle(
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Color(
+                                                              0xFF101828))),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  CustomTextField(
+                                                    keyboardType: TextInputType
+                                                        .emailAddress,
+                                                    hintText: 'Enter email',
+                                                    controller: emergencyEmail,
+                                                    optional: true,
+                                                    showElevation: false,
+                                                    borderColor:
+                                                        Color(0xFFCED4DA),
+                                                    alterController: email,
+                                                    emrgencyController:
+                                                        alterEmail,
+                                                    email: true,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please enter password';
-                                          }
-                                          return null;
-                                        },
-                                        pass: true,
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Expanded(
+                                            child: Container(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text('Phone Number',
+                                                      style: TextStyle(
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Color(
+                                                              0xFF101828))),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  CustomTextField(
+                                                    keyboardType:
+                                                        TextInputType.number,
+                                                    // keyboardType: TextInputType.numberWithOptions(
+                                                    //     signed: true, decimal: true),
+                                                    hintText:
+                                                        'Enter phone number',
+                                                    controller:
+                                                        emergencyPhoneNumber,
+                                                    businessnum: true,
+                                                    optional: true,
+                                                    showElevation: false,
+                                                    // samephonenumber: workNumber.text.isNotEmpty ? workNumber.text == emergencyPhoneNumber.text : false,
+                                                    otherController: workNumber,
+                                                    businessController:
+                                                        phoneNumber,
+                                                    borderColor:
+                                                        Color(0xFFCED4DA),
+                                                    inputFormatters: [
+                                                      FilteringTextInputFormatter
+                                                          .digitsOnly,
+                                                      LengthLimitingTextInputFormatter(
+                                                          10),
+                                                      PhoneNumberFormatter(),
+                                                    ],
+                                                    phone: true,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 10,
                                       ),
                                     ],
                                   ),
-                                ),
-                                SizedBox(width: 10),
-                                Expanded(
-                                  child: Column(
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Divider(
+                                    color: Color(0xFFCED4DA),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  //card accepted
+                                  Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        'Date of Birth',
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF101828),
-                                        ),
+                                      Text('Override Debit Card Fee',
+                                          style: TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xFF152B51))),
+                                      SizedBox(
+                                        height: 10,
                                       ),
-                                      SizedBox(height: 11),
-                                      Material(
-                                        // elevation: 2,
-                                        borderRadius:
-                                        BorderRadius.circular(8.0),
-                                        child: Container(
-                                          height: 50,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 16.0),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            border: Border.all(
-                                              color: Color(0xFFCED4DA),
-                                            ),
-                                            borderRadius:
-                                            BorderRadius.circular(8.0),
-                                            // boxShadow: [
-                                            //   BoxShadow(
-                                            //     color: Colors.black
-                                            //         .withOpacity(0.2),
-                                            //     offset: Offset(2, 2),
-                                            //     blurRadius: 3,
-                                            //   ),
-                                            // ],
-                                          ),
-                                          child: TextFormField(
-                                            controller: _dateController,
-                                            readOnly: true,
-                                            onTap: () => _selectDate(context),
-                                            style: TextStyle(
-                                              color: Color(0xFF8898aa),
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                            decoration: InputDecoration(
-                                              hintText: 'Select Date',
-                                              hintStyle: TextStyle(
+                                      Row(
+                                        children: [
+                                          Checkbox(
+                                              activeColor: blueColor,
+                                              value: enableOverrideFee,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  enableOverrideFee = value!;
+                                                  if (!enableOverrideFee) {
+                                                    overrideFee.clear();
+                                                    overRideFeeError = '';
+                                                  }
+                                                });
+                                              }),
+                                          Text('Enable Debit Card Fee',
+                                              style: TextStyle(
                                                   fontSize: 13,
-                                                  color: Color(0xFFb0b6c3)),
-                                              border: InputBorder.none,
-                                              suffixIcon: IconButton(
-                                                icon:
-                                                Icon(Icons.calendar_today),
-                                                onPressed: () =>
-                                                    _selectDate(context),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color(0xFF101828))),
+                                        ],
                                       ),
+                                      enableOverrideFee
+                                          ? Material(
+                                              // elevation: 2,
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              child: Container(
+                                                height: 50,
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 16.0,
+                                                    vertical: 0),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  border: Border.all(
+                                                    color: Color(0xFFCED4DA),
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                  // boxShadow: [
+                                                  //   BoxShadow(
+                                                  //     color: Colors.black
+                                                  //         .withOpacity(0.2),
+                                                  //     offset: Offset(4, 4),
+                                                  //     blurRadius: 3,
+                                                  //   ),
+                                                  // ],
+                                                ),
+                                                child: TextField(
+                                                  keyboardType: TextInputType
+                                                      .numberWithOptions(
+                                                          decimal: true),
+                                                  decoration: InputDecoration(
+                                                    hintStyle: TextStyle(
+                                                        fontSize: 13,
+                                                        color:
+                                                            Color(0xFFb0b6c3)),
+                                                    border: InputBorder.none,
+                                                    hintText:
+                                                        "Enter the amount to override fee",
+                                                    suffix: Text(
+                                                      '%',
+                                                      style: TextStyle(
+                                                          fontSize: 18,
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                  ),
+                                                  onChanged: (value) {
+                                                    _validateInput();
+                                                  },
+                                                  controller: overrideFee,
+                                                  cursorColor: blueColor,
+                                                ),
+                                              ),
+                                            )
+                                          : Container(),
+                                      overRideFeeError != null
+                                          ? Padding(
+                                              padding:
+                                                  const EdgeInsets.all(0.0),
+                                              child: Text(
+                                                overRideFeeError!,
+                                                style: TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.04),
+                                              ),
+                                            )
+                                          : Container(),
                                     ],
                                   ),
-                                ),
-                              ],
-                            ),
-                            //taxid and comment
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Text('TaxPayer ID',
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xFF101828))),
-                                        SizedBox(height: 10),
-                                        CustomTextField(
-                                          keyboardType: TextInputType.text,
-                                          hintText: 'Enter tax payer id',
-                                          controller: taxPayerId,
-                                          showElevation: false,
-                                          borderColor: Color(0xFFCED4DA),
-                                          optional: true,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Comments',
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xFF101828))),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Container(
-                                          height: 50,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 12.0, vertical: 0),
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              // boxShadow: [
-                                              //   BoxShadow(
-                                              //     color: Colors.black26,
-                                              //     offset: Offset(1.2,
-                                              //         1.2), // Shadow offset to the bottom right
-                                              //     blurRadius:
-                                              //         3.0, // How much to blur the shadow
-                                              //     spreadRadius:
-                                              //         1.0, // How much the shadow should spread
-                                              //   ),
-                                              // ],
-                                              border: Border.all(
-                                                width: 0,
-                                                color: Color(0xFFCED4DA),
-                                              ),
-                                              borderRadius:
-                                              BorderRadius.circular(8.0)),
-                                          child: TextFormField(
-                                              keyboardType: TextInputType.text,
-                                              controller: comments,
-                                              maxLines: 5,
-                                              decoration: InputDecoration(
-                                                border: InputBorder.none,
-                                                hintStyle: TextStyle(
-                                                    fontSize: 13,
-                                                    color: Color(0xFFb0b6c3)),
-                                                hintText: 'Enter the comment',
-                                              )),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Divider(
-                              color: Color(0xFFCED4DA),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            //emergency con
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Emergency Contact',
-                                    style: TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xFF152B51))),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: [
-                                            Text('Contact Name',
-                                                style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Color(0xFF101828))),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            CustomTextField(
-                                              keyboardType: TextInputType.text,
-                                              hintText: 'Enter contact name',
-                                              controller: contactName,
-                                              showElevation: false,
-                                              borderColor: Color(0xFFCED4DA),
-                                              optional: true,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: [
-                                            Text('Relationship to Tenant',
-                                                style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Color(0xFF101828))),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            CustomTextField(
-                                              keyboardType: TextInputType.text,
-                                              hintText:
-                                              'Enter relationship to tenant',
-                                              controller: relationToTenant,
-                                              showElevation: false,
-                                              borderColor: Color(0xFFCED4DA),
-                                              optional: true,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: [
-                                            Text('E-Mail',
-                                                style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Color(0xFF101828))),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            CustomTextField(
-                                              keyboardType:
-                                              TextInputType.emailAddress,
-                                              hintText: 'Enter email',
-                                              controller: emergencyEmail,
-                                              optional: true,
-                                              showElevation: false,
-                                              borderColor: Color(0xFFCED4DA),
-                                              alterController: email,
-                                              emrgencyController: alterEmail,
-                                              email: true,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: [
-                                            Text('Phone Number',
-                                                style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Color(0xFF101828))),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            CustomTextField(
-                                              keyboardType:
-                                              TextInputType.number,
-                                              // keyboardType: TextInputType.numberWithOptions(
-                                              //     signed: true, decimal: true),
-                                              hintText: 'Enter phone number',
-                                              controller: emergencyPhoneNumber,
-                                              businessnum: true,
-                                              optional: true,
-                                              showElevation: false,
-                                              // samephonenumber: workNumber.text.isNotEmpty ? workNumber.text == emergencyPhoneNumber.text : false,
-                                              otherController: workNumber,
-                                              businessController: phoneNumber,
-                                              borderColor: Color(0xFFCED4DA),
-                                              inputFormatters: [
-                                                FilteringTextInputFormatter
-                                                    .digitsOnly,
-                                                LengthLimitingTextInputFormatter(
-                                                    10),
-                                                PhoneNumberFormatter(),
-                                              ],
-                                              phone: true,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Divider(
-                              color: Color(0xFFCED4DA),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            //card accepted
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Override Debit Card Fee',
-                                    style: TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xFF152B51))),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  children: [
-                                    Checkbox(
-                                        activeColor: blueColor,
-                                        value: enableOverrideFee,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            enableOverrideFee = value!;
-                                            if (!enableOverrideFee) {
-                                              overrideFee.clear();
-                                              overRideFeeError = '';
-                                            }
-                                          });
-                                        }),
-                                    Text('Enable Debit Card Fee',
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFF101828))),
-                                  ],
-                                ),
-                                enableOverrideFee
-                                    ? Material(
-                                  // elevation: 2,
-                                  borderRadius:
-                                  BorderRadius.circular(8.0),
-                                  child: Container(
-                                    height: 50,
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 16.0, vertical: 0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border: Border.all(
-                                        color: Color(0xFFCED4DA),
-                                      ),
-                                      borderRadius:
-                                      BorderRadius.circular(8.0),
-                                      // boxShadow: [
-                                      //   BoxShadow(
-                                      //     color: Colors.black
-                                      //         .withOpacity(0.2),
-                                      //     offset: Offset(4, 4),
-                                      //     blurRadius: 3,
-                                      //   ),
-                                      // ],
-                                    ),
-                                    child: TextField(
-                                      keyboardType:
-                                      TextInputType.numberWithOptions(
-                                          decimal: true),
-                                      decoration: InputDecoration(
-                                        hintStyle: TextStyle(
-                                            fontSize: 13,
-                                            color: Color(0xFFb0b6c3)),
-                                        border: InputBorder.none,
-                                        hintText:
-                                        "Enter the amount to override fee",
-                                        suffix: Text(
-                                          '%',
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              color: blueColor,
-                                              fontWeight:
-                                              FontWeight.bold),
-                                        ),
-                                      ),
-                                      onChanged: (value) {
-                                        _validateInput();
-                                      },
-                                      controller: overrideFee,
-                                      cursorColor: blueColor,
-                                    ),
-                                  ),
-                                )
-                                    : Container(),
-                                overRideFeeError != null
-                                    ? Padding(
-                                  padding: const EdgeInsets.all(0.0),
-                                  child: Text(
-                                    overRideFeeError!,
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: MediaQuery.of(context)
-                                            .size
-                                            .width *
-                                            0.04),
-                                  ),
-                                )
-                                    : Container(),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Container(
-                                height: 50,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    color: Colors.white,
-                                    border: Border.all(color: Color(0x80152B51))
-                                  // boxShadow: [
-                                  //   BoxShadow(
-                                  //     color: Colors.grey,
-                                  //     offset: Offset(0.0, 1.0), //(x,y)
-                                  //     blurRadius: 6.0,
-                                  //   ),
-                                  // ],
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "Cancel",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                        MediaQuery.of(context).size.width <
-                                            500
-                                            ? 15
-                                            : 18),
-                                  ),
-                                ),
-                              )),
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () async {
-                              if (_formkey.currentState!.validate()) {
-                                bool isFormValid = true;
-
-                                // Validate each field and update the state accordingly
-                                if (firstName.text.trim().isEmpty) {
-                                  setState(() {
-                                    isFormValid = false;
-                                  });
-                                }
-
-                                if (lastName.text.trim().isEmpty) {
-                                  setState(() {
-                                    isFormValid = false;
-                                  });
-                                }
-
-                                if (email.text.trim().isEmpty ||
-                                    !isValidEmail(email.text.trim())) {
-                                  setState(() {
-                                    isFormValid = false;
-                                  });
-                                }
-
-                                // Check for changes
-                                bool hasChanges =
-                                    firstName.text != initialFirstName ||
-                                        lastName.text != initialLastName ||
-                                        phoneNumber.text !=
-                                            initialPhoneNumber ||
-                                        workNumber.text != initialWorkNumber ||
-                                        email.text != initialEmail ||
-                                        alterEmail.text != initialAlterEmail ||
-                                        passWord.text != initialPassword ||
-                                        _dateController.text != initialDob ||
-                                        taxPayerId.text != initialTaxPayerId ||
-                                        comments.text != initialComments ||
-                                        contactName.text !=
-                                            initialContactName ||
-                                        relationToTenant.text !=
-                                            initialRelationToTenant ||
-                                        emergencyEmail.text !=
-                                            initialEmergencyEmail ||
-                                        emergencyPhoneNumber.text !=
-                                            initialEmergencyPhoneNumber;
-
-                                if (!hasChanges) {
-                                  print(
-                                      "No changes made, API call not necessary.");
-                                  Navigator.of(context)
-                                      .pop(false); // Optionally navigate back
-                                  return;
-                                }
-
-                                if (!isFormValid) {
-                                  return;
-                                }
-
-                                // Proceed with API call
-                                SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
-                                String? adminId = prefs.getString("adminId");
-
-                                if (adminId != null) {
-                                  try {
-                                    setState(() {
-                                      isLoading = true;
-                                    });
-                                    await TenantsRepository().editTenant(
-                                      tenantId: widget.tenants.tenantId ?? "",
-                                      adminId: adminId,
-                                      tenantFirstName: firstName.text.trim(),
-                                      tenantLastName: lastName.text.trim(),
-                                      tenantPhoneNumber: phoneNumber.text.trim(),
-                                      tenantAlternativeNumber: workNumber.text.trim(),
-                                      tenantEmail: email.text.trim(),
-                                      tenantAlternativeEmail: alterEmail.text.trim(),
-                                      tenantPassword: passWord.text.trim(),
-                                      tenantBirthDate: _dateController.text.trim().isNotEmpty
-                                          ? reverseFormatDate(_dateController.text.trim())
-                                          : "",
-                                      taxPayerId: taxPayerId.text.trim(),
-                                      comments: comments.text.trim(),
-                                      emergencyContactName: contactName.text.trim(),
-                                      emergencyContactRelation:
-                                      relationToTenant.text.trim(),
-                                      emergencyContactEmail:
-                                      emergencyEmail.text.trim(),
-                                      emergencyContactPhoneNumber:
-                                      emergencyPhoneNumber.text.trim(),
-                                      companyName: companyName,
-                                      overRideFee: overrideFee.text.trim(),
-                                      enableOverRideFee:
-                                      enableOverrideFee.toString(),
-                                    );
-                                    Fluttertoast.showToast(
-                                        msg: "Tenant updated successfully");
-                                    setState(() {
-                                      isLoading = false;
-                                      errorMessage = null;
-                                      widget.tenants.tenantFirstName =
-                                          firstName.text;
-                                      widget.tenants.tenantLastName =
-                                          lastName.text;
-                                      widget.tenants.tenantPhoneNumber =
-                                          phoneNumber.text;
-                                      widget.tenants.tenantAlternativeNumber =
-                                          workNumber.text;
-                                      widget.tenants.tenantAlternativeEmail =
-                                          alterEmail.text;
-                                      widget.tenants.tenantEmail = email.text;
-                                      widget.tenants.tenantPassword =
-                                          passWord.text;
-                                      widget.tenants.tenantBirthDate =
-                                          _dateController.text;
-                                      widget.tenants.taxPayerId =
-                                          taxPayerId.text;
-                                      widget.tenants.comments = comments.text;
-                                      widget.tenants.emergencyContact?.name =
-                                          contactName.text;
-                                      widget.tenants.emergencyContact
-                                          ?.relation = relationToTenant.text;
-                                      widget.tenants.emergencyContact?.email =
-                                          emergencyEmail.text;
-                                      widget.tenants.emergencyContact
-                                          ?.phoneNumber =
-                                          emergencyPhoneNumber.text;
-                                    });
-                                    Navigator.of(context).pop(true);
-                                  } catch (e) {
-                                    // Fluttertoast.showToast(
-                                    //     msg: "Failed to update tenant");
-                                    setState(() {
-                                      isLoading = false;
-                                    });
-                                    print(e.toString());
-                                  }
-                                }
-                              } else {
-                                setState(() {
-                                  isLoading = false;
-                                  errorMessage = "Admin ID not found";
-                                });
-                              }
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(5.0),
-                              child: Container(
-                                height: 50,
-                                // width: MediaQuery.of(context).size.width < 500
-                                //     ? 160
-                                //     : 180,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  color: blueColor,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      offset: Offset(0.0, 1.0), //(x,y)
-                                      blurRadius: 6.0,
-                                    ),
-                                  ],
-                                ),
-                                child: Center(
-                                  child: isLoading
-                                      ? SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 25.0,
-                                  )
-                                      : Text(
-                                    "Edit Tenant",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: MediaQuery.of(context)
-                                            .size
-                                            .width <
-                                            500
-                                            ? 15
-                                            : 18),
-                                  ),
-                                ),
+                                ],
                               ),
                             ),
                           ),
                         ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Container(
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          color: Colors.white,
+                                          border: Border.all(
+                                              color: Color(0x80152B51))
+                                          // boxShadow: [
+                                          //   BoxShadow(
+                                          //     color: Colors.grey,
+                                          //     offset: Offset(0.0, 1.0), //(x,y)
+                                          //     blurRadius: 6.0,
+                                          //   ),
+                                          // ],
+                                          ),
+                                      child: Center(
+                                        child: Text(
+                                          "Cancel",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                      500
+                                                  ? 15
+                                                  : 18),
+                                        ),
+                                      ),
+                                    )),
+                              ),
+                              SizedBox(
+                                width: 8,
+                              ),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    if (_formkey.currentState!.validate()) {
+                                      bool isFormValid = true;
+
+                                      // Validate each field and update the state accordingly
+                                      if (firstName.text.trim().isEmpty) {
+                                        setState(() {
+                                          isFormValid = false;
+                                        });
+                                      }
+
+                                      if (lastName.text.trim().isEmpty) {
+                                        setState(() {
+                                          isFormValid = false;
+                                        });
+                                      }
+
+                                      if (email.text.trim().isEmpty ||
+                                          !isValidEmail(email.text.trim())) {
+                                        setState(() {
+                                          isFormValid = false;
+                                        });
+                                      }
+
+                                      // Check for changes
+                                      bool hasChanges =
+                                          firstName.text != initialFirstName ||
+                                              lastName.text !=
+                                                  initialLastName ||
+                                              phoneNumber.text !=
+                                                  initialPhoneNumber ||
+                                              workNumber.text !=
+                                                  initialWorkNumber ||
+                                              email.text != initialEmail ||
+                                              alterEmail.text !=
+                                                  initialAlterEmail ||
+                                              passWord.text !=
+                                                  initialPassword ||
+                                              _dateController.text !=
+                                                  initialDob ||
+                                              taxPayerId.text !=
+                                                  initialTaxPayerId ||
+                                              comments.text !=
+                                                  initialComments ||
+                                              contactName.text !=
+                                                  initialContactName ||
+                                              relationToTenant.text !=
+                                                  initialRelationToTenant ||
+                                              emergencyEmail.text !=
+                                                  initialEmergencyEmail ||
+                                              emergencyPhoneNumber.text !=
+                                                  initialEmergencyPhoneNumber;
+
+                                      if (!hasChanges) {
+                                        print(
+                                            "No changes made, API call not necessary.");
+                                        Navigator.of(context).pop(
+                                            false); // Optionally navigate back
+                                        return;
+                                      }
+
+                                      if (!isFormValid) {
+                                        return;
+                                      }
+
+                                      // Proceed with API call
+                                      SharedPreferences prefs =
+                                          await SharedPreferences.getInstance();
+                                      String? adminId =
+                                          prefs.getString("adminId");
+
+                                      if (adminId != null) {
+                                        try {
+                                          setState(() {
+                                            isLoading = true;
+                                          });
+                                          await TenantsRepository().editTenant(
+                                            tenantId:
+                                                widget.tenants.tenantId ?? "",
+                                            adminId: adminId,
+                                            tenantFirstName:
+                                                firstName.text.trim(),
+                                            tenantLastName:
+                                                lastName.text.trim(),
+                                            tenantPhoneNumber:
+                                                phoneNumber.text.trim(),
+                                            tenantAlternativeNumber:
+                                                workNumber.text.trim(),
+                                            tenantEmail: email.text.trim(),
+                                            tenantAlternativeEmail:
+                                                alterEmail.text.trim(),
+                                            tenantPassword:
+                                                passWord.text.trim(),
+                                            tenantBirthDate: _dateController
+                                                    .text
+                                                    .trim()
+                                                    .isNotEmpty
+                                                ? reverseFormatDate(
+                                                    _dateController.text.trim())
+                                                : "",
+                                            taxPayerId: taxPayerId.text.trim(),
+                                            comments: comments.text.trim(),
+                                            emergencyContactName:
+                                                contactName.text.trim(),
+                                            emergencyContactRelation:
+                                                relationToTenant.text.trim(),
+                                            emergencyContactEmail:
+                                                emergencyEmail.text.trim(),
+                                            emergencyContactPhoneNumber:
+                                                emergencyPhoneNumber.text
+                                                    .trim(),
+                                            companyName: companyName,
+                                            overRideFee:
+                                                overrideFee.text.trim(),
+                                            enableOverRideFee:
+                                                enableOverrideFee.toString(),
+                                          );
+                                          Fluttertoast.showToast(
+                                              msg:
+                                                  "Tenant updated successfully");
+                                          setState(() {
+                                            isLoading = false;
+                                            errorMessage = null;
+                                            widget.tenants.tenantFirstName =
+                                                firstName.text;
+                                            widget.tenants.tenantLastName =
+                                                lastName.text;
+                                            widget.tenants.tenantPhoneNumber =
+                                                phoneNumber.text;
+                                            widget.tenants
+                                                    .tenantAlternativeNumber =
+                                                workNumber.text;
+                                            widget.tenants
+                                                    .tenantAlternativeEmail =
+                                                alterEmail.text;
+                                            widget.tenants.tenantEmail =
+                                                email.text;
+                                            widget.tenants.tenantPassword =
+                                                passWord.text;
+                                            widget.tenants.tenantBirthDate =
+                                                _dateController.text;
+                                            widget.tenants.taxPayerId =
+                                                taxPayerId.text;
+                                            widget.tenants.comments =
+                                                comments.text;
+                                            widget.tenants.emergencyContact
+                                                ?.name = contactName.text;
+                                            widget.tenants.emergencyContact
+                                                    ?.relation =
+                                                relationToTenant.text;
+                                            widget.tenants.emergencyContact
+                                                ?.email = emergencyEmail.text;
+                                            widget.tenants.emergencyContact
+                                                    ?.phoneNumber =
+                                                emergencyPhoneNumber.text;
+                                          });
+                                          Navigator.of(context).pop(true);
+                                        } catch (e) {
+                                          // Fluttertoast.showToast(
+                                          //     msg: "Failed to update tenant");
+                                          setState(() {
+                                            isLoading = false;
+                                          });
+                                          print(e.toString());
+                                        }
+                                      }
+                                    } else {
+                                      setState(() {
+                                        isLoading = false;
+                                        errorMessage = "Admin ID not found";
+                                      });
+                                    }
+                                  },
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    child: Container(
+                                      height: 50,
+                                      // width: MediaQuery.of(context).size.width < 500
+                                      //     ? 160
+                                      //     : 180,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(5.0),
+                                        color: blueColor,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey,
+                                            offset: Offset(0.0, 1.0), //(x,y)
+                                            blurRadius: 6.0,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Center(
+                                        child: isLoading
+                                            ? SpinKitFadingCircle(
+                                                color: Colors.white,
+                                                size: 25.0,
+                                              )
+                                            : Text(
+                                                "Edit Tenant",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width <
+                                                                500
+                                                            ? 15
+                                                            : 18),
+                                              ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
                       ],
                     ),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                ],
+                  );
+                }),
               ),
-            );
-          }),
-        ),
-      ),
+            ),
     );
   }
 }
@@ -2328,43 +2527,43 @@ class CustomTextField extends StatefulWidget {
 
   CustomTextField(
       {Key? key,
-        this.onChanged,
-        this.controller,
-        required this.hintText,
-        this.obscureText = false,
-        this.keyboardType = TextInputType.emailAddress,
-        this.readOnnly = false,
-        this.prefixIcon,
-        this.suffixIcon,
-        this.validator,
-        this.onSuffixIconPressed,
-        this.label,
-        this.onTap,
-        this.onChanged2,
-        this.amount_check,
-        this.max_amount,
-        this.error_mess,
-        this.optional = false,
-        this.email,
-        this.pass,
-        this.phone,
-        this.inputFormatters,
-        this.worknum,
-        this.phonenum,
-        this.businessnum,
-        this.otherController, // For work number comparison
-        this.businessController,
-        this.telephoneController,
-        this.alterController,
-        this.emrgencyController,
-        this.samephonenumber = false,
-        this.isInRow = false, // DEFAULT TO FALSE FOR SINGLE COLUMN LAYOUT
-        this.customBorder, // CUSTOM BORDER PARAMETER
-        this.borderColor, // BORDER COLOR PARAMETER
-        this.borderWidth, // BORDER WIDTH PARAMETER
-        this.showElevation =
-        true, // DEFAULT TO TRUE TO MAINTAIN EXISTING BEHAVIOR
-        this.errorMaxLines // PARAMETER FOR ERROR MESSAGE MAX LINES
+      this.onChanged,
+      this.controller,
+      required this.hintText,
+      this.obscureText = false,
+      this.keyboardType = TextInputType.emailAddress,
+      this.readOnnly = false,
+      this.prefixIcon,
+      this.suffixIcon,
+      this.validator,
+      this.onSuffixIconPressed,
+      this.label,
+      this.onTap,
+      this.onChanged2,
+      this.amount_check,
+      this.max_amount,
+      this.error_mess,
+      this.optional = false,
+      this.email,
+      this.pass,
+      this.phone,
+      this.inputFormatters,
+      this.worknum,
+      this.phonenum,
+      this.businessnum,
+      this.otherController, // For work number comparison
+      this.businessController,
+      this.telephoneController,
+      this.alterController,
+      this.emrgencyController,
+      this.samephonenumber = false,
+      this.isInRow = false, // DEFAULT TO FALSE FOR SINGLE COLUMN LAYOUT
+      this.customBorder, // CUSTOM BORDER PARAMETER
+      this.borderColor, // BORDER COLOR PARAMETER
+      this.borderWidth, // BORDER WIDTH PARAMETER
+      this.showElevation =
+          true, // DEFAULT TO TRUE TO MAINTAIN EXISTING BEHAVIOR
+      this.errorMaxLines // PARAMETER FOR ERROR MESSAGE MAX LINES
       })
       : super(key: key);
 
@@ -2375,7 +2574,7 @@ class CustomTextField extends StatefulWidget {
 class CustomTextFieldState extends State<CustomTextField> {
   String? _errorMessage;
   TextEditingController _textController =
-  TextEditingController(); // Add this line
+      TextEditingController(); // Add this line
   late FocusNode _focusNode;
   @override
   void dispose() {
@@ -2397,7 +2596,7 @@ class CustomTextFieldState extends State<CustomTextField> {
         KeyboardActionsItem(
           focusNode: _focusNode,
           toolbarButtons: [
-                (node) {
+            (node) {
               return GestureDetector(
                 onTap: () {
                   if (widget.onChanged2 != null) {
@@ -2498,95 +2697,95 @@ class CustomTextFieldState extends State<CustomTextField> {
         FormField<String>(
           validator: widget.optional!
               ? (value) {
-            print("work same callling  ${widget.samephonenumber}");
-            if (widget.controller!.text.trim().isEmpty) {
-              return null;
-            } else if (widget.phone != null) {
-              _validatePhoneNumber(widget.controller!.text.trim());
-              print("erroe ${_errorMessage}");
-              if (_errorMessage == null) {
-                return null;
-              }
-              return '';
-            } else if (widget.email != null) {
-              _validateEmail(widget.controller!.text.trim());
-              print("erroe2 ${_errorMessage}");
-              // Return an empty string or handle accordingly
-              if (_errorMessage == null) {
-                return null;
-              }
-              return '';
-            } else if (widget.amount_check != null &&
-                double.parse(widget.controller!.text.trim()) >
-                    double.parse(widget.max_amount!))
-              setState(() {
-                _errorMessage = '${widget.error_mess}';
-              });
-            print("value ${value}");
-            return null;
-          }
+                  print("work same callling  ${widget.samephonenumber}");
+                  if (widget.controller!.text.trim().isEmpty) {
+                    return null;
+                  } else if (widget.phone != null) {
+                    _validatePhoneNumber(widget.controller!.text.trim());
+                    print("erroe ${_errorMessage}");
+                    if (_errorMessage == null) {
+                      return null;
+                    }
+                    return '';
+                  } else if (widget.email != null) {
+                    _validateEmail(widget.controller!.text.trim());
+                    print("erroe2 ${_errorMessage}");
+                    // Return an empty string or handle accordingly
+                    if (_errorMessage == null) {
+                      return null;
+                    }
+                    return '';
+                  } else if (widget.amount_check != null &&
+                      double.parse(widget.controller!.text.trim()) >
+                          double.parse(widget.max_amount!))
+                    setState(() {
+                      _errorMessage = '${widget.error_mess}';
+                    });
+                  print("value ${value}");
+                  return null;
+                }
               : (value) {
-            if (widget.controller!.text.trim().isEmpty) {
-              setState(() {
-                if (widget.label == null)
-                  _errorMessage = 'Please ${widget.hintText}';
-                else
-                  _errorMessage = 'Please ${widget.label}';
-              });
-              return '';
-            } else if (widget.phone != null) {
-              // Check if it's a phone number
-              String formattedPhoneNumber =
-              widget.controller!.text.replaceAll(RegExp(r'\D'), '');
+                  if (widget.controller!.text.trim().isEmpty) {
+                    setState(() {
+                      if (widget.label == null)
+                        _errorMessage = 'Please ${widget.hintText}';
+                      else
+                        _errorMessage = 'Please ${widget.label}';
+                    });
+                    return '';
+                  } else if (widget.phone != null) {
+                    // Check if it's a phone number
+                    String formattedPhoneNumber =
+                        widget.controller!.text.replaceAll(RegExp(r'\D'), '');
 
-              if (formattedPhoneNumber.length != 10) {
-                setState(() {
-                  _errorMessage = "Phone number must be 10 digits";
-                });
-                return '';
-              }
-              if (widget.samephonenumber != null &&
-                  widget.samephonenumber!) {
-                setState(() {
-                  _errorMessage =
-                  'Phone number and work number cannot be the same';
-                });
-                return '';
-              } else {
-                // Clear error message if phone number is valid
-                setState(() {
-                  _errorMessage = null;
-                });
-              }
-            } else if (widget.email != null) {
-              if (!EmailValidator.validate(
-                  widget.controller!.text.trim())) {
-                setState(() {
-                  _errorMessage = "Email is not valid";
-                });
-                return '';
-              }
-              //   _validateEmail(widget.controller!.text);
-              //
-              //   // Return an empty string or handle accordingly
-              //   return '';
-            } else if (widget.pass != null) {
-              String? validationMessage =
-              ValidatePassword(widget.controller!.text.trim());
-              if (validationMessage != null) {
-                setState(() {
-                  _errorMessage = validationMessage;
-                });
-                return '';
-              }
-            } else if (widget.amount_check != null &&
-                double.parse(widget.controller!.text.trim()) >
-                    double.parse(widget.max_amount!))
-              setState(() {
-                _errorMessage = '${widget.error_mess}';
-              });
-            return null;
-          },
+                    if (formattedPhoneNumber.length != 10) {
+                      setState(() {
+                        _errorMessage = "Phone number must be 10 digits";
+                      });
+                      return '';
+                    }
+                    if (widget.samephonenumber != null &&
+                        widget.samephonenumber!) {
+                      setState(() {
+                        _errorMessage =
+                            'Phone number and work number cannot be the same';
+                      });
+                      return '';
+                    } else {
+                      // Clear error message if phone number is valid
+                      setState(() {
+                        _errorMessage = null;
+                      });
+                    }
+                  } else if (widget.email != null) {
+                    if (!EmailValidator.validate(
+                        widget.controller!.text.trim())) {
+                      setState(() {
+                        _errorMessage = "Email is not valid";
+                      });
+                      return '';
+                    }
+                    //   _validateEmail(widget.controller!.text);
+                    //
+                    //   // Return an empty string or handle accordingly
+                    //   return '';
+                  } else if (widget.pass != null) {
+                    String? validationMessage =
+                        ValidatePassword(widget.controller!.text.trim());
+                    if (validationMessage != null) {
+                      setState(() {
+                        _errorMessage = validationMessage;
+                      });
+                      return '';
+                    }
+                  } else if (widget.amount_check != null &&
+                      double.parse(widget.controller!.text.trim()) >
+                          double.parse(widget.max_amount!))
+                    setState(() {
+                      _errorMessage = '${widget.error_mess}';
+                    });
+                  return null;
+                },
           builder: (FormFieldState<String> state) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -2597,7 +2796,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                   child: Container(
                     height: 50,
                     padding:
-                    EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.0),
@@ -2605,17 +2804,17 @@ class CustomTextFieldState extends State<CustomTextField> {
                       border: widget.customBorder ??
                           (widget.borderColor != null
                               ? Border.all(
-                              color: widget.borderColor!,
-                              width: widget.borderWidth ?? 1.0)
+                                  color: widget.borderColor!,
+                                  width: widget.borderWidth ?? 1.0)
                               : null),
                       boxShadow: widget.showElevation
                           ? [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          offset: Offset(4, 4),
-                          blurRadius: 3,
-                        ),
-                      ]
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                offset: Offset(4, 4),
+                                blurRadius: 3,
+                              ),
+                            ]
                           : null,
                     ),
                     child: TextFormField(
@@ -2651,7 +2850,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       decoration: InputDecoration(
                         suffixIcon: widget.suffixIcon,
                         hintStyle:
-                        TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                            TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                         border: InputBorder.none,
                         hintText: widget.hintText,
                       ),
@@ -2660,36 +2859,36 @@ class CustomTextFieldState extends State<CustomTextField> {
                 ),
                 hasError
                     ? Padding(
-                  padding: const EdgeInsets.only(top: 4, right: 8),
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (widget.pass == true) SizedBox(width: 4),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(1.0),
-                            child: Text(
-                              _errorMessage!,
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 11.0, // Even smaller font size
-                                height: 1.1, // Even tighter line height
-                                letterSpacing:
-                                -0.2, // Slightly tighter letter spacing
+                        padding: const EdgeInsets.only(top: 4, right: 8),
+                        child: Container(
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (widget.pass == true) SizedBox(width: 4),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(1.0),
+                                  child: Text(
+                                    _errorMessage!,
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 11.0, // Even smaller font size
+                                      height: 1.1, // Even tighter line height
+                                      letterSpacing:
+                                          -0.2, // Slightly tighter letter spacing
+                                    ),
+                                    maxLines: widget.pass == true
+                                        ? 6
+                                        : 1, // Increased to 6 lines for very long messages
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
                               ),
-                              maxLines: widget.pass == true
-                                  ? 6
-                                  : 1, // Increased to 6 lines for very long messages
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                )
+                      )
                     : SizedBox.shrink(),
               ],
             );
@@ -2699,22 +2898,22 @@ class CustomTextFieldState extends State<CustomTextField> {
     );
     return shouldUseKeyboardActions
         ? SizedBox(
-      height: widget.isInRow == true
-          ? 70
-          : (hasError
-          ? (widget.pass == true ? 150 : 74)
-          : 54), // Increased height for password errors with icon
-      child: KeyboardActions(
-        config: _buildConfig(context),
-        child: textfield,
-      ),
-    )
+            height: widget.isInRow == true
+                ? 70
+                : (hasError
+                    ? (widget.pass == true ? 150 : 74)
+                    : 54), // Increased height for password errors with icon
+            child: KeyboardActions(
+              config: _buildConfig(context),
+              child: textfield,
+            ),
+          )
         : widget.isInRow == true
-        ? SizedBox(
-      height:
-      82, // Compact height for row alignment with minimal space
-      child: textfield,
-    )
-        : textfield; // Dynamic shrink only for single column fields
+            ? SizedBox(
+                height:
+                    82, // Compact height for row alignment with minimal space
+                child: textfield,
+              )
+            : textfield; // Dynamic shrink only for single column fields
   }
 }

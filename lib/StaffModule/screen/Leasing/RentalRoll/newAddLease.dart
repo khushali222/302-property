@@ -419,6 +419,9 @@ class _addLease3State extends State<addLease3>
     setState(() {
       _isLoading = true;
       _showUnitDropdown = false;
+      // Clear units and selection when loading new units
+      units = [];
+      _selectedUnit = null;
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");
@@ -444,16 +447,23 @@ class _addLease3State extends State<addLease3>
             };
           }).toList();
 
+          // Filter out any null or empty unit names
+          unitAddresses = unitAddresses.where((unit) {
+            String unitId = unit['unit_id'] ?? '';
+            String unitName = unit['rental_unit'] ?? '';
+            return unitId.isNotEmpty && unitName.trim().isNotEmpty;
+          }).toList();
+
+          print('Found ${unitAddresses.length} valid units');
+
           setState(() {
             units = unitAddresses;
             _isLoading = false;
-            //_showUnitDropdown = true;
             _showUnitDropdown = units.isNotEmpty;
           });
         } else {
           setState(() {
             _isLoading = false;
-            //_showUnitDropdown = true;
             _showUnitDropdown = false;
           });
         }
@@ -463,6 +473,8 @@ class _addLease3State extends State<addLease3>
     } catch (e) {
       setState(() {
         _isLoading = false;
+        units = [];
+        _selectedUnit = null;
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to fetch units: $e')),
@@ -1104,9 +1116,9 @@ class _addLease3State extends State<addLease3>
                                               onChanged: (value) {
                                                 setState(() {
                                                   _selectedProperty = value;
-                                                  _selectedUnit = null;
-                                                  _showUnitDropdown =
-                                                      false; // Optionally reset _selectedUnit
+                                                  _selectedUnit =
+                                                      null; // Reset _selectedUnit when property changes
+                                                  _showUnitDropdown = false;
                                                   state.didChange(
                                                       value); // Notify the FormField that the value has changed
                                                   renderId = value.toString();
@@ -1181,7 +1193,11 @@ class _addLease3State extends State<addLease3>
                                       );
                                     },
                                   ),
-                                  if (_showUnitDropdown && units.isNotEmpty)
+                                  if (units.isNotEmpty &&
+                                      units.any((unit) =>
+                                          (unit['rental_unit'] ?? '')
+                                              .trim()
+                                              .isNotEmpty))
                                     Padding(
                                       padding: const EdgeInsets.only(top: 5.0),
                                       child: Text(
@@ -1193,7 +1209,11 @@ class _addLease3State extends State<addLease3>
                                         ),
                                       ),
                                     ),
-                                  if (_showUnitDropdown && units.isNotEmpty)
+                                  if (units.isNotEmpty &&
+                                      units.any((unit) =>
+                                          (unit['rental_unit'] ?? '')
+                                              .trim()
+                                              .isNotEmpty))
                                     FormField<String>(
                                       // initialValue: _selectedUnit,
                                       validator: (value) {
@@ -1232,24 +1252,45 @@ class _addLease3State extends State<addLease3>
                                                     ),
                                                   ],
                                                 ),
-                                                items: units.map((unit) {
-                                                  return DropdownMenuItem<
-                                                      String>(
-                                                    value: unit['unit_id']!,
-                                                    child: Text(
-                                                      unit['rental_unit']!,
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                        color: Colors.black87,
-                                                      ),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  );
-                                                }).toList(),
-                                                value: _selectedUnit,
+                                                items: units
+                                                    .map((unit) {
+                                                      String? unitName =
+                                                          unit['rental_unit']
+                                                              ?.trim();
+                                                      if (unitName
+                                                              ?.isNotEmpty !=
+                                                          true) return null;
+
+                                                      return DropdownMenuItem<
+                                                          String>(
+                                                        value: unit['unit_id']!,
+                                                        child: Text(
+                                                          unitName!,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            color:
+                                                                Colors.black87,
+                                                          ),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      );
+                                                    })
+                                                    .whereType<
+                                                        DropdownMenuItem<
+                                                            String>>()
+                                                    .toList(),
+                                                value: _selectedUnit != null &&
+                                                        _selectedUnit!
+                                                            .isNotEmpty &&
+                                                        units.any((unit) =>
+                                                            unit['unit_id'] ==
+                                                            _selectedUnit)
+                                                    ? _selectedUnit
+                                                    : null,
                                                 onChanged: (value) {
                                                   setState(() {
                                                     _selectedUnit = value;

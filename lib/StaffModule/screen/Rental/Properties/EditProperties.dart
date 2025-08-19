@@ -276,18 +276,22 @@ class _Edit_propertiesState extends State<Edit_properties> {
     });
     print(widget.rentalId);
     isEditable = false;
-    fetchDetails1(widget.rentalId);
+    // fetchDetails1(widget.rentalId);
     fetchDetails1(widget.rentalId).then((_) {
       // Load unit data after property details are set
       fetchunits1();
     });
   }
+
   List<unit_properties> data = [];
   final Properies_summery_Repo unit1Repository = Properies_summery_Repo();
   Future<void> fetchunits1() async {
     try {
+      print('Fetching units...');
       final fetchedunit1 =
-      await unit1Repository.fetchunit(widget.properties.rentalId ?? "");
+          await unit1Repository.fetchunit(widget.properties.rentalId ?? "");
+      print('Fetched units: $fetchedunit1');
+
       setState(() {
         data = fetchedunit1;
         isLoading = false;
@@ -298,155 +302,139 @@ class _Edit_propertiesState extends State<Edit_properties> {
         propertyGroupImages.clear();
         propertyGroupImagenames.clear();
 
+        print('Creating property groups for ${data.length} units');
+        print('Property Type: ${selectedpropertytypedata?.propertyType}');
+        print('Is Multi Unit: ${selectedpropertytypedata?.isMultiunit}');
+
         // Create property groups for each unit
         for (var unit in data) {
+          print('Processing unit:');
+          print('- Unit name: ${unit.rentalunit}');
+          print('- Unit address: ${unit.rentalunitadress}');
+          print('- Unit sqft: ${unit.rentalsqft}');
+
           List<TextEditingController> controllers = [];
           List<Widget> fields = [];
 
-          print("Property Type: ${selectedpropertytypedata?.propertyType}");
-          print("Is Multi Unit: ${selectedpropertytypedata?.isMultiunit}");
-
-          // First check if it's a single unit property
-          if (selectedpropertytypedata?.isMultiunit == false) {
-            if (selectedpropertytypedata?.propertyType == 'Commercial') {
-              // Single Commercial unit - only SQft
-              var sqftController = TextEditingController(text: unit.rentalsqft);
-
-              controllers = [sqftController];
+          if (selectedpropertytypedata?.propertyType == 'Commercial') {
+            if (selectedpropertytypedata?.isMultiunit == true) {
+              // Commercial multi-unit
+              print('Setting up Commercial multi-unit controllers');
+              controllers = [
+                TextEditingController(text: unit.rentalunit ?? ''),
+                TextEditingController(text: unit.rentalunitadress ?? ''),
+                TextEditingController(text: unit.rentalsqft ?? ''),
+              ];
               fields = [
-                customTextField('SQft', sqftController),
+                customTextField('Unit', controllers[0]),
+                customTextField('Unit Address', controllers[1]),
+                customTextField('SQft', controllers[2]),
                 SizedBox(height: 10),
                 photo(propertyGroups.length),
               ];
             } else {
-              // Single Residential unit
-              var sqftController = TextEditingController(text: unit.rentalsqft);
-              var bathController = TextEditingController(text: unit.rentalbath);
-              var bedController = TextEditingController(text: unit.rentalbed);
+              // Commercial single unit
+              print('Setting up Commercial single unit controllers');
+              print('Unit data:');
+              print('- sqft: "${unit.rentalsqft}"');
+              print('- unit: "${unit.rentalunit}"');
+              print('- address: "${unit.rentalunitadress}"');
 
-              controllers = [sqftController, bathController, bedController];
+              // For Commercial single unit, if sqft is empty but unit has a value, use that
+              String sqftValue = unit.rentalsqft?.isNotEmpty == true
+                  ? unit.rentalsqft!
+                  : unit.rentalunit ?? '';
+
+              print('Using sqft value: "$sqftValue"');
+
+              controllers = [
+                TextEditingController(
+                    text: sqftValue), // sqft in first position
+                TextEditingController(), // dummy controllers for consistency
+                TextEditingController(),
+              ];
+
+              print('Initialized controllers:');
+              for (int j = 0; j < controllers.length; j++) {
+                print('Controller $j: "${controllers[j].text}"');
+              }
+
               fields = [
-                customTextField('SQft', sqftController),
-                customDropdownField('Bath', bathArray, bathController),
-                customDropdownField('Bed', roomsArray, bedController),
+                customTextField('SQft', controllers[0]),
                 SizedBox(height: 10),
                 photo(propertyGroups.length),
               ];
             }
           } else {
-            // Multi-unit properties
-            if (selectedpropertytypedata?.propertyType == 'Commercial') {
-              // Commercial multi-unit
-              var unitController = TextEditingController(text: unit.rentalunit);
-              var unitAddressController =
-              TextEditingController(text: unit.rentalunitadress);
-              var sqftController = TextEditingController(text: unit.rentalsqft);
-
+            // Residential properties
+            if (selectedpropertytypedata?.isMultiunit == true) {
+              print('Setting up Residential multi-unit controllers');
               controllers = [
-                unitController,
-                unitAddressController,
-                sqftController
+                TextEditingController(text: unit.rentalunit ?? ''),
+                TextEditingController(text: unit.rentalunitadress ?? ''),
+                TextEditingController(text: unit.rentalsqft ?? ''),
+                TextEditingController(text: unit.rentalbath ?? ''),
+                TextEditingController(text: unit.rentalbed ?? ''),
               ];
               fields = [
-                customTextField('Unit', unitController),
-                customTextField('Unit Address', unitAddressController),
-                customTextField('SQft', sqftController),
+                customTextField('Unit', controllers[0]),
+                customTextField('Unit Address', controllers[1]),
+                customTextField('SQft', controllers[2]),
+                customDropdownField('Bath', bathArray, controllers[3]),
+                customDropdownField('Bed', roomsArray, controllers[4]),
                 SizedBox(height: 10),
                 photo(propertyGroups.length),
               ];
             } else {
-              // Residential multi-unit
-              var unitController = TextEditingController(text: unit.rentalunit);
-              var unitAddressController =
-              TextEditingController(text: unit.rentalunitadress);
-              var sqftController = TextEditingController(text: unit.rentalsqft);
-              var bathController = TextEditingController(text: unit.rentalbath);
-              var bedController = TextEditingController(text: unit.rentalbed);
-
+              print('Setting up Residential single unit controllers');
               controllers = [
-                unitController,
-                unitAddressController,
-                sqftController,
-                bathController,
-                bedController
+                TextEditingController(text: unit.rentalsqft ?? ''),
+                TextEditingController(text: unit.rentalbath ?? ''),
+                TextEditingController(text: unit.rentalbed ?? ''),
               ];
               fields = [
-                customTextField('Unit', unitController),
-                customTextField('Unit Address', unitAddressController),
-                customTextField('SQft', sqftController),
-                customDropdownField('Bath', bathArray, bathController),
-                customDropdownField('Bed', roomsArray, bedController),
+                customTextField('SQft', controllers[0]),
+                customDropdownField('Bath', bathArray, controllers[1]),
+                customDropdownField('Bed', roomsArray, controllers[2]),
                 SizedBox(height: 10),
                 photo(propertyGroups.length),
               ];
             }
+          }
+
+          print('Adding controllers:');
+          for (int i = 0; i < controllers.length; i++) {
+            print('Controller $i: "${controllers[i].text}"');
           }
 
           propertyGroups.add(fields);
           propertyGroupControllers.add(controllers);
 
-          // Handle existing images
+          // Handle images - construct full URL for display
           if (unit.rentalImages != null && unit.rentalImages!.isNotEmpty) {
-            // Add image preview section for each image
-            List<Widget> imageWidgets = [];
-            for (var imageName in unit.rentalImages!) {
-              imageWidgets.add(
-                Container(
-                  margin: EdgeInsets.only(right: 10),
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      'YOUR_IMAGE_BASE_URL/$imageName', // Replace with your actual image URL
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Center(child: Icon(Icons.error));
-                      },
-                    ),
-                  ),
-                ),
-              );
-            }
+            String imageFilename = unit.rentalImages![0];
+            print('Processing image for unit: $imageFilename');
 
-            // Add horizontal scrollable image list
-            if (imageWidgets.isNotEmpty) {
-              fields.add(
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Existing Images',
-                      style: TextStyle(
-                        color: blueColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(children: imageWidgets),
-                    ),
-                    SizedBox(height: 10),
-                  ],
-                ),
-              );
+            // Check if it's already a full URL
+            if (imageFilename.startsWith('http')) {
+              propertyGroupImagenames.add(imageFilename);
+              print('Using full URL: $imageFilename');
+            } else {
+              // Construct full URL using the image_url constant
+              String fullUrl = '$image_url$imageFilename';
+              propertyGroupImagenames.add(fullUrl);
+              print('Constructed URL: $fullUrl');
             }
-
-            propertyGroupImagenames.add(unit.rentalImages![0]);
-            propertyGroupImages.add(null); // Will be populated when editing
+            propertyGroupImages.add(null);
           } else {
             propertyGroupImagenames.add(null);
             propertyGroupImages.add(null);
+            print('No images for this unit');
           }
         }
 
         selectedIsMultiUnit = data.length > 1;
+        print('Updated selectedIsMultiUnit: $selectedIsMultiUnit');
       });
     } catch (e) {
       setState(() {
@@ -455,6 +443,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
       print('Failed to load units: $e');
     }
   }
+
   Future<void> fetchDetails1(String rentalId) async {
     try {
       Rentals fetchedDetails =
@@ -467,7 +456,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
         selectedpropertytypedata = propertytype(
             propertyType: fetchedDetails.propertyTypeData?.propertyType ?? "",
             propertysubType:
-            fetchedDetails.propertyTypeData?.propertySubType ?? "",
+                fetchedDetails.propertyTypeData?.propertySubType ?? "",
             isMultiunit: fetchedDetails.propertyTypeData?.isMultiunit ?? false,
             propertyId: fetchedDetails.propertyTypeData?.propertyId ?? "");
         selectedpropertytype = fetchedDetails.propertyTypeData?.propertyType;
@@ -640,28 +629,28 @@ class _Edit_propertiesState extends State<Edit_properties> {
         await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      // try {
-      String? filename = await uploadImage(File(pickedFile.path));
-      print(index);
-      print(filename);
-      setState(() {
-        propertyGroupImagenames[index] = filename!;
-        //  _uploadedFilename = filename;
-      });
-      // } catch (e) {
-      // print('Error uploading image: $e');
-      //}09
-    }
-    setState(() {
-      if (pickedFile != null) {
-        print('Image selected: ${pickedFile.path}');
-        print('Before: ${propertyGroupImages.length}');
-        propertyGroupImages[index] = File(pickedFile.path);
-        print('After : ${propertyGroupImages.length}');
-      } else {
-        print('No image selected.');
+      try {
+        String? filename = await uploadImage(File(pickedFile.path));
+        print('Uploaded filename: $filename');
+        setState(() {
+          // Store the full URL for the uploaded image
+          if (filename != null && filename.isNotEmpty) {
+            propertyGroupImagenames[index] = '$image_url$filename';
+            print('Stored full URL: ${propertyGroupImagenames[index]}');
+          }
+          // Store the local file for immediate display
+          propertyGroupImages[index] = File(pickedFile.path);
+        });
+      } catch (e) {
+        print('Error uploading image: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to upload image: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
-    });
+    }
   }
 
   List<List<Widget>> propertyGroups = [];
@@ -769,10 +758,10 @@ class _Edit_propertiesState extends State<Edit_properties> {
   }
 
   Widget customDropdownField(
-      String hint,
-      List<String> items,
-      TextEditingController controller,
-      ) {
+    String hint,
+    List<String> items,
+    TextEditingController controller,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(top: 8, bottom: 8),
       child: DropdownButtonFormField<String>(
@@ -792,7 +781,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
           controller.text = newValue ?? '';
         },
         validator: (value) =>
-        value == null || value.isEmpty ? 'Required' : null,
+            value == null || value.isEmpty ? 'Required' : null,
       ),
     );
   }
@@ -840,38 +829,22 @@ class _Edit_propertiesState extends State<Edit_properties> {
               ],
             ),
             SizedBox(height: 8.0),
-            if (propertyGroupImages[index] == null)
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      getImage(index).then((_) {
-                        setState(
-                            () {}); // Rebuild the widget after selecting the image
-                      });
-                    },
-                    child: Image.asset(
-                      'assets/images/addimage.png',
-                      height: 40,
-                      width: 40,
-                    ),
-                  ),
-                ],
-              ),
-            SizedBox(height: 10),
+
+            // Show image - prioritize local image over network image
             if (propertyGroupImages[index] != null)
+              // Show local image if selected (new image from gallery)
               Column(
                 children: [
                   Row(
                     children: [
-                      SizedBox(
-                        width: 30,
-                      ),
+                      SizedBox(width: 30),
                       GestureDetector(
                         onTap: () {
                           setState(() {
                             propertyGroupImages[index] =
-                                null; // Clear the selected image
+                                null; // Clear the local image
+                            propertyGroupImagenames[index] =
+                                null; // Also clear the network image
                           });
                         },
                         child: Icon(
@@ -893,6 +866,76 @@ class _Edit_propertiesState extends State<Edit_properties> {
                         ),
                       ),
                     ],
+                  ),
+                ],
+              )
+            else if (propertyGroupImagenames[index] != null &&
+                propertyGroupImagenames[index]!.isNotEmpty)
+              // Show network image if no local image (existing image from API)
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(width: 30),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            propertyGroupImagenames[index] =
+                                null; // Clear the existing image
+                          });
+                        },
+                        child: Icon(
+                          Icons.close,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Image.network(
+                          propertyGroupImagenames[index]!,
+                          height: 50,
+                          width: 50,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            print('Error loading image: $error');
+                            print(
+                                'Image URL: ${propertyGroupImagenames[index]}');
+                            return Container(
+                              height: 50,
+                              width: 50,
+                              color: Colors.grey[300],
+                              child: Icon(Icons.error, color: Colors.grey),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+
+            // Show add image button if no image is displayed
+            if (propertyGroupImages[index] == null &&
+                (propertyGroupImagenames[index] == null ||
+                    propertyGroupImagenames[index]!.isEmpty))
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      getImage(index).then((_) {
+                        setState(
+                            () {}); // Rebuild the widget after selecting the image
+                      });
+                    },
+                    child: Image.asset(
+                      'assets/images/addimage.png',
+                      height: 40,
+                      width: 40,
+                    ),
                   ),
                 ],
               ),
@@ -997,9 +1040,9 @@ class _Edit_propertiesState extends State<Edit_properties> {
     // Check if the first element is blank and remove it if it is
     if (propertyGroupControllers.isNotEmpty) {
       List<TextEditingController> firstControllers =
-      propertyGroupControllers[0];
+          propertyGroupControllers[0];
       bool isFirstBlank =
-      firstControllers.every((controller) => controller.text.isEmpty);
+          firstControllers.every((controller) => controller.text.isEmpty);
 
       if (isFirstBlank) {
         propertyGroupControllers.removeAt(0);
@@ -4242,13 +4285,13 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                     child: Column(
                                       children: propertyGroups.map((group) {
                                         int index =
-                                        propertyGroups.indexOf(group);
+                                            propertyGroups.indexOf(group);
                                         return Padding(
                                           padding: const EdgeInsets.only(
                                               left: 16, right: 16),
                                           child: Column(
                                             crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                                CrossAxisAlignment.start,
                                             children: [
                                               // Align(
                                               //   alignment:
@@ -4263,14 +4306,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                               // ),
                                               Align(
                                                 alignment:
-                                                Alignment.centerRight,
+                                                    Alignment.centerRight,
                                                 child: Visibility(
                                                   visible:
-                                                  !(selectedpropertytype ==
-                                                      'Residential' &&
-                                                      selectedIsMultiUnit ==
-                                                          false &&
-                                                      index == 0),
+                                                      !(selectedpropertytype ==
+                                                              'Residential' &&
+                                                          selectedIsMultiUnit ==
+                                                              false &&
+                                                          index == 0),
                                                   child: InkWell(
                                                     onTap: () =>
                                                         removePropertyGroup(
@@ -4305,8 +4348,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                   children: [
                                     SizedBox(
                                         width:
-                                        MediaQuery.of(context).size.width *
-                                            0.02),
+                                            MediaQuery.of(context).size.width *
+                                                0.02),
                                     Container(
                                       height: 40,
                                       width: MediaQuery.of(context).size.width *
@@ -4315,7 +4358,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                         color: Colors.white,
                                         // borderRadius: BorderRadius.circular(3),
                                         borderRadius:
-                                        BorderRadius.circular(8.0),
+                                            BorderRadius.circular(8.0),
                                         border: Border.all(color: blueColor),
                                         // boxShadow: [
                                         //   BoxShadow(
@@ -4400,13 +4443,13 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                       child: Column(
                                         children: propertyGroups.map((group) {
                                           int index =
-                                          propertyGroups.indexOf(group);
+                                              propertyGroups.indexOf(group);
                                           return Padding(
                                             padding: const EdgeInsets.only(
                                                 left: 16, right: 16),
                                             child: Column(
                                               crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 // Align(
                                                 //   alignment:
@@ -4421,14 +4464,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                 // ),
                                                 Align(
                                                   alignment:
-                                                  Alignment.centerRight,
+                                                      Alignment.centerRight,
                                                   child: Visibility(
                                                     visible:
-                                                    !(selectedpropertytype ==
-                                                        'Commercial' &&
-                                                        selectedIsMultiUnit ==
-                                                            false &&
-                                                        index == 0),
+                                                        !(selectedpropertytype ==
+                                                                'Commercial' &&
+                                                            selectedIsMultiUnit ==
+                                                                false &&
+                                                            index == 0),
                                                     child: InkWell(
                                                       onTap: () =>
                                                           removePropertyGroup(
@@ -4458,19 +4501,19 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                     children: [
                                       SizedBox(
                                           width: MediaQuery.of(context)
-                                              .size
-                                              .width *
+                                                  .size
+                                                  .width *
                                               0.02),
                                       Container(
                                         height: 40,
                                         width:
-                                        MediaQuery.of(context).size.width *
-                                            .38,
+                                            MediaQuery.of(context).size.width *
+                                                .38,
                                         decoration: BoxDecoration(
                                           color: Colors.white,
                                           // borderRadius: BorderRadius.circular(3),
                                           borderRadius:
-                                          BorderRadius.circular(8),
+                                              BorderRadius.circular(8),
                                           border: Border.all(color: blueColor),
                                           // boxShadow: [
                                           //   BoxShadow(
@@ -4852,8 +4895,237 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           });
                         }
 
+                        // Check for unit changes
+                        print('=== STARTING CHANGE DETECTION ===');
+                        print('Property Type: $selectedpropertytype');
+                        print('Is Multi Unit: $selectedIsMultiUnit');
+                        print('Checking for unit changes...');
+                        print('Data length: ${data.length}');
+                        print(
+                            'Controllers length: ${propertyGroupControllers.length}');
+
+                        bool hasUnitChanges = false;
+                        print('Checking unit changes...');
+
+                        // Debug: Print controller structure
+                        print('=== CONTROLLER STRUCTURE DEBUG ===');
+                        for (int i = 0;
+                            i < propertyGroupControllers.length;
+                            i++) {
+                          print('Unit $i controllers:');
+                          for (int j = 0;
+                              j < propertyGroupControllers[i].length;
+                              j++) {
+                            print(
+                                '  Controller $j: "${propertyGroupControllers[i][j].text}"');
+                          }
+                        }
+                        print('=== END CONTROLLER STRUCTURE DEBUG ===');
+
+                        if (data.length == propertyGroupControllers.length) {
+                          for (int i = 0; i < data.length; i++) {
+                            var oldUnit = data[i];
+                            var controllers = propertyGroupControllers[i];
+
+                            // Add detailed debug prints
+                            print('Unit ${i + 1} Details:');
+                            print('Old sqft: "${oldUnit.rentalsqft}"');
+                            print(
+                                'New sqft: "${controllers[0].text}"'); // Fixed: sqft is in controller[0]
+                            print('Old unit: "${oldUnit.rentalunit}"');
+                            print(
+                                'New unit: "${controllers[0].text}"'); // For single unit, unit name is same as sqft
+                            print('Old address: "${oldUnit.rentalunitadress}"');
+                            print('New address: "${controllers[1].text}"');
+
+                            // Compare values based on property type
+                            bool sqftChanged = false;
+                            bool unitChanged = false;
+                            bool addressChanged = false;
+                            bool bathChanged = false;
+                            bool bedChanged = false;
+                            bool imageChanged = false;
+
+                            print(
+                                'Comparing values for ${selectedpropertytype} ${selectedIsMultiUnit == true ? "multi-unit" : "single unit"}:');
+
+                            // Fix property type detection - Single-Family should be Commercial
+                            String actualPropertyType =
+                                selectedpropertytype ?? '';
+                            if (actualPropertyType == 'Single-Family') {
+                              actualPropertyType = 'Commercial';
+                            }
+
+                            if (actualPropertyType == 'Commercial') {
+                              if (selectedIsMultiUnit == true) {
+                                // Commercial multi-unit
+                                String oldSqft =
+                                    oldUnit.rentalsqft?.trim() ?? '';
+                                String newSqft = controllers[2].text.trim();
+                                String oldUnitName =
+                                    oldUnit.rentalunit?.trim() ?? '';
+                                String newUnitName = controllers[0].text.trim();
+                                String oldAddress =
+                                    oldUnit.rentalunitadress?.trim() ?? '';
+                                String newAddress = controllers[1].text.trim();
+
+                                sqftChanged = oldSqft != newSqft;
+                                unitChanged = oldUnitName != newUnitName;
+                                addressChanged = oldAddress != newAddress;
+
+                                print('Commercial multi-unit comparison:');
+                                print(
+                                    '- Sqft: "$oldSqft" -> "$newSqft" = $sqftChanged');
+                                print(
+                                    '- Unit: "$oldUnitName" -> "$newUnitName" = $unitChanged');
+                                print(
+                                    '- Address: "$oldAddress" -> "$newAddress" = $addressChanged');
+                              } else {
+                                // Commercial single unit
+                                String oldSqft =
+                                    oldUnit.rentalsqft?.trim() ?? '';
+                                String newSqft = controllers[0].text.trim();
+
+                                sqftChanged = oldSqft != newSqft;
+
+                                print('Commercial single unit comparison:');
+                                print(
+                                    '- Sqft: "$oldSqft" -> "$newSqft" = $sqftChanged');
+                              }
+                            } else if (actualPropertyType == 'Residential') {
+                              if (selectedIsMultiUnit == true) {
+                                // Residential multi-unit
+                                print('=== RESIDENTIAL MULTI-UNIT DEBUG ===');
+                                print(
+                                    'Controllers available: ${controllers.length}');
+                                for (int c = 0; c < controllers.length; c++) {
+                                  print(
+                                      'Controller $c: "${controllers[c].text}"');
+                                }
+
+                                String oldSqft =
+                                    oldUnit.rentalsqft?.trim() ?? '';
+                                String newSqft = controllers[2].text.trim();
+                                String oldUnitName =
+                                    oldUnit.rentalunit?.trim() ?? '';
+                                String newUnitName = controllers[0].text.trim();
+                                String oldAddress =
+                                    oldUnit.rentalunitadress?.trim() ?? '';
+                                String newAddress = controllers[1].text.trim();
+                                String oldBath =
+                                    oldUnit.rentalbath?.trim() ?? '';
+                                String newBath = controllers[3].text.trim();
+                                String oldBed = oldUnit.rentalbed?.trim() ?? '';
+                                String newBed = controllers[4].text.trim();
+
+                                sqftChanged = oldSqft != newSqft;
+                                unitChanged = oldUnitName != newUnitName;
+                                addressChanged = oldAddress != newAddress;
+                                bathChanged = oldBath != newBath;
+                                bedChanged = oldBed != newBed;
+
+                                print('Residential multi-unit comparison:');
+                                print(
+                                    '- Sqft: "$oldSqft" -> "$newSqft" = $sqftChanged');
+                                print(
+                                    '- Unit: "$oldUnitName" -> "$newUnitName" = $unitChanged');
+                                print(
+                                    '- Address: "$oldAddress" -> "$newAddress" = $addressChanged');
+                                print(
+                                    '- Bath: "$oldBath" -> "$newBath" = $bathChanged');
+                                print(
+                                    '- Bed: "$oldBed" -> "$newBed" = $bedChanged');
+                              } else {
+                                // Residential single unit
+                                String oldSqft =
+                                    oldUnit.rentalsqft?.trim() ?? '';
+                                String newSqft = controllers[0].text.trim();
+                                String oldBath =
+                                    oldUnit.rentalbath?.trim() ?? '';
+                                String newBath = controllers[1].text.trim();
+                                String oldBed = oldUnit.rentalbed?.trim() ?? '';
+                                String newBed = controllers[2].text.trim();
+
+                                sqftChanged = oldSqft != newSqft;
+                                bathChanged = oldBath != newBath;
+                                bedChanged = oldBed != newBed;
+
+                                print('Residential single unit comparison:');
+                                print(
+                                    '- Sqft: "$oldSqft" -> "$newSqft" = $sqftChanged');
+                                print(
+                                    '- Bath: "$oldBath" -> "$newBath" = $bathChanged');
+                                print(
+                                    '- Bed: "$oldBed" -> "$newBed" = $bedChanged');
+                              }
+                            }
+
+                            // Check for image changes
+                            print('Checking image changes for unit ${i + 1}:');
+                            print('Old images: ${oldUnit.rentalImages}');
+                            print(
+                                'New local image: ${propertyGroupImages[i]?.path}');
+                            print(
+                                'New network image: ${propertyGroupImagenames[i]}');
+
+                            // Check if there's a new local image (user added a new image)
+                            if (propertyGroupImages[i] != null) {
+                              imageChanged = true;
+                              print('Image changed: New local image added');
+                            }
+                            // Check if network image was removed (user removed existing image)
+                            else if (oldUnit.rentalImages != null &&
+                                oldUnit.rentalImages!.isNotEmpty &&
+                                (propertyGroupImagenames[i] == null ||
+                                    propertyGroupImagenames[i]!.isEmpty)) {
+                              imageChanged = true;
+                              print('Image changed: Existing image removed');
+                            }
+                            // Check if network image changed (different from original)
+                            else if (oldUnit.rentalImages != null &&
+                                oldUnit.rentalImages!.isNotEmpty &&
+                                propertyGroupImagenames[i] != null &&
+                                propertyGroupImagenames[i]!.isNotEmpty) {
+                              String oldImage = oldUnit.rentalImages![0];
+                              String newImage = propertyGroupImagenames[i]!;
+                              // Extract filename from URL if it's a full URL
+                              if (newImage.startsWith('http')) {
+                                newImage = newImage.split('/').last;
+                              }
+                              if (oldImage != newImage) {
+                                imageChanged = true;
+                                print(
+                                    'Image changed: Different image (old: $oldImage, new: $newImage)');
+                              }
+                            }
+
+                            // Check if any changes were detected
+                            if (sqftChanged ||
+                                unitChanged ||
+                                addressChanged ||
+                                bathChanged ||
+                                bedChanged ||
+                                imageChanged) {
+                              print('Changes detected in unit ${i + 1}:');
+                              print('- Sqft changed: $sqftChanged');
+                              print('- Unit changed: $unitChanged');
+                              print('- Address changed: $addressChanged');
+                              print('- Bath changed: $bathChanged');
+                              print('- Bed changed: $bedChanged');
+                              print('- Image changed: $imageChanged');
+                              hasUnitChanges = true;
+                              break; // Exit the loop once we find a change
+                            } else {
+                              print('No changes detected in unit ${i + 1}');
+                            }
+                          }
+                        }
+
                         // Check for changes
-                        bool hasChanges = address.text != initialAddress ||
+                        print('Unit changes detected: $hasUnitChanges');
+
+                        bool hasChanges = hasUnitChanges ||
+                            address.text != initialAddress ||
                             city.text != initialCity ||
                             state.text != initialState ||
                             country.text != initialCountry ||
@@ -4877,14 +5149,130 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             county2.text != Ownersdetails?.country ||
                             code2.text != Ownersdetails?.postalCode ||
                             selectedStaff != widget.properties.staffMemberId;
-                        // selectedStaff != initialselectedselectedStaff ;
+
+                        print('=== CHANGE DETECTION DEBUG ===');
+                        print('Final hasChanges value: $hasChanges');
+                        print('Unit changes: $hasUnitChanges');
+
+                        print('--- Property Details ---');
+                        print('Current address: "${address.text}"');
+                        print('Initial address: "$initialAddress"');
+                        print(
+                            'Address changed: ${address.text != initialAddress}');
+
+                        print('Current city: "${city.text}"');
+                        print('Initial city: "$initialCity"');
+                        print('City changed: ${city.text != initialCity}');
+
+                        print('Current state: "${state.text}"');
+                        print('Initial state: "$initialState"');
+                        print('State changed: ${state.text != initialState}');
+
+                        print('Current country: "${country.text}"');
+                        print('Initial country: "$initialCountry"');
+                        print(
+                            'Country changed: ${country.text != initialCountry}');
+
+                        print('Current postal code: "${postalcode.text}"');
+                        print('Initial postal code: "$initialPostalCode"');
+                        print(
+                            'Postal code changed: ${postalcode.text != initialPostalCode}');
+
+                        print('--- Owner Details ---');
+                        print('Current first name: "${firstname.text}"');
+                        print(
+                            'Initial first name: "${Ownersdetails?.rentalOwnerName}"');
+                        print(
+                            'First name changed: ${firstname.text != Ownersdetails?.rentalOwnerName}');
+
+                        print('Current company name: "${comname.text}"');
+                        print(
+                            'Initial company name: "${Ownersdetails?.rentalOwnerCompanyName}"');
+                        print(
+                            'Company name changed: ${comname.text != Ownersdetails?.rentalOwnerCompanyName}');
+
+                        print('Current primary email: "${primaryemail.text}"');
+                        print(
+                            'Initial primary email: "${Ownersdetails?.rentalOwnerPrimaryEmail}"');
+                        print(
+                            'Primary email changed: ${primaryemail.text != Ownersdetails?.rentalOwnerPrimaryEmail}');
+
+                        print(
+                            'Current alternative email: "${alternativeemail.text}"');
+                        print(
+                            'Initial alternative email: "${Ownersdetails?.rentalOwnerAlternateEmail}"');
+                        print(
+                            'Alternative email changed: ${alternativeemail.text != Ownersdetails?.rentalOwnerAlternateEmail}');
+
+                        print('Current phone number: "${phonenum.text}"');
+                        print(
+                            'Initial phone number: "${Ownersdetails?.rentalOwnerPhoneNumber}"');
+                        print(
+                            'Phone number changed: ${phonenum.text != Ownersdetails?.rentalOwnerPhoneNumber}');
+
+                        print('Current home number: "${homenum.text}"');
+                        print(
+                            'Initial home number: "${Ownersdetails?.rentalOwnerHomeNumber}"');
+                        print(
+                            'Home number changed: ${homenum.text != Ownersdetails?.rentalOwnerHomeNumber}');
+
+                        print('Current business number: "${businessnum.text}"');
+                        print(
+                            'Initial business number: "${Ownersdetails?.rentalOwnerBusinessNumber}"');
+                        print(
+                            'Business number changed: ${businessnum.text != Ownersdetails?.rentalOwnerBusinessNumber}');
+
+                        print('Current street2: "${street2.text}"');
+                        print(
+                            'Initial street2: "${Ownersdetails?.streetAddress}"');
+                        print(
+                            'Street2 changed: ${street2.text != Ownersdetails?.streetAddress}');
+
+                        print('Current city2: "${city2.text}"');
+                        print('Initial city2: "${Ownersdetails?.city}"');
+                        print(
+                            'City2 changed: ${city2.text != Ownersdetails?.city}');
+
+                        print('Current state2: "${state2.text}"');
+                        print('Initial state2: "${Ownersdetails?.state}"');
+                        print(
+                            'State2 changed: ${state2.text != Ownersdetails?.state}');
+
+                        print('Current county2: "${county2.text}"');
+                        print('Initial county2: "${Ownersdetails?.country}"');
+                        print(
+                            'County2 changed: ${county2.text != Ownersdetails?.country}');
+
+                        print('Current code2: "${code2.text}"');
+                        print('Initial code2: "${Ownersdetails?.postalCode}"');
+                        print(
+                            'Code2 changed: ${code2.text != Ownersdetails?.postalCode}');
+
+                        print('Current staff: "$selectedStaff"');
+                        print(
+                            'Initial staff: "${widget.properties.staffMemberId}"');
+                        print(
+                            'Staff changed: ${selectedStaff != widget.properties.staffMemberId}');
+                        print('=== END CHANGE DETECTION DEBUG ===');
+
+                        print("=== TESTING CHANGE DETECTION ===");
+                        print("hasChanges value: $hasChanges");
 
                         if (!hasChanges) {
                           // Show message if no changes detected
-                          print("No changes detected");
+                          print("=== NO CHANGES DETECTED - EXITING EARLY ===");
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('No changes detected'),
+                              backgroundColor: Colors.orange,
+                            ),
+                          );
                           Navigator.pop(context, false);
                           return; // Exit if no changes
                         }
+
+                        print(
+                            "=== CHANGES DETECTED - PROCEEDING WITH API CALL ===");
 
                         // Proceed with form submission
                         SharedPreferences prefs =
@@ -4903,91 +5291,152 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           staffMemberId: widget.properties.staffMemberId,
                         );
 
-                        List<Unit> units = [];
+                        List<Map<String, dynamic>> convertedUnits = [];
+
+                        // First, validate and clean up controllers
                         if (propertyGroupControllers.isNotEmpty) {
                           List<TextEditingController> firstControllers =
-                          propertyGroupControllers[0];
+                              propertyGroupControllers[0];
                           bool isFirstBlank = firstControllers.every(
-                                  (controller) => controller.text.trim().isEmpty);
+                              (controller) => controller.text.trim().isEmpty);
                           if (isFirstBlank) {
                             propertyGroupControllers.removeAt(0);
                           }
                         }
 
                         // Prepare units based on property type
-                        if (selectedpropertytype == 'Commercial' &&
-                            selectedIsMultiUnit == true) {
-                          for (int i = 0;
-                              i < propertyGroupControllers.length;
-                              i++) {
-                            if (units.length <= i) {
-                              units.add(Unit());
+                        for (int i = 0;
+                            i < propertyGroupControllers.length;
+                            i++) {
+                          List<TextEditingController> controllers =
+                              propertyGroupControllers[i];
+                          Map<String, dynamic> unitData = {
+                            "admin_id": id,
+                            "unit_id": DateTime.now()
+                                    .millisecondsSinceEpoch
+                                    .toString() +
+                                "_$i",
+                            "rental_images": []
+                          };
+
+                          // Handle images - prioritize new images over existing ones
+                          print('Handling images for unit $i:');
+                          print(
+                              '- Local image: ${propertyGroupImages[i]?.path}');
+                          print(
+                              '- Existing image: ${propertyGroupImagenames[i]}');
+
+                          if (propertyGroupImages[i] != null) {
+                            // If new image is selected, use the uploaded filename
+                            if (propertyGroupImagenames[i] != null &&
+                                propertyGroupImagenames[i]!.isNotEmpty) {
+                              // Extract filename from URL if it's a full URL
+                              String imageValue = propertyGroupImagenames[i]!;
+                              if (imageValue.startsWith('http')) {
+                                // Extract filename from URL
+                                imageValue = imageValue.split('/').last;
+                              }
+                              unitData["rental_images"] = [imageValue];
+                              print('- Using uploaded filename: $imageValue');
+                            } else {
+                              // If no filename yet, use the file path temporarily
+                              unitData["rental_images"] = [
+                                propertyGroupImages[i]!.path
+                              ];
+                              print(
+                                  '- Using file path: ${propertyGroupImages[i]!.path}');
                             }
-                            List<TextEditingController> controllers =
-                                propertyGroupControllers[i];
-                            units[i].unit = controllers[0].text.trim();
-                            units[i].address = controllers[1].text.trim();
-                            units[i].sqft = controllers[2].text.trim();
-                            units[i].Image = propertyGroupImagenames[i];
-                          }
-                          units.removeWhere((unit) =>
-                              unit.unit!.isEmpty ||
-                              unit.address!.isEmpty ||
-                              unit.sqft!.isEmpty);
-                        } else if (selectedpropertytype == 'Residential' &&
-                            selectedIsMultiUnit == true) {
-                          for (int i = 0;
-                              i < propertyGroupControllers.length;
-                              i++) {
-                            if (units.length <= i) {
-                              units.add(Unit());
+                          } else if (propertyGroupImagenames[i] != null &&
+                              propertyGroupImagenames[i]!.isNotEmpty) {
+                            // If no new image but existing image exists, keep the existing one
+                            // Extract filename from URL if it's a full URL
+                            String imageValue = propertyGroupImagenames[i]!;
+                            if (imageValue.startsWith('http')) {
+                              // Extract filename from URL
+                              imageValue = imageValue.split('/').last;
                             }
-                            List<TextEditingController> controllers =
-                                propertyGroupControllers[i];
-                            units[i].unit = controllers[0].text.trim();
-                            units[i].address = controllers[1].text.trim();
-                            units[i].sqft = controllers[2].text.trim();
-                            units[i].bath = controllers[3].text.trim();
-                            units[i].bed = controllers[4].text.trim();
-                            units[i].Image = propertyGroupImagenames[i];
+                            unitData["rental_images"] = [imageValue];
+                            print('- Using existing image: $imageValue');
+                          } else {
+                            print('- No images for this unit');
                           }
-                        } else if (selectedpropertytype == 'Residential') {
-                          for (int i = 0;
-                              i < propertyGroupControllers.length;
-                              i++) {
-                            if (units.length <= i) {
-                              units.add(Unit());
+
+                          String actualPropertyType =
+                              selectedpropertytype ?? '';
+                          if (actualPropertyType == 'Single-Family') {
+                            actualPropertyType = 'Commercial';
+                          }
+
+                          if (actualPropertyType == 'Commercial' &&
+                              selectedIsMultiUnit == true) {
+                            if (controllers[0].text.trim().isNotEmpty &&
+                                controllers[1].text.trim().isNotEmpty &&
+                                controllers[2].text.trim().isNotEmpty) {
+                              unitData.addAll({
+                                "rental_unit": controllers[0].text.trim(),
+                                "rental_unit_adress":
+                                    controllers[1].text.trim(),
+                                "rental_sqft": controllers[2].text.trim(),
+                              });
+                              convertedUnits.add(unitData);
                             }
-                            List<TextEditingController> controllers =
-                                propertyGroupControllers[i];
-                            units[i].sqft = controllers[0].text.trim();
-                            units[i].bath = controllers[1].text.trim();
-                            units[i].bed = controllers[2].text.trim();
-                            units[i].Image = propertyGroupImagenames[i];
-                          }
-                          units.removeWhere((unit) =>
-                              unit.unit!.isEmpty ||
-                              unit.address!.isEmpty ||
-                              unit.sqft!.isEmpty ||
-                              unit.bath!.isEmpty ||
-                              unit.bed!.isEmpty);
-                        } else if (selectedpropertytype == 'Commercial') {
-                          for (int i = 0;
-                              i < propertyGroupControllers.length;
-                              i++) {
-                            if (units.length <= i) {
-                              units.add(Unit());
+                          } else if (actualPropertyType == 'Residential' &&
+                              selectedIsMultiUnit == true) {
+                            print(
+                                '=== PREPARING RESIDENTIAL MULTI-UNIT DATA ===');
+                            print(
+                                'Controller 0 (Unit): "${controllers[0].text.trim()}"');
+                            print(
+                                'Controller 1 (Address): "${controllers[1].text.trim()}"');
+                            print(
+                                'Controller 2 (SQft): "${controllers[2].text.trim()}"');
+                            print(
+                                'Controller 3 (Bath): "${controllers[3].text.trim()}"');
+                            print(
+                                'Controller 4 (Bed): "${controllers[4].text.trim()}"');
+
+                            if (controllers[0].text.trim().isNotEmpty &&
+                                controllers[1].text.trim().isNotEmpty &&
+                                controllers[2].text.trim().isNotEmpty &&
+                                controllers[3].text.trim().isNotEmpty &&
+                                controllers[4].text.trim().isNotEmpty) {
+                              unitData.addAll({
+                                "rental_unit": controllers[0].text.trim(),
+                                "rental_unit_adress":
+                                    controllers[1].text.trim(),
+                                "rental_sqft": controllers[2].text.trim(),
+                                "rental_bath": controllers[3].text.trim(),
+                                "rental_bed": controllers[4].text.trim(),
+                              });
+                              convertedUnits.add(unitData);
+                              print('Added unit data: $unitData');
+                            } else {
+                              print('Skipping unit - some fields are empty');
                             }
-                            List<TextEditingController> controllers =
-                                propertyGroupControllers[i];
-                            units[i].sqft = controllers[0].text.trim();
-                            units[i].Image = propertyGroupImagenames[i];
+                          } else if (actualPropertyType == 'Residential') {
+                            if (controllers[0].text.trim().isNotEmpty &&
+                                controllers[1].text.trim().isNotEmpty &&
+                                controllers[2].text.trim().isNotEmpty) {
+                              unitData.addAll({
+                                "rental_sqft": controllers[0].text.trim(),
+                                "rental_bath": controllers[1].text.trim(),
+                                "rental_bed": controllers[2].text.trim(),
+                              });
+                              convertedUnits.add(unitData);
+                            }
+                          } else if (actualPropertyType == 'Commercial') {
+                            // For Commercial single unit, we only need sqft
+                            unitData.addAll({
+                              "rental_sqft": controllers[0].text,
+                              "rental_unit": "Unit 1", // Default unit name
+                              "rental_unit_adress":
+                                  address.text, // Use main property address
+                            });
+                            convertedUnits.add(unitData);
                           }
-                          units.removeWhere((unit) =>
-                              unit.bath!.isEmpty ||
-                              unit.bed!.isEmpty ||
-                              unit.sqft!.isEmpty);
                         }
+
+                        print("Converted Units: $convertedUnits");
 
                         RentalOwners owners = RentalOwners(
                           adminId: id,
@@ -5001,11 +5450,11 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           postalCode: code2.text.trim(),
                         );
 
-                        RentalRequest rentalrequest = RentalRequest(
-                          rentalOwner: owners,
-                          rental: rentals,
-                          units: units,
-                        );
+                        // RentalRequest rentalrequest = RentalRequest(
+                        //   rentalOwner: owners,
+                        //   rental: rentals,
+                        //   units: units,
+                        // );
 
                         final updatedOwner = RentalOwner(
                           rentalOwnerName: firstnameController.text.trim(),
@@ -5035,7 +5484,129 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           };
                         }).toList();
 
+                        // Convert List<Unit> to List<Map<String, dynamic>>
+                        // convertedUnits is already prepared above
+
+                        print(
+                            "Number of units being sent: ${convertedUnits.length}");
+
+                        // Prepare units data
+                        List<Map<String, dynamic>> unitData = [];
+                        print('Preparing unit data...');
+                        print('Property Type: $selectedpropertytype');
+                        print('Is Multi Unit: $selectedIsMultiUnit');
+                        print(
+                            'Controllers length: ${propertyGroupControllers.length}');
+                        print('Current controllers values:');
+                        for (var controllers in propertyGroupControllers) {
+                          for (int i = 0; i < controllers.length; i++) {
+                            print('Controller $i: "${controllers[i].text}"');
+                          }
+                        }
+                        print('Data values:');
+                        for (var unit in data) {
+                          print('Unit sqft: "${unit.rentalsqft}"');
+                          print('Unit name: "${unit.rentalunit}"');
+                          print('Unit address: "${unit.rentalunitadress}"');
+                        }
+                        print('Has unit changes: $hasUnitChanges');
+                        for (int i = 0;
+                            i < propertyGroupControllers.length;
+                            i++) {
+                          var controllers = propertyGroupControllers[i];
+                          print('Preparing unit data for API:');
+                          print('Property type: $selectedpropertytype');
+                          print('Is multi unit: $selectedIsMultiUnit');
+                          print('Current controller values:');
+                          for (int j = 0; j < controllers.length; j++) {
+                            print('Controller $j: "${controllers[j].text}"');
+                          }
+                          print('Old unit data:');
+                          print('- sqft: "${data[i].rentalsqft}"');
+                          print('- unit: "${data[i].rentalunit}"');
+                          print('- address: "${data[i].rentalunitadress}"');
+
+                          // For Commercial single unit, ensure sqft goes to rental_sqft
+                          Map<String, dynamic> unit;
+                          String actualPropertyType =
+                              selectedpropertytype ?? '';
+                          if (actualPropertyType == 'Single-Family') {
+                            actualPropertyType = 'Commercial';
+                          }
+
+                          if (actualPropertyType == 'Commercial' &&
+                              !selectedIsMultiUnit) {
+                            print('Preparing Commercial single unit data');
+                            unit = {
+                              'admin_id': id,
+                              'unit_id': data[i].unitId ??
+                                  DateTime.now()
+                                      .millisecondsSinceEpoch
+                                      .toString(),
+                              'rental_unit': controllers[0]
+                                  .text, // Use the actual unit name
+                              'rental_unit_adress': address.text,
+                              'rental_sqft': controllers[0]
+                                  .text, // sqft from first controller
+                              'rental_images':
+                                  propertyGroupImagenames[i] != null
+                                      ? [propertyGroupImagenames[i]]
+                                      : [],
+                              'rental_bath':
+                                  "", // Add empty bath for consistency
+                              'rental_bed': "", // Add empty bed for consistency
+                            };
+                          } else {
+                            print('Preparing multi-unit data');
+                            unit = {
+                              'admin_id': id,
+                              'unit_id': data[i].unitId ??
+                                  DateTime.now()
+                                      .millisecondsSinceEpoch
+                                      .toString(),
+                              'rental_unit': controllers[0].text,
+                              'rental_unit_adress': controllers[1].text,
+                              'rental_sqft': controllers[2].text,
+                              'rental_images':
+                                  propertyGroupImagenames[i] != null
+                                      ? [propertyGroupImagenames[i]]
+                                      : [],
+                              'rental_bath': "",
+                              'rental_bed': "",
+                            };
+                          }
+
+                          print('Prepared unit data:');
+                          print('- Unit ID: ${unit["unit_id"]}');
+                          print('- Unit Name: ${unit["rental_unit"]}');
+                          print(
+                              '- Unit Address: ${unit["rental_unit_adress"]}');
+                          print('- Unit Sqft: ${unit["rental_sqft"]}');
+                          print('Prepared unit data:');
+                          print('- Unit ID: ${unit["unit_id"]}');
+                          print('- Unit Name: ${unit["rental_unit"]}');
+                          print(
+                              '- Unit Address: ${unit["rental_unit_adress"]}');
+                          print('- Unit Sqft: ${unit["rental_sqft"]}');
+                          print('Preparing unit ${i + 1}:');
+                          print('Unit: ${controllers[0].text.trim()}');
+                          print('Address: ${controllers[1].text.trim()}');
+                          print('Sqft: ${controllers[2].text.trim()}');
+                          if (selectedpropertytype == 'Residential') {
+                            unit['rental_bath'] = controllers[3].text.trim();
+                            unit['rental_bed'] = controllers[4].text.trim();
+                          }
+                          unitData.add(unit);
+                        }
+                        print('Prepared unit data: $unitData');
+
+                        print('Has unit changes: $hasUnitChanges');
+                        print('Final unit data: $unitData');
+
+                        print('Making API call with updated unit data...');
                         Rentals properties = Rentals(
+                          units: unitData,
+                          // Always pass the units, even if empty
                           adminId: id,
                           rentalOwnerData: RentalOwnerData(
                             adminId: widget.properties.adminId,
@@ -5069,49 +5640,43 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           processor_id: processorId,
                         );
 
-                        await Future.wait([
-                          PropertiesRepository()
-                              .updateRental1(properties)
-                              .then((value) {
-                            setState(() {
-                              widget.properties.rentalOwnerData =
-                                  RentalOwnerData(
-                                adminId: widget.properties.adminId,
-                                rentalOwnerId: widget.properties.rentalOwnerId,
-                                rentalOwnerName: updatedOwner.rentalOwnerName,
-                                rentalOwnerCompanyName:
-                                    updatedOwner.rentalOwnerCompanyName,
-                                rentalOwnerPrimaryEmail:
-                                    updatedOwner.rentalOwnerPrimaryEmail,
-                                rentalOwnerPhoneNumber:
-                                    updatedOwner.rentalOwnerPhoneNumber,
-                                rentalOwnerAlternativeEmail:
-                                    updatedOwner.rentalOwnerAlternateEmail,
-                                rentalOwnerBuisinessNumber:
-                                    updatedOwner.rentalOwnerBusinessNumber,
-                                rentalOwnerHomeNumber:
-                                    updatedOwner.rentalOwnerHomeNumber,
-                                city: updatedOwner.city,
-                                state: updatedOwner.state,
-                                country: updatedOwner.country,
-                                postalCode: updatedOwner.postalCode,
-                              );
-                              widget.properties.rentalAddress = address.text;
-                              widget.properties.propertyTypeData?.propertyType =
-                                  selectedpropertytype;
-                              widget.properties.propertyTypeData
-                                  ?.propertySubType = selectedpropertytype;
-                              isLoading = false;
-                              widget.properties.staffMemberId;
-                            });
-                          }).catchError((e) {
-                            setState(() {
-                              isLoading = false;
-                            });
-                          }),
-                        ]);
+                        print('About to make API call');
+                        print('Has changes: $hasChanges');
+                        print('Has unit changes: $hasUnitChanges');
+                        print('Properties object:');
+                        print('- Units: ${properties.units}');
+                        print('- Rental ID: ${properties.rentalId}');
+                        print('- Property ID: ${properties.propertyId}');
 
-                        Navigator.of(context).pop(true);
+                        try {
+                          print('Making API call to update rental...');
+                          await PropertiesRepository()
+                              .updateRental1(properties);
+                          print('API call successful');
+
+                          print('Update completed successfully');
+                          // ScaffoldMessenger.of(context).showSnackBar(
+                          //   const SnackBar(
+                          //     content: Text('Property updated successfully'),
+                          //     backgroundColor: Colors.green,
+                          //   ),
+                          // );
+
+                          Navigator.of(context).pop(true);
+                        } catch (e) {
+                          print('Error updating property: $e');
+                          setState(() {
+                            isLoading = false;
+                          });
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  'Failed to update property: ${e.toString()}'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),

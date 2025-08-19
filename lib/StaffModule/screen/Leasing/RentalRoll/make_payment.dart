@@ -998,7 +998,7 @@ class _MakePaymentState extends State<MakePayment> {
   }
 
   Map<int, bool> selectedRows = {};
-  int? surCharge;
+  double? surCharge;
 
   dynamic? surChargeAchper;
   dynamic? surChargeAchflat;
@@ -1025,27 +1025,35 @@ class _MakePaymentState extends State<MakePayment> {
       var jsonResponse = jsonDecode(response.body);
 
       // Accessing the first element in the 'data' list
-      var surchargeData = jsonResponse['data'][0];
+      var surchargeData = jsonResponse['data'][0] ?? "";
       if (_selectedPaymentMethod == "Card") {
         if (cardDetails[selectedcardindex!].binResult == "CREDIT") {
           setState(() {
-            surCharge = surchargeData['surcharge_percent'];
+            surCharge = surchargeData['surcharge_percent'] != null
+                ? surchargeData['surcharge_percent'].toDouble()
+                : 0.0;
           });
         } else {
           setState(() {
             String? overrideFee = getOverrideFee(selectedTenantId!);
             print("overrideFee   ${overrideFee}");
             if (overrideFee == null || overrideFee == "null")
-              surCharge = surchargeData['surcharge_percent_debit'] ?? 0;
+              surCharge = surchargeData['surcharge_percent_debit'] != null
+                  ? surchargeData['surcharge_percent_debit'].toDouble()
+                  : 0.0;
             else
-              surCharge = int.parse(overrideFee) ?? 0;
+              surCharge = double.tryParse(overrideFee) ?? 0.0;
           });
         }
       }
 
       setState(() {
-        surChargeAchper = surchargeData['surcharge_percent_ACH'];
-        surChargeAchflat = surchargeData['surcharge_flat_ACH'];
+        surChargeAchper = surchargeData['surcharge_percent_ACH'] != null
+            ? surchargeData['surcharge_percent_ACH'].toDouble()
+            : 0.0;
+        surChargeAchflat = surchargeData['surcharge_flat_ACH'] != null
+            ? surchargeData['surcharge_flat_ACH'].toDouble()
+            : 0.0;
       });
 
       print(surChargeAchper);

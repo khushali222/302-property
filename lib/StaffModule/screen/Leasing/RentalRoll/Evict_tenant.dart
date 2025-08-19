@@ -93,6 +93,13 @@ class _Evict_tenantState extends State<Evict_tenant> {
       filterTenants(searchController.text);
     });
 
+    // Add listener to damage amount controller to update button state
+    damageAmountController.addListener(() {
+      setState(() {
+        // This will trigger a rebuild and update the button state
+      });
+    });
+
     fetchTenant();
 
     super.initState();
@@ -129,8 +136,6 @@ class _Evict_tenantState extends State<Evict_tenant> {
 
     return parsedDate!;
   }
-
-
 
   TextEditingController rent = TextEditingController();
   TextEditingController securitydeposit = TextEditingController();
@@ -246,13 +251,16 @@ class _Evict_tenantState extends State<Evict_tenant> {
       return false;
     }
 
-    // Check if damage amount is valid when entered
-    if (damageAmountController.text.isNotEmpty) {
-      try {
-        double.parse(damageAmountController.text);
-      } catch (e) {
-        return false;
-      }
+    // Check if damage amount is entered and valid
+    if (damageAmountController.text.isEmpty) {
+      return false;
+    }
+
+    // Check if damage amount is a valid number
+    try {
+      double.parse(damageAmountController.text);
+    } catch (e) {
+      return false;
     }
 
     return true;
@@ -262,7 +270,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
     if (!isFormValid()) {
       Fluttertoast.showToast(
           msg:
-              "Please select at least one tenant and enter valid damage amount if required");
+              "Please select at least one tenant and enter a valid damage amount");
       return;
     }
 
@@ -334,38 +342,36 @@ class _Evict_tenantState extends State<Evict_tenant> {
       setState(() {
         leasegetdata = LeaseSummary.fromJson(jsonDecode(response.body));
         print("Renew lease ${leasegetdata.data!.renewLeases!.length}");
-        if (determineStatus(leasegetdata.data!.startDate, leasegetdata.data!.endDate)) {
+        if (determineStatus(
+            leasegetdata.data!.startDate, leasegetdata.data!.endDate)) {
           // Lease is expired
           startDateController.text = formatDate(DateTime.now().toString());
 
           // Set the end date to one month from today's date
-          DateTime newEndDate = DateTime(
-              DateTime.now().year,
-              DateTime.now().month + 1,
-              DateTime.now().day
-          );
+          DateTime newEndDate = DateTime(DateTime.now().year,
+              DateTime.now().month + 1, DateTime.now().day);
           endDateController.text = formatDate(
               DateFormat('yyyy-MM-dd').format(newEndDate).toString());
         }
         if (leasegetdata.data!.renewLeases != null &&
             leasegetdata.data!.renewLeases!.isNotEmpty) {
           // Lease is active
-          if(!determineStatus(leasegetdata.data!.renewLeases!.last.startDate!, leasegetdata.data!.renewLeases!.last.endDate!)){
-            DateTime endDate = formatDates(leasegetdata.data!.renewLeases!.last.endDate!);
+          if (!determineStatus(leasegetdata.data!.renewLeases!.last.startDate!,
+              leasegetdata.data!.renewLeases!.last.endDate!)) {
+            DateTime endDate =
+                formatDates(leasegetdata.data!.renewLeases!.last.endDate!);
 
             // Set start date to the current lease's end date
-            startDateController.text = formatDate(
-                DateFormat('yyyy-MM-dd').format(endDate).toString()
-            );
+            startDateController.text =
+                formatDate(DateFormat('yyyy-MM-dd').format(endDate).toString());
 
             // Extend the lease for one month from the current lease's end date
-            DateTime newEndDate = DateTime(endDate.year, endDate.month + 1, endDate.day);
+            DateTime newEndDate =
+                DateTime(endDate.year, endDate.month + 1, endDate.day);
             endDateController.text = formatDate(
                 DateFormat('yyyy-MM-dd').format(newEndDate).toString());
           }
-
         }
-
       });
     } else {
       throw Exception('Failed to load lease summary');

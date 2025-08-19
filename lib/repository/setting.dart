@@ -33,6 +33,7 @@ class SurchargeRepository {
     print("id of id 2 $id");
     final response_Data = jsonDecode(response.body);
     print('surcharge check ${adminId}');
+    print('surcharge check responce  ${response.body}');
     if (response_Data["statusCode"] == 200) {
       // final apiResponse = ApiResponse.fromJson(jsonDecode(response.body));
       final apiResponse =

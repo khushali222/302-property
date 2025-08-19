@@ -94,6 +94,13 @@ class _Evict_tenantState extends State<Evict_tenant> {
       filterTenants(searchController.text);
     });
 
+    // Add listener to damage amount controller to update button state
+    damageAmountController.addListener(() {
+      setState(() {
+        // This will trigger a rebuild and update the button state
+      });
+    });
+
     fetchTenant();
     leaseData();
     super.initState();
@@ -299,13 +306,16 @@ class _Evict_tenantState extends State<Evict_tenant> {
       return false;
     }
 
-    // Check if damage amount is valid when entered
-    if (damageAmountController.text.isNotEmpty) {
-      try {
-        double.parse(damageAmountController.text);
-      } catch (e) {
-        return false;
-      }
+    // Check if damage amount is entered and valid
+    if (damageAmountController.text.isEmpty) {
+      return false;
+    }
+
+    // Check if damage amount is a valid number
+    try {
+      double.parse(damageAmountController.text);
+    } catch (e) {
+      return false;
     }
 
     return true;
@@ -315,7 +325,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
     if (!isFormValid()) {
       Fluttertoast.showToast(
           msg:
-              "Please select at least one tenant and enter valid damage amount if required");
+              "Please select at least one tenant and enter a valid damage amount");
       return;
     }
 
@@ -373,7 +383,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-     drawer: CustomDrawer(
+      drawer: CustomDrawer(
         currentpage: "Leases",
         dropdown: true,
       ),

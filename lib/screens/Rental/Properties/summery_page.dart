@@ -482,6 +482,7 @@ class _Summery_pageState extends State<Summery_page>
   final Properies_summery_Repo unitRepository = Properies_summery_Repo();
   //int unitCount = 0;
   int tenentCount = 0;
+  int unitTenantCount = 0; // New variable for tenant count from unit API
   int count = 0;
   int complete_count = 0;
 
@@ -536,6 +537,16 @@ class _Summery_pageState extends State<Summery_page>
       print(widget.unit?.unitId ?? "");
       print('hello');
       data = fetchedunit1;
+
+      // Calculate tenant count from unit API response
+      unitTenantCount = 0;
+      for (var unit in fetchedunit1) {
+        if (unit.tenantCount != null) {
+          unitTenantCount += unit.tenantCount!;
+        }
+      }
+      print('Unit Tenant Count: $unitTenantCount');
+
       isLoading = false;
     });
     //} catch (e) {
@@ -2706,7 +2717,8 @@ class _Summery_pageState extends State<Summery_page>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
                                     child: Text(
                                       'Property Details',
                                       style: TextStyle(
@@ -2722,7 +2734,8 @@ class _Summery_pageState extends State<Summery_page>
                                   ),
                                   SizedBox(height: 5),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
                                     child: Text('Address',
                                         style: TextStyle(
                                           color: Color(0xFF8A95A8),
@@ -2736,24 +2749,25 @@ class _Summery_pageState extends State<Summery_page>
                                   ),
                                   SizedBox(height: 5),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
                                     child: Text(
-                                        '${rentalDetails.propertyTypeData?.propertyType}',
-                                        style: TextStyle(
-                                          color: blueColor,
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 13
-                                              : 18,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
+                                      '${rentalDetails.propertyTypeData?.propertyType}',
+                                      style: TextStyle(
+                                        color: blueColor,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 13
+                                                : 18,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                   SizedBox(height: 5),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 7),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 7),
                                     child: Text(
                                       '${rentalDetails.rentalAddress}',
                                       maxLines: 4,
@@ -2770,7 +2784,8 @@ class _Summery_pageState extends State<Summery_page>
                                   ),
                                   SizedBox(height: 5),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
                                     child: Text(
                                       [
                                         rentalDetails.rentalCity,
@@ -2781,8 +2796,7 @@ class _Summery_pageState extends State<Summery_page>
                                           .where((element) =>
                                               element != null &&
                                               element.isNotEmpty)
-                                          .map((element) =>
-                                              element!)
+                                          .map((element) => element!)
                                           .join(' , '),
                                       style: TextStyle(
                                         color: blueColor,
@@ -2797,36 +2811,36 @@ class _Summery_pageState extends State<Summery_page>
                                     ),
                                   ),
 
-                                // Row(
-                                //   children: [
-                                //     SizedBox(
-                                //       width: 10,
-                                //     ),
-                                //     Text(
-                                //       '${widget.properties.rentalCountry},',
-                                //       style: TextStyle(
-                                //         color: blueColor,
-                                //         fontSize:
-                                //             MediaQuery.of(context).size.width < 500
-                                //                 ? 13
-                                //                 : 18,
-                                //       ),
-                                //     ),
-                                //     SizedBox(width: 3),
-                                //     Text(
-                                //       '${widget.properties.rentalPostcode}',
-                                //       style: TextStyle(
-                                //         color: blueColor,
-                                //         fontSize:
-                                //             MediaQuery.of(context).size.width < 500
-                                //                 ? 13
-                                //                 : 18,
-                                //       ),
-                                //     ),
-                                //   ],
-                                // ),
-                              ],
-                            ),
+                                  // Row(
+                                  //   children: [
+                                  //     SizedBox(
+                                  //       width: 10,
+                                  //     ),
+                                  //     Text(
+                                  //       '${widget.properties.rentalCountry},',
+                                  //       style: TextStyle(
+                                  //         color: blueColor,
+                                  //         fontSize:
+                                  //             MediaQuery.of(context).size.width < 500
+                                  //                 ? 13
+                                  //                 : 18,
+                                  //       ),
+                                  //     ),
+                                  //     SizedBox(width: 3),
+                                  //     Text(
+                                  //       '${widget.properties.rentalPostcode}',
+                                  //       style: TextStyle(
+                                  //         color: blueColor,
+                                  //         fontSize:
+                                  //             MediaQuery.of(context).size.width < 500
+                                  //                 ? 13
+                                  //                 : 18,
+                                  //       ),
+                                  //     ),
+                                  //   ],
+                                  // ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -8571,7 +8585,11 @@ class _Summery_pageState extends State<Summery_page>
                                                   ),
                                                   Expanded(
                                                     child: Text(
-                                                      '${Propertytype.rentalunitadress}',
+                                                      Propertytype.rentalunitadress
+                                                                  ?.isNotEmpty ==
+                                                              true
+                                                          ? '${Propertytype.rentalunitadress}'
+                                                          : '  N/A',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
@@ -8628,7 +8646,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                     ),
                                                                     TextSpan(
                                                                       text:
-                                                                          ' ${tenentCount}',
+                                                                          ' ${unitTenantCount}',
                                                                       style: TextStyle(
                                                                           fontWeight: FontWeight
                                                                               .w700,

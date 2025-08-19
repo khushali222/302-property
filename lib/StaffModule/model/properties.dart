@@ -25,58 +25,66 @@ class Rentals {
   RentalOwnerData? rentalOwnerData;
   PropertyTypeData? propertyTypeData;
   StaffMemberData? staffMemberData;
+  List<Map<String, dynamic>>? units; // Add units field for API requests
+  String? processor_id; // Add processor_id field
 
   Rentals({
-     this.id,
-     this.rentalId,
-     this.adminId,
-     this.rentalOwnerId,
-     this.propertyId,
-     this.rentalAddress,
-     this.isRentOn,
-     this.rentalCity,
-     this.rentalState,
-     this.rentalCountry,
-     this.rentalPostcode,
-     this.rentalImage,
-     this.staffMemberId,
-     this.createdAt,
-     this.updatedAt,
-     this.isDelete,
-     this.rentalOwnerData,
-     this.propertyTypeData,
-     this.staffMemberData,
+    this.id,
+    this.rentalId,
+    this.adminId,
+    this.rentalOwnerId,
+    this.propertyId,
+    this.rentalAddress,
+    this.isRentOn,
+    this.rentalCity,
+    this.rentalState,
+    this.rentalCountry,
+    this.rentalPostcode,
+    this.rentalImage,
+    this.staffMemberId,
+    this.createdAt,
+    this.updatedAt,
+    this.isDelete,
+    this.rentalOwnerData,
+    this.propertyTypeData,
+    this.staffMemberData,
+    this.units,
+    this.processor_id,
   });
 
   // Define the fromJson method within the Rental class
   factory Rentals.fromJson(Map<String, dynamic> json) {
     return Rentals(
-      id: json['_id'],
-      rentalId: json['rental_id'] ?? "",
-      adminId: json['admin_id']?? "",
-      rentalOwnerId: json['rentalowner_id']?? "",
-      propertyId: json['property_id']?? "",
-      rentalAddress: json['rental_adress']?? "",
-      isRentOn: json['is_rent_on']?? "",
-      rentalCity: json['rental_city']?? "",
-      rentalState: json['rental_state']?? "",
-      rentalCountry: json['rental_country']?? "",
-      rentalPostcode: json['rental_postcode']?? "",
-      rentalImage: json['rental_image']?? "",
-      staffMemberId: json['staffmember_id']?? "",
-      createdAt: json['createdAt']?? "",
-      updatedAt: json['updatedAt']?? "",
-      isDelete: json['is_delete']?? "",
-       rentalOwnerData: RentalOwnerData.fromJson(json['rental_owner_data']?? {}),
-       propertyTypeData: PropertyTypeData.fromJson(json['property_type_data']?? {}),
-       staffMemberData: StaffMemberData.fromJson(json['staffmember_data']?? {})
-    );
+        id: json['_id'],
+        rentalId: json['rental_id'] ?? "",
+        adminId: json['admin_id'] ?? "",
+        rentalOwnerId: json['rentalowner_id'] ?? "",
+        propertyId: json['property_id'] ?? "",
+        rentalAddress: json['rental_adress'] ?? "",
+        isRentOn: json['is_rent_on'] ?? "",
+        rentalCity: json['rental_city'] ?? "",
+        rentalState: json['rental_state'] ?? "",
+        rentalCountry: json['rental_country'] ?? "",
+        rentalPostcode: json['rental_postcode'] ?? "",
+        rentalImage: json['rental_image'] ?? "",
+        staffMemberId: json['staffmember_id'] ?? "",
+        createdAt: json['createdAt'] ?? "",
+        updatedAt: json['updatedAt'] ?? "",
+        isDelete: json['is_delete'] ?? "",
+        rentalOwnerData:
+            RentalOwnerData.fromJson(json['rental_owner_data'] ?? {}),
+        propertyTypeData:
+            PropertyTypeData.fromJson(json['property_type_data'] ?? {}),
+        staffMemberData:
+            StaffMemberData.fromJson(json['staffmember_data'] ?? {}));
   }
 }
+
 class RentalOwnerData {
   String? id;
   String? rentalOwnerId;
   String? adminId;
+  String? rentalOwnerName; // Add this field
   String? rentalOwnerFirstName;
   String? rentalOwnerLastName;
   String? rentalOwnerCompanyName;
@@ -96,53 +104,56 @@ class RentalOwnerData {
   List<dynamic>? processorList;
 
   RentalOwnerData({
-     this.id,
-     this.rentalOwnerId,
-     this.adminId,
-     this.rentalOwnerFirstName,
-     this.rentalOwnerLastName,
-     this.rentalOwnerCompanyName,
-     this.rentalOwnerPrimaryEmail,
-     this.rentalOwnerAlternativeEmail,
-     this.rentalOwnerPhoneNumber,
-     this.rentalOwnerHomeNumber,
-     this.rentalOwnerBuisinessNumber,
-     this.city,
-     this.state,
-     this.Address,
-     this.country,
-     this.postalCode,
-     this.createdAt,
-     this.updatedAt,
-     this.isDelete,
-     this.processorList,
+    this.id,
+    this.rentalOwnerId,
+    this.adminId,
+    this.rentalOwnerName,
+    this.rentalOwnerFirstName,
+    this.rentalOwnerLastName,
+    this.rentalOwnerCompanyName,
+    this.rentalOwnerPrimaryEmail,
+    this.rentalOwnerAlternativeEmail,
+    this.rentalOwnerPhoneNumber,
+    this.rentalOwnerHomeNumber,
+    this.rentalOwnerBuisinessNumber,
+    this.city,
+    this.state,
+    this.Address,
+    this.country,
+    this.postalCode,
+    this.createdAt,
+    this.updatedAt,
+    this.isDelete,
+    this.processorList,
   });
 
   factory RentalOwnerData.fromJson(Map<String, dynamic> json) {
     return RentalOwnerData(
-      id: json['_id']?? "",
-      rentalOwnerId: json['rentalowner_id']?? "",
-      adminId: json['admin_id']?? "",
-      rentalOwnerFirstName: json['rentalOwner_firstName']?? "",
-      rentalOwnerLastName: json['rentalOwner_lastName']?? "",
-      rentalOwnerCompanyName: json['rentalOwner_companyName']?? "",
-      rentalOwnerPrimaryEmail: json['rentalOwner_primaryEmail']?? "",
-      rentalOwnerAlternativeEmail: json['rentalOwner_alternateEmail']?? "",
-      rentalOwnerPhoneNumber: json['rentalOwner_phoneNumber']?? "",
-      rentalOwnerHomeNumber: json['rentalOwner_homeNumber']?? "",
-      rentalOwnerBuisinessNumber: json['rentalOwner_businessNumber']?? "",
-      city: json['city']?? "",
-      state: json['state']?? "",
-      Address: json['street_address']?? "",
-      country: json['country']?? "",
-      postalCode: json['postal_code']?? "",
-      createdAt: json['createdAt']?? "",
-      updatedAt: json['updatedAt']?? "",
-      isDelete: json['is_delete']?? "",
-      processorList: json['processor_list']?? "",
+      id: json['_id'] ?? "",
+      rentalOwnerId: json['rentalowner_id'] ?? "",
+      adminId: json['admin_id'] ?? "",
+      rentalOwnerName: json['rentalOwner_name'] ?? "", // Add this field
+      rentalOwnerFirstName: json['rentalOwner_firstName'] ?? "",
+      rentalOwnerLastName: json['rentalOwner_lastName'] ?? "",
+      rentalOwnerCompanyName: json['rentalOwner_companyName'] ?? "",
+      rentalOwnerPrimaryEmail: json['rentalOwner_primaryEmail'] ?? "",
+      rentalOwnerAlternativeEmail: json['rentalOwner_alternateEmail'] ?? "",
+      rentalOwnerPhoneNumber: json['rentalOwner_phoneNumber'] ?? "",
+      rentalOwnerHomeNumber: json['rentalOwner_homeNumber'] ?? "",
+      rentalOwnerBuisinessNumber: json['rentalOwner_businessNumber'] ?? "",
+      city: json['city'] ?? "",
+      state: json['state'] ?? "",
+      Address: json['street_address'] ?? "",
+      country: json['country'] ?? "",
+      postalCode: json['postal_code'] ?? "",
+      createdAt: json['createdAt'] ?? "",
+      updatedAt: json['updatedAt'] ?? "",
+      isDelete: json['is_delete'] ?? "",
+      processorList: json['processor_list'] ?? "",
     );
   }
 }
+
 class PropertyTypeData {
   String? id;
   String? adminId;
@@ -155,48 +166,47 @@ class PropertyTypeData {
   bool? isDelete;
 
   PropertyTypeData({
-     this.id,
-     this.adminId,
-     this.propertyId,
-     this.propertyType,
-     this.propertySubType,
-     this.isMultiunit,
-     this.createdAt,
-     this.updatedAt,
-     this.isDelete,
+    this.id,
+    this.adminId,
+    this.propertyId,
+    this.propertyType,
+    this.propertySubType,
+    this.isMultiunit,
+    this.createdAt,
+    this.updatedAt,
+    this.isDelete,
   });
 
   factory PropertyTypeData.fromJson(Map<String, dynamic> json) {
     return PropertyTypeData(
-      id: json['_id']?? "",
-      adminId: json['admin_id']?? "",
-      propertyId: json['property_id']?? "",
-      propertyType: json['property_type']?? "",
-      propertySubType: json['propertysub_type']?? "",
-      isMultiunit: json['is_multiunit']?? "",
-      createdAt: json['createdAt']?? "",
-      updatedAt: json['updatedAt']?? "",
-      isDelete: json['is_delete']?? "",
+      id: json['_id'] ?? "",
+      adminId: json['admin_id'] ?? "",
+      propertyId: json['property_id'] ?? "",
+      propertyType: json['property_type'] ?? "",
+      propertySubType: json['propertysub_type'] ?? "",
+      isMultiunit: json['is_multiunit'] ?? "",
+      createdAt: json['createdAt'] ?? "",
+      updatedAt: json['updatedAt'] ?? "",
+      isDelete: json['is_delete'] ?? "",
     );
   }
 }
+
 class StaffMemberData {
   String? id;
   String? adminId;
   String? staffmemberName;
 
-
   StaffMemberData({
     this.id,
     this.adminId,
     this.staffmemberName,
-
   });
   factory StaffMemberData.fromJson(Map<String, dynamic> json) {
     return StaffMemberData(
-      id: json['_id']?? "",
-      adminId: json['admin_id']?? "",
-      staffmemberName: json['staffmember_name']?? "",
+      id: json['_id'] ?? "",
+      adminId: json['admin_id'] ?? "",
+      staffmemberName: json['staffmember_name'] ?? "",
     );
   }
 }

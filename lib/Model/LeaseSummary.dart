@@ -320,8 +320,8 @@ class RenewLeases {
     leaseAmount = json['lease_amount'] != null
         ? (json['lease_amount'] as num).toDouble()
         : null;
-    isDelete = json['is_delete'] ?? "";
-    isrenewed = json['is_renewed'] ?? "";
+    isDelete = json['is_delete'] ?? false;
+    isrenewed = json['is_renewed'] ?? false;
     createdAt = json['createdAt'] ?? "";
     updatedAt = json['updatedAt'] ?? "";
     iV = json['__v'] ?? "";

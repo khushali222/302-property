@@ -2,44 +2,49 @@ class Setting1 {
   String id;
   String adminId;
   String surchargeId;
-  int surchargePercent;
+  double surchargePercent;
   String createdAt;
   String updatedAt;
   bool isDelete;
   int v;
-  int surchargePercentDebit;
-  int surchargePercentACH;
+  double surchargePercentDebit;
+  double surchargePercentACH;
   double surchargeFlatACH;
   String? surcharge_account;
 
-  Setting1({
-    required this.id,
-    required this.adminId,
-    required this.surchargeId,
-    required this.surchargePercent,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.isDelete,
-    required this.v,
-    required this.surchargePercentDebit,
-    required this.surchargePercentACH,
-    required this.surchargeFlatACH,
-    this.surcharge_account
-  });
+  Setting1(
+      {required this.id,
+      required this.adminId,
+      required this.surchargeId,
+      required this.surchargePercent,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.isDelete,
+      required this.v,
+      required this.surchargePercentDebit,
+      required this.surchargePercentACH,
+      required this.surchargeFlatACH,
+      this.surcharge_account});
 
   factory Setting1.fromJson(Map<String, dynamic> json) {
     return Setting1(
       id: json['_id'],
       adminId: json['admin_id'],
       surchargeId: json['surcharge_id'],
-      surchargePercent: json['surcharge_percent'] ?? 0.0,
+      surchargePercent: json['surcharge_percent'] != null
+          ? json['surcharge_percent'].toDouble()
+          : 0.0,
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
       isDelete: json['is_delete'],
       v: json['__v'],
-      surchargePercentDebit: json['surcharge_percent_debit'] ?? 0.0,
-      surchargePercentACH: json['surcharge_percent_ACH'] ?? 0.0,
-        surcharge_account:json['surcharge_account'],
+      surchargePercentDebit: json['surcharge_percent_debit'] != null
+          ? json['surcharge_percent_debit'].toDouble()
+          : 0.0,
+      surchargePercentACH: json['surcharge_percent_ACH'] != null
+          ? json['surcharge_percent_ACH'].toDouble()
+          : 0.0,
+      surcharge_account: json['surcharge_account'],
       surchargeFlatACH: json['surcharge_flat_ACH'] != null
           ? json['surcharge_flat_ACH'].toDouble()
           : 0.0,
@@ -79,12 +84,10 @@ class Setting2 {
     required this.latefeeId,
     required this.duration,
     required this.late_fee,
-
   });
 
   factory Setting2.fromJson(Map<String, dynamic> json) {
     return Setting2(
-
       id: json['_id'],
       adminId: json['admin_id'],
       latefeeId: json['latefee_id'],
@@ -93,12 +96,12 @@ class Setting2 {
     );
   }
 }
+
 class Setting3 {
   String? id;
   String? adminId;
   bool? remindermail;
   String? duration;
-
 
   // Constructor
   Setting3({this.id, this.adminId, this.remindermail, this.duration});
@@ -207,7 +210,6 @@ class ApiResponse {
 //     return data;
 //   }
 // }
-
 
 class Setting4 {
   String? sId;

@@ -188,10 +188,10 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
           final coords = await getCoordinatesFromAddress(rental);
           if (coords != null) {
             double distanceInMeters = Geolocator.distanceBetween(
-              // userLocation.latitude,
-              // userLocation.longitude,
-              39.6613845,
-              -75.6339627,
+              userLocation.latitude,
+              userLocation.longitude,
+              // 39.6613845,
+              // -75.6339627,
               coords.latitude,
               coords.longitude,
             );
