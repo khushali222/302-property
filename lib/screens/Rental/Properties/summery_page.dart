@@ -2055,6 +2055,7 @@ class _Summery_pageState extends State<Summery_page>
     100,
   ]; //
   Lease_page() {
+
     print("calling lease page from my screen");
     return Container(
       child: Column(
@@ -2328,6 +2329,7 @@ class _Summery_pageState extends State<Summery_page>
     100,
   ];
   Revenue_page() {
+    final dateProvider = Provider.of<DateProvider>(context);
     print("calling revenue page from my screen");
     return Container(
       child: Column(
@@ -2575,6 +2577,7 @@ class _Summery_pageState extends State<Summery_page>
   bool is_Loading = true;
   Summary_page() {
     print("$image_url${widget.properties.rentalImage}");
+    final dateProvider = Provider.of<DateProvider>(context);
     return FutureBuilder<Rentals>(
       future: futureRentalDetails,
       builder: (context, snapshot) {
@@ -3736,7 +3739,7 @@ class _Summery_pageState extends State<Summery_page>
                                   (rentalDetails.purchaseDate == null ||
                                           rentalDetails.purchaseDate!.isEmpty)
                                       ? "N/A"
-                                      : rentalDetails.purchaseDate!,
+                                      : dateProvider.formatCurrentDate('${rentalDetails.purchaseDate!}'),
                                   style: TextStyle(
                                       fontSize: 14, color: Colors.black),
                                 ),

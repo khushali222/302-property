@@ -846,12 +846,10 @@ class _lease_communicationState extends State<lease_communication> {
                                                     // '${widget.data.createdAt}',
                                                     // formatDate(
                                                     //     '${Propertytype.createdAt}'),
-                                                   DateFormat(
-                                                        "yyyy-MM-dd")
-                                                        .format(DateTime
-                                                        .parse(
+                                                    dateProvider.formatCurrentDate('${ DateFormat("yyyy-MM-dd")
+                                                        .format(DateTime.parse(
                                                         '${Propertytype.createdAt}')
-                                                        .toLocal())
+                                                        .toLocal())}')
                                                        ,
 
                                                     style: TextStyle(

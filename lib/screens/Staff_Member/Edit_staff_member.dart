@@ -694,7 +694,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                 if (name.text.trim().isEmpty) {
                                   setState(() {
                                     nameerror = true;
-                                    namemessage = "Name is required";
+                                    namemessage = "Please enter Staff Member Name";
                                   });
                                 } else {
                                   setState(() {
@@ -707,7 +707,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                   setState(() {
                                     designationerror = true;
                                     designationmessage =
-                                    "Designation is required";
+                                    "Please enter Designation";
                                   });
                                 } else {
                                   setState(() {
@@ -720,7 +720,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                   setState(() {
                                     phonenumbererror = true;
                                     phonenumbermessage =
-                                    "Phone number is required";
+                                    "Please enter Phone Number";
                                   });
                                 }else if (formattedPhoneNumber.length != 10) {
                                   setState(() {
@@ -737,7 +737,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                 if (email.text.trim().isEmpty) {
                                   setState(() {
                                     emailerror = true;
-                                    emailmessage = "Email is required";
+                                    emailmessage = "Please enter Email Address";
                                   });
                                 } else {
                                   setState(() {
@@ -748,7 +748,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                 if (password.text.trim().isEmpty) {
                                   setState(() {
                                     passworderror = true;
-                                    passwordmessage = "Password is required";
+                                    passwordmessage = "Please enter Password";
                                   });
                                 } else if (password.text.length < 8) {
                                   setState(() {
@@ -778,7 +778,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                 if (conpassword.text.trim().isEmpty) {
                                   setState(() {
                                     conpassworderror = true;
-                                    conpasswordmessage = "Confirm Password is required";
+                                    conpasswordmessage = "Must be same as password";
                                   });
                                 } else if (conpassword.text != password.text) {
                                   setState(() {

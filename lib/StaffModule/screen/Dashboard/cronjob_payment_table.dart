@@ -11,11 +11,14 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import '../../../Model/Dashbord_table/Payment_refund_model.dart';
 import '../../../Model/Dashbord_table/cronjob_payment_table.dart';
+import '../../../Model/tenants.dart' as tenant_model;
 import '../../../constant/constant.dart';
 import '../../../provider/dateProvider.dart';
 import '../../../widgets/CustomTableShimmer.dart';
 import '../../repository/Payment_cronjob/Payment_cronjob_repo.dart';
 import '../../repository/Payment_cronjob/cronjob_payment_table.dart';
+import '../../repository/tenants.dart';
+import '../Rental/Tenants/Tenant_summary.dart';
 
 class Cronjob_payment_table extends StatefulWidget {
   @override
@@ -128,17 +131,17 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                         children: [
                           width < 400
                               ? Text("  Rental\n Address",
-                              style: TextStyle(
-                                color: Color.fromRGBO(50, 75, 119, 1),
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ))
+                                  style: TextStyle(
+                                    color: Color.fromRGBO(50, 75, 119, 1),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ))
                               : Text("  Rental\n Address",
-                              style: TextStyle(
-                                color: Color.fromRGBO(50, 75, 119, 1),
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              )),
+                                  style: TextStyle(
+                                    color: Color.fromRGBO(50, 75, 119, 1),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  )),
                           // Text("Property", style: TextStyle(color: Colors.white)),
                           SizedBox(width: 3),
                           // ascending1
@@ -281,13 +284,13 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
   }
 
   Widget paymentCard(
-      String name,
-      String address,
-      String amount,
-      bool isExpanded,
-      VoidCallback onExpandTap,
-      LeaseDatacronjob data,
-      ) {
+    String name,
+    String address,
+    String amount,
+    bool isExpanded,
+    VoidCallback onExpandTap,
+    LeaseDatacronjob data,
+  ) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(16),
@@ -319,7 +322,24 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                 ),
               ),
               SizedBox(width: 5),
-              Text(name, style: cardTextStyle),
+              GestureDetector(
+                onTap: () async {
+                  // Fetch tenant data first using the tenantId
+                  List<tenant_model.Tenant> tenantData =
+                      await TenantsRepository()
+                              .fetchTenantsummery(data.tenant!.tenantId!) ??
+                          [];
+                  if (tenantData.isNotEmpty) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ResponsiveTenantSummary(
+                                tenants: tenantData.first,
+                                tenantId: data.tenant!.tenantId!)));
+                  }
+                },
+                child: Text(name, style: cardTextStyle),
+              ),
               const Spacer(),
               Text('\$$amount', style: cardTextStyle)
             ],
@@ -650,10 +670,10 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
   final _scrollController = ScrollController();
   bool failureacknowledged = true;
   void _showAlertAcknowledgement(
-      BuildContext context,
-      String id,
-      bool failureacknowledged,
-      ) {
+    BuildContext context,
+    String id,
+    bool failureacknowledged,
+  ) {
     TextEditingController reason = TextEditingController();
     Alert(
       context: context,
@@ -708,10 +728,11 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
           },
           color: blueColor,
         ),
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -851,7 +872,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                 if (pickedDate != null) {
                   setState(() {
                     retrydate.text =
-                    pickedDate.toLocal().toString().split(' ')[0];
+                        pickedDate.toLocal().toString().split(' ')[0];
                   });
                 }
               },
@@ -908,10 +929,11 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
           },
           color: blueColor,
         ),
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -926,7 +948,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
   }
 
   final cardTextStyle =
-  TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: blueColor);
+      TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: blueColor);
   final subTextStyle = TextStyle(
       color: Colors.grey[700], fontWeight: FontWeight.bold, fontSize: 14);
   Future<void> _showAlertRefund(BuildContext context, String id) async {
@@ -934,7 +956,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
     TextEditingController amount = TextEditingController();
     TextEditingController memo = TextEditingController();
     List<PaymentRefund> refunds =
-    await PaymentCronjobRepository().fetchPaymentRefunds(id);
+        await PaymentCronjobRepository().fetchPaymentRefunds(id);
     PaymentRefund? refund = refunds.isNotEmpty ? refunds.first : null;
 
     if (refund != null) {
@@ -1033,7 +1055,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                 if (pickedDate != null) {
                   setState(() {
                     retrydate.text =
-                    pickedDate.toLocal().toString().split(' ')[0];
+                        pickedDate.toLocal().toString().split(' ')[0];
                     // This ensures the date appears as selected in yyyy-MM-dd format
                   });
                 }
@@ -1152,11 +1174,11 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
               context: context,
               entry: (refund?.entry ?? [])
                   .map((item) => {
-                "amount": item.amount,
-                "account": item.account,
-                "date": item.date,
-                "memo": item.memo,
-              })
+                        "amount": item.amount,
+                        "account": item.account,
+                        "date": item.date,
+                        "memo": item.memo,
+                      })
                   .toList(),
             );
 
@@ -1214,10 +1236,11 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
 
           color: blueColor,
         ),
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -1247,7 +1270,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                   borderRadius: BorderRadius.circular(12)),
               backgroundColor: Colors.white,
               contentPadding:
-              const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -1289,7 +1312,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                       hintText: 'Enter reason for void',
                       border: OutlineInputBorder(),
                       contentPadding:
-                      EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -1299,25 +1322,25 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                         child: ElevatedButton(
                           onPressed: isReasonEntered
                               ? () async {
-                            Navigator.pop(context);
-                            var data =
-                            await PaymentCronjobRepository().VoidCron(
-                              pay_id: id,
-                              void_reason: reason.text.trim(),
-                              context: context,
-                            );
-                            if (data != null) {
-                              // refresh data
-                              futurecronjobpayment =
-                                  cronjob_payment_tableService()
-                                      .fetchCronjob_payment(
-                                      limit: itemsPerPage);
-                            }
-                          }
+                                  Navigator.pop(context);
+                                  var data =
+                                      await PaymentCronjobRepository().VoidCron(
+                                    pay_id: id,
+                                    void_reason: reason.text.trim(),
+                                    context: context,
+                                  );
+                                  if (data != null) {
+                                    // refresh data
+                                    futurecronjobpayment =
+                                        cronjob_payment_tableService()
+                                            .fetchCronjob_payment(
+                                                limit: itemsPerPage);
+                                  }
+                                }
                               : null,
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                            isReasonEntered ? blueColor : Colors.grey,
+                                isReasonEntered ? blueColor : Colors.grey,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8)),
@@ -1473,7 +1496,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                     // }
                     //sortData(data);
                     final totalPages =
-                    (snapshot.data!.metadata!.total! / itemsPerPage).ceil();
+                        (snapshot.data!.metadata!.total! / itemsPerPage).ceil();
 
                     // final currentPageData = data
                     //     .skip(currentPage * itemsPerPage)
@@ -1501,7 +1524,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                             //     border: Border.all(color: blueColor)),
                             child: Column(
                               children:
-                              currentPageData.asMap().entries.map((entry) {
+                                  currentPageData.asMap().entries.map((entry) {
                                 int index = entry.key;
                                 bool isExpanded = expandedIndex == index;
                                 LeaseDatacronjob Propertytype = entry.value;
@@ -1513,10 +1536,10 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                     Propertytype.totalAmount!
                                         .toStringAsFixed(2)!,
                                     isExpanded,
-                                        () {
+                                    () {
                                       setState(() {
                                         expandedIndex =
-                                        isExpanded ? null : index;
+                                            isExpanded ? null : index;
                                       });
                                     },
                                     Propertytype,
@@ -1526,105 +1549,106 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                             ),
                           ),
                           SizedBox(height: 20),
-                           if (data.length > 5)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Row(
-                                children: [
-                                  // Text('Rows per page:'),
-                                  SizedBox(width: 10),
-                                  Material(
-                                    elevation: 3,
-                                    child: Container(
-                                      height: 40,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 12.0),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<int>(
-                                          value: itemsPerPage,
-                                          items: itemsPerPageOptions
-                                              .map((int value) {
-                                            return DropdownMenuItem<int>(
-                                              value: value,
-                                              child: Text(value.toString()),
-                                            );
-                                          }).toList(),
-                                          onChanged: snapshot
-                                              .data!.metadata!.total! >
-                                              itemsPerPageOptions
-                                                  .first // Condition to check if dropdown should be enabled
-                                              ? (newValue) {
-                                            setState(() {
-                                              itemsPerPage = newValue!;
-                                              currentPage =
-                                              1; // Reset to first page when items per page change
-                                              futurecronjobpayment =
-                                                  cronjob_payment_tableService()
-                                                      .fetchCronjob_payment(
-                                                      limit:
-                                                      itemsPerPage,
-                                                      page:
-                                                      currentPage);
-                                            });
-                                          }
-                                              : null,
+                          if (data.length > 5)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Row(
+                                  children: [
+                                    // Text('Rows per page:'),
+                                    SizedBox(width: 10),
+                                    Material(
+                                      elevation: 3,
+                                      child: Container(
+                                        height: 40,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 12.0),
+                                        decoration: BoxDecoration(
+                                          border:
+                                              Border.all(color: Colors.grey),
+                                        ),
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<int>(
+                                            value: itemsPerPage,
+                                            items: itemsPerPageOptions
+                                                .map((int value) {
+                                              return DropdownMenuItem<int>(
+                                                value: value,
+                                                child: Text(value.toString()),
+                                              );
+                                            }).toList(),
+                                            onChanged: snapshot.data!.metadata!
+                                                        .total! >
+                                                    itemsPerPageOptions
+                                                        .first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
+                                                    setState(() {
+                                                      itemsPerPage = newValue!;
+                                                      currentPage =
+                                                          1; // Reset to first page when items per page change
+                                                      futurecronjobpayment =
+                                                          cronjob_payment_tableService()
+                                                              .fetchCronjob_payment(
+                                                                  limit:
+                                                                      itemsPerPage,
+                                                                  page:
+                                                                      currentPage);
+                                                    });
+                                                  }
+                                                : null,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronLeft,
-                                      color: currentPage == 1
-                                          ? Colors.grey
-                                          : blueColor,
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.circleChevronLeft,
+                                        color: currentPage == 1
+                                            ? Colors.grey
+                                            : blueColor,
+                                      ),
+                                      onPressed: currentPage == 1
+                                          ? null
+                                          : () {
+                                              setState(() {
+                                                currentPage--;
+                                                futurecronjobpayment =
+                                                    cronjob_payment_tableService()
+                                                        .fetchCronjob_payment(
+                                                            limit: itemsPerPage,
+                                                            page: currentPage);
+                                              });
+                                            },
                                     ),
-                                    onPressed: currentPage == 1
-                                        ? null
-                                        : () {
-                                      setState(() {
-                                        currentPage--;
-                                        futurecronjobpayment =
-                                            cronjob_payment_tableService()
-                                                .fetchCronjob_payment(
-                                                limit: itemsPerPage,
-                                                page: currentPage);
-                                      });
-                                    },
-                                  ),
-                                  Text('Page ${currentPage} of $totalPages'),
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronRight,
-                                      color: currentPage < totalPages
-                                          ? blueColor
-                                          : Colors.grey,
+                                    Text('Page ${currentPage} of $totalPages'),
+                                    IconButton(
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.circleChevronRight,
+                                        color: currentPage < totalPages
+                                            ? blueColor
+                                            : Colors.grey,
+                                      ),
+                                      onPressed: currentPage < totalPages
+                                          ? () {
+                                              setState(() {
+                                                currentPage++;
+                                                futurecronjobpayment =
+                                                    cronjob_payment_tableService()
+                                                        .fetchCronjob_payment(
+                                                            limit: itemsPerPage,
+                                                            page: currentPage);
+                                              });
+                                            }
+                                          : null,
                                     ),
-                                    onPressed: currentPage < totalPages
-                                        ? () {
-                                      setState(() {
-                                        currentPage++;
-                                        futurecronjobpayment =
-                                            cronjob_payment_tableService()
-                                                .fetchCronjob_payment(
-                                                limit: itemsPerPage,
-                                                page: currentPage);
-                                      });
-                                    }
-                                        : null,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                                  ],
+                                ),
+                              ],
+                            ),
                         ],
                       ),
                     );

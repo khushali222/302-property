@@ -796,26 +796,26 @@ class _Add_new_propertyState extends State<Add_new_property> {
                           left: 10, right: 10, top: 10, bottom: 10),
                       child: Column(
                         children: [
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 15,
-                              ),
-                              Text(
-                                "New Property ",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: blueColor,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 17
-                                            : 18),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
+                          // Row(
+                          //   children: [
+                          //     SizedBox(
+                          //       width: 15,
+                          //     ),
+                          //     Text(
+                          //       "New Property ",
+                          //       style: TextStyle(
+                          //           fontWeight: FontWeight.bold,
+                          //           color: blueColor,
+                          //           fontSize:
+                          //               MediaQuery.of(context).size.width < 500
+                          //                   ? 17
+                          //                   : 18),
+                          //     ),
+                          //   ],
+                          // ),
+                          // SizedBox(
+                          //   height: 10,
+                          // ),
                           Row(
                             children: [
                               SizedBox(

@@ -1288,8 +1288,8 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                             }
                                                           });
                                                         },
-                                                        child: Text(
-                                                          '${Propertytype.actionDate}',
+                                                        child: Text(dateProvider.formatCurrentDate('${Propertytype.actionDate}')
+                                                          ,
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:

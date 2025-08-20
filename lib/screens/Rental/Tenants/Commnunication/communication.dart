@@ -922,10 +922,10 @@ class _Tenant_communicationState extends State<Tenant_communication> {
                                                   // '${widget.data.createdAt}',
                                                   // formatDate(
                                                   //     '${Propertytype.createdAt}'),
-                                                  DateFormat("yyyy-MM-dd")
-                                                      .format(DateTime.parse(
-                                                      '${Propertytype.createdAt}')
-                                                      .toLocal()),
+                                dateProvider.formatCurrentDate('${ DateFormat("yyyy-MM-dd")
+                                    .format(DateTime.parse(
+                                    '${Propertytype.createdAt}')
+                                    .toLocal())}'),
 
                                                   style: TextStyle(
                                                     color: blueColor,

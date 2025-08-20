@@ -11,6 +11,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 
 import '../../Model/Dashbord_table/Payment_refund_model.dart';
 import '../../Model/Dashbord_table/cronjob_payment_table.dart';
+import '../../Model/tenants.dart' as tenant_model;
 
 import '../../constant/constant.dart';
 
@@ -18,8 +19,10 @@ import '../../provider/dateProvider.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import '../../repository/Payment_cronjob/Payment_cronjob_repo.dart';
 import '../../repository/dashboard_table_repo/cronjob_payment_table.dart';
+import '../../repository/tenants.dart';
 import '../../widgets/CustomTableShimmer.dart';
 import '../../widgets/titleBar.dart';
+import '../Rental/Tenants/Tenant_summary.dart';
 
 class Cronjob_payment_table extends StatefulWidget {
   @override
@@ -807,7 +810,24 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                 ),
               ),
               SizedBox(width: 5),
-              Text(name, style: cardTextStyle),
+              GestureDetector(
+                  onTap: () async {
+                    // Fetch tenant data first using the tenantId
+                    List<tenant_model.Tenant> tenantData =
+                        await TenantsRepository()
+                                .fetchTenantsummery(data.tenant!.tenantId!) ??
+                            [];
+                    if (tenantData.isNotEmpty) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ResponsiveTenantSummary(
+                                  tenants: tenantData
+                                      .first, // Pass the fetched tenant data here
+                                  tenantId: data.tenant!.tenantId!)));
+                    }
+                  },
+                  child: Text(name, style: cardTextStyle)),
               const Spacer(),
               Text('\$$amount', style: cardTextStyle)
             ],
@@ -923,11 +943,13 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Rental Address',
-                      style: subTextStyle.copyWith(
-                        color: blueColor,
-                        fontWeight: FontWeight.bold,
+                    GestureDetector(
+                      child: Text(
+                        'Rental Address',
+                        style: subTextStyle.copyWith(
+                          color: blueColor,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     Text(
@@ -1536,8 +1558,9 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                 }
                               : null,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                isReasonEntered ? blueColor : Colors.grey.shade300,
+                            backgroundColor: isReasonEntered
+                                ? blueColor
+                                : Colors.grey.shade300,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8)),

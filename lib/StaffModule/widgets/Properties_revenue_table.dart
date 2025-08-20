@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import '../../Model/Properties_revenue_model.dart';
 import '../../constant/constant.dart';
+import '../../provider/dateProvider.dart';
 
 class CustomStaffRevenueTable extends StatefulWidget {
   final List<Properties_Revenu_model> revenueData;
@@ -161,6 +163,7 @@ class _CustomAdminRevenueTableState extends State<CustomStaffRevenueTable> {
   }
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Padding(
       padding: EdgeInsets.all(10.0),
       child: Column(
@@ -224,8 +227,7 @@ class _CustomAdminRevenueTableState extends State<CustomStaffRevenueTable> {
                                           expandedIndex == index ? null : index;
                                     });
                                   },
-                                  child: Text(
-                                    formatDate(lease.entry?.first.date),
+                                  child: Text(dateProvider.formatCurrentDate('${formatDate(lease.entry?.first.date)}'),
                                     style: TextStyle(
                                       color: widget.blueColor,
                                       fontWeight: FontWeight.bold,

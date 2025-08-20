@@ -103,7 +103,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
         }
       }
       setState(() {
-        widget.tenants!.leaseData = allLeaseData;
+        if (widget.tenants != null) {
+          widget.tenants!.leaseData = allLeaseData;
+        }
       });
       return allLeaseData;
     } else {
@@ -976,7 +978,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                           Row(
                             children: [
                               Text(
-                                '${widget.tenants?.tenantFirstName} ${widget.tenants?.tenantLastName}',
+                                '${widget.tenants?.tenantFirstName ?? 'Loading...'} ${widget.tenants?.tenantLastName ?? ''}',
                                 style: TextStyle(
                                     color: blueColor,
                                     fontWeight: FontWeight.bold),
@@ -1017,8 +1019,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                     builder: (context) =>
                                                         send_email(
                                                           lease: [
-                                                            widget.tenants!
-                                                                .tenantId!
+                                                            widget.tenantId
                                                           ],
                                                           leaseID: null,
                                                         )));
@@ -1069,15 +1070,24 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                         // Provider.of<SelectedApplicantProvider>(context,
                                         //     listen: false)
                                         //     .clearApplicant();
-                                        final result =
-                                            await Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        EditTenants(
-                                                          tenantId: "",
-                                                          tenants:
-                                                              widget.tenants!,
-                                                        )));
+                                        // Fetch tenant data first
+                                        List<Tenant> tenantData =
+                                            await TenantsRepository()
+                                                    .fetchTenantsummery(
+                                                        widget.tenantId) ??
+                                                [];
+                                        if (tenantData.isNotEmpty) {
+                                          final result =
+                                              await Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          EditTenants(
+                                                            tenantId:
+                                                                widget.tenantId,
+                                                            tenants: tenantData
+                                                                .first,
+                                                          )));
+                                        }
                                       },
                                       child: Container(
                                         height:

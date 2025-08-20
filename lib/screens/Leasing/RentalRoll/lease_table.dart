@@ -625,7 +625,7 @@ class _Lease_tableState extends State<Lease_table> {
                           padding: const EdgeInsets.only(top: 8.0),
                           child: titleBar(
                             width: MediaQuery.of(context).size.width * .65,
-                            title: 'Rent Roll',
+                            title: 'Leases',
                           ),
                         ),
                         GestureDetector(

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/RentalRoll/SummeryPageLease.dart';
 import '../../Model/properties_Lease_model.dart';
 import '../../constant/constant.dart';
+import '../../provider/dateProvider.dart';
 
 
 class CustomStaffLeaseTable extends StatefulWidget {
@@ -159,6 +161,7 @@ class _CustomStaffLeaseTableState extends State<CustomStaffLeaseTable> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Padding(
       padding: EdgeInsets.all(10.0),
       child: Column(
@@ -237,7 +240,7 @@ class _CustomStaffLeaseTableState extends State<CustomStaffLeaseTable> {
                                       MediaQuery.of(context).size.width * .099),
                               Expanded(
                                 child: Text(
-                                  lease.endDate ?? 'N/A',
+                                  dateProvider.formatCurrentDate('${ lease.endDate ?? 'N/A'}'),
                                   style: TextStyle(
                                     color: widget.blueColor,
                                     fontWeight: FontWeight.bold,

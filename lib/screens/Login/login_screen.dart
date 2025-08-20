@@ -194,27 +194,29 @@ class _Login_ScreenState extends State<Login_Screen> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
-                  // Welcome
-                  Center(
-                    child: Text(
-                      "Welcome to CRM",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: MediaQuery.of(context).size.width * 0.04,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.02,
-                  ),
+                  // // Welcome
+                  // Center(
+                  //   child: Text(
+                  //     "Welcome to CRM",
+                  //     style: TextStyle(
+                  //       color: Colors.black,
+                  //       fontWeight: FontWeight.bold,
+                  //       fontSize: MediaQuery.of(context).size.width * 0.04,
+                  //     ),
+                  //   ),
+                  // ),
+                  // SizedBox(
+                  //   height: MediaQuery.of(context).size.height * 0.02,
+                  // ),
                   // Login text
                   Center(
                     child: Text(
                       "Sign In",
                       style: TextStyle(
                           color: Colors.black,
-                          fontSize: MediaQuery.of(context).size.width * 0.03),
+                          fontWeight: FontWeight.bold,
+                          fontSize: MediaQuery.of(context).size.width * 0.046
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -370,7 +372,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                               height: MediaQuery.of(context).size.height * 0.05,
                               width: MediaQuery.of(context).size.width * 0.8,
                               decoration: BoxDecoration(
-                                color: Color(0xFF152B51),
+                                color: blueColor,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Center(
@@ -748,27 +750,29 @@ class _Login_ScreenState extends State<Login_Screen> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
-                  // Welcome
-                  Center(
-                    child: Text(
-                      "Welcome to CRM",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: MediaQuery.of(context).size.width * 0.05,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.02,
-                  ),
+                  // // Welcome
+                  // Center(
+                  //   child: Text(
+                  //     "Welcome to CRM",
+                  //     style: TextStyle(
+                  //       color: Colors.black,
+                  //       fontWeight: FontWeight.bold,
+                  //       fontSize: MediaQuery.of(context).size.width * 0.05,
+                  //     ),
+                  //   ),
+                  // ),
+                  // SizedBox(
+                  //   height: MediaQuery.of(context).size.height * 0.02,
+                  // ),
                   // Login text
                   Center(
                     child: Text(
                       "Sign In",
                       style: TextStyle(
                           color: Colors.black,
-                          fontSize: MediaQuery.of(context).size.width * 0.036),
+                          fontWeight: FontWeight.bold,
+                          fontSize: MediaQuery.of(context).size.width * 0.046
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -924,7 +928,8 @@ class _Login_ScreenState extends State<Login_Screen> {
                               height: MediaQuery.of(context).size.height * 0.06,
                               width: MediaQuery.of(context).size.width * 0.8,
                               decoration: BoxDecoration(
-                                color: Color(0xFF7A8AA0),
+                                //color: Color(0xFF7A8AA0),
+                                color: blueColor,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Center(

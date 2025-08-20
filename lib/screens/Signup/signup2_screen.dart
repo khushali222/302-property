@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:ui';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zxcvbn/zxcvbn.dart';
@@ -55,19 +56,42 @@ class _Signup2State extends State<Signup2> {
   String _feedback = '';
 
 
-
-
+  bool obsecure = true;
+  bool conobsecure = true;
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return MaterialApp(
-      debugShowCheckedModeBanner: true,
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: Colors.white,
         body: ListView(
           children: [
-            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+            Align(
+              alignment: Alignment.topLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 16), // Safe area
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    height: 40,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200], // light grey
+                      borderRadius: BorderRadius.circular(10), // square-ish with smooth edges
+
+                    ),
+                    child: Icon(
+                      Icons.arrow_back_ios_sharp,
+                      color: Colors.black54,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
             Image(
               image: AssetImage('assets/images/logo.png'),
               height: 40,
@@ -81,18 +105,19 @@ class _Signup2State extends State<Signup2> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  // Text(
+                  //   "Welcome to 302 Rentals",
+                  //   style: TextStyle(
+                  //       color: Colors.black,
+                  //       fontWeight: FontWeight.bold,
+                  //       fontSize: MediaQuery.of(context).size.width * 0.05),
+                  // ),
+                  // SizedBox(height: MediaQuery.of(context).size.height * 0.013),
                   Text(
-                    "Welcome to 302 Rentals",
+                    "Sign up for your free trial account",
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
-                        fontSize: MediaQuery.of(context).size.width * 0.05),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.013),
-                  Text(
-                    "Signup for free trial account",
-                    style: TextStyle(
-                        color: Colors.black,
                         fontSize: MediaQuery.of(context).size.width * 0.04),
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.025),
@@ -116,7 +141,10 @@ class _Signup2State extends State<Signup2> {
                                           MediaQuery.of(context).size.width *
                                               0.00),
                                   child: TextField(
-      
+                                    style:  TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500, // optional
+                                    ),
                                     enabled: false,
                                     controller: firstname,
                                     cursorColor:
@@ -165,6 +193,10 @@ class _Signup2State extends State<Signup2> {
                                   child: Center(
                                     child: TextField(
                                       enabled: false,
+                                      style:  TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500, // optional
+                                      ),
                                       controller: lastname,
                                       cursorColor:
                                           blueColor,
@@ -213,6 +245,10 @@ class _Signup2State extends State<Signup2> {
                                     child: TextField(
                                       keyboardType: TextInputType.emailAddress,
                                       controller: email,
+                                      style:  TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500, // optional
+                                      ),
                                       enabled: false,
                                       cursorColor:
                                           blueColor,
@@ -326,7 +362,13 @@ class _Signup2State extends State<Signup2> {
                                               0.00),
                                   child: Center(
                                     child: TextField(
-      
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter
+                                            .digitsOnly,
+                                        LengthLimitingTextInputFormatter(
+                                            10),
+                                        PhoneNumberFormatter(),
+                                      ],
                                       onChanged: (value) {
                                         setState(() {
                                           phoneerror = false;
@@ -400,7 +442,7 @@ class _Signup2State extends State<Signup2> {
                                           passworderror = false;
                                         });
                                       },
-                                      obscureText: true,
+                                      obscureText: obsecure,
                                       controller: password,
                                       cursorColor:
                                           blueColor,
@@ -420,6 +462,20 @@ class _Signup2State extends State<Signup2> {
                                           child: Image.asset(
                                               'assets/icons/pasword.png'),
       
+                                        ),
+                                        suffixIcon: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              obsecure = !obsecure;
+                                            });
+                                          },
+                                          child: Icon(
+                                            obsecure
+                                                ? Icons.visibility
+                                                : Icons.visibility_off,
+                                            color: Color(0xFF444444),
+                                            size: 20,
+                                          ),
                                         ),
                                         hintText: "Password",
                                         //  suffixIcon: Icon(),
@@ -469,7 +525,7 @@ class _Signup2State extends State<Signup2> {
                                           confirmpassworderror = false;
                                         });
                                       },
-                                      obscureText: true,
+                                      obscureText: conobsecure,
                                       controller: confirmpassword,
                                       cursorColor:
                                       blueColor,
@@ -489,6 +545,20 @@ class _Signup2State extends State<Signup2> {
                                           child: Image.asset(
                                               'assets/icons/pasword.png'),
       
+                                        ),
+                                        suffixIcon: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              conobsecure = !conobsecure;
+                                            });
+                                          },
+                                          child: Icon(
+                                            conobsecure
+                                                ? Icons.visibility
+                                                : Icons.visibility_off,
+                                            color: Color(0xFF444444),
+                                            size: 20,
+                                          ),
                                         ),
                                         hintText: "Confirm Password",
                                         //  suffixIcon: Icon(),
@@ -535,7 +605,7 @@ class _Signup2State extends State<Signup2> {
                       ),
                       SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                       Text(
-                        "I have read and accept 302 properties terms and condition ",
+                        "I have read and accept CloudRentalManager terms and conditions ",
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.024,
                           color: Colors.black,
@@ -550,7 +620,7 @@ class _Signup2State extends State<Signup2> {
                      if(companyname.text.trim().isEmpty){
                       setState(() {
                         companynameerror = true;
-                        companynamemessage = "Company name is required";
+                        companynamemessage = "Company Name is required";
                       });
                      }
                      else {
@@ -561,13 +631,13 @@ class _Signup2State extends State<Signup2> {
                      if(phonenumber.text.trim().isEmpty){
                        setState(() {
                          phoneerror = true;
-                         phonemessage = "Phone number is required";
+                         phonemessage = "Phone Number is required";
                        });
                      }
-                     else if(phonenumber.text.trim().length < 9){
+                     else if(phonenumber.text.trim().length != 10){
                        setState(() {
                          phoneerror = true;
-                         phonemessage = "Phone number is atleast 10 digit";
+                         phonemessage = "Phone Number must be 10 digits";
                        });
                      }
                      else {
@@ -637,13 +707,13 @@ class _Signup2State extends State<Signup2> {
                      if(confirmpassword.text.trim().isEmpty){
                        setState(() {
                          confirmpassworderror = true;
-                         confirmpasswordmessage = "Confirm password is required";
+                         confirmpasswordmessage = "Confirm Password is required";
                        });
                      }
                      else if(confirmpassword.text.trim() != password.text.trim()){
                        setState(() {
                          confirmpassworderror = true;
-                         confirmpasswordmessage ="Both password is not match";
+                         confirmpasswordmessage ="Both Password is not match";
                        });
                      }
                      else{
@@ -853,10 +923,10 @@ class _Signup2State extends State<Signup2> {
 
     final response = await http.post(
         Uri.parse('${Api_url}/api/admin/register'),
-        body: {"email": email.text,
-          "password": password.text,"first_name":firstname.text,"last_name":lastname.text,"company_name":companyname.text,"phone_number":phonenumber.text});
+        body: {"email": email.text.trim(),
+          "password": password.text.trim(),"first_name":firstname.text.trim(),"last_name":lastname.text.trim(),"company_name":companyname.text.trim(),"phone_number":phonenumber.text.trim()});
     final jsonData = json.decode(response.body);
-
+    print("login ${response.body}");
     if (jsonData["statusCode"] == 200) {
 
       prefs.setString('first_name', jsonData['data']['first_name']);

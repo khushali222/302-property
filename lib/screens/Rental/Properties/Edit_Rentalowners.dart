@@ -291,7 +291,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                       ],
                     ),
                     child: Text(
-                      "Edit RentalOwners",
+                      "Edit Rental Owner",
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

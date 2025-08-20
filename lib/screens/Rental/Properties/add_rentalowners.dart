@@ -269,7 +269,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                       ],
                     ),
                     child: Text(
-                      "Add RentalOwners",
+                      "Add Rental Owner",
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

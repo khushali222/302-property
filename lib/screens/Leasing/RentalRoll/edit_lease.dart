@@ -1362,7 +1362,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                 ),
                               if (MediaQuery.of(context).size.width < 500)
                                 CustomTextField(
-                                  onTap: () async {
+                                  onTap: ()
+                                  async {
                                     DateTime? pickedDate = await showDatePicker(
                                       context: context,
                                       initialDate: DateTime.now(),
@@ -1423,7 +1424,65 @@ class _Edit_leaseState extends State<Edit_lease>
                                   },
                                   readOnnly: true,
                                   suffixIcon: IconButton(
-                                      onPressed: () {},
+                                      onPressed: ()  async {
+    DateTime? pickedDate = await showDatePicker(
+    context: context,
+    initialDate: DateTime.now(),
+    firstDate: DateTime(2000),
+    lastDate: DateTime(2101),
+    locale: const Locale('en', 'US'),
+    builder: (BuildContext context,
+    Widget? child) {
+    return Theme(
+    data: ThemeData.light().copyWith(
+    colorScheme: ColorScheme.light(
+    primary:
+    blueColor, // header background color
+    onPrimary: Colors
+        .white, // header text color
+    onSurface:
+    blueColor, // body text color
+    ),
+    textButtonTheme:
+    TextButtonThemeData(
+    style: TextButton.styleFrom(
+    foregroundColor: Colors.white,
+    backgroundColor:
+    blueColor, // button text color
+    ),
+    ),
+    ),
+    child: child!,
+    );
+    },
+    );
+
+    if (pickedDate != null) {
+    // String formattedStartDate =
+    //     "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+    String formattedStartDate =
+    "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+    DateTime endDate = DateTime(
+    pickedDate.year,
+    pickedDate.month + 1,
+    pickedDate.day);
+    String formattedEndDate =
+    "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+
+    // String formattedEndDate =
+    //     "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+    setState(() {
+    startDateController.text =
+    formattedStartDate;
+    _startDate = pickedDate;
+    endDateController.text =
+    formattedEndDate;
+    rentCycleItemsDynamic(endDate
+        .difference(_startDate!)
+        .inDays);
+    });
+    }
+    },
                                       icon:
                                           const Icon(Icons.date_range_rounded)),
                                   validator: (value) {
@@ -1452,7 +1511,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                 ),
                               if (MediaQuery.of(context).size.width < 500)
                                 CustomTextField(
-                                  onTap: () async {
+                                  onTap: ()
+                                  async {
                                     DateTime? pickedDate = await showDatePicker(
                                       context: context,
                                       initialDate: DateTime.now(),
@@ -1509,7 +1569,61 @@ class _Edit_leaseState extends State<Edit_lease>
                                   },
                                   readOnnly: true,
                                   suffixIcon: IconButton(
-                                      onPressed: () {},
+                                      onPressed: ()  async {
+                                        DateTime? pickedDate = await showDatePicker(
+                                          context: context,
+                                          initialDate: DateTime.now(),
+                                          firstDate: DateTime(2000),
+                                          lastDate: DateTime(2101),
+                                          locale: const Locale('en', 'US'),
+                                          builder: (BuildContext context,
+                                              Widget? child) {
+                                            return Theme(
+                                              data: ThemeData.light().copyWith(
+                                                colorScheme: ColorScheme.light(
+                                                  primary:
+                                                  blueColor, // header background color
+                                                  onPrimary: Colors
+                                                      .white, // header text color
+                                                  onSurface:
+                                                  blueColor, // body text color
+                                                ),
+                                                textButtonTheme:
+                                                TextButtonThemeData(
+                                                  style: TextButton.styleFrom(
+                                                    foregroundColor: Colors.white,
+                                                    backgroundColor:
+                                                    blueColor, // button text color
+                                                  ),
+                                                ),
+                                              ),
+                                              child: child!,
+                                            );
+                                          },
+                                        );
+
+                                        if (pickedDate != null) {
+                                          // String formattedDate =
+                                          //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                          String formattedDate =
+                                              "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                          setState(() {
+                                            endDateController.text = formattedDate;
+                                            if (_startDate != null) {
+                                              rentCycleItemsDynamic(pickedDate
+                                                  .difference(_startDate!)
+                                                  .inDays);
+                                            } else {
+                                              _startDate = DateTime.parse(
+                                                  reverseFormatDate(
+                                                      startDateController.text));
+                                              rentCycleItemsDynamic(pickedDate
+                                                  .difference(_startDate!)
+                                                  .inDays);
+                                            }
+                                          });
+                                        }
+                                      },
                                       icon:
                                           const Icon(Icons.date_range_rounded)),
                                   validator: (value) {

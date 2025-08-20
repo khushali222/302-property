@@ -255,7 +255,7 @@ class _applicant_summeryState extends State<applicant_summery>
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 1),
                                     child: Text(
-                                      '${snapshot.data!.leaseData!.rentalAdress}',
+                                      '${snapshot.data!.leaseData?.rentalAdress}',
                                       textAlign: TextAlign.justify,
                                       maxLines: 5, // Set maximum number of lines
                                       overflow: TextOverflow

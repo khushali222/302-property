@@ -27,6 +27,7 @@ import 'package:three_zero_two_property/provider/property_summery.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/unit.dart';
 import '../../../../Model/Properties_revenue_model.dart';
 import '../../../../Model/properties_Lease_model.dart';
+import '../../../../provider/dateProvider.dart';
 import '../../../../widgets/Properties_revenue_table.dart';
 import '../../../widgets/Properties_revenue_table.dart';
 import '../../../widgets/custom_staff_lease_table.dart';
@@ -2789,6 +2790,7 @@ class _Summery_pageState extends State<Summery_page>
     100,
   ];
   Revenue_page() {
+    final dateProvider = Provider.of<DateProvider>(context);
     print("calling revenue page from my screen");
     return Container(
       child: Column(
@@ -2992,6 +2994,7 @@ class _Summery_pageState extends State<Summery_page>
   bool is_Loading = true;
   Summary_page() {
     print("$image_url${widget.properties.rentalImage}");
+    final dateProvider = Provider.of<DateProvider>(context);
     return FutureBuilder<Rentals>(
       future: futureRentalDetails,
       builder: (context, snapshot) {
@@ -4417,7 +4420,7 @@ class _Summery_pageState extends State<Summery_page>
                                   (rentalDetails.purchaseDate == null ||
                                           rentalDetails.purchaseDate!.isEmpty)
                                       ? "N/A"
-                                      : rentalDetails.purchaseDate!,
+                                      : dateProvider.formatCurrentDate('${rentalDetails.purchaseDate!}'),
                                   style: TextStyle(
                                       fontSize: 14, color: Colors.black),
                                 ),

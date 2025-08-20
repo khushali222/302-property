@@ -104,6 +104,29 @@ class _SignupState extends State<Signup> {
           backgroundColor: Colors.white,
           body: ListView(
             children: [
+              Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16), // Safe area
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200], // light grey
+                        borderRadius: BorderRadius.circular(10), // square-ish with smooth edges
+
+                      ),
+                      child: Icon(
+                        Icons.arrow_back_ios_sharp,
+                        color: Colors.black54,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.1,
               ),
@@ -113,26 +136,28 @@ class _SignupState extends State<Signup> {
                 width: MediaQuery.of(context).size.width * 0.9,
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.025,
+                height: MediaQuery.of(context).size.height * 0.04,
               ),
               // Welcome
+              // Center(
+              //   child: Text(
+              //     "Welcome to 302 Rentals",
+              //     style: TextStyle(
+              //       color: Colors.black,
+              //       fontWeight: FontWeight.bold,
+              //       fontSize: MediaQuery.of(context).size.width * 0.05,
+              //     ),
+              //   ),
+              // ),
+              // SizedBox(
+              //   height: MediaQuery.of(context).size.height * 0.02,
+              // ),
               Center(
                 child: Text(
-                  "Welcome to 302 Rentals",
+                  "Sign up for your free trial account",
                   style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: MediaQuery.of(context).size.width * 0.05,
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.02,
-              ),
-              Center(
-                child: Text(
-                  "Signup for free trial account",
-                  style: TextStyle(color: Colors.black,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
                       fontSize: MediaQuery.of(context).size.width * 0.036
                   ),
                 ),
@@ -337,7 +362,7 @@ class _SignupState extends State<Signup> {
                   if (firstname.text.trim().isEmpty) {
                     setState(() {
                       firstnameerror = true;
-                      firstnamemessage = "Firstname is required";
+                      firstnamemessage = "First Name is required";
                     });
                   } else {
                     setState(() {
@@ -348,7 +373,7 @@ class _SignupState extends State<Signup> {
                   if (lastname.text.trim().isEmpty) {
                     setState(() {
                       lastnameerror = true;
-                      lastnamemessage = "Lastname is required";
+                      lastnamemessage = "Last Name is required";
                     });
                   } else {
                     setState(() {
@@ -359,12 +384,12 @@ class _SignupState extends State<Signup> {
                   if (email.text.trim().isEmpty) {
                     setState(() {
                       emailerror = true;
-                      emailmessage = "Email is required";
+                      emailmessage = "Business Email is required";
                     });
                   } else if (!EmailValidator.validate(email.text.trim())) {
                     setState(() {
                       emailerror = true;
-                      emailmessage = "Email is not valid";
+                      emailmessage = "Business Email is not valid";
                     });
                   } else {
                     await _checkEmailVerified(email.text.trim());

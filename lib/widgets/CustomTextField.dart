@@ -806,40 +806,7 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
                         ),
                       ],
                     ),
-                    child: TextFormField(
-                      /*    onFieldSubmitted: (value){
-                        if(value.isNotEmpty){
-
-                          if(widget.amount_check != null){
-                            if(int.parse(value) > int.parse(widget.max_amount!)){
-                              setState(() {
-                                _errorMessage = '${widget.error_mess}';
-                              });
-                            }
-                          }
-                          else{
-                            setState(() {
-                              _errorMessage = null;
-                            });
-                          }
-
-                        }
-                        print(value);
-                        widget.onChanged2;
-                      },*/
-                      onFieldSubmitted: widget.onChanged2,
-                      onChanged: (value) {
-                        //  print("object calin $value");
-                        if (value.isNotEmpty) {
-                          setState(() {
-                            _errorMessage = null;
-                          });
-                        }
-                        if (widget.onChanged != null) widget.onChanged!(value);
-//print("callllll");
-                      },
-                      inputFormatters: widget.inputFormatters ?? [],
-                      focusNode: _focusNode,
+                    child: GestureDetector(
                       onTap: () {
                         if (widget.onTap != null) {
                           widget.onTap!();
@@ -848,22 +815,66 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
                           });
                         }
                       },
-                      obscureText: widget.obscureText,
-                      readOnly: widget.readOnnly,
-                      keyboardType: widget.keyboardType,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          state.validate();
-                        }
-                        return null;
-                      },
-                      controller: widget.controller,
-                      decoration: InputDecoration(
-                        suffixIcon: widget.suffixIcon,
-                        hintStyle:
-                            TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
-                        border: InputBorder.none,
-                        hintText: widget.hintText,
+                      child: TextFormField(
+                        /*    onFieldSubmitted: (value){
+                          if(value.isNotEmpty){
+
+                            if(widget.amount_check != null){
+                              if(int.parse(value) > int.parse(widget.max_amount!)){
+                                setState(() {
+                                  _errorMessage = '${widget.error_mess}';
+                                });
+                              }
+                            }
+                            else{
+                              setState(() {
+                                _errorMessage = null;
+                              });
+                            }
+
+                          }
+                          print(value);
+                          widget.onChanged2;
+                        },*/
+                        onFieldSubmitted: widget.onChanged2,
+                        onChanged: (value) {
+                          //  print("object calin $value");
+                          if (value.isNotEmpty) {
+                            setState(() {
+                              _errorMessage = null;
+                            });
+                          }
+                          if (widget.onChanged != null)
+                            widget.onChanged!(value);
+//print("callllll");
+                        },
+                        inputFormatters: widget.inputFormatters ?? [],
+                        focusNode: _focusNode,
+                        onTap: () {
+                          if (widget.onTap != null) {
+                            widget.onTap!();
+                            setState(() {
+                              _errorMessage = null;
+                            });
+                          }
+                        },
+                        obscureText: widget.obscureText,
+                        readOnly: widget.readOnnly,
+                        keyboardType: widget.keyboardType,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            state.validate();
+                          }
+                          return null;
+                        },
+                        controller: widget.controller,
+                        decoration: InputDecoration(
+                          suffixIcon: widget.suffixIcon,
+                          hintStyle:
+                              TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                          border: InputBorder.none,
+                          hintText: widget.hintText,
+                        ),
                       ),
                     ),
                   ),

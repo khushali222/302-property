@@ -741,7 +741,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 if (name.text.trim().isEmpty) {
                                   setState(() {
                                     nameerror = true;
-                                    namemessage = "required";
+                                    namemessage = "Please enter Staff Member Name";
                                   });
                                 } else {
                                   setState(() {
@@ -753,7 +753,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 if (designation.text.trim().isEmpty) {
                                   setState(() {
                                     designationerror = true;
-                                    designationmessage = "required";
+                                    designationmessage = "Please enter Designation";
                                   });
                                 } else {
                                   setState(() {
@@ -766,7 +766,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 if (formattedPhoneNumber.isEmpty) {
                                   setState(() {
                                     phonenumbererror = true;
-                                    phonenumbermessage = "required";
+                                    phonenumbermessage = "Please enter Phone Number";
                                   });
                                 } else if (formattedPhoneNumber.length != 10) {
                                   setState(() {
@@ -784,7 +784,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 if (email.text.trim().isEmpty) {
                                   setState(() {
                                     emailerror = true;
-                                    emailmessage = "required";
+                                    emailmessage = "Please enter Email Address";
                                   });
                                 } else if (!EmailValidator.validate(
                                     email.text)) {
@@ -812,7 +812,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 if (password.text.trim().isEmpty) {
                                   setState(() {
                                     passworderror = true;
-                                    passwordmessage = "required";
+                                    passwordmessage = "Please enter Password";
                                   });
                                 } else if (password.text.length < 8) {
                                   setState(() {
@@ -840,7 +840,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 if (conpassword.text.trim().isEmpty) {
                                   setState(() {
                                     conpassworderror = true;
-                                    conpasswordmessage = "same as password";
+                                    conpasswordmessage = "Must be same as password";
                                   });
                                 } else if (conpassword.text != password.text) {
                                   setState(() {

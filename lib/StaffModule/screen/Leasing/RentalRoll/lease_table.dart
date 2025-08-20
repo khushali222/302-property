@@ -577,7 +577,7 @@ class _Lease_tableState extends State<Lease_table> {
                           padding: const EdgeInsets.only(top: 8.0),
                           child: titleBar(
                             width: permissions!.leaseAdd! ? MediaQuery.of(context).size.width * .65 : MediaQuery.of(context).size.width * .93,
-                            title: 'Rent Roll',
+                            title: 'Leases',
                           ),
                         ),
                         if (permissions!.leaseAdd!)

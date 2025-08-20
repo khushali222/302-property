@@ -1472,10 +1472,10 @@ class _TabBarExampleState extends State<TabBarExample> {
       print('add and update workorder  \\${responseData}');
       print('add workorder  \\${response.body}');
       if (responseData["statusCode"] == 200) {
-        Fluttertoast.showToast(msg: responseData["message"]);
+        Fluttertoast.showToast(msg: responseData["message"], gravity: ToastGravity.TOP,backgroundColor: Colors.black);
         return json.decode(response.body);
       } else {
-        Fluttertoast.showToast(msg: responseData["message"]);
+        Fluttertoast.showToast(msg: responseData["message"], gravity: ToastGravity.TOP,backgroundColor: Colors.black);
         throw Exception('Failed to add workorder');
       }
     } catch (error) {
@@ -1646,7 +1646,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                         ],
                       ),
                       child: Text(
-                        "Setting ",
+                        "Settings ",
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
