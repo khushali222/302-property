@@ -1818,7 +1818,7 @@ class _Summery_pageState extends State<Summery_page>
       await _uploadImage(image); // Upload each picked image
     }
   }
-
+  bool staffExpanded = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -3239,7 +3239,7 @@ class _Summery_pageState extends State<Summery_page>
                                   SizedBox(height: 5),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 7),
+                                        horizontal: 10),
                                     child: Text(
                                       '${rentalDetails.rentalAddress}',
                                       maxLines: 4,
@@ -3400,7 +3400,7 @@ class _Summery_pageState extends State<Summery_page>
                       style: TextStyle(
                           color: blueColor,
                           fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 16 : 20,
+                          MediaQuery.of(context).size.width < 500 ? 16 : 20,
                           fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -3419,9 +3419,9 @@ class _Summery_pageState extends State<Summery_page>
                             ConnectionState.waiting) {
                           return Center(
                               child: SpinKitFadingCircle(
-                            color: Colors.black,
-                            size: 40.0,
-                          ));
+                                color: Colors.black,
+                                size: 40.0,
+                              ));
                         } else if (snapshot.hasError) {
                           return Center(
                               child: Text('Error: ${snapshot.error}'));
@@ -3463,24 +3463,24 @@ class _Summery_pageState extends State<Summery_page>
                           } else if (searchValuerent!.isNotEmpty) {
                             data = snapshot.data!
                                 .where((rentals) => rentals
-                                    .rentalOwnerData!.rentalOwnerName!
-                                    .toLowerCase()
-                                    .contains(searchValuerent!.toLowerCase()))
+                                .rentalOwnerData!.rentalOwnerName!
+                                .toLowerCase()
+                                .contains(searchValuerent!.toLowerCase()))
                                 .toList();
                           } else {
                             data = snapshot.data!
                                 .where((rentals) =>
-                                    rentals.rentalOwnerData!
-                                        .rentalOwnerCompanyName! ==
-                                    searchValuerent)
+                            rentals.rentalOwnerData!
+                                .rentalOwnerCompanyName! ==
+                                searchValuerent)
                                 .toList();
                           }
                           data = data
                               .where((e) =>
-                                  e.rentalId == widget.properties.rentalId)
+                          e.rentalId == widget.properties.rentalId)
                               .toList();
                           final totalPages =
-                              (data.length / itemsPerPagerent).ceil();
+                          (data.length / itemsPerPagerent).ceil();
                           final currentPageData = data
                               .skip(currentPagerent * itemsPerPagerent)
                               .take(itemsPerPagerent)
@@ -3491,15 +3491,9 @@ class _Summery_pageState extends State<Summery_page>
                             child: Column(
                               children: [
                                 SizedBox(height: 5),
-                                _buildHeadersrent(),
-                                SizedBox(height: 20),
+                                //  _buildHeadersrent(),
+                                // SizedBox(height: 20),
                                 Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Color.fromRGBO(
-                                              152, 162, 179, .5))),
-                                  // decoration: BoxDecoration(
-                                  //     border: Border.all(color: blueColor)),
                                   child: Column(
                                     children: currentPageData
                                         .asMap()
@@ -3511,28 +3505,35 @@ class _Summery_pageState extends State<Summery_page>
                                       //return CustomExpansionTile(data: Propertytype, index: index);
                                       return Container(
                                         decoration: BoxDecoration(
-                                          color: index % 2 != 0
-                                              ? Colors.white
-                                              : blueColor.withOpacity(0.09),
+                                          color: Color(0xFFEAF1FB),
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(16),
+                                            topRight: Radius.circular(16),
+                                            bottomLeft: isExpanded
+                                                ? Radius.zero
+                                                : Radius.circular(16),
+                                            bottomRight: isExpanded
+                                                ? Radius.zero
+                                                : Radius.circular(16),
+                                          ),
                                           border: Border.all(
-                                              color: Color.fromRGBO(
-                                                  152, 162, 179, .5)),
+                                            color: Color(
+                                                0x4D636363), // Translucent gray border
+                                            width: 1.0,
+                                          ),
                                         ),
-                                        // decoration: BoxDecoration(
-                                        //   border: Border.all(color: blueColor),
-                                        // ),
                                         child: Column(
                                           children: <Widget>[
                                             ListTile(
                                               contentPadding: EdgeInsets.zero,
                                               title: Padding(
                                                 padding:
-                                                    const EdgeInsets.all(2.0),
+                                                const EdgeInsets.all(2.0),
                                                 child: Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.start,
+                                                  MainAxisAlignment.start,
                                                   crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
+                                                  CrossAxisAlignment.center,
                                                   children: <Widget>[
                                                     InkWell(
                                                       onTap: () {
@@ -3553,7 +3554,7 @@ class _Summery_pageState extends State<Summery_page>
                                                           if (expandedIndex ==
                                                               index) {
                                                             expandedIndex =
-                                                                null;
+                                                            null;
                                                           } else {
                                                             expandedIndex =
                                                                 index;
@@ -3565,113 +3566,60 @@ class _Summery_pageState extends State<Summery_page>
                                                             left: 5, right: 5),
                                                         padding: !isExpanded
                                                             ? EdgeInsets.only(
-                                                                bottom: 10)
+                                                            bottom: 10)
                                                             : EdgeInsets.only(
-                                                                top: 10),
+                                                            top: 10),
                                                         child: FaIcon(
                                                           isExpanded
                                                               ? FontAwesomeIcons
-                                                                  .sortUp
+                                                              .sortUp
                                                               : FontAwesomeIcons
-                                                                  .sortDown,
+                                                              .sortDown,
                                                           size: 20,
                                                           color: blueColor,
                                                         ),
                                                       ),
                                                     ),
-                                                    Expanded(
-                                                      child: InkWell(
-                                                        onTap: () {
-                                                          setState(() {
-                                                            if (expandedIndex ==
-                                                                index) {
-                                                              expandedIndex =
-                                                                  null;
-                                                            } else {
-                                                              expandedIndex =
-                                                                  index;
-                                                            }
-                                                          });
-                                                        },
-                                                        child: Text(
-                                                          '${(rentals.rentalOwnerData?.rentalOwnerName ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerName} ',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13,
-                                                          ),
-                                                        ),
+                                                    SizedBox(width: 8),
+                                                    Text(
+                                                      'Rental Owner',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                        FontWeight.bold,
+                                                        fontSize: 14,
                                                       ),
                                                     ),
-                                                    SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .08),
-                                                    Expanded(
-                                                      child: Text(
-                                                        '${(rentals.rentalOwnerData?.rentalOwnerCompanyName ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerCompanyName}',
-                                                        style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 12,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .06),
-                                                    Expanded(
-                                                      child: Text(
-                                                        formatPhoneNumber(rentals
-                                                                .rentalOwnerData
-                                                                ?.rentalOwnerPhoneNumber ??
-                                                            "N/A"),
-                                                        //'${(rentals.rentalOwnerData?.rentalOwnerPhoneNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerPhoneNumber}',
-                                                        style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 12,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .02),
                                                   ],
                                                 ),
                                               ),
                                             ),
                                             if (isExpanded)
                                               Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 8.0),
-                                                margin:
-                                                    EdgeInsets.only(bottom: 20),
+                                                width: double.infinity,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  border: Border(
+                                                    top: BorderSide(
+                                                      color: Color(0x4D636363),
+                                                      width: 1.0,
+                                                    ),
+                                                  ),
+                                                ),
                                                 child: SingleChildScrollView(
                                                   child: Column(
                                                     children: [
                                                       Row(
                                                         mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
+                                                        MainAxisAlignment
+                                                            .start,
                                                         children: [
                                                           FaIcon(
                                                             isExpanded
                                                                 ? FontAwesomeIcons
-                                                                    .sortUp
+                                                                .sortUp
                                                                 : FontAwesomeIcons
-                                                                    .sortDown,
+                                                                .sortDown,
                                                             size: 50,
                                                             color: Colors
                                                                 .transparent,
@@ -3679,14 +3627,16 @@ class _Summery_pageState extends State<Summery_page>
                                                           Expanded(
                                                             child: Column(
                                                               crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
+                                                              CrossAxisAlignment
+                                                                  .start,
                                                               children: <Widget>[
                                                                 SizedBox(
+                                                                    height: 3),
+                                                                SizedBox(
                                                                   height: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .height *
+                                                                      context)
+                                                                      .size
+                                                                      .height *
                                                                       .01,
                                                                 ),
                                                                 Text.rich(
@@ -3694,83 +3644,104 @@ class _Summery_pageState extends State<Summery_page>
                                                                     children: [
                                                                       TextSpan(
                                                                         text:
-                                                                            'Email : ',
+                                                                        'Rental Owner Name : ',
                                                                         style: TextStyle(
                                                                             fontWeight:
-                                                                                FontWeight.bold,
+                                                                            FontWeight.bold,
+                                                                            color: blueColor),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                        '\n${(rentals.rentalOwnerData?.rentalOwnerName ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerName}',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                            FontWeight.w700,
+                                                                            color: Colors.grey),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                    height: 8),
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                        'Rental Company Name :',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                            FontWeight.bold,
+                                                                            color: blueColor),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                        '\n${(rentals.rentalOwnerData?.rentalOwnerCompanyName ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerCompanyName}',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                            FontWeight.w700,
+                                                                            color: Colors.grey),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                    height: 8),
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                        'Owner E-Mail Address : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                            FontWeight.bold,
                                                                             color: blueColor), // Bold and black
                                                                       ),
                                                                       TextSpan(
                                                                         text:
-                                                                            '${(rentals.rentalOwnerData?.rentalOwnerPrimaryEmail ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerPrimaryEmail}',
+                                                                        '\n${(rentals.rentalOwnerData?.rentalOwnerPrimaryEmail ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerPrimaryEmail}',
                                                                         style: TextStyle(
                                                                             fontWeight:
-                                                                                FontWeight.w700,
+                                                                            FontWeight.w700,
                                                                             color: Colors.grey), // Light and grey
                                                                       ),
                                                                     ],
                                                                   ),
                                                                 ),
                                                                 SizedBox(
-                                                                  height: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .height *
-                                                                      .01,
-                                                                ),
+                                                                    height: 8),
                                                                 Text.rich(
                                                                   TextSpan(
                                                                     children: [
                                                                       TextSpan(
                                                                         text:
-                                                                            'Home Number : ',
+                                                                        'Owner Phone Number : ',
                                                                         style: TextStyle(
                                                                             fontWeight:
-                                                                                FontWeight.bold,
-                                                                            color: blueColor), // Bold and black
+                                                                            FontWeight.bold,
+                                                                            color: blueColor),
                                                                       ),
                                                                       TextSpan(
-                                                                        text: formatPhoneNumber(rentals.rentalOwnerData?.rentalOwnerHomeNumber ??
-                                                                            "N/A"),
-                                                                        //'${(rentals.rentalOwnerData?.rentalOwnerHomeNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerHomeNumber}',
+                                                                        text:
+                                                                        "\n${formatPhoneNumber(rentals.rentalOwnerData?.rentalOwnerPhoneNumber ?? "N/A")}",
                                                                         style: TextStyle(
                                                                             fontWeight:
-                                                                                FontWeight.w700,
-                                                                            color: Colors.grey), // Light and grey
+                                                                            FontWeight.w700,
+                                                                            color: Colors.grey),
                                                                       ),
                                                                     ],
                                                                   ),
                                                                 ),
                                                                 SizedBox(
                                                                   height: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .height *
+                                                                      context)
+                                                                      .size
+                                                                      .height *
                                                                       .01,
                                                                 ),
-                                                                Text.rich(
-                                                                  TextSpan(
-                                                                    children: [
-                                                                      TextSpan(
-                                                                        text:
-                                                                            'Business Number : ',
-                                                                        style: TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            color: blueColor), // Bold and black
-                                                                      ),
-                                                                      TextSpan(
-                                                                        text: formatPhoneNumber(rentals.rentalOwnerData?.rentalOwnerBuisinessNumber ??
-                                                                            "N/A"),
-                                                                        //'${(rentals.rentalOwnerData?.rentalOwnerBuisinessNumber ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerBuisinessNumber}',
-                                                                        style: TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.w700,
-                                                                            color: Colors.grey), // Light and grey
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
+                                                                SizedBox(
+                                                                    height: 3),
                                                               ],
                                                             ),
                                                           ),
@@ -3787,297 +3758,115 @@ class _Summery_pageState extends State<Summery_page>
                                     }).toList(),
                                   ),
                                 ),
-                                SizedBox(height: 20),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        // Text('Rows per page:'),
-                                        SizedBox(width: 10),
-                                        Material(
-                                          elevation: 3,
-                                          child: Container(
-                                            height: 40,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 12.0),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.grey),
-                                            ),
-                                            child: DropdownButtonHideUnderline(
-                                              child: DropdownButton<int>(
-                                                value: itemsPerPagerent,
-                                                items: itemsPerPageOptionsrent
-                                                    .map((int value) {
-                                                  return DropdownMenuItem<int>(
-                                                    value: value,
-                                                    child:
-                                                        Text(value.toString()),
-                                                  );
-                                                }).toList(),
-                                                onChanged: (newValue) {
-                                                  setState(() {
-                                                    itemsPerPagerent =
-                                                        newValue!;
-                                                    currentPagerent =
-                                                        0; // Reset to first page when items per page change
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                          icon: FaIcon(
-                                            FontAwesomeIcons.circleChevronLeft,
-                                            color: currentPagerent == 0
-                                                ? Colors.grey
-                                                : blueColor,
-                                          ),
-                                          onPressed: currentPagerent == 0
-                                              ? null
-                                              : () {
-                                                  setState(() {
-                                                    currentPagerent--;
-                                                  });
-                                                },
-                                        ),
-                                        // IconButton(
-                                        //   icon: Icon(Icons.arrow_back),
-                                        //   onPressed: currentPage > 0
-                                        //       ? () {
-                                        //     setState(() {
-                                        //       currentPage--;
-                                        //     });
-                                        //   }
-                                        //       : null,
-                                        // ),
-                                        Text(
-                                            'Page ${currentPagerent + 1} of $totalPages'),
-                                        // IconButton(
-                                        //   icon: Icon(Icons.arrow_forward),
-                                        //   onPressed: currentPage < totalPages - 1
-                                        //       ? () {
-                                        //     setState(() {
-                                        //       currentPage++;
-                                        //     });
-                                        //   }
-                                        //       : null,
-                                        // ),
-                                        IconButton(
-                                          icon: FaIcon(
-                                            FontAwesomeIcons.circleChevronRight,
-                                            color:
-                                                currentPagerent < totalPages - 1
-                                                    ? blueColor
-                                                    : Colors.grey,
-                                          ),
-                                          onPressed:
-                                              currentPagerent < totalPages - 1
-                                                  ? () {
-                                                      setState(() {
-                                                        currentPagerent++;
-                                                      });
-                                                    }
-                                                  : null,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                // SizedBox(height: 20),
+                                // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.end,
+                                //   children: [
+                                //     Row(
+                                //       children: [
+                                //         // Text('Rows per page:'),
+                                //         SizedBox(width: 10),
+                                //         Material(
+                                //           elevation: 3,
+                                //           child: Container(
+                                //             height: 40,
+                                //             padding: EdgeInsets.symmetric(
+                                //                 horizontal: 12.0),
+                                //             decoration: BoxDecoration(
+                                //               border: Border.all(
+                                //                   color: Colors.grey),
+                                //             ),
+                                //             child: DropdownButtonHideUnderline(
+                                //               child: DropdownButton<int>(
+                                //                 value: itemsPerPagerent,
+                                //                 items: itemsPerPageOptionsrent
+                                //                     .map((int value) {
+                                //                   return DropdownMenuItem<int>(
+                                //                     value: value,
+                                //                     child:
+                                //                         Text(value.toString()),
+                                //                   );
+                                //                 }).toList(),
+                                //                 onChanged: (newValue) {
+                                //                   setState(() {
+                                //                     itemsPerPagerent =
+                                //                         newValue!;
+                                //                     currentPagerent =
+                                //                         0; // Reset to first page when items per page change
+                                //                   });
+                                //                 },
+                                //               ),
+                                //             ),
+                                //           ),
+                                //         ),
+                                //       ],
+                                //     ),
+                                //     Row(
+                                //       children: [
+                                //         IconButton(
+                                //           icon: FaIcon(
+                                //             FontAwesomeIcons.circleChevronLeft,
+                                //             color: currentPagerent == 0
+                                //                 ? Colors.grey
+                                //                 : blueColor,
+                                //           ),
+                                //           onPressed: currentPagerent == 0
+                                //               ? null
+                                //               : () {
+                                //                   setState(() {
+                                //                     currentPagerent--;
+                                //                   });
+                                //                 },
+                                //         ),
+                                //         // IconButton(
+                                //         //   icon: Icon(Icons.arrow_back),
+                                //         //   onPressed: currentPage > 0
+                                //         //       ? () {
+                                //         //     setState(() {
+                                //         //       currentPage--;
+                                //         //     });
+                                //         //   }
+                                //         //       : null,
+                                //         // ),
+                                //         Text(
+                                //             'Page ${currentPagerent + 1} of $totalPages'),
+                                //         // IconButton(
+                                //         //   icon: Icon(Icons.arrow_forward),
+                                //         //   onPressed: currentPage < totalPages - 1
+                                //         //       ? () {
+                                //         //     setState(() {
+                                //         //       currentPage++;
+                                //         //     });
+                                //         //   }
+                                //         //       : null,
+                                //         // ),
+                                //         IconButton(
+                                //           icon: FaIcon(
+                                //             FontAwesomeIcons.circleChevronRight,
+                                //             color:
+                                //                 currentPagerent < totalPages - 1
+                                //                     ? blueColor
+                                //                     : Colors.grey,
+                                //           ),
+                                //           onPressed:
+                                //               currentPagerent < totalPages - 1
+                                //                   ? () {
+                                //                       setState(() {
+                                //                         currentPagerent++;
+                                //                       });
+                                //                     }
+                                //                   : null,
+                                //         ),
+                                //       ],
+                                //     ),
+                                //   ],
+                                // ),
                               ],
                             ),
                           );
                         }
                       },
                     ),
-                  ),
-                if (MediaQuery.of(context).size.width > 500)
-                  FutureBuilder<List<Rentals>>(
-                    future: futurerentalowners,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                            child: SpinKitFadingCircle(
-                          color: Colors.black,
-                          size: 40.0,
-                        ));
-                      } else if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Container(
-                          height: MediaQuery.of(context).size.height * .5,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  "assets/images/no_data.jpg",
-                                  height: 200,
-                                  width: 200,
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Text(
-                                  "No Data Available",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: blueColor,
-                                      fontSize: 16),
-                                )
-                              ],
-                            ),
-                          ),
-                        );
-                      } else {
-                        List<Rentals>? filteredData = [];
-                        _tableDatarent = snapshot.data!;
-                        if (selectedRolerent == null && searchValuerent == "") {
-                          filteredData = snapshot.data;
-                        } else if (selectedRolerent == "All") {
-                          filteredData = snapshot.data;
-                        } else if (searchValuerent.isNotEmpty) {
-                          filteredData = snapshot.data!
-                              .where((staff) =>
-                                  staff.rentalOwnerData!.rentalOwnerName!
-                                      .toLowerCase()
-                                      .contains(
-                                          searchValuerent.toLowerCase()) ||
-                                  staff.rentalOwnerData!.rentalOwnerPhoneNumber!
-                                      .toLowerCase()
-                                      .contains(searchValuerent.toLowerCase()))
-                              .toList();
-                        }
-
-                        _tableDatarent = filteredData!;
-                        totalrecordsrent = _tableDatarent.length;
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5),
-                          child: Column(
-                            children: [
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Container(
-                                  // width: MediaQuery.of(context).size.width * .91,
-                                  child: Table(
-                                    defaultColumnWidth: IntrinsicColumnWidth(),
-                                    children: [
-                                      TableRow(
-                                        decoration:
-                                            BoxDecoration(border: Border.all()),
-                                        children: [
-                                          _buildHeaderrent(
-                                              'Contact Name',
-                                              0,
-                                              (rental) => rental
-                                                  .rentalOwnerData!
-                                                  .rentalOwnerFirstName!),
-                                          _buildHeaderrent(
-                                              'Company Name',
-                                              1,
-                                              (rental) => rental
-                                                  .rentalOwnerData!
-                                                  .rentalOwnerCompanyName!),
-                                          _buildHeaderrent(
-                                              'Email',
-                                              2,
-                                              (rental) => rental
-                                                  .rentalOwnerData!
-                                                  .rentalOwnerPrimaryEmail!),
-                                          _buildHeaderrent(
-                                              'Phone Number',
-                                              3,
-                                              (rental) => rental
-                                                  .rentalOwnerData!
-                                                  .rentalOwnerPhoneNumber!),
-                                          _buildHeaderrent(
-                                              'Home Number',
-                                              4,
-                                              (rental) => rental
-                                                  .rentalOwnerData!
-                                                  .rentalOwnerHomeNumber!),
-                                          _buildHeaderrent(
-                                              'Business Number',
-                                              5,
-                                              (rental) => rental
-                                                  .rentalOwnerData!
-                                                  .rentalOwnerBuisinessNumber!),
-                                        ],
-                                      ),
-                                      TableRow(
-                                        decoration: BoxDecoration(
-                                          border: Border.symmetric(
-                                              horizontal: BorderSide.none),
-                                        ),
-                                        children: List.generate(
-                                            6,
-                                            (index) => TableCell(
-                                                child: Container(height: 20))),
-                                      ),
-                                      for (var i = 0;
-                                          i < _pagedDatarent.length;
-                                          i++)
-                                        TableRow(
-                                          decoration: BoxDecoration(
-                                            border: Border(
-                                              left: BorderSide(
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 81, 1)),
-                                              right: BorderSide(
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 81, 1)),
-                                              top: BorderSide(
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 81, 1)),
-                                              bottom: i ==
-                                                      _pagedDatarent.length - 1
-                                                  ? BorderSide(color: blueColor)
-                                                  : BorderSide.none,
-                                            ),
-                                          ),
-                                          children: [
-                                            _buildDataCellrent(
-                                                '${_pagedDatarent[i].rentalOwnerData!.rentalOwnerName!}'),
-                                            // _buildDataCell('${_pagedData[i].rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerLastName ?? ''}'),
-                                            _buildDataCellrent(
-                                              _pagedDatarent[i]
-                                                  .rentalOwnerData!
-                                                  .rentalOwnerCompanyName!,
-                                            ),
-                                            _buildDataCellrent(_pagedDatarent[i]
-                                                .rentalOwnerData!
-                                                .rentalOwnerPrimaryEmail!),
-                                            _buildDataCellrent(_pagedDatarent[i]
-                                                .rentalOwnerData!
-                                                .rentalOwnerPhoneNumber!),
-                                            _buildDataCellrent(_pagedDatarent[i]
-                                                .rentalOwnerData!
-                                                .rentalOwnerHomeNumber!),
-                                            _buildDataCellrent(_pagedDatarent[i]
-                                                .rentalOwnerData!
-                                                .rentalOwnerBuisinessNumber!),
-                                          ],
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              if (_tableDatarent.isEmpty)
-                                Text("No Search Records Found"),
-                              SizedBox(height: 25),
-                              _buildPaginationControlsrent(),
-                            ],
-                          ),
-                        );
-                      }
-                    },
                   ),
                 SizedBox(height: 10),
                 Row(
@@ -4346,7 +4135,7 @@ class _Summery_pageState extends State<Summery_page>
                     decoration: BoxDecoration(
                       color: Color(0xFFF4F8FF),
                       borderRadius:
-                          BorderRadius.circular(16), // Increased corner radius
+                      BorderRadius.circular(16), // Increased corner radius
                       border: Border.all(color: Colors.grey.shade300),
                     ),
                     child: ClipRRect(
@@ -4360,7 +4149,7 @@ class _Summery_pageState extends State<Summery_page>
                         },
                         border: TableBorder(
                           horizontalInside:
-                              BorderSide(color: Colors.grey.shade400, width: 1),
+                          BorderSide(color: Colors.grey.shade400, width: 1),
                           top: BorderSide.none,
                           bottom: BorderSide.none,
                           left: BorderSide.none,
@@ -4418,7 +4207,7 @@ class _Summery_pageState extends State<Summery_page>
                                 padding: EdgeInsets.all(12.0),
                                 child: Text(
                                   (rentalDetails.purchaseDate == null ||
-                                          rentalDetails.purchaseDate!.isEmpty)
+                                      rentalDetails.purchaseDate!.isEmpty)
                                       ? "N/A"
                                       : dateProvider.formatCurrentDate('${rentalDetails.purchaseDate!}'),
                                   style: TextStyle(
@@ -4429,7 +4218,7 @@ class _Summery_pageState extends State<Summery_page>
                                 padding: EdgeInsets.all(12.0),
                                 child: Text(
                                   (rentalDetails.purchasePrice == null ||
-                                          rentalDetails.purchasePrice == 0)
+                                      rentalDetails.purchasePrice == 0)
                                       ? "N/A"
                                       : "\$${rentalDetails.purchasePrice!.toStringAsFixed(0)}",
                                   style: TextStyle(
@@ -4438,20 +4227,13 @@ class _Summery_pageState extends State<Summery_page>
                               ),
                               Padding(
                                 padding: EdgeInsets.all(12.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      (rentalDetails.parcelNumber == null ||
-                                              rentalDetails
-                                                  .parcelNumber!.isEmpty)
-                                          ? "N/A"
-                                          : rentalDetails.parcelNumber!,
-                                      style: TextStyle(
-                                          fontSize: 14, color: Colors.black),
-                                    ),
-                                  ],
+                                child: Text(
+                                  (rentalDetails.parcelNumber == null ||
+                                      rentalDetails.parcelNumber!.isEmpty)
+                                      ? "N/A"
+                                      : rentalDetails.parcelNumber!,
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.black),
                                 ),
                               ),
                             ],
@@ -4461,7 +4243,7 @@ class _Summery_pageState extends State<Summery_page>
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 15),
                 Row(
                   children: [
                     if (MediaQuery.of(context).size.width > 500)
@@ -4485,58 +4267,166 @@ class _Summery_pageState extends State<Summery_page>
                 const SizedBox(
                   height: 10,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 5, right: 5),
-                  child: Table(
-                    border: TableBorder.all(color: blueColor),
-                    children: [
-                      TableRow(
-                          decoration: BoxDecoration(
-                            color: blueColor,
-                            //  borderRadius: BorderRadius.circular(10),
-                          ),
-                          children: [
-                            TableCell(
-                              child: Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Staff Member',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 16
-                                              : 19,
-                                      fontWeight: FontWeight.bold),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Color(0xFFEAF1FB),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                      bottomLeft:
+                      staffExpanded ? Radius.zero : Radius.circular(16),
+                      bottomRight:
+                      staffExpanded ? Radius.zero : Radius.circular(16),
+                    ),
+                    border: Border.all(
+                      color: Color(0x4D636363), // Translucent gray border
+                      width: 1.0,
+                    ),
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    staffExpanded = !staffExpanded;
+                                  });
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(left: 5, right: 5),
+                                  padding: !staffExpanded
+                                      ? EdgeInsets.only(bottom: 10)
+                                      : EdgeInsets.only(top: 10),
+                                  child: FaIcon(
+                                    staffExpanded
+                                        ? FontAwesomeIcons.sortUp
+                                        : FontAwesomeIcons.sortDown,
+                                    size: 20,
+                                    color: blueColor,
+                                  ),
                                 ),
                               ),
+                              SizedBox(width: 8),
+                              Text(
+                                'Staff Details',
+                                style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      if (staffExpanded)
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border(
+                              top: BorderSide(
+                                color: Color(0x4D636363),
+                                width: 1.0,
+                              ),
                             ),
-                          ]),
-                      TableRow(children: [
-                        TableCell(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              rentalDetails.staffMemberData?.staffmemberName !=
-                                          null &&
-                                      rentalDetails.staffMemberData!
-                                          .staffmemberName!.isNotEmpty
-                                  ? '${rentalDetails.staffMemberData!.staffmemberName}'
-                                  : 'N/A',
-                              style: TextStyle(
-                                fontSize:
-                                    MediaQuery.of(context).size.width < 500
-                                        ? 16
-                                        : 19,
+                          ),
+                          child: SingleChildScrollView(
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 25, right: 25, top: 10, bottom: 10),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Staff Member',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    rentalDetails.staffMemberData
+                                        ?.staffmemberName !=
+                                        null &&
+                                        rentalDetails.staffMemberData!
+                                            .staffmemberName!.isNotEmpty
+                                        ? rentalDetails
+                                        .staffMemberData!.staffmemberName!
+                                        : 'N/A',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.grey),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
                         ),
-                      ])
+                      //SizedBox(height: 13,),
                     ],
                   ),
                 ),
+                // Padding(
+                //   padding: const EdgeInsets.only(left: 5, right: 5),
+                //   child: Table(
+                //     border: TableBorder.all(color: blueColor),
+                //     children: [
+                //       TableRow(
+                //           decoration: BoxDecoration(
+                //             color: blueColor,
+                //             //  borderRadius: BorderRadius.circular(10),
+                //           ),
+                //           children: [
+                //             TableCell(
+                //               child: Padding(
+                //                 padding: EdgeInsets.all(8.0),
+                //                 child: Text(
+                //                   'Staff Member',
+                //                   style: TextStyle(
+                //                       color: Colors.white,
+                //                       fontSize:
+                //                           MediaQuery.of(context).size.width <
+                //                                   500
+                //                               ? 16
+                //                               : 19,
+                //                       fontWeight: FontWeight.bold),
+                //                 ),
+                //               ),
+                //             ),
+                //           ]),
+                //       TableRow(children: [
+                //         TableCell(
+                //           child: Padding(
+                //             padding: const EdgeInsets.all(8.0),
+                //             child: Text(
+                //               rentalDetails.staffMemberData?.staffmemberName !=
+                //                           null &&
+                //                       rentalDetails.staffMemberData!
+                //                           .staffmemberName!.isNotEmpty
+                //                   ? '${rentalDetails.staffMemberData!.staffmemberName}'
+                //                   : 'N/A',
+                //               style: TextStyle(
+                //                 fontSize:
+                //                     MediaQuery.of(context).size.width < 500
+                //                         ? 16
+                //                         : 19,
+                //               ),
+                //             ),
+                //           ),
+                //         ),
+                //       ])
+                //     ],
+                //   ),
+                // ),
                 const SizedBox(
                   height: 50,
                 ),

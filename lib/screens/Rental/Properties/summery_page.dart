@@ -2770,7 +2770,7 @@ class _Summery_pageState extends State<Summery_page>
                                   SizedBox(height: 5),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 7),
+                                        horizontal: 10),
                                     child: Text(
                                       '${rentalDetails.rentalAddress}',
                                       maxLines: 4,
@@ -3399,6 +3399,191 @@ class _Summery_pageState extends State<Summery_page>
                       },
                     ),
                   ),
+                if (MediaQuery.of(context).size.width > 500)
+                  FutureBuilder<List<Rentals>>(
+                    future: futurerentalowners,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                            child: SpinKitFadingCircle(
+                              color: Colors.black,
+                              size: 40.0,
+                            ));
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Container(
+                          height: MediaQuery.of(context).size.height * .5,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "assets/images/no_data.jpg",
+                                  height: 200,
+                                  width: 200,
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  "No Data Available",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor,
+                                      fontSize: 16),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      } else {
+                        List<Rentals>? filteredData = [];
+                        _tableDatarent = snapshot.data!;
+                        if (selectedRolerent == null && searchValuerent == "") {
+                          filteredData = snapshot.data;
+                        } else if (selectedRolerent == "All") {
+                          filteredData = snapshot.data;
+                        } else if (searchValuerent.isNotEmpty) {
+                          filteredData = snapshot.data!
+                              .where((staff) =>
+                          staff.rentalOwnerData!.rentalOwnerName!
+                              .toLowerCase()
+                              .contains(
+                              searchValuerent.toLowerCase()) ||
+                              staff.rentalOwnerData!.rentalOwnerPhoneNumber!
+                                  .toLowerCase()
+                                  .contains(searchValuerent.toLowerCase()))
+                              .toList();
+                        }
+
+                        _tableDatarent = filteredData!;
+                        totalrecordsrent = _tableDatarent.length;
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: Column(
+                            children: [
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Container(
+                                  // width: MediaQuery.of(context).size.width * .91,
+                                  child: Table(
+                                    defaultColumnWidth: IntrinsicColumnWidth(),
+                                    children: [
+                                      TableRow(
+                                        decoration:
+                                        BoxDecoration(border: Border.all()),
+                                        children: [
+                                          _buildHeaderrent(
+                                              'Contact Name',
+                                              0,
+                                                  (rental) => rental
+                                                  .rentalOwnerData!
+                                                  .rentalOwnerFirstName!),
+                                          _buildHeaderrent(
+                                              'Company Name',
+                                              1,
+                                                  (rental) => rental
+                                                  .rentalOwnerData!
+                                                  .rentalOwnerCompanyName!),
+                                          _buildHeaderrent(
+                                              'Email',
+                                              2,
+                                                  (rental) => rental
+                                                  .rentalOwnerData!
+                                                  .rentalOwnerPrimaryEmail!),
+                                          _buildHeaderrent(
+                                              'Phone Number',
+                                              3,
+                                                  (rental) => rental
+                                                  .rentalOwnerData!
+                                                  .rentalOwnerPhoneNumber!),
+                                          _buildHeaderrent(
+                                              'Home Number',
+                                              4,
+                                                  (rental) => rental
+                                                  .rentalOwnerData!
+                                                  .rentalOwnerHomeNumber!),
+                                          _buildHeaderrent(
+                                              'Business Number',
+                                              5,
+                                                  (rental) => rental
+                                                  .rentalOwnerData!
+                                                  .rentalOwnerBuisinessNumber!),
+                                        ],
+                                      ),
+                                      TableRow(
+                                        decoration: BoxDecoration(
+                                          border: Border.symmetric(
+                                              horizontal: BorderSide.none),
+                                        ),
+                                        children: List.generate(
+                                            6,
+                                                (index) => TableCell(
+                                                child: Container(height: 20))),
+                                      ),
+                                      for (var i = 0;
+                                      i < _pagedDatarent.length;
+                                      i++)
+                                        TableRow(
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              left: BorderSide(
+                                                  color: Color.fromRGBO(
+                                                      21, 43, 81, 1)),
+                                              right: BorderSide(
+                                                  color: Color.fromRGBO(
+                                                      21, 43, 81, 1)),
+                                              top: BorderSide(
+                                                  color: Color.fromRGBO(
+                                                      21, 43, 81, 1)),
+                                              bottom: i ==
+                                                  _pagedDatarent.length - 1
+                                                  ? BorderSide(color: blueColor)
+                                                  : BorderSide.none,
+                                            ),
+                                          ),
+                                          children: [
+                                            _buildDataCellrent(
+                                                '${_pagedDatarent[i].rentalOwnerData!.rentalOwnerName!}'),
+                                            // _buildDataCell('${_pagedData[i].rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerLastName ?? ''}'),
+                                            _buildDataCellrent(
+                                              _pagedDatarent[i]
+                                                  .rentalOwnerData!
+                                                  .rentalOwnerCompanyName!,
+                                            ),
+                                            _buildDataCellrent(_pagedDatarent[i]
+                                                .rentalOwnerData!
+                                                .rentalOwnerPrimaryEmail!),
+                                            _buildDataCellrent(_pagedDatarent[i]
+                                                .rentalOwnerData!
+                                                .rentalOwnerPhoneNumber!),
+                                            _buildDataCellrent(_pagedDatarent[i]
+                                                .rentalOwnerData!
+                                                .rentalOwnerHomeNumber!),
+                                            _buildDataCellrent(_pagedDatarent[i]
+                                                .rentalOwnerData!
+                                                .rentalOwnerBuisinessNumber!),
+                                          ],
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              if (_tableDatarent.isEmpty)
+                                Text("No Search Records Found"),
+                              SizedBox(height: 25),
+                              _buildPaginationControlsrent(),
+                            ],
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                const SizedBox(
+                  height: 10,
+                ),
                 SizedBox(height: 10),
                 Row(
                   children: [
@@ -3774,191 +3959,6 @@ class _Summery_pageState extends State<Summery_page>
                   ),
                 ),
                 SizedBox(height: 10),
-                if (MediaQuery.of(context).size.width > 500)
-                  FutureBuilder<List<Rentals>>(
-                    future: futurerentalowners,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                            child: SpinKitFadingCircle(
-                          color: Colors.black,
-                          size: 40.0,
-                        ));
-                      } else if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Container(
-                          height: MediaQuery.of(context).size.height * .5,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  "assets/images/no_data.jpg",
-                                  height: 200,
-                                  width: 200,
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Text(
-                                  "No Data Available",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: blueColor,
-                                      fontSize: 16),
-                                )
-                              ],
-                            ),
-                          ),
-                        );
-                      } else {
-                        List<Rentals>? filteredData = [];
-                        _tableDatarent = snapshot.data!;
-                        if (selectedRolerent == null && searchValuerent == "") {
-                          filteredData = snapshot.data;
-                        } else if (selectedRolerent == "All") {
-                          filteredData = snapshot.data;
-                        } else if (searchValuerent.isNotEmpty) {
-                          filteredData = snapshot.data!
-                              .where((staff) =>
-                                  staff.rentalOwnerData!.rentalOwnerName!
-                                      .toLowerCase()
-                                      .contains(
-                                          searchValuerent.toLowerCase()) ||
-                                  staff.rentalOwnerData!.rentalOwnerPhoneNumber!
-                                      .toLowerCase()
-                                      .contains(searchValuerent.toLowerCase()))
-                              .toList();
-                        }
-
-                        _tableDatarent = filteredData!;
-                        totalrecordsrent = _tableDatarent.length;
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5),
-                          child: Column(
-                            children: [
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Container(
-                                  // width: MediaQuery.of(context).size.width * .91,
-                                  child: Table(
-                                    defaultColumnWidth: IntrinsicColumnWidth(),
-                                    children: [
-                                      TableRow(
-                                        decoration:
-                                            BoxDecoration(border: Border.all()),
-                                        children: [
-                                          _buildHeaderrent(
-                                              'Contact Name',
-                                              0,
-                                              (rental) => rental
-                                                  .rentalOwnerData!
-                                                  .rentalOwnerFirstName!),
-                                          _buildHeaderrent(
-                                              'Company Name',
-                                              1,
-                                              (rental) => rental
-                                                  .rentalOwnerData!
-                                                  .rentalOwnerCompanyName!),
-                                          _buildHeaderrent(
-                                              'Email',
-                                              2,
-                                              (rental) => rental
-                                                  .rentalOwnerData!
-                                                  .rentalOwnerPrimaryEmail!),
-                                          _buildHeaderrent(
-                                              'Phone Number',
-                                              3,
-                                              (rental) => rental
-                                                  .rentalOwnerData!
-                                                  .rentalOwnerPhoneNumber!),
-                                          _buildHeaderrent(
-                                              'Home Number',
-                                              4,
-                                              (rental) => rental
-                                                  .rentalOwnerData!
-                                                  .rentalOwnerHomeNumber!),
-                                          _buildHeaderrent(
-                                              'Business Number',
-                                              5,
-                                              (rental) => rental
-                                                  .rentalOwnerData!
-                                                  .rentalOwnerBuisinessNumber!),
-                                        ],
-                                      ),
-                                      TableRow(
-                                        decoration: BoxDecoration(
-                                          border: Border.symmetric(
-                                              horizontal: BorderSide.none),
-                                        ),
-                                        children: List.generate(
-                                            6,
-                                            (index) => TableCell(
-                                                child: Container(height: 20))),
-                                      ),
-                                      for (var i = 0;
-                                          i < _pagedDatarent.length;
-                                          i++)
-                                        TableRow(
-                                          decoration: BoxDecoration(
-                                            border: Border(
-                                              left: BorderSide(
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 81, 1)),
-                                              right: BorderSide(
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 81, 1)),
-                                              top: BorderSide(
-                                                  color: Color.fromRGBO(
-                                                      21, 43, 81, 1)),
-                                              bottom: i ==
-                                                      _pagedDatarent.length - 1
-                                                  ? BorderSide(color: blueColor)
-                                                  : BorderSide.none,
-                                            ),
-                                          ),
-                                          children: [
-                                            _buildDataCellrent(
-                                                '${_pagedDatarent[i].rentalOwnerData!.rentalOwnerName!}'),
-                                            // _buildDataCell('${_pagedData[i].rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerLastName ?? ''}'),
-                                            _buildDataCellrent(
-                                              _pagedDatarent[i]
-                                                  .rentalOwnerData!
-                                                  .rentalOwnerCompanyName!,
-                                            ),
-                                            _buildDataCellrent(_pagedDatarent[i]
-                                                .rentalOwnerData!
-                                                .rentalOwnerPrimaryEmail!),
-                                            _buildDataCellrent(_pagedDatarent[i]
-                                                .rentalOwnerData!
-                                                .rentalOwnerPhoneNumber!),
-                                            _buildDataCellrent(_pagedDatarent[i]
-                                                .rentalOwnerData!
-                                                .rentalOwnerHomeNumber!),
-                                            _buildDataCellrent(_pagedDatarent[i]
-                                                .rentalOwnerData!
-                                                .rentalOwnerBuisinessNumber!),
-                                          ],
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              if (_tableDatarent.isEmpty)
-                                Text("No Search Records Found"),
-                              SizedBox(height: 25),
-                              _buildPaginationControlsrent(),
-                            ],
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                const SizedBox(
-                  height: 10,
-                ),
                 Row(
                   children: [
                     if (MediaQuery.of(context).size.width > 500)
