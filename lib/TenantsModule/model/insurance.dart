@@ -4,7 +4,7 @@ class Insurance_data {
   String? adminId;
   String? policyId;
   String? provider;
-  int? liabilityCoverage;
+  dynamic liabilityCoverage;
   String? effectiveDate;
   String? expirationDate;
   String? policy;
@@ -16,19 +16,19 @@ class Insurance_data {
 
   Insurance_data(
       {this.tenantInsuranceId,
-        this.tenantId,
-        this.adminId,
-        this.policyId,
-        this.provider,
-        this.liabilityCoverage,
-        this.effectiveDate,
-        this.expirationDate,
-        this.policy,
-        this.status,
-        this.createdAt,
-        this.isDelete,
-        this.sId,
-        this.iV});
+      this.tenantId,
+      this.adminId,
+      this.policyId,
+      this.provider,
+      this.liabilityCoverage,
+      this.effectiveDate,
+      this.expirationDate,
+      this.policy,
+      this.status,
+      this.createdAt,
+      this.isDelete,
+      this.sId,
+      this.iV});
 
   Insurance_data.fromJson(Map<String, dynamic> json) {
     tenantInsuranceId = json['TenantInsurance_id'];

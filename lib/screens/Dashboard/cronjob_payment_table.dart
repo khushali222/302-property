@@ -22,6 +22,7 @@ import '../../repository/dashboard_table_repo/cronjob_payment_table.dart';
 import '../../repository/tenants.dart';
 import '../../widgets/CustomTableShimmer.dart';
 import '../../widgets/titleBar.dart';
+import '../Leasing/RentalRoll/SummeryPageLease.dart';
 import '../Rental/Tenants/Tenant_summary.dart';
 
 class Cronjob_payment_table extends StatefulWidget {
@@ -944,11 +945,24 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     GestureDetector(
+                      onTap: () {
+                        if (data.leaseId != null) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SummeryPageLease(
+                                        leaseId: data.leaseId!,
+                                        enddate:
+                                            null, // You can pass the end date if available
+                                      )));
+                        }
+                      },
                       child: Text(
                         'Rental Address',
                         style: subTextStyle.copyWith(
                           color: blueColor,
                           fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline,
                         ),
                       ),
                     ),
@@ -965,7 +979,27 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(address, style: subTextStyle),
+                    GestureDetector(
+                      onTap: () {
+                        if (data.leaseId != null) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SummeryPageLease(
+                                        leaseId: data.leaseId!,
+                                        enddate:
+                                            null, // You can pass the end date if available
+                                      )));
+                        }
+                      },
+                      child: Text(
+                        address,
+                        style: subTextStyle.copyWith(
+                          decoration: TextDecoration.underline,
+                          color: blueColor.withOpacity(0.8),
+                        ),
+                      ),
+                    ),
                     if (data.response == "FAILURE")
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,

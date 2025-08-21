@@ -7,6 +7,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -372,6 +373,12 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
                               keyboardType: TextInputType.text,
                               hintText: 'Enter Phone Number',
                               controller: number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(10),
+                                PhoneNumberFormatter(),
+                              ],
+                              phone: true,
                               //   label: "",
                               validator: (value) {
                                 if (value == null || value.isEmpty) {

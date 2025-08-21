@@ -7,10 +7,9 @@ import 'package:three_zero_two_property/Model/Renters_Insurnce/Edit_insurnce.dar
 import 'package:three_zero_two_property/Model/lease_renter_insurance.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
-
-
 class RentersInsuranceService {
-  Future<List<lease_renter_insurance>> fetchRentersInsurance( String leaseid) async {
+  Future<List<lease_renter_insurance>> fetchRentersInsurance(
+      String leaseid) async {
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
@@ -28,9 +27,20 @@ class RentersInsuranceService {
         // If the server returns a 200 OK response, parse the JSON
 
         final parsedJson = jsonDecode(response.body);
-        print(parsedJson);
+        print('API Response: $parsedJson');
         List leasesJson = parsedJson['data'];
-        return leasesJson.map((data) => lease_renter_insurance.fromJson(data)).toList();
+        print('Data count: ${leasesJson.length}');
+
+        try {
+          return leasesJson.map((data) {
+            print('Processing item: $data');
+            return lease_renter_insurance.fromJson(data);
+          }).toList();
+        } catch (e) {
+          print('Error parsing data: $e');
+          print('Data that caused error: $leasesJson');
+          return [];
+        }
       } else {
         // If the server did not return a 200 OK response, throw an exception
         throw Exception('Failed to load renters insurance');
@@ -46,20 +56,21 @@ class RentersInsuranceService {
     required String renters_insurance_id,
   }) async {
     try {
-      final Uri uri = Uri.parse('$Api_url/api/renter-insurance/delete-policy/$renters_insurance_id');
+      final Uri uri = Uri.parse(
+          '$Api_url/api/renter-insurance/delete-policy/$renters_insurance_id');
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? adminid = prefs.getString('adminId');
       String? id = prefs.getString("staff_id");
       final http.Response response = await http.delete(
-          uri,
-          headers: <String, String>{
-            "authorization": "CRM $token",
-            "id": "CRM $id",
-            'Content-Type': 'application/json; charset=UTF-8',
-          },
-          body: jsonEncode({}),
+        uri,
+        headers: <String, String>{
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({}),
       );
 
       var responseData = json.decode(response.body);
@@ -100,5 +111,4 @@ class RentersInsuranceService {
       throw Exception('Failed to load rentersdata');
     }
   }
-
 }

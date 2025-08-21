@@ -36,18 +36,18 @@ class widget_302 {
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
       titleSpacing: 05,
-      leading: GestureDetector(
-        onTap: onDrawerIconPressed,
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: SvgPicture.asset(
-            "assets/images/tenants/drawer.svg",
-            height: 20,
-            width: 30,
-            fit: BoxFit.fill,
-          ),
-        ),
-      ),
+      // leading: GestureDetector(
+      //   onTap: onDrawerIconPressed,
+      //   child: Padding(
+      //     padding: const EdgeInsets.all(15.0),
+      //     child: SvgPicture.asset(
+      //       "assets/images/tenants/drawer.svg",
+      //       height: 20,
+      //       width: 30,
+      //       fit: BoxFit.fill,
+      //     ),
+      //   ),
+      // ),
       //automaticallyImplyLeading: false,
       // title: Image(
       //   image: AssetImage('assets/images/applogo.png'),

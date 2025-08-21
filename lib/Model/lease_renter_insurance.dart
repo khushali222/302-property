@@ -8,7 +8,7 @@ class lease_renter_insurance {
   String? policyId;
   String? effectiveDate;
   String? expirationDate;
-  int? liabilityCoverage;
+  dynamic liabilityCoverage;
   String? insurancePolicyDocument;
   bool? active;
   bool? isDelete;
@@ -18,21 +18,21 @@ class lease_renter_insurance {
 
   lease_renter_insurance(
       {this.sId,
-        this.rentersInsuranceId,
-        this.leaseId,
-        this.tenants,
-        this.insuranceCompany,
-        this.insuranceCompanyPhoneNumber,
-        this.policyId,
-        this.effectiveDate,
-        this.expirationDate,
-        this.liabilityCoverage,
-        this.insurancePolicyDocument,
-        this.active,
-        this.isDelete,
-        this.dateCreated,
-        this.dateModified,
-        this.tenantDetails});
+      this.rentersInsuranceId,
+      this.leaseId,
+      this.tenants,
+      this.insuranceCompany,
+      this.insuranceCompanyPhoneNumber,
+      this.policyId,
+      this.effectiveDate,
+      this.expirationDate,
+      this.liabilityCoverage,
+      this.insurancePolicyDocument,
+      this.active,
+      this.isDelete,
+      this.dateCreated,
+      this.dateModified,
+      this.tenantDetails});
 
   lease_renter_insurance.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
@@ -91,9 +91,9 @@ class TenantDetails {
 
   TenantDetails(
       {this.tenantId,
-        this.tenantFirstName,
-        this.tenantLastName,
-        this.tenantEmail});
+      this.tenantFirstName,
+      this.tenantLastName,
+      this.tenantEmail});
 
   TenantDetails.fromJson(Map<String, dynamic> json) {
     tenantId = json['tenant_id'];

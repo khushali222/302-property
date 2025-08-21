@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/applience/Add_applience.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
@@ -10,6 +11,7 @@ import '../../../../Model/unit.dart';
 import '../../../../constant/constant.dart';
 import '../../../../model/properties.dart';
 import '../../../../model/unitsummery_propeties.dart';
+import '../../../../provider/dateProvider.dart';
 import '../../../../repository/appliance_details_service.dart';
 import '../summery_page.dart';
 import 'AddMaintenanceHistoryDialog.dart';
@@ -159,6 +161,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     // Use live data if available, otherwise fall back to widget data
     final appliance = _liveAppliance ?? widget.appliance;
     // print(appliance.categoryName);
@@ -335,17 +338,20 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                               _buildDetailRowPair(
                                   'Installed Date',
                                   appliance.installedDate != null
-                                      ? formatDate(appliance.installedDate!)
+                                      ? dateProvider.formatCurrentDate(
+                                          '${formatDate(appliance.installedDate!)}')
                                       : '',
                                   'Warranty Expiry',
                                   appliance.warrantyExpiry != null
-                                      ? formatDate(appliance.warrantyExpiry!)
+                                      ? dateProvider.formatCurrentDate(
+                                          '${formatDate(appliance.warrantyExpiry!)}')
                                       : ''),
                               if (appliance.lastMaintenanceDate != null &&
                                   appliance.lastMaintenanceDate!.isNotEmpty)
                                 _buildDetailRowPair(
                                     'Last Maintenance',
-                                    formatDate(appliance.lastMaintenanceDate!),
+                                    dateProvider.formatCurrentDate(
+                                        '${formatDate(appliance.lastMaintenanceDate!)}'),
                                     '',
                                     ''),
                             ],
@@ -473,6 +479,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
 
   Widget _buildDetailCard(String title, List<Widget> children,
       {bool showEdit = false, bool showAdd = false, bool showSearch = false}) {
+    final dateProvider = Provider.of<DateProvider>(context);
     final appliance = _liveAppliance ?? widget.appliance;
 
     return Container(
@@ -704,7 +711,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
   Widget _buildMaintenanceItem(String date, String eventType, String vendor,
       String workOrder, String key) {
     bool isExpanded = _expandedItems[key] ?? false;
-
+    final dateProvider = Provider.of<DateProvider>(context);
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -729,8 +736,8 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                     size: 18,
                   ),
                   SizedBox(width: 8),
-                  Text(
-                    date,
+                  Text(dateProvider.formatCurrentDate('${date}')
+                    ,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -831,7 +838,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
   Widget _buildNoteItem(
       String date, String addedBy, String note, String key, String noteId) {
     bool isExpanded = _expandedItems[key] ?? false;
-
+    final dateProvider = Provider.of<DateProvider>(context);
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -857,7 +864,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                   ),
                   SizedBox(width: 8),
                   Text(
-                    date,
+                    dateProvider.formatCurrentDate('${date}'),
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,

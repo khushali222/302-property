@@ -9,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/repository/setting.dart';
@@ -16,6 +17,7 @@ import 'package:three_zero_two_property/screens/Leasing/RentalRoll/enterCharge.d
 import '../../../constant/constant.dart';
 import '../../../model/LeaseSummary.dart';
 import '../../../model/get_lease.dart';
+import '../../../provider/dateProvider.dart';
 import '../../../repository/lease.dart';
 import '../../../widgets/CustomTableShimmer.dart';
 import '../../../widgets/appbar.dart';
@@ -60,16 +62,17 @@ class _RenewleaseState extends State<Renewlease> {
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
     // _tabController = TabController(length: 3, vsync: this);
     _selectedLeaseType = widget.leasetype;
-    startDateController.text = formatDate(widget.enddate!) ?? "";
+
+    // Use formatDate4 to get dd-MM-yyyy format for display
+    startDateController.text = formatDate4(widget.enddate!) ?? "";
     DateTime endDate = formatDates(widget.enddate!);
     DateTime startDate = endDate;
     DateTime newEndDate =
         DateTime(endDate.year, endDate.month + 1, endDate.day);
 
-    // startDateController.text = DateFormat('yyyy-MM-dd').format(startDate);
-    //startDateController.text = formatDate(DateTime.now().toString());
+    // Use formatDate4 to get dd-MM-yyyy format for display
     endDateController.text =
-        formatDate(DateFormat('yyyy-MM-dd').format(newEndDate).toString());
+        formatDate4(DateFormat('yyyy-MM-dd').format(newEndDate));
     rent.text = widget.rentamount ?? "";
 
     // if(widget.renewfileName != "")
@@ -145,13 +148,13 @@ class _RenewleaseState extends State<Renewlease> {
         if (determineStatus(
             leasegetdata.data!.startDate, leasegetdata.data!.endDate)) {
           // Lease is expired
-          startDateController.text = formatDate(DateTime.now().toString());
+          startDateController.text = formatDate4(DateTime.now().toString());
 
           // Set the end date to one month from today's date
           DateTime newEndDate = DateTime(DateTime.now().year,
               DateTime.now().month + 1, DateTime.now().day);
-          endDateController.text = formatDate(
-              DateFormat('yyyy-MM-dd').format(newEndDate).toString());
+          endDateController.text =
+              formatDate4(DateFormat('yyyy-MM-dd').format(newEndDate));
         }
         if (leasegetdata.data!.renewLeases != null &&
             leasegetdata.data!.renewLeases!.isNotEmpty) {
@@ -163,13 +166,13 @@ class _RenewleaseState extends State<Renewlease> {
 
             // Set start date to the current lease's end date
             startDateController.text =
-                formatDate(DateFormat('yyyy-MM-dd').format(endDate).toString());
+                formatDate4(DateFormat('yyyy-MM-dd').format(endDate));
 
             // Extend the lease for one month from the current lease's end date
             DateTime newEndDate =
                 DateTime(endDate.year, endDate.month + 1, endDate.day);
-            endDateController.text = formatDate(
-                DateFormat('yyyy-MM-dd').format(newEndDate).toString());
+            endDateController.text =
+                formatDate4(DateFormat('yyyy-MM-dd').format(newEndDate));
           }
         }
       });
@@ -357,29 +360,56 @@ class _RenewleaseState extends State<Renewlease> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String adminId = prefs.getString('adminId') ?? '';
       String? token = prefs.getString('token');
-      print(token);
-      print('lease ${renewlease}');
       String? id = prefs.getString("adminId");
+
+      print('=== DEBUG INFO ===');
+      print('Token: $token');
+      print('Admin ID: $id');
+      print('API URL: $Api_url/api/leases/renew_lease');
+      print('Request Data: ${json.encode(renewlease)}');
+
+      // Test if the API endpoint is reachable
+      try {
+        final testResponse = await http.get(
+          Uri.parse('$Api_url/api/leases/lease_summary/${widget.leaseId}'),
+          headers: {
+            "authorization": "CRM $token",
+            "id": "CRM $id",
+          },
+        );
+        print('Test API call status: ${testResponse.statusCode}');
+      } catch (e) {
+        print('Test API call failed: $e');
+      }
+
       final response =
-          await http.post(Uri.parse('$Api_url/api/tenant/evict-tenant'),
+          await http.post(Uri.parse('$Api_url/api/leases/renew_lease'),
               headers: {
                 "authorization": "CRM $token",
                 "id": "CRM $id",
                 'Content-Type': 'application/json',
               },
               body: json.encode(renewlease));
-      print(' lease renew ${response.body}');
+
+      print('=== RESPONSE INFO ===');
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+      print('Response Headers: ${response.headers}');
+
       if (response.statusCode == 200) {
+        print('SUCCESS: Lease renewal completed');
         Fluttertoast.showToast(msg: "Lease Renewal Successfully");
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (context) => SummeryPageLease(
                   leaseId: widget.leaseId,
                 )));
       } else {
-        Fluttertoast.showToast(msg: "Renewal Lease not success");
+        print('ERROR: Lease renewal failed with status ${response.statusCode}');
+        Fluttertoast.showToast(msg: "Lease renewal failed: ${response.body}");
       }
     } catch (e) {
-      print(e);
+      print('EXCEPTION: $e');
+      Fluttertoast.showToast(msg: "Network error: $e");
     }
   }
 
@@ -479,6 +509,7 @@ class _RenewleaseState extends State<Renewlease> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -725,7 +756,7 @@ class _RenewleaseState extends State<Renewlease> {
                                             padding:
                                                 const EdgeInsets.only(top: 12),
                                             child: Text(
-                                              '${leasesummery.data?.startDate} to ${leasesummery.data?.endDate}',
+                                              '${dateProvider.formatCurrentDate('${leasesummery.data?.startDate}')} to ${dateProvider.formatCurrentDate('${leasesummery.data?.endDate}')}',
                                               style: TextStyle(
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.bold,
@@ -1012,7 +1043,8 @@ class _RenewleaseState extends State<Renewlease> {
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: CustomTextField(
-                                        onTap: () async {
+                                        onTap: ()
+                                        async {
                                           DateTime? pickedDate =
                                               await showDatePicker(
                                             context: context,
@@ -1057,8 +1089,6 @@ class _RenewleaseState extends State<Renewlease> {
                                           );
 
                                           if (pickedDate != null) {
-                                            // String formattedStartDate =
-                                            //     "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                                             String formattedStartDate =
                                                 "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                                             DateTime endDate = DateTime(
@@ -1066,8 +1096,6 @@ class _RenewleaseState extends State<Renewlease> {
                                                 pickedDate.month + 1,
                                                 pickedDate.day);
 
-                                            // String formattedEndDate =
-                                            //     "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
                                             setState(() {
                                               startDateController.text =
                                                   formattedStartDate;
@@ -1077,7 +1105,65 @@ class _RenewleaseState extends State<Renewlease> {
                                         },
                                         readOnnly: true,
                                         suffixIcon: IconButton(
-                                            onPressed: () {},
+                                            onPressed: ()  async {
+                                              DateTime? pickedDate =
+                                              await showDatePicker(
+                                                context: context,
+                                                initialDate: DateTime.now(),
+                                                firstDate: DateTime(2000),
+                                                lastDate: DateTime(2101),
+                                                locale: const Locale('en', 'US'),
+                                                builder: (BuildContext context,
+                                                    Widget? child) {
+                                                  return Theme(
+                                                    data:
+                                                    ThemeData.light().copyWith(
+                                                      colorScheme:
+                                                      const ColorScheme.light(
+                                                        primary: Color.fromRGBO(
+                                                            21,
+                                                            43,
+                                                            83,
+                                                            1), // header background color
+                                                        onPrimary: Colors
+                                                            .white, // header text color
+                                                        onSurface: Color.fromRGBO(
+                                                            21,
+                                                            43,
+                                                            83,
+                                                            1), // body text color
+                                                      ),
+                                                      textButtonTheme:
+                                                      TextButtonThemeData(
+                                                        style: TextButton.styleFrom(
+                                                          foregroundColor:
+                                                          Colors.white,
+                                                          backgroundColor: const Color
+                                                              .fromRGBO(21, 43, 83,
+                                                              1), // button text color
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    child: child!,
+                                                  );
+                                                },
+                                              );
+
+                                              if (pickedDate != null) {
+                                                String formattedStartDate =
+                                                    "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                                DateTime endDate = DateTime(
+                                                    pickedDate.year,
+                                                    pickedDate.month + 1,
+                                                    pickedDate.day);
+
+                                                setState(() {
+                                                  startDateController.text =
+                                                      formattedStartDate;
+                                                  _startDate = pickedDate;
+                                                });
+                                              }
+                                            },
                                             icon: const Icon(
                                                 Icons.date_range_rounded)),
                                         validator: (value) {
@@ -1112,7 +1198,8 @@ class _RenewleaseState extends State<Renewlease> {
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: CustomTextField(
-                                        onTap: () async {
+                                        onTap: ()
+                                        async {
                                           DateTime? pickedDate =
                                               await showDatePicker(
                                             context: context,
@@ -1190,7 +1277,82 @@ class _RenewleaseState extends State<Renewlease> {
                                         },
                                         readOnnly: true,
                                         suffixIcon: IconButton(
-                                            onPressed: () {},
+                                            onPressed: () async {
+                                              DateTime? pickedDate =
+                                              await showDatePicker(
+                                                context: context,
+                                                initialDate: DateTime.now(),
+                                                firstDate: DateTime(2000),
+                                                lastDate: DateTime(2101),
+                                                locale: const Locale('en', 'US'),
+                                                builder: (BuildContext context,
+                                                    Widget? child) {
+                                                  return Theme(
+                                                    data:
+                                                    ThemeData.light().copyWith(
+                                                      colorScheme:
+                                                      const ColorScheme.light(
+                                                        primary: Color.fromRGBO(
+                                                            21,
+                                                            43,
+                                                            83,
+                                                            1), // header background color
+                                                        onPrimary: Colors
+                                                            .white, // header text color
+                                                        onSurface: Color.fromRGBO(
+                                                            21,
+                                                            43,
+                                                            83,
+                                                            1), // body text color
+                                                      ),
+                                                      textButtonTheme:
+                                                      TextButtonThemeData(
+                                                        style: TextButton.styleFrom(
+                                                          foregroundColor:
+                                                          Colors.white,
+                                                          backgroundColor: const Color
+                                                              .fromRGBO(21, 43, 83,
+                                                              1), // button text color
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    child: child!,
+                                                  );
+                                                },
+                                              );
+
+                                              // if (pickedDate != null) {
+                                              //   // String formattedDate =
+                                              //   //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                              //   String formattedDate =
+                                              //       "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                              //   setState(() {
+                                              //     endDateController.text =
+                                              //         formattedDate;
+                                              //   });
+                                              // }
+
+                                              if (pickedDate != null) {
+                                                String formattedStartDate =
+                                                    "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+
+                                                // Calculate the end date by adding one month
+                                                DateTime endDate = DateTime(
+                                                    pickedDate.year,
+                                                    pickedDate.month + 1,
+                                                    pickedDate.day);
+                                                String formattedEndDate =
+                                                    "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+
+                                                setState(() {
+                                                  startDateController.text =
+                                                      formattedStartDate;
+                                                  endDateController.text =
+                                                      formattedEndDate; // Set the end date
+                                                  _startDate = pickedDate;
+                                                });
+                                              }
+                                            },
                                             icon: const Icon(
                                                 Icons.date_range_rounded)),
                                         validator: (value) {
@@ -2285,22 +2447,44 @@ class _RenewleaseState extends State<Renewlease> {
                                           ]
                                   };
 
+                                  // Debug: Print the date values before formatting
+                                  print(
+                                      "Start Date Controller: ${startDateController.text}");
+                                  print(
+                                      "End Date Controller: ${endDateController.text}");
+
+                                  // Validate that dates are not empty
+                                  if (startDateController.text.trim().isEmpty ||
+                                      endDateController.text.trim().isEmpty) {
+                                    Fluttertoast.showToast(
+                                        msg:
+                                            "Please select both start and end dates");
+                                    return;
+                                  }
+
                                   Map<String, dynamic> leasedata = {
                                     "lease_id": widget.leaseId,
-                                    "tenant_id": leasesummery
-                                                .data?.tenantData !=
-                                            null
-                                        ? leasesummery.data!.tenantData!
-                                            .map((tenant) => tenant.tenantId)
-                                            .toList()
-                                        : [],
+                                    "tenant_id":
+                                        leasesummery.data?.tenantData != null &&
+                                                leasesummery.data!.tenantData!
+                                                    .isNotEmpty
+                                            ? leasesummery.data!.tenantData!
+                                                .first.tenantId
+                                            : "",
                                     "renewAmount": widget.rentamount,
                                     "admin_id": leasesummery.data!.adminId,
                                     "lease_type": leasesummery.data!.leaseType,
-                                    "start_date": reverseFormatDate(
-                                        startDateController.text.trim()),
-                                    "end_date": reverseFormatDate(
-                                        endDateController.text.trim()),
+                                    "start_date": startDateController.text
+                                            .trim()
+                                            .isNotEmpty
+                                        ? reverseFormatDate(
+                                            startDateController.text.trim())
+                                        : "",
+                                    "end_date":
+                                        endDateController.text.trim().isNotEmpty
+                                            ? reverseFormatDate(
+                                                endDateController.text.trim())
+                                            : "",
                                     "amount": rent.text.trim(), // new amount
                                     "renewAmount": securitydeposit.text
                                         .trim(), // new amount
@@ -2311,8 +2495,11 @@ class _RenewleaseState extends State<Renewlease> {
                                             ? _uploadedFileNames.first
                                             : "",
                                   };
+
+                                  // Debug: Print the final lease data
+                                  print("Final lease data: $leasedata");
                                   print(leasedata);
-                                  // updatenewrenewallease(leasedata);
+                                  updatenewrenewallease(leasedata);
                                 },
                                 child: Container(
                                     height:

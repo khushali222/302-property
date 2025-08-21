@@ -10,11 +10,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:keyboard_actions/keyboard_actions_config.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/StaffModule/repository/lease.dart';
 import 'package:three_zero_two_property/StaffModule/repository/setting.dart';
 import '../../../../model/LeaseSummary.dart';
 import '../../../../constant/constant.dart';
+import '../../../../provider/dateProvider.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
@@ -213,7 +215,7 @@ class _RenewleaseState extends State<Renewlease> {
     if (enteredAmount != totalAmount) {
       setState(() {
         validationMessage =
-        "The charge's amount must match the total applied to balance. The difference is ${(enteredAmount - totalAmount).abs().toStringAsFixed(2)}";
+            "The charge's amount must match the total applied to balance. The difference is ${(enteredAmount - totalAmount).abs().toStringAsFixed(2)}";
       });
     } else {
       setState(() {
@@ -243,15 +245,15 @@ class _RenewleaseState extends State<Renewlease> {
         Map<String, dynamic> jsonResponse = json.decode(response.body);
         if (jsonResponse['data'] != null) {
           List<dynamic> data = jsonResponse['data'];
-        Map<String, List<String>> fetchedData = {};
+          Map<String, List<String>> fetchedData = {};
 
           // Initialize with static liability accounts
-        fetchedData["Liability Account"] = [
-          "Late Fee Income",
-          "Pre-payments",
-          "Security Deposit",
-          'Rent Income'
-        ];
+          fetchedData["Liability Account"] = [
+            "Late Fee Income",
+            "Pre-payments",
+            "Security Deposit",
+            'Rent Income'
+          ];
 
           // Group accounts by charge_type
           for (var item in data) {
@@ -259,18 +261,18 @@ class _RenewleaseState extends State<Renewlease> {
             String account = item['account'] ?? '';
 
             if (account.isNotEmpty) {
-          if (!fetchedData.containsKey(chargeType)) {
-            fetchedData[chargeType] = [];
-          }
+              if (!fetchedData.containsKey(chargeType)) {
+                fetchedData[chargeType] = [];
+              }
               if (!fetchedData[chargeType]!.contains(account)) {
-          fetchedData[chargeType]!.add(account);
+                fetchedData[chargeType]!.add(account);
               }
             }
-        }
+          }
 
-        setState(() {
-          categorizedData = fetchedData;
-          isLoading = false;
+          setState(() {
+            categorizedData = fetchedData;
+            isLoading = false;
 
             // Initialize first row if rows is empty
             if (rows.isEmpty) {
@@ -309,29 +311,56 @@ class _RenewleaseState extends State<Renewlease> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String adminId = prefs.getString('adminId') ?? '';
       String? token = prefs.getString('token');
-      print(token);
-      print('lease ${widget.leaseId}');
       String? id = prefs.getString("adminId");
-      final response =
-          await http.post(Uri.parse('$Api_url/api/leases/renew_lease'),
+
+      print('=== DEBUG INFO ===');
+      print('Token: $token');
+      print('Admin ID: $id');
+      print('API URL: $Api_url/api/leases/renew_lease');
+      print('Request Data: ${json.encode(renewlease)}');
+
+      // Test if the API endpoint is reachable
+      try {
+        final testResponse = await http.get(
+          Uri.parse('$Api_url/api/leases/lease_summary/${widget.leaseId}'),
           headers: {
             "authorization": "CRM $token",
             "id": "CRM $id",
-            'Content-Type': 'application/json',
           },
+        );
+        print('Test API call status: ${testResponse.statusCode}');
+      } catch (e) {
+        print('Test API call failed: $e');
+      }
+
+      final response =
+          await http.post(Uri.parse('$Api_url/api/leases/renew_lease'),
+              headers: {
+                "authorization": "CRM $token",
+                "id": "CRM $id",
+                'Content-Type': 'application/json',
+              },
               body: json.encode(renewlease));
-      print(response.body);
+
+      print('=== RESPONSE INFO ===');
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+      print('Response Headers: ${response.headers}');
+
       if (response.statusCode == 200) {
+        print('SUCCESS: Lease renewal completed');
         Fluttertoast.showToast(msg: "Lease Renewal Successfully");
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (context) => SummeryPageLease(
                   leaseId: widget.leaseId,
                 )));
       } else {
-        Fluttertoast.showToast(msg: "Renewal Lease not success");
+        print('ERROR: Lease renewal failed with status ${response.statusCode}');
+        Fluttertoast.showToast(msg: "Lease renewal failed: ${response.body}");
       }
     } catch (e) {
-      print(e);
+      print('EXCEPTION: $e');
+      Fluttertoast.showToast(msg: "Network error: $e");
     }
   }
 
@@ -488,6 +517,7 @@ class _RenewleaseState extends State<Renewlease> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -544,9 +574,9 @@ class _RenewleaseState extends State<Renewlease> {
                         top: MediaQuery.of(context).size.height * .35),
                     child: Center(
                         child: SpinKitFadingCircle(
-                          color: blueColor,
-                          size: 40.0,
-                        )),
+                      color: blueColor,
+                      size: 40.0,
+                    )),
                   );
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
@@ -627,7 +657,7 @@ class _RenewleaseState extends State<Renewlease> {
                                       child: Column(
                                         // crossAxisAlignment: CrossAxisAlignment.center,
                                         mainAxisAlignment:
-                                        MainAxisAlignment.center,
+                                            MainAxisAlignment.center,
                                         children: [
                                           Row(
                                             children: [
@@ -654,80 +684,80 @@ class _RenewleaseState extends State<Renewlease> {
                                         TableRow(children: [
                                           TableCell(
                                               child: Padding(
-                                                padding: const EdgeInsets.all(12.0),
-                                                child: Text(
-                                                  'Lease Type',
-                                                  style: TextStyle(
-                                                      color:
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: Text(
+                                              'Lease Type',
+                                              style: TextStyle(
+                                                  color:
                                                       const Color(0xFF8A95A8),
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 16),
-                                                ),
-                                              )),
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16),
+                                            ),
+                                          )),
                                           TableCell(
                                               child: Padding(
-                                                padding:
+                                            padding:
                                                 const EdgeInsets.only(top: 12),
-                                                child: Text(
-                                                  '${leasesummery.data?.leaseType}',
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight: FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              )),
+                                            child: Text(
+                                              '${leasesummery.data?.leaseType}',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: blueColor),
+                                            ),
+                                          )),
                                         ]),
                                         TableRow(children: [
                                           TableCell(
                                               child: Padding(
-                                                padding: const EdgeInsets.all(12.0),
-                                                child: Text(
-                                                  'Start - End ',
-                                                  style: TextStyle(
-                                                      color:
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: Text(
+                                              'Start - End ',
+                                              style: TextStyle(
+                                                  color:
                                                       const Color(0xFF8A95A8),
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 16),
-                                                ),
-                                              )),
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16),
+                                            ),
+                                          )),
                                           TableCell(
                                               child: Padding(
-                                                padding:
+                                            padding:
                                                 const EdgeInsets.only(top: 12),
-                                                child: Text(
-                                                  '${leasesummery.data?.startDate} to ${leasesummery.data?.endDate}',
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight: FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              )),
+                                            child: Text(
+                                              '${dateProvider.formatCurrentDate('${leasesummery.data?.startDate}')} to ${dateProvider.formatCurrentDate('${leasesummery.data?.endDate}')}',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: blueColor),
+                                            ),
+                                          )),
                                         ]),
                                         TableRow(children: [
                                           TableCell(
                                               child: Padding(
-                                                padding: const EdgeInsets.all(12.0),
-                                                child: Text(
-                                                  'Rent',
-                                                  style: TextStyle(
-                                                      color:
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: Text(
+                                              'Rent',
+                                              style: TextStyle(
+                                                  color:
                                                       const Color(0xFF8A95A8),
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 16),
-                                                ),
-                                              )),
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16),
+                                            ),
+                                          )),
                                           TableCell(
                                               child: Padding(
-                                                padding:
+                                            padding:
                                                 const EdgeInsets.only(top: 12),
-                                                child: Text(
-                                                  '${leasesummery.data?.amount}',
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight: FontWeight.bold,
-                                                      color: blueColor),
-                                                ),
-                                              )),
+                                            child: Text(
+                                              '${leasesummery.data?.amount}',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: blueColor),
+                                            ),
+                                          )),
                                         ]),
                                       ],
                                     ),
@@ -762,7 +792,7 @@ class _RenewleaseState extends State<Renewlease> {
                                       child: Column(
                                         // crossAxisAlignment: CrossAxisAlignment.center,
                                         mainAxisAlignment:
-                                        MainAxisAlignment.center,
+                                            MainAxisAlignment.center,
                                         children: [
                                           Row(
                                             children: [
@@ -813,11 +843,11 @@ class _RenewleaseState extends State<Renewlease> {
                                                 (FormFieldState<String> state) {
                                               return Column(
                                                 crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   DropdownButtonHideUnderline(
                                                     child:
-                                                    DropdownButton2<String>(
+                                                        DropdownButton2<String>(
                                                       isExpanded: true,
                                                       hint: const Row(
                                                         children: [
@@ -830,14 +860,14 @@ class _RenewleaseState extends State<Renewlease> {
                                                               style: TextStyle(
                                                                 fontSize: 14,
                                                                 fontWeight:
-                                                                FontWeight
-                                                                    .bold,
+                                                                    FontWeight
+                                                                        .bold,
                                                                 color: Colors
                                                                     .black,
                                                               ),
                                                               overflow:
-                                                              TextOverflow
-                                                                  .ellipsis,
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                             ),
                                                           ),
                                                         ],
@@ -845,26 +875,26 @@ class _RenewleaseState extends State<Renewlease> {
                                                       items: leaseTypeitems
                                                           .map(
                                                             (String item) =>
-                                                            DropdownMenuItem<
-                                                                String>(
+                                                                DropdownMenuItem<
+                                                                    String>(
                                                               value: item,
                                                               child: Text(
                                                                 item,
                                                                 style:
-                                                                const TextStyle(
+                                                                    const TextStyle(
                                                                   fontSize: 14,
                                                                   fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                                                      FontWeight
+                                                                          .bold,
                                                                   color: Colors
                                                                       .black,
                                                                 ),
                                                                 overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
+                                                                    TextOverflow
+                                                                        .ellipsis,
                                                               ),
                                                             ),
-                                                      )
+                                                          )
                                                           .toList(),
                                                       value: _selectedLeaseType,
                                                       onChanged: (value) {
@@ -878,65 +908,65 @@ class _RenewleaseState extends State<Renewlease> {
                                                         state.reset();
                                                       },
                                                       buttonStyleData:
-                                                      ButtonStyleData(
+                                                          ButtonStyleData(
                                                         height: 50,
                                                         padding:
-                                                        const EdgeInsets
-                                                            .only(
-                                                            left: 14,
-                                                            right: 14),
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 14,
+                                                                right: 14),
                                                         decoration:
-                                                        BoxDecoration(
+                                                            BoxDecoration(
                                                           borderRadius:
-                                                          BorderRadius
-                                                              .circular(6),
+                                                              BorderRadius
+                                                                  .circular(6),
                                                           border: Border.all(
                                                             color:
-                                                            Colors.black26,
+                                                                Colors.black26,
                                                           ),
                                                           color: Colors.white,
                                                         ),
                                                         elevation: 3,
                                                       ),
                                                       dropdownStyleData:
-                                                      DropdownStyleData(
+                                                          DropdownStyleData(
                                                         maxHeight: 200,
                                                         width: 200,
                                                         decoration:
-                                                        BoxDecoration(
+                                                            BoxDecoration(
                                                           borderRadius:
-                                                          BorderRadius
-                                                              .circular(14),
+                                                              BorderRadius
+                                                                  .circular(14),
                                                         ),
                                                         offset: const Offset(
                                                             -20, 0),
                                                         scrollbarTheme:
-                                                        ScrollbarThemeData(
+                                                            ScrollbarThemeData(
                                                           radius: const Radius
                                                               .circular(40),
                                                           thickness:
-                                                          MaterialStateProperty
-                                                              .all(6),
+                                                              MaterialStateProperty
+                                                                  .all(6),
                                                           thumbVisibility:
-                                                          MaterialStateProperty
-                                                              .all(true),
+                                                              MaterialStateProperty
+                                                                  .all(true),
                                                         ),
                                                       ),
                                                       menuItemStyleData:
-                                                      const MenuItemStyleData(
+                                                          const MenuItemStyleData(
                                                         height: 40,
                                                         padding:
-                                                        EdgeInsets.only(
-                                                            left: 14,
-                                                            right: 14),
+                                                            EdgeInsets.only(
+                                                                left: 14,
+                                                                right: 14),
                                                       ),
                                                     ),
                                                   ),
                                                   if (state.hasError)
                                                     Padding(
                                                       padding:
-                                                      const EdgeInsets.only(
-                                                          left: 14, top: 8),
+                                                          const EdgeInsets.only(
+                                                              left: 14, top: 8),
                                                       child: Text(
                                                         state.errorText!,
                                                         style: const TextStyle(
@@ -982,9 +1012,10 @@ class _RenewleaseState extends State<Renewlease> {
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: CustomTextField(
-                                        onTap: () async {
+                                        onTap: ()
+                                        async {
                                           DateTime? pickedDate =
-                                          await showDatePicker(
+                                              await showDatePicker(
                                             context: context,
                                             initialDate: DateTime.now(),
                                             firstDate: DateTime(2000),
@@ -994,9 +1025,9 @@ class _RenewleaseState extends State<Renewlease> {
                                                 Widget? child) {
                                               return Theme(
                                                 data:
-                                                ThemeData.light().copyWith(
+                                                    ThemeData.light().copyWith(
                                                   colorScheme:
-                                                  const ColorScheme.light(
+                                                      const ColorScheme.light(
                                                     primary: Color.fromRGBO(
                                                         21,
                                                         43,
@@ -1011,10 +1042,10 @@ class _RenewleaseState extends State<Renewlease> {
                                                         1), // body text color
                                                   ),
                                                   textButtonTheme:
-                                                  TextButtonThemeData(
+                                                      TextButtonThemeData(
                                                     style: TextButton.styleFrom(
                                                       foregroundColor:
-                                                      Colors.white,
+                                                          Colors.white,
                                                       backgroundColor: const Color
                                                           .fromRGBO(21, 43, 83,
                                                           1), // button text color
@@ -1047,7 +1078,69 @@ class _RenewleaseState extends State<Renewlease> {
                                         },
                                         readOnnly: true,
                                         suffixIcon: IconButton(
-                                            onPressed: () {},
+                                            onPressed: () async {
+                                              DateTime? pickedDate =
+                                              await showDatePicker(
+                                                context: context,
+                                                initialDate: DateTime.now(),
+                                                firstDate: DateTime(2000),
+                                                lastDate: DateTime(2101),
+                                                locale: const Locale('en', 'US'),
+                                                builder: (BuildContext context,
+                                                    Widget? child) {
+                                                  return Theme(
+                                                    data:
+                                                    ThemeData.light().copyWith(
+                                                      colorScheme:
+                                                      const ColorScheme.light(
+                                                        primary: Color.fromRGBO(
+                                                            21,
+                                                            43,
+                                                            83,
+                                                            1), // header background color
+                                                        onPrimary: Colors
+                                                            .white, // header text color
+                                                        onSurface: Color.fromRGBO(
+                                                            21,
+                                                            43,
+                                                            83,
+                                                            1), // body text color
+                                                      ),
+                                                      textButtonTheme:
+                                                      TextButtonThemeData(
+                                                        style: TextButton.styleFrom(
+                                                          foregroundColor:
+                                                          Colors.white,
+                                                          backgroundColor: const Color
+                                                              .fromRGBO(21, 43, 83,
+                                                              1), // button text color
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    child: child!,
+                                                  );
+                                                },
+                                              );
+
+                                              if (pickedDate != null) {
+                                                // String formattedStartDate =
+                                                //     "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                                String formattedStartDate =
+                                                    "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                                DateTime endDate = DateTime(
+                                                    pickedDate.year,
+                                                    pickedDate.month + 1,
+                                                    pickedDate.day);
+
+                                                // String formattedEndDate =
+                                                //     "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+                                                setState(() {
+                                                  startDateController.text =
+                                                      formattedStartDate;
+                                                  _startDate = pickedDate;
+                                                });
+                                              }
+                                            },
                                             icon: const Icon(
                                                 Icons.date_range_rounded)),
                                         validator: (value) {
@@ -1082,9 +1175,10 @@ class _RenewleaseState extends State<Renewlease> {
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: CustomTextField(
-                                        onTap: () async {
+                                        onTap: ()
+                                        async {
                                           DateTime? pickedDate =
-                                          await showDatePicker(
+                                              await showDatePicker(
                                             context: context,
                                             initialDate: DateTime.now(),
                                             firstDate: DateTime(2000),
@@ -1094,9 +1188,9 @@ class _RenewleaseState extends State<Renewlease> {
                                                 Widget? child) {
                                               return Theme(
                                                 data:
-                                                ThemeData.light().copyWith(
+                                                    ThemeData.light().copyWith(
                                                   colorScheme:
-                                                  const ColorScheme.light(
+                                                      const ColorScheme.light(
                                                     primary: Color.fromRGBO(
                                                         21,
                                                         43,
@@ -1111,10 +1205,10 @@ class _RenewleaseState extends State<Renewlease> {
                                                         1), // body text color
                                                   ),
                                                   textButtonTheme:
-                                                  TextButtonThemeData(
+                                                      TextButtonThemeData(
                                                     style: TextButton.styleFrom(
                                                       foregroundColor:
-                                                      Colors.white,
+                                                          Colors.white,
                                                       backgroundColor: const Color
                                                           .fromRGBO(21, 43, 83,
                                                           1), // button text color
@@ -1139,7 +1233,61 @@ class _RenewleaseState extends State<Renewlease> {
                                         },
                                         readOnnly: true,
                                         suffixIcon: IconButton(
-                                            onPressed: () {},
+                                            onPressed: () async {
+                                              DateTime? pickedDate =
+                                              await showDatePicker(
+                                                context: context,
+                                                initialDate: DateTime.now(),
+                                                firstDate: DateTime(2000),
+                                                lastDate: DateTime(2101),
+                                                locale: const Locale('en', 'US'),
+                                                builder: (BuildContext context,
+                                                    Widget? child) {
+                                                  return Theme(
+                                                    data:
+                                                    ThemeData.light().copyWith(
+                                                      colorScheme:
+                                                      const ColorScheme.light(
+                                                        primary: Color.fromRGBO(
+                                                            21,
+                                                            43,
+                                                            83,
+                                                            1), // header background color
+                                                        onPrimary: Colors
+                                                            .white, // header text color
+                                                        onSurface: Color.fromRGBO(
+                                                            21,
+                                                            43,
+                                                            83,
+                                                            1), // body text color
+                                                      ),
+                                                      textButtonTheme:
+                                                      TextButtonThemeData(
+                                                        style: TextButton.styleFrom(
+                                                          foregroundColor:
+                                                          Colors.white,
+                                                          backgroundColor: const Color
+                                                              .fromRGBO(21, 43, 83,
+                                                              1), // button text color
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    child: child!,
+                                                  );
+                                                },
+                                              );
+
+                                              if (pickedDate != null) {
+                                                // String formattedDate =
+                                                //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                                String formattedDate =
+                                                    "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                                setState(() {
+                                                  endDateController.text =
+                                                      formattedDate;
+                                                });
+                                              }
+                                            },
                                             icon: const Icon(
                                                 Icons.date_range_rounded)),
                                         validator: (value) {
@@ -1195,8 +1343,8 @@ class _RenewleaseState extends State<Renewlease> {
 
                                         double renewAmount =
                                             enteredAmount - existingAmount > 0
-                                            ? enteredAmount - existingAmount
-                                            : 0.0;
+                                                ? enteredAmount - existingAmount
+                                                : 0.0;
 
                                         // Update your state (if you're using setState or a state management solution)
                                         setState(() {
@@ -1326,74 +1474,74 @@ class _RenewleaseState extends State<Renewlease> {
                                     ),
                                     isLoading
                                         ? const Center(
-                                      child: SpinKitFadingCircle(
-                                        color: Colors.black,
-                                        size: 50.0,
-                                      ),
-                                    )
+                                            child: SpinKitFadingCircle(
+                                              color: Colors.black,
+                                              size: 50.0,
+                                            ),
+                                          )
                                         : hasError
                                             ? const Center(
                                                 child:
                                                     Text('Failed to load data'))
-                                        : Table(
+                                            : Table(
                                                 border:
                                                     TableBorder.all(width: 1),
-                                      columnWidths: const {
-                                        0: FlexColumnWidth(3),
-                                        1: FlexColumnWidth(2),
-                                        2: FlexColumnWidth(1),
-                                      },
-                                      children: [
-                                        TableRow(children: [
-                                          Padding(
+                                                columnWidths: const {
+                                                  0: FlexColumnWidth(3),
+                                                  1: FlexColumnWidth(2),
+                                                  2: FlexColumnWidth(1),
+                                                },
+                                                children: [
+                                                  TableRow(children: [
+                                                    Padding(
                                                       padding:
                                                           EdgeInsets.all(8.0),
-                                            child: Center(
-                                              child: Text('Account',
-                                                  style: TextStyle(
-                                                      color:
-                                                      blueColor,
+                                                      child: Center(
+                                                        child: Text('Account',
+                                                            style: TextStyle(
+                                                                color:
+                                                                    blueColor,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold)),
-                                            ),
-                                          ),
-                                          Padding(
+                                                      ),
+                                                    ),
+                                                    Padding(
                                                       padding:
                                                           EdgeInsets.all(8.0),
-                                            child: Center(
-                                              child: Text('Amount',
-                                                  style: TextStyle(
-                                                      color:
-                                                      blueColor,
+                                                      child: Center(
+                                                        child: Text('Amount',
+                                                            style: TextStyle(
+                                                                color:
+                                                                    blueColor,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold)),
-                                            ),
-                                          ),
-                                          Padding(
+                                                      ),
+                                                    ),
+                                                    Padding(
                                                       padding:
                                                           EdgeInsets.all(5.0),
-                                            child: Center(
-                                              child: Text('',
-                                                  style: TextStyle(
-                                                      color:
-                                                      blueColor,
+                                                      child: Center(
+                                                        child: Text('',
+                                                            style: TextStyle(
+                                                                color:
+                                                                    blueColor,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold)),
-                                            ),
-                                          ),
-                                        ]),
+                                                      ),
+                                                    ),
+                                                  ]),
                                                   ...rows
                                                       .asMap()
                                                       .entries
                                                       .map((entry) {
-                                          int index = entry.key;
+                                                    int index = entry.key;
                                                     Map<String, dynamic> row =
                                                         entry.value;
-                                          return TableRow(children: [
-                                            Padding(
+                                                    return TableRow(children: [
+                                                      Padding(
                                                         padding:
                                                             const EdgeInsets
                                                                 .all(8.0),
@@ -1401,35 +1549,35 @@ class _RenewleaseState extends State<Renewlease> {
                                                             DropdownButtonHideUnderline(
                                                           child:
                                                               FormField<String>(
-                                                  validator: (value) {
+                                                            validator: (value) {
                                                               if (rows[index][
                                                                       'account'] ==
-                                                        null) {
-                                                      return 'Please select an account';
-                                                    }
-                                                    return null;
-                                                  },
-                                                  builder:
+                                                                  null) {
+                                                                return 'Please select an account';
+                                                              }
+                                                              return null;
+                                                            },
+                                                            builder:
                                                                 (FormFieldState<
                                                                         String>
                                                                     state) {
                                                               String?
                                                                   selectedAccount =
-                                                    row['account'];
+                                                                  row['account'];
 
                                                               String?
                                                                   selectedCharge =
-                                                    row['charge_type'];
-                                                    // List of all dropdown items, including missing ones
+                                                                  row['charge_type'];
+                                                              // List of all dropdown items, including missing ones
                                                               Map<
                                                                       String,
                                                                       List<
                                                                           String>>
-                                                    categorizedDataCopy =
+                                                                  categorizedDataCopy =
                                                                   Map.from(
                                                                       categorizedData);
 
-                                                    // Ensure the selected value is present in the list
+                                                              // Ensure the selected value is present in the list
                                                               if (selectedAccount !=
                                                                       null &&
                                                                   !categorizedData
@@ -1437,11 +1585,11 @@ class _RenewleaseState extends State<Renewlease> {
                                                                       .expand(
                                                                           (list) =>
                                                                               list)
-                                                            .contains(
-                                                            selectedAccount)) {
-                                                      if (categorizedDataCopy[
-                                                      'Other'] ==
-                                                          null) {
+                                                                      .contains(
+                                                                          selectedAccount)) {
+                                                                if (categorizedDataCopy[
+                                                                        'Other'] ==
+                                                                    null) {
                                                                   categorizedDataCopy[
                                                                       'Other'] = [];
                                                                 }
@@ -1454,11 +1602,11 @@ class _RenewleaseState extends State<Renewlease> {
                                                               List<String>
                                                                   liabilityAccounts =
                                                                   [
-                                                      "Late Fee Income",
-                                                      "Pre-payments",
-                                                      "Security Deposit",
-                                                      'Rent Income'
-                                                    ];
+                                                                "Late Fee Income",
+                                                                "Pre-payments",
+                                                                "Security Deposit",
+                                                                'Rent Income'
+                                                              ];
                                                               String?
                                                                   surchargetype;
                                                               if (selectedCharge ==
@@ -1475,10 +1623,10 @@ class _RenewleaseState extends State<Renewlease> {
                                                                     surchargetype =
                                                                         entry
                                                                             .key;
-                                                          break;
-                                                        }
-                                                      }
-                                                    }
+                                                                    break;
+                                                                  }
+                                                                }
+                                                              }
                                                               bool nosurcharge =
                                                                   false;
                                                               if (row["charge_type"] ==
@@ -1505,9 +1653,9 @@ class _RenewleaseState extends State<Renewlease> {
                                                                   nosurcharge =
                                                                       true;
                                                                 }
-                                                    }
+                                                              }
 
-                                                    // Prepare the dropdown items
+                                                              // Prepare the dropdown items
                                                               List<
                                                                       DropdownMenuItem<
                                                                           String>>
@@ -1517,7 +1665,7 @@ class _RenewleaseState extends State<Renewlease> {
                                                                     .entries
                                                                     .expand(
                                                                         (entry) {
-                                                        return [
+                                                                  return [
                                                                     DropdownMenuItem<
                                                                         String>(
                                                                       enabled:
@@ -1528,44 +1676,44 @@ class _RenewleaseState extends State<Renewlease> {
                                                                             .key,
                                                                         style:
                                                                             const TextStyle(
-                                                                fontWeight:
-                                                                FontWeight.bold,
-                                                                color: Color.fromRGBO(
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                          color: Color.fromRGBO(
                                                                               21,
                                                                               43,
                                                                               81,
                                                                               1),
-                                                              ),
-                                                            ),
-                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
                                                                     ...entry
                                                                         .value
                                                                         .map(
                                                                             (item) {
-                                                            return DropdownMenuItem<
-                                                                String>(
-                                                              value:
-                                                              "${item}_${entry.key}",
+                                                                      return DropdownMenuItem<
+                                                                          String>(
+                                                                        value:
+                                                                            "${item}_${entry.key}",
                                                                         child:
                                                                             Padding(
                                                                           padding: const EdgeInsets
-                                                                    .only(
-                                                                    left: 10,
-                                                                    bottom: 1),
+                                                                              .only(
+                                                                              left: 10,
+                                                                              bottom: 1),
                                                                           child:
                                                                               Text(
-                                                                  item,
-                                                                  style:
-                                                                  const TextStyle(
-                                                                    color: Colors.black,
+                                                                            item,
+                                                                            style:
+                                                                                const TextStyle(
+                                                                              color: Colors.black,
                                                                               fontWeight: FontWeight.w400,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            );
-                                                          }).toList(),
-                                                        ];
-                                                      }).toList(),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      );
+                                                                    }).toList(),
+                                                                  ];
+                                                                }).toList(),
                                                                 if (row['account'] !=
                                                                         null &&
                                                                     !categorizedData
@@ -1587,17 +1735,17 @@ class _RenewleaseState extends State<Renewlease> {
                                                                               0.0),
                                                                       child:
                                                                           Text(
-                                                              row['account']!,
+                                                                        row['account']!,
                                                                         style:
                                                                             const TextStyle(
                                                                           color:
                                                                               Colors.black,
                                                                           fontWeight:
                                                                               FontWeight.w400,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
                                                                 DropdownMenuItem<
                                                                     String>(
                                                                   value:
@@ -1607,7 +1755,7 @@ class _RenewleaseState extends State<Renewlease> {
                                                                     onTap: () {
                                                                       Navigator.pop(
                                                                           context);
-                                                            showDialog(
+                                                                      showDialog(
                                                                         context:
                                                                             context,
                                                                         builder:
@@ -1616,288 +1764,288 @@ class _RenewleaseState extends State<Renewlease> {
                                                                           return StatefulBuilder(builder:
                                                                               (context, setState) {
                                                                             return Dialog(
-                                                                          backgroundColor: Colors.white,
-                                                                          surfaceTintColor: Colors.white,
+                                                                              backgroundColor: Colors.white,
+                                                                              surfaceTintColor: Colors.white,
                                                                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
                                                                               child: SingleChildScrollView(
-                                                                            child: Container(
-                                                                              // height: 450,
+                                                                                child: Container(
+                                                                                  // height: 450,
                                                                                   child: Padding(
                                                                                     padding: const EdgeInsets.all(16.0),
-                                                                                child: Form(
-                                                                                  key: _subFormKey,
-                                                                                  child: Column(
-                                                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                    children: [
-                                                                                      Text(
-                                                                                        'Add account',
-                                                                                        style: TextStyle(
-                                                                                          fontSize: 16,
+                                                                                    child: Form(
+                                                                                      key: _subFormKey,
+                                                                                      child: Column(
+                                                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                        children: [
+                                                                                          Text(
+                                                                                            'Add account',
+                                                                                            style: TextStyle(
+                                                                                              fontSize: 16,
                                                                                               fontWeight: FontWeight.bold,
-                                                                                          color: blueColor,
-                                                                                        ),
-                                                                                      ),
-                                                                                      SizedBox(
-                                                                                        height: 20,
-                                                                                      ),
-                                                                                      Text(
-                                                                                        'Account Name *',
-                                                                                        style: TextStyle(
-                                                                                          fontSize: 14,
+                                                                                              color: blueColor,
+                                                                                            ),
+                                                                                          ),
+                                                                                          SizedBox(
+                                                                                            height: 20,
+                                                                                          ),
+                                                                                          Text(
+                                                                                            'Account Name *',
+                                                                                            style: TextStyle(
+                                                                                              fontSize: 14,
                                                                                               fontWeight: FontWeight.bold,
-                                                                                          color: blueColor,
-                                                                                        ),
-                                                                                      ),
-                                                                                      const SizedBox(height: 5),
-                                                                                      CustomTextField(
-                                                                                        validator: (value) {
+                                                                                              color: blueColor,
+                                                                                            ),
+                                                                                          ),
+                                                                                          const SizedBox(height: 5),
+                                                                                          CustomTextField(
+                                                                                            validator: (value) {
                                                                                               if (value == null || value.isEmpty) {
-                                                                                            return 'Please enter Account Name';
-                                                                                          }
-                                                                                          return null;
-                                                                                        },
+                                                                                                return 'Please enter Account Name';
+                                                                                              }
+                                                                                              return null;
+                                                                                            },
                                                                                             keyboardType: TextInputType.text,
                                                                                             hintText: 'Enter Account Name',
                                                                                             controller: _accountNameController,
-                                                                                      ),
-                                                                                      const SizedBox(height: 10),
-                                                                                      Text(
-                                                                                        'Account Type',
-                                                                                        style: TextStyle(
-                                                                                          fontSize: 14,
+                                                                                          ),
+                                                                                          const SizedBox(height: 10),
+                                                                                          Text(
+                                                                                            'Account Type',
+                                                                                            style: TextStyle(
+                                                                                              fontSize: 14,
                                                                                               fontWeight: FontWeight.bold,
-                                                                                          color: blueColor,
-                                                                                        ),
-                                                                                      ),
-                                                                                      const SizedBox(height: 5),
-                                                                                      CustomDropdown(
-                                                                                        validator: (value) {
+                                                                                              color: blueColor,
+                                                                                            ),
+                                                                                          ),
+                                                                                          const SizedBox(height: 5),
+                                                                                          CustomDropdown(
+                                                                                            validator: (value) {
                                                                                               if (_selectedAccountType == null || _selectedAccountType!.isEmpty) {
-                                                                                            return 'Please select a Account Type';
-                                                                                          }
-                                                                                          return null;
-                                                                                        },
+                                                                                                return 'Please select a Account Type';
+                                                                                              }
+                                                                                              return null;
+                                                                                            },
                                                                                             labelText: 'Select Account Type',
-                                                                                        items: accountTypeItems,
+                                                                                            items: accountTypeItems,
                                                                                             selectedValue: _selectedAccountType,
                                                                                             onChanged: (String? value) {
-                                                                                          setState(() {
+                                                                                              setState(() {
                                                                                                 _selectedAccountType = value;
-                                                                                          });
-                                                                                        },
-                                                                                      ),
-                                                                                      const SizedBox(height: 10),
-                                                                                      Text(
-                                                                                        'Fund Type',
-                                                                                        style: TextStyle(
-                                                                                          fontSize: 14,
+                                                                                              });
+                                                                                            },
+                                                                                          ),
+                                                                                          const SizedBox(height: 10),
+                                                                                          Text(
+                                                                                            'Fund Type',
+                                                                                            style: TextStyle(
+                                                                                              fontSize: 14,
                                                                                               fontWeight: FontWeight.bold,
-                                                                                          color: blueColor,
-                                                                                        ),
-                                                                                      ),
-                                                                                      const SizedBox(height: 5),
-                                                                                      CustomDropdown(
-                                                                                        validator: (value) {
+                                                                                              color: blueColor,
+                                                                                            ),
+                                                                                          ),
+                                                                                          const SizedBox(height: 5),
+                                                                                          CustomDropdown(
+                                                                                            validator: (value) {
                                                                                               if (_selectedFundType == null || _selectedFundType!.isEmpty) {
-                                                                                            return 'Please select a Fund Type';
-                                                                                          }
-                                                                                          return null;
-                                                                                        },
+                                                                                                return 'Please select a Fund Type';
+                                                                                              }
+                                                                                              return null;
+                                                                                            },
                                                                                             labelText: 'Select Fund Type',
-                                                                                        items: fundTypeItems,
+                                                                                            items: fundTypeItems,
                                                                                             selectedValue: _selectedFundType,
                                                                                             onChanged: (String? value) {
-                                                                                          setState(() {
+                                                                                              setState(() {
                                                                                                 _selectedFundType = value;
-                                                                                          });
-                                                                                        },
-                                                                                      ),
-                                                                                      const SizedBox(height: 10),
-                                                                                      Text(
-                                                                                        'Notes',
-                                                                                        style: TextStyle(
-                                                                                          fontSize: 14,
+                                                                                              });
+                                                                                            },
+                                                                                          ),
+                                                                                          const SizedBox(height: 10),
+                                                                                          Text(
+                                                                                            'Notes',
+                                                                                            style: TextStyle(
+                                                                                              fontSize: 14,
                                                                                               fontWeight: FontWeight.bold,
-                                                                                          color: blueColor,
-                                                                                        ),
-                                                                                      ),
-                                                                                      const SizedBox(height: 5),
-                                                                                      CustomTextField(
-                                                                                        validator: (value) {
+                                                                                              color: blueColor,
+                                                                                            ),
+                                                                                          ),
+                                                                                          const SizedBox(height: 5),
+                                                                                          CustomTextField(
+                                                                                            validator: (value) {
                                                                                               if (value == null || value.isEmpty) {
-                                                                                            return 'Please enter Notes';
-                                                                                          }
-                                                                                          return null;
-                                                                                        },
+                                                                                                return 'Please enter Notes';
+                                                                                              }
+                                                                                              return null;
+                                                                                            },
                                                                                             keyboardType: TextInputType.text,
-                                                                                        hintText: 'Enter Notes',
+                                                                                            hintText: 'Enter Notes',
                                                                                             controller: _notesController,
-                                                                                      ),
-                                                                                      const SizedBox(
-                                                                                        height: 20,
-                                                                                      ),
-                                                                                      RichText(
+                                                                                          ),
+                                                                                          const SizedBox(
+                                                                                            height: 20,
+                                                                                          ),
+                                                                                          RichText(
                                                                                             text: TextSpan(
-                                                                                          children: <TextSpan>[
-                                                                                            TextSpan(
+                                                                                              children: <TextSpan>[
+                                                                                                TextSpan(
                                                                                                   text: 'We stores this information ',
-                                                                                              style: TextStyle(
-                                                                                                fontSize: 12,
+                                                                                                  style: TextStyle(
+                                                                                                    fontSize: 12,
                                                                                                     fontWeight: FontWeight.bold,
                                                                                                     color: Colors.grey,
-                                                                                              ),
-                                                                                            ),
-                                                                                            TextSpan(
-                                                                                              text: ' Privately ',
-                                                                                              style: TextStyle(
-                                                                                                fontSize: 12,
+                                                                                                  ),
+                                                                                                ),
+                                                                                                TextSpan(
+                                                                                                  text: ' Privately ',
+                                                                                                  style: TextStyle(
+                                                                                                    fontSize: 12,
                                                                                                     fontWeight: FontWeight.bold,
-                                                                                                color: blueColor,
-                                                                                              ),
-                                                                                            ),
-                                                                                            TextSpan(
-                                                                                              text: ' and ',
-                                                                                              style: TextStyle(
-                                                                                                fontSize: 12,
+                                                                                                    color: blueColor,
+                                                                                                  ),
+                                                                                                ),
+                                                                                                TextSpan(
+                                                                                                  text: ' and ',
+                                                                                                  style: TextStyle(
+                                                                                                    fontSize: 12,
                                                                                                     fontWeight: FontWeight.normal,
                                                                                                     color: Colors.grey,
-                                                                                              ),
-                                                                                            ),
-                                                                                            TextSpan(
-                                                                                              text: ' Securely ',
-                                                                                              style: TextStyle(
-                                                                                                fontSize: 12,
+                                                                                                  ),
+                                                                                                ),
+                                                                                                TextSpan(
+                                                                                                  text: ' Securely ',
+                                                                                                  style: TextStyle(
+                                                                                                    fontSize: 12,
                                                                                                     fontWeight: FontWeight.bold,
-                                                                                                color: blueColor,
-                                                                                              ),
+                                                                                                    color: blueColor,
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
                                                                                             ),
-                                                                                          ],
-                                                                                        ),
-                                                                                      ),
-                                                                                      const SizedBox(
-                                                                                        height: 20,
-                                                                                      ),
-                                                                                      Row(
+                                                                                          ),
+                                                                                          const SizedBox(
+                                                                                            height: 20,
+                                                                                          ),
+                                                                                          Row(
                                                                                             mainAxisAlignment: MainAxisAlignment.end,
-                                                                                        children: [
-                                                                                          Container(
-                                                                                              height: 50,
-                                                                                              width: 90,
+                                                                                            children: [
+                                                                                              Container(
+                                                                                                  height: 50,
+                                                                                                  width: 90,
                                                                                                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
                                                                                                   child: ElevatedButton(
                                                                                                       style: ElevatedButton.styleFrom(backgroundColor: blueColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
-                                                                                                  // onPressed:
-                                                                                                  //     () {
-                                                                                                  //   _submitSubForm(context);
-                                                                                                  // },
-                                                                                                  onPressed: () async {
+                                                                                                      // onPressed:
+                                                                                                      //     () {
+                                                                                                      //   _submitSubForm(context);
+                                                                                                      // },
+                                                                                                      onPressed: () async {
                                                                                                         if (_selectedAccountType == null || _accountNameController.text.isEmpty || _selectedFundType == null || _notesController.text.isEmpty) {
-                                                                                                      setState(() {
-                                                                                                        isError = true;
-                                                                                                      });
-                                                                                                    } else {
-                                                                                                      setState(() {
-                                                                                                        isLoading = true;
-                                                                                                        isError = false;
-                                                                                                      });
+                                                                                                          setState(() {
+                                                                                                            isError = true;
+                                                                                                          });
+                                                                                                        } else {
+                                                                                                          setState(() {
+                                                                                                            isLoading = true;
+                                                                                                            isError = false;
+                                                                                                          });
 
                                                                                                           SharedPreferences prefs = await SharedPreferences.getInstance();
-                                                                                                      String? id = prefs.getString("adminId");
+                                                                                                          String? id = prefs.getString("adminId");
 
-                                                                                                      try {
-                                                                                                        await accountRepository().addAccount(
-                                                                                                          adminId: id!,
-                                                                                                          account: _accountNameController.text,
-                                                                                                          accounttype: _selectedAccountType,
-                                                                                                          fundtype: _selectedFundType,
-                                                                                                          chargetype: 'One Time Charge',
-                                                                                                          notes: _notesController.text,
-                                                                                                        );
-                                                                                                        Navigator.pop(context, true);
-                                                                                                        _refreshAccounts();
-                                                                                                      } catch (e) {
-                                                                                                        setState(() {
-                                                                                                          isError = true;
-                                                                                                        });
-                                                                                                      } finally {
-                                                                                                        setState(() {
-                                                                                                          isLoading = false;
-                                                                                                        });
-                                                                                                      }
-                                                                                                    }
-                                                                                                  },
+                                                                                                          try {
+                                                                                                            await accountRepository().addAccount(
+                                                                                                              adminId: id!,
+                                                                                                              account: _accountNameController.text,
+                                                                                                              accounttype: _selectedAccountType,
+                                                                                                              fundtype: _selectedFundType,
+                                                                                                              chargetype: 'One Time Charge',
+                                                                                                              notes: _notesController.text,
+                                                                                                            );
+                                                                                                            Navigator.pop(context, true);
+                                                                                                            _refreshAccounts();
+                                                                                                          } catch (e) {
+                                                                                                            setState(() {
+                                                                                                              isError = true;
+                                                                                                            });
+                                                                                                          } finally {
+                                                                                                            setState(() {
+                                                                                                              isLoading = false;
+                                                                                                            });
+                                                                                                          }
+                                                                                                        }
+                                                                                                      },
                                                                                                       child: const Text(
-                                                                                                    'Add',
+                                                                                                        'Add',
                                                                                                         style: TextStyle(color: Color(0xFFf7f8f9)),
-                                                                                                  ))),
-                                                                                          const SizedBox(
-                                                                                            width: 10,
-                                                                                          ),
-                                                                                          Container(
-                                                                                              height: 50,
-                                                                                              width: 94,
+                                                                                                      ))),
+                                                                                              const SizedBox(
+                                                                                                width: 10,
+                                                                                              ),
+                                                                                              Container(
+                                                                                                  height: 50,
+                                                                                                  width: 94,
                                                                                                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
                                                                                                   child: ElevatedButton(
                                                                                                       style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFffffff), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
                                                                                                       onPressed: () {
-                                                                                                    setState(() {
+                                                                                                        setState(() {
                                                                                                           Navigator.pop(context);
-                                                                                                      _selectedProperty = null;
-                                                                                                    });
+                                                                                                          _selectedProperty = null;
+                                                                                                        });
                                                                                                         Navigator.pop(context);
-                                                                                                  },
+                                                                                                      },
                                                                                                       child: const Text(
-                                                                                                    'Cancel',
+                                                                                                        'Cancel',
                                                                                                         style: TextStyle(color: Color(0xFF748097)),
-                                                                                                  ))),
+                                                                                                      ))),
+                                                                                            ],
+                                                                                          ),
+                                                                                          if (isError)
+                                                                                            Padding(
+                                                                                              padding: const EdgeInsets.only(top: 8.0),
+                                                                                              child: Text(
+                                                                                                'Please fill all fields',
+                                                                                                style: TextStyle(color: Colors.red),
+                                                                                              ),
+                                                                                            ),
                                                                                         ],
                                                                                       ),
-                                                                                      if (isError)
-                                                                                        Padding(
-                                                                                          padding: const EdgeInsets.only(top: 8.0),
-                                                                                          child: Text(
-                                                                                            'Please fill all fields',
-                                                                                            style: TextStyle(color: Colors.red),
-                                                                                          ),
-                                                                                        ),
-                                                                                    ],
+                                                                                    ),
                                                                                   ),
                                                                                 ),
                                                                               ),
-                                                                            ),
-                                                                          ),
-                                                                        );
-                                                                    });
-                                                              },
-                                                            );
-                                                          },
-                                                          child: Row(
+                                                                            );
+                                                                          });
+                                                                        },
+                                                                      );
+                                                                    },
+                                                                    child: Row(
                                                                       mainAxisAlignment:
                                                                           MainAxisAlignment
                                                                               .start,
                                                                       crossAxisAlignment:
                                                                           CrossAxisAlignment
                                                                               .start,
-                                                            children: [
-                                                              const Text(
-                                                                '+ Add One Time Charge',
-                                                                style: TextStyle(
-                                                                    fontSize: 14,
-                                                                    color: Colors.black,
-                                                                    fontWeight: FontWeight.w500),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ];
+                                                                      children: [
+                                                                        const Text(
+                                                                          '+ Add One Time Charge',
+                                                                          style: TextStyle(
+                                                                              fontSize: 14,
+                                                                              color: Colors.black,
+                                                                              fontWeight: FontWeight.w500),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ];
 
-                                                    return Column(
-                                                      crossAxisAlignment:
+                                                              return Column(
+                                                                crossAxisAlignment:
                                                                     CrossAxisAlignment
                                                                         .start,
-                                                      children: [
+                                                                children: [
                                                                   SizedBox(
                                                                       height:
                                                                           5),
@@ -1905,27 +2053,27 @@ class _RenewleaseState extends State<Renewlease> {
                                                                       String>(
                                                                     isExpanded:
                                                                         true,
-                                                          // value: (row['account'] !=
-                                                          //             null &&
-                                                          //         row['charge_type'] !=
-                                                          //             null)
-                                                          //     ? (liabilityAccounts
-                                                          //             .contains(row[
-                                                          //                 'account'])
-                                                          //         ? "${row['account']}_Liability Account"
-                                                          //         : "${row['account']}_${row['charge_type']}")
-                                                          //     : null,
-                                                          // value: row['account'] != null ? liabilityAccounts.contains(row['account']) ?
-                                                          //  "${row['account']}_Liability Account" : row['charge_type'] == "Surcharge" ?
-                                                          //  "${row['account']}_$surchargetype" :  "${row['account']}_${row['charge_type']}":null,
+                                                                    // value: (row['account'] !=
+                                                                    //             null &&
+                                                                    //         row['charge_type'] !=
+                                                                    //             null)
+                                                                    //     ? (liabilityAccounts
+                                                                    //             .contains(row[
+                                                                    //                 'account'])
+                                                                    //         ? "${row['account']}_Liability Account"
+                                                                    //         : "${row['account']}_${row['charge_type']}")
+                                                                    //     : null,
+                                                                    // value: row['account'] != null ? liabilityAccounts.contains(row['account']) ?
+                                                                    //  "${row['account']}_Liability Account" : row['charge_type'] == "Surcharge" ?
+                                                                    //  "${row['account']}_$surchargetype" :  "${row['account']}_${row['charge_type']}":null,
                                                                     value: row['account'] !=
                                                                             null
-                                                              ? (liabilityAccounts.contains(row['account'])
-                                                              ? "${row['account']}_Liability Account"
-                                                              : (row['charge_type'] == "Surcharge" && surchargetype != null
-                                                              ? "${row['account']}_$surchargetype"
-                                                              : "${row['account']}_${row['charge_type']}"))
-                                                              : null,
+                                                                        ? (liabilityAccounts.contains(row['account'])
+                                                                            ? "${row['account']}_Liability Account"
+                                                                            : (row['charge_type'] == "Surcharge" && surchargetype != null
+                                                                                ? "${row['account']}_$surchargetype"
+                                                                                : "${row['account']}_${row['charge_type']}"))
+                                                                        : null,
                                                                     items:
                                                                         dropdownItems,
                                                                     onChanged:
@@ -1936,28 +2084,28 @@ class _RenewleaseState extends State<Renewlease> {
                                                                               'button_item') {
                                                                         setState(
                                                                             () {
-                                                              final parts =
+                                                                          final parts =
                                                                               value.split('_');
                                                                           if (parts.length >=
                                                                               2) {
                                                                             final selectedAccount =
-                                                              parts[0];
+                                                                                parts[0];
                                                                             final selectedChargeType =
                                                                                 parts.sublist(1).join('_');
 
-                                                              rows[index]['account'] =
+                                                                            rows[index]['account'] =
                                                                                 selectedAccount;
                                                                             rows[index]['charge_type'] =
-                                                                  selectedChargeType;
+                                                                                selectedChargeType;
 
                                                                             // Update form field state
                                                                             state.didChange(value);
                                                                           }
                                                                         });
                                                                       }
-                                                          },
-                                                          buttonStyleData:
-                                                          ButtonStyleData(
+                                                                    },
+                                                                    buttonStyleData:
+                                                                        ButtonStyleData(
                                                                       height:
                                                                           45,
                                                                       padding: const EdgeInsets
@@ -1968,47 +2116,47 @@ class _RenewleaseState extends State<Renewlease> {
                                                                               14),
                                                                       decoration:
                                                                           BoxDecoration(
-                                                              borderRadius:
+                                                                        borderRadius:
                                                                             BorderRadius.circular(6),
                                                                         color: Colors
                                                                             .white,
                                                                       ),
                                                                       elevation:
                                                                           2,
-                                                          ),
-                                                          iconStyleData:
-                                                          const IconStyleData(
-                                                            icon: Icon(
+                                                                    ),
+                                                                    iconStyleData:
+                                                                        const IconStyleData(
+                                                                      icon: Icon(
                                                                           Icons
                                                                               .arrow_drop_down),
                                                                       iconSize:
                                                                           24,
-                                                            iconEnabledColor:
+                                                                      iconEnabledColor:
                                                                           Color(
                                                                               0xFFb0b6c3),
-                                                            iconDisabledColor:
+                                                                      iconDisabledColor:
                                                                           Colors
                                                                               .grey,
-                                                          ),
-                                                          dropdownStyleData:
-                                                          DropdownStyleData(
+                                                                    ),
+                                                                    dropdownStyleData:
+                                                                        DropdownStyleData(
                                                                       width:
                                                                           250,
                                                                       decoration:
                                                                           BoxDecoration(
-                                                              borderRadius:
+                                                                        borderRadius:
                                                                             BorderRadius.circular(6),
                                                                         color: Colors
                                                                             .white,
-                                                            ),
-                                                            scrollbarTheme:
-                                                            ScrollbarThemeData(
+                                                                      ),
+                                                                      scrollbarTheme:
+                                                                          ScrollbarThemeData(
                                                                         radius: const Radius
                                                                             .circular(
-                                                                  6),
-                                                              thickness:
+                                                                            6),
+                                                                        thickness:
                                                                             MaterialStateProperty.all(6),
-                                                              thumbVisibility:
+                                                                        thumbVisibility:
                                                                             MaterialStateProperty.all(true),
                                                                       ),
                                                                     ),
@@ -2022,13 +2170,13 @@ class _RenewleaseState extends State<Renewlease> {
                                                                               5,
                                                                           bottom:
                                                                               2),
-                                                            child: Text(
-                                                                'Select an account'),
-                                                          ),
-                                                        ),
-                                                        if (state
-                                                            .hasError) // Display the validation error
-                                                          Padding(
+                                                                      child: Text(
+                                                                          'Select an account'),
+                                                                    ),
+                                                                  ),
+                                                                  if (state
+                                                                      .hasError) // Display the validation error
+                                                                    Padding(
                                                                       padding: const EdgeInsets
                                                                           .only(
                                                                           left:
@@ -2045,481 +2193,481 @@ class _RenewleaseState extends State<Renewlease> {
                                                                               Colors.red,
                                                                           fontSize:
                                                                               12,
-                                                              ),
-                                                            ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                ],
+                                                              );
+                                                            },
                                                           ),
-                                                      ],
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                            // Padding(
-                                            //   padding: const EdgeInsets.all(8.0),
-                                            //   child: DropdownButtonHideUnderline(
-                                            //     child: DropdownButton2<String>(
-                                            //       isExpanded: true,
-                                            //       style: TextStyle(fontSize: 14),
-                                            //       value: row['account'],
-                                            //       items: [
-                                            //         ...categorizedData.entries
-                                            //             .expand((entry) {
-                                            //           return [
-                                            //             DropdownMenuItem<String>(
-                                            //               enabled: false,
-                                            //               child: Text(
-                                            //                 entry.key,
-                                            //                 style: const TextStyle(
-                                            //                   fontWeight:
-                                            //                   FontWeight.bold,
-                                            //                   color: Color.fromRGBO(
-                                            //                       21, 43, 81, 1),
-                                            //                 ),
-                                            //               ),
-                                            //             ),
-                                            //             ...entry.value.map((item) {
-                                            //               return DropdownMenuItem<
-                                            //                   String>(
-                                            //                 value: item,
-                                            //                 child: Padding(
-                                            //                   padding:
-                                            //                   const EdgeInsets.only(
-                                            //                       left: 0.0),
-                                            //                   child: Text(
-                                            //                     item,
-                                            //                     style: const TextStyle(
-                                            //                       color: Colors.black,
-                                            //                       fontWeight:
-                                            //                       FontWeight.w400,
-                                            //                     ),
-                                            //                   ),
-                                            //                 ),
-                                            //               );
-                                            //             }).toList(),
-                                            //
-                                            //           ];
-                                            //
-                                            //         }).toList(),
-                                            //         DropdownMenuItem<String>(
-                                            //           value: 'button_item',
-                                            //           child: GestureDetector(
-                                            //             onTap: (){
-                                            //               Navigator.pop(context);
-                                            //               showDialog(
-                                            //                 context: context,
-                                            //                 builder: (BuildContext context) {
-                                            //                   return StatefulBuilder(
-                                            //                       builder: (context, setState) {
-                                            //                         return
-                                            //                           Dialog(
-                                            //                             backgroundColor: Colors.white,
-                                            //                             surfaceTintColor: Colors.white,
-                                            //                             shape: RoundedRectangleBorder(
-                                            //                                 borderRadius:
-                                            //                                 BorderRadius.circular(10.0)),
-                                            //                             child:
-                                            //                             SingleChildScrollView(
-                                            //                               child: Container(
-                                            //                                 // height: 450,
-                                            //                                 child:
-                                            //                                 Padding(
-                                            //                                   padding:
-                                            //                                   const EdgeInsets.all(16.0),
-                                            //                                   child: Form(
-                                            //                                     key: _subFormKey,
-                                            //                                     child: Column(
-                                            //                                       mainAxisAlignment: MainAxisAlignment.start,
-                                            //                                       crossAxisAlignment: CrossAxisAlignment.start,
-                                            //                                       children: [
-                                            //                                         Text(
-                                            //                                           'Add account',
-                                            //                                           style: TextStyle(
-                                            //                                             fontSize: 16,
-                                            //                                             fontWeight:
-                                            //                                             FontWeight.bold,
-                                            //                                             color: blueColor,
-                                            //                                           ),
-                                            //                                         ),
-                                            //                                         SizedBox(
-                                            //                                           height: 20,
-                                            //                                         ),
-                                            //                                         Text(
-                                            //                                           'Account Name *',
-                                            //                                           style: TextStyle(
-                                            //                                             fontSize: 14,
-                                            //                                             fontWeight:
-                                            //                                             FontWeight.bold,
-                                            //                                             color: blueColor,
-                                            //                                           ),
-                                            //                                         ),
-                                            //                                         const SizedBox(height: 5),
-                                            //                                         CustomTextField(
-                                            //                                           validator: (value) {
-                                            //                                             if (value == null ||
-                                            //                                                 value.isEmpty) {
-                                            //                                               return 'Please enter Account Name';
-                                            //                                             }
-                                            //                                             return null;
-                                            //                                           },
-                                            //                                           keyboardType:
-                                            //                                           TextInputType.text,
-                                            //                                           hintText:
-                                            //                                           'Enter Account Name',
-                                            //                                           controller:
-                                            //                                           _accountNameController,
-                                            //                                         ),
-                                            //                                         const SizedBox(height: 10),
-                                            //                                         Text(
-                                            //                                           'Account Type',
-                                            //                                           style: TextStyle(
-                                            //                                             fontSize: 14,
-                                            //                                             fontWeight:
-                                            //                                             FontWeight.bold,
-                                            //                                             color: blueColor,
-                                            //                                           ),
-                                            //                                         ),
-                                            //                                         const SizedBox(height: 5),
-                                            //                                         CustomDropdown(
-                                            //                                           validator: (value) {
-                                            //                                             if (_selectedAccountType == null ||
-                                            //                                                 _selectedAccountType!.isEmpty) {
-                                            //                                               return 'Please select a Account Type';
-                                            //                                             }
-                                            //                                             return null;
-                                            //                                           },
-                                            //                                           labelText:
-                                            //                                           'Select Account Type',
-                                            //                                           items: accountTypeItems,
-                                            //                                           selectedValue:
-                                            //                                           _selectedAccountType,
-                                            //                                           onChanged:
-                                            //                                               (String? value) {
-                                            //                                             setState(() {
-                                            //                                               _selectedAccountType =
-                                            //                                                   value;
-                                            //                                             });
-                                            //                                           },
-                                            //                                         ),
-                                            //                                         const SizedBox(height: 10),
-                                            //                                         Text(
-                                            //                                           'Fund Type',
-                                            //                                           style: TextStyle(
-                                            //                                             fontSize: 14,
-                                            //                                             fontWeight:
-                                            //                                             FontWeight.bold,
-                                            //                                             color: blueColor,
-                                            //                                           ),
-                                            //                                         ),
-                                            //                                         const SizedBox(height: 5),
-                                            //                                         CustomDropdown(
-                                            //                                           validator: (value) {
-                                            //                                             if (_selectedFundType == null ||
-                                            //                                                 _selectedFundType!.isEmpty) {
-                                            //                                               return 'Please select a Fund Type';
-                                            //                                             }
-                                            //                                             return null;
-                                            //                                           },
-                                            //                                           labelText:
-                                            //                                           'Select Fund Type',
-                                            //                                           items: fundTypeItems,
-                                            //                                           selectedValue:
-                                            //                                           _selectedFundType,
-                                            //                                           onChanged:
-                                            //                                               (String? value) {
-                                            //                                             setState(() {
-                                            //                                               _selectedFundType =
-                                            //                                                   value;
-                                            //                                             });
-                                            //                                           },
-                                            //                                         ),
-                                            //                                         const SizedBox(height: 10),
-                                            //                                         Text(
-                                            //                                           'Notes',
-                                            //                                           style: TextStyle(
-                                            //                                             fontSize: 14,
-                                            //                                             fontWeight:
-                                            //                                             FontWeight.bold,
-                                            //                                             color: blueColor,
-                                            //                                           ),
-                                            //                                         ),
-                                            //                                         const SizedBox(height: 5),
-                                            //                                         CustomTextField(
-                                            //                                           validator: (value) {
-                                            //                                             if (value == null ||
-                                            //                                                 value.isEmpty) {
-                                            //                                               return 'Please enter Notes';
-                                            //                                             }
-                                            //                                             return null;
-                                            //                                           },
-                                            //                                           keyboardType:
-                                            //                                           TextInputType.text,
-                                            //                                           hintText: 'Enter Notes',
-                                            //                                           controller:
-                                            //                                           _notesController,
-                                            //                                         ),
-                                            //                                         const SizedBox(
-                                            //                                           height: 20,
-                                            //                                         ),
-                                            //                                         RichText(
-                                            //                                           text:  TextSpan(
-                                            //                                             children: <TextSpan>[
-                                            //                                               TextSpan(
-                                            //                                                 text:
-                                            //                                                 'We stores this information ',
-                                            //                                                 style: TextStyle(
-                                            //                                                   fontSize: 12,
-                                            //                                                   fontWeight:
-                                            //                                                   FontWeight
-                                            //                                                       .bold,
-                                            //                                                   color:
-                                            //                                                   Colors.grey,
-                                            //                                                 ),
-                                            //                                               ),
-                                            //                                               TextSpan(
-                                            //                                                 text: ' Privately ',
-                                            //                                                 style: TextStyle(
-                                            //                                                   fontSize: 12,
-                                            //                                                   fontWeight:
-                                            //                                                   FontWeight
-                                            //                                                       .bold,
-                                            //                                                   color: blueColor,
-                                            //                                                 ),
-                                            //                                               ),
-                                            //                                               TextSpan(
-                                            //                                                 text: ' and ',
-                                            //                                                 style: TextStyle(
-                                            //                                                   fontSize: 12,
-                                            //                                                   fontWeight:
-                                            //                                                   FontWeight
-                                            //                                                       .normal,
-                                            //                                                   color:
-                                            //                                                   Colors.grey,
-                                            //                                                 ),
-                                            //                                               ),
-                                            //                                               TextSpan(
-                                            //                                                 text: ' Securely ',
-                                            //                                                 style: TextStyle(
-                                            //                                                   fontSize: 12,
-                                            //                                                   fontWeight:
-                                            //                                                   FontWeight
-                                            //                                                       .bold,
-                                            //                                                   color: blueColor,
-                                            //                                                 ),
-                                            //                                               ),
-                                            //                                             ],
-                                            //                                           ),
-                                            //                                         ),
-                                            //                                         const SizedBox(
-                                            //                                           height: 20,
-                                            //                                         ),
-                                            //                                         Row(
-                                            //                                           mainAxisAlignment:
-                                            //                                           MainAxisAlignment.end,
-                                            //                                           children: [
-                                            //                                             Container(
-                                            //                                                 height: 50,
-                                            //                                                 width: 90,
-                                            //                                                 decoration: BoxDecoration(
-                                            //                                                     borderRadius:
-                                            //                                                     BorderRadius
-                                            //                                                         .circular(
-                                            //                                                         8.0)),
-                                            //                                                 child:
-                                            //                                                 ElevatedButton(
-                                            //                                                     style: ElevatedButton.styleFrom(
-                                            //                                                         backgroundColor:
-                                            //                                                         blueColor,
-                                            //                                                         shape: RoundedRectangleBorder(
-                                            //                                                             borderRadius: BorderRadius.circular(
-                                            //                                                                 8.0))),
-                                            //                                                     // onPressed:
-                                            //                                                     //     () {
-                                            //                                                     //   _submitSubForm(context);
-                                            //                                                     // },
-                                            //                                                     onPressed: () async {
-                                            //                                                       if (_selectedAccountType == null || _accountNameController.text.isEmpty ||
-                                            //                                                           _selectedFundType == null || _notesController.text.isEmpty ) {
-                                            //                                                         setState(() {
-                                            //                                                           isError = true;
-                                            //                                                         });
-                                            //                                                       } else {
-                                            //                                                         setState(() {
-                                            //                                                           isLoading = true;
-                                            //                                                           isError = false;
-                                            //                                                         });
-                                            //
-                                            //                                                         SharedPreferences prefs =
-                                            //                                                         await SharedPreferences.getInstance();
-                                            //                                                         String? id = prefs.getString("adminId");
-                                            //
-                                            //                                                         try {
-                                            //                                                           await accountRepository().addAccount(
-                                            //                                                             adminId: id!,
-                                            //                                                             account: _accountNameController.text,
-                                            //                                                             accounttype: _selectedAccountType,
-                                            //                                                             fundtype: _selectedFundType,
-                                            //                                                             chargetype: 'One Time Charge',
-                                            //                                                             notes: _notesController.text,
-                                            //                                                           );
-                                            //                                                           Navigator.pop(context, true);
-                                            //                                                           _refreshAccounts();
-                                            //                                                         } catch (e) {
-                                            //                                                           setState(() {
-                                            //                                                             isError = true;
-                                            //                                                           });
-                                            //                                                         } finally {
-                                            //                                                           setState(() {
-                                            //                                                             isLoading = false;
-                                            //                                                           });
-                                            //                                                         }
-                                            //                                                       }
-                                            //                                                     },
-                                            //                                                     child:
-                                            //                                                     const Text(
-                                            //                                                       'Add',
-                                            //                                                       style: TextStyle(
-                                            //                                                           color:
-                                            //                                                           Color(0xFFf7f8f9)),
-                                            //                                                     ))),
-                                            //                                             const SizedBox(
-                                            //                                               width: 10,
-                                            //                                             ),
-                                            //                                             Container(
-                                            //                                                 height: 50,
-                                            //                                                 width: 94,
-                                            //                                                 decoration: BoxDecoration(
-                                            //                                                     borderRadius:
-                                            //                                                     BorderRadius
-                                            //                                                         .circular(
-                                            //                                                         8.0)),
-                                            //                                                 child:
-                                            //                                                 ElevatedButton(
-                                            //                                                     style: ElevatedButton.styleFrom(
-                                            //                                                         backgroundColor:
-                                            //                                                         const Color(
-                                            //                                                             0xFFffffff),
-                                            //                                                         shape: RoundedRectangleBorder(
-                                            //                                                             borderRadius: BorderRadius.circular(
-                                            //                                                                 8.0))),
-                                            //                                                     onPressed:
-                                            //                                                         () {
-                                            //                                                       setState(() {
-                                            //                                                         Navigator.pop(
-                                            //                                                             context);
-                                            //                                                         _selectedProperty = null;
-                                            //                                                       });
-                                            //                                                       Navigator.pop(
-                                            //                                                           context);
-                                            //
-                                            //                                                     },
-                                            //                                                     child:
-                                            //                                                     const Text(
-                                            //                                                       'Cancel',
-                                            //                                                       style: TextStyle(
-                                            //                                                           color:
-                                            //                                                           Color(0xFF748097)),
-                                            //                                                     ))),
-                                            //                                           ],
-                                            //                                         ),
-                                            //                                         if (isError)
-                                            //                                           Padding(
-                                            //                                             padding: const EdgeInsets.only(top: 8.0),
-                                            //                                             child: Text(
-                                            //                                               'Please fill all fields',
-                                            //                                               style: TextStyle(color: Colors.red),
-                                            //                                             ),
-                                            //                                           ),
-                                            //                                       ],
-                                            //                                     ),
-                                            //                                   ),
-                                            //                                 ),
-                                            //                               ),
-                                            //                             ),
-                                            //                           );
-                                            //
-                                            //                       });
-                                            //                 },
-                                            //               );
-                                            //             },
-                                            //             child: Row(
-                                            //               mainAxisAlignment: MainAxisAlignment.start,
-                                            //               crossAxisAlignment: CrossAxisAlignment.start,
-                                            //               children: [
-                                            //                 const Text(
-                                            //                   '+ Add One Time Charge',
-                                            //                   style: TextStyle(
-                                            //                       fontSize: 14,
-                                            //                       color: Colors.black,
-                                            //                       fontWeight: FontWeight.w500),
-                                            //                 ),
-                                            //               ],
-                                            //             ),
-                                            //           ),
-                                            //         ),
-                                            //       ],
-                                            //       onChanged: (value) {
-                                            //         String? chargeType;
-                                            //         for (var entry
-                                            //         in categorizedData.entries) {
-                                            //           if (entry.value.contains(value)) {
-                                            //             chargeType = entry.key;
-                                            //             break;
-                                            //           }
-                                            //         }
-                                            //
-                                            //         setState(() {
-                                            //           rows[index]['account'] = value;
-                                            //           rows[index]['charge_type'] =
-                                            //               chargeType;
-                                            //         });
-                                            //       },
-                                            //       buttonStyleData: ButtonStyleData(
-                                            //         height: 50,
-                                            //         width: 220,
-                                            //         padding: const EdgeInsets.only(
-                                            //             left: 8, right: 5),
-                                            //         decoration: BoxDecoration(
-                                            //           borderRadius:
-                                            //           BorderRadius.circular(6),
-                                            //           color: Colors.white,
-                                            //         ),
-                                            //         elevation: 2,
-                                            //       ),
-                                            //       iconStyleData: const IconStyleData(
-                                            //         icon: Icon(Icons.arrow_drop_down),
-                                            //         iconSize: 24,
-                                            //         iconEnabledColor: Color(0xFFb0b6c3),
-                                            //         iconDisabledColor: Colors.grey,
-                                            //       ),
-                                            //       dropdownStyleData: DropdownStyleData(
-                                            //         width: 250,
-                                            //         decoration: BoxDecoration(
-                                            //           borderRadius:
-                                            //           BorderRadius.circular(6),
-                                            //           color: Colors.white,
-                                            //         ),
-                                            //         scrollbarTheme: ScrollbarThemeData(
-                                            //           radius: const Radius.circular(6),
-                                            //           thickness:
-                                            //           MaterialStateProperty.all(6),
-                                            //           thumbVisibility:
-                                            //           MaterialStateProperty.all(
-                                            //               true),
-                                            //         ),
-                                            //       ),
-                                            //       hint: const Text('Select an account'),
-                                            //     ),
-                                            //   ),
-                                            // ),
-                                            Container(
+                                                        ),
+                                                      ),
+                                                      // Padding(
+                                                      //   padding: const EdgeInsets.all(8.0),
+                                                      //   child: DropdownButtonHideUnderline(
+                                                      //     child: DropdownButton2<String>(
+                                                      //       isExpanded: true,
+                                                      //       style: TextStyle(fontSize: 14),
+                                                      //       value: row['account'],
+                                                      //       items: [
+                                                      //         ...categorizedData.entries
+                                                      //             .expand((entry) {
+                                                      //           return [
+                                                      //             DropdownMenuItem<String>(
+                                                      //               enabled: false,
+                                                      //               child: Text(
+                                                      //                 entry.key,
+                                                      //                 style: const TextStyle(
+                                                      //                   fontWeight:
+                                                      //                   FontWeight.bold,
+                                                      //                   color: Color.fromRGBO(
+                                                      //                       21, 43, 81, 1),
+                                                      //                 ),
+                                                      //               ),
+                                                      //             ),
+                                                      //             ...entry.value.map((item) {
+                                                      //               return DropdownMenuItem<
+                                                      //                   String>(
+                                                      //                 value: item,
+                                                      //                 child: Padding(
+                                                      //                   padding:
+                                                      //                   const EdgeInsets.only(
+                                                      //                       left: 0.0),
+                                                      //                   child: Text(
+                                                      //                     item,
+                                                      //                     style: const TextStyle(
+                                                      //                       color: Colors.black,
+                                                      //                       fontWeight:
+                                                      //                       FontWeight.w400,
+                                                      //                     ),
+                                                      //                   ),
+                                                      //                 ),
+                                                      //               );
+                                                      //             }).toList(),
+                                                      //
+                                                      //           ];
+                                                      //
+                                                      //         }).toList(),
+                                                      //         DropdownMenuItem<String>(
+                                                      //           value: 'button_item',
+                                                      //           child: GestureDetector(
+                                                      //             onTap: (){
+                                                      //               Navigator.pop(context);
+                                                      //               showDialog(
+                                                      //                 context: context,
+                                                      //                 builder: (BuildContext context) {
+                                                      //                   return StatefulBuilder(
+                                                      //                       builder: (context, setState) {
+                                                      //                         return
+                                                      //                           Dialog(
+                                                      //                             backgroundColor: Colors.white,
+                                                      //                             surfaceTintColor: Colors.white,
+                                                      //                             shape: RoundedRectangleBorder(
+                                                      //                                 borderRadius:
+                                                      //                                 BorderRadius.circular(10.0)),
+                                                      //                             child:
+                                                      //                             SingleChildScrollView(
+                                                      //                               child: Container(
+                                                      //                                 // height: 450,
+                                                      //                                 child:
+                                                      //                                 Padding(
+                                                      //                                   padding:
+                                                      //                                   const EdgeInsets.all(16.0),
+                                                      //                                   child: Form(
+                                                      //                                     key: _subFormKey,
+                                                      //                                     child: Column(
+                                                      //                                       mainAxisAlignment: MainAxisAlignment.start,
+                                                      //                                       crossAxisAlignment: CrossAxisAlignment.start,
+                                                      //                                       children: [
+                                                      //                                         Text(
+                                                      //                                           'Add account',
+                                                      //                                           style: TextStyle(
+                                                      //                                             fontSize: 16,
+                                                      //                                             fontWeight:
+                                                      //                                             FontWeight.bold,
+                                                      //                                             color: blueColor,
+                                                      //                                           ),
+                                                      //                                         ),
+                                                      //                                         SizedBox(
+                                                      //                                           height: 20,
+                                                      //                                         ),
+                                                      //                                         Text(
+                                                      //                                           'Account Name *',
+                                                      //                                           style: TextStyle(
+                                                      //                                             fontSize: 14,
+                                                      //                                             fontWeight:
+                                                      //                                             FontWeight.bold,
+                                                      //                                             color: blueColor,
+                                                      //                                           ),
+                                                      //                                         ),
+                                                      //                                         const SizedBox(height: 5),
+                                                      //                                         CustomTextField(
+                                                      //                                           validator: (value) {
+                                                      //                                             if (value == null ||
+                                                      //                                                 value.isEmpty) {
+                                                      //                                               return 'Please enter Account Name';
+                                                      //                                             }
+                                                      //                                             return null;
+                                                      //                                           },
+                                                      //                                           keyboardType:
+                                                      //                                           TextInputType.text,
+                                                      //                                           hintText:
+                                                      //                                           'Enter Account Name',
+                                                      //                                           controller:
+                                                      //                                           _accountNameController,
+                                                      //                                         ),
+                                                      //                                         const SizedBox(height: 10),
+                                                      //                                         Text(
+                                                      //                                           'Account Type',
+                                                      //                                           style: TextStyle(
+                                                      //                                             fontSize: 14,
+                                                      //                                             fontWeight:
+                                                      //                                             FontWeight.bold,
+                                                      //                                             color: blueColor,
+                                                      //                                           ),
+                                                      //                                         ),
+                                                      //                                         const SizedBox(height: 5),
+                                                      //                                         CustomDropdown(
+                                                      //                                           validator: (value) {
+                                                      //                                             if (_selectedAccountType == null ||
+                                                      //                                                 _selectedAccountType!.isEmpty) {
+                                                      //                                               return 'Please select a Account Type';
+                                                      //                                             }
+                                                      //                                             return null;
+                                                      //                                           },
+                                                      //                                           labelText:
+                                                      //                                           'Select Account Type',
+                                                      //                                           items: accountTypeItems,
+                                                      //                                           selectedValue:
+                                                      //                                           _selectedAccountType,
+                                                      //                                           onChanged:
+                                                      //                                               (String? value) {
+                                                      //                                             setState(() {
+                                                      //                                               _selectedAccountType =
+                                                      //                                                   value;
+                                                      //                                             });
+                                                      //                                           },
+                                                      //                                         ),
+                                                      //                                         const SizedBox(height: 10),
+                                                      //                                         Text(
+                                                      //                                           'Fund Type',
+                                                      //                                           style: TextStyle(
+                                                      //                                             fontSize: 14,
+                                                      //                                             fontWeight:
+                                                      //                                             FontWeight.bold,
+                                                      //                                             color: blueColor,
+                                                      //                                           ),
+                                                      //                                         ),
+                                                      //                                         const SizedBox(height: 5),
+                                                      //                                         CustomDropdown(
+                                                      //                                           validator: (value) {
+                                                      //                                             if (_selectedFundType == null ||
+                                                      //                                                 _selectedFundType!.isEmpty) {
+                                                      //                                               return 'Please select a Fund Type';
+                                                      //                                             }
+                                                      //                                             return null;
+                                                      //                                           },
+                                                      //                                           labelText:
+                                                      //                                           'Select Fund Type',
+                                                      //                                           items: fundTypeItems,
+                                                      //                                           selectedValue:
+                                                      //                                           _selectedFundType,
+                                                      //                                           onChanged:
+                                                      //                                               (String? value) {
+                                                      //                                             setState(() {
+                                                      //                                               _selectedFundType =
+                                                      //                                                   value;
+                                                      //                                             });
+                                                      //                                           },
+                                                      //                                         ),
+                                                      //                                         const SizedBox(height: 10),
+                                                      //                                         Text(
+                                                      //                                           'Notes',
+                                                      //                                           style: TextStyle(
+                                                      //                                             fontSize: 14,
+                                                      //                                             fontWeight:
+                                                      //                                             FontWeight.bold,
+                                                      //                                             color: blueColor,
+                                                      //                                           ),
+                                                      //                                         ),
+                                                      //                                         const SizedBox(height: 5),
+                                                      //                                         CustomTextField(
+                                                      //                                           validator: (value) {
+                                                      //                                             if (value == null ||
+                                                      //                                                 value.isEmpty) {
+                                                      //                                               return 'Please enter Notes';
+                                                      //                                             }
+                                                      //                                             return null;
+                                                      //                                           },
+                                                      //                                           keyboardType:
+                                                      //                                           TextInputType.text,
+                                                      //                                           hintText: 'Enter Notes',
+                                                      //                                           controller:
+                                                      //                                           _notesController,
+                                                      //                                         ),
+                                                      //                                         const SizedBox(
+                                                      //                                           height: 20,
+                                                      //                                         ),
+                                                      //                                         RichText(
+                                                      //                                           text:  TextSpan(
+                                                      //                                             children: <TextSpan>[
+                                                      //                                               TextSpan(
+                                                      //                                                 text:
+                                                      //                                                 'We stores this information ',
+                                                      //                                                 style: TextStyle(
+                                                      //                                                   fontSize: 12,
+                                                      //                                                   fontWeight:
+                                                      //                                                   FontWeight
+                                                      //                                                       .bold,
+                                                      //                                                   color:
+                                                      //                                                   Colors.grey,
+                                                      //                                                 ),
+                                                      //                                               ),
+                                                      //                                               TextSpan(
+                                                      //                                                 text: ' Privately ',
+                                                      //                                                 style: TextStyle(
+                                                      //                                                   fontSize: 12,
+                                                      //                                                   fontWeight:
+                                                      //                                                   FontWeight
+                                                      //                                                       .bold,
+                                                      //                                                   color: blueColor,
+                                                      //                                                 ),
+                                                      //                                               ),
+                                                      //                                               TextSpan(
+                                                      //                                                 text: ' and ',
+                                                      //                                                 style: TextStyle(
+                                                      //                                                   fontSize: 12,
+                                                      //                                                   fontWeight:
+                                                      //                                                   FontWeight
+                                                      //                                                       .normal,
+                                                      //                                                   color:
+                                                      //                                                   Colors.grey,
+                                                      //                                                 ),
+                                                      //                                               ),
+                                                      //                                               TextSpan(
+                                                      //                                                 text: ' Securely ',
+                                                      //                                                 style: TextStyle(
+                                                      //                                                   fontSize: 12,
+                                                      //                                                   fontWeight:
+                                                      //                                                   FontWeight
+                                                      //                                                       .bold,
+                                                      //                                                   color: blueColor,
+                                                      //                                                 ),
+                                                      //                                               ),
+                                                      //                                             ],
+                                                      //                                           ),
+                                                      //                                         ),
+                                                      //                                         const SizedBox(
+                                                      //                                           height: 20,
+                                                      //                                         ),
+                                                      //                                         Row(
+                                                      //                                           mainAxisAlignment:
+                                                      //                                           MainAxisAlignment.end,
+                                                      //                                           children: [
+                                                      //                                             Container(
+                                                      //                                                 height: 50,
+                                                      //                                                 width: 90,
+                                                      //                                                 decoration: BoxDecoration(
+                                                      //                                                     borderRadius:
+                                                      //                                                     BorderRadius
+                                                      //                                                         .circular(
+                                                      //                                                         8.0)),
+                                                      //                                                 child:
+                                                      //                                                 ElevatedButton(
+                                                      //                                                     style: ElevatedButton.styleFrom(
+                                                      //                                                         backgroundColor:
+                                                      //                                                         blueColor,
+                                                      //                                                         shape: RoundedRectangleBorder(
+                                                      //                                                             borderRadius: BorderRadius.circular(
+                                                      //                                                                 8.0))),
+                                                      //                                                     // onPressed:
+                                                      //                                                     //     () {
+                                                      //                                                     //   _submitSubForm(context);
+                                                      //                                                     // },
+                                                      //                                                     onPressed: () async {
+                                                      //                                                       if (_selectedAccountType == null || _accountNameController.text.isEmpty ||
+                                                      //                                                           _selectedFundType == null || _notesController.text.isEmpty ) {
+                                                      //                                                         setState(() {
+                                                      //                                                           isError = true;
+                                                      //                                                         });
+                                                      //                                                       } else {
+                                                      //                                                         setState(() {
+                                                      //                                                           isLoading = true;
+                                                      //                                                           isError = false;
+                                                      //                                                         });
+                                                      //
+                                                      //                                                         SharedPreferences prefs =
+                                                      //                                                         await SharedPreferences.getInstance();
+                                                      //                                                         String? id = prefs.getString("adminId");
+                                                      //
+                                                      //                                                         try {
+                                                      //                                                           await accountRepository().addAccount(
+                                                      //                                                             adminId: id!,
+                                                      //                                                             account: _accountNameController.text,
+                                                      //                                                             accounttype: _selectedAccountType,
+                                                      //                                                             fundtype: _selectedFundType,
+                                                      //                                                             chargetype: 'One Time Charge',
+                                                      //                                                             notes: _notesController.text,
+                                                      //                                                           );
+                                                      //                                                           Navigator.pop(context, true);
+                                                      //                                                           _refreshAccounts();
+                                                      //                                                         } catch (e) {
+                                                      //                                                           setState(() {
+                                                      //                                                             isError = true;
+                                                      //                                                           });
+                                                      //                                                         } finally {
+                                                      //                                                           setState(() {
+                                                      //                                                             isLoading = false;
+                                                      //                                                           });
+                                                      //                                                         }
+                                                      //                                                       }
+                                                      //                                                     },
+                                                      //                                                     child:
+                                                      //                                                     const Text(
+                                                      //                                                       'Add',
+                                                      //                                                       style: TextStyle(
+                                                      //                                                           color:
+                                                      //                                                           Color(0xFFf7f8f9)),
+                                                      //                                                     ))),
+                                                      //                                             const SizedBox(
+                                                      //                                               width: 10,
+                                                      //                                             ),
+                                                      //                                             Container(
+                                                      //                                                 height: 50,
+                                                      //                                                 width: 94,
+                                                      //                                                 decoration: BoxDecoration(
+                                                      //                                                     borderRadius:
+                                                      //                                                     BorderRadius
+                                                      //                                                         .circular(
+                                                      //                                                         8.0)),
+                                                      //                                                 child:
+                                                      //                                                 ElevatedButton(
+                                                      //                                                     style: ElevatedButton.styleFrom(
+                                                      //                                                         backgroundColor:
+                                                      //                                                         const Color(
+                                                      //                                                             0xFFffffff),
+                                                      //                                                         shape: RoundedRectangleBorder(
+                                                      //                                                             borderRadius: BorderRadius.circular(
+                                                      //                                                                 8.0))),
+                                                      //                                                     onPressed:
+                                                      //                                                         () {
+                                                      //                                                       setState(() {
+                                                      //                                                         Navigator.pop(
+                                                      //                                                             context);
+                                                      //                                                         _selectedProperty = null;
+                                                      //                                                       });
+                                                      //                                                       Navigator.pop(
+                                                      //                                                           context);
+                                                      //
+                                                      //                                                     },
+                                                      //                                                     child:
+                                                      //                                                     const Text(
+                                                      //                                                       'Cancel',
+                                                      //                                                       style: TextStyle(
+                                                      //                                                           color:
+                                                      //                                                           Color(0xFF748097)),
+                                                      //                                                     ))),
+                                                      //                                           ],
+                                                      //                                         ),
+                                                      //                                         if (isError)
+                                                      //                                           Padding(
+                                                      //                                             padding: const EdgeInsets.only(top: 8.0),
+                                                      //                                             child: Text(
+                                                      //                                               'Please fill all fields',
+                                                      //                                               style: TextStyle(color: Colors.red),
+                                                      //                                             ),
+                                                      //                                           ),
+                                                      //                                       ],
+                                                      //                                     ),
+                                                      //                                   ),
+                                                      //                                 ),
+                                                      //                               ),
+                                                      //                             ),
+                                                      //                           );
+                                                      //
+                                                      //                       });
+                                                      //                 },
+                                                      //               );
+                                                      //             },
+                                                      //             child: Row(
+                                                      //               mainAxisAlignment: MainAxisAlignment.start,
+                                                      //               crossAxisAlignment: CrossAxisAlignment.start,
+                                                      //               children: [
+                                                      //                 const Text(
+                                                      //                   '+ Add One Time Charge',
+                                                      //                   style: TextStyle(
+                                                      //                       fontSize: 14,
+                                                      //                       color: Colors.black,
+                                                      //                       fontWeight: FontWeight.w500),
+                                                      //                 ),
+                                                      //               ],
+                                                      //             ),
+                                                      //           ),
+                                                      //         ),
+                                                      //       ],
+                                                      //       onChanged: (value) {
+                                                      //         String? chargeType;
+                                                      //         for (var entry
+                                                      //         in categorizedData.entries) {
+                                                      //           if (entry.value.contains(value)) {
+                                                      //             chargeType = entry.key;
+                                                      //             break;
+                                                      //           }
+                                                      //         }
+                                                      //
+                                                      //         setState(() {
+                                                      //           rows[index]['account'] = value;
+                                                      //           rows[index]['charge_type'] =
+                                                      //               chargeType;
+                                                      //         });
+                                                      //       },
+                                                      //       buttonStyleData: ButtonStyleData(
+                                                      //         height: 50,
+                                                      //         width: 220,
+                                                      //         padding: const EdgeInsets.only(
+                                                      //             left: 8, right: 5),
+                                                      //         decoration: BoxDecoration(
+                                                      //           borderRadius:
+                                                      //           BorderRadius.circular(6),
+                                                      //           color: Colors.white,
+                                                      //         ),
+                                                      //         elevation: 2,
+                                                      //       ),
+                                                      //       iconStyleData: const IconStyleData(
+                                                      //         icon: Icon(Icons.arrow_drop_down),
+                                                      //         iconSize: 24,
+                                                      //         iconEnabledColor: Color(0xFFb0b6c3),
+                                                      //         iconDisabledColor: Colors.grey,
+                                                      //       ),
+                                                      //       dropdownStyleData: DropdownStyleData(
+                                                      //         width: 250,
+                                                      //         decoration: BoxDecoration(
+                                                      //           borderRadius:
+                                                      //           BorderRadius.circular(6),
+                                                      //           color: Colors.white,
+                                                      //         ),
+                                                      //         scrollbarTheme: ScrollbarThemeData(
+                                                      //           radius: const Radius.circular(6),
+                                                      //           thickness:
+                                                      //           MaterialStateProperty.all(6),
+                                                      //           thumbVisibility:
+                                                      //           MaterialStateProperty.all(
+                                                      //               true),
+                                                      //         ),
+                                                      //       ),
+                                                      //       hint: const Text('Select an account'),
+                                                      //     ),
+                                                      //   ),
+                                                      // ),
+                                                      Container(
                                                         margin: EdgeInsets.only(
                                                             top: 5),
-                                              child: Padding(
+                                                        child: Padding(
                                                           padding:
                                                               const EdgeInsets
                                                                   .all(8.0),
-                                                child: SizedBox(
-                                                  height: 50,
+                                                          child: SizedBox(
+                                                            height: 50,
                                                             child:
                                                                 KeyboardActions(
                                                               config:
@@ -2533,19 +2681,19 @@ class _RenewleaseState extends State<Renewlease> {
                                                                     ? rows[index]
                                                                             [
                                                                             "amount"]
-                                                          .toString()
-                                                          : "0", // Make sure 0 is a string,
+                                                                        .toString()
+                                                                    : "0", // Make sure 0 is a string,
                                                                 focusNode:
                                                                     focusNodes[
                                                                         index],
-                                                      keyboardType:
+                                                                keyboardType:
                                                                     TextInputType
                                                                         .number,
-                                                      onChanged: (value) =>
+                                                                onChanged: (value) =>
                                                                     updateAmount(
                                                                         index,
                                                                         value),
-                                                      decoration: const InputDecoration(
+                                                                decoration: const InputDecoration(
                                                                     border:
                                                                         OutlineInputBorder(),
                                                                     hintText:
@@ -2553,113 +2701,113 @@ class _RenewleaseState extends State<Renewlease> {
                                                                     hintStyle: TextStyle(
                                                                         fontSize:
                                                                             14),
-                                                          contentPadding:
-                                                          EdgeInsets.only(
+                                                                    contentPadding:
+                                                                        EdgeInsets.only(
                                                                             top:
                                                                                 7,
                                                                             left:
                                                                                 7)),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Padding(
                                                         padding:
                                                             const EdgeInsets
                                                                 .all(8.0),
-                                              child: IconButton(
+                                                        child: IconButton(
                                                           icon: const Icon(
                                                               Icons.delete,
                                                               color:
                                                                   Colors.red),
                                                           onPressed: () =>
                                                               deleteRow(index),
-                                              ),
-                                            ),
-                                          ]);
-                                        }).toList(),
-                                        TableRow(children: [
-                                          const Padding(
+                                                        ),
+                                                      ),
+                                                    ]);
+                                                  }).toList(),
+                                                  TableRow(children: [
+                                                    const Padding(
                                                       padding:
                                                           EdgeInsets.all(8.0),
-                                            child: Text('Total',
-                                                style: TextStyle(
+                                                      child: Text('Total',
+                                                          style: TextStyle(
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold)),
-                                          ),
-                                          Padding(
+                                                    ),
+                                                    Padding(
                                                       padding:
                                                           const EdgeInsets.all(
                                                               8.0),
-                                            child: Text(
-                                                '\$${totalAmount.toStringAsFixed(2)}'),
-                                          ),
-                                          const SizedBox.shrink(),
-                                        ]),
-                                        TableRow(children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(
+                                                      child: Text(
+                                                          '\$${totalAmount.toStringAsFixed(2)}'),
+                                                    ),
+                                                    const SizedBox.shrink(),
+                                                  ]),
+                                                  TableRow(children: [
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
                                                           left: MediaQuery.of(
                                                                           context)
                                                                       .size
                                                                       .width <
-                                                    500
-                                                    ? 16
-                                                    : 70,
+                                                                  500
+                                                              ? 16
+                                                              : 70,
                                                           right: MediaQuery.of(
                                                                           context)
                                                                       .size
                                                                       .width <
-                                                    500
-                                                    ? 16
-                                                    : 70,
-                                                top: 10,
-                                                bottom: 10),
-                                            child: Container(
-                                              height: 40,
-                                              width: 100,
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white,
+                                                                  500
+                                                              ? 16
+                                                              : 70,
+                                                          top: 10,
+                                                          bottom: 10),
+                                                      child: Container(
+                                                        height: 40,
+                                                        width: 100,
+                                                        decoration: BoxDecoration(
+                                                            color: Colors.white,
                                                             border: Border.all(
                                                                 width: 1),
-                                                  borderRadius:
+                                                            borderRadius:
                                                                 BorderRadius
                                                                     .circular(
                                                                         5.0)),
-                                              child: ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                    shape: RoundedRectangleBorder(
-                                                        borderRadius:
+                                                        child: ElevatedButton(
+                                                          style: ElevatedButton.styleFrom(
+                                                              shape: RoundedRectangleBorder(
+                                                                  borderRadius:
                                                                       BorderRadius
                                                                           .circular(
-                                                            5.0)),
-                                                    elevation: 0,
+                                                                              5.0)),
+                                                              elevation: 0,
                                                               backgroundColor:
                                                                   Colors.white),
-                                                onPressed: addRow,
-                                                child: Text(
-                                                  'Add Row',
-                                                  style: TextStyle(
+                                                          onPressed: addRow,
+                                                          child: Text(
+                                                            'Add Row',
+                                                            style: TextStyle(
                                                               fontSize: MediaQuery.of(
                                                                               context)
-                                                        .size
-                                                        .width <
-                                                        500
-                                                        ? 14
-                                                        : 18,
+                                                                          .size
+                                                                          .width <
+                                                                      500
+                                                                  ? 14
+                                                                  : 18,
                                                               color: blueColor,
-                                                  ),
-                                                ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox.shrink(),
+                                                    const SizedBox.shrink(),
+                                                  ]),
+                                                ],
                                               ),
-                                            ),
-                                          ),
-                                          const SizedBox.shrink(),
-                                          const SizedBox.shrink(),
-                                        ]),
-                                      ],
-                                    ),
                                   ],
                                 ),
                               ),
@@ -2699,9 +2847,30 @@ class _RenewleaseState extends State<Renewlease> {
                                           ]
                                   };
 
+                                  // Debug: Print the date values before formatting
+                                  print(
+                                      "Start Date Controller: ${startDateController.text}");
+                                  print(
+                                      "End Date Controller: ${endDateController.text}");
+
+                                  // Validate that dates are not empty
+                                  if (startDateController.text.trim().isEmpty ||
+                                      endDateController.text.trim().isEmpty) {
+                                    Fluttertoast.showToast(
+                                        msg:
+                                            "Please select both start and end dates");
+                                    return;
+                                  }
+
                                   Map<String, dynamic> leasedata = {
                                     "lease_id": widget.leaseId,
-
+                                    "tenant_id":
+                                        leasesummery.data?.tenantData != null &&
+                                                leasesummery.data!.tenantData!
+                                                    .isNotEmpty
+                                            ? leasesummery.data!.tenantData!
+                                                .first.tenantId
+                                            : "",
                                     "renewAmount": widget.rentamount,
                                     "admin_id": leasesummery.data!.adminId,
                                     "lease_type": leasesummery.data!.leaseType,
@@ -2719,29 +2888,32 @@ class _RenewleaseState extends State<Renewlease> {
                                             ? _uploadedFileNames.first
                                             : "",
                                   };
+
+                                  // Debug: Print the final lease data
+                                  print("Final lease data: $leasedata");
                                   updatenewrenewallease(leasedata);
                                 },
                                 child: Container(
                                     height:
-                                    MediaQuery.of(context).size.width < 500
-                                        ? 40
-                                        : 45,
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 40
+                                            : 45,
                                     width:
-                                    MediaQuery.of(context).size.width < 500
-                                        ? 90
-                                        : 150,
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 90
+                                            : 150,
                                     decoration: BoxDecoration(
                                         color: blueColor,
                                         borderRadius:
-                                        BorderRadius.circular(5.0)),
+                                            BorderRadius.circular(5.0)),
                                     child: Center(
                                       child: Text(
                                         'Ok',
                                         style: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
+                                                        .size
+                                                        .width <
+                                                    500
                                                 ? 16
                                                 : 18,
                                             fontWeight: FontWeight.bold,
@@ -2755,25 +2927,25 @@ class _RenewleaseState extends State<Renewlease> {
                                 },
                                 child: Container(
                                     height:
-                                    MediaQuery.of(context).size.width < 500
-                                        ? 35
-                                        : 45,
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 35
+                                            : 45,
                                     width:
-                                    MediaQuery.of(context).size.width < 500
-                                        ? 120
-                                        : 165,
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 120
+                                            : 165,
                                     decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius:
-                                        BorderRadius.circular(5.0)),
+                                            BorderRadius.circular(5.0)),
                                     child: Center(
                                       child: Text(
                                         'Cancel',
                                         style: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
+                                                        .size
+                                                        .width <
+                                                    500
                                                 ? 16
                                                 : 18,
                                             fontWeight: FontWeight.bold,

@@ -477,7 +477,7 @@ class _AddDocumentState extends State<AddDocument> {
       print('response body ${response.body}');
       print('$Api_url/api/renter-insurance/add-policy');
       if (response.statusCode == 200) {
-        Fluttertoast.showToast(msg: responseData["message"]);
+        Fluttertoast.showToast(msg: responseData["Document added successfully"]);
         //Navigator.pop(context, true);
         return responseData;
       } else {

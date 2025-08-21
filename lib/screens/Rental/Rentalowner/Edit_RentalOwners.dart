@@ -2632,7 +2632,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                                   keyboardType:
                                                       TextInputType.number,
                                                   inputFormatters: [
-                                                    FilteringTextInputFormatter.digitsOnly,
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
                                                   ],
                                                   cursorColor: blueColor,
                                                   decoration: InputDecoration(

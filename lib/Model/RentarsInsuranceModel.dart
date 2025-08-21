@@ -84,7 +84,7 @@ class RentersInsurance {
   String? policyId;
   String? effectiveDate;
   String? expirationDate;
-  int? liabilityCoverage;
+  dynamic liabilityCoverage;
   String? insurancePolicyDocument;
   bool? active;
   bool? isDelete;

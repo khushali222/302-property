@@ -266,8 +266,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
         currentpage: "Rental Owner",
         dropdown: true,
       ),
-      body:
-      ListView(
+      body: ListView(
         scrollDirection: Axis.vertical,
         children: [
           Padding(
@@ -2382,7 +2381,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                   keyboardType:
                                                       TextInputType.number,
                                                   inputFormatters: [
-                                                    FilteringTextInputFormatter.digitsOnly,
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
                                                   ],
                                                   cursorColor: blueColor,
                                                   decoration: InputDecoration(
@@ -2955,7 +2955,6 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                               ),
                             ),
                           ),
-
                         ],
                       ),
                       SizedBox(
@@ -3398,15 +3397,18 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                         setState(() {
                           alternativeerror = false;
                         });
-                      } else if (!EmailValidator.validate(alternativeemail.text)) {
+                      } else if (!EmailValidator.validate(
+                          alternativeemail.text)) {
                         setState(() {
                           alternativeerror = true;
                           alternativemessage = "Email is not valid";
                         });
-                      } else if (alternativeemail.text.trim() == primaryemail.text.trim()) {
+                      } else if (alternativeemail.text.trim() ==
+                          primaryemail.text.trim()) {
                         setState(() {
                           alternativeerror = true;
-                          alternativemessage = "Email cannot be the same as primary";
+                          alternativemessage =
+                              "Email cannot be the same as primary";
                         });
                       } else {
                         setState(() {
@@ -3430,7 +3432,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       //     alternativeerror = false;
                       //   });
                       // }
-                
+
                       String formattedPhoneNumber =
                           phonenum.text.replaceAll(RegExp(r'\D'), '');
                       if (formattedPhoneNumber.isEmpty) {
@@ -3591,7 +3593,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                         setState(() {
                           loading = true;
                         });
-                
+
                         print("Callinnnng");
                         // List<ProcessorList> processor = [];
                         // for (var i = 0; i < _controllers.length; i++) {
@@ -3599,12 +3601,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                         //     processor.add(
                         //         ProcessorList(processorId: _controllers[i]!.text));
                         // }
-                
+
                         List<ProcessorList> processorList = [];
                         _controllers.forEach((key, controller) {
                           if (controller.text.trim().isNotEmpty) {
-                            processorList
-                                .add(ProcessorList(processorId: controller.text));
+                            processorList.add(
+                                ProcessorList(processorId: controller.text));
                           }
                         });
                         print(processorList.length);
@@ -3620,7 +3622,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           startDate: startdateController.text.trim(),
                           endDate: enddateController.text.trim(),
                           rentalOwnerPrimaryEmail: primaryemail.text.trim(),
-                          rentalOwnerAlternateEmail: alternativeemail.text.trim(),
+                          rentalOwnerAlternateEmail:
+                              alternativeemail.text.trim(),
                           rentalOwnerPhoneNumber: phonenum.text.trim(),
                           rentalOwnerHomeNumber: homenum.text.trim(),
                           rentalOwnerBusinessNumber: officenum.text.trim(),
@@ -3694,7 +3697,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                       fontSize:
-                                          MediaQuery.of(context).size.width < 500
+                                          MediaQuery.of(context).size.width <
+                                                  500
                                               ? 15
                                               : 20),
                                 ),

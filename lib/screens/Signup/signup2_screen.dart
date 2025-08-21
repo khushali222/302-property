@@ -9,7 +9,7 @@ import '../../constant/constant.dart';
 import '../Dashboard/dashboard_one.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart'as http;
+import 'package:http/http.dart' as http;
 
 import '../../widgets/dialogbox.dart';
 
@@ -51,10 +51,10 @@ class _Signup2State extends State<Signup2> {
     lastname.text = widget.lastname ?? "";
     email.text = widget.email ?? "";
   }
+
   String? _errorMessage;
   int _score = 0; // Initialize score as an int
   String _feedback = '';
-
 
   bool obsecure = true;
   bool conobsecure = true;
@@ -79,8 +79,8 @@ class _Signup2State extends State<Signup2> {
                     width: 40,
                     decoration: BoxDecoration(
                       color: Colors.grey[200], // light grey
-                      borderRadius: BorderRadius.circular(10), // square-ish with smooth edges
-
+                      borderRadius: BorderRadius.circular(
+                          10), // square-ish with smooth edges
                     ),
                     child: Icon(
                       Icons.arrow_back_ios_sharp,
@@ -141,14 +141,13 @@ class _Signup2State extends State<Signup2> {
                                           MediaQuery.of(context).size.width *
                                               0.00),
                                   child: TextField(
-                                    style:  TextStyle(
+                                    style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.w500, // optional
                                     ),
                                     enabled: false,
                                     controller: firstname,
-                                    cursorColor:
-                                        blueColor,
+                                    cursorColor: blueColor,
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
                                       contentPadding: EdgeInsets.all(14),
@@ -193,13 +192,12 @@ class _Signup2State extends State<Signup2> {
                                   child: Center(
                                     child: TextField(
                                       enabled: false,
-                                      style:  TextStyle(
+                                      style: TextStyle(
                                         color: Colors.black,
                                         fontWeight: FontWeight.w500, // optional
                                       ),
                                       controller: lastname,
-                                      cursorColor:
-                                          blueColor,
+                                      cursorColor: blueColor,
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
                                         contentPadding: EdgeInsets.all(14),
@@ -227,7 +225,7 @@ class _Signup2State extends State<Signup2> {
                       SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                       Expanded(
                         child: Container(
-                          height:50,
+                          height: 50,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(
                                 MediaQuery.of(context).size.width * 0.02),
@@ -245,13 +243,12 @@ class _Signup2State extends State<Signup2> {
                                     child: TextField(
                                       keyboardType: TextInputType.emailAddress,
                                       controller: email,
-                                      style:  TextStyle(
+                                      style: TextStyle(
                                         color: Colors.black,
                                         fontWeight: FontWeight.w500, // optional
                                       ),
                                       enabled: false,
-                                      cursorColor:
-                                          blueColor,
+                                      cursorColor: blueColor,
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
                                         contentPadding: EdgeInsets.all(14),
@@ -279,7 +276,7 @@ class _Signup2State extends State<Signup2> {
                       SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                       Expanded(
                         child: Container(
-                          height:50,
+                          height: 50,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(
                                 MediaQuery.of(context).size.width * 0.02),
@@ -301,16 +298,16 @@ class _Signup2State extends State<Signup2> {
                                           companynameerror = false;
                                         });
                                       },
-                                      cursorColor:
-                                          blueColor,
+                                      cursorColor: blueColor,
                                       decoration: InputDecoration(
                                         enabledBorder: companynameerror
                                             ? OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10),
-                                          borderSide: BorderSide(
-                                              color: Colors
-                                                  .red), // Set border color here
-                                        )
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                borderSide: BorderSide(
+                                                    color: Colors
+                                                        .red), // Set border color here
+                                              )
                                             : InputBorder.none,
                                         border: InputBorder.none,
                                         contentPadding: EdgeInsets.all(15),
@@ -334,12 +331,12 @@ class _Signup2State extends State<Signup2> {
                   ),
                   companynameerror
                       ? Center(
-                      child: Text(
-                        companynamemessage,
-                        style: TextStyle(color: Colors.red),
-                      ))
+                          child: Text(
+                          companynamemessage,
+                          style: TextStyle(color: Colors.red),
+                        ))
                       : Container(),
-      
+
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                   Row(
                     children: [
@@ -363,10 +360,8 @@ class _Signup2State extends State<Signup2> {
                                   child: Center(
                                     child: TextField(
                                       inputFormatters: [
-                                        FilteringTextInputFormatter
-                                            .digitsOnly,
-                                        LengthLimitingTextInputFormatter(
-                                            10),
+                                        FilteringTextInputFormatter.digitsOnly,
+                                        LengthLimitingTextInputFormatter(10),
                                         PhoneNumberFormatter(),
                                       ],
                                       onChanged: (value) {
@@ -376,16 +371,16 @@ class _Signup2State extends State<Signup2> {
                                       },
                                       controller: phonenumber,
                                       keyboardType: TextInputType.number,
-                                      cursorColor:
-                                          blueColor,
+                                      cursorColor: blueColor,
                                       decoration: InputDecoration(
                                         enabledBorder: phoneerror
                                             ? OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10),
-                                          borderSide: BorderSide(
-                                              color: Colors
-                                                  .red), // Set border color here
-                                        )
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                borderSide: BorderSide(
+                                                    color: Colors
+                                                        .red), // Set border color here
+                                              )
                                             : InputBorder.none,
                                         border: InputBorder.none,
                                         contentPadding: EdgeInsets.all(15),
@@ -409,19 +404,19 @@ class _Signup2State extends State<Signup2> {
                   ),
                   phoneerror
                       ? Center(
-                      child: Text(
-                        phonemessage,
-                        style: TextStyle(color: Colors.red),
-                      ))
+                          child: Text(
+                          phonemessage,
+                          style: TextStyle(color: Colors.red),
+                        ))
                       : Container(),
-      
+
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                   Row(
                     children: [
                       SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                       Expanded(
                         child: Container(
-                          height:50,
+                          height: 50,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(
                                 MediaQuery.of(context).size.width * 0.02),
@@ -444,24 +439,23 @@ class _Signup2State extends State<Signup2> {
                                       },
                                       obscureText: obsecure,
                                       controller: password,
-                                      cursorColor:
-                                          blueColor,
+                                      cursorColor: blueColor,
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
                                         contentPadding: EdgeInsets.all(15),
                                         enabledBorder: passworderror
                                             ? OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10),
-                                          borderSide: BorderSide(
-                                              color: Colors
-                                                  .red), // Set border color here
-                                        )
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                borderSide: BorderSide(
+                                                    color: Colors
+                                                        .red), // Set border color here
+                                              )
                                             : InputBorder.none,
                                         prefixIcon: Padding(
                                           padding: const EdgeInsets.all(15.0),
                                           child: Image.asset(
                                               'assets/icons/pasword.png'),
-      
                                         ),
                                         suffixIcon: GestureDetector(
                                           onTap: () {
@@ -493,10 +487,10 @@ class _Signup2State extends State<Signup2> {
                   ),
                   passworderror
                       ? Center(
-                      child: Text(
-                        passwordmessage,
-                        style: TextStyle(color: Colors.red),
-                      ))
+                          child: Text(
+                          passwordmessage,
+                          style: TextStyle(color: Colors.red),
+                        ))
                       : Container(),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                   Row(
@@ -504,7 +498,7 @@ class _Signup2State extends State<Signup2> {
                       SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                       Expanded(
                         child: Container(
-                          height:50,
+                          height: 50,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(
                                 MediaQuery.of(context).size.width * 0.02),
@@ -516,8 +510,8 @@ class _Signup2State extends State<Signup2> {
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
                                       horizontal:
-                                      MediaQuery.of(context).size.width *
-                                          0.00),
+                                          MediaQuery.of(context).size.width *
+                                              0.00),
                                   child: Center(
                                     child: TextField(
                                       onChanged: (value) {
@@ -527,24 +521,23 @@ class _Signup2State extends State<Signup2> {
                                       },
                                       obscureText: conobsecure,
                                       controller: confirmpassword,
-                                      cursorColor:
-                                      blueColor,
+                                      cursorColor: blueColor,
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
                                         contentPadding: EdgeInsets.all(14),
                                         enabledBorder: confirmpassworderror
                                             ? OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10),
-                                          borderSide: BorderSide(
-                                              color: Colors
-                                                  .red), // Set border color here
-                                        )
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                borderSide: BorderSide(
+                                                    color: Colors
+                                                        .red), // Set border color here
+                                              )
                                             : InputBorder.none,
                                         prefixIcon: Padding(
                                           padding: const EdgeInsets.all(15.0),
                                           child: Image.asset(
                                               'assets/icons/pasword.png'),
-      
                                         ),
                                         suffixIcon: GestureDetector(
                                           onTap: () {
@@ -576,171 +569,211 @@ class _Signup2State extends State<Signup2> {
                   ),
                   confirmpassworderror
                       ? Center(
-                      child: Text(
-                        confirmpasswordmessage,
-                        style: TextStyle(color: Colors.red),
-                      ))
+                          child: Text(
+                          confirmpasswordmessage,
+                          style: TextStyle(color: Colors.red),
+                        ))
                       : Container(),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  // Row(
+                  //   children: [
+                  //     SizedBox(width: MediaQuery.of(context).size.width * 0.05),
+                  //     Container(
+                  //       height: MediaQuery.of(context).size.height * 0.03,
+                  //       width: MediaQuery.of(context).size.height * 0.03,
+                  //       decoration: BoxDecoration(
+                  //         color: Colors.white,
+                  //         borderRadius: BorderRadius.circular(5),
+                  //       ),
+                  //       child: Checkbox(
+                  //         activeColor: isChecked ? Colors.black : Colors.white,
+                  //         checkColor: Colors.white,
+                  //         value: isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
+                  //         onChanged: ( value) {
+                  //           setState(() {
+                  //             isChecked = value ?? false; // ensure value is not null
+                  //           });
+                  //         },
+                  //       ),
+                  //     ),
+                  //     SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+                  //     Text(
+                  //       "I have read and accept CloudRentalManager terms and conditions ",
+                  //       style: TextStyle(
+                  //         fontSize: MediaQuery.of(context).size.width * 0.024,
+                  //         color: Colors.black,
+                  //       ),
+                  //     ),
+                  //     SizedBox(width: MediaQuery.of(context).size.width * 0.05),
+                  //   ],
+                  // ),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(width: MediaQuery.of(context).size.width * 0.05),
+
+                      // Checkbox
                       Container(
-                        height: MediaQuery.of(context).size.height * 0.03,
-                        width: MediaQuery.of(context).size.height * 0.03,
+                        height: MediaQuery.of(context).size.height * 0.035,
+                        width: MediaQuery.of(context).size.height * 0.035,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(5),
                         ),
                         child: Checkbox(
-                          activeColor: isChecked ? Colors.black : Colors.white,
+                          activeColor: Colors.black,
                           checkColor: Colors.white,
-                          value: isChecked, // assuming _isChecked is a boolean variable indicating whether the checkbox is checked or not
-                          onChanged: ( value) {
+                          value: isChecked,
+                          onChanged: (value) {
                             setState(() {
-                              isChecked = value ?? false; // ensure value is not null
+                              isChecked = value ?? false;
                             });
                           },
                         ),
                       ),
+
                       SizedBox(width: MediaQuery.of(context).size.width * 0.02),
-                      Text(
-                        "I have read and accept CloudRentalManager terms and conditions ",
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.024,
-                          color: Colors.black,
+
+                      // Text that wraps
+                      Expanded(
+                        child: Text(
+                          "   I have read and accept CloudRentalManager\n                      terms and conditions",
+                          textAlign: TextAlign.justify,
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width * 0.03,
+                            color: Colors.black,
+                            height: 1.3, //
+                          ),
                         ),
                       ),
+
                       SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                     ],
                   ),
+
                   SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                   GestureDetector(
                     onTap: () {
-                     if(companyname.text.trim().isEmpty){
-                      setState(() {
-                        companynameerror = true;
-                        companynamemessage = "Company Name is required";
-                      });
-                     }
-                     else {
-                       setState(() {
-                         companynameerror = false;
-                       });
-                     }
-                     if(phonenumber.text.trim().isEmpty){
-                       setState(() {
-                         phoneerror = true;
-                         phonemessage = "Phone Number is required";
-                       });
-                     }
-                     else if(phonenumber.text.trim().length != 10){
-                       setState(() {
-                         phoneerror = true;
-                         phonemessage = "Phone Number must be 10 digits";
-                       });
-                     }
-                     else {
-                       setState(() {
-                         phoneerror = false;
-                       });
-                     }
-                     // if(password.text.isEmpty){
-                     //   setState(() {
-                     //     passworderror = true;
-                     //     passwordmessage = "Password is required";
-                     //   });
-                     // }
-                     // else if(password.text.length < 8){
-                     //   setState(() {
-                     //     passworderror = true;
-                     //     passwordmessage = "Password must have 8 Characters";
-                     //   });
-                     // }
-                     // else if (!_validatePassword(password.text)) {
-                     //   setState(() {
-                     //     passworderror = true;
-                     //     passwordmessage = 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
-                     //     // _errorMessage
-                     //   });
-                     // }
-                     // // else if (!RegExp(r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$').hasMatch(password.text)) {
-                     // //  setState(() {
-                     // //    passworderror = true;
-                     // //    passwordmessage =  'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
-                     // //
-                     // //  });
-                     // //
-                     // // }
-                     // else {
-                     //   setState(() {
-                     //     passworderror = false;
-                     //   });
-                     // }
-                     if (password.text.trim().isEmpty) {
-                       setState(() {
-                         passworderror = true;
-                         passwordmessage = "Password is required";
-                       });
-                     } else if (password.text.trim().length < 8) {
-                       setState(() {
-                         passworderror = true;
-                         passwordmessage = "Password must have 8 Characters";
-                       });
-                     }
-                     else {
-                       String? validationMessage = ValidatePassword(password.text.trim());
-      
-                       if (validationMessage != null) {
-                         setState(() {
-                           passworderror = true;
-                           passwordmessage = validationMessage; // Use the dynamic message
-                         });
-                       }
-                       else {
-                         setState(() {
-                           passworderror = false; // No error
-                         });
-                       }
-                     }
-      
-                     if(confirmpassword.text.trim().isEmpty){
-                       setState(() {
-                         confirmpassworderror = true;
-                         confirmpasswordmessage = "Confirm Password is required";
-                       });
-                     }
-                     else if(confirmpassword.text.trim() != password.text.trim()){
-                       setState(() {
-                         confirmpassworderror = true;
-                         confirmpasswordmessage ="Both Password is not match";
-                       });
-                     }
-                     else{
-                       setState(() {
-                         confirmpassworderror = false;
-                       });
-                     }
-                     if(companynameerror==false && passworderror == false && confirmpassworderror == false && phoneerror ==false){
-                       if(isChecked){
-                         loginsubmit();
-                       }
-                       else {
-                         Fluttertoast.showToast(
-                             msg: "Please check the Terms & Condition",
-                             toastLength: Toast.LENGTH_SHORT,
-                             gravity: ToastGravity.CENTER,
-                             timeInSecForIosWeb: 1,
-                             backgroundColor: Colors.red,
-                             textColor: Colors.white,
-                             fontSize: 16.0
-                         );
-                       }
-      
-                     }
-      
-      
-                    /*  setState(() {
+                      if (companyname.text.trim().isEmpty) {
+                        setState(() {
+                          companynameerror = true;
+                          companynamemessage = "Company Name is required";
+                        });
+                      } else {
+                        setState(() {
+                          companynameerror = false;
+                        });
+                      }
+                      if (phonenumber.text.trim().isEmpty) {
+                        setState(() {
+                          phoneerror = true;
+                          phonemessage = "Phone Number is required";
+                        });
+                      } else if (phonenumber.text.trim().length != 10) {
+                        setState(() {
+                          phoneerror = true;
+                          phonemessage = "Phone Number must be 10 digits";
+                        });
+                      } else {
+                        setState(() {
+                          phoneerror = false;
+                        });
+                      }
+                      // if(password.text.isEmpty){
+                      //   setState(() {
+                      //     passworderror = true;
+                      //     passwordmessage = "Password is required";
+                      //   });
+                      // }
+                      // else if(password.text.length < 8){
+                      //   setState(() {
+                      //     passworderror = true;
+                      //     passwordmessage = "Password must have 8 Characters";
+                      //   });
+                      // }
+                      // else if (!_validatePassword(password.text)) {
+                      //   setState(() {
+                      //     passworderror = true;
+                      //     passwordmessage = 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
+                      //     // _errorMessage
+                      //   });
+                      // }
+                      // // else if (!RegExp(r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$').hasMatch(password.text)) {
+                      // //  setState(() {
+                      // //    passworderror = true;
+                      // //    passwordmessage =  'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
+                      // //
+                      // //  });
+                      // //
+                      // // }
+                      // else {
+                      //   setState(() {
+                      //     passworderror = false;
+                      //   });
+                      // }
+                      if (password.text.trim().isEmpty) {
+                        setState(() {
+                          passworderror = true;
+                          passwordmessage = "Password is required";
+                        });
+                      } else if (password.text.trim().length < 8) {
+                        setState(() {
+                          passworderror = true;
+                          passwordmessage = "Password must have 8 Characters";
+                        });
+                      } else {
+                        String? validationMessage =
+                            ValidatePassword(password.text.trim());
+
+                        if (validationMessage != null) {
+                          setState(() {
+                            passworderror = true;
+                            passwordmessage =
+                                validationMessage; // Use the dynamic message
+                          });
+                        } else {
+                          setState(() {
+                            passworderror = false; // No error
+                          });
+                        }
+                      }
+
+                      if (confirmpassword.text.trim().isEmpty) {
+                        setState(() {
+                          confirmpassworderror = true;
+                          confirmpasswordmessage =
+                              "Confirm Password is required";
+                        });
+                      } else if (confirmpassword.text.trim() !=
+                          password.text.trim()) {
+                        setState(() {
+                          confirmpassworderror = true;
+                          confirmpasswordmessage = "Both Password is not match";
+                        });
+                      } else {
+                        setState(() {
+                          confirmpassworderror = false;
+                        });
+                      }
+                      if (companynameerror == false &&
+                          passworderror == false &&
+                          confirmpassworderror == false &&
+                          phoneerror == false) {
+                        if (isChecked) {
+                          loginsubmit();
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: "Please check the Terms & Condition",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        }
+                      }
+
+                      /*  setState(() {
                         showdialog = true;
                       });
                       showDialog(
@@ -760,24 +793,25 @@ class _Signup2State extends State<Signup2> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Center(
-                        child: loading?
-                        SpinKitFadingCircle(
-                          color: Colors.white,
-                          size: 50.0,
-                        )
+                        child: loading
+                            ? SpinKitFadingCircle(
+                                color: Colors.white,
+                                size: 50.0,
+                              )
                             : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Create your free trial",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: MediaQuery.of(context).size.width *
-                                      0.035),
-                            ),
-                          ],
-                        ),
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Create your free trial",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.035),
+                                  ),
+                                ],
+                              ),
                       ),
                     ),
                   ),
@@ -883,7 +917,8 @@ class _Signup2State extends State<Signup2> {
                             height: 30,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: showdialog ? Color(0xFF152B51) : Colors.grey,
+                              color:
+                                  showdialog ? Color(0xFF152B51) : Colors.grey,
                             ),
                             child: Center(
                               child: Text(
@@ -914,27 +949,29 @@ class _Signup2State extends State<Signup2> {
     );
   }
 
-
   Future<void> loginsubmit() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       loading = true;
     });
 
-    final response = await http.post(
-        Uri.parse('${Api_url}/api/admin/register'),
-        body: {"email": email.text.trim(),
-          "password": password.text.trim(),"first_name":firstname.text.trim(),"last_name":lastname.text.trim(),"company_name":companyname.text.trim(),"phone_number":phonenumber.text.trim()});
+    final response =
+        await http.post(Uri.parse('${Api_url}/api/admin/register'), body: {
+      "email": email.text.trim(),
+      "password": password.text.trim(),
+      "first_name": firstname.text.trim(),
+      "last_name": lastname.text.trim(),
+      "company_name": companyname.text.trim(),
+      "phone_number": phonenumber.text.trim()
+    });
     final jsonData = json.decode(response.body);
     print("login ${response.body}");
     if (jsonData["statusCode"] == 200) {
-
       prefs.setString('first_name', jsonData['data']['first_name']);
       prefs.setString('last_name', jsonData['data']['last_name']);
       setState(() {
         loading = false;
         showdialog = true;
-
       });
       showDialog(
         context: context,
@@ -1008,14 +1045,15 @@ class _Signup2State extends State<Signup2> {
               ),
               GestureDetector(
                 onTap: () {
-                 // Navigator.pop(context);
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Dashboard()));
+                  // Navigator.pop(context);
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Dashboard()));
                 },
                 child: Container(
                   width: 134,
                   height: 34,
                   decoration: BoxDecoration(
-                      color:Color(0xFF152B51),
+                      color: Color(0xFF152B51),
                       borderRadius: BorderRadius.circular(6)),
                   child: Center(
                     child: Text(

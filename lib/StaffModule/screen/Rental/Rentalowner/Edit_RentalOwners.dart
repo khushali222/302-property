@@ -407,6 +407,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
       });
     }
   }
+
   final FocusNode _nodeText1 = FocusNode();
   final FocusNode _nodeText2 = FocusNode();
   final FocusNode _nodeText3 = FocusNode();
@@ -2647,7 +2648,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                                   keyboardType:
                                                       TextInputType.number,
                                                   inputFormatters: [
-                                                    FilteringTextInputFormatter.digitsOnly,
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
                                                   ],
                                                   cursorColor: blueColor,
                                                   decoration: InputDecoration(

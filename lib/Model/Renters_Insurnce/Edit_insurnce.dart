@@ -8,7 +8,7 @@ class RentersEdit {
   final String? policyId;
   final String? effectiveDate;
   final String? expirationDate;
-  final int? liabilityCoverage;
+  final dynamic liabilityCoverage;
   final String? insurancePolicyDocument;
   final bool? active;
   final String? dateCreated;
@@ -38,18 +38,22 @@ class RentersEdit {
       id: json['_id'] as String?,
       rentersInsuranceId: json['renters_insurance_id'] as String?,
       leaseId: json['lease_id'] as String?,
-      tenants: (json['tenants'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      tenants:
+          (json['tenants'] as List<dynamic>?)?.map((e) => e as String).toList(),
       insuranceCompany: json['insurance_company'] as String?,
-      insuranceCompanyPhoneNumber: json['insurance_company_phone_number'] as String?,
+      insuranceCompanyPhoneNumber:
+          json['insurance_company_phone_number'] as String?,
       policyId: json['policy_id'] as String?,
-      effectiveDate: json['effective_date'] ??"",
-      expirationDate: json['expiration_date']??"",
+      effectiveDate: json['effective_date'] ?? "",
+      expirationDate: json['expiration_date'] ?? "",
       liabilityCoverage: json['liability_coverage'] as int?,
       insurancePolicyDocument: json['insurance_policy_document'] as String?,
       active: json['active'] as bool?,
       dateCreated: json['date_created'] as String?,
       dateModified: json['date_modified'] as String?,
-      tenantDetails: (json['tenant_details'] as List<dynamic>?)?.map((e) => TenantDetails.fromJson(e as Map<String, dynamic>)).toList(),
+      tenantDetails: (json['tenant_details'] as List<dynamic>?)
+          ?.map((e) => TenantDetails.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 }

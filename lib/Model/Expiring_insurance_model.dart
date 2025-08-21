@@ -39,7 +39,7 @@ class RentersInsuranceResponse {
       statusCode: json['statusCode'],
       data: json['data'] != null
           ? List<RentersInsuranceData>.from(
-          json['data'].map((v) => RentersInsuranceData.fromJson(v)))
+              json['data'].map((v) => RentersInsuranceData.fromJson(v)))
           : null,
     );
   }
@@ -62,7 +62,7 @@ class RentersInsuranceData {
   final String? policyId;
   final String? effectiveDate;
   final String? expirationDate;
-  final int? liabilityCoverage;
+  final dynamic liabilityCoverage;
   final List<TenantDetails>? tenantDetails;
 
   RentersInsuranceData({
@@ -81,17 +81,16 @@ class RentersInsuranceData {
 
   factory RentersInsuranceData.fromJson(Map<String, dynamic> json) {
     return RentersInsuranceData(
-      id: json['_id'] ??"",
-      rentersInsuranceId: json['renters_insurance_id'] ??"",
-      leaseId: json['lease_id'] ??"",
-      tenants: json['tenants'] != null
-          ? List<String>.from(json['tenants'])
-          : null,
-      insuranceCompany: json['insurance_company'] ??"",
-      insuranceCompanyPhoneNumber: json['insurance_company_phone_number']??"",
-      policyId: json['policy_id'] ??"",
+      id: json['_id'] ?? "",
+      rentersInsuranceId: json['renters_insurance_id'] ?? "",
+      leaseId: json['lease_id'] ?? "",
+      tenants:
+          json['tenants'] != null ? List<String>.from(json['tenants']) : null,
+      insuranceCompany: json['insurance_company'] ?? "",
+      insuranceCompanyPhoneNumber: json['insurance_company_phone_number'] ?? "",
+      policyId: json['policy_id'] ?? "",
       effectiveDate: json['effective_date'] ?? "",
-      expirationDate: json['expiration_date']?? "",
+      expirationDate: json['expiration_date'] ?? "",
       liabilityCoverage: json['liability_coverage'] ?? 00,
       tenantDetails: (json['tenant_details'] as List<dynamic>?)
           ?.map((e) => TenantDetails.fromJson(e as Map<String, dynamic>))
@@ -129,9 +128,9 @@ class TenantDetails {
 
   factory TenantDetails.fromJson(Map<String, dynamic> json) {
     return TenantDetails(
-      tenantFirstName: json['tenant_firstName'] ??"",
-      tenantLastName: json['tenant_lastName'] ??"",
-      tenantEmail: json['tenant_email'] ??"",
+      tenantFirstName: json['tenant_firstName'] ?? "",
+      tenantLastName: json['tenant_lastName'] ?? "",
+      tenantEmail: json['tenant_email'] ?? "",
     );
   }
 

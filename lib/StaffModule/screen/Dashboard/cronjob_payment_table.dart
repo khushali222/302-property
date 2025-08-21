@@ -19,6 +19,7 @@ import '../../repository/Payment_cronjob/Payment_cronjob_repo.dart';
 import '../../repository/Payment_cronjob/cronjob_payment_table.dart';
 import '../../repository/tenants.dart';
 import '../Rental/Tenants/Tenant_summary.dart';
+import '../Leasing/RentalRoll/SummeryPageLease.dart';
 
 class Cronjob_payment_table extends StatefulWidget {
   @override
@@ -322,25 +323,54 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                 ),
               ),
               SizedBox(width: 5),
-              GestureDetector(
-                onTap: () async {
-                  // Fetch tenant data first using the tenantId
-                  List<tenant_model.Tenant> tenantData =
-                      await TenantsRepository()
-                              .fetchTenantsummery(data.tenant!.tenantId!) ??
-                          [];
-                  if (tenantData.isNotEmpty) {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ResponsiveTenantSummary(
-                                tenants: tenantData.first,
-                                tenantId: data.tenant!.tenantId!)));
-                  }
-                },
-                child: Text(name, style: cardTextStyle),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        // Fetch tenant data first using the tenantId
+                        List<tenant_model.Tenant> tenantData =
+                            await TenantsRepository().fetchTenantsummery(
+                                    data.tenant!.tenantId!) ??
+                                [];
+                        if (tenantData.isNotEmpty) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ResponsiveTenantSummary(
+                                      tenants: tenantData.first,
+                                      tenantId: data.tenant!.tenantId!)));
+                        }
+                      },
+                      child: Text(name, style: cardTextStyle),
+                    ),
+                    SizedBox(height: 2),
+                    GestureDetector(
+                      onTap: () {
+                        if (data.leaseId != null) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SummeryPageLease(
+                                        leaseId: data.leaseId!,
+                                        enddate:
+                                            null, // You can pass the end date if available
+                                      )));
+                        }
+                      },
+                      child: Text(
+                        address,
+                        style: cardTextStyle.copyWith(
+                          fontSize: 14,
+                          color: blueColor.withOpacity(0.8),
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const Spacer(),
               Text('\$$amount', style: cardTextStyle)
             ],
           ),
@@ -454,11 +484,26 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Rental Address',
-                      style: subTextStyle.copyWith(
-                        color: blueColor,
-                        fontWeight: FontWeight.bold,
+                    GestureDetector(
+                      onTap: () {
+                        if (data.leaseId != null) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SummeryPageLease(
+                                        leaseId: data.leaseId!,
+                                        enddate:
+                                            null, // You can pass the end date if available
+                                      )));
+                        }
+                      },
+                      child: Text(
+                        'Rental Address',
+                        style: subTextStyle.copyWith(
+                          color: blueColor,
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
                     ),
                     Text(
@@ -474,7 +519,27 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(address, style: subTextStyle),
+                    GestureDetector(
+                      onTap: () {
+                        if (data.leaseId != null) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SummeryPageLease(
+                                        leaseId: data.leaseId!,
+                                        enddate:
+                                            null, // You can pass the end date if available
+                                      )));
+                        }
+                      },
+                      child: Text(
+                        address,
+                        style: subTextStyle.copyWith(
+                          decoration: TextDecoration.underline,
+                          color: blueColor.withOpacity(0.8),
+                        ),
+                      ),
+                    ),
                     if (data.response == "FAILURE")
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
