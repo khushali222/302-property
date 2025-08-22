@@ -155,6 +155,12 @@ class _RenewleaseState extends State<Renewlease> {
         KeyboardActionsItem(
           focusNode: _nodeText1,
         ),
+        // Add actions for table amount fields
+        ...focusNodes
+            .map((focusNode) => KeyboardActionsItem(
+                  focusNode: focusNode,
+                ))
+            .toList(),
       ],
     );
   }
