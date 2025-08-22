@@ -183,7 +183,7 @@ import '../constant/constant.dart';
 
 class DateProvider with ChangeNotifier {
   DateTime _currentDate = DateTime.now();
-  String _dateFormat = 'yyyy-MM-dd';
+  String _dateFormat = 'MM/dd/yyyy';
   int dateformateselect = 0; // default date format
 
   DateTime get currentDate => _currentDate;
@@ -218,7 +218,7 @@ class DateProvider with ChangeNotifier {
       await checkToken(token);
     } else {
       // If no token, set to default
-      _dateFormat = 'MM-dd-yyyy';
+      _dateFormat = 'MM/dd/yyyy';
       dateformateselect = 0;
       notifyListeners();
     }
@@ -307,6 +307,75 @@ class DateProvider with ChangeNotifier {
     return DateFormat(_dateFormat).format(DateTime.parse(standardizedDate));
   }
 
+  String formatCurrentDateTime(String dateTime) {
+    dateTime = dateTime.trim();
+
+    // Handle special cases
+    if (dateTime == "At Will" || dateTime == "---") {
+      return dateTime;
+    }
+
+    DateTime? parsedDate;
+
+    // Parse the ISO 8601 format (2025-05-26T11:59:24.867Z)
+    try {
+      parsedDate = DateTime.parse(dateTime);
+    } catch (e) {
+      // If DateTime.parse fails, try with specific formats as fallback
+      List<String> dateTimeFormats = [
+        'yyyy-MM-dd HH:mm:ss',
+        'yyyy-MM-dd HH:mm',
+        'yyyy-M-d HH:mm:ss',
+        'yyyy-M-d HH:mm',
+        'dd-MM-yyyy HH:mm:ss',
+        'dd-MM-yyyy HH:mm',
+        'd-M-yyyy HH:mm:ss',
+        'd-M-yyyy HH:mm',
+        'M/d/yyyy HH:mm:ss',
+        'M/d/yyyy HH:mm',
+        'MM/dd/yyyy HH:mm:ss',
+        'MM/dd/yyyy HH:mm',
+        'yyyy-MM-dd',
+        'yyyy-M-d',
+        'dd-MM-yyyy',
+        'd-M-yyyy',
+        'M/d/yyyy',
+        'MM/dd/yyyy'
+      ];
+
+      for (String format in dateTimeFormats) {
+        try {
+          parsedDate = DateFormat(format).parse(dateTime);
+          break;
+        } catch (e) {
+          continue;
+        }
+      }
+    }
+
+    if (parsedDate == null) {
+      return dateTime; // Return original string if parsing fails
+    }
+
+    // Convert to match web timezone (assuming web shows UTC+5:30 for IST)
+    // Adjust the offset based on your web application's timezone
+    DateTime webTimezoneDate = parsedDate.add(Duration(hours: 5, minutes: 30));
+
+    // Create a datetime format that includes time
+    String dateTimeFormat = '$_dateFormat HH:mm:ss';
+
+    // Debug print to see what's happening
+    print('Original date: $dateTime');
+    print('Parsed date: $parsedDate');
+    print('Web timezone date: $webTimezoneDate');
+    print('Format: $dateTimeFormat');
+
+    // Format the date using the combined format
+    String result = DateFormat(dateTimeFormat).format(webTimezoneDate);
+    print('Formatted result: $result');
+    return result;
+  }
+
   // Future<void> checkToken(String token) async {
   //   try {
   //     final prefs = await SharedPreferences.getInstance();
@@ -367,25 +436,34 @@ class DateProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
-        _dateFormat = jsonData['themes']?['format']?.toString() ?? 'MM-dd-yyyy';
-        if (_dateFormat == "YYYY-MM-DD") {
+        String? serverFormat = jsonData['themes']?['format']?.toString();
+
+        if (serverFormat == "YYYY-MM-DD") {
           dateformateselect = 1;
           _dateFormat = 'yyyy-MM-dd';
-        } else if (_dateFormat == "YYYY-MMM-DD") {
+        } else if (serverFormat == "YYYY-MMM-DD") {
           dateformateselect = 2;
           _dateFormat = 'yyyy-MMM-dd';
-        } else if (_dateFormat == "MM/DD/YYYY") {
+        } else if (serverFormat == "MM/DD/YYYY") {
           dateformateselect = 0;
           _dateFormat = 'MM/dd/yyyy';
+        } else if (serverFormat == "M/D/YYYY") {
+          dateformateselect = 0;
+          _dateFormat = 'M/d/yyyy';
         } else {
-          // Handle custom case
-          dateformateselect = 3;
-          //  customdate = _dateFormat; // Store the custom format
+          // Handle custom case or default
+          dateformateselect = 0;
+          _dateFormat = 'MM/dd/yyyy'; // Default to MM/dd/yyyy
         }
+
         _dateFormat = fixDateFormat(_dateFormat);
         notifyListeners();
       } else {
         print("Token validation failed. Status code: ${response.statusCode}");
+        // Set default format on error
+        _dateFormat = 'MM/dd/yyyy';
+        dateformateselect = 0;
+        notifyListeners();
       }
     } catch (e) {
       print("Error in checkToken: $e");

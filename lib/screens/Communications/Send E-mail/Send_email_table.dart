@@ -466,10 +466,11 @@ class _Send_Email_tableState extends State<Send_Email_table> {
           },
           color: blueColor,
         ),
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -731,15 +732,15 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                         GestureDetector(
                           onTap: () async {
                             final result = await Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (context) => send_email()));
+                                MaterialPageRoute(
+                                    builder: (context) => send_email()));
                             // final result = await Navigator.of(context).push(
                             //     MaterialPageRoute(
                             //         builder: (context) => Add_property()));
                             if (result == true) {
                               setState(() {
-                                futureEmailss =
-                                    SendemailRepository().fetchSendEmailTable(limit: 10, page: 1);
+                                futureEmailss = SendemailRepository()
+                                    .fetchSendEmailTable(limit: 10, page: 1);
                               });
                             }
                           },
@@ -986,12 +987,9 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                                           Propertytype
                                                                   .createdAt!
                                                                   .isNotEmpty
-                                                              ? DateFormat(
-                                                                      "yyyy-MM-dd HH:mm:ss")
-                                                                  .format(DateTime
-                                                                          .parse(
-                                                                              '${Propertytype.createdAt}')
-                                                                      .toLocal())
+                                                              ? dateProvider
+                                                                  .formatCurrentDateTime(
+                                                                      '${Propertytype.createdAt}')
                                                               : 'Not Sent',
 
                                                           style: TextStyle(
@@ -1133,11 +1131,17 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                                                 child:
                                                                     Container(
                                                                   height: 40,
-                                                                  decoration: BoxDecoration(
-                                                                    border: Border.all(color: Colors.red, width: 1.5),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    border: Border.all(
+                                                                        color: Colors
+                                                                            .red,
+                                                                        width:
+                                                                            1.5),
                                                                     borderRadius:
-                                                                    BorderRadius.circular(
-                                                                        8),),
+                                                                        BorderRadius
+                                                                            .circular(8),
+                                                                  ),
                                                                   child: Row(
                                                                     mainAxisAlignment:
                                                                         MainAxisAlignment
@@ -1151,8 +1155,8 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                                                             .trashCan,
                                                                         size:
                                                                             15,
-                                                                        color:
-                                                                            Colors.red,
+                                                                        color: Colors
+                                                                            .red,
                                                                       ),
                                                                       SizedBox(
                                                                         width:
@@ -1163,8 +1167,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                                                         style: TextStyle(
                                                                             color:
                                                                                 Colors.red,
-                                                                            fontWeight:
-                                                                                FontWeight.bold),
+                                                                            fontWeight: FontWeight.bold),
                                                                       )
                                                                     ],
                                                                   ),
@@ -1187,11 +1190,16 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                                                 child:
                                                                     Container(
                                                                   height: 40,
-                                                                  decoration: BoxDecoration(
-                                                                    border: Border.all(color: blueColor, width: 1.5),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    border: Border.all(
+                                                                        color:
+                                                                            blueColor,
+                                                                        width:
+                                                                            1.5),
                                                                     borderRadius:
-                                                                    BorderRadius.circular(
-                                                                        8),
+                                                                        BorderRadius
+                                                                            .circular(8),
                                                                   ),
                                                                   child: Row(
                                                                     mainAxisAlignment:

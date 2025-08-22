@@ -23,6 +23,7 @@ import '../../../provider/dateProvider.dart';
 import '../../../repository/Communication/Email_log_repo.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'package:http/http.dart' as http;
+
 class Email_log_tablee extends StatefulWidget {
   @override
   _Email_log_tableeState createState() => _Email_log_tableeState();
@@ -117,9 +118,9 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                   children: [
                     width < 400
                         ? Text("Recipient",
-                        style: TextStyle(color: Colors.white))
+                            style: TextStyle(color: Colors.white))
                         : Text("Recipient",
-                        style: TextStyle(color: Colors.white)),
+                            style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     // SizedBox(width: 3),
                     // ascending1
@@ -342,7 +343,8 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                   height: 48,
                   decoration: BoxDecoration(
                     color: blueColor,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(20)),
                   ),
                   child: Center(
                     child: Row(
@@ -364,8 +366,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                             child: Icon(
                               Icons.close,
                               color: Colors.white,
-                            )
-                        ),
+                            )),
                         SizedBox(width: 8),
                       ],
                     ),
@@ -382,22 +383,23 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                           data.isAccepted == true && data.isOpened == true
                               ? "✔✔ Read"
                               : data.isAccepted == true
-                              ? "✔ Not Opened"
-                              : "✖",
+                                  ? "✔ Not Opened"
+                                  : "✖",
                           data.isAccepted == true && data.isOpened == true
                               ? Colors.green
                               : Colors.red),
                       _buildField("Subject", '${data.subject}', Colors.black),
-                      _buildField("Recipient Email", '${data.email}', Colors.black),
+                      _buildField(
+                          "Recipient Email", '${data.email}', Colors.black),
                       _buildField("From Email", '${data.from}', Colors.black),
                       _buildField(
                           "Created Time",
-                          DateFormat("yyyy-MM-dd HH:mm:ss").format(
-                              DateTime.parse('${data.createdAt}').toLocal()),
+                          Provider.of<DateProvider>(context, listen: false)
+                              .formatCurrentDateTime('${data.createdAt}'),
                           Colors.black),
                       _buildField(
                           "Open Time",
-                          '${data.isOpened == true ? DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.fromMillisecondsSinceEpoch(int.parse('${data.openedAt}')).toLocal()) : "Not Opened"}',
+                          '${data.isOpened == true ? Provider.of<DateProvider>(context, listen: false).formatCurrentDateTime(DateTime.fromMillisecondsSinceEpoch(int.parse('${data.openedAt}'), isUtc: true).toIso8601String()) : "Not Opened"}',
                           Colors.black),
 
                       // Email Body Section
@@ -406,13 +408,13 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
-                            color: blueColor
-                        ),
+                            color: blueColor),
                       ),
                       SizedBox(height: 5),
                       Container(
                         width: double.infinity,
-                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                         decoration: BoxDecoration(
                           color: Colors.grey[200],
                           borderRadius: BorderRadius.circular(10),
@@ -440,13 +442,15 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: blueColor,
                             foregroundColor: Colors.white,
-                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
                           onPressed: () async {
-                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
                             String token = prefs.getString('token') ?? '';
                             String adminId = prefs.getString('adminId') ?? '';
                             try {
@@ -485,24 +489,28 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
 
                               // Call resend API endpoint
                               final response = await http.post(
-                                Uri.parse('$Api_url/api/email-logs/resend-email'),
+                                Uri.parse(
+                                    '$Api_url/api/email-logs/resend-email'),
                                 headers: {
                                   'Content-Type': 'application/json',
                                   'authorization': 'CRM $token',
                                   'id': 'CRM $adminId',
                                 },
                                 body: jsonEncode({
-                                  'email_id': data.emailId, // Assuming data.id contains the email log ID
+                                  'email_id': data
+                                      .emailId, // Assuming data.id contains the email log ID
                                 }),
                               );
 
-                              Navigator.pop(context); // Remove loading indicator
-                              Navigator.pop(context); // Remove loading indicator
+                              Navigator.pop(
+                                  context); // Remove loading indicator
+                              Navigator.pop(
+                                  context); // Remove loading indicator
 
                               if (response.statusCode == 200) {
                                 Fluttertoast.showToast(
                                   msg: 'Email resent successfully',
-                                 // backgroundColor: Colors.green,
+                                  // backgroundColor: Colors.green,
 
                                   toastLength: Toast.LENGTH_SHORT,
                                 );
@@ -510,10 +518,11 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                 throw Exception('Failed to resend email');
                               }
                             } catch (e) {
-                              Navigator.pop(context); // Remove loading indicator
+                              Navigator.pop(
+                                  context); // Remove loading indicator
                               Fluttertoast.showToast(
                                 msg: 'Failed to resend email',
-                               // backgroundColor: Colors.red,
+                                // backgroundColor: Colors.red,
 
                                 toastLength: Toast.LENGTH_SHORT,
                               );
@@ -627,8 +636,8 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
       child: InkWell(
         onTap: getField != null
             ? () {
-          _sort(getField, columnIndex, !_sortAscending);
-        }
+                _sort(getField, columnIndex, !_sortAscending);
+              }
             : null,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -710,10 +719,10 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
           onPressed: _currentPage == 0
               ? null
               : () {
-            setState(() {
-              _currentPage--;
-            });
-          },
+                  setState(() {
+                    _currentPage--;
+                  });
+                },
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
@@ -730,10 +739,10 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
           onPressed: (_currentPage + 1) * _rowsPerPage >= _allEmails.length
               ? null
               : () {
-            setState(() {
-              _currentPage++;
-            });
-          },
+                  setState(() {
+                    _currentPage++;
+                  });
+                },
         ),
       ],
     );
@@ -755,649 +764,660 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
       ),
       body: _connectivityResult != ConnectivityResult.none
           ? SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20,
-            ),
-            //add propertytype
-            Padding(
-              padding: const EdgeInsets.only(left: 4, right: 0),
-              child: Row(
-                //mainAxisAlignment: MainAxisAlignment.end,
+              child: Column(
                 children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  //add propertytype
                   Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: titleBar(
-                      width: MediaQuery.of(context).size.width * .90,
-                      title: 'Email Logs',
-                    ),
-                  ),
-                  if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 4),
-                  if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 22),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 12, right: 12),
-              child: Row(
-                children: [
-                  if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 1),
-                  if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 24),
-                  Material(
-                    elevation: 2,
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      // height: 40,
-                      height: MediaQuery.of(context).size.width < 500
-                          ? 45
-                          : 50,
-                      width: MediaQuery.of(context).size.width < 500
-                          ? MediaQuery.of(context).size.width * .52
-                          : MediaQuery.of(context).size.width * .49,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          // border: Border.all(color: Colors.grey),
-                          border: Border.all(color: Color(0xFF8A95A8))),
-                      child: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: TextField(
-                              style: TextStyle(
-                                  fontSize:
-                                  MediaQuery.of(context).size.width <
-                                      500
-                                      ? 15
-                                      : 14),
-                              // onChanged: (value) {
-                              //   setState(() {
-                              //     cvverror = false;
-                              //   });
-                              // },
-                              // controller: cvv,
-                              onChanged: (value) {
-                                setState(() {
-                                  searchvalue = value;
-                                  if (_currentPage != 0) _currentPage = 0;
-                                });
-                              },
-                              cursorColor: blueColor,
-                              decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: "Search here...",
-                                  hintStyle: TextStyle(
-                                    fontSize: MediaQuery.of(context)
-                                        .size
-                                        .width <
-                                        500
-                                        ? 14
-                                        : 18,
-                                    // fontWeight: FontWeight.bold,
-                                    color: Color(0xFF8A95A8),
-                                  ),
-                                  contentPadding: EdgeInsets.only(
-                                      left: 5, bottom: 12, top: 5)),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (MediaQuery.of(context).size.width < 500)
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: FutureBuilder<Email_log_table>(
-                  future: futureEmailss,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState ==
-                        ConnectionState.waiting) {
-                      return ColabShimmerLoadingWidget();
-                    } else if (snapshot.hasError) {
-                      return Center(
-                          child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData ||
-                        snapshot.data!.emails!.isEmpty) {
-                      return Container(
-                        height: MediaQuery.of(context).size.height * .5,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/images/no_data.jpg",
-                                height: 200,
-                                width: 200,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "No Data Available",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: blueColor,
-                                    fontSize: 16),
-                              )
-                            ],
+                    padding: const EdgeInsets.only(left: 4, right: 0),
+                    child: Row(
+                      //mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: titleBar(
+                            width: MediaQuery.of(context).size.width * .90,
+                            title: 'Email Logs',
                           ),
                         ),
-                      );
-                    } else {
-                      // Store all emails for frontend pagination
-                      _allEmails = snapshot.data!.emails!;
-                      // Apply search filter if needed
-                      List<Emails> filteredEmails = _allEmails;
-                      if (searchvalue.isNotEmpty) {
-                        filteredEmails = filteredEmails.where((property) =>
-                        (property.email?.toLowerCase() ?? '').contains(searchvalue.toLowerCase()) ||
-                            (property.rentalAddress?.toLowerCase() ?? '').contains(searchvalue.toLowerCase()) ||
-                            ((property.isAccepted == true
-                                ? DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.parse('${property.createdAt}').toLocal())
-                                : 'Not Sent').toLowerCase().contains(searchvalue.toLowerCase()))
-                        ).toList();
-                      }
-                      if (filteredEmails.isEmpty) {
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/images/no_data.jpg",
-                                height: 200,
-                                width: 200,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "No Data Available",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: blueColor,
-                                    fontSize: 16),
-                              )
-                            ],
-                          ),
-                        );
-                      }
-
-                    //  filteredEmails = filteredEmails.reversed.toList();
-                      sortData(filteredEmails);
-                      int totalPages =
-                      (filteredEmails.length / _rowsPerPage).ceil();
-                      List<Emails> currentPageData = filteredEmails
-                          .skip(_currentPage * _rowsPerPage)
-                          .take(_rowsPerPage)
-                          .toList();
-                      return SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            _buildHeaders(),
-                            SizedBox(height: 20),
-                            Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Color.fromRGBO(
-                                          152, 162, 179, .5))),
-                              // decoration: BoxDecoration(
-                              //     border: Border.all(color: blueColor)),
-                              child: Column(
-                                children: currentPageData
-                                    .asMap()
-                                    .entries
-                                    .map((entry) {
-                                  int index = entry.key;
-                                  bool isExpanded =
-                                      expandedIndex == index;
-                                  Emails Propertytype = entry.value;
-
-                                  //return CustomExpansionTile(data: Propertytype, index: index);
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                      color: index % 2 != 0
-                                          ? Colors.white
-                                          : blueColor.withOpacity(0.09),
-                                      border: Border.all(
-                                          color: Color.fromRGBO(
-                                              152, 162, 179, .5)),
-                                    ),
-                                    // decoration: BoxDecoration(
-                                    //   border: Border.all(color: blueColor),
-                                    // ),
-                                    child: Column(
-                                      children: <Widget>[
-                                        ListTile(
-                                          contentPadding: EdgeInsets.zero,
-                                          title: Padding(
-                                            padding:
-                                            const EdgeInsets.all(2.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment
-                                                  .center,
-                                              children: <Widget>[
-                                                InkWell(
-                                                  onTap: () {
-                                                    // setState(() {
-                                                    //    isExpanded = !isExpanded;
-                                                    // //  expandedIndex = !expandedIndex;
-                                                    //
-                                                    // });
-                                                    // setState(() {
-                                                    //   if (isExpanded) {
-                                                    //     expandedIndex = null;
-                                                    //     isExpanded = !isExpanded;
-                                                    //   } else {
-                                                    //     expandedIndex = index;
-                                                    //   }
-                                                    // });
-                                                    setState(() {
-                                                      if (expandedIndex ==
-                                                          index) {
-                                                        expandedIndex =
-                                                        null;
-                                                      } else {
-                                                        expandedIndex =
-                                                            index;
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    margin:
-                                                    EdgeInsets.only(
-                                                        left: 5,
-                                                        right: 5),
-                                                    padding: !isExpanded
-                                                        ? EdgeInsets.only(
-                                                        bottom: 10)
-                                                        : EdgeInsets.only(
-                                                        top: 10),
-                                                    child: FaIcon(
-                                                      isExpanded
-                                                          ? FontAwesomeIcons
-                                                          .sortUp
-                                                          : FontAwesomeIcons
-                                                          .sortDown,
-                                                      size: 20,
-                                                      color: blueColor,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        if (expandedIndex ==
-                                                            index) {
-                                                          expandedIndex =
-                                                          null;
-                                                        } else {
-                                                          expandedIndex =
-                                                              index;
-                                                        }
-                                                      });
-                                                    },
-                                                    child: Text(
-                                                      Propertytype.email
-                                                          ?.isNotEmpty ==
-                                                          true
-                                                          ? '${Propertytype.email}'
-                                                          : 'N/A',
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .bold,
-                                                        fontSize: 13,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width: MediaQuery.of(
-                                                        context)
-                                                        .size
-                                                        .width *
-                                                        .05),
-                                                Expanded(
-                                                  child: Text(
-                                                    Propertytype.rentalAddress
-                                                        ?.isNotEmpty ==
-                                                        true
-                                                        ? '${Propertytype.rentalAddress}'
-                                                        : 'N/A',
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width: MediaQuery.of(
-                                                        context)
-                                                        .size
-                                                        .width *
-                                                        .08),
-                                                Expanded(
-                                                  child: Text(
-                                                    // '${widget.data.createdAt}',
-                                                    // formatDate(
-                                                    //     '${Propertytype.createdAt}'),
-                                                    Propertytype.isAccepted ==
-                                                        true
-                                                        ? DateFormat(
-                                                        "yyyy-MM-dd HH:mm:ss")
-                                                        .format(DateTime
-                                                        .parse(
-                                                        '${Propertytype.createdAt}')
-                                                        .toLocal())
-                                                        : 'Not Sent',
-
-                                                    style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width: MediaQuery.of(
-                                                        context)
-                                                        .size
-                                                        .width *
-                                                        .01),
-                                              ],
-                                            ),
-                                          ),
+                        if (MediaQuery.of(context).size.width < 500)
+                          SizedBox(width: 4),
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 22),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12, right: 12),
+                    child: Row(
+                      children: [
+                        if (MediaQuery.of(context).size.width < 500)
+                          SizedBox(width: 1),
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 24),
+                        Material(
+                          elevation: 2,
+                          borderRadius: BorderRadius.circular(8),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            // height: 40,
+                            height: MediaQuery.of(context).size.width < 500
+                                ? 45
+                                : 50,
+                            width: MediaQuery.of(context).size.width < 500
+                                ? MediaQuery.of(context).size.width * .52
+                                : MediaQuery.of(context).size.width * .49,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                // border: Border.all(color: Colors.grey),
+                                border: Border.all(color: Color(0xFF8A95A8))),
+                            child: Stack(
+                              children: [
+                                Positioned.fill(
+                                  child: TextField(
+                                    style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 15
+                                                : 14),
+                                    // onChanged: (value) {
+                                    //   setState(() {
+                                    //     cvverror = false;
+                                    //   });
+                                    // },
+                                    // controller: cvv,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        searchvalue = value;
+                                        if (_currentPage != 0) _currentPage = 0;
+                                      });
+                                    },
+                                    cursorColor: blueColor,
+                                    decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: "Search here...",
+                                        hintStyle: TextStyle(
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 14
+                                              : 18,
+                                          // fontWeight: FontWeight.bold,
+                                          color: Color(0xFF8A95A8),
                                         ),
-                                        if (isExpanded)
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 2.0),
-                                            margin: EdgeInsets.only(
-                                                bottom: 2),
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                children: [
-                                                  Row(
+                                        contentPadding: EdgeInsets.only(
+                                            left: 5, bottom: 12, top: 5)),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (MediaQuery.of(context).size.width < 500)
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: FutureBuilder<Email_log_table>(
+                        future: futureEmailss,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return ColabShimmerLoadingWidget();
+                          } else if (snapshot.hasError) {
+                            return Center(
+                                child: Text('Error: ${snapshot.error}'));
+                          } else if (!snapshot.hasData ||
+                              snapshot.data!.emails!.isEmpty) {
+                            return Container(
+                              height: MediaQuery.of(context).size.height * .5,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/no_data.jpg",
+                                      height: 200,
+                                      width: 200,
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      "No Data Available",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                          fontSize: 16),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            );
+                          } else {
+                            // Store all emails for frontend pagination
+                            _allEmails = snapshot.data!.emails!;
+                            // Apply search filter if needed
+                            List<Emails> filteredEmails = _allEmails;
+                            if (searchvalue.isNotEmpty) {
+                              filteredEmails = filteredEmails
+                                  .where((property) =>
+                                      (property.email?.toLowerCase() ?? '')
+                                          .contains(
+                                              searchvalue.toLowerCase()) ||
+                                      (property.rentalAddress?.toLowerCase() ??
+                                              '')
+                                          .contains(
+                                              searchvalue.toLowerCase()) ||
+                                      ((property.isAccepted == true
+                                              ? dateProvider
+                                                  .formatCurrentDateTime(
+                                                      '${property.createdAt}')
+                                              : 'Not Sent')
+                                          .toLowerCase()
+                                          .contains(searchvalue.toLowerCase())))
+                                  .toList();
+                            }
+                            if (filteredEmails.isEmpty) {
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/no_data.jpg",
+                                      height: 200,
+                                      width: 200,
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      "No Data Available",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                          fontSize: 16),
+                                    )
+                                  ],
+                                ),
+                              );
+                            }
+
+                            //  filteredEmails = filteredEmails.reversed.toList();
+                            sortData(filteredEmails);
+                            int totalPages =
+                                (filteredEmails.length / _rowsPerPage).ceil();
+                            List<Emails> currentPageData = filteredEmails
+                                .skip(_currentPage * _rowsPerPage)
+                                .take(_rowsPerPage)
+                                .toList();
+                            return SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  _buildHeaders(),
+                                  SizedBox(height: 20),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Color.fromRGBO(
+                                                152, 162, 179, .5))),
+                                    // decoration: BoxDecoration(
+                                    //     border: Border.all(color: blueColor)),
+                                    child: Column(
+                                      children: currentPageData
+                                          .asMap()
+                                          .entries
+                                          .map((entry) {
+                                        int index = entry.key;
+                                        bool isExpanded =
+                                            expandedIndex == index;
+                                        Emails Propertytype = entry.value;
+
+                                        //return CustomExpansionTile(data: Propertytype, index: index);
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                            color: index % 2 != 0
+                                                ? Colors.white
+                                                : blueColor.withOpacity(0.09),
+                                            border: Border.all(
+                                                color: Color.fromRGBO(
+                                                    152, 162, 179, .5)),
+                                          ),
+                                          // decoration: BoxDecoration(
+                                          //   border: Border.all(color: blueColor),
+                                          // ),
+                                          child: Column(
+                                            children: <Widget>[
+                                              ListTile(
+                                                contentPadding: EdgeInsets.zero,
+                                                title: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(2.0),
+                                                  child: Row(
                                                     mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .start,
-                                                    children: [
-                                                      FaIcon(
-                                                        isExpanded
-                                                            ? FontAwesomeIcons
-                                                            .sortUp
-                                                            : FontAwesomeIcons
-                                                            .sortDown,
-                                                        size: 50,
-                                                        color: Colors
-                                                            .transparent,
-                                                      ),
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                          children: <Widget>[
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                    'Subject   :  ',
-                                                                    style: TextStyle(
-                                                                        fontWeight: FontWeight.bold,
-                                                                        color: blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    // text: formatDate(
-                                                                    //     '${Propertytype.updatedAt}'),
-                                                                    text: Propertytype.subject?.isNotEmpty == true
-                                                                        ? Propertytype.subject
-                                                                        : 'N/A',
-                                                                    style: TextStyle(
-                                                                        fontWeight: FontWeight.w700,
-                                                                        color: grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                    'Opened  :  ',
-                                                                    style: TextStyle(
-                                                                        fontWeight: FontWeight.bold,
-                                                                        color: blueColor), // Bold and black
-                                                                  ),
-                                                                  TextSpan(
-                                                                    // text: formatDate(
-                                                                    //     '${Propertytype.updatedAt}'),
-                                                                    text: Propertytype.isOpened == true
-                                                                        ? DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.fromMillisecondsSinceEpoch(int.parse('${Propertytype.openedAt}')).toLocal())
-                                                                        : 'Not Opened',
-                                                                    style: TextStyle(
-                                                                        fontWeight: FontWeight.w700,
-                                                                        color: grey), // Light and grey
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: 15,
-                                                            ),
-                                                          ],
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: <Widget>[
+                                                      InkWell(
+                                                        onTap: () {
+                                                          // setState(() {
+                                                          //    isExpanded = !isExpanded;
+                                                          // //  expandedIndex = !expandedIndex;
+                                                          //
+                                                          // });
+                                                          // setState(() {
+                                                          //   if (isExpanded) {
+                                                          //     expandedIndex = null;
+                                                          //     isExpanded = !isExpanded;
+                                                          //   } else {
+                                                          //     expandedIndex = index;
+                                                          //   }
+                                                          // });
+                                                          setState(() {
+                                                            if (expandedIndex ==
+                                                                index) {
+                                                              expandedIndex =
+                                                                  null;
+                                                            } else {
+                                                              expandedIndex =
+                                                                  index;
+                                                            }
+                                                          });
+                                                        },
+                                                        child: Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  left: 5,
+                                                                  right: 5),
+                                                          padding: !isExpanded
+                                                              ? EdgeInsets.only(
+                                                                  bottom: 10)
+                                                              : EdgeInsets.only(
+                                                                  top: 10),
+                                                          child: FaIcon(
+                                                            isExpanded
+                                                                ? FontAwesomeIcons
+                                                                    .sortUp
+                                                                : FontAwesomeIcons
+                                                                    .sortDown,
+                                                            size: 20,
+                                                            color: blueColor,
+                                                          ),
                                                         ),
                                                       ),
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
                                                       Expanded(
-                                                        child:
-                                                        GestureDetector(
+                                                        child: InkWell(
                                                           onTap: () {
-                                                            _showAlert(
-                                                                context,
-                                                                Propertytype
-                                                                    .emailId!,
-                                                                Propertytype
-                                                            );
-
+                                                            setState(() {
+                                                              if (expandedIndex ==
+                                                                  index) {
+                                                                expandedIndex =
+                                                                    null;
+                                                              } else {
+                                                                expandedIndex =
+                                                                    index;
+                                                              }
+                                                            });
                                                           },
-                                                          child:
-                                                          Container(
-                                                            height: 40,
-                                                            decoration: BoxDecoration(
-                                                                  border: Border.all(color: blueColor, width: 1.5),
-                                                            borderRadius:
-                                                            BorderRadius.circular(
-                                                                8),),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                              crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                              children: [
-                                                                Image
-                                                                    .asset(
-                                                                  'assets/icons/view.png',
-                                                                  color:
-                                                                  blueColor,
-                                                                ),
-                                                                SizedBox(
-                                                                  width:
-                                                                  10,
-                                                                ),
-                                                                Text(
-                                                                  "Details",
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                      blueColor,
-                                                                      fontWeight:
-                                                                      FontWeight.bold),
-                                                                )
-                                                              ],
+                                                          child: Text(
+                                                            Propertytype.email
+                                                                        ?.isNotEmpty ==
+                                                                    true
+                                                                ? '${Propertytype.email}'
+                                                                : 'N/A',
+                                                            style: TextStyle(
+                                                              color: blueColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 13,
                                                             ),
                                                           ),
                                                         ),
                                                       ),
+                                                      SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              .05),
+                                                      Expanded(
+                                                        child: Text(
+                                                          Propertytype.rentalAddress
+                                                                      ?.isNotEmpty ==
+                                                                  true
+                                                              ? '${Propertytype.rentalAddress}'
+                                                              : 'N/A',
+                                                          style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              .08),
+                                                      Expanded(
+                                                        child: Text(
+                                                          // '${widget.data.createdAt}',
+                                                          // formatDate(
+                                                          //     '${Propertytype.createdAt}'),
+                                                          Propertytype.isAccepted ==
+                                                                  true
+                                                              ? dateProvider
+                                                                  .formatCurrentDateTime(
+                                                                      '${Propertytype.createdAt}')
+                                                              : 'Not Sent',
+
+                                                          style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              .01),
                                                     ],
                                                   ),
-                                                ],
+                                                ),
+                                              ),
+                                              if (isExpanded)
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 2.0),
+                                                  margin: EdgeInsets.only(
+                                                      bottom: 2),
+                                                  child: SingleChildScrollView(
+                                                    child: Column(
+                                                      children: [
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            FaIcon(
+                                                              isExpanded
+                                                                  ? FontAwesomeIcons
+                                                                      .sortUp
+                                                                  : FontAwesomeIcons
+                                                                      .sortDown,
+                                                              size: 50,
+                                                              color: Colors
+                                                                  .transparent,
+                                                            ),
+                                                            Expanded(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: <Widget>[
+                                                                  Text.rich(
+                                                                    TextSpan(
+                                                                      children: [
+                                                                        TextSpan(
+                                                                          text:
+                                                                              'Subject   :  ',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color: blueColor), // Bold and black
+                                                                        ),
+                                                                        TextSpan(
+                                                                          // text: formatDate(
+                                                                          //     '${Propertytype.updatedAt}'),
+                                                                          text: Propertytype.subject?.isNotEmpty == true
+                                                                              ? Propertytype.subject
+                                                                              : 'N/A',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey), // Light and grey
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  Text.rich(
+                                                                    TextSpan(
+                                                                      children: [
+                                                                        TextSpan(
+                                                                          text:
+                                                                              'Opened  :  ',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color: blueColor), // Bold and black
+                                                                        ),
+                                                                        TextSpan(
+                                                                          // text: formatDate(
+                                                                          //     '${Propertytype.updatedAt}'),
+                                                                          text: Propertytype.isOpened == true
+                                                                              ? dateProvider.formatCurrentDateTime(DateTime.fromMillisecondsSinceEpoch(int.parse('${Propertytype.openedAt}'), isUtc: true).toIso8601String())
+                                                                              : 'Not Opened',
+                                                                          style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: grey), // Light and grey
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 15,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        Row(
+                                                          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            Expanded(
+                                                              child:
+                                                                  GestureDetector(
+                                                                onTap: () {
+                                                                  _showAlert(
+                                                                      context,
+                                                                      Propertytype
+                                                                          .emailId!,
+                                                                      Propertytype);
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                  height: 40,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    border: Border.all(
+                                                                        color:
+                                                                            blueColor,
+                                                                        width:
+                                                                            1.5),
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(8),
+                                                                  ),
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      Image
+                                                                          .asset(
+                                                                        'assets/icons/view.png',
+                                                                        color:
+                                                                            blueColor,
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            10,
+                                                                      ),
+                                                                      Text(
+                                                                        "Details",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                blueColor,
+                                                                            fontWeight:
+                                                                                FontWeight.bold),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              //SizedBox(height: 13,),
+                                            ],
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          // Text('Rows per page:'),
+                                          SizedBox(width: 10),
+                                          Material(
+                                            elevation: 3,
+                                            child: Container(
+                                              height: 40,
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 12.0),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.grey),
+                                              ),
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton<int>(
+                                                  value: _rowsPerPage,
+                                                  items: itemsPerPageOptions
+                                                      .map((int value) {
+                                                    return DropdownMenuItem<
+                                                        int>(
+                                                      value: value,
+                                                      child: Text(
+                                                          value.toString()),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged: (newValue) {
+                                                    if (newValue != null) {
+                                                      _changeRowsPerPage(
+                                                          newValue);
+                                                    }
+                                                  },
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        //SizedBox(height: 13,),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Row(
-                                  children: [
-                                    // Text('Rows per page:'),
-                                    SizedBox(width: 10),
-                                    Material(
-                                      elevation: 3,
-                                      child: Container(
-                                        height: 40,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 12.0),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: Colors.grey),
-                                        ),
-                                        child:
-                                        DropdownButtonHideUnderline(
-                                          child: DropdownButton<int>(
-                                            value: _rowsPerPage,
-                                            items: itemsPerPageOptions
-                                                .map((int value) {
-                                              return DropdownMenuItem<
-                                                  int>(
-                                                value: value,
-                                                child: Text(
-                                                    value.toString()),
-                                              );
-                                            }).toList(),
-                                            onChanged: (newValue) {
-                                              if (newValue != null) {
-                                                _changeRowsPerPage(
-                                                    newValue);
-                                              }
-                                            },
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: FaIcon(
+                                              FontAwesomeIcons
+                                                  .circleChevronLeft,
+                                              color: _currentPage == 0
+                                                  ? Colors.grey
+                                                  : blueColor,
+                                            ),
+                                            onPressed: _currentPage == 0
+                                                ? null
+                                                : () {
+                                                    setState(() {
+                                                      _currentPage--;
+                                                    });
+                                                  },
                                           ),
-                                        ),
+                                          Text(
+                                              'Page ${_currentPage + 1} of $totalPages'),
+                                          IconButton(
+                                            icon: FaIcon(
+                                              FontAwesomeIcons
+                                                  .circleChevronRight,
+                                              color: (_currentPage + 1) <
+                                                      totalPages
+                                                  ? blueColor
+                                                  : Colors.grey,
+                                            ),
+                                            onPressed:
+                                                (_currentPage + 1) < totalPages
+                                                    ? () {
+                                                        setState(() {
+                                                          _currentPage++;
+                                                        });
+                                                      }
+                                                    : null,
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons
-                                            .circleChevronLeft,
-                                        color: _currentPage == 0
-                                            ? Colors.grey
-                                            : blueColor,
-                                      ),
-                                      onPressed: _currentPage == 0
-                                          ? null
-                                          : () {
-                                        setState(() {
-                                          _currentPage--;
-                                        });
-                                      },
-                                    ),
-                                    Text(
-                                        'Page ${_currentPage + 1} of $totalPages'),
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons
-                                            .circleChevronRight,
-                                        color: (_currentPage + 1) <
-                                            totalPages
-                                            ? blueColor
-                                            : Colors.grey,
-                                      ),
-                                      onPressed:
-                                      (_currentPage + 1) < totalPages
-                                          ? () {
-                                        setState(() {
-                                          _currentPage++;
-                                        });
-                                      }
-                                          : null,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                ],
               ),
-          ],
-        ),
-      )
+            )
           : SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Lottie.asset(
-              'assets/no_internet.json',
-              width: 200,
-              height: 200,
-              fit: BoxFit.fill,
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Lottie.asset(
+                    'assets/no_internet.json',
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.fill,
+                  ),
+                  Text(
+                    'No Internet',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'Check your internet connection',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
             ),
-            Text(
-              'No Internet',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Check your internet connection',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

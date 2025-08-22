@@ -110,8 +110,21 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     taxtype.text = widget.rentalOwner.textIdentityType!;
     taxid.text = widget.rentalOwner.texpayerId!;
     //birthdateController.text = widget.rentalOwner.b;
-    startdateController.text = formatDate(widget.rentalOwner.startDate!);
-    enddateController.text = formatDate(widget.rentalOwner.endDate!);
+    // Convert API format (yyyy-MM-dd) to display format (MM-dd-yyyy)
+    String convertToDisplayFormat(String apiDate) {
+      if (apiDate.isEmpty) return "";
+      try {
+        DateTime date = DateFormat('yyyy-MM-dd').parse(apiDate);
+        return DateFormat('MM-dd-yyyy').format(date);
+      } catch (e) {
+        return apiDate; // Return as is if parsing fails
+      }
+    }
+
+    startdateController.text =
+        convertToDisplayFormat(widget.rentalOwner.startDate!);
+    enddateController.text =
+        convertToDisplayFormat(widget.rentalOwner.endDate!);
 
     if (widget.rentalOwner.processorList != null) {
       for (int i = 0; i < widget.rentalOwner.processorList!.length; i++) {
@@ -137,8 +150,8 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     initialPostalCode = widget.rentalOwner.postalCode;
     initialTaxId = widget.rentalOwner.texpayerId;
     initialTaxType = widget.rentalOwner.textIdentityType;
-    initialStartDate = widget.rentalOwner.startDate;
-    initialEndDate = widget.rentalOwner.endDate;
+    initialStartDate = convertToDisplayFormat(widget.rentalOwner.startDate!);
+    initialEndDate = convertToDisplayFormat(widget.rentalOwner.endDate!);
     fetchPaymentSettings();
   }
 
@@ -364,20 +377,84 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     if (picked != null && picked != startdate) {
       setState(() {
         startdate = picked;
-        // startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-        startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-        // Use this format (yyyy-MM-dd) when passing it to your API or saving it
+        // Display format: MM-dd-yyyy for user
+        startdateController.text = DateFormat('MM-dd-yyyy').format(picked);
+        // Store the date in yyyy-MM-dd format for API
         String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
-        print(dateForApi);
+        print('Display: ${startdateController.text}');
+        print('API format: $dateForApi');
+
+        // Check if the new start date is later than the current end date
+        if (enddateController.text.isNotEmpty) {
+          try {
+            DateTime currentEndDate =
+                DateFormat('MM-dd-yyyy').parse(enddateController.text);
+            if (picked.isAfter(currentEndDate)) {
+              // Clear the end date if start date is after end date
+              print('Clearing end date because start date is after end date');
+              enddateController.clear();
+              enddate = null;
+            }
+            // If start date is before or equal to end date, keep the end date
+            // This allows valid date ranges like start: 22, end: 23
+          } catch (e) {
+            // If parsing fails, just continue
+            print('Error parsing end date: $e');
+          }
+        }
       });
     }
   }
 
   Future<void> _endDate(BuildContext context) async {
+    // Parse the start date from the controller to get the current start date
+    DateTime? currentStartDate;
+    try {
+      if (startdateController.text.isNotEmpty) {
+        currentStartDate =
+            DateFormat('MM-dd-yyyy').parse(startdateController.text);
+      }
+    } catch (e) {
+      currentStartDate = DateTime.now();
+    }
+
+    // Set initial date for end date picker
+    DateTime initialEndDate;
+    if (enddateController.text.isNotEmpty) {
+      try {
+        DateTime parsedEndDate =
+            DateFormat('MM-dd-yyyy').parse(enddateController.text);
+        // Only use the current end date if it's after the start date
+        if (parsedEndDate.isAfter(currentStartDate ?? DateTime.now())) {
+          initialEndDate = parsedEndDate;
+        } else {
+          // If current end date is before or equal to start date, use start date + 1 day
+          initialEndDate =
+              (currentStartDate ?? DateTime.now()).add(Duration(days: 1));
+        }
+      } catch (e) {
+        // If parsing fails, use start date + 1 day
+        initialEndDate =
+            (currentStartDate ?? DateTime.now()).add(Duration(days: 1));
+      }
+    } else {
+      // If no end date is set, use start date + 1 day
+      initialEndDate =
+          (currentStartDate ?? DateTime.now()).add(Duration(days: 1));
+    }
+
+    print('=== END DATE PICKER DEBUG ===');
+    print('Current Start Date: ${currentStartDate}');
+    print('Current Start Date Text: ${startdateController.text}');
+    print('Current End Date Text: ${enddateController.text}');
+    print('Initial End Date: ${initialEndDate}');
+    print('First Date: ${currentStartDate ?? DateTime.now()}');
+    print('==============================');
+
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: enddate ?? DateTime.now(),
-      firstDate: startdate!,
+      initialDate: initialEndDate,
+      firstDate: currentStartDate ?? DateTime.now(),
       // firstDate: DateTime(2015, 8),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
@@ -400,11 +477,18 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     if (picked != null && picked != enddate) {
       setState(() {
         enddate = picked;
-        //birthdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-        //startdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-        enddateController.text = DateFormat('yyyy-MM-dd').format(picked);
+        // Display format: MM-dd-yyyy for user
+        enddateController.text = DateFormat('MM-dd-yyyy').format(picked);
+        // Store the date in yyyy-MM-dd format for API
         String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
+        print('=== END DATE SELECTED ===');
+        print('Display: ${enddateController.text}');
+        print('API format: $dateForApi');
+        print('Picked date: $picked');
+        print('==========================');
       });
+    } else if (picked == null) {
+      print('End date picker was cancelled');
     }
   }
 
@@ -1132,7 +1216,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                                         startdateController,
                                                     cursorColor: blueColor,
                                                     decoration: InputDecoration(
-                                                      hintText: "YYYY-MM-DD",
+                                                      hintText: "MM-DD-YYYY",
                                                       hintStyle: TextStyle(
                                                         fontSize: MediaQuery.of(
                                                                         context)
@@ -1237,7 +1321,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                                         enddateController,
                                                     cursorColor: blueColor,
                                                     decoration: InputDecoration(
-                                                      hintText: "YYYY-MM-DD",
+                                                      hintText: "MM-DD-YYYY",
                                                       hintStyle: TextStyle(
                                                         fontSize: MediaQuery.of(
                                                                         context)
@@ -1393,7 +1477,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                                 controller: startdateController,
                                                 cursorColor: blueColor,
                                                 decoration: InputDecoration(
-                                                  hintText: "dd - mm - yyyy",
+                                                  hintText: "MM-DD-YYYY",
                                                   hintStyle: TextStyle(
                                                     fontSize:
                                                         MediaQuery.of(context)
@@ -1515,7 +1599,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                                 controller: enddateController,
                                                 cursorColor: blueColor,
                                                 decoration: InputDecoration(
-                                                  hintText: "dd - mm - yyyy",
+                                                  hintText: "MM-DD-YYYY",
                                                   hintStyle: TextStyle(
                                                     fontSize:
                                                         MediaQuery.of(context)
@@ -3793,6 +3877,18 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                       }
                     });
 
+                    // Convert display format (MM-dd-yyyy) to API format (yyyy-MM-dd)
+                    String convertToApiFormat(String displayDate) {
+                      if (displayDate.isEmpty) return "";
+                      try {
+                        DateTime date =
+                            DateFormat('MM-dd-yyyy').parse(displayDate);
+                        return DateFormat('yyyy-MM-dd').format(date);
+                      } catch (e) {
+                        return displayDate; // Return as is if parsing fails
+                      }
+                    }
+
                     try {
                       setState(() {
                         isLoading = true;
@@ -3807,8 +3903,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                         rentalOwnerPhoneNumber: phonenum.text.trim(),
                         rentalOwnerHomeNumber: homenum.text.trim(),
                         rentalOwnerBusinessNumber: officenum.text.trim(),
-                        startDate: startdateController.text.trim(),
-                        endDate: enddateController.text.trim(),
+                        startDate:
+                            convertToApiFormat(startdateController.text.trim()),
+                        endDate:
+                            convertToApiFormat(enddateController.text.trim()),
                         texpayerId: taxid.text.trim(),
                         textIdentityType: taxtype.text.trim(),
                         city: city2.text.trim(),
@@ -3832,8 +3930,10 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                         widget.rentalOwner.rentalOwnerHomeNumber = homenum.text;
                         widget.rentalOwner.rentalOwnerBusinessNumber =
                             officenum.text;
-                        widget.rentalOwner.startDate = startdateController.text;
-                        widget.rentalOwner.endDate = enddateController.text;
+                        widget.rentalOwner.startDate =
+                            convertToApiFormat(startdateController.text.trim());
+                        widget.rentalOwner.endDate =
+                            convertToApiFormat(enddateController.text.trim());
                         widget.rentalOwner.texpayerId = taxid.text;
                         widget.rentalOwner.textIdentityType = taxtype.text;
                         widget.rentalOwner.city = city2.text;

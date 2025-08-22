@@ -17,7 +17,6 @@ import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
-
 import '../../../../Model/Comunication_model/email_logtable.dart';
 import '../../../../constant/constant.dart';
 import '../../../../provider/dateProvider.dart';
@@ -25,6 +24,7 @@ import '../../../repository/Communication/Email_log_repo.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'package:http/http.dart' as http;
+
 class Email_log_tablee extends StatefulWidget {
   @override
   _Email_log_tableeState createState() => _Email_log_tableeState();
@@ -348,7 +348,8 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                   height: 48,
                   decoration: BoxDecoration(
                     color: blueColor,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(20)),
                   ),
                   child: Center(
                     child: Row(
@@ -370,8 +371,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                             child: Icon(
                               Icons.close,
                               color: Colors.white,
-                            )
-                        ),
+                            )),
                         SizedBox(width: 8),
                       ],
                     ),
@@ -388,22 +388,23 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                           data.isAccepted == true && data.isOpened == true
                               ? "✔✔ Read"
                               : data.isAccepted == true
-                              ? "✔ Not Opened"
-                              : "✖",
+                                  ? "✔ Not Opened"
+                                  : "✖",
                           data.isAccepted == true && data.isOpened == true
                               ? Colors.green
                               : Colors.red),
                       _buildField("Subject", '${data.subject}', Colors.black),
-                      _buildField("Recipient Email", '${data.email}', Colors.black),
+                      _buildField(
+                          "Recipient Email", '${data.email}', Colors.black),
                       _buildField("From Email", '${data.from}', Colors.black),
                       _buildField(
                           "Created Time",
-                          DateFormat("yyyy-MM-dd HH:mm:ss").format(
-                              DateTime.parse('${data.createdAt}').toLocal()),
+                          Provider.of<DateProvider>(context, listen: false)
+                              .formatCurrentDateTime('${data.createdAt}'),
                           Colors.black),
                       _buildField(
                           "Open Time",
-                          '${data.isOpened == true ? DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.fromMillisecondsSinceEpoch(int.parse('${data.openedAt}')).toLocal()) : "Not Opened"}',
+                          '${data.isOpened == true ? Provider.of<DateProvider>(context, listen: false).formatCurrentDateTime(DateTime.fromMillisecondsSinceEpoch(int.parse('${data.openedAt}'), isUtc: true).toIso8601String()) : "Not Opened"}',
                           Colors.black),
 
                       // Email Body Section
@@ -412,13 +413,13 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
-                            color: blueColor
-                        ),
+                            color: blueColor),
                       ),
                       SizedBox(height: 5),
                       Container(
                         width: double.infinity,
-                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                         decoration: BoxDecoration(
                           color: Colors.grey[200],
                           borderRadius: BorderRadius.circular(10),
@@ -446,13 +447,15 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: blueColor,
                             foregroundColor: Colors.white,
-                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
                           onPressed: () async {
-                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
                             String token = prefs.getString('token') ?? '';
                             String adminId = prefs.getString('adminId') ?? '';
                             try {
@@ -491,19 +494,23 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
 
                               // Call resend API endpoint
                               final response = await http.post(
-                                Uri.parse('$Api_url/api/email-logs/resend-email'),
+                                Uri.parse(
+                                    '$Api_url/api/email-logs/resend-email'),
                                 headers: {
                                   'Content-Type': 'application/json',
                                   'authorization': 'CRM $token',
                                   'id': 'CRM $adminId',
                                 },
                                 body: jsonEncode({
-                                  'email_id': data.emailId, // Assuming data.id contains the email log ID
+                                  'email_id': data
+                                      .emailId, // Assuming data.id contains the email log ID
                                 }),
                               );
 
-                              Navigator.pop(context); // Remove loading indicator
-                              Navigator.pop(context); // Remove loading indicator
+                              Navigator.pop(
+                                  context); // Remove loading indicator
+                              Navigator.pop(
+                                  context); // Remove loading indicator
 
                               if (response.statusCode == 200) {
                                 Fluttertoast.showToast(
@@ -516,7 +523,8 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                 throw Exception('Failed to resend email');
                               }
                             } catch (e) {
-                              Navigator.pop(context); // Remove loading indicator
+                              Navigator.pop(
+                                  context); // Remove loading indicator
                               Fluttertoast.showToast(
                                 msg: 'Failed to resend email',
                                 // backgroundColor: Colors.red,
@@ -538,7 +546,6 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
       },
     );
   }
-
 
 // Field-like container function
   Widget _buildField(String label, String value, Color textColor) {
@@ -1039,12 +1046,9 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                           //     '${Propertytype.createdAt}'),
                                                           Propertytype.isAccepted ==
                                                                   true
-                                                              ? DateFormat(
-                                                                      "yyyy-MM-dd HH:mm:ss")
-                                                                  .format(DateTime
-                                                                          .parse(
-                                                                              '${Propertytype.createdAt}')
-                                                                      .toLocal())
+                                                              ? dateProvider
+                                                                  .formatCurrentDateTime(
+                                                                      '${Propertytype.createdAt}')
                                                               : 'Not Sent',
 
                                                           style: TextStyle(
@@ -1132,7 +1136,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                                           // text: formatDate(
                                                                           //     '${Propertytype.updatedAt}'),
                                                                           text: Propertytype.isOpened == true
-                                                                              ? DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.fromMillisecondsSinceEpoch(int.parse('${Propertytype.openedAt}')).toLocal())
+                                                                              ? dateProvider.formatCurrentDateTime(DateTime.fromMillisecondsSinceEpoch(int.parse('${Propertytype.openedAt}'), isUtc: true).toIso8601String())
                                                                               : 'Not Opened',
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.w700,

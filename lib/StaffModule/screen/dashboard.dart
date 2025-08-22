@@ -33,6 +33,7 @@ import '../repository/staffpermission_provider.dart';
 import '../widgets/appbar.dart';
 import 'package:http/http.dart' as http;
 import '../../constant/constant.dart';
+import '../../provider/dateProvider.dart';
 import '../widgets/drawer_tiles.dart';
 import '../widgets/custom_drawer.dart';
 import '../../widgets/barchart.dart';
@@ -730,8 +731,10 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                           bool isExpanded =
                                               expandedIndex == index;
                                           Data workOrder = entry.value;
-                                          print("data of status check ${workOrder.workOrderData?.status}");
-                                          print("data id 1 ${workOrder.workOrderData?.workOrderId}");
+                                          print(
+                                              "data of status check ${workOrder.workOrderData?.status}");
+                                          print(
+                                              "data id 1 ${workOrder.workOrderData?.workOrderId}");
                                           //return CustomExpansionTile(data: Data, index: index);
                                           return Container(
                                             decoration: BoxDecoration(
@@ -944,11 +947,12 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                                     //         ?.staffmemberName)),
                                                                     _buildTableRow(
                                                                         'Created At:',
-                                                                        formatDate(
+                                                                        Provider.of<DateProvider>(context, listen: false).formatCurrentDateTime(
                                                                             '${workOrder.workOrderData!.createdAt}'),
                                                                         'Updated At:',
-                                                                        formatDate(
-                                                                            '${workOrder.workOrderData!.updatedAt}}')),
+                                                                        Provider.of<DateProvider>(context,
+                                                                                listen: false)
+                                                                            .formatCurrentDateTime('${workOrder.workOrderData!.updatedAt}')),
                                                                   ],
                                                                 ),
                                                               ),
@@ -1469,7 +1473,8 @@ class _PropertyCardState extends State<PropertyCard> {
                                   bool isExpanded = expandedIndexrow == index;
                                   Data workOrder = entry.value;
                                   //return CustomExpansionTile(data: Data, index: index);
-                                  print("workorder id ${workOrder.workOrderData?.workOrderId}");
+                                  print(
+                                      "workorder id ${workOrder.workOrderData?.workOrderId}");
                                   return Container(
                                     decoration: BoxDecoration(
                                       color: index % 2 != 0
@@ -1621,11 +1626,19 @@ class _PropertyCardState extends State<PropertyCard> {
                                                             //         ?.staffmemberName)),
                                                             _buildTableRow(
                                                                 'Created On:',
-                                                                formatDate(
-                                                                    '${workOrder.workOrderData!.createdAt}'),
+                                                                Provider.of<DateProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false)
+                                                                    .formatCurrentDateTime(
+                                                                        '${workOrder.workOrderData!.createdAt}'),
                                                                 'Updated On:',
-                                                                formatDate(
-                                                                    '${workOrder.workOrderData!.updatedAt}}')),
+                                                                Provider.of<DateProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false)
+                                                                    .formatCurrentDateTime(
+                                                                        '${workOrder.workOrderData!.updatedAt}')),
                                                           ],
                                                         ),
                                                       ),

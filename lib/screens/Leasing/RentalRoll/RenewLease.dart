@@ -1043,8 +1043,7 @@ class _RenewleaseState extends State<Renewlease> {
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: CustomTextField(
-                                        onTap: ()
-                                        async {
+                                        onTap: () async {
                                           DateTime? pickedDate =
                                               await showDatePicker(
                                             context: context,
@@ -1105,21 +1104,23 @@ class _RenewleaseState extends State<Renewlease> {
                                         },
                                         readOnnly: true,
                                         suffixIcon: IconButton(
-                                            onPressed: ()  async {
+                                            onPressed: () async {
                                               DateTime? pickedDate =
-                                              await showDatePicker(
+                                                  await showDatePicker(
                                                 context: context,
                                                 initialDate: DateTime.now(),
                                                 firstDate: DateTime(2000),
                                                 lastDate: DateTime(2101),
-                                                locale: const Locale('en', 'US'),
+                                                locale:
+                                                    const Locale('en', 'US'),
                                                 builder: (BuildContext context,
                                                     Widget? child) {
                                                   return Theme(
-                                                    data:
-                                                    ThemeData.light().copyWith(
+                                                    data: ThemeData.light()
+                                                        .copyWith(
                                                       colorScheme:
-                                                      const ColorScheme.light(
+                                                          const ColorScheme
+                                                              .light(
                                                         primary: Color.fromRGBO(
                                                             21,
                                                             43,
@@ -1134,13 +1135,18 @@ class _RenewleaseState extends State<Renewlease> {
                                                             1), // body text color
                                                       ),
                                                       textButtonTheme:
-                                                      TextButtonThemeData(
-                                                        style: TextButton.styleFrom(
+                                                          TextButtonThemeData(
+                                                        style: TextButton
+                                                            .styleFrom(
                                                           foregroundColor:
-                                                          Colors.white,
-                                                          backgroundColor: const Color
-                                                              .fromRGBO(21, 43, 83,
-                                                              1), // button text color
+                                                              Colors.white,
+                                                          backgroundColor:
+                                                              const Color
+                                                                  .fromRGBO(
+                                                                  21,
+                                                                  43,
+                                                                  83,
+                                                                  1), // button text color
                                                         ),
                                                       ),
                                                     ),
@@ -1198,8 +1204,7 @@ class _RenewleaseState extends State<Renewlease> {
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: CustomTextField(
-                                        onTap: ()
-                                        async {
+                                        onTap: () async {
                                           DateTime? pickedDate =
                                               await showDatePicker(
                                             context: context,
@@ -1279,19 +1284,21 @@ class _RenewleaseState extends State<Renewlease> {
                                         suffixIcon: IconButton(
                                             onPressed: () async {
                                               DateTime? pickedDate =
-                                              await showDatePicker(
+                                                  await showDatePicker(
                                                 context: context,
                                                 initialDate: DateTime.now(),
                                                 firstDate: DateTime(2000),
                                                 lastDate: DateTime(2101),
-                                                locale: const Locale('en', 'US'),
+                                                locale:
+                                                    const Locale('en', 'US'),
                                                 builder: (BuildContext context,
                                                     Widget? child) {
                                                   return Theme(
-                                                    data:
-                                                    ThemeData.light().copyWith(
+                                                    data: ThemeData.light()
+                                                        .copyWith(
                                                       colorScheme:
-                                                      const ColorScheme.light(
+                                                          const ColorScheme
+                                                              .light(
                                                         primary: Color.fromRGBO(
                                                             21,
                                                             43,
@@ -1306,13 +1313,18 @@ class _RenewleaseState extends State<Renewlease> {
                                                             1), // body text color
                                                       ),
                                                       textButtonTheme:
-                                                      TextButtonThemeData(
-                                                        style: TextButton.styleFrom(
+                                                          TextButtonThemeData(
+                                                        style: TextButton
+                                                            .styleFrom(
                                                           foregroundColor:
-                                                          Colors.white,
-                                                          backgroundColor: const Color
-                                                              .fromRGBO(21, 43, 83,
-                                                              1), // button text color
+                                                              Colors.white,
+                                                          backgroundColor:
+                                                              const Color
+                                                                  .fromRGBO(
+                                                                  21,
+                                                                  43,
+                                                                  83,
+                                                                  1), // button text color
                                                         ),
                                                       ),
                                                     ),
@@ -2279,6 +2291,9 @@ class _RenewleaseState extends State<Renewlease> {
                                                                 keyboardType:
                                                                     TextInputType
                                                                         .number,
+                                                                textInputAction:
+                                                                    TextInputAction
+                                                                        .done,
                                                                 onChanged: (value) =>
                                                                     updateAmount(
                                                                         index,

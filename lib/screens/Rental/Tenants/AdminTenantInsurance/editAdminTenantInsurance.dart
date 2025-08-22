@@ -6,6 +6,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -418,12 +419,19 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType: TextInputType.text,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               hintText: '\$0.0',
                               controller: liablity,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')), // allows decimals
+                              ],
                               validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'please enter the subject';
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Please enter the liability coverage.';
+                                }
+                                final parsed = double.tryParse(value.trim());
+                                if (parsed == null) {
+                                  return 'Liability Coverage must be a number. Please enter a valid numeric value.';
                                 }
                                 return null;
                               },

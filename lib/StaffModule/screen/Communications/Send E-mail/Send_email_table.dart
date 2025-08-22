@@ -465,10 +465,11 @@ class _Send_Email_tableState extends State<Send_Email_table> {
           },
           color: blueColor,
         ),
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -730,15 +731,15 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                         GestureDetector(
                           onTap: () async {
                             final result = await Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (context) => send_email()));
+                                MaterialPageRoute(
+                                    builder: (context) => send_email()));
                             // final result = await Navigator.of(context).push(
                             //     MaterialPageRoute(
                             //         builder: (context) => Add_property()));
                             if (result == true) {
                               setState(() {
-                                futureEmailss =
-                                    SendemailRepository().fetchSendEmailTable(limit: 10, page: 1);
+                                futureEmailss = SendemailRepository()
+                                    .fetchSendEmailTable(limit: 10, page: 1);
                               });
                             }
                           },
@@ -985,12 +986,9 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                                           Propertytype
                                                                   .createdAt!
                                                                   .isNotEmpty
-                                                              ? DateFormat(
-                                                                      "yyyy-MM-dd HH:mm:ss")
-                                                                  .format(DateTime
-                                                                          .parse(
-                                                                              '${Propertytype.createdAt}')
-                                                                      .toLocal())
+                                                              ? dateProvider
+                                                                  .formatCurrentDateTime(
+                                                                      '${Propertytype.createdAt}')
                                                               : 'Not Sent',
 
                                                           style: TextStyle(

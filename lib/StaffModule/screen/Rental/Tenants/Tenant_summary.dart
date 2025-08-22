@@ -152,12 +152,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
@@ -191,7 +188,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                     Padding(
                       padding: EdgeInsets.only(left: 25.0),
                       child: Text("Company",
-                          style: TextStyle(color: Colors.white, fontSize: 14)),
+                          style: TextStyle(
+                              color: blueColor, fontWeight: FontWeight.bold)),
                     ),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
@@ -222,12 +220,15 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                     // Sorting logic here
                   });
                 },
-                child: const Row(
+                child: Row(
                   children: [
                     Padding(
                       padding: EdgeInsets.only(left: 5.0),
                       child: Text("Policy Id",
-                          style: TextStyle(color: Colors.white, fontSize: 14)),
+                          style: TextStyle(
+                              color: blueColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold)),
                     ),
                     SizedBox(width: 5),
                   ],
@@ -258,11 +259,14 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                     // Sorting logic here
                   });
                 },
-                child: const Row(
+                child: Row(
                   children: [
                     Text(
                       "Expiration\nDate",
-                      style: TextStyle(color: Colors.white, fontSize: 14),
+                      style: TextStyle(
+                          color: blueColor,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(width: 5),
@@ -280,12 +284,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
@@ -318,7 +319,10 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                     Padding(
                       padding: EdgeInsets.only(left: 30.0),
                       child: Text("Status",
-                          style: TextStyle(color: Colors.white, fontSize: 14)),
+                          style: TextStyle(
+                              color: blueColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold)),
                     ),
                     const SizedBox(width: 3),
                   ],
@@ -347,12 +351,15 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                     // Sorting logic here
                   });
                 },
-                child: const Row(
+                child: Row(
                   children: [
                     Padding(
                       padding: EdgeInsets.only(left: 5.0),
                       child: Text("Start Date",
-                          style: TextStyle(color: Colors.white, fontSize: 14)),
+                          style: TextStyle(
+                              color: blueColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold)),
                     ),
                     SizedBox(width: 5),
                   ],
@@ -382,11 +389,14 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                     // Sorting logic here
                   });
                 },
-                child: const Row(
+                child: Row(
                   children: [
                     Text(
                       "End Date",
-                      style: TextStyle(color: Colors.white, fontSize: 14),
+                      style: TextStyle(
+                          color: blueColor,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(width: 5),
@@ -1665,18 +1675,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                               children: [
                                                 const SizedBox(height: 15),
                                                 _buildHeaders(),
-                                                const SizedBox(height: 20),
+                                                const SizedBox(height: 10),
                                                 Container(
-                                                  decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                          color: Color.fromRGBO(
-                                                              152,
-                                                              162,
-                                                              179,
-                                                              .5))),
-                                                  // decoration: BoxDecoration(
-                                                  //     border: Border.all(
-                                                  //         color: blueColor)),
                                                   child: Column(
                                                     children: currentPageData
                                                         .asMap()
@@ -1691,13 +1691,26 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                           entry.value;
                                                       //return CustomExpansionTile(data: Propertytype, index: index);
                                                       return Container(
+                                                        margin: EdgeInsets
+                                                            .symmetric(
+                                                            vertical:
+                                                            5),
                                                         decoration:
-                                                            BoxDecoration(
-                                                          color: index % 2 != 0
-                                                              ? Colors.white
-                                                              : blueColor
-                                                                  .withOpacity(
-                                                                      0.09),
+                                                        BoxDecoration(
+                                                          color: index %
+                                                              2 !=
+                                                              0
+                                                              ? Color(
+                                                              0xFFF4F8FF)
+                                                              : Colors
+                                                              .white,
+                                                          border: Border.all(
+                                                              color: Color(
+                                                                  0xFFDBE0E5)),
+                                                          borderRadius:
+                                                          BorderRadius
+                                                              .circular(
+                                                              10),
                                                         ),
                                                         child: Column(
                                                           children: <Widget>[
@@ -1978,93 +1991,71 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                       ),
                                                                     ),*/
                                                                       Row(
-                                                                        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                        mainAxisAlignment: MainAxisAlignment.end,
                                                                         children: [
-                                                                          // Expanded(
-                                                                          //   child: GestureDetector(
-                                                                          //     onTap: () async {
-                                                                          //       var check = await Navigator.push(
-                                                                          //           context,
-                                                                          //           MaterialPageRoute(
-                                                                          //               builder: (context) => editAdminInsurance(
-                                                                          //                 data: Propertytype,
-                                                                          //               )));
-                                                                          //       if (check == true) {
-                                                                          //         setState(() {
-                                                                          //           futurePropertyTypes = AdminTenantInsuranceRepository().fetchTenantInsurance(widget.tenantId);
-                                                                          //         });
-                                                                          //       }
-                                                                          //     },
-                                                                          //     child: Container(
-                                                                          //       height: 40,
-                                                                          //       decoration: BoxDecoration(
-                                                                          //           color: Colors
-                                                                          //               .grey[
-                                                                          //           350]), // color:Colors.grey[100],
-                                                                          //       child: Row(
-                                                                          //         mainAxisAlignment:
-                                                                          //         MainAxisAlignment
-                                                                          //             .center,
-                                                                          //         crossAxisAlignment:
-                                                                          //         CrossAxisAlignment
-                                                                          //             .center,
-                                                                          //         children: [
-                                                                          //           FaIcon(
-                                                                          //             FontAwesomeIcons
-                                                                          //                 .edit,
-                                                                          //             size: 15,
-                                                                          //             color:
-                                                                          //             blueColor,
-                                                                          //           ),
-                                                                          //           SizedBox(
-                                                                          //             width: 10,
-                                                                          //           ),
-                                                                          //           Text(
-                                                                          //             "Edit",
-                                                                          //             style: TextStyle(
-                                                                          //                 color:
-                                                                          //                 blueColor,
-                                                                          //                 fontWeight:
-                                                                          //                 FontWeight
-                                                                          //                     .bold),
-                                                                          //           ),
-                                                                          //         ],
-                                                                          //       ),
-                                                                          //     ),
-                                                                          //   ),
-                                                                          // ),
-                                                                          // SizedBox(
-                                                                          //   width: 5,
-                                                                          // ),
-                                                                          Expanded(
+                                                                          GestureDetector(
+                                                                            onTap:
+                                                                                () async {
+                                                                              // handleEdit(Propertytype);
+
+                                                                              var check = await Navigator.push(
+                                                                                  context,
+                                                                                  MaterialPageRoute(
+                                                                                      builder: (context) => editAdminInsurance(
+                                                                                            data: Propertytype,
+                                                                                          )));
+                                                                              if (check == true) {
+                                                                                setState(() {
+                                                                                  futurePropertyTypes = AdminTenantInsuranceRepository().fetchTenantInsurance(widget.tenantId);
+                                                                                });
+                                                                              }
+                                                                            },
                                                                             child:
-                                                                                GestureDetector(
-                                                                              onTap: () {
-                                                                                _showAlert(context, Propertytype.tenantInsuranceId!);
-                                                                              },
-                                                                              child: Container(
-                                                                                height: 40,
-                                                                                decoration: BoxDecoration(color: Colors.grey[350]),
-                                                                                child: Row(
-                                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                  children: [
-                                                                                    FaIcon(
-                                                                                      FontAwesomeIcons.trashCan,
-                                                                                      size: 15,
-                                                                                      color: blueColor,
-                                                                                    ),
-                                                                                    SizedBox(
-                                                                                      width: 10,
-                                                                                    ),
-                                                                                    Text(
-                                                                                      "Delete",
-                                                                                      style: TextStyle(color: blueColor, fontWeight: FontWeight.bold),
-                                                                                    )
-                                                                                  ],
-                                                                                ),
+                                                                                Container(
+                                                                              height: 35,
+                                                                              width: 35,
+                                                                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.green.shade50), // color:Colors.grey[100],
+                                                                              child: Row(
+                                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                children: [
+                                                                                  FaIcon(
+                                                                                    FontAwesomeIcons.edit,
+                                                                                    size: 15,
+                                                                                    color: Colors.green,
+                                                                                  ),
+                                                                                ],
                                                                               ),
                                                                             ),
+                                                                          ),
+                                                                          SizedBox(
+                                                                            width:
+                                                                                10,
+                                                                          ),
+                                                                          GestureDetector(
+                                                                            onTap: () {
+                                                                              _showAlert(context, Propertytype.tenantInsuranceId!);
+                                                                            },
+                                                                            child: Container(
+                                                                              height: 35,
+                                                                              width: 35,
+                                                                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.red.shade50),
+                                                                              child: Row(
+                                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                children: [
+                                                                                  FaIcon(
+                                                                                    FontAwesomeIcons.trashCan,
+                                                                                    size: 15,
+                                                                                    color: Colors.red,
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(
+                                                                            width:
+                                                                            5,
                                                                           ),
                                                                         ],
                                                                       ),
@@ -2376,20 +2367,11 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                         return SingleChildScrollView(
                                           child: Column(
                                             children: [
-                                              const SizedBox(height: 20),
+                                              const SizedBox(height: 10),
                                               _buildHeaders_lease(),
-                                              const SizedBox(height: 20),
+                                              const SizedBox(height: 10),
                                               Container(
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        color: Color.fromRGBO(
-                                                            152,
-                                                            162,
-                                                            179,
-                                                            .5))),
-                                                // decoration: BoxDecoration(
-                                                //     border: Border.all(
-                                                //         color: blueColor)),
+
                                                 child: Column(
                                                   children: currentPageData
                                                       .asMap()
@@ -2404,17 +2386,27 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                         entry.value;
                                                     //return CustomExpansionTile(data: Propertytype, index: index);
                                                     return Container(
-                                                      decoration: BoxDecoration(
-                                                        color: index % 2 != 0
-                                                            ? Colors.white
-                                                            : blueColor
-                                                                .withOpacity(
-                                                                    0.09),
+                                                      margin: EdgeInsets
+                                                          .symmetric(
+                                                          vertical:
+                                                          5),
+                                                      decoration:
+                                                      BoxDecoration(
+                                                        color: index %
+                                                            2 !=
+                                                            0
+                                                            ? Color(
+                                                            0xFFF4F8FF)
+                                                            : Colors
+                                                            .white,
+                                                        border: Border.all(
+                                                            color: Color(
+                                                                0xFFDBE0E5)),
+                                                        borderRadius:
+                                                        BorderRadius
+                                                            .circular(
+                                                            10),
                                                       ),
-                                                      // decoration: BoxDecoration(
-                                                      //   border: Border.all(
-                                                      //       color: blueColor),
-                                                      // ),
                                                       child: Column(
                                                         children: <Widget>[
                                                           ListTile(

@@ -2031,6 +2031,56 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                               mainAxisAlignment: MainAxisAlignment.end,
                                                                               children: [
                                                                                 GestureDetector(
+                                                                                  onTap: ()
+                                                                                  async {
+                                                                                    // handleEdit(Propertytype);
+
+                                                                                    var check = await Navigator.push(
+                                                                                        context,
+                                                                                        MaterialPageRoute(
+                                                                                            builder: (context) => editAdminInsurance(
+                                                                                              data: Propertytype,
+                                                                                            )));
+                                                                                    if (check == true) {
+                                                                                      setState(() {
+                                                                                        futurePropertyTypes = AdminTenantInsuranceRepository().fetchTenantInsurance(widget.tenantId);
+                                                                                      });
+                                                                                    }
+                                                                                  },
+                                                                                  child: Container(
+                                                                                    height: 35,
+                                                                                    width: 35,
+                                                                                    decoration: BoxDecoration(
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(
+                                                                                            8),
+                                                                                        color: Colors
+                                                                                            .green
+                                                                                            .shade50), // color:Colors.grey[100],
+                                                                                    child: Row(
+                                                                                      mainAxisAlignment:
+                                                                                      MainAxisAlignment
+                                                                                          .center,
+                                                                                      crossAxisAlignment:
+                                                                                      CrossAxisAlignment
+                                                                                          .center,
+                                                                                      children: [
+                                                                                        FaIcon(
+                                                                                          FontAwesomeIcons
+                                                                                              .edit,
+                                                                                          size: 15,
+                                                                                          color: Colors
+                                                                                              .green,
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                                SizedBox(
+                                                                                  width: 10,
+                                                                                ),
+                                                                                GestureDetector(
                                                                                   onTap: () {
                                                                                     _showAlert(context, Propertytype.tenantInsuranceId!);
                                                                                   },

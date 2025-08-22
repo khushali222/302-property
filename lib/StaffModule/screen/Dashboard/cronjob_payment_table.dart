@@ -345,29 +345,29 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                       },
                       child: Text(name, style: cardTextStyle),
                     ),
-                    SizedBox(height: 2),
-                    GestureDetector(
-                      onTap: () {
-                        if (data.leaseId != null) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SummeryPageLease(
-                                        leaseId: data.leaseId!,
-                                        enddate:
-                                            null, // You can pass the end date if available
-                                      )));
-                        }
-                      },
-                      child: Text(
-                        address,
-                        style: cardTextStyle.copyWith(
-                          fontSize: 14,
-                          color: blueColor.withOpacity(0.8),
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ),
+                    // SizedBox(height: 2),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     if (data.leaseId != null) {
+                    //       Navigator.push(
+                    //           context,
+                    //           MaterialPageRoute(
+                    //               builder: (context) => SummeryPageLease(
+                    //                     leaseId: data.leaseId!,
+                    //                     enddate:
+                    //                         null, // You can pass the end date if available
+                    //                   )));
+                    //     }
+                    //   },
+                    //   child: Text(
+                    //     address,
+                    //     style: cardTextStyle.copyWith(
+                    //       fontSize: 14,
+                    //       color: blueColor.withOpacity(0.8),
+                    //       decoration: TextDecoration.underline,
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
