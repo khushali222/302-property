@@ -86,16 +86,143 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
     }
   }
 
+  // Widget _buildHeaders() {
+  //   var width = MediaQuery.of(context).size.width;
+  //   return Container(
+  //     decoration: BoxDecoration(
+  //       color: blueColor,
+  //       borderRadius: BorderRadius.only(
+  //         topLeft: Radius.circular(13),
+  //         topRight: Radius.circular(13),
+  //       ),
+  //     ),
+  //     child: ListTile(
+  //       contentPadding: EdgeInsets.zero,
+  //       title: Row(
+  //         mainAxisAlignment: MainAxisAlignment.start,
+  //         children: <Widget>[
+  //           Container(
+  //             child: Icon(
+  //               Icons.expand_less,
+  //               color: Colors.transparent,
+  //             ),
+  //           ),
+  //           Expanded(
+  //             flex: 3,
+  //             child: InkWell(
+  //               onTap: () {
+  //                 setState(() {
+  //                   if (sorting1 == true) {
+  //                     sorting2 = false;
+  //                     sorting3 = false;
+  //                     ascending1 = sorting1 ? !ascending1 : true;
+  //                     ascending2 = false;
+  //                     ascending3 = false;
+  //                   } else {
+  //                     sorting1 = !sorting1;
+  //                     sorting2 = false;
+  //                     sorting3 = false;
+  //                     ascending1 = sorting1 ? !ascending1 : true;
+  //                     ascending2 = false;
+  //                     ascending3 = false;
+  //                   }
+  //
+  //                   // Sorting logic here
+  //                 });
+  //               },
+  //               child: Row(
+  //                 children: [
+  //                   width < 400
+  //                       ? Text("Name",
+  //                           style: TextStyle(color: Colors.white, fontSize: 18))
+  //                       : Text("Name",
+  //                           style:
+  //                               TextStyle(color: Colors.white, fontSize: 18)),
+  //                   // Text("Property", style: TextStyle(color: Colors.white)),
+  //                   SizedBox(width: 3),
+  //                   ascending1
+  //                       ? Padding(
+  //                           padding: const EdgeInsets.only(top: 7, left: 2),
+  //                           child: FaIcon(
+  //                             FontAwesomeIcons.sortUp,
+  //                             size: 20,
+  //                             color: Colors.white,
+  //                           ),
+  //                         )
+  //                       : Padding(
+  //                           padding: const EdgeInsets.only(bottom: 7, left: 2),
+  //                           child: FaIcon(
+  //                             FontAwesomeIcons.sortDown,
+  //                             size: 20,
+  //                             color: Colors.white,
+  //                           ),
+  //                         ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //           Expanded(
+  //             flex: 3,
+  //             child: InkWell(
+  //               onTap: () {
+  //                 setState(() {
+  //                   if (sorting2) {
+  //                     sorting1 = false;
+  //                     sorting2 = sorting2;
+  //                     sorting3 = false;
+  //                     ascending2 = sorting2 ? !ascending2 : true;
+  //                     ascending1 = false;
+  //                     ascending3 = false;
+  //                   } else {
+  //                     sorting1 = false;
+  //                     sorting2 = !sorting2;
+  //                     sorting3 = false;
+  //                     ascending2 = sorting2 ? !ascending2 : true;
+  //                     ascending1 = false;
+  //                     ascending3 = false;
+  //                   }
+  //                   // Sorting logic here
+  //                 });
+  //               },
+  //               child: Row(
+  //                 children: [
+  //                   SizedBox(width: 15),
+  //                   Text("Phone",
+  //                       style: TextStyle(color: Colors.white, fontSize: 18)),
+  //                   SizedBox(width: 5),
+  //                   ascending2
+  //                       ? Padding(
+  //                           padding: const EdgeInsets.only(top: 7, left: 2),
+  //                           child: FaIcon(
+  //                             FontAwesomeIcons.sortUp,
+  //                             size: 20,
+  //                             color: Colors.white,
+  //                           ),
+  //                         )
+  //                       : Padding(
+  //                           padding: const EdgeInsets.only(bottom: 7, left: 2),
+  //                           child: FaIcon(
+  //                             FontAwesomeIcons.sortDown,
+  //                             size: 20,
+  //                             color: Colors.white,
+  //                           ),
+  //                         ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
@@ -134,29 +261,28 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                   children: [
                     width < 400
                         ? Text("Name",
-                            style: TextStyle(color: Colors.white, fontSize: 18))
+                        style: TextStyle(color: blueColor, fontSize: 18))
                         : Text("Name",
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 18)),
+                        style: TextStyle(color: blueColor, fontSize: 18)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
                         ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
                         : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -188,25 +314,25 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                   children: [
                     SizedBox(width: 15),
                     Text("Phone",
-                        style: TextStyle(color: Colors.white, fontSize: 18)),
+                        style: TextStyle(color: blueColor, fontSize: 18)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
                         : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),

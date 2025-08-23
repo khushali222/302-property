@@ -686,12 +686,9 @@ class _Summery_pageState extends State<Summery_page>
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -710,6 +707,7 @@ class _Summery_pageState extends State<Summery_page>
               ),
             ),
             Expanded(
+              flex: 4,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -735,33 +733,36 @@ class _Summery_pageState extends State<Summery_page>
                   children: [
                     width < 400
                         ? Text("Work Order ",
-                            style: TextStyle(color: Colors.white))
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold))
                         : Text("Work Order",
-                            style: TextStyle(color: Colors.white)),
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 1),
                     ascending1
                         ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
                         : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -785,30 +786,33 @@ class _Summery_pageState extends State<Summery_page>
                 },
                 child: Row(
                   children: [
-                    Text("   Status", style: TextStyle(color: Colors.white)),
+                    Text("   Status",
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
                         : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -833,25 +837,10 @@ class _Summery_pageState extends State<Summery_page>
                 },
                 child: Row(
                   children: [
-                    Text("   Billable ", style: TextStyle(color: Colors.white)),
+                    Text("       Billable ",
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
-                    ascending3
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
                   ],
                 ),
               ),
@@ -5701,8 +5690,9 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   Widget buildTenantCard(TenantData tenant,
-      {bool? isMoveouts, List<TenantData>? tenants}) {
-    print(' notice give date ${tenant.moveoutNoticeGivenDate}');
+      {bool? isMoveouts, List<TenantData>? tenants})
+  {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Column(
       children: [
         const SizedBox(height: 10),
@@ -5738,7 +5728,7 @@ class _Summery_pageState extends State<Summery_page>
                         '${tenant.firstName} ${tenant.lastName}',
                         style: TextStyle(
                           fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 16 : 19,
+                          MediaQuery.of(context).size.width < 500 ? 16 : 19,
                           fontWeight: FontWeight.bold,
                           color: blueColor,
                         ),
@@ -5752,10 +5742,10 @@ class _Summery_pageState extends State<Summery_page>
                   children: [
                     const SizedBox(width: 2),
                     Text(
-                      formatDate(tenant.endDate!),
+                      dateProvider.formatCurrentDate('${tenant.endDate}'),
                       style: TextStyle(
                         fontSize:
-                            MediaQuery.of(context).size.width < 500 ? 15 : 17,
+                        MediaQuery.of(context).size.width < 500 ? 15 : 17,
                         color: Color(0xFF8A95A8),
                       ),
                     ),
@@ -5824,7 +5814,7 @@ class _Summery_pageState extends State<Summery_page>
                       "Move out",
                       style: TextStyle(
                         fontSize:
-                            MediaQuery.of(context).size.width < 500 ? 15 : 15,
+                        MediaQuery.of(context).size.width < 500 ? 15 : 15,
                         fontWeight: FontWeight.w500,
                         color: blueColor,
                       ),
@@ -5838,12 +5828,12 @@ class _Summery_pageState extends State<Summery_page>
                 onTap: () async {
                   print("calling movein");
                   String? tenantId =
-                      tenant.tenantId != null && tenant.tenantId!.isNotEmpty
-                          ? tenant.tenantId?.first
-                          : null;
+                  tenant.tenantId != null && tenant.tenantId!.isNotEmpty
+                      ? tenant.tenantId?.first
+                      : null;
                   print(tenantId);
                   SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
+                  await SharedPreferences.getInstance();
                   String? id = prefs.getString("adminId");
                   LeaseMoveoutRepository()
                       .addMoveInTenant(
@@ -5893,18 +5883,16 @@ class _Summery_pageState extends State<Summery_page>
           children: [
             const SizedBox(width: 65),
             Text(
-              '${formatDate('${tenant.startDate}')} to',
+              '${dateProvider.formatCurrentDate('${tenant.startDate}')}  to',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
                 color: blueColor,
                 fontWeight: FontWeight.w500,
               ),
             ),
-            SizedBox(
-              width: 5,
-            ),
+            SizedBox(width: 5),
             Text(
-              '${formatDate('${tenant.endDate}')}',
+              '${dateProvider.formatCurrentDate('${tenant.endDate}')}',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
                 color: blueColor,
@@ -5924,7 +5912,9 @@ class _Summery_pageState extends State<Summery_page>
             ),
             const SizedBox(width: 5),
             Text(
-              formatPhoneNumber('${tenant.phoneNumber}'),
+              formatPhoneNumber(
+                '${tenant.phoneNumber}',
+              ),
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
                 color: blueColor,
@@ -5936,7 +5926,7 @@ class _Summery_pageState extends State<Summery_page>
         const SizedBox(height: 10),
         Row(
           children: [
-            SizedBox(width: 65),
+            const SizedBox(width: 65),
             FaIcon(
               FontAwesomeIcons.solidEnvelope,
               size: 15,
@@ -5966,7 +5956,7 @@ class _Summery_pageState extends State<Summery_page>
                 'Notice Date : ',
                 maxLines: 3, // Set maximum number of lines
                 overflow:
-                    TextOverflow.ellipsis, // Handle overflow with ellipsis
+                TextOverflow.ellipsis, // Handle overflow with ellipsis
                 style: TextStyle(
                     fontSize: 15,
                     color: blueColor,
@@ -5976,7 +5966,7 @@ class _Summery_pageState extends State<Summery_page>
                 width: 5,
               ),
               Text(
-                '${tenant.moveoutNoticeGivenDate}',
+                formatDate('${tenant.moveoutNoticeGivenDate}'),
                 style: TextStyle(
                   fontSize: 15,
                   color: blueColor,
@@ -5994,7 +5984,7 @@ class _Summery_pageState extends State<Summery_page>
                 'Move out : ',
                 maxLines: 3, // Set maximum number of lines
                 overflow:
-                    TextOverflow.ellipsis, // Handle overflow with ellipsis
+                TextOverflow.ellipsis, // Handle overflow with ellipsis
                 style: TextStyle(
                     fontSize: 15,
                     color: blueColor,
@@ -6004,7 +5994,7 @@ class _Summery_pageState extends State<Summery_page>
                 width: 5,
               ),
               Text(
-                '${tenant.moveoutDate}',
+                formatDate('${tenant.moveoutDate}'),
                 style: TextStyle(
                   fontSize: 15,
                   color: blueColor,
@@ -6017,6 +6007,7 @@ class _Summery_pageState extends State<Summery_page>
       ],
     );
   }
+
 
   Widget buildMoveout(TenantData tenant) {
     moveOutDate = formatDate(tenant.endDate!);
@@ -15139,6 +15130,7 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   Workorder(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -15146,100 +15138,7 @@ class _Summery_pageState extends State<Summery_page>
             height: 20,
           ),
           //add Data
-          Padding(
-            padding: const EdgeInsets.only(left: 11, right: 11),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 5),
-                if (MediaQuery.of(context).size.width > 500) SizedBox(width: 8),
-                Row(
-                  children: [
-                    Text(
-                      "Billable To Tenants",
-                      style: TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.bold,
-                          fontSize: MediaQuery.of(context).size.width > 500
-                              ? 20
-                              : 12),
-                    ),
-                    if (MediaQuery.of(context).size.width < 500)
-                      SizedBox(
-                        width: 10,
-                      ),
-                    if (MediaQuery.of(context).size.width > 500)
-                      SizedBox(width: 20),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width < 500 ? 24 : 50,
-                      height: MediaQuery.of(context).size.width < 500 ? 24 : 50,
-                      child: Checkbox(
-                        value: isChecked,
-                        onChanged: (value) {
-                          setState(() {
-                            isChecked = value ?? false;
-                          });
-                        },
-                        activeColor: isChecked ? blueColor : Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-                Spacer(),
-                GestureDetector(
-                  onTap: () async {
-                    final result =
-                        await Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => ResponsiveAddWorkOrder(
-                                  rentalid: widget.properties.rentalId,
-                                )));
-                    if (result == true) {
-                      setState(() {
-                        futureworkordersummery = Properies_summery_Repo()
-                            .fetchWorkOrders(widget.properties.rentalId!);
-                      });
-                    }
-                  },
-                  child: Container(
-                    height: (MediaQuery.of(context).size.width < 500)
-                        ? 40
-                        : MediaQuery.of(context).size.width * 0.063,
 
-                    // height:  MediaQuery.of(context).size.width * 0.07,
-                    // height:  40,
-                    width: MediaQuery.of(context).size.width * 0.29,
-                    decoration: BoxDecoration(
-                      color: blueColor,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Add Work Order",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: MediaQuery.of(context).size.width > 500
-                                  ? 20
-                                  : 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 2),
-                if (MediaQuery.of(context).size.width > 500) SizedBox(width: 8),
-              ],
-            ),
-          ),
-          // SizedBox(height: 15),
-          if (MediaQuery.of(context).size.width > 500) SizedBox(height: 20),
-          if (MediaQuery.of(context).size.width < 500) SizedBox(height: 15),
-          //search
           Padding(
             padding: const EdgeInsets.only(left: 11, right: 11),
             child: Row(
@@ -15267,9 +15166,9 @@ class _Summery_pageState extends State<Summery_page>
                           child: TextField(
                             style: TextStyle(
                                 fontSize:
-                                    MediaQuery.of(context).size.width < 500
-                                        ? 12
-                                        : 14),
+                                MediaQuery.of(context).size.width < 500
+                                    ? 12
+                                    : 14),
                             // onChanged: (value) {
                             //   setState(() {
                             //     cvverror = false;
@@ -15279,7 +15178,6 @@ class _Summery_pageState extends State<Summery_page>
                             onChanged: (value) {
                               setState(() {
                                 searchvalue = value;
-                                if (currentPage != 0) currentPage = 0;
                               });
                             },
                             cursorColor: blueColor,
@@ -15288,9 +15186,9 @@ class _Summery_pageState extends State<Summery_page>
                                 hintText: "Search here...",
                                 hintStyle: TextStyle(
                                   fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 14
-                                          : 18,
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 14
+                                      : 18,
                                   // fontWeight: FontWeight.bold,
                                   color: Color(0xFF8A95A8),
                                 ),
@@ -15329,17 +15227,17 @@ class _Summery_pageState extends State<Summery_page>
                       ),
                       items: items
                           .map((String item) => DropdownMenuItem<String>(
-                                value: item,
-                                child: Text(
-                                  item,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ))
+                        value: item,
+                        child: Text(
+                          item,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ))
                           .toList(),
                       value: selectedValue,
                       onChanged: (value) {
@@ -15349,7 +15247,7 @@ class _Summery_pageState extends State<Summery_page>
                       },
                       buttonStyleData: ButtonStyleData(
                         height:
-                            MediaQuery.of(context).size.width < 500 ? 45 : 50,
+                        MediaQuery.of(context).size.width < 500 ? 45 : 50,
                         // width: 180,
                         width: MediaQuery.of(context).size.width < 500
                             ? MediaQuery.of(context).size.width * .38
@@ -15391,6 +15289,102 @@ class _Summery_pageState extends State<Summery_page>
               ],
             ),
           ),
+          // SizedBox(height: 15),
+          if (MediaQuery.of(context).size.width > 500) SizedBox(height: 20),
+          if (MediaQuery.of(context).size.width < 500) SizedBox(height: 15),
+          //search
+          Padding(
+            padding: const EdgeInsets.only(left: 11, right: 11),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 5),
+                if (MediaQuery.of(context).size.width > 500) SizedBox(width: 8),
+                Row(
+                  children: [
+                    Text(
+                      "Show Completed Task",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: MediaQuery.of(context).size.width > 500
+                              ? 20
+                              : 12),
+                    ),
+                    if (MediaQuery.of(context).size.width < 500)
+                      SizedBox(
+                        width: 10,
+                      ),
+                    if (MediaQuery.of(context).size.width > 500)
+                      SizedBox(width: 20),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width < 500 ? 24 : 50,
+                      height: MediaQuery.of(context).size.width < 500 ? 24 : 50,
+                      child: Checkbox(
+                        value: isChecked,
+                        onChanged: (value) {
+                          setState(() {
+                            isChecked = value ?? false;
+                          });
+                        },
+                        activeColor: isChecked ? blueColor : Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                Spacer(),
+                GestureDetector(
+                  onTap: () async {
+                    final result =
+                    await Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => ResponsiveAddWorkOrder(
+                          rentalid: widget.properties.rentalId,
+                        )));
+                    if (result == true) {
+                      setState(() {
+                        futureworkordersummery = Properies_summery_Repo()
+                            .fetchWorkOrders(widget.properties.rentalId!);
+                      });
+                    }
+                  },
+                  child: Container(
+                    height: (MediaQuery.of(context).size.width < 500)
+                        ? 40
+                        : MediaQuery.of(context).size.width * 0.063,
+
+                    // height:  MediaQuery.of(context).size.width * 0.07,
+                    // height:  40,
+                    width: MediaQuery.of(context).size.width * 0.29,
+
+                    decoration: BoxDecoration(
+                      border: Border.all(color: blueColor),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Add Work Order",
+                            style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: MediaQuery.of(context).size.width > 500
+                                  ? 20
+                                  : 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 2),
+                if (MediaQuery.of(context).size.width > 500) SizedBox(width: 8),
+              ],
+            ),
+          ),
           if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
           if (MediaQuery.of(context).size.width < 500)
             Padding(
@@ -15401,9 +15395,9 @@ class _Summery_pageState extends State<Summery_page>
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(
                         child: SpinKitFadingCircle(
-                      color: Colors.black,
-                      size: 40.0,
-                    ));
+                          color: Colors.black,
+                          size: 40.0,
+                        ));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Container(
                       height: MediaQuery.of(context).size.height * .5,
@@ -15440,12 +15434,12 @@ class _Summery_pageState extends State<Summery_page>
                     } else if (searchvalue!.isNotEmpty) {
                       data = snapshot.data!
                           .where((workorder) =>
-                              workorder.workSubject!
-                                  .toLowerCase()
-                                  .contains(searchvalue!.toLowerCase()) ||
-                              workorder.workCategory!
-                                  .toLowerCase()
-                                  .contains(searchvalue!.toLowerCase()))
+                      workorder.workSubject!
+                          .toLowerCase()
+                          .contains(searchvalue!.toLowerCase()) ||
+                          workorder.workCategory!
+                              .toLowerCase()
+                              .contains(searchvalue!.toLowerCase()))
                           .toList();
                     } else {
                       data = snapshot.data!
@@ -15472,7 +15466,7 @@ class _Summery_pageState extends State<Summery_page>
                       // Schedule the update after the current frame
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         Provider.of<WorkOrderCountProvider>(context,
-                                listen: false)
+                            listen: false)
                             .updateCount(data.length);
                       });
                     } else {
@@ -15491,17 +15485,11 @@ class _Summery_pageState extends State<Summery_page>
                     return SingleChildScrollView(
                       child: Column(
                         children: [
-                          if (data.isNotEmpty) SizedBox(height: 20),
+                          if (data.isNotEmpty) SizedBox(height: 10),
                           if (data.isNotEmpty) _buildHeaders(),
-                          SizedBox(height: 20),
+                          SizedBox(height: 10),
                           if (data.isNotEmpty)
                             Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color:
-                                          Color.fromRGBO(152, 162, 179, .5))),
-                              // decoration: BoxDecoration(
-                              //     border: Border.all(color: blueColor)),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -15512,17 +15500,15 @@ class _Summery_pageState extends State<Summery_page>
                                   propertiesworkData workOrder = entry.value;
                                   //return CustomExpansionTile(data: Data, index: index);
                                   return Container(
+                                    margin: EdgeInsets.symmetric(vertical: 6),
                                     decoration: BoxDecoration(
                                       color: index % 2 != 0
-                                          ? Colors.white
-                                          : blueColor.withOpacity(0.09),
-                                      border: Border.all(
-                                          color: Color.fromRGBO(
-                                              152, 162, 179, .5)),
+                                          ? Color(0xFFF4F8FF)
+                                          : Colors.white,
+                                      border:
+                                      Border.all(color: Color(0xFFDBE0E5)),
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
-                                    // decoration: BoxDecoration(
-                                    //   border: Border.all(color: blueColor),
-                                    // ),
                                     child: Column(
                                       children: <Widget>[
                                         ListTile(
@@ -15531,9 +15517,9 @@ class _Summery_pageState extends State<Summery_page>
                                             padding: const EdgeInsets.all(2.0),
                                             child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.start,
+                                              MainAxisAlignment.start,
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
+                                              CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 InkWell(
                                                   onTap: () {
@@ -15564,75 +15550,75 @@ class _Summery_pageState extends State<Summery_page>
                                                         left: 5, right: 8),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
-                                                            bottom: 10)
+                                                        bottom: 10)
                                                         : EdgeInsets.only(
-                                                            top: 10),
+                                                        top: 10),
                                                     child: FaIcon(
                                                       isExpanded
                                                           ? FontAwesomeIcons
-                                                              .sortUp
+                                                          .sortUp
                                                           : FontAwesomeIcons
-                                                              .sortDown,
+                                                          .sortDown,
                                                       size: 20,
                                                       color: blueColor,
                                                     ),
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  flex: 3,
+                                                  flex: 4,
                                                   child: Text(
                                                     '${workOrder.workSubject}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
-                                                          FontWeight.bold,
+                                                      FontWeight.bold,
                                                       fontSize: 13,
                                                     ),
                                                   ),
                                                 ),
                                                 SizedBox(
                                                     width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .099),
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                        .05),
                                                 Expanded(
-                                                  flex: 2,
+                                                  flex: 3,
                                                   child: Text(
                                                     '${workOrder.status}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
-                                                          FontWeight.bold,
+                                                      FontWeight.bold,
                                                       fontSize: 13,
                                                     ),
                                                   ),
                                                 ),
                                                 SizedBox(
                                                     width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .08),
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                        .05),
                                                 Expanded(
-                                                  flex: 3,
+                                                  flex: 2,
                                                   child: Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
+                                                    MainAxisAlignment
+                                                        .center,
                                                     crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
+                                                    CrossAxisAlignment
+                                                        .center,
                                                     children: [
                                                       if (workOrder
-                                                              .isBillable ==
+                                                          .isBillable ==
                                                           true)
                                                         Icon(
                                                           Icons.check,
                                                           color: blueColor,
                                                         ),
                                                       if (workOrder
-                                                              .isBillable ==
+                                                          .isBillable ==
                                                           false)
                                                         Icon(
                                                           Icons.close,
@@ -15643,10 +15629,10 @@ class _Summery_pageState extends State<Summery_page>
                                                 ),
                                                 SizedBox(
                                                     width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .02),
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                        .02),
                                               ],
                                             ),
                                           ),
@@ -15659,17 +15645,161 @@ class _Summery_pageState extends State<Summery_page>
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
+                                                  // Row(
+                                                  //   mainAxisAlignment:
+                                                  //   MainAxisAlignment.start,
+                                                  //   children: [
+                                                  //     FaIcon(
+                                                  //       isExpanded
+                                                  //           ? FontAwesomeIcons
+                                                  //           .sortUp
+                                                  //           : FontAwesomeIcons
+                                                  //           .sortDown,
+                                                  //       size: 50,
+                                                  //       color: Colors.transparent,
+                                                  //     ),
+                                                  //     Expanded(
+                                                  //       child: Column(
+                                                  //         crossAxisAlignment:
+                                                  //         CrossAxisAlignment
+                                                  //             .start,
+                                                  //         children: <Widget>[
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                   ' Category : ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                       FontWeight
+                                                  //                           .bold,
+                                                  //                       color:
+                                                  //                       blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                   '${workOrder.workCategory}',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                       FontWeight
+                                                  //                           .w700,
+                                                  //                       color: Colors
+                                                  //                           .grey), // Light and grey
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //           SizedBox(
+                                                  //             height: 5,
+                                                  //           ),
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                   'Created At : ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                       FontWeight
+                                                  //                           .bold,
+                                                  //                       color:
+                                                  //                       blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text: formatDate(
+                                                  //                       '${workOrder.createdAt}'),
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                       FontWeight
+                                                  //                           .w700,
+                                                  //                       color: Colors
+                                                  //                           .grey), // Light and grey
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //         ],
+                                                  //       ),
+                                                  //     ),
+                                                  //     SizedBox(width: 5),
+                                                  //     Expanded(
+                                                  //       child: Column(
+                                                  //         crossAxisAlignment:
+                                                  //         CrossAxisAlignment
+                                                  //             .start,
+                                                  //         children: <Widget>[
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                   'Assign ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                       FontWeight
+                                                  //                           .bold,
+                                                  //                       color:
+                                                  //                       blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                   '${workOrder.staffmemberName}',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                       FontWeight
+                                                  //                           .w700,
+                                                  //                       color: Colors
+                                                  //                           .grey), // Light and grey
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //           SizedBox(
+                                                  //             height: 5,
+                                                  //           ),
+                                                  //           Text.rich(
+                                                  //             TextSpan(
+                                                  //               children: [
+                                                  //                 TextSpan(
+                                                  //                   text:
+                                                  //                   'Updated At : ',
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                       FontWeight
+                                                  //                           .bold,
+                                                  //                       color:
+                                                  //                       blueColor), // Bold and black
+                                                  //                 ),
+                                                  //                 TextSpan(
+                                                  //                   text: formatDate(
+                                                  //                       '${workOrder.updatedAt}'),
+                                                  //                   style: TextStyle(
+                                                  //                       fontWeight:
+                                                  //                       FontWeight
+                                                  //                           .w700,
+                                                  //                       color: Colors
+                                                  //                           .grey), // Light and grey
+                                                  //                 ),
+                                                  //               ],
+                                                  //             ),
+                                                  //           ),
+                                                  //         ],
+                                                  //       ),
+                                                  //     ),
+                                                  //   ],
+                                                  // ),
                                                   Row(
                                                     children: [
                                                       FaIcon(
                                                         isExpanded
                                                             ? FontAwesomeIcons
-                                                                .sortUp
+                                                            .sortUp
                                                             : FontAwesomeIcons
-                                                                .sortDown,
+                                                            .sortDown,
                                                         size: 30,
                                                         color:
-                                                            Colors.transparent,
+                                                        Colors.transparent,
                                                       ),
                                                       Expanded(
                                                         child: Table(
@@ -15691,11 +15821,13 @@ class _Summery_pageState extends State<Summery_page>
                                                                         .staffmemberName)),
                                                             _buildTableRow(
                                                                 'Created At:',
-                                                                formatDate(
+                                                                dateProvider
+                                                                    .formatCurrentDate(
                                                                     '${workOrder.createdAt}'),
                                                                 'Updated At:',
-                                                                formatDate(
-                                                                    '${workOrder.updatedAt}}')),
+                                                                dateProvider
+                                                                    .formatCurrentDate(
+                                                                    '${workOrder.createdAt}')),
                                                           ],
                                                         ),
                                                       ),
@@ -15753,68 +15885,61 @@ class _Summery_pageState extends State<Summery_page>
                                                     height: 10,
                                                   ),
                                                   Row(
-                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment.end,
                                                     children: [
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            Workorder_summery(
-                                                                              workorder_id: workOrder.workOrderId,
-                                                                            )));
-                                                          },
-                                                          child: Container(
-                                                            height: 40,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        350]),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                SizedBox(
-                                                                  width: 5,
-                                                                ),
-                                                                Image.asset(
-                                                                  'assets/icons/view.png',
-                                                                  color:
-                                                                      blueColor,
-                                                                ),
-                                                                // FaIcon(
-                                                                //   FontAwesomeIcons.trashCan,
-                                                                //   size: 15,
-                                                                //   color:blueColor,
-                                                                // ),
-                                                                SizedBox(
-                                                                  width: 8,
-                                                                ),
-                                                                Text(
-                                                                  "View Summery",
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          11,
-                                                                      color:
-                                                                          blueColor,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                )
-                                                              ],
-                                                            ),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                      Workorder_summery(
+                                                                        workorder_id:
+                                                                        workOrder.workOrderId,
+                                                                      )));
+                                                        },
+                                                        child: Container(
+                                                          height: 35,
+                                                          width: 35,
+                                                          decoration:
+                                                          BoxDecoration(
+                                                            color: Colors
+                                                                .grey.shade200,
+                                                            borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                8),
+                                                          ),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                            crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .eye,
+                                                                size: 15,
+                                                                color: Colors
+                                                                    .black,
+                                                              ),
+                                                              SizedBox(
+                                                                  width: 2),
+                                                            ],
                                                           ),
                                                         ),
                                                       ),
+                                                      SizedBox(
+                                                        width: 20,
+                                                      ),
                                                     ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 15,
                                                   ),
                                                 ],
                                               ),
@@ -15869,7 +15994,7 @@ class _Summery_pageState extends State<Summery_page>
                                             horizontal: 12.0),
                                         decoration: BoxDecoration(
                                           border:
-                                              Border.all(color: Colors.grey),
+                                          Border.all(color: Colors.grey),
                                         ),
                                         child: DropdownButtonHideUnderline(
                                           child: DropdownButton<int>(
@@ -15885,7 +16010,7 @@ class _Summery_pageState extends State<Summery_page>
                                               setState(() {
                                                 itemsPerPage = newValue!;
                                                 currentPage =
-                                                    0; // Reset to first page when items per page change
+                                                0; // Reset to first page when items per page change
                                               });
                                             },
                                           ),
@@ -15906,10 +16031,10 @@ class _Summery_pageState extends State<Summery_page>
                                       onPressed: currentPage == 0
                                           ? null
                                           : () {
-                                              setState(() {
-                                                currentPage--;
-                                              });
-                                            },
+                                        setState(() {
+                                          currentPage--;
+                                        });
+                                      },
                                     ),
                                     // IconButton(
                                     //   icon: Icon(Icons.arrow_back),
@@ -15942,10 +16067,10 @@ class _Summery_pageState extends State<Summery_page>
                                       ),
                                       onPressed: currentPage < totalPages - 1
                                           ? () {
-                                              setState(() {
-                                                currentPage++;
-                                              });
-                                            }
+                                        setState(() {
+                                          currentPage++;
+                                        });
+                                      }
                                           : null,
                                     ),
                                   ],
@@ -16008,12 +16133,12 @@ class _Summery_pageState extends State<Summery_page>
                   } else if (searchvalue.isNotEmpty) {
                     _tableData = snapshot.data!
                         .where((property) =>
-                            property.workSubject!
-                                .toLowerCase()
-                                .contains(searchvalue.toLowerCase()) ||
-                            property.workCategory!
-                                .toLowerCase()
-                                .contains(searchvalue.toLowerCase()))
+                    property.workSubject!
+                        .toLowerCase()
+                        .contains(searchvalue.toLowerCase()) ||
+                        property.workCategory!
+                            .toLowerCase()
+                            .contains(searchvalue.toLowerCase()))
                         .toList();
                   } else {
                     _tableData = snapshot.data!
@@ -16046,38 +16171,38 @@ class _Summery_pageState extends State<Summery_page>
                                     //     .91,
                                     child: Table(
                                       defaultColumnWidth:
-                                          IntrinsicColumnWidth(),
+                                      IntrinsicColumnWidth(),
                                       children: [
                                         TableRow(
                                           decoration: BoxDecoration(
                                             border: Border.all(
-                                                // color: blueColor
-                                                ),
+                                              // color: blueColor
+                                            ),
                                           ),
                                           children: [
                                             _buildHeader(
                                                 'Work Orders',
                                                 0,
-                                                (property) =>
-                                                    property.workSubject!),
+                                                    (property) =>
+                                                property.workSubject!),
                                             _buildHeader(
                                                 'Category',
                                                 1,
-                                                (property) =>
-                                                    property.workCategory!),
+                                                    (property) =>
+                                                property.workCategory!),
                                             _buildHeader(
                                                 'Billable',
                                                 2,
-                                                (property) => property
+                                                    (property) => property
                                                     .isBillable!
                                                     .toString()),
                                             _buildHeader(
                                                 'Assign',
                                                 3,
-                                                (property) =>
-                                                    property.staffmemberName!),
+                                                    (property) =>
+                                                property.staffmemberName!),
                                             _buildHeader('Status', 4,
-                                                (property) => property.status!),
+                                                    (property) => property.status!),
                                             _buildHeader('Created At', 5, null),
                                             _buildHeader('Updated At', 6, null),
                                           ],
@@ -16089,13 +16214,13 @@ class _Summery_pageState extends State<Summery_page>
                                           ),
                                           children: List.generate(
                                               7,
-                                              (index) => TableCell(
+                                                  (index) => TableCell(
                                                   child:
-                                                      Container(height: 20))),
+                                                  Container(height: 20))),
                                         ),
                                         for (var i = 0;
-                                            i < _pagedData.length;
-                                            i++)
+                                        i < _pagedData.length;
+                                        i++)
                                           TableRow(
                                             decoration: BoxDecoration(
                                               border: Border(
@@ -16106,10 +16231,10 @@ class _Summery_pageState extends State<Summery_page>
                                                 top: BorderSide(
                                                     color: blueColor),
                                                 bottom:
-                                                    i == _pagedData.length - 1
-                                                        ? BorderSide(
-                                                            color: blueColor)
-                                                        : BorderSide.none,
+                                                i == _pagedData.length - 1
+                                                    ? BorderSide(
+                                                    color: blueColor)
+                                                    : BorderSide.none,
                                               ),
                                             ),
                                             children: [
@@ -16131,7 +16256,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   _pagedData[i].isBillable ==
                                                       true),
                                               _buildDataCell(_pagedData[i]
-                                                      .staffmemberName ??
+                                                  .staffmemberName ??
                                                   ""),
                                               _buildDataCell(_pagedData[i]
                                                   .status

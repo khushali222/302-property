@@ -968,7 +968,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                       sortData(data);
                       print(
                           'table password ${snapshot.data?.first.tenantPassword}');
-                      data = data.reversed.toList();
+                     // data = data.reversed.toList();
                       final totalPages =
                       (data.length / itemsPerPage).ceil();
                       final currentPageData = data

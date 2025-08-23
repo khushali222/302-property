@@ -402,13 +402,17 @@ class _PropertiesTableState extends State<PropertiesTable> {
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
+      // decoration: BoxDecoration(
+      //   color: blueColor,
+      //   borderRadius: BorderRadius.only(
+      //     topLeft: Radius.circular(13),
+      //     topRight: Radius.circular(13),
+      //   ),
+      // ),
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
@@ -421,10 +425,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
               ),
             ),
             Expanded(
+              flex: 4,
               child: InkWell(
                 onTap: () {
                   setState(() {
-                    if (sorting1) {
+                    if (sorting1 == true) {
                       sorting2 = false;
                       sorting3 = false;
                       ascending1 = sorting1 ? !ascending1 : true;
@@ -438,6 +443,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                       ascending2 = false;
                       ascending3 = false;
                     }
+
+                    // Sorting logic here
                   });
                 },
                 child: Row(
@@ -445,61 +452,86 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     SizedBox(width: 6),
                     width < 400
                         ? Text("Property",
-                            style: TextStyle(color: Colors.white, fontSize: 14))
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14))
                         : Text("Property",
-                            style: TextStyle(color: Colors.white)),
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
+                    // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
                         ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
+                      padding: const EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
                         : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
+            // Expanded(
+            //   child: InkWell(
+            //     onTap: () {
+            //       setState(() {
+            //         if (sorting2) {
+            //           sorting1 = false;
+            //           sorting2 = sorting2;
+            //           sorting3 = false;
+            //           ascending2 = sorting2 ? !ascending2 : true;
+            //           ascending1 = false;
+            //           ascending3 = false;
+            //         } else {
+            //           sorting1 = false;
+            //           sorting2 = !sorting2;
+            //           sorting3 = false;
+            //           ascending2 = sorting2 ? !ascending2 : true;
+            //           ascending1 = false;
+            //           ascending3 = false;
+            //         }
+            //         // Sorting logic here
+            //       });
+            //     },
+            //     child: Row(
+            //       children: [
+            //         Text("     Type",
+            //             style: TextStyle(color: blueColor, fontWeight: FontWeight.bold , fontSize: 15)),
+            //         SizedBox(width: 2),
+            //         ascending2
+            //             ? Padding(
+            //                 padding: const EdgeInsets.only(top: 7, left: 2),
+            //                 child: FaIcon(
+            //                   FontAwesomeIcons.sortUp,
+            //                   size: 20,
+            //                   color: Colors.white,
+            //                 ),
+            //               )
+            //             : Padding(
+            //                 padding: const EdgeInsets.only(bottom: 7, left: 2),
+            //                 child: FaIcon(
+            //                   FontAwesomeIcons.sortDown,
+            //                   size: 20,
+            //                   color: Colors.white,
+            //                 ),
+            //               ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
             Expanded(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting2) {
-                      sorting1 = false;
-                      sorting2 = sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = !sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    }
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("     Type",
-                        style: TextStyle(color: Colors.white, fontSize: 15)),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
+              flex: 2,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -508,22 +540,45 @@ class _PropertiesTableState extends State<PropertiesTable> {
                       sorting2 = false;
                       sorting3 = sorting3;
                       ascending3 = sorting3 ? !ascending3 : true;
-                      ascending1 = false;
                       ascending2 = false;
+                      ascending1 = false;
                     } else {
                       sorting1 = false;
                       sorting2 = false;
                       sorting3 = !sorting3;
                       ascending3 = sorting3 ? !ascending3 : true;
-                      ascending1 = false;
                       ascending2 = false;
+                      ascending1 = false;
                     }
+
+                    // Sorting logic here
                   });
                 },
                 child: Row(
                   children: [
-                    Text("Accepting \nApplicant",
-                        style: TextStyle(color: Colors.white, fontSize: 15)),
+                    Text("Accepting\nApplication",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14)),
+                    SizedBox(width: 5),
+                    // ascending3
+                    //     ? Padding(
+                    //         padding: const EdgeInsets.only(top: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortUp,
+                    //           size: 20,
+                    //           color: Colors.white,
+                    //         ),
+                    //       )
+                    //     : Padding(
+                    //         padding: const EdgeInsets.only(bottom: 7, left: 2),
+                    //         child: FaIcon(
+                    //           FontAwesomeIcons.sortDown,
+                    //           size: 20,
+                    //           color: Colors.white,
+                    //         ),
+                    //       ),
                   ],
                 ),
               ),

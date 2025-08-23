@@ -750,10 +750,10 @@ class _Edit_leaseState extends State<Edit_lease>
         'dob': tenant.tenantBirthDate ?? '',
         'taxPayerId': tenant.taxPayerId ?? '',
         'createdAt': tenant.createdAt ?? '',
-        'emergencyContactName': tenant.emergencyContact!.name ?? '',
-        'emergencyRelation': tenant.emergencyContact!.relation ?? '',
-        'emergencyEmail': tenant.emergencyContact!.email ?? '',
-        'emergencyPhoneNumber': tenant.emergencyContact!.phoneNumber ?? '',
+        'emergencyContactName': tenant.emergencyContact?.name ?? '',
+        'emergencyRelation': tenant.emergencyContact?.relation ?? '',
+        'emergencyEmail': tenant.emergencyContact?.email ?? '',
+        'emergencyPhoneNumber': tenant.emergencyContact?.phoneNumber ?? '',
         'city': '', // Add city if available
         'country': '', // Add country if available
         'postalCode': '', // Add postal code if available
