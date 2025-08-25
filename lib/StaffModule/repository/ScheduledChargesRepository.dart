@@ -16,6 +16,7 @@ class ScheduledChargesRepository {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String?  adminid = prefs.getString('adminId');
+      String? id = prefs.getString("staff_id");
       String url = "";
       if(leaseid == null) {
         url = '$Api_url/api/charge/scheduled-charges/$adminid';
@@ -26,7 +27,7 @@ class ScheduledChargesRepository {
       print(url);
       final response = await http.get(Uri.parse(url), headers: <String, String>{
         "authorization" : "CRM $token",
-        "id":"CRM $adminid",
+        "id":"CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },);
       print(response.body);
@@ -85,12 +86,12 @@ class ScheduledChargesRepository {
     final response = charge_id == null
         ? await http.put(url, body: json.encode(body), headers: {
       "authorization": "CRM $token",
-      "id": "CRM $Id",
+      "id": "CRM $staffid",
       "Content-Type": "application/json",
     })
         : await http.put(url, body: json.encode(body), headers: {
       "authorization": "CRM $token",
-      "id": "CRM $Id",
+      "id": "CRM $staffid",
       "Content-Type": "application/json",
     });
     print(body);
@@ -124,7 +125,7 @@ class ScheduledChargesRepository {
         uri,
         headers: <String, String>{
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM $staffid",
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode({}),

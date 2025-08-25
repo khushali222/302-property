@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:three_zero_two_property/Model/profile.dart';
+
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:http/http.dart' as http;
+
+import '../../Model/profile.dart';
 
 class GetAddressAdminPdfService {
   final String apiUrl = "${Api_url}/api/admin/admin_profile/";

@@ -11,8 +11,8 @@ import '../../../../../constant/constant.dart';
 import '../../../../../repository/fetch_allcategories.dart';
 import '../../../../widgets/appbar.dart';
 import '../../../../widgets/custom_drawer.dart';
-import '../../../../model/properties.dart';
-import '../../../../model/unitsummery_propeties.dart';
+import '../../../../../model/properties.dart';
+import '../../../../../model/unitsummery_propeties.dart';
 import '../../../../repository/properties_summery.dart';
 import '../../../../repository/unit_data.dart';
 import 'dart:io';
@@ -23,7 +23,6 @@ class Edit_applience extends StatefulWidget {
   final unit_properties? unit;
   final unit_appliance?
       appliance; // Make this required and non-null if possible
-
   Edit_applience({
     this.unit,
     this.properties,

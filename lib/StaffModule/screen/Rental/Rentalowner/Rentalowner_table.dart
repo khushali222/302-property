@@ -272,7 +272,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                       child: FaIcon(
                         FontAwesomeIcons.sortUp,
                         size: 20,
-                        color: Colors.white,
+                        color: blueColor,
                       ),
                     )
                         : Padding(
@@ -280,7 +280,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                       child: FaIcon(
                         FontAwesomeIcons.sortDown,
                         size: 20,
-                        color: Colors.white,
+                        color: blueColor,
                       ),
                     ),
                   ],
@@ -322,7 +322,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                       child: FaIcon(
                         FontAwesomeIcons.sortUp,
                         size: 20,
-                        color: Colors.white,
+                        color: blueColor,
                       ),
                     )
                         : Padding(
@@ -330,7 +330,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                       child: FaIcon(
                         FontAwesomeIcons.sortDown,
                         size: 20,
-                        color: Colors.white,
+                        color: blueColor,
                       ),
                     ),
                   ],

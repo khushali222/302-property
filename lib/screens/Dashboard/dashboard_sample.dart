@@ -487,10 +487,7 @@ class DashboardMobileSimple extends StatelessWidget {
             workOrderCard('Overdue Work Order', overdueWorkOrder),
             analyticCard(),
             const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.only(left: 8, right: 8),
-              child: Cronjob_payment_table(),
-            ),
+            Cronjob_payment_table(),
             SizedBox(
               height: 10,
             ),

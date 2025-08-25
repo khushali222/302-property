@@ -185,7 +185,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           )
                         : Padding(
@@ -193,7 +193,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           ),
                   ],

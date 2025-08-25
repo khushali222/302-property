@@ -79,12 +79,9 @@ class _PropertyTableState extends State<PropertyTable> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -128,10 +125,15 @@ class _PropertyTableState extends State<PropertyTable> {
                   children: [
                     width < 400
                         ? Text("Main Type ",
-                            style: TextStyle(color: Colors.white, fontSize: 15))
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15))
                         : Text("Main Type",
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 15)),
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
@@ -140,7 +142,7 @@ class _PropertyTableState extends State<PropertyTable> {
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           )
                         : Padding(
@@ -148,7 +150,7 @@ class _PropertyTableState extends State<PropertyTable> {
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           ),
                   ],
@@ -180,7 +182,10 @@ class _PropertyTableState extends State<PropertyTable> {
                 child: Row(
                   children: [
                     Text("Subtypes",
-                        style: TextStyle(color: Colors.white, fontSize: 15)),
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
@@ -188,7 +193,7 @@ class _PropertyTableState extends State<PropertyTable> {
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           )
                         : Padding(
@@ -196,7 +201,7 @@ class _PropertyTableState extends State<PropertyTable> {
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           ),
                   ],
@@ -229,7 +234,10 @@ class _PropertyTableState extends State<PropertyTable> {
                 child: Row(
                   children: [
                     Text("  Created On",
-                        style: TextStyle(color: Colors.white, fontSize: 15)),
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
                     // ascending3
                     //     ? Padding(
@@ -362,7 +370,8 @@ class _PropertyTableState extends State<PropertyTable> {
         DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -1032,6 +1041,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                 ),
                               );
                             }
+                            //  data = data.reversed.toList();
                             sortData(data);
                             final totalPages =
                                 (data.length / itemsPerPage).ceil();
@@ -1044,12 +1054,9 @@ class _PropertyTableState extends State<PropertyTable> {
                                 children: [
                                   SizedBox(height: 10),
                                   _buildHeaders(),
-                                  SizedBox(height: 20),
+                                  SizedBox(height: 10),
                                   Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Color.fromRGBO(
-                                                152, 162, 179, .5))),
+
                                     // decoration: BoxDecoration(
                                     //     border: Border.all(color: blueColor)),
                                     child: Column(
@@ -1063,13 +1070,16 @@ class _PropertyTableState extends State<PropertyTable> {
                                         propertytype Propertytype = entry.value;
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
+                                          margin:
+                                              EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
-                                                ? Colors.white
-                                                : blueColor.withOpacity(0.09),
+                                                ? Color(0xFFF4F8FF)
+                                                : Colors.white,
                                             border: Border.all(
-                                                color: Color.fromRGBO(
-                                                    152, 162, 179, .5)),
+                                                color: Color(0xFFDBE0E5)),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                           ),
                                           // decoration: BoxDecoration(
                                           //   border: Border.all(color: blueColor),
@@ -1271,55 +1281,62 @@ class _PropertyTableState extends State<PropertyTable> {
                                                               Expanded(
                                                                 child:
                                                                     GestureDetector(
-                                                                      onTap:
-                                                                          () async {
-                                                                        var check = await Navigator.push(
-                                                                            context,
-                                                                            MaterialPageRoute(
-                                                                                builder: (context) => Edit_property_type(
+                                                                  onTap:
+                                                                      () async {
+                                                                    var check = await Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                            builder: (context) => Edit_property_type(
                                                                                   property: Propertytype,
                                                                                 )));
-                                                                        if (check ==
-                                                                            true) {
-                                                                          setState(
-                                                                                  () {
-                                                                                futurePropertyTypes =
-                                                                                    PropertyTypeRepository()
-                                                                                        .fetchPropertyTypes();
-                                                                              });
-                                                                        }
-                                                                      },
+                                                                    if (check ==
+                                                                        true) {
+                                                                      setState(
+                                                                          () {
+                                                                        futurePropertyTypes =
+                                                                            PropertyTypeRepository().fetchPropertyTypes();
+                                                                      });
+                                                                    }
+                                                                  },
                                                                   child:
-                                                                      Container(
+                                                                  Container(
                                                                     height: 40,
                                                                     decoration:
-                                                                        BoxDecoration(
-                                                                            color:
-                                                                                Colors.grey[350]), // color:Colors.grey[100],
+                                                                    BoxDecoration(
+                                                                      border: Border.all(
+                                                                          color: Colors
+                                                                              .green,
+                                                                          width:
+                                                                          1.5),
+                                                                      borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(8),
+                                                                    ),
                                                                     child: Row(
                                                                       mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .center,
+                                                                      MainAxisAlignment
+                                                                          .center,
                                                                       crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .center,
+                                                                      CrossAxisAlignment
+                                                                          .center,
                                                                       children: [
                                                                         FaIcon(
                                                                           FontAwesomeIcons
                                                                               .edit,
                                                                           size:
-                                                                              15,
-                                                                          color:
-                                                                              blueColor,
+                                                                          15,
+                                                                          color: Colors
+                                                                              .green,
                                                                         ),
                                                                         SizedBox(
                                                                           width:
-                                                                              10,
+                                                                          10,
                                                                         ),
                                                                         Text(
                                                                           "Edit",
                                                                           style: TextStyle(
-                                                                              color: blueColor,
+                                                                              color:
+                                                                              Colors.green,
                                                                               fontWeight: FontWeight.bold),
                                                                         ),
                                                                       ],
@@ -1344,36 +1361,44 @@ class _PropertyTableState extends State<PropertyTable> {
                                                                             .propertyId!);
                                                                   },
                                                                   child:
-                                                                      Container(
+                                                                  Container(
                                                                     height: 40,
                                                                     decoration:
-                                                                        BoxDecoration(
-                                                                            color:
-                                                                                Colors.grey[350]),
+                                                                    BoxDecoration(
+                                                                      border: Border.all(
+                                                                          color: Colors
+                                                                              .red,
+                                                                          width:
+                                                                          1.5),
+                                                                      borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(8),
+                                                                    ),
                                                                     child: Row(
                                                                       mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .center,
+                                                                      MainAxisAlignment
+                                                                          .center,
                                                                       crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .center,
+                                                                      CrossAxisAlignment
+                                                                          .center,
                                                                       children: [
                                                                         FaIcon(
                                                                           FontAwesomeIcons
                                                                               .trashCan,
                                                                           size:
-                                                                              15,
-                                                                          color:
-                                                                              blueColor,
+                                                                          15,
+                                                                          color: Colors
+                                                                              .red,
                                                                         ),
                                                                         SizedBox(
                                                                           width:
-                                                                              10,
+                                                                          10,
                                                                         ),
                                                                         Text(
                                                                           "Delete",
                                                                           style: TextStyle(
-                                                                              color: blueColor,
+                                                                              color:
+                                                                              Colors.red,
                                                                               fontWeight: FontWeight.bold),
                                                                         )
                                                                       ],

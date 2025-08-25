@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../../../../Model/All_categories_model.dart';
-import '../../../../../Model/properties.dart';
+import '../../../../../model/properties.dart';
 import '../../../../../Model/unit.dart';
 import '../../../../../constant/constant.dart';
 import '../../../../../repository/fetch_allcategories.dart';
@@ -15,10 +15,9 @@ import '../../../../widgets/appbar.dart';
 import '../../../../widgets/custom_drawer.dart';
 import '../summery_page.dart';
 
-import '../../../../model/unitsummery_propeties.dart';
+import '../../../../../model/unitsummery_propeties.dart';
 import '../../../../repository/properties_summery.dart';
 import '../../../../repository/unit_data.dart';
-
 
 class AddApplience extends StatefulWidget {
   Rentals? properties;
@@ -146,7 +145,7 @@ class _AddApplienceState extends State<AddApplience> {
       // _selectedDropdownCategory = _dropdownCategories.first;
       // print("Selected category: ${_selectedDropdownCategory?.name}");
       _selectedDropdownCategory = _dropdownCategories.firstWhere(
-            (category) => category.categoryId == widget.appliance?.categoryId,
+        (category) => category.categoryId == widget.appliance?.categoryId,
         orElse: () => _dropdownCategories.first,
       );
 
@@ -523,7 +522,8 @@ class _AddApplienceState extends State<AddApplience> {
                     keyboardType: TextInputType.name,
                   ),
                   SizedBox(height: 8),
-                  if (brandList.isNotEmpty) ...[
+                  if (!['Electrical', 'Exterior', 'Roof']
+                      .contains(_selectedDropdownCategory?.name)) ...[
                     Padding(
                       padding: EdgeInsets.only(left: 10),
                       child: Text(
@@ -1182,7 +1182,8 @@ class _AddApplienceState extends State<AddApplience> {
                   ),
                   if (iserror)
                     const Padding(
-                      padding: EdgeInsets.only(top: 8.0),
+                      padding: EdgeInsets.only(
+                          top: 8.0, left: 10, right: 10, bottom: 20),
                       child: Text(
                         "Please fill in all fields correctly.",
                         style: TextStyle(color: Colors.redAccent),

@@ -150,7 +150,8 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                   "Leases",
                   "Applicants",
                   "Upcoming renewal",
-                  "Scheduled Payment"
+                  "Scheduled Payment",
+                  "Scheduled Charges",
                 ],
                 [
                   FaIcon(
@@ -188,7 +189,14 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                     color: widget.currentpage == "Scheduled Payment"
                         ? Colors.white
                         : blueColor,
-                  ), // Icon for RentalOwner
+                  ),
+                  Icon(
+                    Icons.calendar_month,
+                    size: 25,
+                    color: widget.currentpage == "Scheduled Charges"
+                        ? Colors.white
+                        : blueColor,
+                  ) // Icon for RentalOwner
                   //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
                 ],
                 selectedSubtopic: !widget.dropdown ? null : widget.currentpage,

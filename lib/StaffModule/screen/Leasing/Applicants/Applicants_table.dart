@@ -81,12 +81,9 @@ class _Applicants_tableState extends State<Applicants_table> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -130,27 +127,27 @@ class _Applicants_tableState extends State<Applicants_table> {
                 child: Row(
                   children: [
                     width < 400
-                        ? const Text("Name",
-                            style: TextStyle(color: Colors.white))
-                        : const Text("Name",
-                            style: TextStyle(color: Colors.white)),
+                        ?  Text("Name",
+                            style: TextStyle( color: blueColor, fontWeight: FontWeight.bold))
+                        :  Text("Name",
+                            style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
                     ascending1
-                        ? const Padding(
+                        ?  Padding(
                             padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           )
-                        : const Padding(
+                        :  Padding(
                             padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           ),
                   ],
@@ -182,23 +179,23 @@ class _Applicants_tableState extends State<Applicants_table> {
                 },
                 child: Row(
                   children: [
-                     Text("   Phone Number", style: TextStyle(color: Colors.white,fontSize: 14)),
+                     Text("   Phone Number", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold,fontSize: 14)),
                      SizedBox(width: 5),
                     ascending2
-                        ? const Padding(
+                        ?  Padding(
                             padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           )
-                        : const Padding(
+                        :  Padding(
                             padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           ),
                   ],
@@ -232,23 +229,23 @@ class _Applicants_tableState extends State<Applicants_table> {
                 child: Row(
                   children: [
                     SizedBox(width: 15),
-                    const Text("Status", style: TextStyle(color: Colors.white)),
+                     Text("Status", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 5),
                     ascending3
-                        ? const Padding(
+                        ?  Padding(
                             padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           )
-                        : const Padding(
+                        :  Padding(
                             padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
-                              color: Colors.white,
+                              color:blueColor,
                             ),
                           ),
                   ],
@@ -1060,18 +1057,14 @@ class _Applicants_tableState extends State<Applicants_table> {
                           children: [
                             const SizedBox(height: 10),
                             _buildHeaders(),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 10),
                             Container(
                               // decoration: BoxDecoration(
                               //     border: Border.all(
                               //         color:
                               //             blueColor)
                               // ),
-                              decoration: BoxDecoration(
-                                  border: Border.all(color:  Color.fromRGBO(152, 162, 179, .5)
 
-
-)),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -1086,13 +1079,17 @@ class _Applicants_tableState extends State<Applicants_table> {
                                     //       color: const Color.fromRGBO(
                                     //           21, 43, 83, 1)),
                                     // ),
-                                    decoration: BoxDecoration(
-                                      color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                      border: Border.all(color:  Color.fromRGBO(152, 162, 179, .5)
-
-
-),
-                                    ),
+                                      margin:
+                                      EdgeInsets.symmetric(vertical: 6),
+                                  decoration: BoxDecoration(
+                                  color: index % 2 != 0
+                                  ? Color(0xFFF4F8FF)
+                                      : Colors.white,
+                                  border: Border.all(
+                                  color: Color(0xFFDBE0E5)),
+                                  borderRadius:
+                                  BorderRadius.circular(10),
+                                  ),
                                     child: Column(
                                       children: <Widget>[
                                         ListTile(
@@ -1334,130 +1331,158 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                     height: 10,
                                                   ),
                                                   Row(
-                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .end,
                                                     children: [
                                                       if(permissions!.applicantView!)
-                                                        Expanded(
-                                                          child: GestureDetector(
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder: (context) =>
-                                                                          applicant_summery(
-                                                                            applicant_id:
-                                                                            applicant
-                                                                                .applicantId,
-                                                                          )));
-
-                                                            },
-                                                            child: Container(
-                                                              height:40,
-                                                              decoration: BoxDecoration(
-                                                                  color: Colors.grey[350]
-                                                              ),
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                MainAxisAlignment.center,
-                                                                crossAxisAlignment:
-                                                                CrossAxisAlignment.center,
-                                                                children: [
-                                                                  SizedBox(width: 5,),
-                                                                  Image.asset('assets/icons/view.png',color: blueColor,),
-                                                                  // FaIcon(
-                                                                  //   FontAwesomeIcons.trashCan,
-                                                                  //   size: 15,
-                                                                  //   color:blueColor,
-                                                                  // ),
-                                                                  SizedBox(width: 1,),
-                                                                  Text("View Summery",style: TextStyle(fontSize: 11,color: blueColor,fontWeight: FontWeight.bold),)
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      if(permissions!.applicantEdit!)
-                                                        SizedBox(width: 5,),
-                                                      if(permissions!.applicantEdit!)
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap:()async{
-                                                            var check = await Navigator.push(
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(
-                                                                    builder: (context) => EditApplicant(
-                                                                      applicant: applicant,
-                                                                      applicantId: applicant.applicantId!,
-                                                                    )));
-                                                            if (check ==
-                                                                true) {
-                                                              setState(
-                                                                      () {
-                                                                    futureApplicantdata =     ApplicantRepository().fetchApplicants();
-                                                                  });
-                                                            }
+                                                                    builder: (context) =>
+                                                                        applicant_summery(
+                                                                          applicant_id:
+                                                                          applicant
+                                                                              .applicantId,
+                                                                        )));
+
                                                           },
-                                                          child: Container(
-                                                            height:40,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors.grey[350]
-                                                            ),                                               // color:Colors.grey[100],
+                                                          child:  Container(
+                                                            height: 35,
+                                                            width: 35,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              color: Colors
+                                                                  .grey
+                                                                  .shade200,
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  8),
+                                                            ),
                                                             child: Row(
                                                               mainAxisAlignment:
-                                                              MainAxisAlignment.center,
+                                                              MainAxisAlignment
+                                                                  .center,
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment.center,
+                                                              CrossAxisAlignment
+                                                                  .center,
                                                               children: [
                                                                 FaIcon(
-                                                                  FontAwesomeIcons.edit,
+                                                                  FontAwesomeIcons
+                                                                      .eye,
                                                                   size: 15,
-                                                                  color:blueColor,
+                                                                  color: Colors
+                                                                      .black,
                                                                 ),
-                                                                SizedBox(width: 10,),
-                                                                Text("Edit",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),),
+                                                                SizedBox(
+                                                                    width:
+                                                                    2),
                                                               ],
                                                             ),
+                                                          ),
+                                                        ),
+                                                      if(permissions!.applicantEdit!)
+                                                        SizedBox(width: 5,),
+                                                      if(permissions!.applicantEdit!)
+                                                      GestureDetector(
+                                                        onTap:()async{
+                                                          var check = await Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder: (context) => EditApplicant(
+                                                                    applicant: applicant,
+                                                                    applicantId: applicant.applicantId!,
+                                                                  )));
+                                                          if (check ==
+                                                              true) {
+                                                            setState(
+                                                                    () {
+                                                                  futureApplicantdata =     ApplicantRepository().fetchApplicants();
+                                                                });
+                                                          }
+                                                        },
+                                                        child:
+                                                        Container(
+                                                          height: 35,
+                                                          width: 35,
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  8),
+                                                              color: Colors
+                                                                  .green
+                                                                  .shade50), // color:Colors.grey[100],
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                            crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .edit,
+                                                                size: 15,
+                                                                color: Colors
+                                                                    .green,
+                                                              ),
+                                                            ],
                                                           ),
                                                         ),
                                                       ),
                                                       if(permissions!.applicantDelete!)
                                                         SizedBox(width: 5,),
                                                       if(permissions!.applicantDelete!)
-                                                      Expanded(
-                                                        child: GestureDetector(
-                                                          onTap:(){
-                                                            _showDeleteAlert(
-                                                                context,
-                                                                applicant
-                                                                    .applicantId
-                                                                    .toString());
-                                                          },
-                                                          child: Container(
-                                                            height:40,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors.grey[350]
-                                                            ),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                              MainAxisAlignment.center,
-                                                              crossAxisAlignment:
-                                                              CrossAxisAlignment.center,
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons.trashCan,
-                                                                  size: 15,
-                                                                  color:blueColor,
-                                                                ),
-                                                                SizedBox(width: 10,),
-                                                                Text("Delete",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),)
-                                                              ],
-                                                            ),
+                                                      GestureDetector(
+                                                        onTap:(){
+                                                          _showDeleteAlert(
+                                                              context,
+                                                              applicant
+                                                                  .applicantId
+                                                                  .toString());
+                                                        },
+                                                        child:
+                                                        Container(
+                                                          height: 35,
+                                                          width: 35,
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                  8),
+                                                              color: Colors
+                                                                  .red
+                                                                  .shade50),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                            crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .trashCan,
+                                                                size: 15,
+                                                                color: Colors
+                                                                    .red,
+                                                              ),
+                                                            ],
                                                           ),
                                                         ),
                                                       ),
-
+                                                      SizedBox(width: 10,),
 
                                                     ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 8,
                                                   ),
                                                 ],
                                               ),

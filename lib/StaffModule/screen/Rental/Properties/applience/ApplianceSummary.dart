@@ -3,19 +3,16 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:three_zero_two_property/screens/Rental/Properties/applience/Add_applience.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
-
-import 'package:three_zero_two_property/widgets/custom_drawer.dart';
-
-
-import '../../../../../Model/properties.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/applience/Add_applience.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/summery_page.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
+import '../../../../../model/properties.dart';
 import '../../../../../Model/unit.dart';
 import '../../../../../constant/constant.dart';
-
 import '../../../../../provider/dateProvider.dart';
 import '../../../../../repository/appliance_details_service.dart';
-import '../../../../model/unitsummery_propeties.dart';
+import '../../../../../model/unitsummery_propeties.dart';
 
 import 'AddMaintenanceHistoryDialog.dart';
 import 'AddNoteDialog.dart';
@@ -171,9 +168,9 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
 
     if (_isLoading) {
       return Scaffold(
-        appBar: widget_302.App_Bar(context: context),
+        appBar: widget_302_Staff.App_Bar(context: context),
         backgroundColor: Colors.white,
-        drawer: CustomDrawer(
+        drawer: CustomDrawerStaff(
           currentpage: "Properties",
           dropdown: true,
         ),
@@ -203,9 +200,9 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
     }
 
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
+      drawer: CustomDrawerStaff(
         currentpage: "Properties",
         dropdown: true,
       ),
@@ -243,7 +240,21 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => Navigator.pop(context),
+                    onTap: () {
+                      if (widget.properties != null) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Summery_page(
+                              properties: widget.properties!,
+                              unit: widget.unit,
+                            ),
+                          ),
+                        );
+                      } else {
+                        Navigator.pop(context, true);
+                      }
+                    }, // Pass true back to refresh parent page
                     child: Container(
                       padding:
                           EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -278,9 +289,13 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(blueColor),
+                          // CircularProgressIndicator(
+                          //   valueColor:
+                          //       AlwaysStoppedAnimation<Color>(blueColor),
+                          // ),
+                          SpinKitFadingCircle(
+                            color: Colors.black,
+                            size: 40.0,
                           ),
                           SizedBox(height: 16),
                           Text(
@@ -324,12 +339,12 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                                   'Installed Date',
                                   appliance.installedDate != null
                                       ? dateProvider.formatCurrentDate(
-                                      '${formatDate(appliance.installedDate!)}')
+                                          '${formatDate(appliance.installedDate!)}')
                                       : '',
                                   'Warranty Expiry',
                                   appliance.warrantyExpiry != null
                                       ? dateProvider.formatCurrentDate(
-                                      '${formatDate(appliance.warrantyExpiry!)}')
+                                          '${formatDate(appliance.warrantyExpiry!)}')
                                       : ''),
                               if (appliance.lastMaintenanceDate != null &&
                                   appliance.lastMaintenanceDate!.isNotEmpty)
@@ -464,6 +479,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
 
   Widget _buildDetailCard(String title, List<Widget> children,
       {bool showEdit = false, bool showAdd = false, bool showSearch = false}) {
+    final dateProvider = Provider.of<DateProvider>(context);
     final appliance = _liveAppliance ?? widget.appliance;
 
     return Container(
@@ -518,12 +534,27 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                     if (showEdit)
                       GestureDetector(
                         onTap: () {
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) =>
+                          //             AddApplience(appliance: appliance)));
+                          //Edit functionality
+
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      AddApplience(appliance: appliance)));
-                          // Edit functionality
+                                builder: (context) => AddApplience(
+                                  unit: widget.unit,
+                                  properties: widget.properties,
+                                  appliance: appliance,
+                                ),
+                              )).then((value) {
+                            if (value == true) {
+                              // Refresh the data when returning from edit screen
+                              _refreshApplianceData();
+                            }
+                          });
                         },
                         child: Text(
                           'Edit',
@@ -679,9 +710,8 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
 
   Widget _buildMaintenanceItem(String date, String eventType, String vendor,
       String workOrder, String key) {
-    final dateProvider = Provider.of<DateProvider>(context);
     bool isExpanded = _expandedItems[key] ?? false;
-
+    final dateProvider = Provider.of<DateProvider>(context);
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -707,8 +737,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                   ),
                   SizedBox(width: 8),
                   Text(
-                    dateProvider.formatCurrentDate('${date}')
-                    ,
+                    dateProvider.formatCurrentDate('${date}'),
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,

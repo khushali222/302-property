@@ -17,6 +17,7 @@ import '../screen/Communications/E-mail Logs/email_log_table.dart';
 import '../screen/Communications/Send E-mail/Send_email_table.dart';
 import '../screen/Communications/Templates/Templet_table.dart';
 import '../screen/Leasing/Scheduled_Payments/Scheduled_Payments_table.dart';
+import '../screen/Leasing/scheduled_charges/ScheduledCharge.dart';
 import '../screen/dashboard.dart';
 import '../screen/profile.dart';
 import '../screen/upcoming_renewal/upcoming_renewal.dart';
@@ -79,7 +80,8 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Templates": (context) => TempletTable(),
     "E-mail Logs": (context) => Email_log_tablee(),
     "Send E-mail": (context) => Send_Email_table(),
-    "Scheduled Payment": (context) => Scheduled_Payments_table()
+    "Scheduled Payment": (context) => Scheduled_Payments_table(),
+    "Scheduled Charges": (context) => ScheduledChargeTable(),
   };
   // if (isActive != true) {
   Navigator.push(

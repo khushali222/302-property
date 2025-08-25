@@ -2,9 +2,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../Model/unit.dart';
+
 import '../../../constant/constant.dart';
 import '../../Model/applience_details_model.dart';
+import '../../Model/unit.dart';
+
+
 
 class UnitData {
   final String baseUrl = '${Api_url}/api/';
@@ -20,7 +23,8 @@ class UnitData {
 
     try {
       final response = await http.get(url,headers: {"authorization" : "CRM $token","id":"CRM $id",},);
-      print(response.body);
+      print("check for data of applience ${response.body}");
+      print("check for url ${url}");
       print(["data"].first.length);
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body)["data"];

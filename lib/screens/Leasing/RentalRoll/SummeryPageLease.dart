@@ -3663,7 +3663,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                       Container(
                                                         width: 150,
                                                         child: Text(
-                                                          '${dateProvider.formatCurrentDate(snapshot.data![index].tenantFirstName)} ${dateProvider.formatCurrentDate(snapshot.data![index].tenantLastName)}',
+                                                          '${snapshot.data![index].tenantFirstName} ${snapshot.data![index].tenantLastName}',
                                                           style: TextStyle(
                                                             fontSize: 16,
                                                             fontWeight:

@@ -7,16 +7,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/applience/Add_applience.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/applience/ApplianceSummary.dart';
-
-import '../../../../Model/properties.dart';
+import '../../../../model/properties.dart';
 import '../../../../Model/unit.dart';
 import '../../../../constant/constant.dart';
-
-import '../../../model/unitsummery_propeties.dart';
-
+import '../../../../model/unitsummery_propeties.dart';
 import '../../../repository/unit_data.dart';
 import '../../../repository/properties_summery.dart';
-
 
 class InfrastructurePart extends StatefulWidget {
   Rentals? properties;
@@ -64,7 +60,11 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
   }
 
   Future<void> fetchAllLeases() async {
-    if (widget.units == null || widget.units!.isEmpty) return;
+    print('fetchAllLeases called - units: ${widget.units?.length ?? 0}');
+    if (widget.units == null || widget.units!.isEmpty) {
+      print('No units available for fetching appliances');
+      return;
+    }
 
     setState(() {
       isLoading = true;
@@ -73,6 +73,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
     try {
       // Fetch appliances for all units
       for (var unit in widget.units!) {
+        print('Fetching appliances for unit: ${unit.unitId}');
         await fetchLeasesForUnit(unit.unitId!);
       }
     } catch (e) {
@@ -105,6 +106,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
   @override
   void initState() {
     super.initState();
+    print('InfrastructurePart initState - units: ${widget.units?.length ?? 0}');
     fetchAllLeases();
     // Set the first unit as selected by default
     if (widget.units != null && widget.units!.isNotEmpty) {
@@ -112,6 +114,19 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
     }
     // Initialize futureAppliences with all appliances
     futureAppliences = _getAllAppliancesFuture();
+  }
+
+  @override
+  void didUpdateWidget(InfrastructurePart oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    print('InfrastructurePart didUpdateWidget - units: ${widget.units?.length ?? 0}');
+    if (widget.units != oldWidget.units) {
+      fetchAllLeases();
+      if (widget.units != null && widget.units!.isNotEmpty) {
+        selectedUnit = widget.units!.first;
+      }
+      futureAppliences = _getAllAppliancesFuture();
+    }
   }
 
   Future<List<unit_appliance>> _getAllAppliancesFuture() async {
@@ -369,10 +384,11 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
         backgroundColor: Colors.white,
       ),
       buttons: [
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,

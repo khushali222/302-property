@@ -3210,6 +3210,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   }
 
   Tenant(context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return LayoutBuilder(
       builder: (context, constraints) {
         bool isTablet = constraints.maxWidth > 600;
@@ -3785,7 +3786,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                             children: [
                                               const SizedBox(width: 65),
                                               Text(
-                                                ' ${formatDate(snapshot.data![index].startDate)} to',
+                                                ' ${dateProvider.formatCurrentDate('${snapshot.data![index].startDate}')} to',
                                                 style: TextStyle(
                                                   fontSize: 15,
                                                   color: blueColor,
@@ -3793,7 +3794,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 ),
                                               ),
                                               Text(
-                                                ' ${formatDate(snapshot.data![index].endDate)} ',
+                                                ' ${dateProvider.formatCurrentDate('${snapshot.data![index].endDate}')} ',
                                                 style: TextStyle(
                                                   fontSize: 15,
                                                   color: blueColor,
