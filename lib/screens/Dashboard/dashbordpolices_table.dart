@@ -139,17 +139,17 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                         children: [
                           width < 400
                               ? Text("Tenant\n Name ",
-                              style: TextStyle(
-                                color: Color.fromRGBO(50, 75, 119, 1),
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ))
+                                  style: TextStyle(
+                                    color: Color.fromRGBO(50, 75, 119, 1),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ))
                               : Text("Tenant\n Name",
-                              style: TextStyle(
-                                color: Color.fromRGBO(50, 75, 119, 1),
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              )),
+                                  style: TextStyle(
+                                    color: Color.fromRGBO(50, 75, 119, 1),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  )),
                           // Text("Property", style: TextStyle(color: Colors.white)),
                           SizedBox(width: 3),
                           // ascending1
@@ -360,8 +360,8 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
       child: InkWell(
         onTap: getField != null
             ? () {
-          _sort(getField, columnIndex, !_sortAscending);
-        }
+                _sort(getField, columnIndex, !_sortAscending);
+              }
             : null,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -443,10 +443,10 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
           onPressed: _currentPage == 0
               ? null
               : () {
-            setState(() {
-              _currentPage--;
-            });
-          },
+                  setState(() {
+                    _currentPage--;
+                  });
+                },
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
@@ -463,10 +463,10 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
               : () {
-            setState(() {
-              _currentPage++;
-            });
-          },
+                  setState(() {
+                    _currentPage++;
+                  });
+                },
         ),
       ],
     );
@@ -509,23 +509,30 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                 color: blueColor,
                                 fontSize: 16,
                               ),
-
                             ),
                           ),
-                          SizedBox(height: 5,),
+                          SizedBox(
+                            height: 5,
+                          ),
                           Container(
                             height: 100,
                             decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Color(0xFFDBE0E5))
-                            ),
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: Color(0xFFDBE0E5))),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Image.asset('assets/icons/Nodata.png',height: 20,width: 20,color: Color(0xFF101828),),
-                                SizedBox(width: 10,),
+                                Image.asset(
+                                  'assets/icons/Nodata.png',
+                                  height: 20,
+                                  width: 20,
+                                  color: Color(0xFF101828),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
                                 Center(
                                   child: Text(
                                     "No data Available",
@@ -534,7 +541,6 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                       color: Color(0xFF101828),
                                       fontSize: 15,
                                     ),
-
                                   ),
                                 ),
                               ],
@@ -552,13 +558,13 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                     } else if (searchvalue!.isNotEmpty) {
                       data = snapshot.data!
                           .where((property) => property.insuranceCompany!
-                          .toLowerCase()
-                          .contains(searchvalue!.toLowerCase()))
+                              .toLowerCase()
+                              .contains(searchvalue!.toLowerCase()))
                           .toList();
                     } else {
                       data = snapshot.data!
                           .where((property) =>
-                      property.insuranceCompany == selectedValue)
+                              property.insuranceCompany == selectedValue)
                           .toList();
                     }
                     final totalPages = (data.length / itemsPerPage).ceil();
@@ -582,24 +588,24 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                 fontSize: 16,
                                 letterSpacing: 0.5,
                               ),
-                             // textAlign: TextAlign.center,
+                              // textAlign: TextAlign.center,
                             ),
                           ),
-                          if(currentPageData.isEmpty)
+                          if (currentPageData.isEmpty)
                             Container(
                               child: Text("No Data Available"),
                             ),
                           // Card-based expandable list
                           Column(
                             children:
-                            currentPageData.asMap().entries.map((entry) {
+                                currentPageData.asMap().entries.map((entry) {
                               int index = entry.key;
                               bool isExpanded = expandedIndex == index;
                               ExpiringRentersInsuranceData item = entry.value;
                               return insurancePolicyCard(
                                 item,
                                 isExpanded,
-                                    () {
+                                () {
                                   setState(() {
                                     expandedIndex = isExpanded ? null : index;
                                   });
@@ -608,8 +614,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                               );
                             }).toList(),
                           ),
-                          if (data.length > 5)
-                          SizedBox(height: 20),
+                          if (data.length > 5) SizedBox(height: 20),
                           if (data.length > 5)
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
@@ -625,7 +630,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                             horizontal: 12.0),
                                         decoration: BoxDecoration(
                                           border:
-                                          Border.all(color: Colors.grey),
+                                              Border.all(color: Colors.grey),
                                         ),
                                         child: DropdownButtonHideUnderline(
                                           child: DropdownButton<int>(
@@ -638,13 +643,13 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                               );
                                             }).toList(),
                                             onChanged: data.length >
-                                                itemsPerPageOptions.first
+                                                    itemsPerPageOptions.first
                                                 ? (newValue) {
-                                              setState(() {
-                                                itemsPerPage = newValue!;
-                                                currentPage = 0;
-                                              });
-                                            }
+                                                    setState(() {
+                                                      itemsPerPage = newValue!;
+                                                      currentPage = 0;
+                                                    });
+                                                  }
                                                 : null,
                                           ),
                                         ),
@@ -664,10 +669,10 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                       onPressed: currentPage == 0
                                           ? null
                                           : () {
-                                        setState(() {
-                                          currentPage--;
-                                        });
-                                      },
+                                              setState(() {
+                                                currentPage--;
+                                              });
+                                            },
                                     ),
                                     Text(
                                         'Page ${currentPage + 1} of $totalPages'),
@@ -680,10 +685,10 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                       ),
                                       onPressed: currentPage < totalPages - 1
                                           ? () {
-                                        setState(() {
-                                          currentPage++;
-                                        });
-                                      }
+                                              setState(() {
+                                                currentPage++;
+                                              });
+                                            }
                                           : null,
                                     ),
                                   ],
@@ -741,13 +746,13 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                   } else if (searchvalue.isNotEmpty) {
                     _tableData = snapshot.data!
                         .where((property) => property.insuranceCompany!
-                        .toLowerCase()
-                        .contains(searchvalue.toLowerCase()))
+                            .toLowerCase()
+                            .contains(searchvalue.toLowerCase()))
                         .toList();
                   } else {
                     _tableData = snapshot.data!
                         .where((property) =>
-                    property.insuranceCompany == selectedValue)
+                            property.insuranceCompany == selectedValue)
                         .toList();
                   }
                   totalrecords = _tableData.length;
@@ -764,33 +769,33 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                   scrollDirection: Axis.horizontal,
                                   child: Container(
                                     width:
-                                    MediaQuery.of(context).size.width * .91,
+                                        MediaQuery.of(context).size.width * .91,
                                     child: Table(
                                       defaultColumnWidth:
-                                      IntrinsicColumnWidth(),
+                                          IntrinsicColumnWidth(),
                                       children: [
                                         TableRow(
                                           decoration: BoxDecoration(
                                             border: Border.all(
-                                              // color: blueColor
-                                            ),
+                                                // color: blueColor
+                                                ),
                                           ),
                                           children: [
                                             _buildHeader(
                                                 'Main Type',
                                                 0,
-                                                    (property) =>
-                                                property.tenantName!),
+                                                (property) =>
+                                                    property.tenantName!),
                                             _buildHeader(
                                                 'Subtype',
                                                 1,
-                                                    (property) =>
-                                                property.rentalAddress!),
+                                                (property) =>
+                                                    property.rentalAddress!),
                                             _buildHeader(
                                                 'Created At',
                                                 2,
-                                                    (property) =>
-                                                property.expirationDate!),
+                                                (property) =>
+                                                    property.expirationDate!),
                                           ],
                                         ),
                                         TableRow(
@@ -800,13 +805,13 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                           ),
                                           children: List.generate(
                                               3,
-                                                  (index) => TableCell(
+                                              (index) => TableCell(
                                                   child:
-                                                  Container(height: 20))),
+                                                      Container(height: 20))),
                                         ),
                                         for (var i = 0;
-                                        i < _pagedData.length;
-                                        i++)
+                                            i < _pagedData.length;
+                                            i++)
                                           TableRow(
                                             decoration: BoxDecoration(
                                               border: Border(
@@ -817,10 +822,10 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                                                 top: BorderSide(
                                                     color: blueColor),
                                                 bottom:
-                                                i == _pagedData.length - 1
-                                                    ? BorderSide(
-                                                    color: blueColor)
-                                                    : BorderSide.none,
+                                                    i == _pagedData.length - 1
+                                                        ? BorderSide(
+                                                            color: blueColor)
+                                                        : BorderSide.none,
                                               ),
                                             ),
                                             children: [
@@ -858,11 +863,11 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
 
   // Add this card widget for displaying each insurance policy in a card with expandable details
   Widget insurancePolicyCard(
-      ExpiringRentersInsuranceData data,
-      bool isExpanded,
-      VoidCallback onExpandTap,
-      DateProvider dateProvider,
-      ) {
+    ExpiringRentersInsuranceData data,
+    bool isExpanded,
+    VoidCallback onExpandTap,
+    DateProvider dateProvider,
+  ) {
     TextStyle subTextStyle = TextStyle(
       fontSize: 14,
     );
@@ -903,11 +908,8 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                   style: cardTextStyle,
                 ),
               ),
-
             ],
           ),
-
-
           if (isExpanded) ...[
             SizedBox(height: 8),
             Divider(thickness: 2),
@@ -948,7 +950,10 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                         ),
                       ),
                       Text(
-                        data.expirationDate != null ? dateProvider.formatCurrentDate(data.expirationDate!) : "-",
+                        data.expirationDate != null
+                            ? dateProvider
+                                .formatCurrentDate(data.expirationDate!)
+                            : "-",
                         style: subTextStyle,
                         overflow: TextOverflow.ellipsis,
                       ),

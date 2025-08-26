@@ -292,6 +292,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
     VoidCallback onExpandTap,
     LeaseDatacronjob data,
   ) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(16),
@@ -330,17 +331,20 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                     GestureDetector(
                       onTap: () async {
                         // Fetch tenant data first using the tenantId
-                        List<tenant_model.Tenant> tenantData =
-                            await TenantsRepository().fetchTenantsummery(
-                                    data.tenant!.tenantId!) ??
-                                [];
-                        if (tenantData.isNotEmpty) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ResponsiveTenantSummary(
-                                      tenants: tenantData.first,
-                                      tenantId: data.tenant!.tenantId!)));
+                        if (data.tenant?.tenantId != null) {
+                          List<tenant_model.Tenant> tenantData =
+                              await TenantsRepository().fetchTenantsummery(
+                                      data.tenant!.tenantId!) ??
+                                  [];
+                          if (tenantData.isNotEmpty) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ResponsiveTenantSummary(
+                                            tenants: tenantData.first,
+                                            tenantId: data.tenant!.tenantId!)));
+                          }
                         }
                       },
                       child: Text(name, style: cardTextStyle),
@@ -398,7 +402,8 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                             ),
                           ),
                           Text(
-                            data.date != null ? data.date! : "-",
+                            dateProvider
+                                .formatCurrentDate('${data.date ?? "-"}'),
                             style: subTextStyle,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -446,7 +451,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                             ),
                           ),
                           Text(
-                            data.paymenttype! ?? "-",
+                            data.paymenttype ?? "-",
                             style: subTextStyle,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -546,8 +551,10 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              _showAlertAcknowledgement(
-                                  context, data.id!, failureacknowledged!);
+                              if (data.id != null) {
+                                _showAlertAcknowledgement(
+                                    context, data.id!, failureacknowledged);
+                              }
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -562,7 +569,9 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                           SizedBox(width: 10),
                           GestureDetector(
                             onTap: () {
-                              _showAlertRetry(context, data.id!);
+                              if (data.id != null) {
+                                _showAlertRetry(context, data.id!);
+                              }
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -578,7 +587,9 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                           SizedBox(width: 10),
                           GestureDetector(
                             onTap: () {
-                              _showAlertSchedule(context, data.id!);
+                              if (data.id != null) {
+                                _showAlertSchedule(context, data.id!);
+                              }
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -599,7 +610,9 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              _showAlertRefund(context, data.id!);
+                              if (data.id != null) {
+                                _showAlertRefund(context, data.id!);
+                              }
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -624,7 +637,9 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              _showAlertvoid(context, data.id!);
+                              if (data.id != null) {
+                                _showAlertvoid(context, data.id!);
+                              }
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -1025,8 +1040,10 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
     PaymentRefund? refund = refunds.isNotEmpty ? refunds.first : null;
 
     if (refund != null) {
-      retrydate.text = refund.entry!.first.date!;
-      amount.text = refund.totalAmount!.toString() ?? "0.0";
+      if (refund.entry != null && refund.entry!.isNotEmpty) {
+        retrydate.text = refund.entry!.first.date ?? "";
+      }
+      amount.text = refund.totalAmount?.toString() ?? "0.0";
       print(" r ${refund.entry}");
     }
 
@@ -1484,7 +1501,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData ||
-                      snapshot.data!.data!.isEmpty) {
+                      snapshot.data?.data?.isEmpty != false) {
                     return Container(
                       child: Center(
                         child: Column(
@@ -1516,7 +1533,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                       ),
                     );
                   } else {
-                    var data = snapshot.data!.data!;
+                    var data = snapshot.data?.data ?? [];
                     print("data ${data.length}");
                     // if (selectedValue == null && searchvalue!.isEmpty) {
                     //   data = snapshot.data!;
@@ -1561,7 +1578,8 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                     // }
                     //sortData(data);
                     final totalPages =
-                        (snapshot.data!.metadata!.total! / itemsPerPage).ceil();
+                        ((snapshot.data?.metadata?.total ?? 0) / itemsPerPage)
+                            .ceil();
 
                     // final currentPageData = data
                     //     .skip(currentPage * itemsPerPage)
@@ -1596,10 +1614,13 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
 
                                 return Container(
                                   child: paymentCard(
-                                    Propertytype.tenant!.tenantName!,
-                                    Propertytype.rentalAddress!,
-                                    Propertytype.totalAmount!
-                                        .toStringAsFixed(2)!,
+                                    Propertytype.tenant?.tenantName ??
+                                        "Unknown Tenant",
+                                    Propertytype.rentalAddress ??
+                                        "Unknown Address",
+                                    Propertytype.totalAmount
+                                            ?.toStringAsFixed(2) ??
+                                        "0.00",
                                     isExpanded,
                                     () {
                                       setState(() {
@@ -1642,13 +1663,15 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                                 child: Text(value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: snapshot.data!.metadata!
-                                                        .total! >
+                                            onChanged: (snapshot.data?.metadata
+                                                            ?.total ??
+                                                        0) >
                                                     itemsPerPageOptions
                                                         .first // Condition to check if dropdown should be enabled
                                                 ? (newValue) {
                                                     setState(() {
-                                                      itemsPerPage = newValue!;
+                                                      itemsPerPage = newValue ??
+                                                          itemsPerPage;
                                                       currentPage =
                                                           1; // Reset to first page when items per page change
                                                       futurecronjobpayment =

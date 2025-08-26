@@ -733,8 +733,8 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text(
-                            data.endDate != null ? data.endDate! : "-",
+                          Text( dateProvider.formatCurrentDate('${ data.endDate != null ? data.endDate! : "-"}')
+                           ,
                             style: subTextStyle,
                             overflow: TextOverflow.ellipsis,
                           ),

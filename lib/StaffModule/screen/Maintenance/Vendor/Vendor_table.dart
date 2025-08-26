@@ -77,12 +77,9 @@ class _Vendor_tableState extends State<Vendor_table> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -126,8 +123,8 @@ class _Vendor_tableState extends State<Vendor_table> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Name ", style: TextStyle(color: Colors.white))
-                        : Text("Name", style: TextStyle(color: Colors.white)),
+                        ? Text("Name ", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold))
+                        : Text("Name", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
@@ -136,7 +133,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           )
                         : Padding(
@@ -144,7 +141,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
-                              color: Colors.white,
+                              color:blueColor,
                             ),
                           ),
                   ],
@@ -176,7 +173,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                 },
                 child: Row(
                   children: [
-                    Text("  Phone  Number", style: TextStyle(color: Colors.white)),
+                    Text("  Phone  Number", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
@@ -184,7 +181,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           )
                         : Padding(
@@ -192,7 +189,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
-                              color: Colors.white,
+                              color:blueColor,
                             ),
                           ),
                   ],
@@ -877,14 +874,8 @@ class _Vendor_tableState extends State<Vendor_table> {
                                 children: [
                                   SizedBox(height: 10),
                                   _buildHeaders(),
-                                  SizedBox(height: 20),
+                                  SizedBox(height: 10),
                                   Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Color.fromRGBO(
-                                                152, 162, 179, .5))),
-                                    // decoration: BoxDecoration(
-                                    //     border: Border.all(color: blueColor)),
                                     child: Column(
                                       children: currentPageData
                                           .asMap()
@@ -896,17 +887,17 @@ class _Vendor_tableState extends State<Vendor_table> {
                                         Vendor Propertytype = entry.value;
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
+                                          margin:
+                                          EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
-                                                ? Colors.white
-                                                : blueColor.withOpacity(0.09),
+                                                ? Color(0xFFF4F8FF)
+                                                : Colors.white,
                                             border: Border.all(
-                                                color: Color.fromRGBO(
-                                                    152, 162, 179, .5)),
+                                                color: Color(0xFFDBE0E5)),
+                                            borderRadius:
+                                            BorderRadius.circular(10),
                                           ),
-                                          // decoration: BoxDecoration(
-                                          //   border: Border.all(color: blueColor),
-                                          // ),
                                           child: Column(
                                             children: <Widget>[
                                               ListTile(
@@ -1193,39 +1184,45 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                                   }
                                                                 },
                                                                 child:
-                                                                    Container(
+                                                                Container(
                                                                   height: 40,
-                                                                  decoration: BoxDecoration(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          350]), // color:Colors.grey[100],
+                                                                  decoration:
+                                                                  BoxDecoration(
+                                                                    border: Border.all(
+                                                                        color: Colors
+                                                                            .green,
+                                                                        width:
+                                                                        1.5),
+                                                                    borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(8),
+                                                                  ), // color:Colors.grey[100],
                                                                   child: Row(
                                                                     mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
+                                                                    MainAxisAlignment
+                                                                        .center,
                                                                     crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
+                                                                    CrossAxisAlignment
+                                                                        .center,
                                                                     children: [
                                                                       FaIcon(
                                                                         FontAwesomeIcons
                                                                             .edit,
                                                                         size:
-                                                                            15,
-                                                                        color:
-                                                                            blueColor,
+                                                                        15,
+                                                                        color: Colors
+                                                                            .green,
                                                                       ),
                                                                       SizedBox(
                                                                         width:
-                                                                            10,
+                                                                        10,
                                                                       ),
                                                                       Text(
                                                                         "Edit",
                                                                         style: TextStyle(
                                                                             color:
-                                                                                blueColor,
-                                                                            fontWeight:
-                                                                                FontWeight.bold),
+                                                                            Colors.green,
+                                                                            fontWeight: FontWeight.bold),
                                                                       ),
                                                                     ],
                                                                   ),
@@ -1247,39 +1244,45 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                                           .vendorId!);
                                                                 },
                                                                 child:
-                                                                    Container(
+                                                                Container(
                                                                   height: 40,
-                                                                  decoration: BoxDecoration(
-                                                                      color: Colors
-                                                                              .grey[
-                                                                          350]),
+                                                                  decoration:
+                                                                  BoxDecoration(
+                                                                    border: Border.all(
+                                                                        color: Colors
+                                                                            .red,
+                                                                        width:
+                                                                        1.5),
+                                                                    borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(8),
+                                                                  ),
                                                                   child: Row(
                                                                     mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
+                                                                    MainAxisAlignment
+                                                                        .center,
                                                                     crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
+                                                                    CrossAxisAlignment
+                                                                        .center,
                                                                     children: [
                                                                       FaIcon(
                                                                         FontAwesomeIcons
                                                                             .trashCan,
                                                                         size:
-                                                                            15,
-                                                                        color:
-                                                                            blueColor,
+                                                                        15,
+                                                                        color: Colors
+                                                                            .red,
                                                                       ),
                                                                       SizedBox(
                                                                         width:
-                                                                            10,
+                                                                        10,
                                                                       ),
                                                                       Text(
                                                                         "Delete",
                                                                         style: TextStyle(
                                                                             color:
-                                                                                blueColor,
-                                                                            fontWeight:
-                                                                                FontWeight.bold),
+                                                                            Colors.red,
+                                                                            fontWeight: FontWeight.bold),
                                                                       )
                                                                     ],
                                                                   ),

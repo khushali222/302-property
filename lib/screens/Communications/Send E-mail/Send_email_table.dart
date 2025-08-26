@@ -72,12 +72,9 @@ class _Send_Email_tableState extends State<Send_Email_table> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -121,9 +118,9 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                   children: [
                     width < 400
                         ? Text(" Subject",
-                            style: TextStyle(color: Colors.white))
+                            style: TextStyle( color: blueColor, fontWeight: FontWeight.bold))
                         : Text(" Subject",
-                            style: TextStyle(color: Colors.white)),
+                            style: TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     // SizedBox(width: 3),
                     // ascending1
@@ -173,7 +170,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                 child: Row(
                   children: [
                     Text("              Sent",
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 3),
                   ],
                 ),
@@ -849,12 +846,12 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                               child: Column(
                                 children: [
                                   _buildHeaders(),
-                                  SizedBox(height: 20),
+                                  SizedBox(height: 10),
                                   Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Color.fromRGBO(
-                                                152, 162, 179, .5))),
+                                    // decoration: BoxDecoration(
+                                    //     border: Border.all(
+                                    //         color: Color.fromRGBO(
+                                    //             152, 162, 179, .5))),
                                     // decoration: BoxDecoration(
                                     //     border: Border.all(color: blueColor)),
                                     child: Column(
@@ -869,17 +866,28 @@ class _Send_Email_tableState extends State<Send_Email_table> {
 
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
-                                          decoration: BoxDecoration(
-                                            color: index % 2 != 0
-                                                ? Colors.white
-                                                : blueColor.withOpacity(0.09),
-                                            border: Border.all(
-                                                color: Color.fromRGBO(
-                                                    152, 162, 179, .5)),
-                                          ),
+                                          // decoration: BoxDecoration(
+                                          //   color: index % 2 != 0
+                                          //       ? Colors.white
+                                          //       : blueColor.withOpacity(0.09),
+                                          //   border: Border.all(
+                                          //       color: Color.fromRGBO(
+                                          //           152, 162, 179, .5)),
+                                          // ),
                                           // decoration: BoxDecoration(
                                           //   border: Border.all(color: blueColor),
                                           // ),
+                                          margin:
+                                          EdgeInsets.symmetric(vertical: 6),
+                                          decoration: BoxDecoration(
+                                            color: index % 2 != 0
+                                                ? Color(0xFFF4F8FF)
+                                                : Colors.white,
+                                            border: Border.all(
+                                                color: Color(0xFFDBE0E5)),
+                                            borderRadius:
+                                            BorderRadius.circular(10),
+                                          ),
                                           child: Column(
                                             children: <Widget>[
                                               ListTile(

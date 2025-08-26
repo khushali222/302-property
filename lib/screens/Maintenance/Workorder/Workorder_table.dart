@@ -1031,7 +1031,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                   color:
                                       currentPageData.indexOf(workOrder) % 2 ==
                                               0
-                                          ? Color(0xFFF7F9FC)
+                                          ? Color(0xFFF4F8FF)
                                           : Colors.white,
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(color: Color(0xFFDBE0E5)),

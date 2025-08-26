@@ -119,7 +119,8 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
   @override
   void didUpdateWidget(InfrastructurePart oldWidget) {
     super.didUpdateWidget(oldWidget);
-    print('InfrastructurePart didUpdateWidget - units: ${widget.units?.length ?? 0}');
+    print(
+        'InfrastructurePart didUpdateWidget - units: ${widget.units?.length ?? 0}');
     if (widget.units != oldWidget.units) {
       fetchAllLeases();
       if (widget.units != null && widget.units!.isNotEmpty) {

@@ -51,12 +51,9 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -99,7 +96,11 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                 },
                 child: Row(
                   children: [
-                    width < 400 ? Text("Property ", style: TextStyle(color: Colors.white)) : Text("Property", style: TextStyle(color: Colors.white)),
+                    width < 400
+                        ? Text("Property ",
+                        style: TextStyle( color: blueColor, fontWeight: FontWeight.bold))
+                        : Text("Property",
+                        style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     // ascending1
@@ -148,7 +149,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                 },
                 child: Row(
                   children: [
-                    Text("    Tenant", style: TextStyle(color: Colors.white)),
+                    Text("    Tenant", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -180,7 +181,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                 },
                 child: Row(
                   children: [
-                    Text("Amount", style: TextStyle(color: Colors.white)),
+                    Text("Amount", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -489,9 +490,9 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                 children: [
                                   SizedBox(height: 10),
                                   _buildHeaders(),
-                                  SizedBox(height: 20),
+                                  SizedBox(height: 10),
                                   Container(
-                                    decoration: BoxDecoration(border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
+                                    // decoration: BoxDecoration(border: Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
                                     // decoration: BoxDecoration(
                                     //     border: Border.all(color: blueColor)),
                                     child: Column(
@@ -502,13 +503,17 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
 
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
+                                          margin:
+                                          EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
-                                            color: index % 2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                            border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                                            color: index % 2 != 0
+                                                ? Color(0xFFF4F8FF)
+                                                : Colors.white,
+                                            border: Border.all(
+                                                color: Color(0xFFDBE0E5)),
+                                            borderRadius:
+                                            BorderRadius.circular(10),
                                           ),
-                                          // decoration: BoxDecoration(
-                                          //   border: Border.all(color: blueColor),
-                                          // ),
                                           child: Column(
                                             children: <Widget>[
                                               ListTile(
@@ -640,7 +645,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                                           ),
                                                         ),
                                                         SizedBox(
-                                                          height: 10,
+                                                          height: 15,
                                                         ),
                                                         Row(
                                                           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -657,23 +662,40 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                                                             isredirectpayment: true,
                                                                           )));
                                                                 },
-                                                                child: Container(
+                                                                child:
+                                                                Container(
                                                                   height: 40,
-                                                                  decoration: BoxDecoration(color: Colors.grey[350]), // color:Colors.grey[100],
+                                                                  decoration: BoxDecoration(
+                                                                    border: Border.all(color: blueColor, width: 1.5),
+                                                                    borderRadius:
+                                                                    BorderRadius.circular(
+                                                                        8),
+                                                                  ), // color:Colors.grey[100],
                                                                   child: Row(
-                                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                                    mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                    crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
                                                                     children: [
-                                                                      Image.asset(
+                                                                      Image
+                                                                          .asset(
                                                                         'assets/icons/view.png',
-                                                                        color: blueColor,
+                                                                        color:
+                                                                        blueColor,
                                                                       ),
                                                                       SizedBox(
-                                                                        width: 10,
+                                                                        width:
+                                                                        10,
                                                                       ),
                                                                       Text(
                                                                         "View",
-                                                                        style: TextStyle(color: blueColor, fontWeight: FontWeight.bold),
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                            blueColor,
+                                                                            fontWeight:
+                                                                            FontWeight.bold),
                                                                       ),
                                                                     ],
                                                                   ),
@@ -688,24 +710,42 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                                                 onTap: () async {
                                                                   _showAlert(context, Propertytype.sId!, Propertytype);
                                                                 },
-                                                                child: Container(
+                                                                child:
+                                                                Container(
                                                                   height: 40,
-                                                                  decoration: BoxDecoration(color: Colors.grey[350]), // color:Colors.grey[100],
+                                                                  decoration: BoxDecoration(
+                                                                    border: Border.all(color: Colors.red, width: 1.5),
+                                                                    borderRadius:
+                                                                    BorderRadius.circular(
+                                                                        8),
+                                                                  ), // color:Colors.grey[100],
                                                                   child: Row(
-                                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                                    mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                    crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
                                                                     children: [
                                                                       FaIcon(
-                                                                        FontAwesomeIcons.trashCan,
-                                                                        size: 15,
-                                                                        color: blueColor,
+                                                                        FontAwesomeIcons
+                                                                            .trashCan,
+                                                                        size:
+                                                                        15,
+                                                                        color:
+                                                                        Colors.red,
                                                                       ),
                                                                       SizedBox(
-                                                                        width: 10,
+                                                                        width:
+                                                                        10,
                                                                       ),
                                                                       Text(
                                                                         "Delete",
-                                                                        style: TextStyle(color: blueColor, fontWeight: FontWeight.bold),
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                            Colors.red,
+                                                                            fontWeight:
+                                                                            FontWeight.bold),
                                                                       ),
                                                                     ],
                                                                   ),

@@ -100,17 +100,26 @@ class _SplashScreenState extends State<SplashScreen> {
         print('The plan is not active.');
       }
 
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => isAuthenticated == true
+      //         ? isPlanActive!
+      //         ? Dashboard()
+      //         : PlanPurchaseCard()
+      //         : Login_Screen(),
+      //   ),
+      // );
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => isAuthenticated == true
               ? isPlanActive!
               ? Dashboard()
-              : PlanPurchaseCard()
+              : provider.checkplanpurchaseModel != null ? PlanPurchaseCard() : Login_Screen()
               : Login_Screen(),
         ),
       );
-
 
 
 

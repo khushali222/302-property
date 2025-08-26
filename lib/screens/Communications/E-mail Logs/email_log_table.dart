@@ -69,12 +69,9 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -118,9 +115,9 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                   children: [
                     width < 400
                         ? Text("Recipient",
-                            style: TextStyle(color: Colors.white))
+                            style: TextStyle( color: blueColor, fontWeight: FontWeight.bold))
                         : Text("Recipient",
-                            style: TextStyle(color: Colors.white)),
+                            style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     // SizedBox(width: 3),
                     // ascending1
@@ -169,7 +166,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                 child: Row(
                   children: [
                     Text("       Rental \n     Address",
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
                     // SizedBox(width: 5),
                     // ascending2
                     //     ? Padding(
@@ -218,7 +215,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                 child: Row(
                   children: [
                     Text("          Sent",
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 3),
                   ],
                 ),
@@ -966,12 +963,12 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                               child: Column(
                                 children: [
                                   _buildHeaders(),
-                                  SizedBox(height: 20),
+                                  SizedBox(height: 10),
                                   Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Color.fromRGBO(
-                                                152, 162, 179, .5))),
+                                    // decoration: BoxDecoration(
+                                    //     border: Border.all(
+                                    //         color: Color.fromRGBO(
+                                    //             152, 162, 179, .5))),
                                     // decoration: BoxDecoration(
                                     //     border: Border.all(color: blueColor)),
                                     child: Column(
@@ -986,13 +983,16 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
 
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
+                                          margin:
+                                          EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
-                                                ? Colors.white
-                                                : blueColor.withOpacity(0.09),
+                                                ? Color(0xFFF4F8FF)
+                                                : Colors.white,
                                             border: Border.all(
-                                                color: Color.fromRGBO(
-                                                    152, 162, 179, .5)),
+                                                color: Color(0xFFDBE0E5)),
+                                            borderRadius:
+                                            BorderRadius.circular(10),
                                           ),
                                           // decoration: BoxDecoration(
                                           //   border: Border.all(color: blueColor),

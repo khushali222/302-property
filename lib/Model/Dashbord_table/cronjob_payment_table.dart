@@ -12,8 +12,11 @@ class LeaseResponse {
   factory LeaseResponse.fromJson(Map<String, dynamic> json) {
     return LeaseResponse(
       statusCode: json['statusCode'],
-      data: (json['data'] as List?)?.map((e) => LeaseDatacronjob.fromJson(e)).toList(),
-      metadata: json['metadata'] != null ? Metadata.fromJson(json['metadata']) : null,
+      data: (json['data'] as List?)
+          ?.map((e) => LeaseDatacronjob.fromJson(e))
+          .toList(),
+      metadata:
+          json['metadata'] != null ? Metadata.fromJson(json['metadata']) : null,
     );
   }
 }
@@ -56,7 +59,9 @@ class LeaseDatacronjob {
       paymenttype: json['payment_type'],
       state: json['state'],
       tenant: json['tenant'] != null ? Tenant.fromJson(json['tenant']) : null,
-      totalAmount: (json['total_amount'] as num?)?.toDouble(),
+      totalAmount: json['total_amount'] != null
+          ? double.tryParse(json['total_amount'].toString()) ?? 0.0
+          : null,
       response: json['response'],
       responseText: json['responseText'],
       status: json['status'],

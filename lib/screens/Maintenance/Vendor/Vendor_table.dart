@@ -73,13 +73,17 @@ class _Vendor_tableState extends State<Vendor_table> {
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
+      // decoration: BoxDecoration(
+      //   color: blueColor,
+      //   borderRadius: BorderRadius.only(
+      //     topLeft: Radius.circular(13),
+      //     topRight: Radius.circular(13),
+      //   ),
+      // ),
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -123,25 +127,25 @@ class _Vendor_tableState extends State<Vendor_table> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Name ", style: TextStyle(color: Colors.white))
-                        : Text("Name", style: TextStyle(color: Colors.white)),
+                        ? Text("Name ", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold))
+                        : Text("Name", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
                         ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            padding:  EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           )
                         : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            padding:  EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
-                              color: Colors.white,
+                              color:blueColor
                             ),
                           ),
                   ],
@@ -173,23 +177,23 @@ class _Vendor_tableState extends State<Vendor_table> {
                 },
                 child: Row(
                   children: [
-                    Text("  Phone  Number", style: TextStyle(color: Colors.white)),
+                    Text("  Phone  Number", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            padding:  EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           )
                         : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            padding:  EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           ),
                   ],
@@ -921,12 +925,12 @@ class _Vendor_tableState extends State<Vendor_table> {
                                 children: [
                                   SizedBox(height: 10),
                                   _buildHeaders(),
-                                  SizedBox(height: 20),
+                                  SizedBox(height: 10),
                                   Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Color.fromRGBO(
-                                                152, 162, 179, .5))),
+                                    // decoration: BoxDecoration(
+                                    //     border: Border.all(
+                                    //         color: Color.fromRGBO(
+                                    //             152, 162, 179, .5))),
                                     // decoration: BoxDecoration(
                                     //     border: Border.all(color: blueColor)),
                                     child: Column(
@@ -940,17 +944,28 @@ class _Vendor_tableState extends State<Vendor_table> {
                                         Vendor Propertytype = entry.value;
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
-                                          decoration: BoxDecoration(
-                                            color: index % 2 != 0
-                                                ? Colors.white
-                                                : blueColor.withOpacity(0.09),
-                                            border: Border.all(
-                                                color: Color.fromRGBO(
-                                                    152, 162, 179, .5)),
-                                          ),
+                                          // decoration: BoxDecoration(
+                                          //   color: index % 2 != 0
+                                          //       ? Colors.white
+                                          //       : blueColor.withOpacity(0.09),
+                                          //   border: Border.all(
+                                          //       color: Color.fromRGBO(
+                                          //           152, 162, 179, .5)),
+                                          // ),
                                           // decoration: BoxDecoration(
                                           //   border: Border.all(color: blueColor),
                                           // ),
+                                          margin:
+                                          EdgeInsets.symmetric(vertical: 6),
+                                          decoration: BoxDecoration(
+                                            color: index % 2 != 0
+                                                ? Color(0xFFF4F8FF)
+                                                : Colors.white,
+                                            border: Border.all(
+                                                color: Color(0xFFDBE0E5)),
+                                            borderRadius:
+                                            BorderRadius.circular(10),
+                                          ),
                                           child: Column(
                                             children: <Widget>[
                                               ListTile(

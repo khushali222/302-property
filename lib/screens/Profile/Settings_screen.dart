@@ -361,38 +361,17 @@ class _TabBarExampleState extends State<TabBarExample> {
       if (success) {
         // ScaffoldMessenger.of(context).showSnackBar(
         //     SnackBar(content: Text('Latefee Updated Successfully')));
-        Fluttertoast.showToast(
-          msg: 'Late Fee Updated Successfully',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.TOP,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
+        Fluttertoast.showToast(msg: 'Late Fee Updated Successfully');
       } else {
         // ScaffoldMessenger.of(context)
         //     .showSnackBar(SnackBar(content: Text('Failed to Update Latefee')));
-        Fluttertoast.showToast(
-          msg: 'Failed to Update Late Fee',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.TOP,
-          backgroundColor: Colors.redAccent,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
+        Fluttertoast.showToast(msg: 'Failed to Update Late Fee');
       }
     } catch (e) {
       print('Failed to update Late Fee data: $e');
       // ScaffoldMessenger.of(context)
       //     .showSnackBar(SnackBar(content: Text('Error: $e')));
-      Fluttertoast.showToast(
-        msg: 'Error: $e',
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.TOP,
-        backgroundColor: Colors.redAccent,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+      Fluttertoast.showToast(msg: 'Error: $e');
     }
   }
 
@@ -447,40 +426,17 @@ class _TabBarExampleState extends State<TabBarExample> {
       if (success) {
         // ScaffoldMessenger.of(context).showSnackBar(
         //     SnackBar(content: Text('late_fee Updated Successfully')));
-        Fluttertoast.showToast(
-          msg: 'Late Fee updated successfully',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.TOP,
-          backgroundColor: Colors.black87,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-
+        Fluttertoast.showToast(msg: 'Late Fee updated successfully');
       } else {
         // ScaffoldMessenger.of(context).showSnackBar(
         //     SnackBar(content: Text('Failed to Update Surcharge')));
-        Fluttertoast.showToast(
-          msg: 'Failed to Update Late Fee',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.TOP,
-          backgroundColor: Colors.black87,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-
+        Fluttertoast.showToast(msg: 'Failed to Update Late Fee');
       }
     } catch (e) {
       print('Failed to update Late Fee data: $e');
       // ScaffoldMessenger.of(context)
       //     .showSnackBar(SnackBar(content: Text('Error: $e')));
-      Fluttertoast.showToast(
-        msg: 'Error: $e',
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.TOP,
-        backgroundColor: Colors.redAccent,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+      Fluttertoast.showToast(msg: 'Error: $e');
     }
   }
 
@@ -596,7 +552,7 @@ class _TabBarExampleState extends State<TabBarExample> {
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
     print("id of id 1 $id");
-    print("$Api_url/api/mail_permission");
+
     print(data);
     final response = await http.post(
       Uri.parse('$Api_url/api/charge-setting'),
@@ -608,9 +564,24 @@ class _TabBarExampleState extends State<TabBarExample> {
       body: jsonEncode(data),
     );
     print(response.body);
+
     if (response.statusCode == 200) {
-      return true;
+      final responseData = jsonDecode(response.body);
+      if (responseData["statusCode"] == 200) {
+        // Show success message
+        Fluttertoast.showToast(
+            msg: responseData["message"] ??
+                "Charge Setting updated successfully");
+        return true;
+      } else {
+        // Show error message from API
+        Fluttertoast.showToast(
+            msg: responseData["message"] ?? "Failed to update charge setting");
+        return false;
+      }
     } else {
+      // Show error message for HTTP error
+      Fluttertoast.showToast(msg: "Failed to update charge setting");
       return false;
     }
   }
@@ -691,12 +662,9 @@ class _TabBarExampleState extends State<TabBarExample> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
@@ -733,9 +701,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Account", style: TextStyle(color: Colors.white))
+                        ? Text("Account",
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold))
                         : Text("Account",
-                            style: TextStyle(color: Colors.white)),
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                   ],
@@ -768,8 +739,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                   children: [
                     Text("    Type",
                         style: TextStyle(
-                          color: Colors.white,
-                        )),
+                            color: blueColor, fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
@@ -800,7 +770,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                 child: Row(
                   children: [
                     // SizedBox(width: 3),
-                    Text("Fund Type", style: TextStyle(color: Colors.white)),
+                    Text("Fund Type",
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
@@ -871,10 +843,11 @@ class _TabBarExampleState extends State<TabBarExample> {
         backgroundColor: Colors.white,
       ),
       buttons: [
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -1472,10 +1445,10 @@ class _TabBarExampleState extends State<TabBarExample> {
       print('add and update workorder  \\${responseData}');
       print('add workorder  \\${response.body}');
       if (responseData["statusCode"] == 200) {
-        Fluttertoast.showToast(msg: responseData["message"], gravity: ToastGravity.TOP,backgroundColor: Colors.black);
+        Fluttertoast.showToast(msg: responseData["message"]);
         return json.decode(response.body);
       } else {
-        Fluttertoast.showToast(msg: responseData["message"], gravity: ToastGravity.TOP,backgroundColor: Colors.black);
+        Fluttertoast.showToast(msg: responseData["message"]);
         throw Exception('Failed to add workorder');
       }
     } catch (error) {
@@ -2016,9 +1989,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 ? Colors.white
                                                 : blueColor,
                                             fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
+                                                        .size
+                                                        .width <
+                                                    500
                                                 ? 15
                                                 : 20),
                                       ),
@@ -2063,9 +2036,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   ? Colors.white
                                                   : blueColor,
                                               fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width <
-                                                  500
+                                                          .size
+                                                          .width <
+                                                      500
                                                   ? 15
                                                   : 20),
                                         ),
@@ -2074,7 +2047,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   ),
                                 ),
                               ),
-
 
                               // Expanded(
                               //   child: InkWell(
@@ -4398,13 +4370,13 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             children: [
                                               SizedBox(height: 10),
                                               _buildHeaders(),
-                                              SizedBox(height: 20),
+                                              SizedBox(height: 10),
                                               Container(
-                                                decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color: Color.fromRGBO(
-                                                          152, 162, 179, .5)),
-                                                ),
+                                                // decoration: BoxDecoration(
+                                                //   border: Border.all(
+                                                //       color: Color.fromRGBO(
+                                                //           152, 162, 179, .5)),
+                                                // ),
                                                 // decoration: BoxDecoration(
                                                 //     border: Border.all(color: blueColor)),
                                                 child: Column(
@@ -4419,19 +4391,19 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                         entry.value;
                                                     //return CustomExpansionTile(data: Propertytype, index: index);
                                                     return Container(
+                                                      margin:
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 6),
                                                       decoration: BoxDecoration(
                                                         color: index % 2 != 0
-                                                            ? Colors.white
-                                                            : blueColor
-                                                                .withOpacity(
-                                                                    0.09),
+                                                            ? Color(0xFFF4F8FF)
+                                                            : Colors.white,
                                                         border: Border.all(
-                                                            color:
-                                                                Color.fromRGBO(
-                                                                    152,
-                                                                    162,
-                                                                    179,
-                                                                    .5)),
+                                                            color: Color(
+                                                                0xFFDBE0E5)),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
                                                       ),
                                                       // decoration: BoxDecoration(
                                                       //   border: Border.all(color: blueColor),
@@ -4612,7 +4584,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                               },
                                                                               child: Container(
                                                                                 height: 40,
-                                                                                decoration: BoxDecoration(color: Colors.grey[350]),
+                                                                                decoration: BoxDecoration(
+                                                                                  border: Border.all(color: Colors.red, width: 1.5),
+                                                                                  borderRadius: BorderRadius.circular(8),
+                                                                                ),
                                                                                 child: Row(
                                                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -4620,14 +4595,14 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                                     FaIcon(
                                                                                       FontAwesomeIcons.trashCan,
                                                                                       size: 15,
-                                                                                      color: blueColor,
+                                                                                      color: Colors.red,
                                                                                     ),
                                                                                     SizedBox(
                                                                                       width: 10,
                                                                                     ),
                                                                                     Text(
                                                                                       "Delete",
-                                                                                      style: TextStyle(color: blueColor, fontWeight: FontWeight.bold),
+                                                                                      style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                                                                                     )
                                                                                   ],
                                                                                 ),
@@ -5443,58 +5418,67 @@ class _TabBarExampleState extends State<TabBarExample> {
                               // Dynamic categories dropdown for work order
                               DropdownButtonHideUnderline(
                                 child: DropdownButton2<allcategories_model>(
-                                        isExpanded: true,
-                                  hint: Text(_isLoadingCategories ? 'Loading categories...' : 'Select Category'),
-                                  value: _dropdownCategories.contains(_selectedDropdownCategory)
-                                            ? _selectedDropdownCategory
-                                            : null,
-                                        items: _dropdownCategories.map((cat) {
-                                    return DropdownMenuItem<allcategories_model>(
-                                            value: cat,
-                                            child: Text(cat.name ?? ''),
-                                          );
-                                        }).toList(),
-                                        onChanged: _isLoadingCategories
+                                  isExpanded: true,
+                                  hint: Text(_isLoadingCategories
+                                      ? 'Loading categories...'
+                                      : 'Select Category'),
+                                  value: _dropdownCategories
+                                          .contains(_selectedDropdownCategory)
+                                      ? _selectedDropdownCategory
+                                      : null,
+                                  items: _dropdownCategories.map((cat) {
+                                    return DropdownMenuItem<
+                                        allcategories_model>(
+                                      value: cat,
+                                      child: Text(cat.name ?? ''),
+                                    );
+                                  }).toList(),
+                                  onChanged: _isLoadingCategories
                                       ? null // disables dropdown while loading
-                                            : (allcategories_model? newValue) {
-                                                setState(() {
-                                            _selectedDropdownCategory = newValue;
-                                            _showTextField = newValue?.name == 'Other';
-                                                });
-                                              },
-                                        buttonStyleData: ButtonStyleData(
-                                          height: 45,
-                                    padding: const EdgeInsets.only(left: 14, right: 14),
-                                          decoration: BoxDecoration(
+                                      : (allcategories_model? newValue) {
+                                          setState(() {
+                                            _selectedDropdownCategory =
+                                                newValue;
+                                            _showTextField =
+                                                newValue?.name == 'Other';
+                                          });
+                                        },
+                                  buttonStyleData: ButtonStyleData(
+                                    height: 45,
+                                    padding: const EdgeInsets.only(
+                                        left: 14, right: 14),
+                                    decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(6),
-                                            color: Colors.white,
-                                          ),
-                                          elevation: 2,
-                                        ),
-                                        iconStyleData: const IconStyleData(
-                                          icon: Icon(Icons.arrow_drop_down),
-                                          iconSize: 24,
-                                          iconEnabledColor: Color(0xFFb0b6c3),
-                                          iconDisabledColor: Colors.grey,
-                                        ),
-                                        dropdownStyleData: DropdownStyleData(
-                                    maxHeight: 250,
-                                          decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                            color: Colors.white,
-                                          ),
-                                          scrollbarTheme: ScrollbarThemeData(
-                                            radius: const Radius.circular(6),
-                                      thickness: MaterialStateProperty.all(6),
-                                      thumbVisibility: MaterialStateProperty.all(true),
-                                          ),
-                                        ),
-                                  menuItemStyleData: const MenuItemStyleData(
-                                          height: 50,
-                                    padding: EdgeInsets.only(left: 14, right: 14),
-                                        ),
-                                      ),
+                                      color: Colors.white,
                                     ),
+                                    elevation: 2,
+                                  ),
+                                  iconStyleData: const IconStyleData(
+                                    icon: Icon(Icons.arrow_drop_down),
+                                    iconSize: 24,
+                                    iconEnabledColor: Color(0xFFb0b6c3),
+                                    iconDisabledColor: Colors.grey,
+                                  ),
+                                  dropdownStyleData: DropdownStyleData(
+                                    maxHeight: 250,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: Colors.white,
+                                    ),
+                                    scrollbarTheme: ScrollbarThemeData(
+                                      radius: const Radius.circular(6),
+                                      thickness: MaterialStateProperty.all(6),
+                                      thumbVisibility:
+                                          MaterialStateProperty.all(true),
+                                    ),
+                                  ),
+                                  menuItemStyleData: const MenuItemStyleData(
+                                    height: 50,
+                                    padding:
+                                        EdgeInsets.only(left: 14, right: 14),
+                                  ),
+                                ),
+                              ),
                               if (_showTextField)
                                 Padding(
                                   padding: const EdgeInsets.only(
@@ -6039,13 +6023,16 @@ class _TabBarExampleState extends State<TabBarExample> {
                                           await SharedPreferences.getInstance();
                                       String? token = prefs.getString('token');
                                       String? id = prefs.getString('adminId');
-                                      await AddChargeSettingData(id, {
+                                      bool success = await AddChargeSettingData(
+                                          id, {
                                         "admin_id": id,
                                         "unbundle_charges":
                                             chargesetting!["unbundle_charges"]
-                                      }).then((value) {
-                                        setState(() {});
                                       });
+                                      if (success) {
+                                        // Refresh the charge settings data
+                                        loadChargeSetting();
+                                      }
                                     },
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(5.0),
@@ -6883,10 +6870,11 @@ class _TabBarExampleState extends State<TabBarExample> {
           },
           color: blueColor,
         ),
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,

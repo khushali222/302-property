@@ -15,9 +15,11 @@ class ExpiringRentersInsuranceResponse {
     return ExpiringRentersInsuranceResponse(
       statusCode: json['statusCode'] as int?,
       data: (json['data'] as List<dynamic>?)
-          ?.map((e) => ExpiringRentersInsuranceData.fromJson(e as Map<String, dynamic>))
+          ?.map((e) =>
+              ExpiringRentersInsuranceData.fromJson(e as Map<String, dynamic>))
           .toList(),
-      metadata: json['metadata'] != null ? Metadata.fromJson(json['metadata']) : null,
+      metadata:
+          json['metadata'] != null ? Metadata.fromJson(json['metadata']) : null,
       message: json['message'] as String?,
     );
   }
@@ -37,12 +39,24 @@ class ExpiringRentersInsuranceData {
   final String? insuranceCompany;
   final String? policyId;
   final String? expirationDate;
-  final int? liabilityCoverage;
+  final double?
+      liabilityCoverage; // Changed from int? to double? to handle both int and double
   final String? rentersInsuranceId;
   final String? leaseId;
   final String? tenantId;
   final String? tenantName;
   final String? rentalAddress;
+
+  // Additional fields that might be present in the actual API response
+  final String? response;
+  final double? totalAmount; // Handle total_amount that can be int or double
+  final String? responseText;
+  final String? rentalUnit;
+  final TenantInfo? tenant;
+  final String? paymentType;
+  final String? date;
+  final String? timestamp;
+  final String? state;
 
   ExpiringRentersInsuranceData({
     this.id,
@@ -55,6 +69,15 @@ class ExpiringRentersInsuranceData {
     this.tenantId,
     this.tenantName,
     this.rentalAddress,
+    this.response,
+    this.totalAmount,
+    this.responseText,
+    this.rentalUnit,
+    this.tenant,
+    this.paymentType,
+    this.date,
+    this.timestamp,
+    this.state,
   });
 
   factory ExpiringRentersInsuranceData.fromJson(Map<String, dynamic> json) {
@@ -63,13 +86,36 @@ class ExpiringRentersInsuranceData {
       insuranceCompany: json['insurance_company'] as String?,
       policyId: json['policy_id'] as String?,
       expirationDate: json['expiration_date'] ?? "",
-      liabilityCoverage: json['liability_coverage'] as int?,
+      liabilityCoverage:
+          _parseNumericField(json['liability_coverage']), // Use helper function
       rentersInsuranceId: json['renters_insurance_id'] as String?,
       leaseId: json['lease_id'] as String?,
       tenantId: json['tenant_id'] as String?,
       tenantName: json['tenant_name'] as String?,
       rentalAddress: json['rental_address'] as String?,
+      response: json['response'] as String?,
+      totalAmount:
+          _parseNumericField(json['total_amount']), // Use helper function
+      responseText: json['responseText'] as String?,
+      rentalUnit: json['rental_unit'] as String?,
+      tenant:
+          json['tenant'] != null ? TenantInfo.fromJson(json['tenant']) : null,
+      paymentType: json['payment_type'] as String?,
+      date: json['date'] as String?,
+      timestamp: json['timestamp'] as String?,
+      state: json['state'] as String?,
     );
+  }
+
+  // Helper function to safely parse numeric fields that can be int or double
+  static double? _parseNumericField(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value.toDouble();
+    if (value is double) return value;
+    if (value is String) {
+      return double.tryParse(value);
+    }
+    return null;
   }
 
   Map<String, dynamic> toJson() {
@@ -84,6 +130,39 @@ class ExpiringRentersInsuranceData {
       'tenant_id': tenantId,
       'tenant_name': tenantName,
       'rental_address': rentalAddress,
+      'response': response,
+      'total_amount': totalAmount,
+      'responseText': responseText,
+      'rental_unit': rentalUnit,
+      'tenant': tenant?.toJson(),
+      'payment_type': paymentType,
+      'date': date,
+      'timestamp': timestamp,
+      'state': state,
+    };
+  }
+}
+
+class TenantInfo {
+  final String? tenantId;
+  final String? tenantName;
+
+  TenantInfo({
+    this.tenantId,
+    this.tenantName,
+  });
+
+  factory TenantInfo.fromJson(Map<String, dynamic> json) {
+    return TenantInfo(
+      tenantId: json['tenant_id'] as String?,
+      tenantName: json['tenant_name'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'tenant_id': tenantId,
+      'tenant_name': tenantName,
     };
   }
 }
@@ -99,9 +178,20 @@ class Metadata {
 
   factory Metadata.fromJson(Map<String, dynamic> json) {
     return Metadata(
-      total: json['total'] as int?,
-      page: json['page'] as int?,
+      total: _parseIntField(json['total']), // Use helper function
+      page: _parseIntField(json['page']), // Use helper function
     );
+  }
+
+  // Helper function to safely parse int fields
+  static int? _parseIntField(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) {
+      return int.tryParse(value);
+    }
+    return null;
   }
 
   Map<String, dynamic> toJson() {
