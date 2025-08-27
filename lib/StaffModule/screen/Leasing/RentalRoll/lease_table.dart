@@ -98,15 +98,24 @@ class _Lease_tableState extends State<Lease_table> {
   }
 
   void sortData(List<Lease1> data) {
-    if (sorting1) {
+    // Always apply default sort by startDate in descending order (newest first)
+    data.sort((a, b) {
+      if (a.startDate == null && b.startDate == null) return 0;
+      if (a.startDate == null) return 1;
+      if (b.startDate == null) return -1;
+      return b.startDate!.compareTo(a.startDate!); // Descending order
+    });
+
+    // Apply user-selected sorting only if explicitly chosen
+    if (sorting1 && !sorting2 && !sorting3) {
       data.sort((a, b) => ascending1
           ? a.tenantNames!.compareTo(b.tenantNames!)
           : b.tenantNames!.compareTo(a.tenantNames!));
-    } else if (sorting2) {
+    } else if (sorting2 && !sorting1 && !sorting3) {
       data.sort((a, b) => ascending2
           ? a.startDate!.compareTo(b.startDate!)
           : b.startDate!.compareTo(a.startDate!));
-    } else if (sorting3) {
+    } else if (sorting3 && !sorting1 && !sorting2) {
       data.sort((a, b) => ascending3
           ? a.endDate!.compareTo(b.endDate!)
           : b.endDate!.compareTo(a.endDate!));

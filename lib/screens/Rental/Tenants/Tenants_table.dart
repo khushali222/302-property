@@ -48,15 +48,24 @@ class _Tenants_tableState extends State<Tenants_table> {
   ]; // Options for items per page
 
   void sortData(List<Tenant> data) {
-    if (sorting1) {
+    // Always apply default sort by createdAt in descending order (newest first)
+    data.sort((a, b) {
+      if (a.createdAt == null && b.createdAt == null) return 0;
+      if (a.createdAt == null) return 1;
+      if (b.createdAt == null) return -1;
+      return b.createdAt!.compareTo(a.createdAt!); // Descending order
+    });
+
+    // Apply user-selected sorting only if explicitly chosen
+    if (sorting1 && !sorting2 && !sorting3) {
       data.sort((a, b) => ascending1
           ? a.tenantFirstName!.compareTo(b.tenantFirstName!)
           : b.tenantFirstName!.compareTo(a.tenantFirstName!));
-    } else if (sorting2) {
+    } else if (sorting2 && !sorting1 && !sorting3) {
       data.sort((a, b) => ascending2
           ? a.rentalAddress!.compareTo(b.rentalAddress!)
           : b.rentalAddress!.compareTo(a.rentalAddress!));
-    } else if (sorting3) {
+    } else if (sorting3 && !sorting1 && !sorting2) {
       data.sort((a, b) => ascending3
           ? a.tenantPhoneNumber!.compareTo(b.tenantPhoneNumber!)
           : b.tenantPhoneNumber!.compareTo(a.tenantPhoneNumber!));
@@ -344,7 +353,8 @@ class _Tenants_tableState extends State<Tenants_table> {
         DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,

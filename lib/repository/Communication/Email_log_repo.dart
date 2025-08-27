@@ -25,7 +25,7 @@ class EmailLogRepository {
         },
       );
 
-      print("fetch mail ${response.body}");
+      print("fetch mail responce ${response.body}");
 
       if (response.statusCode == 200) {
         return Email_log_table.fromJson(json.decode(response.body));

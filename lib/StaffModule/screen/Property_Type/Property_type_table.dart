@@ -43,7 +43,16 @@ class _PropertyTableState extends State<PropertyTable> {
   ]; // Options for items per page
 
   void sortData(List<propertytype> data) {
-    if (sorting1) {
+    // Always apply default sort by createdAt in descending order (newest first)
+    data.sort((a, b) {
+      if (a.createdAt == null && b.createdAt == null) return 0;
+      if (a.createdAt == null) return 1;
+      if (b.createdAt == null) return -1;
+      return b.createdAt!.compareTo(a.createdAt!); // Descending order
+    });
+
+    // Apply user-selected sorting only if explicitly chosen
+    if (sorting1 && !sorting2 && !sorting3) {
       data.sort((a, b) => ascending1
           ? a.propertyType!
               .toLowerCase()
@@ -51,7 +60,7 @@ class _PropertyTableState extends State<PropertyTable> {
           : b.propertyType!
               .toLowerCase()
               .compareTo(a.propertyType!.toLowerCase()));
-    } else if (sorting2) {
+    } else if (sorting2 && !sorting1 && !sorting3) {
       data.sort((a, b) => ascending2
           ? a.propertysubType!
               .toLowerCase()
@@ -59,7 +68,7 @@ class _PropertyTableState extends State<PropertyTable> {
           : b.propertysubType!
               .toLowerCase()
               .compareTo(a.propertysubType!.toLowerCase()));
-    } else if (sorting3) {
+    } else if (sorting3 && !sorting1 && !sorting2) {
       data.sort((a, b) => ascending3
           ? a.createdAt!.compareTo(b.createdAt!)
           : b.createdAt!.compareTo(a.createdAt!));
@@ -1056,7 +1065,6 @@ class _PropertyTableState extends State<PropertyTable> {
                                   _buildHeaders(),
                                   SizedBox(height: 10),
                                   Container(
-
                                     // decoration: BoxDecoration(
                                     //     border: Border.all(color: blueColor)),
                                     child: Column(
@@ -1299,44 +1307,43 @@ class _PropertyTableState extends State<PropertyTable> {
                                                                     }
                                                                   },
                                                                   child:
-                                                                  Container(
+                                                                      Container(
                                                                     height: 40,
                                                                     decoration:
-                                                                    BoxDecoration(
+                                                                        BoxDecoration(
                                                                       border: Border.all(
                                                                           color: Colors
                                                                               .green,
                                                                           width:
-                                                                          1.5),
+                                                                              1.5),
                                                                       borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(8),
+                                                                          BorderRadius.circular(
+                                                                              8),
                                                                     ),
                                                                     child: Row(
                                                                       mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
+                                                                          MainAxisAlignment
+                                                                              .center,
                                                                       crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
+                                                                          CrossAxisAlignment
+                                                                              .center,
                                                                       children: [
                                                                         FaIcon(
                                                                           FontAwesomeIcons
                                                                               .edit,
                                                                           size:
-                                                                          15,
-                                                                          color: Colors
-                                                                              .green,
+                                                                              15,
+                                                                          color:
+                                                                              Colors.green,
                                                                         ),
                                                                         SizedBox(
                                                                           width:
-                                                                          10,
+                                                                              10,
                                                                         ),
                                                                         Text(
                                                                           "Edit",
                                                                           style: TextStyle(
-                                                                              color:
-                                                                              Colors.green,
+                                                                              color: Colors.green,
                                                                               fontWeight: FontWeight.bold),
                                                                         ),
                                                                       ],
@@ -1361,44 +1368,43 @@ class _PropertyTableState extends State<PropertyTable> {
                                                                             .propertyId!);
                                                                   },
                                                                   child:
-                                                                  Container(
+                                                                      Container(
                                                                     height: 40,
                                                                     decoration:
-                                                                    BoxDecoration(
+                                                                        BoxDecoration(
                                                                       border: Border.all(
                                                                           color: Colors
                                                                               .red,
                                                                           width:
-                                                                          1.5),
+                                                                              1.5),
                                                                       borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(8),
+                                                                          BorderRadius.circular(
+                                                                              8),
                                                                     ),
                                                                     child: Row(
                                                                       mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
+                                                                          MainAxisAlignment
+                                                                              .center,
                                                                       crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
+                                                                          CrossAxisAlignment
+                                                                              .center,
                                                                       children: [
                                                                         FaIcon(
                                                                           FontAwesomeIcons
                                                                               .trashCan,
                                                                           size:
-                                                                          15,
-                                                                          color: Colors
-                                                                              .red,
+                                                                              15,
+                                                                          color:
+                                                                              Colors.red,
                                                                         ),
                                                                         SizedBox(
                                                                           width:
-                                                                          10,
+                                                                              10,
                                                                         ),
                                                                         Text(
                                                                           "Delete",
                                                                           style: TextStyle(
-                                                                              color:
-                                                                              Colors.red,
+                                                                              color: Colors.red,
                                                                               fontWeight: FontWeight.bold),
                                                                         )
                                                                       ],

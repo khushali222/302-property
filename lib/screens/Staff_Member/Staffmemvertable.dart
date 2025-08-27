@@ -74,7 +74,16 @@ class _StaffTableState extends State<StaffTable> {
   bool ascending3 = false;
 
   void sortData(List<Staffmembers> data) {
-    if (sorting1) {
+    // Always apply default sort by createdAt in descending order (newest first)
+    data.sort((a, b) {
+      if (a.createdAt == null && b.createdAt == null) return 0;
+      if (a.createdAt == null) return 1;
+      if (b.createdAt == null) return -1;
+      return b.createdAt!.compareTo(a.createdAt!); // Descending order
+    });
+
+    // Apply user-selected sorting only if explicitly chosen
+    if (sorting1 && !sorting2 && !sorting3) {
       data.sort((a, b) => ascending1
           ? a.staffmemberName!
               .toLowerCase()
@@ -82,7 +91,7 @@ class _StaffTableState extends State<StaffTable> {
           : b.staffmemberName!
               .toLowerCase()
               .compareTo(a.staffmemberName!.toLowerCase()));
-    } else if (sorting2) {
+    } else if (sorting2 && !sorting1 && !sorting3) {
       data.sort((a, b) => ascending2
           ? a.staffmemberDesignation!
               .toLowerCase()
@@ -90,7 +99,7 @@ class _StaffTableState extends State<StaffTable> {
           : b.staffmemberDesignation!
               .toLowerCase()
               .compareTo(a.staffmemberDesignation!.toLowerCase()));
-    } else if (sorting3) {
+    } else if (sorting3 && !sorting1 && !sorting2) {
       data.sort((a, b) => ascending3
           ? a.createdAt!.compareTo(b.createdAt!)
           : b.createdAt!.compareTo(a.createdAt!));
@@ -601,7 +610,8 @@ class _StaffTableState extends State<StaffTable> {
         DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,

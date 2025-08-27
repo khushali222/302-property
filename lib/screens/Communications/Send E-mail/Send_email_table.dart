@@ -767,15 +767,15 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "+ Add",
+                                    "Send Email",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                       fontSize:
                                           MediaQuery.of(context).size.width <
                                                   500
-                                              ? 16
-                                              : 20,
+                                              ? 14
+                                              : 17,
                                     ),
                                   ),
                                 ],

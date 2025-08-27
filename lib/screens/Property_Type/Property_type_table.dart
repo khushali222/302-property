@@ -43,7 +43,16 @@ class _PropertyTableState extends State<PropertyTable> {
   ]; // Options for items per page
 
   void sortData(List<propertytype> data) {
-    if (sorting1) {
+    // Always apply default sort by createdAt in descending order (newest first)
+    data.sort((a, b) {
+      if (a.createdAt == null && b.createdAt == null) return 0;
+      if (a.createdAt == null) return 1;
+      if (b.createdAt == null) return -1;
+      return b.createdAt!.compareTo(a.createdAt!); // Descending order
+    });
+
+    // Apply user-selected sorting only if explicitly chosen
+    if (sorting1 && !sorting2 && !sorting3) {
       data.sort((a, b) => ascending1
           ? a.propertyType!
               .toLowerCase()
@@ -51,7 +60,7 @@ class _PropertyTableState extends State<PropertyTable> {
           : b.propertyType!
               .toLowerCase()
               .compareTo(a.propertyType!.toLowerCase()));
-    } else if (sorting2) {
+    } else if (sorting2 && !sorting1 && !sorting3) {
       data.sort((a, b) => ascending2
           ? a.propertysubType!
               .toLowerCase()
@@ -59,7 +68,7 @@ class _PropertyTableState extends State<PropertyTable> {
           : b.propertysubType!
               .toLowerCase()
               .compareTo(a.propertysubType!.toLowerCase()));
-    } else if (sorting3) {
+    } else if (sorting3 && !sorting1 && !sorting2) {
       data.sort((a, b) => ascending3
           ? a.createdAt!.compareTo(b.createdAt!)
           : b.createdAt!.compareTo(a.createdAt!));
@@ -126,12 +135,14 @@ class _PropertyTableState extends State<PropertyTable> {
                     width < 400
                         ? Text("Main Type ",
                             style: TextStyle(
-                                color: blueColor, fontWeight: FontWeight.bold, fontSize: 15
-                            ))
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15))
                         : Text("Main Type",
                             style: TextStyle(
-                                color: blueColor, fontWeight: FontWeight.bold , fontSize: 15
-                            )),
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
@@ -181,8 +192,9 @@ class _PropertyTableState extends State<PropertyTable> {
                   children: [
                     Text("  Sub Type",
                         style: TextStyle(
-                            color: blueColor, fontWeight: FontWeight.bold, fontSize: 15
-                        )),
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
@@ -232,8 +244,9 @@ class _PropertyTableState extends State<PropertyTable> {
                   children: [
                     Text("Created On ",
                         style: TextStyle(
-                            color: blueColor, fontWeight: FontWeight.bold, fontSize: 15
-                        )),
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     ascending3
                         ? Padding(
                             padding: const EdgeInsets.only(top: 7, left: 2),
@@ -1103,17 +1116,17 @@ class _PropertyTableState extends State<PropertyTable> {
                                         propertytype Propertytype = entry.value;
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
-                                            margin:
-                                            EdgeInsets.symmetric(vertical: 6),
-                                        decoration: BoxDecoration(
-                                        color: index % 2 != 0
-                                        ? Color(0xFFF4F8FF)
-                                            : Colors.white,
-                                        border: Border.all(
-                                        color: Color(0xFFDBE0E5)),
-                                        borderRadius:
-                                        BorderRadius.circular(10),
-                                        ),
+                                          margin:
+                                              EdgeInsets.symmetric(vertical: 6),
+                                          decoration: BoxDecoration(
+                                            color: index % 2 != 0
+                                                ? Color(0xFFF4F8FF)
+                                                : Colors.white,
+                                            border: Border.all(
+                                                color: Color(0xFFDBE0E5)),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
                                           // decoration: BoxDecoration(
                                           //   border: Border.all(color: blueColor),
                                           // ),

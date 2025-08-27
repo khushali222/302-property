@@ -41,15 +41,24 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
   List<int> itemsPerPageOptions = [10, 25, 50, 100];
 
   void sortData(List<Emails> data) {
-    if (sorting1) {
+    // Always apply default sort by createdAt in descending order (newest first)
+    data.sort((a, b) {
+      if (a.createdAt == null && b.createdAt == null) return 0;
+      if (a.createdAt == null) return 1;
+      if (b.createdAt == null) return -1;
+      return b.createdAt!.compareTo(a.createdAt!); // Descending order
+    });
+
+    // Apply user-selected sorting only if explicitly chosen
+    if (sorting1 && !sorting2 && !sorting3) {
       data.sort((a, b) => ascending1
           ? a.subject!.compareTo(b.subject!)
           : b.subject!.compareTo(a.subject!));
-    } else if (sorting2) {
+    } else if (sorting2 && !sorting1 && !sorting3) {
       data.sort((a, b) => ascending2
-          ? a.subject!.compareTo(b.subject!)
-          : b.subject!.compareTo(a.subject!));
-    } else if (sorting3) {
+          ? a.rentalAddress!.compareTo(b.rentalAddress!)
+          : b.rentalAddress!.compareTo(a.rentalAddress!));
+    } else if (sorting3 && !sorting1 && !sorting2) {
       data.sort((a, b) => ascending3
           ? a.createdAt!.compareTo(b.createdAt!)
           : b.createdAt!.compareTo(a.createdAt!));
@@ -61,10 +70,10 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
   late bool isExpanded;
   bool sorting1 = false;
   bool sorting2 = false;
-  bool sorting3 = false;
+  bool sorting3 = false; // Set to false so default sorting applies
   bool ascending1 = false;
   bool ascending2 = false;
-  bool ascending3 = false;
+  bool ascending3 = false; // Set to false for descending order
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
@@ -115,9 +124,11 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                   children: [
                     width < 400
                         ? Text("Recipient",
-                            style: TextStyle( color: blueColor, fontWeight: FontWeight.bold))
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold))
                         : Text("Recipient",
-                            style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     // SizedBox(width: 3),
                     // ascending1
@@ -166,7 +177,8 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                 child: Row(
                   children: [
                     Text("       Rental \n     Address",
-                        style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
                     // SizedBox(width: 5),
                     // ascending2
                     //     ? Padding(
@@ -215,7 +227,8 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                 child: Row(
                   children: [
                     Text("          Sent",
-                        style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 3),
                   ],
                 ),
@@ -959,6 +972,8 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                 .skip(_currentPage * _rowsPerPage)
                                 .take(_rowsPerPage)
                                 .toList();
+                            print(
+                                "rental address ${snapshot.data?.emails?.first.rentalAddress}");
                             return SingleChildScrollView(
                               child: Column(
                                 children: [
@@ -984,7 +999,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
                                           margin:
-                                          EdgeInsets.symmetric(vertical: 6),
+                                              EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
                                                 ? Color(0xFFF4F8FF)
@@ -992,7 +1007,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                             border: Border.all(
                                                 color: Color(0xFFDBE0E5)),
                                             borderRadius:
-                                            BorderRadius.circular(10),
+                                                BorderRadius.circular(10),
                                           ),
                                           // decoration: BoxDecoration(
                                           //   border: Border.all(color: blueColor),
@@ -1100,7 +1115,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                                       ?.isNotEmpty ==
                                                                   true
                                                               ? '${Propertytype.rentalAddress}'
-                                                              : 'N/A',
+                                                              : '         N/A',
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:

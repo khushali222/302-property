@@ -124,7 +124,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           )
                         : Padding(
@@ -132,7 +132,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           ),
                   ],
