@@ -657,7 +657,7 @@ class _FinancialTableState extends State<FinancialTable> {
         key.currentState!.openDrawer();
       },),
       backgroundColor: Colors.white,
-      drawer:  CustomDrawer(currentpage: 'Financial',),
+      drawer:  CustomDrawer(currentpage: 'Ledger',),
       body:
       _connectivityResult !=ConnectivityResult.none ?
       SingleChildScrollView(

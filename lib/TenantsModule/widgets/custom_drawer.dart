@@ -122,12 +122,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   FaIcon(
                     FontAwesomeIcons.chartColumn,
                     size: 20,
-                    color: widget.currentpage == "Financial"
+                    color: widget.currentpage == "Ledger"
                         ? Colors.white
                         : blueColor,
                   ),
-                  "Financial",
-                  widget.currentpage == "Financial",
+                  "Ledger",
+                  widget.currentpage == "Ledger",
                 ),
               if (permissions!.workorderView)
                 buildListTile(

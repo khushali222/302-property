@@ -14,7 +14,6 @@ import 'package:three_zero_two_property/provider/color_theme.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/editapplicationsummaryForm.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
-
 import 'package:three_zero_two_property/provider/lease_provider.dart';
 
 import 'package:three_zero_two_property/provider/properties_workorders.dart';

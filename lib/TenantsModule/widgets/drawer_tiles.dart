@@ -36,7 +36,7 @@ Widget buildListTile(
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => PropertyTable()));
         }
-        else if (title == "Financial") {
+        else if (title == "Ledger") {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => FinancialTable()));
         }
