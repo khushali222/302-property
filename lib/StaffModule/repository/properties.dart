@@ -119,7 +119,38 @@ class PropertiesRepository {
       "id": "CRM $staffid",
       'Authorization': 'Bearer $token',
     };
+    final List<Map<String, dynamic>> formattedUnits =
+        rentalRequest.units?.map((unit) {
+          print('Processing unit for API request:');
+          print('Raw unit data: $unit');
 
+          // For Commercial single unit, ensure sqft is in the correct field
+          var formattedUnit = {
+            "admin_id": rentalRequest.adminId,
+            "unit_id": unit["unit_id"] ??
+                DateTime.now().millisecondsSinceEpoch.toString(),
+            "rental_unit": unit["rental_unit"] ??
+                "Unit 1", // Default to "Unit 1" if empty
+            "rental_unit_adress": unit["rental_unit_adress"] ?? "",
+            "rental_sqft": unit["rental_sqft"] ??
+                unit["rental_unit"] ??
+                "", // Try to get sqft from rental_unit if rental_sqft is empty
+            "rental_bath": unit["rental_bath"] ?? "",
+            "rental_bed": unit["rental_bed"] ?? "",
+            "rental_images": unit["rental_images"] ?? []
+          };
+
+          print('Formatted unit data:');
+          print('- Unit ID: ${formattedUnit["unit_id"]}');
+          print('- Unit Name: ${formattedUnit["rental_unit"]}');
+          print('- Unit Address: ${formattedUnit["rental_unit_adress"]}');
+          print('- Unit Sqft: ${formattedUnit["rental_sqft"]}');
+          print('- Bath: ${formattedUnit["rental_bath"]}');
+          print('- Bed: ${formattedUnit["rental_bed"]}');
+
+          return formattedUnit;
+        }).toList() ??
+            [];
     final rentalOwnerData = {
       "admin_id": rentalRequest.adminId,
       "rentalowner_id": rentalRequest.rentalOwnerData?.rentalOwnerId,
@@ -152,6 +183,7 @@ class PropertiesRepository {
         "staffmember_id": rentalRequest.staffMemberId,
         "processor_id": rentalRequest.processor_id
       },
+      "units": formattedUnits
     };
 
     // Add units data if available

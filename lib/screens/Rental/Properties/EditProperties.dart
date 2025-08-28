@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
@@ -286,6 +287,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
         propertyGroupControllers.clear();
         propertyGroupImages.clear();
         propertyGroupImagenames.clear();
+        originalValues.clear();
 
         print('Creating property groups for ${data.length} units');
         print('Property Type: ${selectedpropertytypedata?.propertyType}');
@@ -354,6 +356,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
             // Residential properties
             if (selectedpropertytypedata?.isMultiunit == true) {
               print('Setting up Residential multi-unit controllers');
+
+              // Use original values directly for display
               controllers = [
                 TextEditingController(text: unit.rentalunit ?? ''),
                 TextEditingController(text: unit.rentalunitadress ?? ''),
@@ -361,29 +365,57 @@ class _Edit_propertiesState extends State<Edit_properties> {
                 TextEditingController(text: unit.rentalbath ?? ''),
                 TextEditingController(text: unit.rentalbed ?? ''),
               ];
-              fields = [
+
+              // Store original values for API
+              originalValues.add({
+                'bath': unit.rentalbath ?? '',
+                'bed': unit.rentalbed ?? '',
+              });
+
+              // Create fields - always use dropdowns for display
+              List<Widget> fieldList = [
                 customTextField('Unit', controllers[0]),
                 customTextField('Unit Address', controllers[1]),
                 customTextField('SQft', controllers[2]),
                 customDropdownField('Bath', bathArray, controllers[3]),
                 customDropdownField('Bed', roomsArray, controllers[4]),
+              ];
+
+              fieldList.addAll([
                 SizedBox(height: 10),
                 photo(propertyGroups.length),
-              ];
+              ]);
+
+              fields = fieldList;
             } else {
               print('Setting up Residential single unit controllers');
+
+              // Use original values directly for display
               controllers = [
                 TextEditingController(text: unit.rentalsqft ?? ''),
                 TextEditingController(text: unit.rentalbath ?? ''),
                 TextEditingController(text: unit.rentalbed ?? ''),
               ];
-              fields = [
+
+              // Store original values for API
+              originalValues.add({
+                'bath': unit.rentalbath ?? '',
+                'bed': unit.rentalbed ?? '',
+              });
+
+              // Create fields - always use dropdowns for display
+              List<Widget> fieldList = [
                 customTextField('SQft', controllers[0]),
                 customDropdownField('Bath', bathArray, controllers[1]),
                 customDropdownField('Bed', roomsArray, controllers[2]),
+              ];
+
+              fieldList.addAll([
                 SizedBox(height: 10),
                 photo(propertyGroups.length),
-              ];
+              ]);
+
+              fields = fieldList;
             }
           }
 
@@ -466,6 +498,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
         propertyGroupControllers.clear();
         propertyGroupImages.clear();
         propertyGroupImagenames.clear();
+        originalValues.clear();
 
         for (var unit in data) {
           List<TextEditingController> controllers = [];
@@ -707,6 +740,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
   //  List<List<TextEditingController>> propertyGroupControllers = [];
   List<File?> propertyGroupImages = [];
   List<String?> propertyGroupImagenames = [];
+  // Track original values for API (separate from display values)
+  List<Map<String, String>> originalValues = [];
   File? _image;
   Future<String?> uploadImage(File imageFile) async {
     // print(imageFile.path!);
@@ -799,15 +834,19 @@ class _Edit_propertiesState extends State<Edit_properties> {
     List<String> items,
     TextEditingController controller,
   ) {
+    // Check if the current value exists in the items list
+    String? currentValue = controller.text.isNotEmpty ? controller.text : null;
+    bool valueExists = currentValue != null && items.contains(currentValue);
+
     return Padding(
       padding: const EdgeInsets.only(top: 8, bottom: 8),
       child: DropdownButtonFormField<String>(
-        value: controller.text.isNotEmpty ? controller.text : null,
+        value: valueExists ? currentValue : null,
         decoration: InputDecoration(
           border: OutlineInputBorder(),
           contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         ),
-        hint: Text(hint),
+        hint: Text(valueExists ? hint : (currentValue ?? hint)),
         items: items.map((String value) {
           return DropdownMenuItem<String>(
             value: value,
@@ -848,6 +887,140 @@ class _Edit_propertiesState extends State<Edit_properties> {
     "5 Bath",
     "5+ Bath",
   ];
+
+  // Helper method to convert database value to dropdown format
+  String convertToDropdownValue(String? dbValue, List<String> options) {
+    if (dbValue == null || dbValue.isEmpty) {
+      return '';
+    }
+
+    // If the value already contains the expected format, return as is
+    String searchValue = dbValue.toLowerCase();
+    for (String option in options) {
+      if (option.toLowerCase() == searchValue) {
+        return option;
+      }
+    }
+
+    // Try to match numeric values
+    for (String option in options) {
+      if (option.toLowerCase().contains(searchValue)) {
+        return option;
+      }
+    }
+
+    // If no match found, return empty string to avoid dropdown error
+    return '';
+  }
+
+  // Helper method to check if value exists in dropdown options
+  bool isValueInDropdown(String? dbValue, List<String> options) {
+    if (dbValue == null || dbValue.isEmpty) {
+      return false;
+    }
+
+    // Check if the value exists in the dropdown options (exact match)
+    if (options.contains(dbValue)) {
+      return true;
+    }
+
+    // Try to find an exact match (case insensitive)
+    String searchValue = dbValue.toLowerCase();
+    for (String option in options) {
+      if (option.toLowerCase() == searchValue) {
+        return true;
+      }
+    }
+
+    // Only return true if the value is already in dropdown format (contains "Bath" or "Bed")
+    if (searchValue.contains('bath') || searchValue.contains('bed')) {
+      return true;
+    }
+
+    // For numeric values like "2", "3", etc., return false to use text field
+    return false;
+  }
+
+  // Helper method to find best matching dropdown option for display
+  String findBestDropdownMatch(String? dbValue, List<String> options) {
+    if (dbValue == null || dbValue.isEmpty) {
+      return '';
+    }
+
+    // Check if the value exists in the dropdown options (exact match)
+    if (options.contains(dbValue)) {
+      return dbValue;
+    }
+
+    // Try to find an exact match (case insensitive)
+    String searchValue = dbValue.toLowerCase();
+    for (String option in options) {
+      if (option.toLowerCase() == searchValue) {
+        return option;
+      }
+    }
+
+    // For numeric values like "2", "4", etc., return empty string to show as hint
+    // This way the dropdown will show the original value as hint instead of converting it
+    return '';
+  }
+
+  // Helper method to safely set dropdown value - only set if it exists in options
+  String safeDropdownValue(String? dbValue, List<String> options) {
+    if (dbValue == null || dbValue.isEmpty) {
+      return '';
+    }
+
+    // Check if the value exists in the dropdown options (exact match)
+    if (options.contains(dbValue)) {
+      return dbValue; // Use as is if it exists in dropdown
+    }
+
+    // Try to find an exact match (case insensitive)
+    String searchValue = dbValue.toLowerCase();
+    for (String option in options) {
+      if (option.toLowerCase() == searchValue) {
+        return option;
+      }
+    }
+
+    // Only try to match if the value is already in dropdown format (contains "Bath" or "Bed")
+    if (searchValue.contains('bath') || searchValue.contains('bed')) {
+      for (String option in options) {
+        if (option.toLowerCase().contains(searchValue)) {
+          return option;
+        }
+      }
+    }
+
+    // If no match found, return empty string to avoid dropdown error
+    return '';
+  }
+
+  // Helper method to extract numeric value from dropdown text for API
+  String extractNumericValue(String dropdownText) {
+    if (dropdownText.isEmpty) return '';
+
+    // Extract numeric part from dropdown text (e.g., "2 Bath" -> "2")
+    RegExp regex = RegExp(r'^(\d+(?:\.\d+)?)');
+    Match? match = regex.firstMatch(dropdownText);
+
+    if (match != null) {
+      return match.group(1) ?? '';
+    }
+
+    // If no numeric match found, return the original text
+    return dropdownText;
+  }
+
+  // Helper method to check if a value is in dropdown format (e.g., "2 Bath", "3 Bed")
+  bool isDropdownFormat(String value) {
+    if (value.isEmpty) return false;
+
+    // Check if it contains "Bath" or "Bed"
+    return value.toLowerCase().contains('bath') ||
+        value.toLowerCase().contains('bed');
+  }
 
   Widget photo(int index) {
     return StatefulBuilder(
@@ -5251,12 +5424,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                         if (!hasChanges) {
                           // Show message if no changes detected
                           print("=== NO CHANGES DETECTED - EXITING EARLY ===");
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('No changes detected'),
-                              backgroundColor: Colors.orange,
-                            ),
-                          );
+                          Fluttertoast.showToast(msg: "No changes detected");
                           Navigator.pop(context, false);
                           return; // Exit if no changes
                         }
@@ -5376,8 +5544,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                 "rental_unit_adress":
                                     controllers[1].text.trim(),
                                 "rental_sqft": controllers[2].text.trim(),
-                                "rental_bath": controllers[3].text.trim(),
-                                "rental_bed": controllers[4].text.trim(),
+                                "rental_bath": i < originalValues.length
+                                    ? originalValues[i]['bath'] ??
+                                        controllers[3].text.trim()
+                                    : controllers[3].text.trim(),
+                                "rental_bed": i < originalValues.length
+                                    ? originalValues[i]['bed'] ??
+                                        controllers[4].text.trim()
+                                    : controllers[4].text.trim(),
                               });
                               convertedUnits.add(unitData);
                             }
@@ -5387,8 +5561,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                 controllers[2].text.trim().isNotEmpty) {
                               unitData.addAll({
                                 "rental_sqft": controllers[0].text.trim(),
-                                "rental_bath": controllers[1].text.trim(),
-                                "rental_bed": controllers[2].text.trim(),
+                                "rental_bath": i < originalValues.length
+                                    ? originalValues[i]['bath'] ??
+                                        controllers[1].text.trim()
+                                    : controllers[1].text.trim(),
+                                "rental_bed": i < originalValues.length
+                                    ? originalValues[i]['bed'] ??
+                                        controllers[2].text.trim()
+                                    : controllers[2].text.trim(),
                               });
                               convertedUnits.add(unitData);
                             }
@@ -5555,8 +5735,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           print('Address: ${controllers[1].text.trim()}');
                           print('Sqft: ${controllers[2].text.trim()}');
                           if (selectedpropertytype == 'Residential') {
-                            unit['rental_bath'] = controllers[3].text.trim();
-                            unit['rental_bed'] = controllers[4].text.trim();
+                            unit['rental_bath'] = i < originalValues.length
+                                ? originalValues[i]['bath'] ??
+                                    controllers[3].text.trim()
+                                : controllers[3].text.trim();
+                            unit['rental_bed'] = i < originalValues.length
+                                ? originalValues[i]['bed'] ??
+                                    controllers[4].text.trim()
+                                : controllers[4].text.trim();
                           }
                           unitData.add(unit);
                         }

@@ -232,7 +232,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
     super.initState();
     filteredOwners = owners;
     selected = List<bool>.generate(owners.length, (index) => false);
-    fetchunits1();
     // searchController.addListener(() { });
     // futureMember = StaffMemberRepository().fetchStaffmembers();
     futureProperties = PropertyTypeRepository().fetchPropertyTypes();
@@ -276,7 +275,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
     });
     print(widget.rentalId);
     isEditable = false;
-    // fetchDetails1(widget.rentalId);
     fetchDetails1(widget.rentalId).then((_) {
       // Load unit data after property details are set
       fetchunits1();
@@ -301,6 +299,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
         propertyGroupControllers.clear();
         propertyGroupImages.clear();
         propertyGroupImagenames.clear();
+        originalValues.clear();
 
         print('Creating property groups for ${data.length} units');
         print('Property Type: ${selectedpropertytypedata?.propertyType}');
@@ -369,6 +368,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
             // Residential properties
             if (selectedpropertytypedata?.isMultiunit == true) {
               print('Setting up Residential multi-unit controllers');
+              // Use original values directly for display
               controllers = [
                 TextEditingController(text: unit.rentalunit ?? ''),
                 TextEditingController(text: unit.rentalunitadress ?? ''),
@@ -376,6 +376,11 @@ class _Edit_propertiesState extends State<Edit_properties> {
                 TextEditingController(text: unit.rentalbath ?? ''),
                 TextEditingController(text: unit.rentalbed ?? ''),
               ];
+              // Store original values for API
+              originalValues.add({
+                'bath': unit.rentalbath ?? '',
+                'bed': unit.rentalbed ?? '',
+              });
               fields = [
                 customTextField('Unit', controllers[0]),
                 customTextField('Unit Address', controllers[1]),
@@ -387,11 +392,24 @@ class _Edit_propertiesState extends State<Edit_properties> {
               ];
             } else {
               print('Setting up Residential single unit controllers');
+              // Extract correct values from potentially corrupted data
+              Map<String, String> correctValues = extractCorrectValues(unit);
+
+              print('Extracted correct values:');
+              print('- SQFT: "${correctValues['sqft']}"');
+              print('- Bath: "${correctValues['bath']}"');
+              print('- Bed: "${correctValues['bed']}"');
+
               controllers = [
-                TextEditingController(text: unit.rentalsqft ?? ''),
-                TextEditingController(text: unit.rentalbath ?? ''),
-                TextEditingController(text: unit.rentalbed ?? ''),
+                TextEditingController(text: correctValues['sqft'] ?? ''),
+                TextEditingController(text: correctValues['bath'] ?? ''),
+                TextEditingController(text: correctValues['bed'] ?? ''),
               ];
+              // Store original values for API
+              originalValues.add({
+                'bath': correctValues['bath'] ?? '',
+                'bed': correctValues['bed'] ?? '',
+              });
               fields = [
                 customTextField('SQft', controllers[0]),
                 customDropdownField('Bath', bathArray, controllers[1]),
@@ -451,6 +469,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
       await Future.delayed(const Duration(seconds: 1));
       setState(() {
+        originalValues.clear();
         // print(fetchedDetails.rentalAddress);
         // selectedpropertytype = fetchedDetails.propertyTypeData?.propertyType;
         selectedpropertytypedata = propertytype(
@@ -460,7 +479,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
             isMultiunit: fetchedDetails.propertyTypeData?.isMultiunit ?? false,
             propertyId: fetchedDetails.propertyTypeData?.propertyId ?? "");
         selectedpropertytype = fetchedDetails.propertyTypeData?.propertyType;
-        selectedpropertytype = fetchedDetails.propertyTypeData?.propertySubType;
+        selectedProperty = fetchedDetails.propertyTypeData?.propertySubType;
         address.text = fetchedDetails.rentalAddress!;
         city.text = fetchedDetails.rentalCity!;
         state.text = fetchedDetails.rentalState!;
@@ -586,6 +605,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
   }
 
   List<List<TextEditingController>> propertyGroupControllers = [];
+  // Track original values for API (separate from display values)
+  List<Map<String, String>> originalValues = [];
 
   bool iserror = false;
   bool iserror2 = false;
@@ -762,15 +783,19 @@ class _Edit_propertiesState extends State<Edit_properties> {
     List<String> items,
     TextEditingController controller,
   ) {
+    // Check if the current value exists in the items list
+    String? currentValue = controller.text.isNotEmpty ? controller.text : null;
+    bool valueExists = currentValue != null && items.contains(currentValue);
+
     return Padding(
       padding: const EdgeInsets.only(top: 8, bottom: 8),
       child: DropdownButtonFormField<String>(
-        value: controller.text.isNotEmpty ? controller.text : null,
+        value: valueExists ? currentValue : null,
         decoration: InputDecoration(
           border: OutlineInputBorder(),
           contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         ),
-        hint: Text(hint),
+        hint: Text(valueExists ? hint : (currentValue ?? hint)),
         items: items.map((String value) {
           return DropdownMenuItem<String>(
             value: value,
@@ -811,6 +836,150 @@ class _Edit_propertiesState extends State<Edit_properties> {
     "5 Bath",
     "5+ Bath",
   ];
+
+  // Helper method to get actual property type
+  String getActualPropertyType(String? propertyType) {
+    if (propertyType == null) return '';
+    if (propertyType == 'Single-Family') return 'Commercial';
+    return propertyType;
+  }
+
+  // Helper method to find best matching dropdown option for display
+  String findBestDropdownMatch(String? dbValue, List<String> options) {
+    if (dbValue == null || dbValue.isEmpty) {
+      return '';
+    }
+
+    // Check if the value exists in the dropdown options (exact match)
+    if (options.contains(dbValue)) {
+      return dbValue;
+    }
+
+    // Try to find an exact match (case insensitive)
+    String searchValue = dbValue.toLowerCase();
+    for (String option in options) {
+      if (option.toLowerCase() == searchValue) {
+        return option;
+      }
+    }
+
+    // For numeric values like "2", "4", etc., return empty string to show as hint
+    // This way the dropdown will show the original value as hint instead of converting it
+    return '';
+  }
+
+  // Helper method to check if value exists in dropdown options
+  bool isValueInDropdown(String? dbValue, List<String> options) {
+    if (dbValue == null || dbValue.isEmpty) {
+      return false;
+    }
+
+    // Check if the value exists in the dropdown options (exact match)
+    if (options.contains(dbValue)) {
+      return true;
+    }
+
+    // Try to find an exact match (case insensitive)
+    String searchValue = dbValue.toLowerCase();
+    for (String option in options) {
+      if (option.toLowerCase() == searchValue) {
+        return true;
+      }
+    }
+
+    // Only return true if the value is already in dropdown format (contains "Bath" or "Bed")
+    if (searchValue.contains('bath') || searchValue.contains('bed')) {
+      return true;
+    }
+
+    // For numeric values like "2", "3", etc., return false to use text field
+    return false;
+  }
+
+  // Helper method to safely set dropdown value - only set if it exists in options
+  String safeDropdownValue(String? dbValue, List<String> options) {
+    if (dbValue == null || dbValue.isEmpty) {
+      return '';
+    }
+
+    // Check if the value exists in the dropdown options (exact match)
+    if (options.contains(dbValue)) {
+      return dbValue; // Use as is if it exists in dropdown
+    }
+
+    // Try to find an exact match (case insensitive)
+    String searchValue = dbValue.toLowerCase();
+    for (String option in options) {
+      if (option.toLowerCase() == searchValue) {
+        return option;
+      }
+    }
+
+    // Only try to match if the value is already in dropdown format (contains "Bath" or "Bed")
+    if (searchValue.contains('bath') || searchValue.contains('bed')) {
+      for (String option in options) {
+        if (option.toLowerCase().contains(searchValue)) {
+          return option;
+        }
+      }
+    }
+
+    // If no match found, return empty string to avoid dropdown error
+    return '';
+  }
+
+  // Helper method to extract correct values from corrupted data
+  Map<String, String> extractCorrectValues(unit_properties unit) {
+    Map<String, String> result = {
+      'sqft': '',
+      'bath': '',
+      'bed': '',
+    };
+
+    // Try to find numeric sqft value
+    if (unit.rentalsqft != null &&
+        RegExp(r'^\d+$').hasMatch(unit.rentalsqft!)) {
+      result['sqft'] = unit.rentalsqft!;
+    } else if (unit.rentalunit != null &&
+        RegExp(r'^\d+$').hasMatch(unit.rentalunit!)) {
+      result['sqft'] = unit.rentalunit!;
+    } else if (unit.rentalunitadress != null &&
+        RegExp(r'^\d+$').hasMatch(unit.rentalunitadress!)) {
+      result['sqft'] = unit.rentalunitadress!;
+    }
+
+    // Try to find bath value
+    if (unit.rentalbath != null &&
+        unit.rentalbath!.toLowerCase().contains('bath')) {
+      result['bath'] = unit.rentalbath!;
+    } else if (unit.rentalunit != null &&
+        unit.rentalunit!.toLowerCase().contains('bath')) {
+      result['bath'] = unit.rentalunit!;
+    } else if (unit.rentalunitadress != null &&
+        unit.rentalunitadress!.toLowerCase().contains('bath')) {
+      result['bath'] = unit.rentalunitadress!;
+    } else if (unit.rentalsqft != null &&
+        unit.rentalsqft!.toLowerCase().contains('bath')) {
+      result['bath'] = unit.rentalsqft!;
+    }
+
+    // Try to find bed value
+    if (unit.rentalbed != null &&
+        unit.rentalbed!.toLowerCase().contains('bed')) {
+      result['bed'] = unit.rentalbed!;
+    } else if (unit.rentalunit != null &&
+        unit.rentalunit!.toLowerCase().contains('bed')) {
+      result['bed'] = unit.rentalunit!;
+    } else if (unit.rentalunitadress != null &&
+        unit.rentalunitadress!.toLowerCase().contains('bed')) {
+      result['bed'] = unit.rentalunitadress!;
+    } else if (unit.rentalsqft != null &&
+        unit.rentalsqft!.toLowerCase().contains('bed')) {
+      result['bed'] = unit.rentalsqft!;
+    }
+
+    return result;
+  }
 
   Widget photo(int index) {
     return StatefulBuilder(
@@ -4951,10 +5120,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
                             // Fix property type detection - Single-Family should be Commercial
                             String actualPropertyType =
-                                selectedpropertytype ?? '';
-                            if (actualPropertyType == 'Single-Family') {
-                              actualPropertyType = 'Commercial';
-                            }
+                                getActualPropertyType(selectedpropertytype);
 
                             if (actualPropertyType == 'Commercial') {
                               if (selectedIsMultiUnit == true) {
@@ -5037,15 +5203,38 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                     '- Bed: "$oldBed" -> "$newBed" = $bedChanged');
                               } else {
                                 // Residential single unit
-                                String oldSqft =
-                                    oldUnit.rentalsqft?.trim() ?? '';
+                                // Extract correct values from potentially corrupted data for comparison
+                                Map<String, String> correctValues =
+                                    extractCorrectValues(oldUnit);
+
+                                String oldSqft = correctValues['sqft'] ?? '';
                                 String newSqft = controllers[0].text.trim();
-                                String oldBath =
-                                    oldUnit.rentalbath?.trim() ?? '';
+                                String oldBath = correctValues['bath'] ?? '';
                                 String newBath = controllers[1].text.trim();
-                                String oldBed = oldUnit.rentalbed?.trim() ?? '';
+                                String oldBed = correctValues['bed'] ?? '';
                                 String newBed = controllers[2].text.trim();
 
+                                // Check if the data is corrupted (sqft contains "Bed" or "Bath")
+                                bool isDataCorrupted = oldUnit.rentalsqft
+                                            ?.toLowerCase()
+                                            .contains('bed') ==
+                                        true ||
+                                    oldUnit.rentalsqft
+                                            ?.toLowerCase()
+                                            .contains('bath') ==
+                                        true;
+
+                                if (isDataCorrupted) {
+                                  print(
+                                      'Detected corrupted data - using extracted correct values for comparison');
+                                  print(
+                                      'Original corrupted sqft: "${oldUnit.rentalsqft}"');
+                                  print('Extracted correct sqft: "$oldSqft"');
+                                  print('Extracted correct bath: "$oldBath"');
+                                  print('Extracted correct bed: "$oldBed"');
+                                }
+
+                                // Compare using extracted correct values
                                 sqftChanged = oldSqft != newSqft;
                                 bathChanged = oldBath != newBath;
                                 bedChanged = oldBed != newBed;
@@ -5057,6 +5246,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                     '- Bath: "$oldBath" -> "$newBath" = $bathChanged');
                                 print(
                                     '- Bed: "$oldBed" -> "$newBed" = $bedChanged');
+                                print('- Data corrupted: $isDataCorrupted');
                               }
                             }
 
@@ -5362,10 +5552,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           }
 
                           String actualPropertyType =
-                              selectedpropertytype ?? '';
-                          if (actualPropertyType == 'Single-Family') {
-                            actualPropertyType = 'Commercial';
-                          }
+                              getActualPropertyType(selectedpropertytype);
 
                           if (actualPropertyType == 'Commercial' &&
                               selectedIsMultiUnit == true) {
@@ -5405,8 +5592,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                 "rental_unit_adress":
                                     controllers[1].text.trim(),
                                 "rental_sqft": controllers[2].text.trim(),
-                                "rental_bath": controllers[3].text.trim(),
-                                "rental_bed": controllers[4].text.trim(),
+                                "rental_bath": i < originalValues.length
+                                    ? originalValues[i]['bath'] ??
+                                        controllers[3].text.trim()
+                                    : controllers[3].text.trim(),
+                                "rental_bed": i < originalValues.length
+                                    ? originalValues[i]['bed'] ??
+                                        controllers[4].text.trim()
+                                    : controllers[4].text.trim(),
                               });
                               convertedUnits.add(unitData);
                               print('Added unit data: $unitData');
@@ -5419,8 +5612,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                 controllers[2].text.trim().isNotEmpty) {
                               unitData.addAll({
                                 "rental_sqft": controllers[0].text.trim(),
-                                "rental_bath": controllers[1].text.trim(),
-                                "rental_bed": controllers[2].text.trim(),
+                                "rental_bath": i < originalValues.length
+                                    ? originalValues[i]['bath'] ??
+                                        controllers[1].text.trim()
+                                    : controllers[1].text.trim(),
+                                "rental_bed": i < originalValues.length
+                                    ? originalValues[i]['bed'] ??
+                                        controllers[2].text.trim()
+                                    : controllers[2].text.trim(),
                               });
                               convertedUnits.add(unitData);
                             }
@@ -5529,10 +5728,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           // For Commercial single unit, ensure sqft goes to rental_sqft
                           Map<String, dynamic> unit;
                           String actualPropertyType =
-                              selectedpropertytype ?? '';
-                          if (actualPropertyType == 'Single-Family') {
-                            actualPropertyType = 'Commercial';
-                          }
+                              getActualPropertyType(selectedpropertytype);
 
                           if (actualPropertyType == 'Commercial' &&
                               !selectedIsMultiUnit) {
@@ -5593,8 +5789,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           print('Address: ${controllers[1].text.trim()}');
                           print('Sqft: ${controllers[2].text.trim()}');
                           if (selectedpropertytype == 'Residential') {
-                            unit['rental_bath'] = controllers[3].text.trim();
-                            unit['rental_bed'] = controllers[4].text.trim();
+                            unit['rental_bath'] = i < originalValues.length
+                                ? originalValues[i]['bath'] ??
+                                    controllers[3].text.trim()
+                                : controllers[3].text.trim();
+                            unit['rental_bed'] = i < originalValues.length
+                                ? originalValues[i]['bed'] ??
+                                    controllers[4].text.trim()
+                                : controllers[4].text.trim();
                           }
                           unitData.add(unit);
                         }
