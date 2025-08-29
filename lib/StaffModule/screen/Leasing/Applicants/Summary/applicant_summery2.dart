@@ -437,9 +437,9 @@ class _applicant_summeryState extends State<applicant_summery>
                                               builder: (context) => addLease3(
                                                 applicantId: widget.applicant_id,
                                                 rentalId: snapshot
-                                                    .data!.leaseData!.rentalId,
+                                                    .data?.leaseData?.rentalId,
                                                 unitId: snapshot
-                                                    .data!.leaseData!.unitId,
+                                                    .data?.leaseData?.unitId,
                                               ),
                                             ),
                                           );

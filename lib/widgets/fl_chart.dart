@@ -124,7 +124,7 @@ class _FlChartAppState extends State<FlChartApp> {
     return
       Container(
         padding: EdgeInsets.symmetric(horizontal: 0),
-        height: 260, // Increased height to accommodate the title
+       // height: 260, // Increased height to accommodate the title
         margin: EdgeInsets.only(top: 20),
         child: Card(
           shape: RoundedRectangleBorder(
@@ -143,7 +143,7 @@ class _FlChartAppState extends State<FlChartApp> {
               // Add the title here
               Padding(
                 padding: const EdgeInsets.only(
-                    left: 8, right: 8, top: 16, bottom: 4),
+                    left: 6, right: 6, top: 16, bottom: 4),
                 child: Text(
                   'Property Summary',
                   style: TextStyle(
@@ -266,10 +266,11 @@ class _FlChartAppState extends State<FlChartApp> {
                   child: Text(
                     '${leases} of ${rentals} Units Currently Occupied -   ${occupancy} \%',
                     style: TextStyle(
-                        fontSize: 14,color: Color.fromRGBO(21, 43, 81, 0.8), fontWeight: FontWeight.bold),
+                        fontSize: 13,color: Color.fromRGBO(21, 43, 81, 0.8), fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
+              SizedBox(height: 5,),
             ],
           ),
         ),

@@ -773,7 +773,7 @@ class _StaffTableState extends State<StaffTable> {
                                 ? 50
                                 : MediaQuery.of(context).size.width * 0.062,
                             width: (MediaQuery.of(context).size.width < 500)
-                                ? MediaQuery.of(context).size.width * 0.25
+                                ? MediaQuery.of(context).size.width * 0.24
                                 : MediaQuery.of(context).size.width * 0.25,
                             decoration: BoxDecoration(
                               color: blueColor,

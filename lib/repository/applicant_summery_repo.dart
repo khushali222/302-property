@@ -128,6 +128,7 @@ class ApplicantSummeryRepository {
   //     throw Exception('Failed to fetch applicant summary: ${response.body}');
   //   }
   // }
+
   static Future<applicant_summery_details> getApplicantSummary(
       String applicantId) async {
     print('entry');

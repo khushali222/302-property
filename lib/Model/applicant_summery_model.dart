@@ -45,30 +45,30 @@ class applicant_summery_details {
       this.leaseData});
 
   applicant_summery_details.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
+    sId = json['_id']?.toString();
     print(sId);
-    applicantId = json['applicant_id'];
+    applicantId = json['applicant_id']?.toString();
     print(applicantId);
-    adminId = json['admin_id'];
+    adminId = json['admin_id']?.toString();
     print(adminId);
-    applicantFirstName = json['applicant_firstName'];
+    applicantFirstName = json['applicant_firstName']?.toString();
     print(applicantFirstName);
-    applicantLastName = json['applicant_lastName'];
+    applicantLastName = json['applicant_lastName']?.toString();
     print(applicantLastName);
-    applicantEmail = json['applicant_email'];
+    applicantEmail = json['applicant_email']?.toString();
     print(applicantEmail);
-    applicantPhoneNumber = json['applicant_phoneNumber'].toString();
+    applicantPhoneNumber = json['applicant_phoneNumber']?.toString();
     print(applicantPhoneNumber);
-    applicantHomeNumber = json['applicant_homeNumber'].toString();
+    applicantHomeNumber = json['applicant_homeNumber']?.toString();
     print(applicantHomeNumber);
-    applicantBusinessNumber = json['applicant_businessNumber'].toString();
+    applicantBusinessNumber = json['applicant_businessNumber']?.toString();
     print(applicantBusinessNumber);
-    applicantTelephoneNumber = json['applicant_telephoneNumber'].toString();
+    applicantTelephoneNumber = json['applicant_telephoneNumber']?.toString();
     print(applicantTelephoneNumber);
     if (json['applicant_checklist'] != null) {
       applicantChecklist = <String>[];
       json['applicant_checklist'].forEach((v) {
-        applicantChecklist!.add(v);
+        applicantChecklist!.add(v.toString());
       });
     }
     print(applicantChecklist);
@@ -76,9 +76,9 @@ class applicant_summery_details {
     print(applicantCheckedChecklist);
     isMovedin = json['isMovedin'];
     print(isMovedin);
-    createdAt = json['createdAt'];
+    createdAt = json['createdAt']?.toString();
     print(createdAt);
-    updatedAt = json['updatedAt'];
+    updatedAt = json['updatedAt']?.toString();
     print(updatedAt);
     if (json['applicant_NotesAndFile'] != null) {
       applicantNotesAndFile = <ApplicantNotesAndFile>[];
@@ -96,7 +96,7 @@ class applicant_summery_details {
     print(applicantStatus);
     isApplicantDataEmpty = json['isApplicantDataEmpty'];
     print(isApplicantDataEmpty);
-    applicantEmailsendDate = json['applicant_emailsend_date'];
+    applicantEmailsendDate = json['applicant_emailsend_date']?.toString();
     print(applicantEmailsendDate);
     leaseData = json['lease_data'] != null
         ? new LeaseData.fromJson(json['lease_data'])
@@ -151,9 +151,9 @@ class ApplicantNotesAndFile {
   ApplicantNotesAndFile({this.applicantNotes, this.applicantFile, this.sId});
 
   ApplicantNotesAndFile.fromJson(Map<String, dynamic> json) {
-    applicantNotes = json['applicant_notes'];
-    applicantFile = json['applicant_file'];
-    sId = json['_id'];
+    applicantNotes = json['applicant_notes']?.toString();
+    applicantFile = json['applicant_file']?.toString();
+    sId = json['_id']?.toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -174,10 +174,10 @@ class ApplicantStatus {
   ApplicantStatus({this.status, this.updateAt, this.statusUpdatedBy, this.sId});
 
   ApplicantStatus.fromJson(Map<String, dynamic> json) {
-    status = json['status'];
-    updateAt = json['updateAt'];
-    statusUpdatedBy = json['statusUpdatedBy'];
-    sId = json['_id'];
+    status = json['status']?.toString();
+    updateAt = json['updateAt']?.toString();
+    statusUpdatedBy = json['statusUpdatedBy']?.toString();
+    sId = json['_id']?.toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -217,21 +217,30 @@ class LeaseData {
       this.rentalUnit});
 
   LeaseData.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
-    leaseId = json['lease_id'];
-    applicantId = json['applicant_id'];
-    adminId = json['admin_id'];
-    rentalId = json['rental_id'];
-    unitId = json['unit_id'];
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
+    sId = json['_id']?.toString();
+    leaseId = json['lease_id']?.toString();
+    applicantId = json['applicant_id']?.toString();
+    adminId = json['admin_id']?.toString();
+
+    // Handle rental_id which can be a list or string
+    if (json['rental_id'] is List) {
+      rentalId = (json['rental_id'] as List).isNotEmpty
+          ? json['rental_id'][0].toString()
+          : null;
+    } else {
+      rentalId = json['rental_id']?.toString();
+    }
+
+    unitId = json['unit_id']?.toString();
+    createdAt = json['createdAt']?.toString();
+    updatedAt = json['updatedAt']?.toString();
     iV = json['__v'];
     if (json['rental_adress'] is List) {
       rentalAdress = (json['rental_adress'] as List).join(', ');
     } else {
-      rentalAdress = json['rental_adress'];
+      rentalAdress = json['rental_adress']?.toString();
     }
-    rentalUnit = json['rental_unit'];
+    rentalUnit = json['rental_unit']?.toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -261,7 +270,7 @@ class ApplicantContentDetails {
   ApplicantContentDetails.fromJson(Map<String, dynamic> json) {
     statusCode = json['statusCode'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
-    message = json['message'];
+    message = json['message']?.toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -328,21 +337,21 @@ class Data {
         ? new Employment.fromJson(json['employment'])
         : null;
     // sId = json['_id'];
-    applicantId = json['applicant_id'];
+    applicantId = json['applicant_id']?.toString();
 
-    adminId = json['admin_id'];
-    applicantStreetAddress = json['applicant_streetAddress'];
-    applicantCity = json['applicant_city'];
-    applicantState = json['applicant_state'];
-    applicantCountry = json['applicant_country'];
-    applicantPostalCode = json['applicant_postalCode'];
+    adminId = json['admin_id']?.toString();
+    applicantStreetAddress = json['applicant_streetAddress']?.toString();
+    applicantCity = json['applicant_city']?.toString();
+    applicantState = json['applicant_state']?.toString();
+    applicantCountry = json['applicant_country']?.toString();
+    applicantPostalCode = json['applicant_postalCode']?.toString();
 
-    agreeBy = json['agreeBy'];
+    agreeBy = json['agreeBy']?.toString();
     // iV = json['__v'];
-    applicantFirstName = json['applicant_firstName'];
-    applicantLastName = json['applicant_lastName'];
-    applicantEmail = json['applicant_email'];
-    applicantPhoneNumber = json['applicant_phoneNumber'];
+    applicantFirstName = json['applicant_firstName']?.toString();
+    applicantLastName = json['applicant_lastName']?.toString();
+    applicantEmail = json['applicant_email']?.toString();
+    applicantPhoneNumber = json['applicant_phoneNumber']?.toString();
     isApplicantDataEmpty = json['isApplicantDataEmpty'];
   }
 
@@ -390,10 +399,10 @@ class EmergencyContact {
       this.phoneNumber});
 
   EmergencyContact.fromJson(Map<String, dynamic> json) {
-    firstName = json['first_name'];
-    lastName = json['last_name'];
-    relationship = json['relationship'];
-    email = json['email'];
+    firstName = json['first_name']?.toString();
+    lastName = json['last_name']?.toString();
+    relationship = json['relationship']?.toString();
+    email = json['email']?.toString();
     phoneNumber = json['phone_number'];
   }
 
@@ -439,18 +448,18 @@ class RentalHistory {
       this.rentalOwnerPhoneNumber});
 
   RentalHistory.fromJson(Map<String, dynamic> json) {
-    rentalAdress = json['rental_adress'];
-    rentalCity = json['rental_city'];
-    rentalState = json['rental_state'];
-    rentalCountry = json['rental_country'];
-    rentalPostcode = json['rental_postcode'];
-    rentalOwnerFirstName = json['rentalOwner_firstName'];
-    rentalOwnerLastName = json['rentalOwner_lastName'];
-    startDate = json['start_date'];
-    endDate = json['end_date'];
-    rent = json['rent'];
-    leavingReason = json['leaving_reason'];
-    rentalOwnerPrimaryEmail = json['rentalOwner_primaryEmail'];
+    rentalAdress = json['rental_adress']?.toString();
+    rentalCity = json['rental_city']?.toString();
+    rentalState = json['rental_state']?.toString();
+    rentalCountry = json['rental_country']?.toString();
+    rentalPostcode = json['rental_postcode']?.toString();
+    rentalOwnerFirstName = json['rentalOwner_firstName']?.toString();
+    rentalOwnerLastName = json['rentalOwner_lastName']?.toString();
+    startDate = json['start_date']?.toString();
+    endDate = json['end_date']?.toString();
+    rent = json['rent']?.toString();
+    leavingReason = json['leaving_reason']?.toString();
+    rentalOwnerPrimaryEmail = json['rentalOwner_primaryEmail']?.toString();
     rentalOwnerPhoneNumber = json['rentalOwner_phoneNumber'];
   }
 
@@ -502,18 +511,18 @@ class Employment {
       this.supervisorTitle});
 
   Employment.fromJson(Map<String, dynamic> json) {
-    name = json['name'];
-    streetAddress = json['streetAddress'];
-    city = json['city'];
-    state = json['state'];
-    country = json['country'];
-    postalCode = json['postalCode'];
-    employmentPrimaryEmail = json['employment_primaryEmail'];
+    name = json['name']?.toString();
+    streetAddress = json['streetAddress']?.toString();
+    city = json['city']?.toString();
+    state = json['state']?.toString();
+    country = json['country']?.toString();
+    postalCode = json['postalCode']?.toString();
+    employmentPrimaryEmail = json['employment_primaryEmail']?.toString();
     employmentPhoneNumber = json['employment_phoneNumber'];
-    employmentPosition = json['employment_position'];
-    supervisorFirstName = json['supervisor_firstName'];
-    supervisorLastName = json['supervisor_lastName'];
-    supervisorTitle = json['supervisor_title'];
+    employmentPosition = json['employment_position']?.toString();
+    supervisorFirstName = json['supervisor_firstName']?.toString();
+    supervisorLastName = json['supervisor_lastName']?.toString();
+    supervisorTitle = json['supervisor_title']?.toString();
   }
 
   Map<String, dynamic> toJson() {

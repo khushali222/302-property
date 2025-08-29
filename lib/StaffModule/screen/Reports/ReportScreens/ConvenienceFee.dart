@@ -430,12 +430,12 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                 },
                 child: Row(
                   children: [
-                    SizedBox(width: 20),
-                width < 400
-                    ? const Text("Lease \nEndDate",
-                    style: TextStyle(color: Colors.white))
-                    : const Text("Lease \nEndDate",
-                    style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 22),
+                    width < 400
+                        ? const Text("Lease\nEndDate",
+                        style: TextStyle(color: Colors.white,fontSize: 15))
+                        : const Text("Lease\nEndDate",
+                        style: TextStyle(color: Colors.white,fontSize: 15)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(

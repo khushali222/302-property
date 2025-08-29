@@ -178,6 +178,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../constant/constant.dart';
 
@@ -250,9 +251,27 @@ class DateProvider with ChangeNotifier {
       if (response.statusCode != 200) {
         // Handle error
         print("Failed to save date format.");
+        Fluttertoast.showToast(
+          msg: 'Failed to save date format',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black87,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
       } else {
         final jsonData = jsonDecode(response.body);
         await checkToken(token);
+
+        // Show success toast message
+        Fluttertoast.showToast(
+          msg: jsonData['message'] ?? 'Date format saved successfully!',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.black87,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
       }
     }
   }

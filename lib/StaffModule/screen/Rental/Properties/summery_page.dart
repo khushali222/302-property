@@ -14723,28 +14723,28 @@ class _Summery_pageState extends State<Summery_page>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(left: 16),
+                            padding: const EdgeInsets.only(left: 12,bottom: 5),
                             child: Text(
-                              '${unit!.rentalunit}',
+                              '${unit?.rentalunit}',
                               style: TextStyle(
                                   fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 14
-                                          : 20,
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 14
+                                      : 20,
                                   color: Colors.grey[800],
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 16),
+                            padding: const EdgeInsets.only(left: 12),
                             child: Text(
                               'ADDRESS',
                               style: TextStyle(
                                   fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 14
-                                          : 20,
-                                  color: Colors.grey[800],
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 14
+                                      : 20,
+                                  color: grey,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -14754,20 +14754,20 @@ class _Summery_pageState extends State<Summery_page>
                           SizedBox(
                             width: MediaQuery.of(context).size.width > 500
                                 ? 200
-                                : 150,
+                                : 140,
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 16),
+                              padding: const EdgeInsets.only(left: 12),
                               child: Text(
                                 '${widget.properties?.rentalAddress}',
-                                maxLines: 2, // Set maximum number of lines
+                                maxLines: 3, // Set maximum number of lines
                                 overflow: TextOverflow
                                     .ellipsis, // Handle overflow with ellipsis
                                 style: TextStyle(
                                   fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 13
-                                          : 18,
-                                  color: Colors.grey[800],
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 13
+                                      : 18,
+                                  color: blueColor,
                                 ),
                               ),
                             ),
@@ -14775,35 +14775,66 @@ class _Summery_pageState extends State<Summery_page>
                           SizedBox(
                             height: 5,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 16),
-                            child: Text(
-                              maxLines: 2,
-                              '${widget.properties?.rentalCity} ${widget.properties?.rentalState}',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 13
-                                          : 18,
-                                  color: Colors.grey[800]),
-                            ),
-                          ),
                           SizedBox(
-                            height: 5,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 16),
-                            child: Text(
-                              '${widget.properties?.rentalCountry} ${widget.properties?.rentalPostcode}',
-                              style: TextStyle(
+                            width: MediaQuery.of(context).size.width > 500
+                                ? 200
+                                : 140,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 12),
+                              child: Text(
+                                [
+                                  widget.properties.rentalCity,
+                                  widget.properties.rentalState,
+                                  widget.properties.rentalCountry,
+                                  widget.properties.rentalPostcode,
+                                ]
+                                    .where((element) =>
+                                element != null &&
+                                    element
+                                        .isNotEmpty) // Filter out null or empty elements
+                                    .map((element) =>
+                                element!) // Ensure non-null elements
+                                    .join(' , '),
+                                style: TextStyle(
+                                  color: blueColor,
                                   fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 13
-                                          : 18,
-                                  color: Colors.grey[800]),
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 13
+                                      : 18,
+                                ),
+                                maxLines: 6,
+                              ),
                             ),
                           ),
+                          // Padding(
+                          //   padding: const EdgeInsets.only(left: 8),
+                          //   child: Text(
+                          //     maxLines: 4,
+                          //     '${widget.properties?.rentalCity} ${widget.properties?.rentalState}',
+                          //     overflow: TextOverflow.ellipsis,
+                          //     style: TextStyle(
+                          //         fontSize:
+                          //             MediaQuery.of(context).size.width < 500
+                          //                 ? 13
+                          //                 : 18,
+                          //         color: Colors.grey[800]),
+                          //   ),
+                          // ),
+                          // SizedBox(
+                          //   height: 5,
+                          // ),
+                          // Padding(
+                          //   padding: const EdgeInsets.only(left: 12),
+                          //   child: Text(
+                          //     '${widget.properties?.rentalCountry} ${widget.properties?.rentalPostcode}',
+                          //     style: TextStyle(
+                          //         fontSize:
+                          //             MediaQuery.of(context).size.width < 500
+                          //                 ? 13
+                          //                 : 18,
+                          //         color: Colors.grey[800]),
+                          //   ),
+                          // ),
                         ],
                       ),
                       Spacer(),

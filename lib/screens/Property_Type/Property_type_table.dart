@@ -242,7 +242,7 @@ class _PropertyTableState extends State<PropertyTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Created On ",
+                    Text("Created On",
                         style: TextStyle(
                             color: blueColor,
                             fontWeight: FontWeight.bold,

@@ -279,7 +279,7 @@ class _AddApplicantState extends State<AddApplicant> {
                         const SizedBox(
                           height: 8,
                         ),
-                        const Text('home number',
+                        const Text('Home Number',
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,

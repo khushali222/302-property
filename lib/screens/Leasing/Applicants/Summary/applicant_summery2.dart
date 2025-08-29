@@ -371,9 +371,9 @@ class _applicant_summeryState extends State<applicant_summery>
                                           });
                                           if (value != null) {
                                             final rentalId =
-                                                snapshot.data!.leaseData!.rentalId;
+                                                snapshot.data?.leaseData?.rentalId;
                                             final unitId =
-                                                snapshot.data!.leaseData!.unitId;
+                                                snapshot.data?.leaseData?.unitId;
 
                                             // Call the API to update the applicant status
                                             bool success =
@@ -483,9 +483,9 @@ class _applicant_summeryState extends State<applicant_summery>
                                                 builder: (context) => addLease3(
                                                   applicantId: widget.applicant_id,
                                                   rentalId: snapshot
-                                                      .data!.leaseData!.rentalId,
+                                                      .data?.leaseData?.rentalId,
                                                   unitId: snapshot
-                                                      .data!.leaseData!.unitId,
+                                                      .data?.leaseData?.unitId,
                                                   leaseId: snapshot.data?.leaseData?.leaseId,
                                                 ),
                                               ),

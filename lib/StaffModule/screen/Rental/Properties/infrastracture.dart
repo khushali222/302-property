@@ -637,82 +637,86 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Text(
-                        'Infrastructure',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.grey.shade900,
-                        ),
-                      ),
-                      if (widget.units != null && widget.units!.length > 1)
-                        Container(
-                          margin: EdgeInsets.only(left: 20),
-                          height: 36, // Reduced height
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                                color: blueColor.withOpacity(0.3), width: 1.5),
-                            borderRadius: BorderRadius.circular(
-                                20), // More rounded corners
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.1),
-                                blurRadius: 4,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Text(
+                          'Infrastructure',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.grey.shade900,
                           ),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<unit_properties>(
-                              value: selectedUnit,
-                              icon: Icon(
-                                Icons.keyboard_arrow_down,
-                                color: blueColor,
-                                size: 20,
+                        ),
+                        if (widget.units != null && widget.units!.length > 1)
+                          Expanded(
+                            child: Container(
+                              margin: EdgeInsets.only(left: 20),
+                              height: 36,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(
+                                    color: blueColor.withOpacity(0.3),
+                                    width: 1.5),
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.1),
+                                    blurRadius: 4,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
                               ),
-                              iconSize: 20,
-                              elevation: 3,
-                              dropdownColor: Colors.white,
-                              style: TextStyle(
-                                color: Colors.grey.shade800,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              items: widget.units!
-                                  .map((unit) =>
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<unit_properties>(
+                                  isExpanded:
+                                  true, // Makes dropdown text responsive
+                                  value: selectedUnit,
+                                  icon: Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: blueColor,
+                                    size: 20,
+                                  ),
+                                  elevation: 3,
+                                  dropdownColor: Colors.white,
+                                  style: TextStyle(
+                                    color: Colors.grey.shade800,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  items: widget.units!
+                                      .map((unit) =>
                                       DropdownMenuItem<unit_properties>(
                                         value: unit,
-                                        child: Container(
-                                          padding:
-                                              EdgeInsets.symmetric(vertical: 4),
-                                          child: Text(
-                                            unit.rentalunit ??
-                                                'Unit ${unit.unitId}',
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey.shade800,
-                                            ),
+                                        child: Text(
+                                          unit.rentalunit ??
+                                              'Unit ${unit.unitId}',
+                                          overflow: TextOverflow
+                                              .ellipsis, // Prevent overflow
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.grey.shade800,
                                           ),
                                         ),
                                       ))
-                                  .toList(),
-                              onChanged: (unit) {
-                                setState(() {
-                                  selectedUnit = unit;
-                                  _filterAppliancesByUnit();
-                                });
-                              },
+                                      .toList(),
+                                  onChanged: (unit) {
+                                    setState(() {
+                                      selectedUnit = unit;
+                                      _filterAppliancesByUnit();
+                                    });
+                                  },
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
+                  SizedBox(width: 8,),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -724,7 +728,6 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                           ),
                         ),
                       ).then((result) {
-                        // Refresh the data when returning from AddApplience
                         if (result == true) {
                           setState(() {
                             fetchAllLeases();
@@ -735,7 +738,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                     },
                     child: Container(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                       decoration: BoxDecoration(
                         color: blueColor,
                         borderRadius: BorderRadius.circular(10),
@@ -750,11 +753,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                            Icons.add,
-                            color: Colors.white,
-                            size: 18,
-                          ),
+                          Icon(Icons.add, color: Colors.white, size: 18),
                           SizedBox(width: 8),
                           Text(
                             'Add',

@@ -2723,7 +2723,7 @@ class _Summery_pageState extends State<Summery_page>
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10),
                                     child: Text(
-                                      'Property Details',
+                                      'Property Detailss',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize:
@@ -12063,10 +12063,12 @@ class _Summery_pageState extends State<Summery_page>
                                 ? "$image_url${unit.rentalImages!.first}"
                                 : 'assets/images/no_image.jpg',
                             fit: BoxFit.cover,
-                            height: MediaQuery.of(context).size.width < 500
+                            height:
+                            MediaQuery.of(context).size.width < 500
                                 ? 140
                                 : 220,
-                            width: MediaQuery.of(context).size.width < 500
+                            width:
+                            MediaQuery.of(context).size.width < 500
                                 ? 160
                                 : 220,
                             placeholder: (context, url) => Shimmer.fromColors(
@@ -12094,7 +12096,7 @@ class _Summery_pageState extends State<Summery_page>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(left: 12),
+                            padding: const EdgeInsets.only(left: 12,bottom: 5),
                             child: Text(
                               '${unit?.rentalunit}',
                               style: TextStyle(
@@ -12115,7 +12117,7 @@ class _Summery_pageState extends State<Summery_page>
                                       MediaQuery.of(context).size.width < 500
                                           ? 14
                                           : 20,
-                                  color: Colors.grey[800],
+                                  color: grey,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -12125,7 +12127,7 @@ class _Summery_pageState extends State<Summery_page>
                           SizedBox(
                             width: MediaQuery.of(context).size.width > 500
                                 ? 200
-                                : 150,
+                                : 140,
                             child: Padding(
                               padding: const EdgeInsets.only(left: 12),
                               child: Text(
@@ -12138,7 +12140,7 @@ class _Summery_pageState extends State<Summery_page>
                                       MediaQuery.of(context).size.width < 500
                                           ? 13
                                           : 18,
-                                  color: Colors.grey[800],
+                                  color: blueColor,
                                 ),
                               ),
                             ),
@@ -12149,7 +12151,7 @@ class _Summery_pageState extends State<Summery_page>
                           SizedBox(
                             width: MediaQuery.of(context).size.width > 500
                                 ? 200
-                                : 160,
+                                : 140,
                             child: Padding(
                               padding: const EdgeInsets.only(left: 12),
                               child: Text(
