@@ -1459,8 +1459,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       lastName: _emergencyLastNameController.text,
                       relationship: _emergencyRelationshipController.text,
                       email: _emergencyEmailController.text,
-                      phoneNumber:
-                          int.tryParse(_emergencyPhoneNumberController.text),
+                      phoneNumber: _emergencyPhoneNumberController.text,
                     ),
                     rentalHistory: RentalHistory(
                       rentalAdress: _rentalAddressController.text,
@@ -1476,8 +1475,9 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       rent: _rentController.text,
                       leavingReason: _leavingReasonController.text,
                       rentalOwnerPrimaryEmail: _rentalOwnerEmailController.text,
-                      rentalOwnerPhoneNumber:
-                          int.tryParse(_rentalOwnerPhoneNumberController.text),
+                      // rentalOwnerPhoneNumber:
+                      //     int.tryParse(_rentalOwnerPhoneNumberController.text),
+                      rentalOwnerPhoneNumber: _rentalOwnerPhoneNumberController.text,
                     ),
                     employment: Employment(
                       name: _employmentNameController.text,
@@ -1488,8 +1488,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       postalCode: _employmentPostalCodeController.text,
                       employmentPrimaryEmail:
                           _employmentPrimaryEmailController.text,
-                      employmentPhoneNumber:
-                          int.tryParse(_employmentPhoneNumberController.text),
+                      employmentPhoneNumber: _employmentPhoneNumberController.text,
                       employmentPosition: _employmentPositionController.text,
                       supervisorFirstName: _supervisorFirstNameController.text,
                       supervisorLastName: _supervisorLastNameController.text,

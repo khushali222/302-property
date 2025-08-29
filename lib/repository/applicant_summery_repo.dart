@@ -243,7 +243,7 @@ class ApplicantSummeryRepository {
           });
 
       if (response.statusCode == 200) {
-        print('Response body: ${response.body}');
+        print('Response body kkk : ${response.body}');
         return ApplicantContentDetails.fromJson(json.decode(response.body));
       } else {
         print(

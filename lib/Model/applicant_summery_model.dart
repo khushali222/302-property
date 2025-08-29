@@ -389,7 +389,7 @@ class EmergencyContact {
   String? lastName;
   String? relationship;
   String? email;
-  int? phoneNumber;
+  String? phoneNumber;
 
   EmergencyContact(
       {this.firstName,
@@ -403,7 +403,7 @@ class EmergencyContact {
     lastName = json['last_name']?.toString();
     relationship = json['relationship']?.toString();
     email = json['email']?.toString();
-    phoneNumber = json['phone_number'];
+    phoneNumber = json['phone_number']?.toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -430,7 +430,7 @@ class RentalHistory {
   String? rent;
   String? leavingReason;
   String? rentalOwnerPrimaryEmail;
-  int? rentalOwnerPhoneNumber;
+  String? rentalOwnerPhoneNumber;
 
   RentalHistory(
       {this.rentalAdress,
@@ -460,7 +460,7 @@ class RentalHistory {
     rent = json['rent']?.toString();
     leavingReason = json['leaving_reason']?.toString();
     rentalOwnerPrimaryEmail = json['rentalOwner_primaryEmail']?.toString();
-    rentalOwnerPhoneNumber = json['rentalOwner_phoneNumber'];
+    rentalOwnerPhoneNumber = json['rentalOwner_phoneNumber']?.toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -490,7 +490,7 @@ class Employment {
   String? country;
   String? postalCode;
   String? employmentPrimaryEmail;
-  int? employmentPhoneNumber;
+  String? employmentPhoneNumber;
   String? employmentPosition;
   String? supervisorFirstName;
   String? supervisorLastName;
@@ -518,7 +518,7 @@ class Employment {
     country = json['country']?.toString();
     postalCode = json['postalCode']?.toString();
     employmentPrimaryEmail = json['employment_primaryEmail']?.toString();
-    employmentPhoneNumber = json['employment_phoneNumber'];
+    employmentPhoneNumber = json['employment_phoneNumber']?.toString();
     employmentPosition = json['employment_position']?.toString();
     supervisorFirstName = json['supervisor_firstName']?.toString();
     supervisorLastName = json['supervisor_lastName']?.toString();

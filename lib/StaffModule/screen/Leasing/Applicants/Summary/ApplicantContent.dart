@@ -1470,9 +1470,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             _emergencyRelationshipController
                                                 .text.trim(),
                                             email: _emergencyEmailController.text.trim(),
-                                            phoneNumber: int.tryParse(
+                                            phoneNumber:
                                                 _emergencyPhoneNumberController
-                                                    .text.trim()),
+                                                    .text.trim(),
                                           ),
                                           rentalHistory: RentalHistory(
                                             rentalAdress:
@@ -1498,9 +1498,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             _leavingReasonController.text.trim(),
                                             rentalOwnerPrimaryEmail:
                                             _rentalOwnerEmailController.text.trim(),
-                                            rentalOwnerPhoneNumber: int.tryParse(
+                                            rentalOwnerPhoneNumber:
                                                 _rentalOwnerPhoneNumberController
-                                                    .text.trim()),
+                                                    .text.trim(),
                                           ),
                                           employment: Employment(
                                             name: _employmentNameController.text.trim(),
@@ -1518,9 +1518,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             employmentPrimaryEmail:
                                             _employmentPrimaryEmailController
                                                 .text.trim(),
-                                            employmentPhoneNumber: int.tryParse(
+                                            employmentPhoneNumber:
                                                 _employmentPhoneNumberController
-                                                    .text.trim()),
+                                                    .text.trim(),
                                             employmentPosition:
                                             _employmentPositionController
                                                 .text.trim(),
@@ -3287,9 +3287,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       email:
                                                           _emergencyEmailController
                                                               .text.trim(),
-                                                      phoneNumber: int.tryParse(
+                                                      phoneNumber:
                                                           _emergencyPhoneNumberController
-                                                              .text.trim()),
+                                                              .text.trim(),
                                                     ),
                                                     rentalHistory:
                                                         RentalHistory(
@@ -3329,9 +3329,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                           _rentalOwnerEmailController
                                                               .text.trim(),
                                                       rentalOwnerPhoneNumber:
-                                                          int.tryParse(
+
                                                               _rentalOwnerPhoneNumberController
-                                                                  .text.trim()),
+                                                                  .text.trim(),
                                                     ),
                                                     employment: Employment(
                                                       name:
@@ -3356,9 +3356,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                           _employmentPrimaryEmailController
                                                               .text.trim(),
                                                       employmentPhoneNumber:
-                                                          int.tryParse(
+
                                                               _employmentPhoneNumberController
-                                                                  .text.trim()),
+                                                                  .text.trim(),
                                                       employmentPosition:
                                                           _employmentPositionController
                                                               .text.trim(),

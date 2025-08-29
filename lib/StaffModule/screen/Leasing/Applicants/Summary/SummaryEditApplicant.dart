@@ -1462,7 +1462,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       relationship: _emergencyRelationshipController.text,
                       email: _emergencyEmailController.text,
                       phoneNumber:
-                      int.tryParse(_emergencyPhoneNumberController.text),
+                     _emergencyPhoneNumberController.text,
                     ),
                     rentalHistory: RentalHistory(
                       rentalAdress: _rentalAddressController.text,
@@ -1479,7 +1479,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       leavingReason: _leavingReasonController.text,
                       rentalOwnerPrimaryEmail: _rentalOwnerEmailController.text,
                       rentalOwnerPhoneNumber:
-                      int.tryParse(_rentalOwnerPhoneNumberController.text),
+                     _rentalOwnerPhoneNumberController.text,
                     ),
                     employment: Employment(
                       name: _employmentNameController.text,
@@ -1491,7 +1491,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                       employmentPrimaryEmail:
                       _employmentPrimaryEmailController.text,
                       employmentPhoneNumber:
-                      int.tryParse(_employmentPhoneNumberController.text),
+                     _employmentPhoneNumberController.text,
                       employmentPosition: _employmentPositionController.text,
                       supervisorFirstName: _supervisorFirstNameController.text,
                       supervisorLastName: _supervisorLastNameController.text,
