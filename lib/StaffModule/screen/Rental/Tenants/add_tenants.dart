@@ -1627,6 +1627,9 @@ class _AddTenantState extends State<AddTenant> {
                                           hintText: 'Enter first name',
                                           controller: firstName,
                                           showElevation: false,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]")), // only letters + spaces
+                                          ],
                                           isInRow:
                                           true, // ADD FOR ROW ALIGNMENT
                                           borderColor: Color(
@@ -1665,6 +1668,9 @@ class _AddTenantState extends State<AddTenant> {
                                           keyboardType: TextInputType.text,
                                           hintText: 'Enter last name',
                                           controller: lastName,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]")), // only letters + spaces
+                                          ],
                                           borderColor: Color(0xFFCED4DA),
                                           isInRow:
                                           true, // ADD FOR ROW ALIGNMENT

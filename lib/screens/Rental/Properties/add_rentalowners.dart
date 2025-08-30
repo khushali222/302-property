@@ -2014,7 +2014,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                         if (firstname.text.trim().isEmpty) {
                           setState(() {
                             firstnameerror = true;
-                            firstnamemessage = "required";
+                            firstnamemessage = "Please enter name";
                           });
                         } else {
                           setState(() {
@@ -2024,7 +2024,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                         if (comname.text.trim().isEmpty) {
                           setState(() {
                             comnameerror = true;
-                            comnamemessage = "required";
+                            comnamemessage = "Please enter company name";
                           });
                         } else {
                           setState(() {
@@ -2034,7 +2034,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                         if (primaryemail.text.trim().isEmpty) {
                           setState(() {
                             primaryemailerror = true;
-                            primaryemailmessage = "required";
+                            primaryemailmessage = "Email is required";
                           });
                         } else if (!EmailValidator.validate(
                             primaryemail.text)) {
@@ -2081,7 +2081,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                         if (formattedPhoneNumber.isEmpty) {
                           setState(() {
                             phonenumerror = true;
-                            phonenummessage = "required";
+                            phonenummessage = "Please enter phone number";
                           });
                         } else if (formattedPhoneNumber.length != 10) {
                           setState(() {
