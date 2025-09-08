@@ -14,8 +14,8 @@ class ActivityRepository {
     String?  id = prefs.getString('adminId');
     final response = await http.get(Uri.parse('$Api_url/api/activity/$id?pageSize=$pageSize&pageNumber=$pageNumber'),
       headers: <String, String>{
-      "authorization": "CRM $token",
-      "id":"CRM $id",
+        "authorization": "CRM $token",
+        "id":"CRM $id",
       'Content-Type': 'application/json; charset=UTF-8',
     },);
 

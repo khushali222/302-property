@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/screens/Dashboard/revenue_details_screen.dart';
 
 class Barchart extends StatefulWidget {
   @override
@@ -228,6 +229,18 @@ class _BarchartState extends State<Barchart> {
               child: isLoading
                   ? Center(child: CircularProgressIndicator())
                   : SfCartesianChart(
+                      onChartTouchInteractionDown:
+                          (ChartTouchInteractionArgs args) {
+                        // Navigate to revenue details when chart is tapped
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RevenueDetailsScreen(
+                              selectedYear: selectedValue ?? 'Current Year',
+                            ),
+                          ),
+                        );
+                      },
                       primaryXAxis: CategoryAxis(
                         majorGridLines: MajorGridLines(width: 0),
                         isVisible: true, // Show X-axis labels

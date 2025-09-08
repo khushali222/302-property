@@ -1,0 +1,625 @@
+import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/widgets/appbar.dart';
+import 'package:three_zero_two_property/widgets/custom_drawer.dart';
+import 'package:three_zero_two_property/widgets/titleBar.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+class MortgageSummary extends StatefulWidget {
+  final Map<String, dynamic>? mortgageData;
+
+  const MortgageSummary({Key? key, this.mortgageData}) : super(key: key);
+
+  @override
+  State<MortgageSummary> createState() => _MortgageSummaryState();
+}
+
+class _MortgageSummaryState extends State<MortgageSummary> {
+  Map<String, dynamic>? mortgageData;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    print(widget.mortgageData!['_id']);
+    //mortgageData = widget.mortgageData;
+    // if (mortgageData == null) {
+    _loadMortgageData();
+    //}
+  }
+
+  Future<void> _loadMortgageData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? id = prefs.getString('adminId');
+
+      final response = await http.get(
+        Uri.parse(
+            'https://staging.cloudrentalmanager.com/api/mortgage/details/${widget.mortgageData!['_id']}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': 'CRM $token',
+          'id': 'CRM $id',
+        },
+      ).timeout(const Duration(seconds: 30));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          mortgageData = data["data"];
+
+          print(mortgageData!["properties"]);
+        });
+      }
+    } catch (e) {
+      setState(() {
+        mortgageData = {
+          '_id': '85d15d7a-77dc-401b-9d48-cd88d5f1abf3',
+          'properties': ['1752748973359'],
+          'bank_name': 'Test Bank',
+          'mortgage_no': '11',
+          'loan_amount': 4500,
+          'interest_rate': 5,
+          'status': 'active',
+          'remaining_balance': 4500,
+          'start_date': '2025-09-02T00:00:00.000Z',
+          'end_date': '2025-09-24T00:00:00.000Z',
+          'last_payment_date': '2025-09-02T00:00:00.000Z',
+          'next_payment_date': '2025-09-16T00:00:00.000Z',
+          'borrower_first_name': 'John',
+          'borrower_last_name': 'Doe',
+          'monthly_payment': 4518.75,
+        };
+      });
+      print(e);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  String _formatCurrency(dynamic amount) {
+    if (amount == null) return '\$0';
+    final numValue = amount is String ? double.tryParse(amount) ?? 0 : amount;
+    return '\$${numValue.toStringAsFixed(2)}';
+  }
+
+  String _formatDate(String? dateString) {
+    if (dateString == null) return 'N/A';
+    try {
+      final date = DateTime.parse(dateString);
+      return '${date.day}/${date.month}/${date.year}';
+    } catch (e) {
+      return 'Invalid Date';
+    }
+  }
+
+  Color _getStatusColor(String? status) {
+    if (status == null) return Colors.grey;
+    switch (status.toLowerCase()) {
+      case 'active':
+        return Colors.green;
+      case 'paid off':
+        return Colors.blue;
+      case 'defaulted':
+        return Colors.red;
+      case 'refinanced':
+        return Colors.orange;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  double _getPaymentProgress() {
+    if (mortgageData == null) return 0.0;
+    final loanAmount = mortgageData!['loan_amount'] ?? 0;
+    final remainingBalance = mortgageData!['remaining_balance'] ?? 0;
+    if (loanAmount == 0) return 0.0;
+    return ((loanAmount - remainingBalance) / loanAmount) * 100;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        appBar: widget_302.App_Bar(context: context),
+        backgroundColor: Colors.white,
+        drawer: CustomDrawer(
+          currentpage: "Mortgage Summary",
+          dropdown: true,
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1E3A8A)),
+          ),
+        ),
+      );
+    }
+
+    if (mortgageData == null) {
+      return Scaffold(
+        appBar: widget_302.App_Bar(context: context),
+        backgroundColor: Colors.white,
+        drawer: CustomDrawer(
+          currentpage: "Mortgage Summary",
+          dropdown: true,
+        ),
+        body: const Center(
+          child: Text('No mortgage data available'),
+        ),
+      );
+    }
+
+    final paymentProgress = _getPaymentProgress();
+    final status = mortgageData!['status'] ?? 'unknown';
+
+    return Scaffold(
+      appBar: widget_302.App_Bar(context: context),
+      backgroundColor: Colors.grey.shade50,
+      drawer: CustomDrawer(
+        currentpage: "Mortgage Summary",
+        dropdown: true,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: titleBar(
+                width: MediaQuery.of(context).size.width * .90,
+                title: 'Mortgage Summary',
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+
+                  // Status and Progress Section
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: _getStatusColor(status).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: _getStatusColor(status)),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: _getStatusColor(status),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: FaIcon(
+                            FontAwesomeIcons.check,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                status.toUpperCase(),
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: _getStatusColor(status),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Last updated: ${_formatDate(mortgageData!['updatedAt'])}',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                '${_formatCurrency(mortgageData!['remaining_balance'])} Remaining Balance',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF1E3A8A),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Payment Progress
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade200),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.1),
+                          spreadRadius: 1,
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Payment Progress',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1E3A8A),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${paymentProgress.toStringAsFixed(0)}% COMPLETE',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF1E3A8A),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  LinearProgressIndicator(
+                                    value: paymentProgress / 100,
+                                    backgroundColor: Colors.grey.shade200,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      _getStatusColor(status),
+                                    ),
+                                    minHeight: 8,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Paid: ${_formatCurrency((mortgageData!['loan_amount'] ?? 0) - (mortgageData!['remaining_balance'] ?? 0))}',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            Text(
+                              'Total: ${_formatCurrency(mortgageData!['loan_amount'])}',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Financial Information Cards
+                  const Text(
+                    'Financial Information',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1E3A8A),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  Column(
+                    children: [
+                      _buildSummaryCard(
+                        title: 'Original Loan',
+                        value: _formatCurrency(mortgageData!['loan_amount']),
+                        icon: FontAwesomeIcons.dollarSign,
+                        color: Colors.blue,
+                      ),
+                      const SizedBox(height: 12),
+                      _buildSummaryCard(
+                        title: 'Interest Rate',
+                        value: '${mortgageData!['interest_rate'] ?? 0}%',
+                        icon: FontAwesomeIcons.percent,
+                        color: Colors.green,
+                      ),
+                      const SizedBox(height: 12),
+                      _buildSummaryCard(
+                        title: 'Monthly Payment',
+                        value:
+                            _formatCurrency(mortgageData!['monthly_payment']),
+                        icon: FontAwesomeIcons.calendar,
+                        color: Colors.orange,
+                      ),
+                      const SizedBox(height: 12),
+                      _buildSummaryCard(
+                        title: 'Total Interest',
+                        value: _formatCurrency(
+                          ((mortgageData!['loan_amount'] ?? 0) *
+                              (mortgageData!['interest_rate'] ?? 0) /
+                              100),
+                        ),
+                        icon: FontAwesomeIcons.chartLine,
+                        color: Colors.purple,
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Dates Information
+                  _buildInfoCard(
+                    title: 'Important Dates',
+                    children: [
+                      _buildDateRow('Start Date',
+                          _formatDate(mortgageData!['start_date'])),
+                      _buildDateRow(
+                          'End Date', _formatDate(mortgageData!['end_date'])),
+                      _buildDateRow('Last Payment',
+                          _formatDate(mortgageData!['last_payment_date'])),
+                      _buildDateRow('Next Payment',
+                          _formatDate(mortgageData!['next_payment_date'])),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Bank Information
+                  _buildInfoCard(
+                    title: 'Bank Information',
+                    children: [
+                      _buildInfoRow(
+                          'Bank Name', mortgageData!['bank_name'] ?? 'N/A'),
+                      _buildInfoRow(
+                          'Contact', mortgageData!['bank_contact_no'] ?? 'N/A'),
+                      _buildInfoRow(
+                          'Email', mortgageData!['bank_email'] ?? 'N/A'),
+                      _buildInfoRow(
+                          'Address', mortgageData!['bank_address'] ?? 'N/A'),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Borrower Information
+                  _buildInfoCard(
+                    title: 'Borrower Information',
+                    children: [
+                      _buildInfoRow(
+                          'Name',
+                          '${mortgageData!['borrower_first_name'] ?? ''} ${mortgageData!['borrower_last_name'] ?? ''}'
+                              .trim()),
+                      _buildInfoRow(
+                          'Phone', mortgageData!['borrower_phone'] ?? 'N/A'),
+                      _buildInfoRow(
+                          'Email', mortgageData!['borrower_email'] ?? 'N/A'),
+                      _buildInfoRow('Address',
+                          mortgageData!['borrower_address'] ?? 'N/A'),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Property Information
+                  // _buildInfoCard(
+                  //   title: 'Property Information',
+                  //   children: [
+                  //     _buildInfoRow('Properties',
+                  //         '${(mortgageData!['properties'] as List).length} Property${(mortgageData!['properties'] as List).length > 1 ? 's' : ''}'),
+                  //     _buildInfoRow(
+                  //         'Mortgage #', mortgageData!['mortgage_no'] ?? 'N/A'),
+                  //     _buildInfoRow('Status', status.toUpperCase()),
+                  //   ],
+                  // ),
+
+                  const SizedBox(height: 40),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSummaryCard({
+    required String title,
+    required String value,
+    required IconData icon,
+    required Color color,
+    String? subtitle,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: color, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      value,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                      ),
+                    ),
+                    if (subtitle != null)
+                      Text(
+                        subtitle,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          color: Colors.grey,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoCard({
+    required String title,
+    required List<Widget> children,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF1E3A8A),
+            ),
+          ),
+          const SizedBox(height: 12),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.grey,
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF1E3A8A),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.grey,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              textAlign: TextAlign.right,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF1E3A8A),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

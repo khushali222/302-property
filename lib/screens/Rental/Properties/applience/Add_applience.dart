@@ -10,12 +10,8 @@ import '../../../../Model/All_categories_model.dart';
 import '../../../../constant/constant.dart';
 import '../../../../widgets/appbar.dart';
 import '../../../../widgets/custom_drawer.dart';
-import '../summery_page.dart';
-import '../../../../Model/All_categories_model.dart';
-import '../../../../constant/constant.dart';
 import '../../../../model/properties.dart';
 import '../../../../model/unitsummery_propeties.dart';
-import '../../../../provider/dateProvider.dart';
 import '../../../../repository/fetch_allcategories.dart';
 import '../../../../repository/properties_summery.dart';
 import '../../../../repository/unit_data.dart';
@@ -1184,7 +1180,8 @@ class _AddApplienceState extends State<AddApplience> {
                   ),
                   if (iserror)
                     const Padding(
-                      padding: EdgeInsets.only(top: 8.0,left: 10,right: 10,bottom: 20),
+                      padding: EdgeInsets.only(
+                          top: 8.0, left: 10, right: 10, bottom: 20),
                       child: Text(
                         "Please fill in all fields correctly.",
                         style: TextStyle(color: Colors.redAccent),

@@ -13,6 +13,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 
 import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
 
@@ -733,6 +734,7 @@ class _addLease3State extends State<addLease3>
   @override
   void dispose() {
     _tabController.dispose();
+    _rentShareFocusNode.dispose();
     super.dispose();
   }
 
@@ -948,6 +950,9 @@ class _addLease3State extends State<addLease3>
   //for rentshare
   String? _errorMessage;
   String? _errorMessagetenants;
+
+  // FocusNode for keyboard actions
+  final FocusNode _rentShareFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -1672,8 +1677,9 @@ class _addLease3State extends State<addLease3>
                                   },
                                   readOnnly: true,
                                   suffixIcon: IconButton(
-                                    onPressed: () async{
-                                      DateTime? pickedDate = await showDatePicker(
+                                    onPressed: () async {
+                                      DateTime? pickedDate =
+                                          await showDatePicker(
                                         context: context,
                                         initialDate: DateTime.now(),
                                         firstDate: _startDate != null
@@ -1687,18 +1693,18 @@ class _addLease3State extends State<addLease3>
                                             data: ThemeData.light().copyWith(
                                               colorScheme: ColorScheme.light(
                                                 primary:
-                                                blueColor, // header background color
+                                                    blueColor, // header background color
                                                 onPrimary: Colors
                                                     .white, // header text color
                                                 onSurface:
-                                                blueColor, // body text color
+                                                    blueColor, // body text color
                                               ),
                                               textButtonTheme:
-                                              TextButtonThemeData(
+                                                  TextButtonThemeData(
                                                 style: TextButton.styleFrom(
                                                   foregroundColor: Colors.white,
                                                   backgroundColor:
-                                                  blueColor, // button text color
+                                                      blueColor, // button text color
                                                 ),
                                               ),
                                             ),
@@ -1712,7 +1718,8 @@ class _addLease3State extends State<addLease3>
                                         String formattedDate =
                                             "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                                         setState(() {
-                                          endDateController.text = formattedDate;
+                                          endDateController.text =
+                                              formattedDate;
                                           rentCycleItemsDynamic(pickedDate
                                               .difference(_startDate!)
                                               .inDays);
@@ -2960,93 +2967,33 @@ class _addLease3State extends State<addLease3>
                                                                   .only(
                                                                   left: 10,
                                                                   bottom: 7),
-                                                          child: TextField(
-                                                            controller:
-                                                                controller,
-                                                            style: TextStyle(
-                                                              fontSize: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width <
-                                                                      500
-                                                                  ? 16
-                                                                  : 16,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color:
-                                                                  Colors.black,
+                                                          child:
+                                                              KeyboardActions(
+                                                            config:
+                                                                KeyboardActionsConfig(
+                                                              keyboardActionsPlatform:
+                                                                  KeyboardActionsPlatform
+                                                                      .ALL,
+                                                              actions: [
+                                                                KeyboardActionsItem(
+                                                                  focusNode:
+                                                                      _rentShareFocusNode,
+                                                                  displayDoneButton:
+                                                                      true,
+                                                                  onTapAction:
+                                                                      () {
+                                                                    _rentShareFocusNode
+                                                                        .unfocus();
+                                                                  },
+                                                                ),
+                                                              ],
                                                             ),
-                                                            onChanged: (value) {
-                                                              double
-                                                                  enteredValue =
-                                                                  double.tryParse(
-                                                                          value) ??
-                                                                      0;
-                                                              if (enteredValue >
-                                                                  100) {
-                                                                controller
-                                                                        .text =
-                                                                    '100';
-                                                                controller
-                                                                        .selection =
-                                                                    TextSelection
-                                                                        .fromPosition(
-                                                                  TextPosition(
-                                                                      offset: controller
-                                                                          .text
-                                                                          .length),
-                                                                );
-                                                              }
-                                                              Provider.of<SelectedTenantsProvider>(
-                                                                      context,
-                                                                      listen:
-                                                                          false)
-                                                                  .validateRentShares();
-
-                                                              final provider =
-                                                                  Provider.of<
-                                                                          SelectedTenantsProvider>(
-                                                                      context,
-                                                                      listen:
-                                                                          false);
-                                                              final rentShareControllers =
-                                                                  provider
-                                                                      .rentShareControllers;
-                                                              double
-                                                                  totalRentShare =
-                                                                  0.0;
-                                                              for (var controller
-                                                                  in rentShareControllers) {
-                                                                double
-                                                                    rentShare =
-                                                                    double.tryParse(
-                                                                            controller.text) ??
-                                                                        0.0;
-                                                                totalRentShare +=
-                                                                    rentShare;
-                                                              }
-                                                              if (totalRentShare !=
-                                                                  100.0) {
-                                                                setState(() {
-                                                                  _errorMessage =
-                                                                      'Total rent share must equal 100';
-                                                                });
-                                                              } else {
-                                                                setState(() {
-                                                                  _errorMessage =
-                                                                      null;
-                                                                });
-                                                              }
-                                                            },
-                                                            keyboardType:
-                                                                TextInputType
-                                                                    .number,
-                                                            decoration:
-                                                                InputDecoration(
-                                                              hintText: "0",
-                                                              hintStyle:
-                                                                  TextStyle(
+                                                            child: TextField(
+                                                              focusNode:
+                                                                  _rentShareFocusNode,
+                                                              controller:
+                                                                  controller,
+                                                              style: TextStyle(
                                                                 fontSize: MediaQuery.of(context)
                                                                             .size
                                                                             .width <
@@ -3059,14 +3006,96 @@ class _addLease3State extends State<addLease3>
                                                                 color: Colors
                                                                     .black,
                                                               ),
-                                                              border:
-                                                                  InputBorder
-                                                                      .none,
-                                                              contentPadding:
-                                                                  EdgeInsets
-                                                                      .symmetric(
-                                                                          vertical:
-                                                                              8),
+                                                              onChanged:
+                                                                  (value) {
+                                                                double
+                                                                    enteredValue =
+                                                                    double.tryParse(
+                                                                            value) ??
+                                                                        0;
+                                                                if (enteredValue >
+                                                                    100) {
+                                                                  controller
+                                                                          .text =
+                                                                      '100';
+                                                                  controller
+                                                                          .selection =
+                                                                      TextSelection
+                                                                          .fromPosition(
+                                                                    TextPosition(
+                                                                        offset: controller
+                                                                            .text
+                                                                            .length),
+                                                                  );
+                                                                }
+                                                                Provider.of<SelectedTenantsProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false)
+                                                                    .validateRentShares();
+
+                                                                final provider =
+                                                                    Provider.of<
+                                                                            SelectedTenantsProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false);
+                                                                final rentShareControllers =
+                                                                    provider
+                                                                        .rentShareControllers;
+                                                                double
+                                                                    totalRentShare =
+                                                                    0.0;
+                                                                for (var controller
+                                                                    in rentShareControllers) {
+                                                                  double
+                                                                      rentShare =
+                                                                      double.tryParse(
+                                                                              controller.text) ??
+                                                                          0.0;
+                                                                  totalRentShare +=
+                                                                      rentShare;
+                                                                }
+                                                                if (totalRentShare !=
+                                                                    100.0) {
+                                                                  setState(() {
+                                                                    _errorMessage =
+                                                                        'Total rent share must equal 100';
+                                                                  });
+                                                                } else {
+                                                                  setState(() {
+                                                                    _errorMessage =
+                                                                        null;
+                                                                  });
+                                                                }
+                                                              },
+                                                              keyboardType:
+                                                                  TextInputType
+                                                                      .number,
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                hintText: "0",
+                                                                hintStyle:
+                                                                    TextStyle(
+                                                                  fontSize:
+                                                                      MediaQuery.of(context).size.width <
+                                                                              500
+                                                                          ? 16
+                                                                          : 16,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .black,
+                                                                ),
+                                                                border:
+                                                                    InputBorder
+                                                                        .none,
+                                                                contentPadding:
+                                                                    EdgeInsets.symmetric(
+                                                                        vertical:
+                                                                            8),
+                                                              ),
                                                             ),
                                                           ),
                                                         ),

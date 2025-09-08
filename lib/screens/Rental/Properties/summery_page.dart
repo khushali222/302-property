@@ -39,6 +39,7 @@ import '../../../repository/unit_data.dart';
 import '../../../widgets/Properties_revenue_table.dart';
 import '../../Leasing/RentalRoll/addcard/CardModel.dart';
 import '../../Maintenance/Workorder/workorder_summery.dart';
+import '../mortgage/property_mortgage_table.dart';
 import 'applience/Applience_parts.dart';
 import 'infrastracture.dart';
 import 'moveout/Moveout_properties.dart';
@@ -1850,6 +1851,7 @@ class _Summery_pageState extends State<Summery_page>
                             "title": "Infrastructure",
                             "index": isMultiUnit ? 6 : 5
                           },
+                          {"title": "Mortgage", "index": isMultiUnit ? 7 : 6},
                         ]);
 
                         return Row(
@@ -2055,7 +2057,6 @@ class _Summery_pageState extends State<Summery_page>
     100,
   ]; //
   Lease_page() {
-
     print("calling lease page from my screen");
     return Container(
       child: Column(
@@ -2563,6 +2564,15 @@ class _Summery_pageState extends State<Summery_page>
           }
         } else if (_selectedIndex == 6 && isMultiUnit) {
           return Infrastructure_page(data);
+        }
+        else if (_selectedIndex == 6) {
+          if (isMultiUnit) {
+            return Infrastructure_page(data);
+          } else {
+            return Mortgage_page(data);
+          }
+        } else if (_selectedIndex == 7 && isMultiUnit) {
+          return Mortgage_page(data);
         }
 
         return Container();
@@ -3406,9 +3416,9 @@ class _Summery_pageState extends State<Summery_page>
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(
                             child: SpinKitFadingCircle(
-                              color: Colors.black,
-                              size: 40.0,
-                            ));
+                          color: Colors.black,
+                          size: 40.0,
+                        ));
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -3448,13 +3458,13 @@ class _Summery_pageState extends State<Summery_page>
                         } else if (searchValuerent.isNotEmpty) {
                           filteredData = snapshot.data!
                               .where((staff) =>
-                          staff.rentalOwnerData!.rentalOwnerName!
-                              .toLowerCase()
-                              .contains(
-                              searchValuerent.toLowerCase()) ||
-                              staff.rentalOwnerData!.rentalOwnerPhoneNumber!
-                                  .toLowerCase()
-                                  .contains(searchValuerent.toLowerCase()))
+                                  staff.rentalOwnerData!.rentalOwnerName!
+                                      .toLowerCase()
+                                      .contains(
+                                          searchValuerent.toLowerCase()) ||
+                                  staff.rentalOwnerData!.rentalOwnerPhoneNumber!
+                                      .toLowerCase()
+                                      .contains(searchValuerent.toLowerCase()))
                               .toList();
                         }
 
@@ -3473,42 +3483,42 @@ class _Summery_pageState extends State<Summery_page>
                                     children: [
                                       TableRow(
                                         decoration:
-                                        BoxDecoration(border: Border.all()),
+                                            BoxDecoration(border: Border.all()),
                                         children: [
                                           _buildHeaderrent(
                                               'Contact Name',
                                               0,
-                                                  (rental) => rental
+                                              (rental) => rental
                                                   .rentalOwnerData!
                                                   .rentalOwnerFirstName!),
                                           _buildHeaderrent(
                                               'Company Name',
                                               1,
-                                                  (rental) => rental
+                                              (rental) => rental
                                                   .rentalOwnerData!
                                                   .rentalOwnerCompanyName!),
                                           _buildHeaderrent(
                                               'Email',
                                               2,
-                                                  (rental) => rental
+                                              (rental) => rental
                                                   .rentalOwnerData!
                                                   .rentalOwnerPrimaryEmail!),
                                           _buildHeaderrent(
                                               'Phone Number',
                                               3,
-                                                  (rental) => rental
+                                              (rental) => rental
                                                   .rentalOwnerData!
                                                   .rentalOwnerPhoneNumber!),
                                           _buildHeaderrent(
                                               'Home Number',
                                               4,
-                                                  (rental) => rental
+                                              (rental) => rental
                                                   .rentalOwnerData!
                                                   .rentalOwnerHomeNumber!),
                                           _buildHeaderrent(
                                               'Business Number',
                                               5,
-                                                  (rental) => rental
+                                              (rental) => rental
                                                   .rentalOwnerData!
                                                   .rentalOwnerBuisinessNumber!),
                                         ],
@@ -3520,12 +3530,12 @@ class _Summery_pageState extends State<Summery_page>
                                         ),
                                         children: List.generate(
                                             6,
-                                                (index) => TableCell(
+                                            (index) => TableCell(
                                                 child: Container(height: 20))),
                                       ),
                                       for (var i = 0;
-                                      i < _pagedDatarent.length;
-                                      i++)
+                                          i < _pagedDatarent.length;
+                                          i++)
                                         TableRow(
                                           decoration: BoxDecoration(
                                             border: Border(
@@ -3539,7 +3549,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   color: Color.fromRGBO(
                                                       21, 43, 81, 1)),
                                               bottom: i ==
-                                                  _pagedDatarent.length - 1
+                                                      _pagedDatarent.length - 1
                                                   ? BorderSide(color: blueColor)
                                                   : BorderSide.none,
                                             ),
@@ -3924,7 +3934,8 @@ class _Summery_pageState extends State<Summery_page>
                                   (rentalDetails.purchaseDate == null ||
                                           rentalDetails.purchaseDate!.isEmpty)
                                       ? "N/A"
-                                      : dateProvider.formatCurrentDate('${rentalDetails.purchaseDate!}'),
+                                      : dateProvider.formatCurrentDate(
+                                          '${rentalDetails.purchaseDate!}'),
                                   style: TextStyle(
                                       fontSize: 14, color: Colors.black),
                                 ),
@@ -12063,12 +12074,10 @@ class _Summery_pageState extends State<Summery_page>
                                 ? "$image_url${unit.rentalImages!.first}"
                                 : 'assets/images/no_image.jpg',
                             fit: BoxFit.cover,
-                            height:
-                            MediaQuery.of(context).size.width < 500
+                            height: MediaQuery.of(context).size.width < 500
                                 ? 140
                                 : 220,
-                            width:
-                            MediaQuery.of(context).size.width < 500
+                            width: MediaQuery.of(context).size.width < 500
                                 ? 160
                                 : 220,
                             placeholder: (context, url) => Shimmer.fromColors(
@@ -12096,7 +12105,7 @@ class _Summery_pageState extends State<Summery_page>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(left: 12,bottom: 5),
+                            padding: const EdgeInsets.only(left: 12, bottom: 5),
                             child: Text(
                               '${unit?.rentalunit}',
                               style: TextStyle(
@@ -12574,6 +12583,15 @@ class _Summery_pageState extends State<Summery_page>
     return InfrastructurePart(
       properties: widget.properties,
       units: unit,
+    );
+  }
+
+  Mortgage_page(List<unit_properties> unit) {
+    return PropertyMortgageTable(
+      propertyId: widget.properties.rentalId ?? "",
+      showAppBar: false,
+      showDrawer: false,
+      showAddButton: true,
     );
   }
 

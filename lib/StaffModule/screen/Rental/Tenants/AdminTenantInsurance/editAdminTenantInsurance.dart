@@ -206,7 +206,7 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                   ),
                   titleBar(
                     width: MediaQuery.of(context).size.width * .91,
-                    title: 'Edit Insurance Policy',
+                    title: 'New Insurance',
                   ),
                   Padding(
                     padding: const EdgeInsets.all(12.0),

@@ -207,7 +207,7 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
                   ),
                   titleBar(
                     width: MediaQuery.of(context).size.width * .91,
-                    title: 'Add Insurance Policy',
+                    title: 'New Insurance',
                   ),
                   Padding(
                     padding: const EdgeInsets.all(12.0),

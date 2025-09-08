@@ -1169,7 +1169,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
 
                             if (searchvalue.isNotEmpty) {
                               data = data
-                              
                                   .where((properties) =>
                                       properties.rentalAddress!.toLowerCase().contains(searchvalue.toLowerCase()) ||
                                       properties.propertyTypeData!.propertyType!

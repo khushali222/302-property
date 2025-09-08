@@ -112,7 +112,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   color: blueColor,
                 ),
                 "Rentals",
-                ["Properties", "Rental Owner", "Tenants","Property Type"],
+                ["Properties", "Rental Owner", "Tenants","Property Type","Mortgage"],
                 [
                   FaIcon(
                     FontAwesomeIcons.buildingUser,
@@ -139,6 +139,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     FontAwesomeIcons.house,
                     size: 20,
                     color: widget.currentpage == "Property Type"
+                        ? Colors.white
+                        : blueColor,
+                  ),
+                  FaIcon(
+                    FontAwesomeIcons.house,
+                    size: 20,
+                    color: widget.currentpage == "Mortgage"
                         ? Colors.white
                         : blueColor,
                   ),

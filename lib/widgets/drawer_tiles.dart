@@ -22,6 +22,7 @@ import '../screens/Rental/Rentalowner/Add_RentalOwners.dart';
 import '../screens/Rental/Tenants/Tenants_table.dart';
 import '../screens/Rental/Properties/add_new_property.dart';
 import '../screens/Rental/Tenants/add_tenants.dart';
+import '../screens/Rental/mortgage/mortgageTable.dart';
 import '../screens/Staff_Member/Add_staffmember.dart';
 import '../screens/Dashboard/dashboard_one.dart';
 import '../screens/Rental/Properties/properties.dart';
@@ -90,6 +91,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Upcoming renewal": (context) => Upcomingrenewal(),
     "Scheduled Payment": (context) => Scheduled_Payments_table(),
     "Scheduled Charges": (context) => ScheduledChargeTable(),
+    "Mortgage":(context)=> MortgageTable()
     // "Work Order": (context) => Cardpayment(leaseId: '',),
   };
 

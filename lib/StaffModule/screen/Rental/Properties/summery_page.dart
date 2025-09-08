@@ -24,6 +24,7 @@ import 'package:three_zero_two_property/StaffModule/repository/lease_provider.da
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/Applicants/Applicants_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Workorder/workorder_summery.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/infrastracture.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Rental/mortgage/property_mortgage_table.dart';
 
 import '../../../../Model/Properties_revenue_model.dart';
 import '../../../../Model/properties_Lease_model.dart';
@@ -2237,6 +2238,7 @@ class _Summery_pageState extends State<Summery_page>
                             "title": "Infrastructure",
                             "index": isMultiUnit ? 6 : 5
                           },
+                          //{"title": "Mortgage", "index": isMultiUnit ? 7 : 6},
                         ]);
 
                         return Row(
@@ -2478,6 +2480,14 @@ class _Summery_pageState extends State<Summery_page>
           }
         } else if (_selectedIndex == 6 && isMultiUnit) {
           return Infrastructure_page(data);
+        } else if (_selectedIndex == 6) {
+          if (isMultiUnit) {
+            return Infrastructure_page(data);
+          } else {
+            return Mortgage_page(data);
+          }
+        } else if (_selectedIndex == 7 && isMultiUnit) {
+          return Mortgage_page(data);
         }
 
         return Container();
@@ -2489,6 +2499,15 @@ class _Summery_pageState extends State<Summery_page>
     return InfrastructurePart(
       properties: widget.properties,
       units: unit,
+    );
+  }
+
+  Mortgage_page(List<unit_properties> unit) {
+    return PropertyMortgageTable(
+      propertyId: widget.properties.rentalId ?? "",
+      showAppBar: false,
+      showDrawer: false,
+      showAddButton: true,
     );
   }
 

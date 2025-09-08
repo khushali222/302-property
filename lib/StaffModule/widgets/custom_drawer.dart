@@ -105,6 +105,7 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                   if (permissions!.rentalownerView == true) "Rental Owner",
                   if (permissions!.tenantView == true) "Tenants",
                   if (permissions!.propertytypeView == true) "Property Type",
+                 // "Mortgage",
                 ],
                 // Filter the icons based on permissions in the same order
                 [
@@ -135,6 +136,14 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                           ? Colors.white
                           : blueColor,
                     ),
+                  // if (permissions!.propertytypeView == true)
+                  FaIcon(
+                    FontAwesomeIcons.house,
+                    size: 20,
+                    color: widget.currentpage == "Mortgage"
+                        ? Colors.white
+                        : blueColor,
+                  ),
                 ],
                 selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
               ),

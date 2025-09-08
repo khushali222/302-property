@@ -210,9 +210,6 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                             setState(() => nameerror = false);
                                           },
                                           controller: name,
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]")), // only letters + spaces
-                                          ],
                                           cursorColor: blueColor,
                                           decoration: InputDecoration(
                                             hintText: "Enter staff member name",
@@ -226,7 +223,6 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                         ),
                                       ),
                                     ),
-
                                   ],
                                 ),
                               ),

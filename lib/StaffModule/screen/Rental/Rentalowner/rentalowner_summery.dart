@@ -91,6 +91,7 @@ class _RentalownersSummeryForMobileState
   //for card payment
 
   bool creditcard = false;
+  bool achaccepted = false;
   bool debitcard = false;
 
   Future<void> fetchPaymentSettings() async {
@@ -114,6 +115,7 @@ class _RentalownersSummeryForMobileState
       print(creditcard);
       setState(() {
         creditcard = jsonData['data']['creditCardAccepted'];
+        achaccepted = jsonData['data']['achAccepted'];
         debitcard = jsonData['data']['debitCardAccepted'];
       });
     } else {
@@ -984,6 +986,27 @@ class _RentalownersSummeryForMobileState
                                   SizedBox(width: 12),
                                   Text(
                                     "Debit Card",
+                                    style: TextStyle(
+                                      color: Color(0xFF101828),
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 16),
+
+                              // ach  Row
+                              Row(
+                                children: [
+                                  Icon(
+                                    achaccepted ? Icons.check : Icons.close,
+                                    color: achaccepted ? Colors.green : Colors.red,
+                                    size: 20,
+                                  ),
+                                  SizedBox(width: 12),
+                                  Text(
+                                    "ACH",
                                     style: TextStyle(
                                       color: Color(0xFF101828),
                                       fontWeight: FontWeight.w600,

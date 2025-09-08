@@ -7,6 +7,7 @@ import 'package:three_zero_two_property/StaffModule/screen/Property_Type/Propert
 import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/Properties_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Rental/Rentalowner/Rentalowner_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Rental/Tenants/Tenants_table.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Rental/mortgage/mortgageTable.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportsMainScreen.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
@@ -82,6 +83,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Send E-mail": (context) => Send_Email_table(),
     "Scheduled Payment": (context) => Scheduled_Payments_table(),
     "Scheduled Charges": (context) => ScheduledChargeTable(),
+    "Mortgage":(context)=> MortgageTable()
   };
   // if (isActive != true) {
   Navigator.push(
