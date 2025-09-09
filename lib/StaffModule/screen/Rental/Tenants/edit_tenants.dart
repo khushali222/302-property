@@ -11,6 +11,8 @@ import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:provider/provider.dart';
+import '../../../../provider/dateProvider.dart';
 
 import '../../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
@@ -102,9 +104,31 @@ class _EditTenantsState extends State<EditTenants> {
   // }
 
   Future<void> _selectDate(BuildContext context) async {
-    DateTime initialDate = _dateController.text.isNotEmpty
-        ? DateFormat('dd-MM-yyyy').parse(_dateController.text)
-        : DateTime.now();
+    DateTime initialDate = DateTime.now();
+    if (_dateController.text.isNotEmpty) {
+      try {
+        // Try to parse the date using common formats since it's now in user's preferred format
+        List<String> dateFormats = [
+          'MM/dd/yyyy',
+          'MM-dd-yyyy',
+          'yyyy-MM-dd',
+          'dd/MM/yyyy',
+          'dd-MM-yyyy'
+        ];
+
+        for (String format in dateFormats) {
+          try {
+            initialDate = DateFormat(format).parse(_dateController.text);
+            break;
+          } catch (e) {
+            continue;
+          }
+        }
+      } catch (e) {
+        // If parsing fails, use current date
+        initialDate = DateTime.now();
+      }
+    }
 
     DateTime? selectedDate = await showDatePicker(
       context: context,
@@ -134,7 +158,11 @@ class _EditTenantsState extends State<EditTenants> {
 
     if (selectedDate != null) {
       setState(() {
-        _dateController.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        _dateController.text = dateProvider.formatCurrentDate(apiFormatDate);
       });
     }
   }
@@ -174,7 +202,14 @@ class _EditTenantsState extends State<EditTenants> {
     email.text = widget.tenants.tenantEmail ?? "";
     alterEmail.text = widget.tenants.tenantAlternativeEmail ?? "";
     passWord.text = widget.tenants.tenantPassword ?? "";
-    _dateController.text = formatDate(widget.tenants.tenantBirthDate ?? "");
+    // Get dateProvider to format the date according to user's preference
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    String birthDate = widget.tenants.tenantBirthDate ?? "";
+    if (birthDate.isNotEmpty) {
+      _dateController.text = dateProvider.formatCurrentDate(birthDate);
+    } else {
+      _dateController.text = "";
+    }
     taxPayerId.text = widget.tenants.taxPayerId ?? "";
     comments.text = widget.tenants.comments ?? "";
     contactName.text = widget.tenants.emergencyContact?.name ?? "";
@@ -249,6 +284,40 @@ class _EditTenantsState extends State<EditTenants> {
         overRideFeeError = '';
       }
     });
+  }
+
+  // Helper function to convert display format back to API format (yyyy-MM-dd)
+  String _convertToApiFormat(String displayDate) {
+    if (displayDate.isEmpty) return "";
+    try {
+      DateTime? parsedDate;
+
+      // Try to parse the date using common formats
+      List<String> dateFormats = [
+        'MM/dd/yyyy',
+        'MM-dd-yyyy',
+        'yyyy-MM-dd',
+        'dd/MM/yyyy',
+        'dd-MM-yyyy'
+      ];
+
+      for (String format in dateFormats) {
+        try {
+          parsedDate = DateFormat(format).parse(displayDate);
+          break;
+        } catch (e) {
+          continue;
+        }
+      }
+
+      if (parsedDate != null) {
+        return DateFormat('yyyy-MM-dd').format(parsedDate);
+      }
+
+      return displayDate; // Return as is if parsing fails
+    } catch (e) {
+      return displayDate; // Return as is if parsing fails
+    }
   }
 
   @override
@@ -2352,7 +2421,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                     .text
                                                     .trim()
                                                     .isNotEmpty
-                                                ? reverseFormatDate(
+                                                ? _convertToApiFormat(
                                                     _dateController.text.trim())
                                                 : "",
                                             taxPayerId: taxPayerId.text.trim(),

@@ -9,6 +9,8 @@ import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:provider/provider.dart';
+import '../../../../provider/dateProvider.dart';
 
 import '../../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
@@ -76,7 +78,11 @@ class _AddTenantState extends State<AddTenant> {
 
     if (selectedDate != null) {
       setState(() {
-        _dateController.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        _dateController.text = dateProvider.formatCurrentDate(apiFormatDate);
       });
     }
   }
@@ -95,6 +101,40 @@ class _AddTenantState extends State<AddTenant> {
         overRideFeeError = '';
       }
     });
+  }
+
+  // Helper function to convert display format back to API format (yyyy-MM-dd)
+  String _convertToApiFormat(String displayDate) {
+    if (displayDate.isEmpty) return "";
+    try {
+      DateTime? parsedDate;
+
+      // Try to parse the date using common formats
+      List<String> dateFormats = [
+        'MM/dd/yyyy',
+        'MM-dd-yyyy',
+        'yyyy-MM-dd',
+        'dd/MM/yyyy',
+        'dd-MM-yyyy'
+      ];
+
+      for (String format in dateFormats) {
+        try {
+          parsedDate = DateFormat(format).parse(displayDate);
+          break;
+        } catch (e) {
+          continue;
+        }
+      }
+
+      if (parsedDate != null) {
+        return DateFormat('yyyy-MM-dd').format(parsedDate);
+      }
+
+      return displayDate; // Return as is if parsing fails
+    } catch (e) {
+      return displayDate; // Return as is if parsing fails
+    }
   }
 
   @override
@@ -1612,7 +1652,7 @@ class _AddTenantState extends State<AddTenant> {
                                   child: Container(
                                     child: Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text('First Name *',
                                             style: TextStyle(
@@ -1628,7 +1668,7 @@ class _AddTenantState extends State<AddTenant> {
                                           controller: firstName,
                                           showElevation: false,
                                           isInRow:
-                                          true, // ADD FOR ROW ALIGNMENT
+                                              true, // ADD FOR ROW ALIGNMENT
                                           borderColor: Color(
                                               0xFFCED4DA), // ADD BORDER COLOR
                                           borderWidth: 1.5, // ADD BORDER WIDTH
@@ -1651,7 +1691,7 @@ class _AddTenantState extends State<AddTenant> {
                                   child: Container(
                                     child: Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text('Last Name *',
                                             style: TextStyle(
@@ -1667,7 +1707,7 @@ class _AddTenantState extends State<AddTenant> {
                                           controller: lastName,
                                           borderColor: Color(0xFFCED4DA),
                                           isInRow:
-                                          true, // ADD FOR ROW ALIGNMENT
+                                              true, // ADD FOR ROW ALIGNMENT
                                           showElevation: false,
                                           validator: (value) {
                                             if (value == null ||
@@ -1690,7 +1730,7 @@ class _AddTenantState extends State<AddTenant> {
                                   child: Container(
                                     child: Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text('Phone Number *',
                                             style: TextStyle(
@@ -1708,7 +1748,7 @@ class _AddTenantState extends State<AddTenant> {
                                           controller: phoneNumber,
                                           borderColor: Color(0xFFCED4DA),
                                           isInRow:
-                                          true, // ADD FOR ROW ALIGNMENT
+                                              true, // ADD FOR ROW ALIGNMENT
                                           showElevation: false,
                                           inputFormatters: [
                                             FilteringTextInputFormatter
@@ -1744,7 +1784,7 @@ class _AddTenantState extends State<AddTenant> {
                                   child: Container(
                                     child: Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text('Work Number ',
                                             style: TextStyle(
@@ -1762,7 +1802,7 @@ class _AddTenantState extends State<AddTenant> {
                                           controller: workNumber,
                                           borderColor: Color(0xFFCED4DA),
                                           isInRow:
-                                          true, // ADD FOR ROW ALIGNMENT
+                                              true, // ADD FOR ROW ALIGNMENT
                                           showElevation: false,
                                           optional: true,
                                           phone: true,
@@ -1791,7 +1831,7 @@ class _AddTenantState extends State<AddTenant> {
                                   child: Container(
                                     child: Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text('Email *',
                                             style: TextStyle(
@@ -1803,7 +1843,7 @@ class _AddTenantState extends State<AddTenant> {
                                         ),
                                         CustomTextField(
                                           keyboardType:
-                                          TextInputType.emailAddress,
+                                              TextInputType.emailAddress,
                                           hintText: 'Enter Email',
                                           controller: email,
                                           isInRow: true,
@@ -1834,7 +1874,7 @@ class _AddTenantState extends State<AddTenant> {
                                   child: Container(
                                     child: Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text('Alternative Email',
                                             style: TextStyle(
@@ -1846,7 +1886,7 @@ class _AddTenantState extends State<AddTenant> {
                                         ),
                                         CustomTextField(
                                           keyboardType:
-                                          TextInputType.emailAddress,
+                                              TextInputType.emailAddress,
                                           hintText: 'Enter alternative email',
                                           controller: alterEmail,
                                           isInRow: true,
@@ -1869,12 +1909,12 @@ class _AddTenantState extends State<AddTenant> {
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       // Label + Tooltip + Refresh aligned horizontally
                                       Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Row(
                                             children: [
@@ -1902,7 +1942,7 @@ class _AddTenantState extends State<AddTenant> {
                                                   margin: EdgeInsets.symmetric(
                                                       horizontal: 42),
                                                   message:
-                                                  '''• At least one uppercase letter (A-Z).
+                                                      '''• At least one uppercase letter (A-Z).
     • At least one lowercase letter (a-z).
     • At least one number (0-9).
     • At least one special character (e.g., @ # etc.).
@@ -1924,7 +1964,7 @@ class _AddTenantState extends State<AddTenant> {
                                             constraints: BoxConstraints(),
                                             onPressed: () {
                                               String generatedPassword =
-                                              generateRandomPassword();
+                                                  generateRandomPassword();
                                               setState(() {
                                                 passWord.text =
                                                     generatedPassword;
@@ -1971,7 +2011,7 @@ class _AddTenantState extends State<AddTenant> {
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Date of Birth',
@@ -1985,7 +2025,7 @@ class _AddTenantState extends State<AddTenant> {
                                       Material(
                                         // elevation: 2,
                                         borderRadius:
-                                        BorderRadius.circular(8.0),
+                                            BorderRadius.circular(8.0),
                                         child: Container(
                                           height: 50,
                                           padding: EdgeInsets.symmetric(
@@ -1996,7 +2036,7 @@ class _AddTenantState extends State<AddTenant> {
                                               color: Color(0xFFCED4DA),
                                             ),
                                             borderRadius:
-                                            BorderRadius.circular(8.0),
+                                                BorderRadius.circular(8.0),
                                             // boxShadow: [
                                             //   BoxShadow(
                                             //     color: Colors.black
@@ -2023,7 +2063,7 @@ class _AddTenantState extends State<AddTenant> {
                                               border: InputBorder.none,
                                               suffixIcon: IconButton(
                                                 icon:
-                                                Icon(Icons.calendar_today),
+                                                    Icon(Icons.calendar_today),
                                                 onPressed: () =>
                                                     _selectDate(context),
                                               ),
@@ -2043,7 +2083,7 @@ class _AddTenantState extends State<AddTenant> {
                                   child: Container(
                                     child: Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text('TaxPayer ID',
                                             style: TextStyle(
@@ -2070,7 +2110,7 @@ class _AddTenantState extends State<AddTenant> {
                                   child: Container(
                                     child: Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text('Comments',
                                             style: TextStyle(
@@ -2102,7 +2142,7 @@ class _AddTenantState extends State<AddTenant> {
                                                 color: Color(0xFFCED4DA),
                                               ),
                                               borderRadius:
-                                              BorderRadius.circular(8.0)),
+                                                  BorderRadius.circular(8.0)),
                                           child: TextFormField(
                                               keyboardType: TextInputType.text,
                                               controller: comments,
@@ -2148,7 +2188,7 @@ class _AddTenantState extends State<AddTenant> {
                                       child: Container(
                                         child: Column(
                                           crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text('Contact Name',
                                                 style: TextStyle(
@@ -2177,7 +2217,7 @@ class _AddTenantState extends State<AddTenant> {
                                       child: Container(
                                         child: Column(
                                           crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text('Relationship to Tenant',
                                                 style: TextStyle(
@@ -2190,7 +2230,7 @@ class _AddTenantState extends State<AddTenant> {
                                             CustomTextField(
                                               keyboardType: TextInputType.text,
                                               hintText:
-                                              'Enter relationship to tenant',
+                                                  'Enter relationship to tenant',
                                               controller: relationToTenant,
                                               showElevation: false,
                                               borderColor: Color(0xFFCED4DA),
@@ -2211,7 +2251,7 @@ class _AddTenantState extends State<AddTenant> {
                                       child: Container(
                                         child: Column(
                                           crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text('E-Mail',
                                                 style: TextStyle(
@@ -2223,7 +2263,7 @@ class _AddTenantState extends State<AddTenant> {
                                             ),
                                             CustomTextField(
                                               keyboardType:
-                                              TextInputType.emailAddress,
+                                                  TextInputType.emailAddress,
                                               hintText: 'Enter email',
                                               controller: emergencyEmail,
                                               optional: true,
@@ -2244,7 +2284,7 @@ class _AddTenantState extends State<AddTenant> {
                                       child: Container(
                                         child: Column(
                                           crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text('Phone Number',
                                                 style: TextStyle(
@@ -2256,7 +2296,7 @@ class _AddTenantState extends State<AddTenant> {
                                             ),
                                             CustomTextField(
                                               keyboardType:
-                                              TextInputType.number,
+                                                  TextInputType.number,
                                               // keyboardType: TextInputType.numberWithOptions(
                                               //     signed: true, decimal: true),
                                               hintText: 'Enter phone number',
@@ -2332,71 +2372,71 @@ class _AddTenantState extends State<AddTenant> {
                                 ),
                                 enableOverrideFee
                                     ? Material(
-                                  // elevation: 2,
-                                  borderRadius:
-                                  BorderRadius.circular(8.0),
-                                  child: Container(
-                                    height: 50,
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 16.0, vertical: 0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border: Border.all(
-                                        color: Color(0xFFCED4DA),
-                                      ),
-                                      borderRadius:
-                                      BorderRadius.circular(8.0),
-                                      // boxShadow: [
-                                      //   BoxShadow(
-                                      //     color: Colors.black
-                                      //         .withOpacity(0.2),
-                                      //     offset: Offset(4, 4),
-                                      //     blurRadius: 3,
-                                      //   ),
-                                      // ],
-                                    ),
-                                    child: TextField(
-                                      keyboardType:
-                                      TextInputType.numberWithOptions(
-                                          decimal: true),
-                                      decoration: InputDecoration(
-                                        hintStyle: TextStyle(
-                                            fontSize: 13,
-                                            color: Color(0xFFb0b6c3)),
-                                        border: InputBorder.none,
-                                        hintText:
-                                        "Enter the amount to override fee",
-                                        suffix: Text(
-                                          '%',
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              color: blueColor,
-                                              fontWeight:
-                                              FontWeight.bold),
+                                        // elevation: 2,
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        child: Container(
+                                          height: 50,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 16.0, vertical: 0),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            border: Border.all(
+                                              color: Color(0xFFCED4DA),
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                            // boxShadow: [
+                                            //   BoxShadow(
+                                            //     color: Colors.black
+                                            //         .withOpacity(0.2),
+                                            //     offset: Offset(4, 4),
+                                            //     blurRadius: 3,
+                                            //   ),
+                                            // ],
+                                          ),
+                                          child: TextField(
+                                            keyboardType:
+                                                TextInputType.numberWithOptions(
+                                                    decimal: true),
+                                            decoration: InputDecoration(
+                                              hintStyle: TextStyle(
+                                                  fontSize: 13,
+                                                  color: Color(0xFFb0b6c3)),
+                                              border: InputBorder.none,
+                                              hintText:
+                                                  "Enter the amount to override fee",
+                                              suffix: Text(
+                                                '%',
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: blueColor,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                            onChanged: (value) {
+                                              _validateInput();
+                                            },
+                                            controller: overrideFee,
+                                            cursorColor: blueColor,
+                                          ),
                                         ),
-                                      ),
-                                      onChanged: (value) {
-                                        _validateInput();
-                                      },
-                                      controller: overrideFee,
-                                      cursorColor: blueColor,
-                                    ),
-                                  ),
-                                )
+                                      )
                                     : Container(),
                                 overRideFeeError != null
                                     ? Padding(
-                                  padding: const EdgeInsets.all(0.0),
-                                  child: Text(
-                                    overRideFeeError!,
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: MediaQuery.of(context)
-                                            .size
-                                            .width *
-                                            0.04),
-                                  ),
-                                )
+                                        padding: const EdgeInsets.all(0.0),
+                                        child: Text(
+                                          overRideFeeError!,
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.04),
+                                        ),
+                                      )
                                     : Container(),
                               ],
                             ),
@@ -3200,7 +3240,7 @@ class _AddTenantState extends State<AddTenant> {
       tenantAlternativeEmail: alterEmail.text,
       tenantPassword: passWord.text,
       tenantBirthDate: _dateController.text.isNotEmpty
-          ? reverseFormatDate(_dateController.text)
+          ? _convertToApiFormat(_dateController.text)
           : "",
       taxPayerId: taxPayerId.text,
       comments: comments.text,
@@ -3391,43 +3431,43 @@ class CustomTextField extends StatefulWidget {
 
   CustomTextField(
       {Key? key,
-        this.onChanged,
-        this.controller,
-        required this.hintText,
-        this.obscureText = false,
-        this.keyboardType = TextInputType.emailAddress,
-        this.readOnnly = false,
-        this.prefixIcon,
-        this.suffixIcon,
-        this.validator,
-        this.onSuffixIconPressed,
-        this.label,
-        this.onTap,
-        this.onChanged2,
-        this.amount_check,
-        this.max_amount,
-        this.error_mess,
-        this.optional = false,
-        this.email,
-        this.pass,
-        this.phone,
-        this.inputFormatters,
-        this.worknum,
-        this.phonenum,
-        this.businessnum,
-        this.otherController, // For work number comparison
-        this.businessController,
-        this.telephoneController,
-        this.alterController,
-        this.emrgencyController,
-        this.samephonenumber = false,
-        this.isInRow = false, // DEFAULT TO FALSE FOR SINGLE COLUMN LAYOUT
-        this.customBorder, // CUSTOM BORDER PARAMETER
-        this.borderColor, // BORDER COLOR PARAMETER
-        this.borderWidth, // BORDER WIDTH PARAMETER
-        this.showElevation =
-        true, // DEFAULT TO TRUE TO MAINTAIN EXISTING BEHAVIOR
-        this.errorMaxLines // PARAMETER FOR ERROR MESSAGE MAX LINES
+      this.onChanged,
+      this.controller,
+      required this.hintText,
+      this.obscureText = false,
+      this.keyboardType = TextInputType.emailAddress,
+      this.readOnnly = false,
+      this.prefixIcon,
+      this.suffixIcon,
+      this.validator,
+      this.onSuffixIconPressed,
+      this.label,
+      this.onTap,
+      this.onChanged2,
+      this.amount_check,
+      this.max_amount,
+      this.error_mess,
+      this.optional = false,
+      this.email,
+      this.pass,
+      this.phone,
+      this.inputFormatters,
+      this.worknum,
+      this.phonenum,
+      this.businessnum,
+      this.otherController, // For work number comparison
+      this.businessController,
+      this.telephoneController,
+      this.alterController,
+      this.emrgencyController,
+      this.samephonenumber = false,
+      this.isInRow = false, // DEFAULT TO FALSE FOR SINGLE COLUMN LAYOUT
+      this.customBorder, // CUSTOM BORDER PARAMETER
+      this.borderColor, // BORDER COLOR PARAMETER
+      this.borderWidth, // BORDER WIDTH PARAMETER
+      this.showElevation =
+          true, // DEFAULT TO TRUE TO MAINTAIN EXISTING BEHAVIOR
+      this.errorMaxLines // PARAMETER FOR ERROR MESSAGE MAX LINES
       })
       : super(key: key);
 
@@ -3438,7 +3478,7 @@ class CustomTextField extends StatefulWidget {
 class CustomTextFieldState extends State<CustomTextField> {
   String? _errorMessage;
   TextEditingController _textController =
-  TextEditingController(); // Add this line
+      TextEditingController(); // Add this line
   late FocusNode _focusNode;
   @override
   void dispose() {
@@ -3460,7 +3500,7 @@ class CustomTextFieldState extends State<CustomTextField> {
         KeyboardActionsItem(
           focusNode: _focusNode,
           toolbarButtons: [
-                (node) {
+            (node) {
               return GestureDetector(
                 onTap: () {
                   if (widget.onChanged2 != null) {
@@ -3561,95 +3601,95 @@ class CustomTextFieldState extends State<CustomTextField> {
         FormField<String>(
           validator: widget.optional!
               ? (value) {
-            print("work same callling  ${widget.samephonenumber}");
-            if (widget.controller!.text.trim().isEmpty) {
-              return null;
-            } else if (widget.phone != null) {
-              _validatePhoneNumber(widget.controller!.text.trim());
-              print("erroe ${_errorMessage}");
-              if (_errorMessage == null) {
-                return null;
-              }
-              return '';
-            } else if (widget.email != null) {
-              _validateEmail(widget.controller!.text.trim());
-              print("erroe2 ${_errorMessage}");
-              // Return an empty string or handle accordingly
-              if (_errorMessage == null) {
-                return null;
-              }
-              return '';
-            } else if (widget.amount_check != null &&
-                double.parse(widget.controller!.text.trim()) >
-                    double.parse(widget.max_amount!))
-              setState(() {
-                _errorMessage = '${widget.error_mess}';
-              });
-            print("value ${value}");
-            return null;
-          }
+                  print("work same callling  ${widget.samephonenumber}");
+                  if (widget.controller!.text.trim().isEmpty) {
+                    return null;
+                  } else if (widget.phone != null) {
+                    _validatePhoneNumber(widget.controller!.text.trim());
+                    print("erroe ${_errorMessage}");
+                    if (_errorMessage == null) {
+                      return null;
+                    }
+                    return '';
+                  } else if (widget.email != null) {
+                    _validateEmail(widget.controller!.text.trim());
+                    print("erroe2 ${_errorMessage}");
+                    // Return an empty string or handle accordingly
+                    if (_errorMessage == null) {
+                      return null;
+                    }
+                    return '';
+                  } else if (widget.amount_check != null &&
+                      double.parse(widget.controller!.text.trim()) >
+                          double.parse(widget.max_amount!))
+                    setState(() {
+                      _errorMessage = '${widget.error_mess}';
+                    });
+                  print("value ${value}");
+                  return null;
+                }
               : (value) {
-            if (widget.controller!.text.trim().isEmpty) {
-              setState(() {
-                if (widget.label == null)
-                  _errorMessage = 'Please ${widget.hintText}';
-                else
-                  _errorMessage = 'Please ${widget.label}';
-              });
-              return '';
-            } else if (widget.phone != null) {
-              // Check if it's a phone number
-              String formattedPhoneNumber =
-              widget.controller!.text.replaceAll(RegExp(r'\D'), '');
+                  if (widget.controller!.text.trim().isEmpty) {
+                    setState(() {
+                      if (widget.label == null)
+                        _errorMessage = 'Please ${widget.hintText}';
+                      else
+                        _errorMessage = 'Please ${widget.label}';
+                    });
+                    return '';
+                  } else if (widget.phone != null) {
+                    // Check if it's a phone number
+                    String formattedPhoneNumber =
+                        widget.controller!.text.replaceAll(RegExp(r'\D'), '');
 
-              if (formattedPhoneNumber.length != 10) {
-                setState(() {
-                  _errorMessage = "Phone number must be 10 digits";
-                });
-                return '';
-              }
-              if (widget.samephonenumber != null &&
-                  widget.samephonenumber!) {
-                setState(() {
-                  _errorMessage =
-                  'Phone number and work number cannot be the same';
-                });
-                return '';
-              } else {
-                // Clear error message if phone number is valid
-                setState(() {
-                  _errorMessage = null;
-                });
-              }
-            } else if (widget.email != null) {
-              if (!EmailValidator.validate(
-                  widget.controller!.text.trim())) {
-                setState(() {
-                  _errorMessage = "Email is not valid";
-                });
-                return '';
-              }
-              //   _validateEmail(widget.controller!.text);
-              //
-              //   // Return an empty string or handle accordingly
-              //   return '';
-            } else if (widget.pass != null) {
-              String? validationMessage =
-              ValidatePassword(widget.controller!.text.trim());
-              if (validationMessage != null) {
-                setState(() {
-                  _errorMessage = validationMessage;
-                });
-                return '';
-              }
-            } else if (widget.amount_check != null &&
-                double.parse(widget.controller!.text.trim()) >
-                    double.parse(widget.max_amount!))
-              setState(() {
-                _errorMessage = '${widget.error_mess}';
-              });
-            return null;
-          },
+                    if (formattedPhoneNumber.length != 10) {
+                      setState(() {
+                        _errorMessage = "Phone number must be 10 digits";
+                      });
+                      return '';
+                    }
+                    if (widget.samephonenumber != null &&
+                        widget.samephonenumber!) {
+                      setState(() {
+                        _errorMessage =
+                            'Phone number and work number cannot be the same';
+                      });
+                      return '';
+                    } else {
+                      // Clear error message if phone number is valid
+                      setState(() {
+                        _errorMessage = null;
+                      });
+                    }
+                  } else if (widget.email != null) {
+                    if (!EmailValidator.validate(
+                        widget.controller!.text.trim())) {
+                      setState(() {
+                        _errorMessage = "Email is not valid";
+                      });
+                      return '';
+                    }
+                    //   _validateEmail(widget.controller!.text);
+                    //
+                    //   // Return an empty string or handle accordingly
+                    //   return '';
+                  } else if (widget.pass != null) {
+                    String? validationMessage =
+                        ValidatePassword(widget.controller!.text.trim());
+                    if (validationMessage != null) {
+                      setState(() {
+                        _errorMessage = validationMessage;
+                      });
+                      return '';
+                    }
+                  } else if (widget.amount_check != null &&
+                      double.parse(widget.controller!.text.trim()) >
+                          double.parse(widget.max_amount!))
+                    setState(() {
+                      _errorMessage = '${widget.error_mess}';
+                    });
+                  return null;
+                },
           builder: (FormFieldState<String> state) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -3660,7 +3700,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                   child: Container(
                     height: 50,
                     padding:
-                    EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.0),
@@ -3668,17 +3708,17 @@ class CustomTextFieldState extends State<CustomTextField> {
                       border: widget.customBorder ??
                           (widget.borderColor != null
                               ? Border.all(
-                              color: widget.borderColor!,
-                              width: widget.borderWidth ?? 1.0)
+                                  color: widget.borderColor!,
+                                  width: widget.borderWidth ?? 1.0)
                               : null),
                       boxShadow: widget.showElevation
                           ? [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          offset: Offset(4, 4),
-                          blurRadius: 3,
-                        ),
-                      ]
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                offset: Offset(4, 4),
+                                blurRadius: 3,
+                              ),
+                            ]
                           : null,
                     ),
                     child: TextFormField(
@@ -3714,7 +3754,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       decoration: InputDecoration(
                         suffixIcon: widget.suffixIcon,
                         hintStyle:
-                        TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                            TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                         border: InputBorder.none,
                         hintText: widget.hintText,
                       ),
@@ -3723,36 +3763,36 @@ class CustomTextFieldState extends State<CustomTextField> {
                 ),
                 hasError
                     ? Padding(
-                  padding: const EdgeInsets.only(top: 4, right: 8),
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (widget.pass == true) SizedBox(width: 4),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(1.0),
-                            child: Text(
-                              _errorMessage!,
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 11.0, // Even smaller font size
-                                height: 1.1, // Even tighter line height
-                                letterSpacing:
-                                -0.2, // Slightly tighter letter spacing
+                        padding: const EdgeInsets.only(top: 4, right: 8),
+                        child: Container(
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (widget.pass == true) SizedBox(width: 4),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(1.0),
+                                  child: Text(
+                                    _errorMessage!,
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 11.0, // Even smaller font size
+                                      height: 1.1, // Even tighter line height
+                                      letterSpacing:
+                                          -0.2, // Slightly tighter letter spacing
+                                    ),
+                                    maxLines: widget.pass == true
+                                        ? 6
+                                        : 1, // Increased to 6 lines for very long messages
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
                               ),
-                              maxLines: widget.pass == true
-                                  ? 6
-                                  : 1, // Increased to 6 lines for very long messages
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                )
+                      )
                     : SizedBox.shrink(),
               ],
             );
@@ -3762,22 +3802,22 @@ class CustomTextFieldState extends State<CustomTextField> {
     );
     return shouldUseKeyboardActions
         ? SizedBox(
-      height: widget.isInRow == true
-          ? 70
-          : (hasError
-          ? (widget.pass == true ? 150 : 74)
-          : 54), // Increased height for password errors with icon
-      child: KeyboardActions(
-        config: _buildConfig(context),
-        child: textfield,
-      ),
-    )
+            height: widget.isInRow == true
+                ? 70
+                : (hasError
+                    ? (widget.pass == true ? 150 : 74)
+                    : 54), // Increased height for password errors with icon
+            child: KeyboardActions(
+              config: _buildConfig(context),
+              child: textfield,
+            ),
+          )
         : widget.isInRow == true
-        ? SizedBox(
-      height:
-      82, // Compact height for row alignment with minimal space
-      child: textfield,
-    )
-        : textfield; // Dynamic shrink only for single column fields
+            ? SizedBox(
+                height:
+                    82, // Compact height for row alignment with minimal space
+                child: textfield,
+              )
+            : textfield; // Dynamic shrink only for single column fields
   }
 }

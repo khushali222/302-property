@@ -153,6 +153,40 @@ class _Summery_pageState extends State<Summery_page>
     }
   }
 
+  // Helper function to convert display format back to API format (yyyy-MM-dd)
+  String _convertToApiFormat(String displayDate) {
+    if (displayDate.isEmpty) return "";
+    try {
+      DateTime? parsedDate;
+
+      // Try to parse the date using common formats
+      List<String> dateFormats = [
+        'MM/dd/yyyy',
+        'MM-dd-yyyy',
+        'yyyy-MM-dd',
+        'dd/MM/yyyy',
+        'dd-MM-yyyy'
+      ];
+
+      for (String format in dateFormats) {
+        try {
+          parsedDate = DateFormat(format).parse(displayDate);
+          break;
+        } catch (e) {
+          continue;
+        }
+      }
+
+      if (parsedDate != null) {
+        return DateFormat('yyyy-MM-dd').format(parsedDate);
+      }
+
+      return displayDate; // Return as is if parsing fails
+    } catch (e) {
+      return displayDate; // Return as is if parsing fails
+    }
+  }
+
   Future<void> fetchPropertySummeryData(String rentalId) async {
     setState(() {
       isLoaders = true;
@@ -3909,8 +3943,19 @@ class _Summery_pageState extends State<Summery_page>
                           ),
                           onPressed: () {
                             // Initialize with current values
-                            purchaseDateController.text =
+                            // Get dateProvider to format the date according to user's preference
+                            final dateProvider = Provider.of<DateProvider>(
+                                context,
+                                listen: false);
+                            String purchaseDate =
                                 rentalDetails.purchaseDate ?? '';
+                            if (purchaseDate.isNotEmpty &&
+                                purchaseDate != 'N/A') {
+                              purchaseDateController.text =
+                                  dateProvider.formatCurrentDate(purchaseDate);
+                            } else {
+                              purchaseDateController.text = '';
+                            }
                             purchasePriceController.text =
                                 rentalDetails.purchasePrice?.toString() ?? '';
                             parcelNumberController.text =
@@ -3962,10 +4007,21 @@ class _Summery_pageState extends State<Summery_page>
                                                 if (picked != null) {
                                                   setState(() {
                                                     selectedDate = picked;
-                                                    purchaseDateController
-                                                            .text =
+                                                    // Get dateProvider to format the date according to user's preference
+                                                    final dateProvider =
+                                                        Provider.of<
+                                                                DateProvider>(
+                                                            context,
+                                                            listen: false);
+                                                    // Display format: Use provider's format for user display
+                                                    String apiFormatDate =
                                                         DateFormat('yyyy-MM-dd')
                                                             .format(picked);
+                                                    purchaseDateController
+                                                            .text =
+                                                        dateProvider
+                                                            .formatCurrentDate(
+                                                                apiFormatDate);
                                                   });
                                                 }
                                               },
@@ -4063,8 +4119,9 @@ class _Summery_pageState extends State<Summery_page>
                                                 },
                                                 body: json.encode({
                                                   "purchase_date":
-                                                      purchaseDateController
-                                                          .text,
+                                                      _convertToApiFormat(
+                                                          purchaseDateController
+                                                              .text),
                                                   "purchase_price": double.tryParse(
                                                           purchasePriceController
                                                               .text) ??
@@ -14742,14 +14799,14 @@ class _Summery_pageState extends State<Summery_page>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(left: 12,bottom: 5),
+                            padding: const EdgeInsets.only(left: 12, bottom: 5),
                             child: Text(
                               '${unit?.rentalunit}',
                               style: TextStyle(
                                   fontSize:
-                                  MediaQuery.of(context).size.width < 500
-                                      ? 14
-                                      : 20,
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 14
+                                          : 20,
                                   color: Colors.grey[800],
                                   fontWeight: FontWeight.bold),
                             ),
@@ -14760,9 +14817,9 @@ class _Summery_pageState extends State<Summery_page>
                               'ADDRESS',
                               style: TextStyle(
                                   fontSize:
-                                  MediaQuery.of(context).size.width < 500
-                                      ? 14
-                                      : 20,
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 14
+                                          : 20,
                                   color: grey,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -14783,9 +14840,9 @@ class _Summery_pageState extends State<Summery_page>
                                     .ellipsis, // Handle overflow with ellipsis
                                 style: TextStyle(
                                   fontSize:
-                                  MediaQuery.of(context).size.width < 500
-                                      ? 13
-                                      : 18,
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 13
+                                          : 18,
                                   color: blueColor,
                                 ),
                               ),
@@ -14808,18 +14865,18 @@ class _Summery_pageState extends State<Summery_page>
                                   widget.properties.rentalPostcode,
                                 ]
                                     .where((element) =>
-                                element != null &&
-                                    element
-                                        .isNotEmpty) // Filter out null or empty elements
+                                        element != null &&
+                                        element
+                                            .isNotEmpty) // Filter out null or empty elements
                                     .map((element) =>
-                                element!) // Ensure non-null elements
+                                        element!) // Ensure non-null elements
                                     .join(' , '),
                                 style: TextStyle(
                                   color: blueColor,
                                   fontSize:
-                                  MediaQuery.of(context).size.width < 500
-                                      ? 13
-                                      : 18,
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 13
+                                          : 18,
                                 ),
                                 maxLines: 6,
                               ),

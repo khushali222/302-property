@@ -25,6 +25,7 @@ import '../../VendorModule/repository/vendor_permission.dart';
 import '../../VendorModule/screen/mainScreen.dart';
 import '../../constant/constant.dart';
 import '../../provider/Plan Purchase/plancheckProvider.dart';
+import '../../provider/dateProvider.dart';
 import '../Dashboard/dashboard_one.dart';
 import '../Password/forgotpassword.dart';
 import '../Password/otp_vrify.dart';
@@ -215,8 +216,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                       style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
-                          fontSize: MediaQuery.of(context).size.width * 0.046
-                      ),
+                          fontSize: MediaQuery.of(context).size.width * 0.046),
                     ),
                   ),
                   SizedBox(
@@ -325,7 +325,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                   child: Text(
                                     "Forgot password?",
                                     style: TextStyle(
-                                      fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.bold,
                                         fontSize:
                                             MediaQuery.of(context).size.width *
                                                 0.02,
@@ -771,8 +771,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                       style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
-                          fontSize: MediaQuery.of(context).size.width * 0.046
-                      ),
+                          fontSize: MediaQuery.of(context).size.width * 0.046),
                     ),
                   ),
                   SizedBox(
@@ -880,7 +879,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                   child: Text(
                                     "Forgot password?",
                                     style: TextStyle(
-                                      fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.bold,
                                         fontSize:
                                             MediaQuery.of(context).size.width *
                                                 0.035,
@@ -1096,10 +1095,9 @@ class _Login_ScreenState extends State<Login_Screen> {
                               child: Text(
                                 "Forgot password?",
                                 style: TextStyle(
-                                    fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.035,
-                                    color: Color(0xFF152B51),
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.035,
+                                  color: Color(0xFF152B51),
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -1197,7 +1195,6 @@ class _Login_ScreenState extends State<Login_Screen> {
                                     : Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
-
                                         children: [
                                           Text(
                                             "Login",
@@ -1367,6 +1364,8 @@ class _Login_ScreenState extends State<Login_Screen> {
       } else {
         print('The plan is not active.');
       }
+      // Refresh DateProvider to load new user's date format preferences
+      await Provider.of<DateProvider>(context, listen: false).loadDateFormat();
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -1415,6 +1414,8 @@ class _Login_ScreenState extends State<Login_Screen> {
       // String? userId = jsonData['user_id'];
       await Provider.of<StaffPermissionProvider>(context, listen: false)
           .fetchPermissions();
+      // Refresh DateProvider to load new user's date format preferences
+      await Provider.of<DateProvider>(context, listen: false).loadDateFormat();
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Dashboard_staff()));
     } else {
@@ -1458,6 +1459,8 @@ class _Login_ScreenState extends State<Login_Screen> {
       // String? userId = jsonData['user_id'];
       await Provider.of<PermissionProvider>(context, listen: false)
           .fetchPermissions();
+      // Refresh DateProvider to load new user's date format preferences
+      await Provider.of<DateProvider>(context, listen: false).loadDateFormat();
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => Dashboard_tenants()));
     } else {
@@ -1511,6 +1514,8 @@ class _Login_ScreenState extends State<Login_Screen> {
       //  prefs.setString('adminId', adminId!);
       await Provider.of<VendorPermission>(context, listen: false)
           .fetchPermissions();
+      // Refresh DateProvider to load new user's date format preferences
+      await Provider.of<DateProvider>(context, listen: false).loadDateFormat();
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => MainScreen()));
     } else {
@@ -1883,6 +1888,7 @@ import '../../TenantsModule/screen/dashboard.dart';
 import '../../VendorModule/screen/mainScreen.dart';
 import '../../constant/constant.dart';
 import '../../provider/Plan Purchase/plancheckProvider.dart';
+import '../../provider/dateProvider.dart';
 import '../Dashboard/dashboard_one.dart';
 import '../Password/forgotpassword.dart';
 import '../Password/otp_vrify.dart';

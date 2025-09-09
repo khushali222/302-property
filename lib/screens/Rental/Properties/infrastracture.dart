@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +11,7 @@ import 'package:three_zero_two_property/screens/Rental/Properties/applience/Appl
 import '../../../Model/unit.dart';
 import '../../../model/unitsummery_propeties.dart';
 import '../../../constant/constant.dart';
+import '../../../provider/dateProvider.dart';
 import '../../../repository/unit_data.dart';
 import '../../../repository/properties_summery.dart';
 import '../../../model/properties.dart';
@@ -607,6 +609,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
+    final dateProvider = Provider.of<DateProvider>(context);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -1135,10 +1138,12 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                             ),
                                                           ),
                                                           SizedBox(height: 6),
-                                                          Text(
-                                                            formatDate(rentals
-                                                                    .installedDate ??
-                                                                ''),
+                                                          Text(dateProvider
+                                                              .formatCurrentDate(
+                                                              '${ formatDate(rentals
+                                                                  .installedDate ??
+                                                                  '')}')
+                                                           ,
                                                             style: TextStyle(
                                                               color: Colors.grey
                                                                   .shade800,

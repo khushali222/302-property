@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/custom_drawer.dart';
@@ -7,6 +8,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import '../../../provider/dateProvider.dart';
 
 class MortgageSummary extends StatefulWidget {
   final Map<String, dynamic>? mortgageData;
@@ -129,6 +132,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     if (_isLoading) {
       return Scaffold(
         appBar: widget_302.App_Bar(context: context),
@@ -387,13 +391,14 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                     title: 'Important Dates',
                     children: [
                       _buildDateRow('Start Date',
-                          _formatDate(mortgageData!['start_date'])),
+                      dateProvider.formatCurrentDate('${_formatDate(mortgageData!['start_date'])}')
+                          ),
                       _buildDateRow(
-                          'End Date', _formatDate(mortgageData!['end_date'])),
+                          'End Date',dateProvider.formatCurrentDate('${_formatDate(mortgageData!['end_date'])}') ),
                       _buildDateRow('Last Payment',
-                          _formatDate(mortgageData!['last_payment_date'])),
+                          dateProvider.formatCurrentDate('${_formatDate(mortgageData!['last_payment_date'])}')   ),
                       _buildDateRow('Next Payment',
-                          _formatDate(mortgageData!['next_payment_date'])),
+                          dateProvider.formatCurrentDate('${_formatDate(mortgageData!['next_payment_date'])}') ),
                     ],
                   ),
 

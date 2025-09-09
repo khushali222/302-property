@@ -9,6 +9,8 @@ import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:provider/provider.dart';
+import '../../../provider/dateProvider.dart';
 
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
@@ -79,7 +81,11 @@ class _AddTenantState extends State<AddTenant> {
 
     if (selectedDate != null) {
       setState(() {
-        _dateController.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        _dateController.text = dateProvider.formatCurrentDate(apiFormatDate);
       });
     }
   }
@@ -98,6 +104,40 @@ class _AddTenantState extends State<AddTenant> {
         overRideFeeError = '';
       }
     });
+  }
+
+  // Helper function to convert display format back to API format (yyyy-MM-dd)
+  String _convertToApiFormat(String displayDate) {
+    if (displayDate.isEmpty) return "";
+    try {
+      DateTime? parsedDate;
+
+      // Try to parse the date using common formats
+      List<String> dateFormats = [
+        'MM/dd/yyyy',
+        'MM-dd-yyyy',
+        'yyyy-MM-dd',
+        'dd/MM/yyyy',
+        'dd-MM-yyyy'
+      ];
+
+      for (String format in dateFormats) {
+        try {
+          parsedDate = DateFormat(format).parse(displayDate);
+          break;
+        } catch (e) {
+          continue;
+        }
+      }
+
+      if (parsedDate != null) {
+        return DateFormat('yyyy-MM-dd').format(parsedDate);
+      }
+
+      return displayDate; // Return as is if parsing fails
+    } catch (e) {
+      return displayDate; // Return as is if parsing fails
+    }
   }
 
   @override
@@ -2698,7 +2738,7 @@ class _AddTenantState extends State<AddTenant> {
       tenantAlternativeEmail: alterEmail.text.trim(),
       tenantPassword: passWord.text.trim(),
       tenantBirthDate: _dateController.text.trim().isNotEmpty
-          ? reverseFormatDate(_dateController.text.trim())
+          ? _convertToApiFormat(_dateController.text.trim())
           : "",
       taxPayerId: taxPayerId.text.trim(),
       comments: comments.text.trim(),

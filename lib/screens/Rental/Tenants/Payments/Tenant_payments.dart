@@ -1241,13 +1241,12 @@ class _FinancialTableState extends State<FinancialTable> {
 
     if (picked != null) {
       setState(() {
-        // String formattedDate = DateFormat('dd-MM-yyyy').format(picked);
-        // controller.text = formattedDate;
-        print(picked);
-
-        //  _filterData();
-        controller.text = picked.toLocal().toString().split(' ')[0];
-        fdate = controller.text;
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        controller.text = dateProvider.formatCurrentDate(apiFormatDate);
+        fdate = apiFormatDate; // Keep API format for filtering
       });
     }
   }
@@ -1281,29 +1280,67 @@ class _FinancialTableState extends State<FinancialTable> {
 
     if (picked != null) {
       setState(() {
-        edate = picked.toString();
-        // String formattedDate = DateFormat('dd-MM-yyyy').format(picked);
-        // controller.text = formattedDate;
-        //  _filterData();
-        controller.text = picked.toLocal().toString().split(' ')[0];
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        controller.text = dateProvider.formatCurrentDate(apiFormatDate);
+        edate = apiFormatDate; // Keep API format for filtering
       });
     }
   }
 
   List<Data> allData = []; // Assume this is your complete dataset
   List<Data> filteredData = [];
+  // Helper function to convert display format back to API format (yyyy-MM-dd)
+  String _convertToApiFormat(String displayDate) {
+    if (displayDate.isEmpty) return "";
+    try {
+      DateTime? parsedDate;
+
+      // Try to parse the date using common formats
+      List<String> dateFormats = [
+        'MM/dd/yyyy',
+        'MM-dd-yyyy',
+        'yyyy-MM-dd',
+        'dd/MM/yyyy',
+        'dd-MM-yyyy'
+      ];
+
+      for (String format in dateFormats) {
+        try {
+          parsedDate = DateFormat(format).parse(displayDate);
+          break;
+        } catch (e) {
+          continue;
+        }
+      }
+
+      if (parsedDate != null) {
+        return DateFormat('yyyy-MM-dd').format(parsedDate);
+      }
+
+      return displayDate; // Return as is if parsing fails
+    } catch (e) {
+      return displayDate; // Return as is if parsing fails
+    }
+  }
+
   void _filterData() {
     // Parse the dates from the controllers
     try {
-      DateTime fromDate =
-          DateFormat('dd-MM-yyyy').parse(_fromDateController.text);
-      DateTime toDate = DateFormat('dd-MM-yyyy')
-          .parse(_toDateController.text)
+      // Convert display format back to API format for filtering
+      String fromDateStr = _convertToApiFormat(_fromDateController.text);
+      String toDateStr = _convertToApiFormat(_toDateController.text);
+
+      DateTime fromDate = DateFormat('yyyy-MM-dd').parse(fromDateStr);
+      DateTime toDate = DateFormat('yyyy-MM-dd')
+          .parse(toDateStr)
           .add(Duration(days: 1)); // Include the end date
 
       // Filter the data based on the selected date range
       filteredData = allData.where((data) {
-        DateTime leaseDate = DateFormat('dd-MM-yyyy').parse(
+        DateTime leaseDate = DateFormat('yyyy-MM-dd').parse(
             data.entry!.first.date!); // Adjust according to your data structure
         return leaseDate.isAfter(fromDate) && leaseDate.isBefore(toDate);
       }).toList();
@@ -1391,12 +1428,16 @@ class _FinancialTableState extends State<FinancialTable> {
                       if (_fromDateController.text.isNotEmpty &&
                           _toDateController.text.isNotEmpty) {
                         try {
-                          // Use DateFormat to parse the dates
-                          print(_fromDateController.text);
-                          DateTime fromDate = DateFormat('yyyy-MM-dd')
-                              .parse(_fromDateController.text);
-                          DateTime toDate = DateFormat('yyyy-MM-dd')
-                              .parse(_toDateController.text);
+                          // Convert display format back to API format for filtering
+                          String fromDateStr =
+                              _convertToApiFormat(_fromDateController.text);
+                          String toDateStr =
+                              _convertToApiFormat(_toDateController.text);
+
+                          DateTime fromDate =
+                              DateFormat('yyyy-MM-dd').parse(fromDateStr);
+                          DateTime toDate =
+                              DateFormat('yyyy-MM-dd').parse(toDateStr);
                           print("From Date: $fromDate");
                           print("To Date: $toDate");
 
@@ -2454,7 +2495,7 @@ class _FinancialTableState extends State<FinancialTable> {
                             ),
                             if (data.isEmpty)
                               Container(
-                               // height: MediaQuery.of(context).size.height * .3,
+                                // height: MediaQuery.of(context).size.height * .3,
                                 child: Center(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,

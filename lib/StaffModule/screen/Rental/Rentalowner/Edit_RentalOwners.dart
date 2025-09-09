@@ -21,6 +21,8 @@ import '../../../repository/Rental_ownersData.dart';
 import '../../../repository/Staffmember.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/custom_drawer.dart';
+import '../../../../provider/dateProvider.dart';
+import 'package:provider/provider.dart';
 
 class Edit_rentalowners extends StatefulWidget {
   RentalOwnerData rentalOwner;
@@ -110,12 +112,13 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     taxtype.text = widget.rentalOwner.textIdentityType!;
     taxid.text = widget.rentalOwner.texpayerId!;
     //birthdateController.text = widget.rentalOwner.b;
-    // Convert API format (yyyy-MM-dd) to display format (MM-dd-yyyy)
+    // Convert API format (yyyy-MM-dd) to display format using DateProvider
     String convertToDisplayFormat(String apiDate) {
       if (apiDate.isEmpty) return "";
       try {
-        DateTime date = DateFormat('yyyy-MM-dd').parse(apiDate);
-        return DateFormat('MM-dd-yyyy').format(date);
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        return dateProvider.formatCurrentDate(apiDate);
       } catch (e) {
         return apiDate; // Return as is if parsing fails
       }
@@ -377,9 +380,13 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     if (picked != null && picked != startdate) {
       setState(() {
         startdate = picked;
-        // Display format: MM-dd-yyyy for user
-        startdateController.text = DateFormat('MM-dd-yyyy').format(picked);
-        // Store the date in yyyy-MM-dd format for API
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        startdateController.text =
+            dateProvider.formatCurrentDate(apiFormatDate);
+        // Store the date in yyyy-MM-dd format for API (unchanged)
         String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
         print('Display: ${startdateController.text}');
         print('API format: $dateForApi');
@@ -411,8 +418,12 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     DateTime? currentStartDate;
     try {
       if (startdateController.text.isNotEmpty) {
-        currentStartDate =
-            DateFormat('MM-dd-yyyy').parse(startdateController.text);
+        // Get dateProvider to parse the date from display format
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Convert display format back to yyyy-MM-dd for parsing
+        String apiFormatDate =
+            dateProvider.formatCurrentDate(startdateController.text);
+        currentStartDate = DateFormat('yyyy-MM-dd').parse(apiFormatDate);
       }
     } catch (e) {
       currentStartDate = DateTime.now();
@@ -422,8 +433,12 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     DateTime initialEndDate;
     if (enddateController.text.isNotEmpty) {
       try {
-        DateTime parsedEndDate =
-            DateFormat('MM-dd-yyyy').parse(enddateController.text);
+        // Get dateProvider to parse the date from display format
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Convert display format back to yyyy-MM-dd for parsing
+        String apiFormatDate =
+            dateProvider.formatCurrentDate(enddateController.text);
+        DateTime parsedEndDate = DateFormat('yyyy-MM-dd').parse(apiFormatDate);
         // Only use the current end date if it's after the start date
         if (parsedEndDate.isAfter(currentStartDate ?? DateTime.now())) {
           initialEndDate = parsedEndDate;
@@ -477,9 +492,12 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     if (picked != null && picked != enddate) {
       setState(() {
         enddate = picked;
-        // Display format: MM-dd-yyyy for user
-        enddateController.text = DateFormat('MM-dd-yyyy').format(picked);
-        // Store the date in yyyy-MM-dd format for API
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        enddateController.text = dateProvider.formatCurrentDate(apiFormatDate);
+        // Store the date in yyyy-MM-dd format for API (unchanged)
         String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
         print('=== END DATE SELECTED ===');
         print('Display: ${enddateController.text}');
@@ -1216,7 +1234,12 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                                         startdateController,
                                                     cursorColor: blueColor,
                                                     decoration: InputDecoration(
-                                                      hintText: "MM-DD-YYYY",
+                                                      hintText: Provider.of<
+                                                                  DateProvider>(
+                                                              context,
+                                                              listen: false)
+                                                          .dateFormat
+                                                          .toUpperCase(),
                                                       hintStyle: TextStyle(
                                                         fontSize: MediaQuery.of(
                                                                         context)
@@ -1321,7 +1344,12 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                                         enddateController,
                                                     cursorColor: blueColor,
                                                     decoration: InputDecoration(
-                                                      hintText: "MM-DD-YYYY",
+                                                      hintText: Provider.of<
+                                                                  DateProvider>(
+                                                              context,
+                                                              listen: false)
+                                                          .dateFormat
+                                                          .toUpperCase(),
                                                       hintStyle: TextStyle(
                                                         fontSize: MediaQuery.of(
                                                                         context)
@@ -1477,7 +1505,12 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                                 controller: startdateController,
                                                 cursorColor: blueColor,
                                                 decoration: InputDecoration(
-                                                  hintText: "MM-DD-YYYY",
+                                                  hintText:
+                                                      Provider.of<DateProvider>(
+                                                              context,
+                                                              listen: false)
+                                                          .dateFormat
+                                                          .toUpperCase(),
                                                   hintStyle: TextStyle(
                                                     fontSize:
                                                         MediaQuery.of(context)
@@ -1599,7 +1632,12 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                                                 controller: enddateController,
                                                 cursorColor: blueColor,
                                                 decoration: InputDecoration(
-                                                  hintText: "MM-DD-YYYY",
+                                                  hintText:
+                                                      Provider.of<DateProvider>(
+                                                              context,
+                                                              listen: false)
+                                                          .dateFormat
+                                                          .toUpperCase(),
                                                   hintStyle: TextStyle(
                                                     fontSize:
                                                         MediaQuery.of(context)

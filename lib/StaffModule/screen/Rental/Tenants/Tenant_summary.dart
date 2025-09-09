@@ -19,7 +19,6 @@ import '../../../../StaffModule/screen/Rental/Tenants/Commnunication/communicati
 
 import '../../../../provider/dateProvider.dart';
 
-
 import '../../../repository/AdminTenantInsuranceService/adminTenantinsuranceService.dart';
 import '../../../repository/tenants.dart';
 
@@ -3292,6 +3291,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       // appBar: widget302.,
@@ -4330,7 +4330,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                                                   FontWeight
                                                                       .w500))),
                                                       DataCell(Text(
-                                                          '${lease.startDate} to ${lease.endDate}',
+                                                          '${Provider.of<DateProvider>(context, listen: false).formatCurrentDate(lease.startDate!)} to ${Provider.of<DateProvider>(context, listen: false).formatCurrentDate(lease.endDate!)}',
                                                           style: const TextStyle(
                                                               fontSize: 16,
                                                               color: Color(

@@ -159,6 +159,40 @@ class _Summery_pageState extends State<Summery_page>
     }
   }
 
+  // Helper function to convert display format back to API format (yyyy-MM-dd)
+  String _convertToApiFormat(String displayDate) {
+    if (displayDate.isEmpty) return "";
+    try {
+      DateTime? parsedDate;
+
+      // Try to parse the date using common formats
+      List<String> dateFormats = [
+        'MM/dd/yyyy',
+        'MM-dd-yyyy',
+        'yyyy-MM-dd',
+        'dd/MM/yyyy',
+        'dd-MM-yyyy'
+      ];
+
+      for (String format in dateFormats) {
+        try {
+          parsedDate = DateFormat(format).parse(displayDate);
+          break;
+        } catch (e) {
+          continue;
+        }
+      }
+
+      if (parsedDate != null) {
+        return DateFormat('yyyy-MM-dd').format(parsedDate);
+      }
+
+      return displayDate; // Return as is if parsing fails
+    } catch (e) {
+      return displayDate; // Return as is if parsing fails
+    }
+  }
+
   ConnectivityResult? _connectivityResult;
 
   @override
@@ -2564,8 +2598,7 @@ class _Summery_pageState extends State<Summery_page>
           }
         } else if (_selectedIndex == 6 && isMultiUnit) {
           return Infrastructure_page(data);
-        }
-        else if (_selectedIndex == 6) {
+        } else if (_selectedIndex == 6) {
           if (isMultiUnit) {
             return Infrastructure_page(data);
           } else {
@@ -3626,8 +3659,19 @@ class _Summery_pageState extends State<Summery_page>
                           ),
                           onPressed: () {
                             // Initialize with current values
-                            purchaseDateController.text =
+                            // Get dateProvider to format the date according to user's preference
+                            final dateProvider = Provider.of<DateProvider>(
+                                context,
+                                listen: false);
+                            String purchaseDate =
                                 rentalDetails.purchaseDate ?? '';
+                            if (purchaseDate.isNotEmpty &&
+                                purchaseDate != 'N/A') {
+                              purchaseDateController.text =
+                                  dateProvider.formatCurrentDate(purchaseDate);
+                            } else {
+                              purchaseDateController.text = '';
+                            }
                             purchasePriceController.text =
                                 rentalDetails.purchasePrice?.toString() ?? '';
                             parcelNumberController.text =
@@ -3679,10 +3723,21 @@ class _Summery_pageState extends State<Summery_page>
                                                 if (picked != null) {
                                                   setState(() {
                                                     selectedDate = picked;
-                                                    purchaseDateController
-                                                            .text =
+                                                    // Get dateProvider to format the date according to user's preference
+                                                    final dateProvider =
+                                                        Provider.of<
+                                                                DateProvider>(
+                                                            context,
+                                                            listen: false);
+                                                    // Display format: Use provider's format for user display
+                                                    String apiFormatDate =
                                                         DateFormat('yyyy-MM-dd')
                                                             .format(picked);
+                                                    purchaseDateController
+                                                            .text =
+                                                        dateProvider
+                                                            .formatCurrentDate(
+                                                                apiFormatDate);
                                                   });
                                                 }
                                               },
@@ -3779,8 +3834,9 @@ class _Summery_pageState extends State<Summery_page>
                                                 },
                                                 body: json.encode({
                                                   "purchase_date":
-                                                      purchaseDateController
-                                                          .text,
+                                                      _convertToApiFormat(
+                                                          purchaseDateController
+                                                              .text),
                                                   "purchase_price": double.tryParse(
                                                           purchasePriceController
                                                               .text) ??
