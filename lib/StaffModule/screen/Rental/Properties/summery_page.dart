@@ -2272,7 +2272,7 @@ class _Summery_pageState extends State<Summery_page>
                             "title": "Infrastructure",
                             "index": isMultiUnit ? 6 : 5
                           },
-                          //{"title": "Mortgage", "index": isMultiUnit ? 7 : 6},
+                          {"title": "Mortgage", "index": isMultiUnit ? 7 : 6},
                         ]);
 
                         return Row(

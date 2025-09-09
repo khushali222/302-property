@@ -105,7 +105,7 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                   if (permissions!.rentalownerView == true) "Rental Owner",
                   if (permissions!.tenantView == true) "Tenants",
                   if (permissions!.propertytypeView == true) "Property Type",
-                 // "Mortgage",
+                  "Mortgage",
                 ],
                 // Filter the icons based on permissions in the same order
                 [
