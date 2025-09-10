@@ -15,6 +15,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
+import 'package:provider/provider.dart';
 
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 
@@ -156,7 +158,11 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
     if (selectedDate != null) {
       setState(() {
         effectiveDate = selectedDate;
-        effective.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        effective.text = dateProvider.formatCurrentDate(apiFormatDate);
       });
     }
   }
@@ -191,7 +197,11 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
     if (selectedDate != null) {
       setState(() {
         expirationDate = selectedDate;
-        expiration.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        expiration.text = dateProvider.formatCurrentDate(apiFormatDate);
       });
     }
   }
@@ -200,6 +210,41 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
 
   List<Map<String, String>> tenants = [];
   List<String> selectedTenants = [];
+
+  // Helper function to convert display format back to API format (yyyy-MM-dd)
+  String _convertToApiFormat(String displayDate) {
+    if (displayDate.isEmpty) return "";
+    try {
+      DateTime? parsedDate;
+
+      // Try to parse the date using common formats
+      List<String> dateFormats = [
+        'MM/dd/yyyy',
+        'MM-dd-yyyy',
+        'yyyy-MM-dd',
+        'dd/MM/yyyy',
+        'dd-MM-yyyy'
+      ];
+
+      for (String format in dateFormats) {
+        try {
+          parsedDate = DateFormat(format).parse(displayDate);
+          break;
+        } catch (e) {
+          continue;
+        }
+      }
+
+      if (parsedDate != null) {
+        return DateFormat('yyyy-MM-dd').format(parsedDate);
+      }
+
+      return displayDate; // Return as is if parsing fails
+    } catch (e) {
+      return displayDate; // Return as is if parsing fails
+    }
+  }
+
   Future<void> fetchTenants() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
@@ -275,7 +320,7 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
                   ),
                   titleBar(
                     width: MediaQuery.of(context).size.width * .91,
-                    title: 'New Insurance',
+                    title: 'Add New Policy',
                   ),
                   Padding(
                     padding: const EdgeInsets.all(12.0),
@@ -380,7 +425,10 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
                                 _selectDate(context);
                               },
                               keyboardType: TextInputType.text,
-                              hintText: 'dd-mm-yyyy',
+                              hintText: Provider.of<DateProvider>(context,
+                                      listen: false)
+                                  .dateFormat
+                                  .toUpperCase(),
                               controller: effective,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -409,7 +457,10 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
                                 _selectDateexpiration(context);
                               },
                               keyboardType: TextInputType.text,
-                              hintText: 'dd-mm-yyyy',
+                              hintText: Provider.of<DateProvider>(context,
+                                      listen: false)
+                                  .dateFormat
+                                  .toUpperCase(),
                               controller: expiration,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -665,52 +716,52 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
       isLoading = true; // Start loading
     });
     try {
-    print('entry');
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? adminId = prefs.getString("adminId");
-    String? token = prefs.getString('token');
-    print('${adminId}  ${token}');
+      print('entry');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? adminId = prefs.getString("adminId");
+      String? token = prefs.getString('token');
+      print('${adminId}  ${token}');
 
-    // Convert selected tenants to a list of maps
-    List<String> selectedTenantsList =
-        selectedTenants.map((tenantId) => tenantId.toString()).toList();
+      // Convert selected tenants to a list of maps
+      List<String> selectedTenantsList =
+          selectedTenants.map((tenantId) => tenantId.toString()).toList();
 
-    Map<String, dynamic> values = {
-      "lease_id": widget.leaseId,
-      "insurance_company": company.text.trim(),
-      "insurance_company_phone_number": number.text.trim(),
-      "policy_id": policy.text.trim(),
-      "effective_date": reverseFormatDate(effective.text.trim()),
-      "expiration_date": reverseFormatDate(expiration.text.trim()),
-      "liability_coverage": liablity.text.trim(),
-      "tenants": selectedTenantsList, // Ensure it's properly formatted
-      "insurance_policy_document":
-          _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : "",
-    };
+      Map<String, dynamic> values = {
+        "lease_id": widget.leaseId,
+        "insurance_company": company.text.trim(),
+        "insurance_company_phone_number": number.text.trim(),
+        "policy_id": policy.text.trim(),
+        "effective_date": _convertToApiFormat(effective.text.trim()),
+        "expiration_date": _convertToApiFormat(expiration.text.trim()),
+        "liability_coverage": liablity.text.trim(),
+        "tenants": selectedTenantsList, // Ensure it's properly formatted
+        "insurance_policy_document":
+            _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : "",
+      };
 
-    print(jsonEncode(values)); // Debugging: Check final JSON format
+      print(jsonEncode(values)); // Debugging: Check final JSON format
 
-    final http.Response response = await http.post(
-      Uri.parse('$Api_url/api/renter-insurance/add-policy'),
-      headers: <String, String>{
-        'authorization': 'CRM $token',
-        'id': 'CRM $adminId',
-        'Content-Type': 'application/json', // Ensure JSON format is specified
-      },
-      body: jsonEncode(values), // Encode JSON properly
-    );
+      final http.Response response = await http.post(
+        Uri.parse('$Api_url/api/renter-insurance/add-policy'),
+        headers: <String, String>{
+          'authorization': 'CRM $token',
+          'id': 'CRM $adminId',
+          'Content-Type': 'application/json', // Ensure JSON format is specified
+        },
+        body: jsonEncode(values), // Encode JSON properly
+      );
 
-    var responseData = json.decode(response.body);
-    print('response body ${response.body}');
-    print('$Api_url/api/renter-insurance/add-policy');
-    if (responseData["savedPolicy"] == 200) {
-      Fluttertoast.showToast(msg: responseData["message"]);
-      Navigator.pop(context, true);
-      return responseData;
-    } else {
-      Fluttertoast.showToast(msg: responseData["message"]);
-      throw Exception('Failed to Insurance');
-    }
+      var responseData = json.decode(response.body);
+      print('response body ${response.body}');
+      print('$Api_url/api/renter-insurance/add-policy');
+      if (responseData["savedPolicy"] == 200) {
+        Fluttertoast.showToast(msg: responseData["message"]);
+        Navigator.pop(context, true);
+        return responseData;
+      } else {
+        Fluttertoast.showToast(msg: responseData["message"]);
+        throw Exception('Failed to Insurance');
+      }
     } catch (error) {
       print('Error: $error');
       Fluttertoast.showToast(msg: 'Something went wrong');

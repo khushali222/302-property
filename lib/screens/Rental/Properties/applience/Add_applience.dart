@@ -3,11 +3,14 @@ import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../../../Model/All_categories_model.dart';
 import '../../../../constant/constant.dart';
+import '../../../../provider/dateProvider.dart';
+import 'package:provider/provider.dart';
 import '../../../../widgets/appbar.dart';
 import '../../../../widgets/custom_drawer.dart';
 import '../../../../model/properties.dart';
@@ -58,8 +61,10 @@ class _AddApplienceState extends State<AddApplience> {
       _lastMaintenanceDateError = null;
 
       if (_installedDate.text.isNotEmpty && _warrantyExpiry.text.isNotEmpty) {
-        DateTime installed = DateTime.parse(_installedDate.text);
-        DateTime warranty = DateTime.parse(_warrantyExpiry.text);
+        DateTime installed =
+            DateTime.parse(_convertToApiFormat(_installedDate.text));
+        DateTime warranty =
+            DateTime.parse(_convertToApiFormat(_warrantyExpiry.text));
         if (warranty.isBefore(installed)) {
           _warrantyExpiryError =
               "Warranty Expiration Date cannot be earlier than Installed Date.";
@@ -69,8 +74,10 @@ class _AddApplienceState extends State<AddApplience> {
 
       if (_installedDate.text.isNotEmpty &&
           _lastMaintenanceDate.text.isNotEmpty) {
-        DateTime installed = DateTime.parse(_installedDate.text);
-        DateTime maintenance = DateTime.parse(_lastMaintenanceDate.text);
+        DateTime installed =
+            DateTime.parse(_convertToApiFormat(_installedDate.text));
+        DateTime maintenance =
+            DateTime.parse(_convertToApiFormat(_lastMaintenanceDate.text));
         if (maintenance.isBefore(installed)) {
           _lastMaintenanceDateError =
               "Last Maintenance Date cannot be earlier than Installed Date.";
@@ -128,9 +135,23 @@ class _AddApplienceState extends State<AddApplience> {
 
       _name.text = widget.appliance?.applianceName ?? '';
       _description.text = widget.appliance?.applianceDescription ?? '';
-      _installedDate.text = widget.appliance?.installedDate ?? '';
-      _warrantyExpiry.text = widget.appliance?.warrantyExpiry ?? '';
-      _lastMaintenanceDate.text = widget.appliance?.lastMaintenanceDate ?? '';
+
+      // Convert API date format to user's preferred display format
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
+      _installedDate.text = widget.appliance?.installedDate != null &&
+              widget.appliance!.installedDate!.isNotEmpty
+          ? dateProvider.formatCurrentDate(widget.appliance!.installedDate!)
+          : '';
+      _warrantyExpiry.text = widget.appliance?.warrantyExpiry != null &&
+              widget.appliance!.warrantyExpiry!.isNotEmpty
+          ? dateProvider.formatCurrentDate(widget.appliance!.warrantyExpiry!)
+          : '';
+      _lastMaintenanceDate.text =
+          widget.appliance?.lastMaintenanceDate != null &&
+                  widget.appliance!.lastMaintenanceDate!.isNotEmpty
+              ? dateProvider
+                  .formatCurrentDate(widget.appliance!.lastMaintenanceDate!)
+              : '';
       _maintenanceNotes.text = widget.appliance?.maintenanceNotes ?? '';
       _type.text = widget.appliance?.type ?? '';
       _model.text = widget.appliance?.model ?? '';
@@ -277,6 +298,40 @@ class _AddApplienceState extends State<AddApplience> {
   }
 
   bool showFiltersSection = false;
+
+  // Helper function to convert display format back to API format (yyyy-MM-dd)
+  String _convertToApiFormat(String displayDate) {
+    if (displayDate.isEmpty) return "";
+    try {
+      DateTime? parsedDate;
+
+      // Try to parse the date using common formats
+      List<String> dateFormats = [
+        'MM/dd/yyyy',
+        'MM-dd-yyyy',
+        'yyyy-MM-dd',
+        'yyyy-MMM-dd', // Added for API format like "2025-Aug-22"
+        'dd/MM/yyyy',
+        'dd-MM-yyyy'
+      ];
+
+      for (String format in dateFormats) {
+        try {
+          parsedDate = DateFormat(format).parse(displayDate);
+          break;
+        } catch (e) {
+          continue;
+        }
+      }
+
+      if (parsedDate != null) {
+        return DateFormat('yyyy-MM-dd').format(parsedDate);
+      }
+      return displayDate;
+    } catch (e) {
+      return displayDate;
+    }
+  }
 
   //for image add
   File? _image;
@@ -1069,18 +1124,21 @@ class _AddApplienceState extends State<AddApplience> {
                                         unitId: widget.unit?.unitId ?? "",
                                         appliancename: _name.text,
                                         appliancedescription: _description.text,
-                                        installeddate: _installedDate.text,
+                                        installeddate: _convertToApiFormat(
+                                            _installedDate.text),
                                         type: _type.text,
                                         brand: _selectedBrand ?? "",
                                         model: _model.text,
                                         serialNumber: _serialNumber.text,
                                         warrantyExpiry:
                                             _warrantyExpiry.text.isNotEmpty
-                                                ? _warrantyExpiry.text
+                                                ? _convertToApiFormat(
+                                                    _warrantyExpiry.text)
                                                 : "",
                                         lastMaintenanceDate:
                                             _lastMaintenanceDate.text.isNotEmpty
-                                                ? _lastMaintenanceDate.text
+                                                ? _convertToApiFormat(
+                                                    _lastMaintenanceDate.text)
                                                 : "",
                                         maintenanceNotes:
                                             _maintenanceNotes.text,
@@ -1101,18 +1159,21 @@ class _AddApplienceState extends State<AddApplience> {
                                             widget.appliance?.applianceId ?? "",
                                         appliancename: _name.text,
                                         appliancedescription: _description.text,
-                                        installeddate: _installedDate.text,
+                                        installeddate: _convertToApiFormat(
+                                            _installedDate.text),
                                         type: _type.text,
                                         brand: _selectedBrand ?? "",
                                         model: _model.text,
                                         serialNumber: _serialNumber.text,
                                         warrantyExpiry:
                                             _warrantyExpiry.text.isNotEmpty
-                                                ? _warrantyExpiry.text
+                                                ? _convertToApiFormat(
+                                                    _warrantyExpiry.text)
                                                 : "",
                                         lastMaintenanceDate:
                                             _lastMaintenanceDate.text.isNotEmpty
-                                                ? _lastMaintenanceDate.text
+                                                ? _convertToApiFormat(
+                                                    _lastMaintenanceDate.text)
                                                 : "",
                                         maintenanceNotes:
                                             _maintenanceNotes.text,
@@ -1227,10 +1288,15 @@ class _AddApplienceState extends State<AddApplience> {
             DateTime? firstDate;
 
             // Set minimum date based on installed date for warranty and maintenance
-            if (_installedDate.text.isNotEmpty &&
+            if (label == 'Installed Date') {
+              // For installed date, allow any date from 2000 to 2100
+              firstDate = DateTime(2000);
+              initialDate = DateTime.now();
+            } else if (_installedDate.text.isNotEmpty &&
                 (label == 'Warranty Expiry' ||
                     label == 'Last Maintenance Date')) {
-              firstDate = DateTime.parse(_installedDate.text);
+              firstDate =
+                  DateTime.parse(_convertToApiFormat(_installedDate.text));
               initialDate = firstDate;
             } else {
               firstDate = DateTime(2000);
@@ -1256,7 +1322,13 @@ class _AddApplienceState extends State<AddApplience> {
             ).then((date) {
               if (date != null) {
                 setState(() {
-                  controller.text = formatDate(date.toString());
+                  // Get dateProvider to format the date according to user's preference
+                  final dateProvider =
+                      Provider.of<DateProvider>(context, listen: false);
+                  // Display format: Use provider's format for user display
+                  String apiFormatDate = DateFormat('yyyy-MM-dd').format(date);
+                  controller.text =
+                      dateProvider.formatCurrentDate(apiFormatDate);
                   validateDates(); // Validate dates after selection
                 });
               }

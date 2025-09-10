@@ -1353,7 +1353,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                                               Expanded(
                                                 flex: 3,
                                                 child: Text(
-                                                  formatDate('${rental.endDate ?? '-'}'),
+                                                    dateProvider.formatCurrentDate('${formatDate('${rental.endDate ?? '-'}')}'),
                                                   style: TextStyle(
                                                     color: blueColor,
                                                     fontWeight:

@@ -7873,6 +7873,8 @@ class _Summery_pageState extends State<Summery_page>
                                                               bed3.text.trim(),
                                                           rentalImages:
                                                               _uploadedFileNames!));
+                                                      // Update unit count
+                                                      unitCount = data.length;
                                                     });
                                                     reload_Screen();
                                                     Navigator.pop(
@@ -8356,6 +8358,8 @@ class _Summery_pageState extends State<Summery_page>
                                                         rentalunit:
                                                             unitnum.text.trim(),
                                                       ));
+                                                      // Update unit count
+                                                      unitCount = data.length;
                                                     });
                                                     reload_Screen();
                                                     Navigator.pop(
@@ -8716,7 +8720,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                     ),
                                                                     TextSpan(
                                                                       text:
-                                                                          ' ${unitTenantCount}',
+                                                                          ' ${Propertytype.tenantCount ?? 0}',
                                                                       style: TextStyle(
                                                                           fontWeight: FontWeight
                                                                               .w700,
@@ -12096,6 +12100,8 @@ class _Summery_pageState extends State<Summery_page>
                                     .fetchunit(
                                         widget.properties.rentalId ?? "");
                                 showdetails = false;
+                                // Update unit count after deletion
+                                unitCount = unitCount > 0 ? unitCount - 1 : 0;
                               });
                               //Navigator.pop(context);
                             },

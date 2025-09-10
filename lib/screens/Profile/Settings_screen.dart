@@ -784,12 +784,15 @@ class _TabBarExampleState extends State<TabBarExample> {
   }
 
   int dateformateselect = 0;
+  int timeformateselect = 0;
   int? expandedIndex;
   Set<int> expandedIndices = {};
   String? dateformate1;
   String? dateformate2;
   String? dateformate3;
   String? customdate;
+  String? timeformate1;
+  String? timeformate2;
   int totalrecords = 0;
   List<Setting4> _tableData = [];
   int _rowsPerPage = 10;
@@ -1909,12 +1912,18 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       DateTime now = DateTime.now();
                                       dateformateselect =
                                           dateProvider.dateformateselect;
+                                      timeformateselect =
+                                          dateProvider.timeformateselect;
                                       dateformate1 =
                                           DateFormat('MM-dd-yyyy').format(now);
                                       dateformate2 =
                                           DateFormat('yyyy-MM-dd').format(now);
                                       dateformate3 =
                                           DateFormat('yyyy-MMM-dd').format(now);
+                                      timeformate1 =
+                                          DateFormat('HH:mm:ss').format(now);
+                                      timeformate2 =
+                                          DateFormat('h:mm:ss a').format(now);
                                       //dateformate1 = DateFormat('mm/dd/yyyy').parse(DateTime.now().toString()).toString();
                                     });
                                   },
@@ -5374,6 +5383,187 @@ class _TabBarExampleState extends State<TabBarExample> {
                               // ),
                             ],
                           ),
+                        // if (isdateformate)
+                        //   Column(
+                        //     mainAxisAlignment: MainAxisAlignment.start,
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //     children: [
+                        //       SizedBox(height: 30),
+                        //       Text(
+                        //         "Select Time Format",
+                        //         style: TextStyle(
+                        //           fontWeight: FontWeight.normal,
+                        //           color: blueColor,
+                        //           fontSize:
+                        //               MediaQuery.of(context).size.width < 500
+                        //                   ? 16
+                        //                   : 25,
+                        //         ),
+                        //       ),
+                        //       SizedBox(height: 15),
+                        //       Column(
+                        //         children: [
+                        //           Column(
+                        //             mainAxisAlignment: MainAxisAlignment.start,
+                        //             crossAxisAlignment:
+                        //                 CrossAxisAlignment.start,
+                        //             children: [
+                        //               Row(
+                        //                 children: [
+                        //                   SizedBox(
+                        //                       height: 20,
+                        //                       width: 30,
+                        //                       child: Radio(
+                        //                           value: 0,
+                        //                           groupValue: timeformateselect,
+                        //                           onChanged: (value) {
+                        //                             setState(() {
+                        //                               dateProvider
+                        //                                   .updateTimeFormat(
+                        //                                       '24', value);
+                        //                               timeformateselect =
+                        //                                   value!;
+                        //                             });
+                        //                           })),
+                        //                   Text(
+                        //                     "24-hour format (14:00:00)",
+                        //                     style: TextStyle(
+                        //                       fontSize: 16,
+                        //                     ),
+                        //                   )
+                        //                 ],
+                        //               ),
+                        //               SizedBox(
+                        //                 height: 10,
+                        //               ),
+                        //               SizedBox(
+                        //                 height: 50,
+                        //                 width: 150,
+                        //                 child: Consumer<DateProvider>(
+                        //                   builder:
+                        //                       (context, dateProvider, child) {
+                        //                     DateTime now = DateTime.now();
+                        //                     String timeFormat1 =
+                        //                         DateFormat('HH:mm:ss')
+                        //                             .format(now);
+                        //                     return TextFormField(
+                        //                       enabled: false,
+                        //                       initialValue: timeFormat1,
+                        //                       decoration: InputDecoration(
+                        //                         contentPadding:
+                        //                             EdgeInsets.symmetric(
+                        //                                 horizontal: 15),
+                        //                         border: OutlineInputBorder(),
+                        //                         filled: true,
+                        //                         fillColor: Colors.grey.shade200,
+                        //                       ),
+                        //                     );
+                        //                   },
+                        //                 ),
+                        //               )
+                        //             ],
+                        //           ),
+                        //           SizedBox(
+                        //             height: 15,
+                        //           ),
+                        //           Column(
+                        //             mainAxisAlignment: MainAxisAlignment.start,
+                        //             crossAxisAlignment:
+                        //                 CrossAxisAlignment.start,
+                        //             children: [
+                        //               Row(
+                        //                 children: [
+                        //                   SizedBox(
+                        //                       height: 20,
+                        //                       width: 30,
+                        //                       child: Radio(
+                        //                           value: 1,
+                        //                           groupValue: timeformateselect,
+                        //                           onChanged: (value) {
+                        //                             setState(() {
+                        //                               dateProvider
+                        //                                   .updateTimeFormat(
+                        //                                       '12', value);
+                        //                               timeformateselect =
+                        //                                   value!;
+                        //                             });
+                        //                           })),
+                        //                   Text(
+                        //                     "12-hour format (2:00:00 PM)",
+                        //                     style: TextStyle(
+                        //                       fontSize: 16,
+                        //                     ),
+                        //                   )
+                        //                 ],
+                        //               ),
+                        //               SizedBox(
+                        //                 height: 10,
+                        //               ),
+                        //               SizedBox(
+                        //                 height: 50,
+                        //                 width: 150,
+                        //                 child: Consumer<DateProvider>(
+                        //                   builder:
+                        //                       (context, dateProvider, child) {
+                        //                     DateTime now = DateTime.now();
+                        //                     String timeFormat2 =
+                        //                         DateFormat('h:mm:ss a')
+                        //                             .format(now);
+                        //                     return TextFormField(
+                        //                       enabled: false,
+                        //                       initialValue: timeFormat2,
+                        //                       decoration: InputDecoration(
+                        //                         contentPadding:
+                        //                             EdgeInsets.symmetric(
+                        //                                 horizontal: 15),
+                        //                         border: OutlineInputBorder(),
+                        //                         filled: true,
+                        //                         fillColor: Colors.grey.shade200,
+                        //                       ),
+                        //                     );
+                        //                   },
+                        //                 ),
+                        //               )
+                        //             ],
+                        //           )
+                        //         ],
+                        //       ),
+                        //       SizedBox(height: 20),
+                        //       Text(
+                        //         "Formatted Date and Time Preview:",
+                        //         style: TextStyle(
+                        //           fontWeight: FontWeight.normal,
+                        //           color: blueColor,
+                        //           fontSize:
+                        //               MediaQuery.of(context).size.width < 500
+                        //                   ? 16
+                        //                   : 25,
+                        //         ),
+                        //       ),
+                        //       SizedBox(height: 10),
+                        //       Container(
+                        //         padding: EdgeInsets.all(15),
+                        //         decoration: BoxDecoration(
+                        //           border: Border.all(color: blueColor),
+                        //           borderRadius: BorderRadius.circular(5),
+                        //           color: Colors.grey.shade50,
+                        //         ),
+                        //         child: Consumer<DateProvider>(
+                        //           builder: (context, dateProvider, child) {
+                        //             return Text(
+                        //               dateProvider
+                        //                   .getFormattedDateTimePreview(),
+                        //               style: TextStyle(
+                        //                 fontSize: 18,
+                        //                 fontWeight: FontWeight.bold,
+                        //                 color: blueColor,
+                        //               ),
+                        //             );
+                        //           },
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
                         if (isworkorder)
                           Column(
                             mainAxisAlignment: MainAxisAlignment.start,

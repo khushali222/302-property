@@ -186,13 +186,14 @@ class DateProvider with ChangeNotifier {
   DateTime _currentDate = DateTime.now();
   String _dateFormat = 'MM/dd/yyyy';
   int dateformateselect = 0; // default date format
+  String _timeFormat = '24'; // default time format (24-hour)
+  int timeformateselect = 0; // default time format selection
 
   DateTime get currentDate => _currentDate;
   String get dateFormat => _dateFormat;
-  int get _dateformateselect => dateformateselect;
+  String get timeFormat => _timeFormat;
   DateProvider() {
     loadDateFormat();
-    //_loadSelectedDateFormat();
   }
   String fixDateFormat(String customdate) {
     return customdate.replaceAllMapped(
@@ -212,7 +213,6 @@ class DateProvider with ChangeNotifier {
   Future<void> loadDateFormat() async {
     print("calling loadDate");
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
 
     if (token != null) {
@@ -240,6 +240,7 @@ class DateProvider with ChangeNotifier {
         },
         body: jsonEncode({
           'format': _dateFormat.toUpperCase(),
+          'timeFormat': _timeFormat,
           'admin_id': id,
         }),
       );
@@ -282,6 +283,15 @@ class DateProvider with ChangeNotifier {
     dateformateselect = selectIndex;
     _saveDateFormat();
     _saveSelectedDateFormat();
+    notifyListeners();
+  }
+
+  void updateTimeFormat(String newTimeFormat, selectIndex) {
+    print(newTimeFormat);
+    _timeFormat = newTimeFormat;
+    timeformateselect = selectIndex;
+    _saveDateFormat();
+    _saveSelectedTimeFormat();
     notifyListeners();
   }
 
@@ -380,8 +390,9 @@ class DateProvider with ChangeNotifier {
     // Adjust the offset based on your web application's timezone
     DateTime webTimezoneDate = parsedDate.add(Duration(hours: 5, minutes: 30));
 
-    // Create a datetime format that includes time
-    String dateTimeFormat = '$_dateFormat HH:mm:ss';
+    // Create a datetime format that includes time based on time format preference
+    String timeFormatPattern = _timeFormat == '24' ? 'HH:mm:ss' : 'h:mm:ss a';
+    String dateTimeFormat = '$_dateFormat $timeFormatPattern';
 
     // Debug print to see what's happening
     print('Original date: $dateTime');
@@ -415,7 +426,6 @@ class DateProvider with ChangeNotifier {
   //       if (jsonData["statusCode"] == 200) {
   //         _dateFormat = jsonData['format'].toString();
   //         dateformateselect = _dateformateselect;
-  //        // _loadSelectedDateFormat();
   //         notifyListeners();
   //       } else {
   //         // Handle invalid token case
@@ -456,6 +466,8 @@ class DateProvider with ChangeNotifier {
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
         String? serverFormat = jsonData['themes']?['format']?.toString();
+        String? serverTimeFormat =
+            jsonData['themes']?['timeFormat']?.toString();
 
         if (serverFormat == "YYYY-MM-DD") {
           dateformateselect = 1;
@@ -473,6 +485,19 @@ class DateProvider with ChangeNotifier {
           // Handle custom case or default
           dateformateselect = 0;
           _dateFormat = 'MM/dd/yyyy'; // Default to MM/dd/yyyy
+        }
+
+        // Handle time format
+        if (serverTimeFormat == "24") {
+          timeformateselect = 0;
+          _timeFormat = '24';
+        } else if (serverTimeFormat == "12") {
+          timeformateselect = 1;
+          _timeFormat = '12';
+        } else {
+          // Default to 24-hour format
+          timeformateselect = 0;
+          _timeFormat = '24';
         }
 
         _dateFormat = fixDateFormat(_dateFormat);
@@ -495,15 +520,16 @@ class DateProvider with ChangeNotifier {
     await prefs.setInt('selectedDateIndex', dateformateselect);
   }
 
-  Future<void> _loadSelectedDateFormat() async {
+  Future<void> _saveSelectedTimeFormat() async {
     final prefs = await SharedPreferences.getInstance();
-    final selectedDateFormat = prefs.getString('selectedDateFormat');
-    final selectedDateIndex = prefs.getInt('selectedDateIndex');
+    await prefs.setString('selectedTimeFormat', _timeFormat);
+    await prefs.setInt('selectedTimeIndex', timeformateselect);
+  }
 
-    if (selectedDateFormat != null && selectedDateIndex != null) {
-      _dateFormat = selectedDateFormat;
-      dateformateselect = selectedDateIndex;
-      notifyListeners();
-    }
+  String getFormattedDateTimePreview() {
+    DateTime now = DateTime.now();
+    String timeFormatPattern = _timeFormat == '24' ? 'HH:mm' : 'h:mm a';
+    String dateTimeFormat = '$_dateFormat $timeFormatPattern';
+    return DateFormat(dateTimeFormat).format(now);
   }
 }

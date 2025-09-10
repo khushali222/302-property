@@ -16,7 +16,6 @@ import '../../../repository/Communication/Templet_Repo.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
 
-
 class Add_Email_templet extends StatefulWidget {
   String? templetid;
   Add_Email_templet({super.key, this.templetid});
@@ -72,8 +71,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
     super.initState();
     _subjectFocusNode = FocusNode();
     _nameFocusNode = FocusNode();
-    if(widget.templetid != null)
-    fetchTemplates();
+    if (widget.templetid != null) fetchTemplates();
   }
 
   String replaceSpanTags(String html) {
@@ -90,16 +88,19 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
     // Regex to match <span> with class and/or style attributes
     return html.replaceAllMapped(
       RegExp(r'<span([^>]*)>(.*?)<\/span>', caseSensitive: false),
-          (match) {
-        String attributes = match.group(1) ?? ''; // Extract attributes inside <span>
+      (match) {
+        String attributes =
+            match.group(1) ?? ''; // Extract attributes inside <span>
         String text = match.group(2) ?? ''; // Extract inner text
 
         // Extract class names
-        RegExpMatch? classMatch = RegExp(r'class="([^"]+)"').firstMatch(attributes);
+        RegExpMatch? classMatch =
+            RegExp(r'class="([^"]+)"').firstMatch(attributes);
         String classNames = classMatch?.group(1) ?? '';
 
         // Extract styles
-        RegExpMatch? styleMatch = RegExp(r'style="([^"]+)"').firstMatch(attributes);
+        RegExpMatch? styleMatch =
+            RegExp(r'style="([^"]+)"').firstMatch(attributes);
         String style = styleMatch?.group(1) ?? '';
 
         // Extract color from style
@@ -138,7 +139,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
     double s = int.parse(match.group(2)!) / 100;
     double l = int.parse(match.group(3)!) / 100;
 
-    double c = (1 - (2 * l - 1).abs())*s;
+    double c = (1 - (2 * l - 1).abs()) * s;
     double x = c * (1 - ((h / 60) % 2 - 1).abs());
     double m = l - c / 2;
 
@@ -172,8 +173,8 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
         "${green.toRadixString(16).padLeft(2, '0')}"
         "${blue.toRadixString(16).padLeft(2, '0')}";
   }
-  Future<void> fetchTemplates() async {
 
+  Future<void> fetchTemplates() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString("token");
@@ -190,7 +191,6 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
       final data = json.decode(response.body);
       if (data["statusCode"] == 200 && data.containsKey("template")) {
         setState(() {
-
           templates = [data["template"]]; // Store in list
           //events = [data["template"]["name"] as String]; // Extract name
           _selectedEvent = data["template"]["mail_type"]; // Select default
@@ -207,7 +207,8 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
         Future.delayed(Duration(milliseconds: 500), () {
           if (mounted) {
             _htmlEditorController.setFocus();
-            _htmlEditorController.setText(replaceDollarWithAt(replaceSpanTags(htmlBody)));
+            _htmlEditorController
+                .setText(replaceDollarWithAt(replaceSpanTags(htmlBody)));
           }
         });
       }
@@ -401,7 +402,6 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
     ],
   };
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -412,7 +412,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
       ),
       appBar: widget_302_Staff.App_Bar(context: context),
       body: Padding(
-        padding: const EdgeInsets.only(left: 16,right: 16,top: 16),
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(2.0),
@@ -614,7 +614,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                     setState(() {
                                       _selectedEvent = newValue;
                                       eventError = false;
-                                    //  fetchTemplates();
+                                      //  fetchTemplates();
                                     });
                                     print('Selected Event: $_selectedEvent');
 
@@ -878,9 +878,12 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                         icon: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Icon(Icons.format_list_bulleted, color: Colors.black),
-                                           // SizedBox(width: 4),
-                                            Icon(Icons.arrow_drop_down, color: Colors.black), // Dropdown Arrow
+                                            Icon(Icons.format_list_bulleted,
+                                                color: Colors.black),
+                                            // SizedBox(width: 4),
+                                            Icon(Icons.arrow_drop_down,
+                                                color: Colors
+                                                    .black), // Dropdown Arrow
                                           ],
                                         ),
                                         tooltip: "Unordered List",
@@ -893,7 +896,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                           _htmlEditorController.execCommand(
                                               "insertHTML",
                                               argument:
-                                              '<ul style="list-style-type: $style;"><li>List Item</li></ul>');
+                                                  '<ul style="list-style-type: $style;"><li>List Item</li></ul>');
                                         },
                                         itemBuilder: (context) => [
                                           PopupMenuItem(
@@ -901,7 +904,8 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                             child: Row(
                                               children: [
                                                 Icon(Icons.circle,
-                                                    size: 16, color: Colors.black),
+                                                    size: 16,
+                                                    color: Colors.black),
                                                 SizedBox(width: 10),
                                                 Text("Disc"),
                                               ],
@@ -912,7 +916,8 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                             child: Row(
                                               children: [
                                                 Icon(Icons.circle_outlined,
-                                                    size: 16, color: Colors.black),
+                                                    size: 16,
+                                                    color: Colors.black),
                                                 SizedBox(width: 10),
                                                 Text("Circle"),
                                               ],
@@ -923,7 +928,8 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                             child: Row(
                                               children: [
                                                 Icon(Icons.square,
-                                                    size: 16, color: Colors.black),
+                                                    size: 16,
+                                                    color: Colors.black),
                                                 SizedBox(width: 10),
                                                 Text("Square"),
                                               ],
@@ -931,52 +937,67 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(width: 5,),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
                                       PopupMenuButton<String>(
                                         constraints: BoxConstraints(
-                                          minWidth: 100, // Minimum width of the popup
+                                          minWidth:
+                                              100, // Minimum width of the popup
                                           maxWidth: 200, // Maximum width
                                         ),
                                         padding: EdgeInsets.all(0),
                                         icon: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Icon(Icons.format_list_numbered, color: Colors.black),
+                                            Icon(Icons.format_list_numbered,
+                                                color: Colors.black),
                                             // SizedBox(width: 4),
-                                            Icon(Icons.arrow_drop_down, color: Colors.black), // Dropdown Arrow
+                                            Icon(Icons.arrow_drop_down,
+                                                color: Colors
+                                                    .black), // Dropdown Arrow
                                           ],
                                         ), // Ordered List Button
                                         tooltip: "Ordered List",
                                         offset: Offset(0, 40),
                                         shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10)),
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
                                         onSelected: (String style) {
                                           _htmlEditorController.execCommand(
                                               "insertHTML",
                                               argument:
-                                              '<ol style="list-style-type: $style;"><li>List Item</li></ol>');
+                                                  '<ol style="list-style-type: $style;"><li>List Item</li></ol>');
                                         },
                                         itemBuilder: (context) => [
                                           PopupMenuItem(
                                             enabled:
-                                            false, // Disable selection on this item
+                                                false, // Disable selection on this item
                                             child: Container(
-                                              width: 200, // Adjust width as needed
+                                              width:
+                                                  200, // Adjust width as needed
                                               child: GridView.count(
                                                 shrinkWrap: true,
-                                                crossAxisCount: 3, // 3 items in a row
+                                                crossAxisCount:
+                                                    3, // 3 items in a row
                                                 mainAxisSpacing: 5,
                                                 crossAxisSpacing: 5,
                                                 //childAspectRatio: .3,
                                                 // Adjust for better layout
                                                 children: [
-                                                  _buildListItem("decimal", "1"),
                                                   _buildListItem(
-                                                      "decimal-leading-zero", "01"),
-                                                  _buildListItem("lower-roman", "i"),
-                                                  _buildListItem("upper-roman", "I"),
-                                                  _buildListItem("lower-alpha", "a"),
-                                                  _buildListItem("upper-alpha", "A"),
+                                                      "decimal", "1"),
+                                                  _buildListItem(
+                                                      "decimal-leading-zero",
+                                                      "01"),
+                                                  _buildListItem(
+                                                      "lower-roman", "i"),
+                                                  _buildListItem(
+                                                      "upper-roman", "I"),
+                                                  _buildListItem(
+                                                      "lower-alpha", "a"),
+                                                  _buildListItem(
+                                                      "upper-alpha", "A"),
                                                 ],
                                               ),
                                             ),
@@ -987,7 +1008,6 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                   ),
 
                                   // OL (Ordered List) Style Dropdown
-
 
                                   PopupMenuButton<String>(
                                     child: Padding(
@@ -1099,7 +1119,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                   ListButtons(
                                     ul: false,
                                     ol: false,
-                                   listStyles: false,
+                                    listStyles: false,
                                   ),
                                   ParagraphButtons(
                                     textDirection: false,
@@ -1208,14 +1228,28 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
 
                             if (adminId != null) {
                               try {
-                                await TempletRepository().addTemplet(
-                                  adminId: adminId,
-                                  name: name.text.trim(),
-                                  subject: subject.text.trim(),
-                                  body: replaceFontTags(updatedHtmlBody),
-                                  type: "E-mail",
-                                  mail_type: _selectedEvent,
-                                );
+                                if (widget.templetid != null) {
+                                  // Editing existing template
+                                  await TempletRepository().Edit_Templet(
+                                    template_id: widget.templetid,
+                                    adminId: adminId,
+                                    name: name.text.trim(),
+                                    subject: subject.text.trim(),
+                                    body: replaceFontTags(updatedHtmlBody),
+                                    type: "E-mail",
+                                    mail_type: _selectedEvent,
+                                  );
+                                } else {
+                                  // Adding new template
+                                  await TempletRepository().addTemplet(
+                                    adminId: adminId,
+                                    name: name.text.trim(),
+                                    subject: subject.text.trim(),
+                                    body: replaceFontTags(updatedHtmlBody),
+                                    type: "E-mail",
+                                    mail_type: _selectedEvent,
+                                  );
+                                }
                                 setState(() {
                                   isLoading = false;
                                 });
@@ -1278,26 +1312,29 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
       ),
     );
   }
+
   String replaceDollarWithAt(String input) {
     return input.replaceAllMapped(
       RegExp(r'\$\{(\w+)\}'), // Match ${VariableName}
-          (match) => '@${match.group(1)}', // Replace with @VariableName
+      (match) => '@${match.group(1)}', // Replace with @VariableName
     );
   }
+
   String replaceAtWithDollar(String input) {
     return input.replaceAllMapped(
       RegExp(r'@(\w+)'), // Match @ followed by a word
-          (match) => '\${${match.group(1)}}', // Replace with ${Variable}
+      (match) => '\${${match.group(1)}}', // Replace with ${Variable}
     );
   }
+
   String replaceFontTags(String html) {
     final Map<String, String> fontSizeMap = {
       '1': 'text-tiny',
       '2': 'text-small',
       '3': 'text-default',
-      '4': 'text-medium',  // Added missing size 4
+      '4': 'text-medium', // Added missing size 4
       '5': 'text-big',
-      '6': 'text-larger',  // Added missing size 6
+      '6': 'text-larger', // Added missing size 6
       '7': 'text-huge',
     };
 
@@ -1306,8 +1343,9 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
         r'<font\s+([^>]*)>(.*?)<\/font>',
         caseSensitive: false,
       ),
-          (match) {
-        String attributes = match.group(1) ?? ''; // Get all attributes inside <font>
+      (match) {
+        String attributes =
+            match.group(1) ?? ''; // Get all attributes inside <font>
         String text = match.group(2) ?? ''; // Get the inner text
 
         // Extract size attribute
@@ -1315,7 +1353,8 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
         String? size = sizeMatch?.group(1);
 
         // Extract color attribute
-        RegExpMatch? colorMatch = RegExp(r'color="([^"]+)"').firstMatch(attributes);
+        RegExpMatch? colorMatch =
+            RegExp(r'color="([^"]+)"').firstMatch(attributes);
         String? color = colorMatch?.group(1);
 
         // Get the corresponding class name for size
@@ -1329,13 +1368,14 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
       },
     ));
   }
+
   Widget _buildListItem(String value, String text) {
     return GestureDetector(
       onTap: () {
         // Execute the command when an item is clicked
         _htmlEditorController.execCommand("insertHTML",
             argument:
-            '<ol style="list-style-type: $value;"><li>List Item</li></ol>');
+                '<ol style="list-style-type: $value;"><li>List Item</li></ol>');
       },
       child: Container(
         alignment: Alignment.center,
@@ -1343,7 +1383,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
           border: Border.all(color: Colors.black),
           borderRadius: BorderRadius.circular(5),
         ),
-        child:  SvgPicture.asset(
+        child: SvgPicture.asset(
           "assets/images/${text == "1" ? "1" : text == "01" ? "01" : text == "i" ? "OL-i" : text == "I" ? "OL-II" : text == "a" ? "OL-aa" : "OL-AAA"}.svg",
           height: 80,
           width: 80,

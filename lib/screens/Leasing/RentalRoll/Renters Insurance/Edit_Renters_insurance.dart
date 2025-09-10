@@ -16,6 +16,8 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/Renters_Insurnce/Edit_insurnce.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
+import 'package:provider/provider.dart';
 
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 
@@ -33,11 +35,12 @@ class EditRentersInsurance extends StatefulWidget {
   final String leaseId;
   final String renters_insurance_id;
   const EditRentersInsurance(
-      {required this.tenantid, required this.leaseId, required this.renters_insurance_id});
+      {required this.tenantid,
+      required this.leaseId,
+      required this.renters_insurance_id});
 
   @override
-  State<EditRentersInsurance> createState() =>
-      _EditRentersInsuranceState();
+  State<EditRentersInsurance> createState() => _EditRentersInsuranceState();
 }
 
 class _EditRentersInsuranceState extends State<EditRentersInsurance> {
@@ -56,35 +59,37 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
     fetchTenants();
     fetchRentersDetails(widget.renters_insurance_id);
   }
+
   Future<void> fetchRentersDetails(String renters_insurance_id) async {
     //try {
     // await _loadProperties();
-    RentersEdit fetchedDetails =
-    await RentersInsuranceService().fetchRentersDetails(renters_insurance_id);
+    RentersEdit fetchedDetails = await RentersInsuranceService()
+        .fetchRentersDetails(renters_insurance_id);
     print(renters_insurance_id);
 
     print('Address ${fetchedDetails.insurancePolicyDocument}');
-
 
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
       // print(fetchedDetails.rental.rentalAddress);
 
-
       //_imageUrls = fetchedDetails.workOrderImages ?? [];
       company.text = fetchedDetails.insuranceCompany!;
       number.text = fetchedDetails.insuranceCompanyPhoneNumber!;
 
-      policy.text = fetchedDetails.policyId?? "";
+      policy.text = fetchedDetails.policyId ?? "";
       // effective.text = fetchedDetails.expirationDate ?? "" ;
       // expiration.text = fetchedDetails.expirationDate ?? "";
 
-      // Convert int to String
+      // Convert API date format to user's preferred display format
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
       effective.text = fetchedDetails.effectiveDate != null
-          ? formatDate(fetchedDetails.effectiveDate!.substring(0, 10))  // Extract YYYY-MM-DD
+          ? dateProvider.formatCurrentDate(fetchedDetails.effectiveDate!
+              .substring(0, 10)) // Extract YYYY-MM-DD
           : "";
       expiration.text = fetchedDetails.expirationDate != null
-          ? formatDate(fetchedDetails.expirationDate!.substring(0, 10))  // Extract YYYY-MM-DD
+          ? dateProvider.formatCurrentDate(fetchedDetails.expirationDate!
+              .substring(0, 10)) // Extract YYYY-MM-DD
           : "";
       liablity.text = fetchedDetails.liabilityCoverage != null
           ? fetchedDetails.liabilityCoverage.toString()
@@ -92,12 +97,11 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
 
       selectedTenants = fetchedDetails.tenants!;
 
-      if(fetchedDetails.insurancePolicyDocument!.isNotEmpty)
+      if (fetchedDetails.insurancePolicyDocument!.isNotEmpty)
         _uploadedFileNames.add(fetchedDetails.insurancePolicyDocument!);
-
     });
-
   }
+
   bool isLoading = false;
   List<File> _pdfFiles = [];
 
@@ -201,7 +205,11 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
     if (selectedDate != null) {
       setState(() {
         effectiveDate = selectedDate;
-        effective.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        effective.text = dateProvider.formatCurrentDate(apiFormatDate);
       });
     }
   }
@@ -210,7 +218,7 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
     DateTime? selectedDate = await showDatePicker(
       context: context,
       initialDate: expirationDate ?? DateTime.now(),
-      firstDate: effectiveDate!,
+      firstDate: effectiveDate ?? DateTime.now(),
       // firstDate: DateTime(1900),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
@@ -236,7 +244,11 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
     if (selectedDate != null) {
       setState(() {
         expirationDate = selectedDate;
-        expiration.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        expiration.text = dateProvider.formatCurrentDate(apiFormatDate);
       });
     }
   }
@@ -245,6 +257,40 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
 
   List<Map<String, String>> tenants = [];
   List<String> selectedTenants = [];
+
+  // Helper function to convert display format back to API format (yyyy-MM-dd)
+  String _convertToApiFormat(String displayDate) {
+    if (displayDate.isEmpty) return "";
+    try {
+      DateTime? parsedDate;
+
+      // Try to parse the date using common formats
+      List<String> dateFormats = [
+        'MM/dd/yyyy',
+        'MM-dd-yyyy',
+        'yyyy-MM-dd',
+        'dd/MM/yyyy',
+        'dd-MM-yyyy'
+      ];
+
+      for (String format in dateFormats) {
+        try {
+          parsedDate = DateFormat(format).parse(displayDate);
+          break;
+        } catch (e) {
+          continue;
+        }
+      }
+
+      if (parsedDate != null) {
+        return DateFormat('yyyy-MM-dd').format(parsedDate);
+      }
+      return displayDate;
+    } catch (e) {
+      return displayDate;
+    }
+  }
+
   Future<void> fetchTenants() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
@@ -265,7 +311,7 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
         fetchedTenants.add({
           'tenant_id': tenant['tenant_id'],
           'tenant_name':
-          '${tenant['tenant_firstName']} ${tenant['tenant_lastName']}',
+              '${tenant['tenant_firstName']} ${tenant['tenant_lastName']}',
           'tenant_firstname': '${tenant['tenant_firstName']}',
           'tenant_lastName': '${tenant['tenant_lastName']}',
           'tenant_email': '${tenant['tenant_email']}',
@@ -279,7 +325,7 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
           'tenant_lastName': '${tenant['tenant_lastName']}',
           'tenant_email': '${tenant['tenant_email']}',
           'tenant_phoneNumber':
-          formatPhoneNumberedit('${tenant['tenant_phoneNumber']}'),
+              formatPhoneNumberedit('${tenant['tenant_phoneNumber']}'),
           'rental_adress': "${data['data']['rental_adress']}",
           'rental_city': "${data['data']['rental_city']}",
           'rental_state': "${data['data']['rental_state']}",
@@ -320,7 +366,7 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
                   ),
                   titleBar(
                     width: MediaQuery.of(context).size.width * .91,
-                    title: 'Update Insurance',
+                    title: 'Update Policy',
                   ),
                   Padding(
                     padding: const EdgeInsets.all(12.0),
@@ -425,7 +471,10 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
                                 _selectDate(context);
                               },
                               keyboardType: TextInputType.text,
-                              hintText: 'dd-mm-yyyy',
+                              hintText: Provider.of<DateProvider>(context,
+                                      listen: false)
+                                  .dateFormat
+                                  .toUpperCase(),
                               controller: effective,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -454,7 +503,10 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
                                 _selectDateexpiration(context);
                               },
                               keyboardType: TextInputType.text,
-                              hintText: 'dd-mm-yyyy',
+                              hintText: Provider.of<DateProvider>(context,
+                                      listen: false)
+                                  .dateFormat
+                                  .toUpperCase(),
                               controller: expiration,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -556,7 +608,7 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
                               child: Column(
                                 children: _uploadedFileNames.map((fileName) {
                                   int index =
-                                  _uploadedFileNames.indexOf(fileName);
+                                      _uploadedFileNames.indexOf(fileName);
                                   return ListTile(
                                     title: Text(
                                       fileName,
@@ -614,15 +666,15 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
                             },
                             child: isLoading
                                 ? Center(
-                              child: SpinKitFadingCircle(
-                                color: Colors.white,
-                                size: 50.0,
-                              ),
-                            )
+                                    child: SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 50.0,
+                                    ),
+                                  )
                                 : Text(
-                              'Update Insurance',
-                              style: TextStyle(color: Color(0xFFf7f8f9)),
-                            ),
+                                    'Update Insurance',
+                                    style: TextStyle(color: Color(0xFFf7f8f9)),
+                                  ),
                           ),
                         ),
                         SizedBox(
@@ -638,7 +690,7 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
                                     backgroundColor: Color(0xFFffffff),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
-                                        BorderRadius.circular(8.0))),
+                                            BorderRadius.circular(8.0))),
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
@@ -710,55 +762,55 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
       isLoading = true; // Start loading
     });
     try {
-    print('entry');
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? adminId = prefs.getString("adminId");
-    String? token = prefs.getString('token');
-    print('${adminId}  ${token}');
+      print('entry');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? adminId = prefs.getString("adminId");
+      String? token = prefs.getString('token');
+      print('${adminId}  ${token}');
 
-    // Convert selected tenants to a list of maps
-    List<String> selectedTenantsList =
-    selectedTenants.map((tenantId) => tenantId.toString()).toList();
+      // Convert selected tenants to a list of maps
+      List<String> selectedTenantsList =
+          selectedTenants.map((tenantId) => tenantId.toString()).toList();
 
-    Map<String, dynamic> values = {
-    "admin_id":adminId!,
-      "lease_id": widget.leaseId,
-      "insurance_company": company.text.trim(),
-      "insurance_company_phone_number": number.text.trim(),
-      "policy_id": policy.text.trim(),
-      "effective_date": reverseFormatDate(effective.text.trim()),
-      "expiration_date": reverseFormatDate(expiration.text.trim()),
-      "liability_coverage": liablity.text.trim(),
-      "tenants": selectedTenantsList, // Ensure it's properly formatted
-      "insurance_policy_document":
-      _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : "",
-      "renters_insurance_id"
-          : widget.renters_insurance_id,
-    };
+      Map<String, dynamic> values = {
+        "admin_id": adminId!,
+        "lease_id": widget.leaseId,
+        "insurance_company": company.text.trim(),
+        "insurance_company_phone_number": number.text.trim(),
+        "policy_id": policy.text.trim(),
+        "effective_date": _convertToApiFormat(effective.text.trim()),
+        "expiration_date": _convertToApiFormat(expiration.text.trim()),
+        "liability_coverage": liablity.text.trim(),
+        "tenants": selectedTenantsList, // Ensure it's properly formatted
+        "insurance_policy_document":
+            _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : "",
+        "renters_insurance_id": widget.renters_insurance_id,
+      };
 
-    print(jsonEncode(values)); // Debugging: Check final JSON format
+      print(jsonEncode(values)); // Debugging: Check final JSON format
 
-    final http.Response response = await http.put(
-      Uri.parse('$Api_url/api/renter-insurance/edit-policy/${widget.renters_insurance_id}'),
-      headers: <String, String>{
-        'authorization': 'CRM $token',
-        'id': 'CRM $adminId',
-        'Content-Type': 'application/json', // Ensure JSON format is specified
-      },
-      body: jsonEncode(values), // Encode JSON properly
-    );
+      final http.Response response = await http.put(
+        Uri.parse(
+            '$Api_url/api/renter-insurance/edit-policy/${widget.renters_insurance_id}'),
+        headers: <String, String>{
+          'authorization': 'CRM $token',
+          'id': 'CRM $adminId',
+          'Content-Type': 'application/json', // Ensure JSON format is specified
+        },
+        body: jsonEncode(values), // Encode JSON properly
+      );
 
-    var responseData = json.decode(response.body);
-    print('response body ${response.body}');
-    print('$Api_url/api/renter-insurance/add-policy');
-    if (responseData["statusCode"] == 200) {
-      Fluttertoast.showToast(msg: responseData["message"]);
-      Navigator.pop(context, true);
-      return responseData;
-    } else {
-      Fluttertoast.showToast(msg: responseData["message"]);
-      throw Exception('Failed to Insurance');
-    }
+      var responseData = json.decode(response.body);
+      print('response body ${response.body}');
+      print('$Api_url/api/renter-insurance/add-policy');
+      if (responseData["statusCode"] == 200) {
+        Fluttertoast.showToast(msg: responseData["message"]);
+        Navigator.pop(context, true);
+        return responseData;
+      } else {
+        Fluttertoast.showToast(msg: responseData["message"]);
+        throw Exception('Failed to Insurance');
+      }
     } catch (error) {
       print('Error: $error');
       Fluttertoast.showToast(msg: 'Something went wrong');
