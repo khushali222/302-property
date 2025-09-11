@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 import '../../../../../Model/lease_notes_model.dart';
 import '../../../../../constant/constant.dart';
 import '../../../../../provider/dateProvider.dart';
@@ -19,7 +18,7 @@ import 'package:http/http.dart' as http;
 
 class NotesTable extends StatefulWidget {
   String? leaseid;
-   NotesTable({super.key,this.leaseid});
+  NotesTable({super.key, this.leaseid});
 
   @override
   State<NotesTable> createState() => _NotesTableState();
@@ -52,13 +51,13 @@ class _NotesTableState extends State<NotesTable> {
     super.initState();
     _futureleasenotes = fetchleasenotedata();
   }
+
   Future<List<lease_notes>> fetchleasenotedata() async {
-   // RentersInsuranceService service = RentersInsuranceService();
+    // RentersInsuranceService service = RentersInsuranceService();
     try {
-      List<lease_notes> data =
-      await fetchleaseNote(widget.leaseid!);
+      List<lease_notes> data = await fetchleaseNote(widget.leaseid!);
       setState(() {
-       // rentersInsuranceModel = data;
+        // rentersInsuranceModel = data;
         isLoading = false;
         //errorMessage = null; // Reset error message on successful data fetch
       });
@@ -80,7 +79,8 @@ class _NotesTableState extends State<NotesTable> {
     String? token = prefs.getString('token');
     String? staffid = prefs.getString("staff_id");
     try {
-      final response = await http.get(Uri.parse('$Api_url/api/lease-notes/$leaseid'), headers: {
+      final response = await http
+          .get(Uri.parse('$Api_url/api/lease-notes/$leaseid'), headers: {
         "authorization": "CRM $token",
         "id": "CRM $staffid",
       });
@@ -137,38 +137,40 @@ class _NotesTableState extends State<NotesTable> {
 
       var responseData = json.decode(response.body);
       print(response.body);
-     // print(renters_insurance_id);
+      // print(renters_insurance_id);
       if (response.statusCode == 200) {
-        Fluttertoast.showToast(msg: responseData["message"]);
+        Fluttertoast.showToast(
+          msg: responseData["message"] ?? "Note deleted successfully",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
         return json.decode(response.body);
       } else {
-        Fluttertoast.showToast(msg: responseData["message"]);
-        throw Exception('Failed to delete Insurance');
+        Fluttertoast.showToast(
+          msg: responseData["message"] ?? "Failed to delete note",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
+        throw Exception('Failed to delete note');
       }
     } catch (e) {
-      throw Exception('Failed to delete Insurance: $e');
+      throw Exception('Failed to delete note: $e');
     }
   }
 
-
   final _formKey = GlobalKey<FormState>();
-  Future<void> submitNote(
-      {
-        String? leaseId,
-        String? adminId,
-        String? noteId,
-        String? noteType,
-        String? content,
-      }
-
-      ) async {
-
+  Future<void> submitNote({
+    String? leaseId,
+    String? adminId,
+    String? noteId,
+    String? noteType,
+    String? content,
+  }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? Id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     String? staffid = prefs.getString("staff_id");
 //if (!_formKey.currentState!.validate()) return;
-
 
     final url = noteId == null
         ? Uri.parse("$Api_url/api/lease-notes/add_note")
@@ -184,259 +186,294 @@ class _NotesTableState extends State<NotesTable> {
 
     final response = noteId == null
         ? await http.post(url, body: json.encode(body), headers: {
-      "authorization": "CRM $token",
-      "id": "CRM $staffid",
-      "Content-Type": "application/json",
-    })
+            "authorization": "CRM $token",
+            "id": "CRM $staffid",
+            "Content-Type": "application/json",
+          })
         : await http.put(url, body: json.encode(body), headers: {
-      "authorization": "CRM $token",
-      "id": "CRM $staffid",
-      "Content-Type": "application/json",
-    });
+            "authorization": "CRM $token",
+            "id": "CRM $staffid",
+            "Content-Type": "application/json",
+          });
     print(body);
 
     print(response.body);
     if (response.statusCode == 200 || response.statusCode == 201) {
-     // Navigator.of(context).pop();
-     //  setState(() {
-     //    _futureleasenotes = fetchleasenotedata();
-     //  });
+      var responseData = json.decode(response.body);
+      Fluttertoast.showToast(
+        msg: responseData["message"] ??
+            "${noteId == null ? 'Note added' : 'Note updated'} successfully",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+      );
+      // Navigator.of(context).pop();
+      //  setState(() {
+      //    _futureleasenotes = fetchleasenotedata();
+      //  });
       //widget.onSuccess();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to ${noteId == null ? 'add' : 'update'} note")),
+      var responseData = json.decode(response.body);
+      Fluttertoast.showToast(
+        msg: responseData["message"] ??
+            "Failed to ${noteId == null ? 'add' : 'update'} note",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
       );
     }
   }
 
-  reloadScreen(){
+  reloadScreen() {
     setState(() {
       _futureleasenotes = fetchleasenotedata();
     });
     Navigator.pop(context);
   }
-  Future<bool?>  showNoteDialog(BuildContext context, {
-     String? leaseId,
-     String? adminId,
+
+  Future<bool?> showNoteDialog(
+    BuildContext context, {
+    String? leaseId,
+    String? adminId,
     String? noteId,
     String? noteType,
     String? content,
   }) async {
-    String? selectedNoteType =noteType;
-    TextEditingController contentController = content != null ? TextEditingController(text: content):TextEditingController();
-    showDialog<bool>(
+    String? selectedNoteType = noteType;
+    TextEditingController contentController = content != null
+        ? TextEditingController(text: content)
+        : TextEditingController();
+    return showDialog<bool>(
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return  StatefulBuilder(
-            builder: (context, setState) {
-            return Dialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        noteId == null ? 'Add Note' : 'Edit Note',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+        return StatefulBuilder(builder: (context, setState) {
+          return Dialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            insetPadding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      noteId == null ? 'Add Note' : 'Edit Note',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(height: 20),
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(" Notes Type *",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,fontSize: 15),),
-                                DropdownButtonHideUnderline(
-                                  child: DropdownButtonFormField2<String>(
-                                    isExpanded: true,
-                                    hint: const Padding(
-                                      padding: EdgeInsets.symmetric(horizontal: 5),
-                                      child: Text(
-                                        "Select Note Type",
-                                        style: TextStyle(fontSize: 14, color: Colors.black),
-                                      ),
-                                    ),
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.zero,
-
-                                      border: OutlineInputBorder(
-                                        borderSide: BorderSide.none, // <-- Hide outer border
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide.none, // <-- Hide underline
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide.none, // <-- Hide underline
-                                      ),
-                                    ),
-                                    value: selectedNoteType,
-                                    items: noteTypeList
-                                        .map((type) => DropdownMenuItem<String>(
-                                      value: type,
-                                      child: Text(
-                                        type,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                    ))
-                                        .toList(),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        selectedNoteType = value!;
-                                      });
-                                    },
-                                    validator: (value) => value == null ? 'Please select a note type' : null,
-                                    dropdownStyleData: DropdownStyleData(
-                                      maxHeight: 300,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(6),
-                                        color: Colors.white,
-                                      ),
-                                      scrollbarTheme: ScrollbarThemeData(
-                                        radius: const Radius.circular(6),
-                                        thickness: MaterialStateProperty.all(6),
-                                        thumbVisibility: MaterialStateProperty.all(true),
-                                      ),
-                                    ),
-                                    buttonStyleData: ButtonStyleData(
-                                      height: 50,
-                                      padding: const EdgeInsets.symmetric(horizontal: 3),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(6),
-                                        color: Colors.white,
-                                        border: Border.all(color: Colors.grey.shade400),
-                                      ),
-                                      elevation: 2,
-                                    ),
-                                    iconStyleData: const IconStyleData(
-                                      icon: Icon(Icons.arrow_drop_down),
-                                      iconSize: 24,
-                                      iconEnabledColor: Color(0xFFb0b6c3),
-                                      iconDisabledColor: Colors.grey,
-                                    ),
-                                    menuItemStyleData: const MenuItemStyleData(
-                                      height: 50,
-                                      padding: EdgeInsets.only(left: 14, right: 14),
-                                    ),
-                                  ),
-                                ),
-
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(" Content *",style: TextStyle(color: blueColor,fontWeight: FontWeight.bold,fontSize: 15),),
-
-                                TextFormField(
-                                  controller: contentController,
-                                  maxLines: 5,
-                                  decoration: InputDecoration(
-                                   // labelText: 'Content',
-                                    hintText: 'Content...',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Content is required';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                    ),
+                    const SizedBox(height: 20),
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.grey[700],
-                            ),
-                            child: const Text('Cancel'),
-                          ),
-                          const SizedBox(width: 12),
-                          ElevatedButton(
-                            onPressed: () async {
-                              if (!_formKey.currentState!.validate()) return;
-
-                              setState(() {
-                                isLoading = true;
-                              });
-
-                              await submitNote(
-                                leaseId: leaseId,
-                                adminId: adminId,
-                                noteId: noteId,
-                                noteType: selectedNoteType,
-                                content: contentController.text,
-                              ).then((value){
-                                setState(() {
-                                  isLoading = false;
-                                 // _futureleasenotes = fetchleasenotedata();
-                                });
-                               reloadScreen();
-
-                              });
-                              //
-
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: blueColor,
-                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                " Notes Type *",
+                                style: TextStyle(
+                                    color: blueColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15),
                               ),
-                            ),
-                            child: isLoading
-                                ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                            )
-                                : Text(
-                              noteId == null ? 'Add' : 'Update',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
+                              DropdownButtonHideUnderline(
+                                child: DropdownButtonFormField2<String>(
+                                  isExpanded: true,
+                                  hint: const Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 5),
+                                    child: Text(
+                                      "Select Note Type",
+                                      style: TextStyle(
+                                          fontSize: 14, color: Colors.black),
+                                    ),
+                                  ),
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.zero,
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide
+                                          .none, // <-- Hide outer border
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide.none, // <-- Hide underline
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide.none, // <-- Hide underline
+                                    ),
+                                  ),
+                                  value: selectedNoteType,
+                                  items: noteTypeList
+                                      .map((type) => DropdownMenuItem<String>(
+                                            value: type,
+                                            child: Text(
+                                              type,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black87,
+                                              ),
+                                            ),
+                                          ))
+                                      .toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedNoteType = value!;
+                                    });
+                                  },
+                                  validator: (value) => value == null
+                                      ? 'Please select a note type'
+                                      : null,
+                                  dropdownStyleData: DropdownStyleData(
+                                    maxHeight: 300,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: Colors.white,
+                                    ),
+                                    scrollbarTheme: ScrollbarThemeData(
+                                      radius: const Radius.circular(6),
+                                      thickness: MaterialStateProperty.all(6),
+                                      thumbVisibility:
+                                          MaterialStateProperty.all(true),
+                                    ),
+                                  ),
+                                  buttonStyleData: ButtonStyleData(
+                                    height: 50,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 3),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: Colors.white,
+                                      border: Border.all(
+                                          color: Colors.grey.shade400),
+                                    ),
+                                    elevation: 2,
+                                  ),
+                                  iconStyleData: const IconStyleData(
+                                    icon: Icon(Icons.arrow_drop_down),
+                                    iconSize: 24,
+                                    iconEnabledColor: Color(0xFFb0b6c3),
+                                    iconDisabledColor: Colors.grey,
+                                  ),
+                                  menuItemStyleData: const MenuItemStyleData(
+                                    height: 50,
+                                    padding:
+                                        EdgeInsets.only(left: 14, right: 14),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                " Content *",
+                                style: TextStyle(
+                                    color: blueColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15),
+                              ),
+                              TextFormField(
+                                controller: contentController,
+                                maxLines: 5,
+                                decoration: InputDecoration(
+                                  // labelText: 'Content',
+                                  hintText: 'Content...',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 14),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Content is required';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
                           ),
                         ],
-                      )
-                    ],
-                  ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.grey[700],
+                          ),
+                          child: const Text('Cancel'),
+                        ),
+                        const SizedBox(width: 12),
+                        ElevatedButton(
+                          onPressed: () async {
+                            if (!_formKey.currentState!.validate()) return;
+
+                            setState(() {
+                              isLoading = true;
+                            });
+
+                            await submitNote(
+                              leaseId: leaseId,
+                              adminId: adminId,
+                              noteId: noteId,
+                              noteType: selectedNoteType,
+                              content: contentController.text,
+                            ).then((value) {
+                              setState(() {
+                                isLoading = false;
+                                // _futureleasenotes = fetchleasenotedata();
+                              });
+                              reloadScreen();
+                            });
+                            //
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: blueColor,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: isLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2, color: Colors.white),
+                                )
+                              : Text(
+                                  noteId == null ? 'Add' : 'Update',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                        ),
+                      ],
+                    )
+                  ],
                 ),
               ),
-            );
-          }
-        );
+            ),
+          );
+        });
       },
     );
   }
-
-
 
   void _showDeleteAlert(BuildContext context, String id) {
     TextEditingController reason = TextEditingController();
@@ -455,15 +492,16 @@ class _NotesTableState extends State<NotesTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-           await deleteNote(noteid: id);
+            await deleteNote(noteid: id);
             reloadScreen();
           },
           color: blueColor,
         ),
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -476,6 +514,7 @@ class _NotesTableState extends State<NotesTable> {
       ],
     ).show();
   }
+
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
@@ -508,7 +547,12 @@ class _NotesTableState extends State<NotesTable> {
                 padding: const EdgeInsets.only(left: 0),
                 child: Row(
                   children: [
-                    width < 400 ? const Text("Date", style: TextStyle(color: Colors.white, fontSize: 15)) : const Text("Date", style: TextStyle(color: Colors.white, fontSize: 15)),
+                    width < 400
+                        ? const Text("Date",
+                            style: TextStyle(color: Colors.white, fontSize: 15))
+                        : const Text("Date",
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 15)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
                     // ascending1
@@ -535,7 +579,8 @@ class _NotesTableState extends State<NotesTable> {
             Expanded(
               child: Row(
                 children: [
-                  Text("Note Type", style: TextStyle(color: Colors.white, fontSize: 15)),
+                  Text("Note Type",
+                      style: TextStyle(color: Colors.white, fontSize: 15)),
                   SizedBox(width: 5),
                   // ascending2
                   //     ? Padding(
@@ -567,7 +612,6 @@ class _NotesTableState extends State<NotesTable> {
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
     return Container(
-
       child: SingleChildScrollView(
         child: Column(
           children: [
@@ -576,11 +620,13 @@ class _NotesTableState extends State<NotesTable> {
                 Spacer(),
                 GestureDetector(
                   onTap: () async {
-                    final shouldRefresh = await showNoteDialog( context,leaseId: widget.leaseid);
+                    final shouldRefresh =
+                        await showNoteDialog(context, leaseId: widget.leaseid);
                     if (shouldRefresh == true) {
                       print("should Refresh $shouldRefresh");
                       setState(() {
-                        _futureleasenotes = fetchleasenotedata(); // or whatever your data refresh method is
+                        _futureleasenotes =
+                            fetchleasenotedata(); // or whatever your data refresh method is
                       });
                     }
 
@@ -595,8 +641,12 @@ class _NotesTableState extends State<NotesTable> {
                     //     .clearApplicant();
                   },
                   child: Container(
-                    height: (MediaQuery.of(context).size.width < 500) ? 35 : MediaQuery.of(context).size.width * 0.063,
-                    width: (MediaQuery.of(context).size.width < 500) ? MediaQuery.of(context).size.width * 0.35 : MediaQuery.of(context).size.width * 0.2,
+                    height: (MediaQuery.of(context).size.width < 500)
+                        ? 35
+                        : MediaQuery.of(context).size.width * 0.063,
+                    width: (MediaQuery.of(context).size.width < 500)
+                        ? MediaQuery.of(context).size.width * 0.35
+                        : MediaQuery.of(context).size.width * 0.2,
                     decoration: BoxDecoration(
                       color: blueColor,
                       borderRadius: BorderRadius.circular(5),
@@ -607,7 +657,8 @@ class _NotesTableState extends State<NotesTable> {
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 22,
+                          fontSize:
+                              MediaQuery.of(context).size.width < 500 ? 14 : 22,
                         ),
                       ),
                     ),
@@ -619,7 +670,6 @@ class _NotesTableState extends State<NotesTable> {
               ],
             ),
             const SizedBox(height: 8),
-
             FutureBuilder<List<lease_notes>>(
                 future: _futureleasenotes,
                 builder: (context, snapshot) {
@@ -628,12 +678,9 @@ class _NotesTableState extends State<NotesTable> {
                       padding: const EdgeInsets.all(7.0),
                       child: ColabShimmerLoadingWidget(),
                     );
-                  }
-                  else if(snapshot.hasError){
+                  } else if (snapshot.hasError) {
                     print(snapshot.error);
-                  }
-                  else if (!snapshot.hasData ||
-                      snapshot.data!.isEmpty) {
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Container(
                       height: MediaQuery.of(context).size.height * .45,
                       child: Center(
@@ -669,7 +716,7 @@ class _NotesTableState extends State<NotesTable> {
                       .take(itemsPerPage)
                       .toList();
 
-                  return  SingleChildScrollView(
+                  return SingleChildScrollView(
                     child: Padding(
                       padding: const EdgeInsets.all(7.0),
                       child: Column(
@@ -679,15 +726,12 @@ class _NotesTableState extends State<NotesTable> {
                           Container(
                             decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: Color.fromRGBO(
-                                        152, 162, 179, .5))),
+                                    color: Color.fromRGBO(152, 162, 179, .5))),
                             // decoration: BoxDecoration(
                             //     border: Border.all(color: blueColor)),
                             child: Column(
-                              children: currentPageData
-                                  .asMap()
-                                  .entries
-                                  .map((entry) {
+                              children:
+                                  currentPageData.asMap().entries.map((entry) {
                                 int rowIndex = entry.key;
                                 var item = entry.value;
                                 bool isRowExpanded =
@@ -699,8 +743,8 @@ class _NotesTableState extends State<NotesTable> {
                                         ? Colors.white
                                         : blueColor.withOpacity(0.09),
                                     border: Border.all(
-                                        color: Color.fromRGBO(
-                                            152, 162, 179, .5)),
+                                        color:
+                                            Color.fromRGBO(152, 162, 179, .5)),
                                   ),
                                   // decoration: BoxDecoration(
                                   //   border: Border.all(color: blueColor),
@@ -710,21 +754,19 @@ class _NotesTableState extends State<NotesTable> {
                                       ListTile(
                                         contentPadding: EdgeInsets.zero,
                                         title: Padding(
-                                          padding:
-                                          const EdgeInsets.all(2.0),
+                                          padding: const EdgeInsets.all(2.0),
                                           child: Row(
                                             mainAxisAlignment:
-                                            MainAxisAlignment.start,
+                                                MainAxisAlignment.start,
                                             crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                                CrossAxisAlignment.center,
                                             children: <Widget>[
                                               InkWell(
                                                 onTap: () {
                                                   setState(() {
                                                     if (expandedRowIndex ==
                                                         rowIndex) {
-                                                      expandedRowIndex =
-                                                      null;
+                                                      expandedRowIndex = null;
                                                     } else {
                                                       expandedRowIndex =
                                                           rowIndex;
@@ -732,39 +774,37 @@ class _NotesTableState extends State<NotesTable> {
                                                   });
                                                 },
                                                 child: Container(
-                                                  margin: const EdgeInsets
-                                                      .only(left: 5),
+                                                  margin: const EdgeInsets.only(
+                                                      left: 5),
                                                   padding: !isRowExpanded
-                                                      ? const EdgeInsets
-                                                      .only(
-                                                      bottom: 10)
-                                                      : const EdgeInsets
-                                                      .only(top: 10),
+                                                      ? const EdgeInsets.only(
+                                                          bottom: 10)
+                                                      : const EdgeInsets.only(
+                                                          top: 10),
                                                   child: FaIcon(
                                                     isRowExpanded
                                                         ? FontAwesomeIcons
-                                                        .sortUp
+                                                            .sortUp
                                                         : FontAwesomeIcons
-                                                        .sortDown,
+                                                            .sortDown,
                                                     size: 20,
                                                     color: blueColor,
                                                   ),
                                                 ),
                                               ),
                                               Expanded(
-                                               // Larger size for the first field
+                                                // Larger size for the first field
                                                 child: Padding(
                                                   padding:
-                                                  const EdgeInsets
-                                                      .only(
-                                                      left: 8.0),
+                                                      const EdgeInsets.only(
+                                                          left: 8.0),
                                                   child: InkWell(
                                                     onTap: () {
                                                       setState(() {
                                                         if (expandedRowIndex ==
                                                             rowIndex) {
                                                           expandedRowIndex =
-                                                          null;
+                                                              null;
                                                         } else {
                                                           expandedRowIndex =
                                                               rowIndex;
@@ -776,16 +816,13 @@ class _NotesTableState extends State<NotesTable> {
                                                         children: [
                                                           TextSpan(
                                                             text:
-                                                            '${dateProvider.formatCurrentDate(item.createdAt!) ?? '-'}',
-                                                            style:
-                                                            TextStyle(
-                                                              color:
-                                                              blueColor,
+                                                                '${dateProvider.formatCurrentDate(item.createdAt!) ?? '-'}',
+                                                            style: TextStyle(
+                                                              color: blueColor,
                                                               fontWeight:
-                                                              FontWeight
-                                                                  .bold,
-                                                              fontSize:
-                                                              13,
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 13,
                                                             ),
                                                           ),
                                                         ],
@@ -796,19 +833,15 @@ class _NotesTableState extends State<NotesTable> {
                                               ),
                                               SizedBox(width: 10),
                                               Expanded(
-
                                                 child: Text(
-                                                  item.noteType!
-                                                     ,
+                                                  item.noteType!,
                                                   style: TextStyle(
                                                     color: blueColor,
-                                                    fontWeight:
-                                                    FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     fontSize: 14,
                                                   ),
                                                 ),
                                               ),
-
                                             ],
                                           ),
                                         ),
@@ -817,8 +850,7 @@ class _NotesTableState extends State<NotesTable> {
                                         Container(
                                           padding: EdgeInsets.only(
                                               left: 2, right: 2),
-                                          margin:
-                                          EdgeInsets.only(bottom: 2),
+                                          margin: EdgeInsets.only(bottom: 2),
                                           child: SingleChildScrollView(
                                             child: Container(
                                               //color: Colors.blue,
@@ -826,18 +858,17 @@ class _NotesTableState extends State<NotesTable> {
                                                 children: [
                                                   Row(
                                                     mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .start,
+                                                        MainAxisAlignment.start,
                                                     children: [
                                                       FaIcon(
                                                         isRowExpanded
                                                             ? FontAwesomeIcons
-                                                            .sortUp
+                                                                .sortUp
                                                             : FontAwesomeIcons
-                                                            .sortDown,
+                                                                .sortDown,
                                                         size: 50,
-                                                        color: Colors
-                                                            .transparent,
+                                                        color:
+                                                            Colors.transparent,
                                                       ),
                                                       Expanded(
                                                         child: Text.rich(
@@ -845,31 +876,32 @@ class _NotesTableState extends State<NotesTable> {
                                                             children: [
                                                               TextSpan(
                                                                 text:
-                                                                'Content : ',
+                                                                    'Content : ',
                                                                 style: TextStyle(
-                                                                    fontWeight: FontWeight
-                                                                        .bold,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
                                                                     color:
-                                                                    blueColor), // Bold and black
+                                                                        blueColor), // Bold and black
                                                               ),
                                                               TextSpan(
                                                                 // text: formatDate(
                                                                 //     '${Propertytype.updatedAt}'),
-                                                                text:  '${item.content}' ,
+                                                                text:
+                                                                    '${item.content}',
                                                                 style: TextStyle(
-                                                                    fontWeight: FontWeight
-                                                                        .w700,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
                                                                     color:
-                                                                    grey), // Light and grey
+                                                                        grey), // Light and grey
                                                               ),
                                                             ],
                                                           ),
                                                         ),
                                                       ),
-
                                                     ],
                                                   ),
-
                                                   SizedBox(
                                                     height: 15,
                                                   ),
@@ -877,51 +909,61 @@ class _NotesTableState extends State<NotesTable> {
                                                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
                                                       Expanded(
-                                                        child:
-                                                        GestureDetector(
-                                                          onTap:
-                                                              () async {
-                                                                final shouldRefresh =    await  showNoteDialog(context,noteId: item.noteId,content: item.content,adminId: item.adminId,leaseId: item.leaseId,noteType: item.noteType);
-                                                                if (shouldRefresh == true) {
-                                                                  setState(() {
-                                                                    _futureleasenotes = fetchleasenotedata(); // or whatever your data refresh method is
-                                                                  });
-                                                                }
+                                                        child: GestureDetector(
+                                                          onTap: () async {
+                                                            final shouldRefresh =
+                                                                await showNoteDialog(
+                                                                    context,
+                                                                    noteId: item
+                                                                        .noteId,
+                                                                    content: item
+                                                                        .content,
+                                                                    adminId: item
+                                                                        .adminId,
+                                                                    leaseId: item
+                                                                        .leaseId,
+                                                                    noteType: item
+                                                                        .noteType);
+                                                            if (shouldRefresh ==
+                                                                true) {
+                                                              setState(() {
+                                                                _futureleasenotes =
+                                                                    fetchleasenotedata(); // or whatever your data refresh method is
+                                                              });
+                                                            }
                                                           },
-                                                          child:
-                                                          Container(
+                                                          child: Container(
                                                             height: 40,
                                                             decoration: BoxDecoration(
                                                                 color: Colors
-                                                                    .grey[
-                                                                350]), // color:Colors.grey[100],
+                                                                        .grey[
+                                                                    350]), // color:Colors.grey[100],
                                                             child: Row(
                                                               mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
+                                                                  MainAxisAlignment
+                                                                      .center,
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
+                                                                  CrossAxisAlignment
+                                                                      .center,
                                                               children: [
                                                                 FaIcon(
                                                                   FontAwesomeIcons
                                                                       .edit,
-                                                                  size:
-                                                                  15,
+                                                                  size: 15,
                                                                   color:
-                                                                  blueColor,
+                                                                      blueColor,
                                                                 ),
                                                                 SizedBox(
-                                                                  width:
-                                                                  10,
+                                                                  width: 10,
                                                                 ),
                                                                 Text(
                                                                   "Edit",
                                                                   style: TextStyle(
                                                                       color:
-                                                                      blueColor,
+                                                                          blueColor,
                                                                       fontWeight:
-                                                                      FontWeight.bold),
+                                                                          FontWeight
+                                                                              .bold),
                                                                 ),
                                                               ],
                                                             ),
@@ -932,55 +974,52 @@ class _NotesTableState extends State<NotesTable> {
                                                         width: 5,
                                                       ),
                                                       Expanded(
-                                                        child:
-                                                        GestureDetector(
+                                                        child: GestureDetector(
                                                           onTap: () {
                                                             _showDeleteAlert(
                                                                 context,
                                                                 item.noteId ??
                                                                     "");
                                                           },
-                                                          child:
-                                                          Container(
+                                                          child: Container(
                                                             height: 40,
-                                                            decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .grey[
-                                                                350]),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        350]),
                                                             child: Row(
                                                               mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
+                                                                  MainAxisAlignment
+                                                                      .center,
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
+                                                                  CrossAxisAlignment
+                                                                      .center,
                                                               children: [
                                                                 FaIcon(
                                                                   FontAwesomeIcons
                                                                       .trashCan,
-                                                                  size:
-                                                                  15,
+                                                                  size: 15,
                                                                   color:
-                                                                  blueColor,
+                                                                      blueColor,
                                                                 ),
                                                                 SizedBox(
-                                                                  width:
-                                                                  10,
+                                                                  width: 10,
                                                                 ),
                                                                 Text(
                                                                   "Delete",
                                                                   style: TextStyle(
                                                                       color:
-                                                                      blueColor,
+                                                                          blueColor,
                                                                       fontWeight:
-                                                                      FontWeight.bold),
+                                                                          FontWeight
+                                                                              .bold),
                                                                 )
                                                               ],
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-
                                                     ],
                                                   ),
                                                 ],
@@ -1008,8 +1047,7 @@ class _NotesTableState extends State<NotesTable> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 12.0),
                                       decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Colors.grey),
+                                        border: Border.all(color: Colors.grey),
                                       ),
                                       child: DropdownButtonHideUnderline(
                                         child: DropdownButton<int>(
@@ -1018,15 +1056,14 @@ class _NotesTableState extends State<NotesTable> {
                                               .map((int value) {
                                             return DropdownMenuItem<int>(
                                               value: value,
-                                              child:
-                                              Text(value.toString()),
+                                              child: Text(value.toString()),
                                             );
                                           }).toList(),
                                           onChanged: (newValue) {
                                             setState(() {
                                               itemsPerPage = newValue!;
                                               currentPage =
-                                              0; // Reset to first page when items per page change
+                                                  0; // Reset to first page when items per page change
                                             });
                                           },
                                         ),
@@ -1047,10 +1084,10 @@ class _NotesTableState extends State<NotesTable> {
                                     onPressed: currentPage == 0
                                         ? null
                                         : () {
-                                      setState(() {
-                                        currentPage--;
-                                      });
-                                    },
+                                            setState(() {
+                                              currentPage--;
+                                            });
+                                          },
                                   ),
                                   Text(
                                       'Page ${currentPage + 1} of $totalPages'),
@@ -1061,13 +1098,12 @@ class _NotesTableState extends State<NotesTable> {
                                           ? blueColor
                                           : Colors.grey,
                                     ),
-                                    onPressed:
-                                    currentPage < totalPages - 1
+                                    onPressed: currentPage < totalPages - 1
                                         ? () {
-                                      setState(() {
-                                        currentPage++;
-                                      });
-                                    }
+                                            setState(() {
+                                              currentPage++;
+                                            });
+                                          }
                                         : null,
                                   ),
                                 ],

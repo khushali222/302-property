@@ -82,12 +82,9 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -133,9 +130,13 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                   children: [
                     width < 400
                         ? Text("        Work Order",
-                            style: TextStyle(color: Colors.white))
+                            style: TextStyle(  color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15))
                         : Text("         Work Order",
-                            style: TextStyle(color: Colors.white)),
+                            style: TextStyle(  color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     /*ascending1
@@ -184,7 +185,9 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                 },
                 child: Row(
                   children: [
-                    Text(" Property", style: TextStyle(color: Colors.white)),
+                    Text(" Property", style: TextStyle(  color: blueColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15)),
                     SizedBox(width: 5),
                     /* ascending2
                         ? Padding(
@@ -233,7 +236,9 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Status", style: TextStyle(color: Colors.white)),
+                    Text("Status", style: TextStyle(  color: blueColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15)),
                     SizedBox(width: 5),
                     /*ascending3
                         ? Padding(
@@ -1133,12 +1138,9 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                 children: [
                                   SizedBox(height: 20),
                                   _buildHeaders(),
-                                  SizedBox(height: 20),
+                                  SizedBox(height: 10),
                                   Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Color.fromRGBO(
-                                                152, 162, 179, .5))),
+
                                     child: Column(
                                       children: currentPageData
                                           .asMap()
@@ -1151,13 +1153,16 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                         //print(Tenant_financial.totalBalance);
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
+                                          margin:
+                                          EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
-                                                ? Colors.white
-                                                : blueColor.withOpacity(0.09),
+                                                ? Color(0xFFF4F8FF)
+                                                : Colors.white,
                                             border: Border.all(
-                                                color: Color.fromRGBO(
-                                                    152, 162, 179, .5)),
+                                                color: Color(0xFFDBE0E5)),
+                                            borderRadius:
+                                            BorderRadius.circular(10),
                                           ),
                                           child: Column(
                                             children: <Widget>[
@@ -1184,6 +1189,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                           //   if (isExpanded) {
                                                           //     expandedIndex = null;
                                                           //     isExpanded = !isExpanded;
+
                                                           //   } else {
                                                           //     expandedIndex = index;
                                                           //   }

@@ -72,13 +72,17 @@ class _PropertyTableState extends State<PropertyTable> {
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
+      // decoration: BoxDecoration(
+      //   color: blueColor,
+      //   borderRadius: BorderRadius.only(
+      //     topLeft: Radius.circular(13),
+      //     topRight: Radius.circular(13),
+      //   ),
+      // ),
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -124,9 +128,13 @@ class _PropertyTableState extends State<PropertyTable> {
                   children: [
                     width < 400
                         ? Text("     Rental Address ",
-                        style: TextStyle(color: Colors.white))
+                        style: TextStyle(  color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15))
                         : Text("     Rental Address",
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle(  color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     /*ascending1
@@ -175,7 +183,9 @@ class _PropertyTableState extends State<PropertyTable> {
                 },
                 child: Row(
                   children: [
-                    Text("   Start Date", style: TextStyle(color: Colors.white)),
+                    Text("   Start Date", style: TextStyle(  color: blueColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15)),
                     SizedBox(width: 5),
                    /* ascending2
                         ? Padding(
@@ -224,7 +234,9 @@ class _PropertyTableState extends State<PropertyTable> {
                 },
                 child: Row(
                   children: [
-                    Text("End Date", style: TextStyle(color: Colors.white)),
+                    Text("End Date", style: TextStyle(  color: blueColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15)),
                     SizedBox(width: 5),
                     /*ascending3
                         ? Padding(
@@ -938,14 +950,8 @@ class _PropertyTableState extends State<PropertyTable> {
                           children: [
                             SizedBox(height: 20),
                             _buildHeaders(),
-                            SizedBox(height: 20),
+                            SizedBox(height: 10),
                             Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Color.fromRGBO(
-                                      152, 162, 179, .5)
-
-
-)),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -956,13 +962,16 @@ class _PropertyTableState extends State<PropertyTable> {
                                   tenant_property Propertytype = entry.value;
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
+                                    margin:
+                                    EdgeInsets.symmetric(vertical: 6),
                                     decoration: BoxDecoration(
-                                      color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                      border: Border.all(color: Color.fromRGBO(
-                                          152, 162, 179, .5)
-
-
-),
+                                      color: index % 2 != 0
+                                          ? Color(0xFFF4F8FF)
+                                          : Colors.white,
+                                      border: Border.all(
+                                          color: Color(0xFFDBE0E5)),
+                                      borderRadius:
+                                      BorderRadius.circular(10),
                                     ),
                                     child: Column(
                                       children: <Widget>[

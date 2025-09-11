@@ -4988,23 +4988,23 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 ],
                               ),
                               SizedBox(height: 15),
-                              Row(
-                                children: [
-                                  Text(
-                                    "Current Date Format :- dd-mm-yyyy",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                      color: blueColor,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 16
-                                              : 25,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 15),
+                              // Row(
+                              //   children: [
+                              //     Text(
+                              //       "Current Date Format :- dd-mm-yyyy",
+                              //       style: TextStyle(
+                              //         fontWeight: FontWeight.normal,
+                              //         color: blueColor,
+                              //         fontSize:
+                              //             MediaQuery.of(context).size.width <
+                              //                     500
+                              //                 ? 16
+                              //                 : 25,
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
+                              // SizedBox(height: 15),
                               Text(
                                 "Select Date Format",
                                 style: TextStyle(
@@ -5016,6 +5016,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                           : 25,
                                 ),
                               ),
+                              SizedBox(height: 10),
                               Row(
                                 children: [
                                   Column(
@@ -5252,6 +5253,163 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   )
                                 ],
                               ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(height: 30),
+                                  Text(
+                                    "Select Time Format",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      color: blueColor,
+                                      fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 16
+                                          : 25,
+                                    ),
+                                  ),
+                                  SizedBox(height: 15),
+                                  Column(
+                                    children: [
+                                      Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              SizedBox(
+                                                  height: 20,
+                                                  width: 30,
+                                                  child: Radio(
+                                                      value: 0,
+                                                      groupValue: timeformateselect,
+                                                      onChanged: (value) {
+                                                        setState(() {
+                                                          dateProvider
+                                                              .updateTimeFormat(
+                                                              '24', value);
+                                                          timeformateselect =
+                                                          value!;
+                                                        });
+                                                      })),
+                                              Text(
+                                                "24-hour format (14:00:00)",
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          SizedBox(
+                                            height: 50,
+                                            width: 150,
+                                            child: TextFormField(
+                                              enabled: false,
+                                              initialValue: timeformate1 ?? "",
+                                              decoration: InputDecoration(
+                                                contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    horizontal: 15),
+                                                border: OutlineInputBorder(),
+                                                filled: true,
+                                                fillColor: Colors.grey.shade200,
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 15,
+                                      ),
+                                      Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              SizedBox(
+                                                  height: 20,
+                                                  width: 30,
+                                                  child: Radio(
+                                                      value: 1,
+                                                      groupValue: timeformateselect,
+                                                      onChanged: (value) {
+                                                        setState(() {
+                                                          dateProvider
+                                                              .updateTimeFormat(
+                                                              '12', value);
+                                                          timeformateselect =
+                                                          value!;
+                                                        });
+                                                      })),
+                                              Text(
+                                                "12-hour format (2:00:00 PM)",
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          SizedBox(
+                                            height: 50,
+                                            width: 150,
+                                            child: TextFormField(
+                                              enabled: false,
+                                              initialValue: timeformate2 ?? "",
+                                              decoration: InputDecoration(
+                                                contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    horizontal: 15),
+                                                border: OutlineInputBorder(),
+                                                filled: true,
+                                                fillColor: Colors.grey.shade200,
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(height: 20),
+                                  Text(
+                                    "Formatted Date and Time Preview:",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      color: blueColor,
+                                      fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 16
+                                          : 25,
+                                    ),
+                                  ),
+                                  SizedBox(height: 10),
+                                  Container(
+                                    padding: EdgeInsets.all(15),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: blueColor),
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: Colors.grey.shade50,
+                                    ),
+                                    child: Text(
+                                      dateProvider.getFormattedDateTimePreview(),
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                               SizedBox(
                                 height: 20,
                               ),
@@ -5383,187 +5541,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                               // ),
                             ],
                           ),
-                        // if (isdateformate)
-                        //   Column(
-                        //     mainAxisAlignment: MainAxisAlignment.start,
-                        //     crossAxisAlignment: CrossAxisAlignment.start,
-                        //     children: [
-                        //       SizedBox(height: 30),
-                        //       Text(
-                        //         "Select Time Format",
-                        //         style: TextStyle(
-                        //           fontWeight: FontWeight.normal,
-                        //           color: blueColor,
-                        //           fontSize:
-                        //               MediaQuery.of(context).size.width < 500
-                        //                   ? 16
-                        //                   : 25,
-                        //         ),
-                        //       ),
-                        //       SizedBox(height: 15),
-                        //       Column(
-                        //         children: [
-                        //           Column(
-                        //             mainAxisAlignment: MainAxisAlignment.start,
-                        //             crossAxisAlignment:
-                        //                 CrossAxisAlignment.start,
-                        //             children: [
-                        //               Row(
-                        //                 children: [
-                        //                   SizedBox(
-                        //                       height: 20,
-                        //                       width: 30,
-                        //                       child: Radio(
-                        //                           value: 0,
-                        //                           groupValue: timeformateselect,
-                        //                           onChanged: (value) {
-                        //                             setState(() {
-                        //                               dateProvider
-                        //                                   .updateTimeFormat(
-                        //                                       '24', value);
-                        //                               timeformateselect =
-                        //                                   value!;
-                        //                             });
-                        //                           })),
-                        //                   Text(
-                        //                     "24-hour format (14:00:00)",
-                        //                     style: TextStyle(
-                        //                       fontSize: 16,
-                        //                     ),
-                        //                   )
-                        //                 ],
-                        //               ),
-                        //               SizedBox(
-                        //                 height: 10,
-                        //               ),
-                        //               SizedBox(
-                        //                 height: 50,
-                        //                 width: 150,
-                        //                 child: Consumer<DateProvider>(
-                        //                   builder:
-                        //                       (context, dateProvider, child) {
-                        //                     DateTime now = DateTime.now();
-                        //                     String timeFormat1 =
-                        //                         DateFormat('HH:mm:ss')
-                        //                             .format(now);
-                        //                     return TextFormField(
-                        //                       enabled: false,
-                        //                       initialValue: timeFormat1,
-                        //                       decoration: InputDecoration(
-                        //                         contentPadding:
-                        //                             EdgeInsets.symmetric(
-                        //                                 horizontal: 15),
-                        //                         border: OutlineInputBorder(),
-                        //                         filled: true,
-                        //                         fillColor: Colors.grey.shade200,
-                        //                       ),
-                        //                     );
-                        //                   },
-                        //                 ),
-                        //               )
-                        //             ],
-                        //           ),
-                        //           SizedBox(
-                        //             height: 15,
-                        //           ),
-                        //           Column(
-                        //             mainAxisAlignment: MainAxisAlignment.start,
-                        //             crossAxisAlignment:
-                        //                 CrossAxisAlignment.start,
-                        //             children: [
-                        //               Row(
-                        //                 children: [
-                        //                   SizedBox(
-                        //                       height: 20,
-                        //                       width: 30,
-                        //                       child: Radio(
-                        //                           value: 1,
-                        //                           groupValue: timeformateselect,
-                        //                           onChanged: (value) {
-                        //                             setState(() {
-                        //                               dateProvider
-                        //                                   .updateTimeFormat(
-                        //                                       '12', value);
-                        //                               timeformateselect =
-                        //                                   value!;
-                        //                             });
-                        //                           })),
-                        //                   Text(
-                        //                     "12-hour format (2:00:00 PM)",
-                        //                     style: TextStyle(
-                        //                       fontSize: 16,
-                        //                     ),
-                        //                   )
-                        //                 ],
-                        //               ),
-                        //               SizedBox(
-                        //                 height: 10,
-                        //               ),
-                        //               SizedBox(
-                        //                 height: 50,
-                        //                 width: 150,
-                        //                 child: Consumer<DateProvider>(
-                        //                   builder:
-                        //                       (context, dateProvider, child) {
-                        //                     DateTime now = DateTime.now();
-                        //                     String timeFormat2 =
-                        //                         DateFormat('h:mm:ss a')
-                        //                             .format(now);
-                        //                     return TextFormField(
-                        //                       enabled: false,
-                        //                       initialValue: timeFormat2,
-                        //                       decoration: InputDecoration(
-                        //                         contentPadding:
-                        //                             EdgeInsets.symmetric(
-                        //                                 horizontal: 15),
-                        //                         border: OutlineInputBorder(),
-                        //                         filled: true,
-                        //                         fillColor: Colors.grey.shade200,
-                        //                       ),
-                        //                     );
-                        //                   },
-                        //                 ),
-                        //               )
-                        //             ],
-                        //           )
-                        //         ],
-                        //       ),
-                        //       SizedBox(height: 20),
-                        //       Text(
-                        //         "Formatted Date and Time Preview:",
-                        //         style: TextStyle(
-                        //           fontWeight: FontWeight.normal,
-                        //           color: blueColor,
-                        //           fontSize:
-                        //               MediaQuery.of(context).size.width < 500
-                        //                   ? 16
-                        //                   : 25,
-                        //         ),
-                        //       ),
-                        //       SizedBox(height: 10),
-                        //       Container(
-                        //         padding: EdgeInsets.all(15),
-                        //         decoration: BoxDecoration(
-                        //           border: Border.all(color: blueColor),
-                        //           borderRadius: BorderRadius.circular(5),
-                        //           color: Colors.grey.shade50,
-                        //         ),
-                        //         child: Consumer<DateProvider>(
-                        //           builder: (context, dateProvider, child) {
-                        //             return Text(
-                        //               dateProvider
-                        //                   .getFormattedDateTimePreview(),
-                        //               style: TextStyle(
-                        //                 fontSize: 18,
-                        //                 fontWeight: FontWeight.bold,
-                        //                 color: blueColor,
-                        //               ),
-                        //             );
-                        //           },
-                        //         ),
-                        //       ),
-                        //     ],
-                        //   ),
                         if (isworkorder)
                           Column(
                             mainAxisAlignment: MainAxisAlignment.start,

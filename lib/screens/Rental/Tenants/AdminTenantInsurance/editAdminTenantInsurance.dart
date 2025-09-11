@@ -23,6 +23,8 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../../widgets/custom_drawer.dart';
+import 'package:provider/provider.dart';
+import '../../../../provider/dateProvider.dart';
 
 class editAdminInsurance extends StatefulWidget {
   AdminTenantInsuranceModel data;
@@ -148,11 +150,18 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
     provider.text = widget.data.provider!;
     policy.text = widget.data.policyId!;
 
-     effective.text = formatDate(widget.data.effectiveDate!);
-     expiration.text = formatDate(widget.data.expirationDate!);
+    // Use DateProvider to format dates for display
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
+      effective.text =
+          dateProvider.formatCurrentDate(widget.data.effectiveDate!);
+      expiration.text =
+          dateProvider.formatCurrentDate(widget.data.expirationDate!);
+    });
+
     liablity.text = widget.data.liabilityCoverage.toString()!;
-    if(widget.data.policy!.isNotEmpty)
-    _uploadedFileNames.add(widget.data.policy!);
+    if (widget.data.policy!.isNotEmpty)
+      _uploadedFileNames.add(widget.data.policy!);
     super.initState();
   }
 
@@ -193,10 +202,45 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
   DateTime? effectiveDate;
   DateTime? expirationDate;
 
+  String _convertToApiFormat(String displayDate) {
+    if (displayDate.isEmpty) return "";
+    try {
+      DateTime? parsedDate;
+
+      // Try to parse the date using common formats
+      List<String> dateFormats = [
+        'MM/dd/yyyy',
+        'MM-dd-yyyy',
+        'yyyy-MM-dd',
+        'yyyy-MMM-dd', // Added for API format like "2025-Aug-22"
+        'dd/MM/yyyy',
+        'dd-MM-yyyy'
+      ];
+
+      for (String format in dateFormats) {
+        try {
+          parsedDate = DateFormat(format).parse(displayDate);
+          break;
+        } catch (e) {
+          continue;
+        }
+      }
+
+      if (parsedDate != null) {
+        return DateFormat('yyyy-MM-dd').format(parsedDate);
+      } else {
+        return displayDate; // Return original if parsing fails
+      }
+    } catch (e) {
+      return displayDate; // Return original if parsing fails
+    }
+  }
+
   Future<void> _selectDate(BuildContext context) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate:effectiveDate ?? DateTime.now(),
+      initialDate: effectiveDate ?? DateTime.now(),
       firstDate: DateTime(2015, 8),
       //  firstDate: DateTime(1900),
       lastDate: DateTime(2101),
@@ -211,8 +255,7 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor:
-                blueColor, // button text color
+                backgroundColor: blueColor, // button text color
               ),
             ),
           ),
@@ -224,16 +267,18 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
     if (selectedDate != null) {
       setState(() {
         effectiveDate = selectedDate;
-        effective.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        effective.text = dateProvider.formatCurrentDate(apiFormatDate);
       });
     }
   }
 
   Future<void> _selectDateexpiration(BuildContext context) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     DateTime? selectedDate = await showDatePicker(
       context: context,
       initialDate: expirationDate ?? DateTime.now(),
-      firstDate:effectiveDate!,
+      firstDate: effectiveDate ?? DateTime.now(),
       // firstDate: DateTime(1900),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
@@ -247,8 +292,7 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor:
-                blueColor, // button text color
+                backgroundColor: blueColor, // button text color
               ),
             ),
           ),
@@ -260,7 +304,8 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
     if (selectedDate != null) {
       setState(() {
         expirationDate = selectedDate;
-        expiration.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        expiration.text = dateProvider.formatCurrentDate(apiFormatDate);
       });
     }
   }
@@ -289,7 +334,7 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                   ),
                   titleBar(
                     width: MediaQuery.of(context).size.width * .91,
-                    title: 'New Insurance',
+                    title: 'Edit Insurance Policy',
                   ),
                   Padding(
                     padding: const EdgeInsets.all(12.0),
@@ -365,7 +410,10 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                                 _selectDate(context);
                               },
                               keyboardType: TextInputType.text,
-                              hintText: 'dd-mm-yyyy',
+                              hintText: Provider.of<DateProvider>(context,
+                                      listen: false)
+                                  .dateFormat
+                                  .toUpperCase(),
                               controller: effective,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -394,7 +442,10 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                                 _selectDateexpiration(context);
                               },
                               keyboardType: TextInputType.text,
-                              hintText: 'dd-mm-yyyy',
+                              hintText: Provider.of<DateProvider>(context,
+                                      listen: false)
+                                  .dateFormat
+                                  .toUpperCase(),
                               controller: expiration,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -419,11 +470,13 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType: TextInputType.numberWithOptions(decimal: true),
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
                               hintText: '\$0.0',
                               controller: liablity,
                               inputFormatters: [
-                                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')), // allows decimals
+                                FilteringTextInputFormatter.allow(RegExp(
+                                    r'^\d*\.?\d{0,2}')), // allows decimals
                               ],
                               validator: (value) {
                                 if (value == null || value.trim().isEmpty) {
@@ -455,10 +508,7 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                               ),
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor:  blueColor
-
-
-,
+                                  backgroundColor: blueColor,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
@@ -502,7 +552,7 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 13,top: 4),
+                    padding: const EdgeInsets.only(left: 13, top: 4),
                     child: Row(
                       children: [
                         Container(
@@ -523,23 +573,25 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                               if (_formkey.currentState!.validate()) {
                                 //  print("calling 22");
 
-                                if( provider.text.trim() == widget.data.provider! &&
-                                policy.text.trim() == widget.data.policyId! &&
-
-                                effective.text.trim() == formatDate(widget.data.effectiveDate!) &&
-                                expiration.text.trim() == formatDate(widget.data.expirationDate!) &&
-                                liablity.text.trim() == widget.data.liabilityCoverage.toString()!
-                                &&  _uploadedFileNames.contains(widget.data.policy!)
-                              ){
+                                if (provider.text.trim() ==
+                                        widget.data.provider! &&
+                                    policy.text.trim() ==
+                                        widget.data.policyId! &&
+                                    _convertToApiFormat(
+                                            effective.text.trim()) ==
+                                        widget.data.effectiveDate! &&
+                                    _convertToApiFormat(
+                                            expiration.text.trim()) ==
+                                        widget.data.expirationDate! &&
+                                    liablity.text.trim() ==
+                                        widget.data.liabilityCoverage
+                                            .toString()! &&
+                                    _uploadedFileNames
+                                        .contains(widget.data.policy!)) {
                                   Navigator.of(context).pop();
-                                }
-
-                                else{
-
-
+                                } else {
                                   editinsurance(widget.data.tenantInsuranceId!);
                                 }
-
                               }
                             },
                             child: isLoading
@@ -594,8 +646,8 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
       "admin_id": adminId!,
       "Provider": provider.text.trim(),
       "policy_id": policy.text.trim(),
-       "EffectiveDate": reverseFormatDate(effective.text.trim()),
-       "ExpirationDate": reverseFormatDate(expiration.text.trim()),
+      "EffectiveDate": _convertToApiFormat(effective.text.trim()),
+      "ExpirationDate": _convertToApiFormat(expiration.text.trim()),
       "LiabilityCoverage": liablity.text.trim(),
       "Policy": _uploadedFileNames.length > 0 ? _uploadedFileNames.first : "",
     };

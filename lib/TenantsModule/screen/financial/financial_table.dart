@@ -80,12 +80,9 @@ class _FinancialTableState extends State<FinancialTable> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -130,7 +127,9 @@ class _FinancialTableState extends State<FinancialTable> {
                 },
                 child: Row(
                   children: [
-                    Text("       Type", style: TextStyle(color: Colors.white)),
+                    Text("       Type", style: TextStyle(  color: blueColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15)),
                     SizedBox(width: 5),
                     /* ascending2
                         ? Padding(
@@ -178,7 +177,9 @@ class _FinancialTableState extends State<FinancialTable> {
                 },
                 child: Row(
                   children: [
-                    Text("    Balance", style: TextStyle(color: Colors.white)),
+                    Text("    Balance", style: TextStyle(  color: blueColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15)),
                     SizedBox(width: 5),
                     /* ascending2
                         ? Padding(
@@ -227,7 +228,9 @@ class _FinancialTableState extends State<FinancialTable> {
                 },
                 child: Row(
                   children: [
-                    Text("      Date", style: TextStyle(color: Colors.white)),
+                    Text("      Date", style: TextStyle(  color: blueColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15)),
                     SizedBox(width: 5),
                     /*ascending3
                         ? Padding(
@@ -996,14 +999,9 @@ class _FinancialTableState extends State<FinancialTable> {
                           children: [
                             SizedBox(height: 10),
                             _buildHeaders(),
-                            SizedBox(height: 20),
+                            SizedBox(height: 10),
                             Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Color.fromRGBO(
-                                      152, 162, 179, .5)
 
-
-)),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -1025,13 +1023,16 @@ class _FinancialTableState extends State<FinancialTable> {
                                   //print(Tenant_financial.totalBalance);
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
+                                    margin:
+                                    EdgeInsets.symmetric(vertical: 6),
                                     decoration: BoxDecoration(
-                                      color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                      border: Border.all(color: Color.fromRGBO(
-                                          152, 162, 179, .5)
-
-
-),
+                                      color: index % 2 != 0
+                                          ? Color(0xFFF4F8FF)
+                                          : Colors.white,
+                                      border: Border.all(
+                                          color: Color(0xFFDBE0E5)),
+                                      borderRadius:
+                                      BorderRadius.circular(10),
                                     ),
                                     child: Column(
                                       children: <Widget>[

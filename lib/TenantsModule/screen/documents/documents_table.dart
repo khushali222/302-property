@@ -118,12 +118,9 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -173,12 +170,16 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                             child: Text(
                               "Insurance \nCompany ",
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 14),
+                                  TextStyle( color: blueColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14),
                               textAlign: TextAlign.center,
                             ),
                           )
                         : Text("     Insurance Company",
-                            style: TextStyle(color: Colors.white, fontSize: 14),
+                            style: TextStyle( color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14),
                             textAlign: TextAlign.center),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
@@ -231,7 +232,9 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                     Padding(
                       padding: const EdgeInsets.only(left: 15.0),
                       child: Text("Policy Id",
-                          style: TextStyle(color: Colors.white, fontSize: 14)),
+                          style: TextStyle( color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14)),
                     ),
                     SizedBox(width: 5),
                     /* ascending2
@@ -283,7 +286,9 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                   children: [
                     Text(
                       "Expiration\nDate",
-                      style: TextStyle(color: Colors.white, fontSize: 14),
+                      style: TextStyle( color: blueColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(width: 5),
@@ -1097,12 +1102,9 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                 children: [
                                   SizedBox(height: 20),
                                   _buildHeaders(),
-                                  SizedBox(height: 20),
+                                  SizedBox(height: 10),
                                   Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Color.fromRGBO(
-                                                152, 162, 179, .5))),
+
                                     child: Column(
                                       children: currentPageData
                                           .asMap()
@@ -1115,13 +1117,16 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                             entry.value;
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
+                                          margin:
+                                          EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
-                                                ? Colors.white
-                                                : blueColor.withOpacity(0.09),
+                                                ? Color(0xFFF4F8FF)
+                                                : Colors.white,
                                             border: Border.all(
-                                                color: Color.fromRGBO(
-                                                    152, 162, 179, .5)),
+                                                color: Color(0xFFDBE0E5)),
+                                            borderRadius:
+                                            BorderRadius.circular(10),
                                           ),
                                           child: Column(
                                             children: <Widget>[

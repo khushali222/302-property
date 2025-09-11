@@ -6,6 +6,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -21,9 +22,12 @@ import '../../widgets/appbar.dart';
 import '../../widgets/custom_drawer.dart';
 import '../../widgets/drawer_tiles.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import '../../../provider/dateProvider.dart';
+
 class edit_insurance extends StatefulWidget {
   Insurance_data data;
-   edit_insurance({super.key,required this.data});
+  edit_insurance({super.key, required this.data});
 
   @override
   State<edit_insurance> createState() => _edit_insuranceState();
@@ -40,6 +44,40 @@ class _edit_insuranceState extends State<edit_insurance> {
   List<File> _pdfFiles = [];
 
   List<String> _uploadedFileNames = [];
+
+  String _convertToApiFormat(String displayDate) {
+    if (displayDate.isEmpty) return "";
+    try {
+      DateTime? parsedDate;
+
+      // Try to parse the date using common formats
+      List<String> dateFormats = [
+        'MM/dd/yyyy',
+        'MM-dd-yyyy',
+        'yyyy-MM-dd',
+        'yyyy-MMM-dd', // Added for API format like "2025-Aug-22"
+        'dd/MM/yyyy',
+        'dd-MM-yyyy'
+      ];
+
+      for (String format in dateFormats) {
+        try {
+          parsedDate = DateFormat(format).parse(displayDate);
+          break;
+        } catch (e) {
+          continue;
+        }
+      }
+
+      if (parsedDate != null) {
+        return DateFormat('yyyy-MM-dd').format(parsedDate);
+      } else {
+        return displayDate; // Return original if parsing fails
+      }
+    } catch (e) {
+      return displayDate; // Return original if parsing fails
+    }
+  }
 
   Future<void> _pickPdfFiles() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -74,7 +112,7 @@ class _edit_insuranceState extends State<edit_insurance> {
       String? fileName = await uploadPdf(pdfFile);
       setState(() {
         if (fileName != null) {
-          if(_uploadedFileNames.isNotEmpty){
+          if (_uploadedFileNames.isNotEmpty) {
             _uploadedFileNames.clear();
           }
           _uploadedFileNames.add(fileName);
@@ -107,6 +145,7 @@ class _edit_insuranceState extends State<edit_insurance> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     DateTime? selectedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -123,8 +162,7 @@ class _edit_insuranceState extends State<edit_insurance> {
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor:
-                blueColor, // button text color
+                backgroundColor: blueColor, // button text color
               ),
             ),
           ),
@@ -135,7 +173,8 @@ class _edit_insuranceState extends State<edit_insurance> {
 
     if (selectedDate != null) {
       setState(() {
-        effective.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        effective.text = dateProvider.formatCurrentDate(apiFormatDate);
       });
     }
   }
@@ -148,17 +187,21 @@ class _edit_insuranceState extends State<edit_insurance> {
   late List<String> initialUploadedFileNames;
 
   @override
-  initState(){
+  initState() {
     provider.text = widget.data.provider!;
     policy.text = widget.data.policyId!;
 
+    // Use DateProvider to format dates for display
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
+      effective.text =
+          dateProvider.formatCurrentDate(widget.data.effectiveDate!);
+      expiration.text =
+          dateProvider.formatCurrentDate(widget.data.expirationDate!);
+    });
 
-    effective.text = formatDate3( widget.data.effectiveDate!);
-
-    expiration.text = formatDate3( widget.data.expirationDate!);
     liablity.text = widget.data.liabilityCoverage.toString()!;
-    if(widget.data.policy != "")
-    _uploadedFileNames.add(widget.data.policy!);
+    if (widget.data.policy != "") _uploadedFileNames.add(widget.data.policy!);
 
     initialProvider = provider.text;
     initialPolicy = policy.text;
@@ -168,10 +211,10 @@ class _edit_insuranceState extends State<edit_insurance> {
     initialUploadedFileNames = List.from(_uploadedFileNames);
 
     super.initState();
-
-
   }
+
   Future<void> _selectDateexpiration(BuildContext context) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     DateTime? selectedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -188,8 +231,7 @@ class _edit_insuranceState extends State<edit_insurance> {
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor:
-                blueColor, // button text color
+                backgroundColor: blueColor, // button text color
               ),
             ),
           ),
@@ -200,7 +242,8 @@ class _edit_insuranceState extends State<edit_insurance> {
 
     if (selectedDate != null) {
       setState(() {
-        expiration.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+        expiration.text = dateProvider.formatCurrentDate(apiFormatDate);
       });
     }
   }
@@ -210,333 +253,371 @@ class _edit_insuranceState extends State<edit_insurance> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: key,
-        appBar: widget_302.App_Bar(context: context,onDrawerIconPressed: () {
-          key.currentState!.openDrawer();
-        },),
+        appBar: widget_302.App_Bar(
+          context: context,
+          onDrawerIconPressed: () {
+            key.currentState!.openDrawer();
+          },
+        ),
         backgroundColor: Colors.white,
-        drawer:  CustomDrawer(currentpage: 'Documents',),
-      body:Form(
-        key: _formkey,
-        child: Container(
-          color: Colors.white,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 25,
-                ),
-                titleBar(
-                  width: MediaQuery.of(context).size.width * .91,
-                  title: 'New Insurance',
-                 // size: 18,
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Container(
-                    width: double.infinity,
-                    // height: !form_valid ? 860 : 830,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        border: Border.all(
-                          color: Color.fromRGBO(21, 43, 103, 1),
-                        )),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Provider *',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          CustomTextField(
-                            keyboardType: TextInputType.text,
-                            hintText: 'Enter Provider Name',
-                             controller: provider,
-                         //   label: "",
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'please enter the subject';
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text('Policy Id *',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          CustomTextField(
-                            keyboardType: TextInputType.text,
-                            hintText: 'Enter Policy Id',
-                             controller: policy,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'please enter the subject';
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text('Effective Date *',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          CustomTextField(
-                            onTap: (){
-                              _selectDate(context);
-                            },
-                            keyboardType: TextInputType.text,
-                            hintText: 'dd-mm-yyyy',
-
-                            label: "Enter effective date",
-
-                             controller: effective,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'please enter the subject';
-                              }
-                              return null;
-                            },
-                            suffixIcon: Icon(Icons.date_range,color: blueColor,),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text('Expiration Date *',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          CustomTextField(
-                            onTap: (){
-                              _selectDateexpiration(context);
-                            },
-                            keyboardType: TextInputType.text,
-                            hintText: 'dd-mm-yyyy',
-                            label: "Enter expiration date",
-                             controller: expiration,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'please enter the subject';
-                              }
-                              return null;
-                            },
-                            suffixIcon: Icon(Icons.date_range,color: blueColor,),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text('Liability Coverage *',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          CustomTextField(
-                            keyboardType: TextInputType.text,
-                            hintText: '\$0.0',
-                             label: "Enter Liability Coverage",
-                             controller: liablity,
-
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'please enter the subject';
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text('Upload Insurance Document',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey)),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            height: 40,
-                            width: 125,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
+        drawer: CustomDrawer(
+          currentpage: 'Documents',
+        ),
+        body: Form(
+          key: _formkey,
+          child: Container(
+            color: Colors.white,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 25,
+                  ),
+                  titleBar(
+                    width: MediaQuery.of(context).size.width * .91,
+                    title: 'Edit Insurance Policy',
+                    // size: 18,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Container(
+                      width: double.infinity,
+                      // height: !form_valid ? 860 : 830,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          border: Border.all(
+                            color: Color.fromRGBO(21, 43, 103, 1),
+                          )),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Provider *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
                             ),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:  blueColor
-
-
-,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
+                            CustomTextField(
+                              keyboardType: TextInputType.text,
+                              hintText: 'Enter Provider Name',
+                              controller: provider,
+                              //   label: "",
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'please enter the subject';
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text('Policy Id *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              keyboardType: TextInputType.text,
+                              hintText: 'Enter Policy Id',
+                              controller: policy,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'please enter the subject';
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text('Effective Date *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              onTap: () {
+                                _selectDate(context);
+                              },
+                              keyboardType: TextInputType.text,
+                              hintText: Provider.of<DateProvider>(context,
+                                      listen: false)
+                                  .dateFormat
+                                  .toUpperCase(),
+                              label: "Enter effective date",
+                              controller: effective,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'please enter the subject';
+                                }
+                                return null;
+                              },
+                              suffixIcon: Icon(
+                                Icons.date_range,
+                                color: blueColor,
                               ),
-                              onPressed: _pickPdfFiles,
-                              child: Text('Choose Files'),
                             ),
-                          ),
-                          SingleChildScrollView(
-                            child: Column(
-                              children: _uploadedFileNames.map((fileName) {
-                                int index = _uploadedFileNames.indexOf(fileName);
-                                return ListTile(
-                                  title: Text(
-                                    fileName,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: Color(0xFF748097),
-                                    ),
-                                  ),
-                                  trailing: IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        _uploadedFileNames.removeAt(index);
-                                      });
-                                    },
-                                    icon: const FaIcon(
-                                      FontAwesomeIcons.remove,
-                                      color: Color(0xFF748097),
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
+                            SizedBox(
+                              height: 10,
                             ),
-                          ),
-
-                        ],
+                            Text('Expiration Date *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              onTap: () {
+                                _selectDateexpiration(context);
+                              },
+                              keyboardType: TextInputType.text,
+                              hintText: Provider.of<DateProvider>(context,
+                                      listen: false)
+                                  .dateFormat
+                                  .toUpperCase(),
+                              label: "Enter expiration date",
+                              controller: expiration,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'please enter the subject';
+                                }
+                                return null;
+                              },
+                              suffixIcon: Icon(
+                                Icons.date_range,
+                                color: blueColor,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text('Liability Coverage *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            // CustomTextField(
+                            //   keyboardType: TextInputType.text,
+                            //   hintText: '\$0.0',
+                            //    label: "Enter Liability Coverage",
+                            //    controller: liablity,
+                            //
+                            //   validator: (value) {
+                            //     if (value == null || value.isEmpty) {
+                            //       return 'please enter the subject';
+                            //     }
+                            //     return null;
+                            //   },
+                            // ),
+                            CustomTextField(
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
+                              hintText: '\$0.0',
+                              controller: liablity,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(
+                                    r'^\d*\.?\d{0,2}')), // allows decimals
+                              ],
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Please enter the liability coverage.';
+                                }
+                                final parsed = double.tryParse(value.trim());
+                                if (parsed == null) {
+                                  return 'Liability Coverage must be a number. Please enter a valid numeric value.';
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text('Upload Insurance Document',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                              height: 40,
+                              width: 125,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: blueColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                                onPressed: _pickPdfFiles,
+                                child: Text('Choose Files'),
+                              ),
+                            ),
+                            SingleChildScrollView(
+                              child: Column(
+                                children: _uploadedFileNames.map((fileName) {
+                                  int index =
+                                      _uploadedFileNames.indexOf(fileName);
+                                  return ListTile(
+                                    title: Text(
+                                      fileName,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        color: Color(0xFF748097),
+                                      ),
+                                    ),
+                                    trailing: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _uploadedFileNames.removeAt(index);
+                                        });
+                                      },
+                                      icon: const FaIcon(
+                                        FontAwesomeIcons.remove,
+                                        color: Color(0xFF748097),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 50,
-                        width: 150,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: blueColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                          ),
-                          // onPressed: (){
-                          //   //print("calling 111");
-                          //   if(_formkey.currentState!.validate()){
-                          //   //  print("calling 22");
-                          //     editinsurance(widget.data.tenantInsuranceId!);
-                          //   }
-                          // },
-                          onPressed: () {
-                            if (_formkey.currentState!.validate()) {
-                              // Check if any field has changed
-                              if (provider.text != initialProvider ||
-                                  policy.text != initialPolicy ||
-                                  effective.text != initialEffective ||
-                                  expiration.text != initialExpiration ||
-                                  liablity.text != initialLiability ||
-                                  !listEquals(_uploadedFileNames, initialUploadedFileNames)) {
-                                editinsurance(widget.data.tenantInsuranceId!);
-                              } else {
-                                print("no changes made");
-                                Navigator.of(context).pop(true);
-                              }
-                            }
-                          },
-                          child: isLoading
-                              ? Center(
-                            child: SpinKitFadingCircle(
-                              color: Colors.white,
-                              size: 55.0,
-                            ),
-                          )
-                              : Text(
-                            'Save',
-                            style: TextStyle(color: Color(0xFFf7f8f9)),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Container(
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        Container(
                           height: 50,
-                          width: 120,
+                          width: 150,
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0)),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
                           child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFFffffff),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(8.0))),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                'Cancel',
-                                style: TextStyle(color: Color(0xFF748097)),
-                              )))
-                    ],
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: blueColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            // onPressed: (){
+                            //   //print("calling 111");
+                            //   if(_formkey.currentState!.validate()){
+                            //   //  print("calling 22");
+                            //     editinsurance(widget.data.tenantInsuranceId!);
+                            //   }
+                            // },
+                            onPressed: () {
+                              if (_formkey.currentState!.validate()) {
+                                // Check if any field has changed
+                                if (provider.text != initialProvider ||
+                                    policy.text != initialPolicy ||
+                                    _convertToApiFormat(
+                                            effective.text.trim()) !=
+                                        _convertToApiFormat(
+                                            initialEffective.trim()) ||
+                                    _convertToApiFormat(
+                                            expiration.text.trim()) !=
+                                        _convertToApiFormat(
+                                            initialExpiration.trim()) ||
+                                    liablity.text != initialLiability ||
+                                    !listEquals(_uploadedFileNames,
+                                        initialUploadedFileNames)) {
+                                  editinsurance(widget.data.tenantInsuranceId!);
+                                } else {
+                                  print("no changes made");
+                                  Navigator.of(context).pop(true);
+                                }
+                              }
+                            },
+                            child: isLoading
+                                ? Center(
+                                    child: SpinKitFadingCircle(
+                                      color: Colors.white,
+                                      size: 55.0,
+                                    ),
+                                  )
+                                : Text(
+                                    'Save',
+                                    style: TextStyle(color: Color(0xFFf7f8f9)),
+                                  ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Container(
+                            height: 50,
+                            width: 120,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0)),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color(0xFFffffff),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0))),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(color: Color(0xFF748097)),
+                                )))
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      )
-    );
+        ));
   }
-  editinsurance(String TenantInsurance_id)async{
+
+  editinsurance(String TenantInsurance_id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-  Map<String,dynamic> values =   {
+    Map<String, dynamic> values = {
       "admin_id": admin_id!,
-    "Provider": provider.text.trim(),
-    "policy_id": policy.text.trim(),
-    "EffectiveDate": reverseFormatDate(effective.text.trim()),
-    "ExpirationDate": reverseFormatDate(expiration.text.trim()),
-    "LiabilityCoverage": liablity.text.trim(),
-    "Policy": _uploadedFileNames.length > 0 ?  _uploadedFileNames.first : "" ,
-  };
-
-
+      "Provider": provider.text.trim(),
+      "policy_id": policy.text.trim(),
+      "EffectiveDate": _convertToApiFormat(effective.text.trim()),
+      "ExpirationDate": _convertToApiFormat(expiration.text.trim()),
+      "LiabilityCoverage": liablity.text.trim(),
+      "Policy": _uploadedFileNames.length > 0 ? _uploadedFileNames.first : "",
+    };
 
     final http.Response response = await http.put(
-      Uri.parse('$Api_url/api/tenantinsurance/tenantinsurance/$TenantInsurance_id'),
+      Uri.parse(
+          '$Api_url/api/tenantinsurance/tenantinsurance/$TenantInsurance_id'),
       headers: <String, String>{
         "authorization": "CRM $token",
         "id": "CRM $id",
@@ -556,7 +637,5 @@ class _edit_insuranceState extends State<edit_insurance> {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to Insurance');
     }
-
-
   }
 }
