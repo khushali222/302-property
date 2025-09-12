@@ -40,6 +40,7 @@ import '../../../widgets/Properties_revenue_table.dart';
 import '../../Leasing/RentalRoll/addcard/CardModel.dart';
 import '../../Maintenance/Workorder/workorder_summery.dart';
 import '../mortgage/property_mortgage_table.dart';
+import 'Property Tax/Property_tax_Table.dart';
 import 'applience/Applience_parts.dart';
 import 'infrastracture.dart';
 import 'moveout/Moveout_properties.dart';
@@ -1886,6 +1887,7 @@ class _Summery_pageState extends State<Summery_page>
                             "index": isMultiUnit ? 6 : 5
                           },
                           {"title": "Mortgage", "index": isMultiUnit ? 7 : 6},
+                         // {"title": "Property Tax", "index": isMultiUnit ? 8 : 7},
                         ]);
 
                         return Row(
@@ -2606,6 +2608,15 @@ class _Summery_pageState extends State<Summery_page>
           }
         } else if (_selectedIndex == 7 && isMultiUnit) {
           return Mortgage_page(data);
+        }
+        else if (_selectedIndex == 7) {
+          if (isMultiUnit) {
+            return Mortgage_page(data);
+          } else {
+            return PropertyTax_page(data);
+          }
+        } else if (_selectedIndex == 8 && isMultiUnit) {
+          return PropertyTax_page(data);
         }
 
         return Container();
@@ -12650,6 +12661,15 @@ class _Summery_pageState extends State<Summery_page>
 
   Mortgage_page(List<unit_properties> unit) {
     return PropertyMortgageTable(
+      propertyId: widget.properties.rentalId ?? "",
+      showAppBar: false,
+      showDrawer: false,
+      showAddButton: true,
+    );
+  }
+
+  PropertyTax_page(List<unit_properties> unit) {
+    return Property_tax_Table(
       propertyId: widget.properties.rentalId ?? "",
       showAppBar: false,
       showDrawer: false,

@@ -112,7 +112,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
             const Expanded(
               child: Row(
                 children: [
-                  Text("     Document \n    Name",
+                  Text("    Document\n    Name",
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.white, fontSize: 15)),
                   SizedBox(width: 5),
