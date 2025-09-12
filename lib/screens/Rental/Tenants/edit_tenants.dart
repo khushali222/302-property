@@ -1449,6 +1449,9 @@ class _EditTenantsState extends State<EditTenants> {
                                                     0xFFCED4DA), // ADD BORDER COLOR
                                                 borderWidth:
                                                     1.5, // ADD BORDER WIDTH
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]")), // only letters + spaces
+                                                  ],
                                                 validator: (value) {
                                                   if (value == null ||
                                                       value.isEmpty) {
@@ -1489,6 +1492,9 @@ class _EditTenantsState extends State<EditTenants> {
                                                 isInRow:
                                                     true, // ADD FOR ROW ALIGNMENT
                                                 showElevation: false,
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]")), // only letters + spaces
+                                                  ],
                                                 validator: (value) {
                                                   if (value == null ||
                                                       value.isEmpty) {

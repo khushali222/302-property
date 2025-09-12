@@ -126,7 +126,11 @@ class _TabBarExampleState extends State<TabBarExample> {
     try {
       final cats = await FetchAllcategories().fetchAllCategories();
       setState(() {
-        _dropdownCategories = cats;
+        // Sort categories alphabetically by name
+        _dropdownCategories = cats
+          ..sort((a, b) => (a.name ?? '')
+              .toLowerCase()
+              .compareTo((b.name ?? '').toLowerCase()));
         _isLoadingCategories = false;
       });
     } catch (e) {
@@ -1336,7 +1340,11 @@ class _TabBarExampleState extends State<TabBarExample> {
         });
 
         setState(() {
-          vendors = names;
+          // Sort vendors alphabetically by name (values)
+          var sortedEntries = names.entries.toList()
+            ..sort((a, b) =>
+                a.value.toLowerCase().compareTo(b.value.toLowerCase()));
+          vendors = Map.fromEntries(sortedEntries);
           _isLoadingvendors = false;
         });
       } else {
@@ -1382,7 +1390,11 @@ class _TabBarExampleState extends State<TabBarExample> {
         });
 
         setState(() {
-          staffs = staffnames;
+          // Sort staff alphabetically by name (values)
+          var sortedEntries = staffnames.entries.toList()
+            ..sort((a, b) =>
+                a.value.toLowerCase().compareTo(b.value.toLowerCase()));
+          staffs = Map.fromEntries(sortedEntries);
           _isLoadingstaff = false;
         });
       } else {
@@ -5264,18 +5276,20 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       fontWeight: FontWeight.normal,
                                       color: blueColor,
                                       fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 16
-                                          : 25,
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 16
+                                              : 25,
                                     ),
                                   ),
                                   SizedBox(height: 15),
                                   Column(
                                     children: [
                                       Column(
-                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
                                         crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Row(
                                             children: [
@@ -5284,14 +5298,15 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   width: 30,
                                                   child: Radio(
                                                       value: 0,
-                                                      groupValue: timeformateselect,
+                                                      groupValue:
+                                                          timeformateselect,
                                                       onChanged: (value) {
                                                         setState(() {
                                                           dateProvider
                                                               .updateTimeFormat(
-                                                              '24', value);
+                                                                  '24', value);
                                                           timeformateselect =
-                                                          value!;
+                                                              value!;
                                                         });
                                                       })),
                                               Text(
@@ -5313,8 +5328,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                               initialValue: timeformate1 ?? "",
                                               decoration: InputDecoration(
                                                 contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    horizontal: 15),
+                                                    EdgeInsets.symmetric(
+                                                        horizontal: 15),
                                                 border: OutlineInputBorder(),
                                                 filled: true,
                                                 fillColor: Colors.grey.shade200,
@@ -5327,9 +5342,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                         height: 15,
                                       ),
                                       Column(
-                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
                                         crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Row(
                                             children: [
@@ -5338,14 +5354,15 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   width: 30,
                                                   child: Radio(
                                                       value: 1,
-                                                      groupValue: timeformateselect,
+                                                      groupValue:
+                                                          timeformateselect,
                                                       onChanged: (value) {
                                                         setState(() {
                                                           dateProvider
                                                               .updateTimeFormat(
-                                                              '12', value);
+                                                                  '12', value);
                                                           timeformateselect =
-                                                          value!;
+                                                              value!;
                                                         });
                                                       })),
                                               Text(
@@ -5367,8 +5384,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                               initialValue: timeformate2 ?? "",
                                               decoration: InputDecoration(
                                                 contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    horizontal: 15),
+                                                    EdgeInsets.symmetric(
+                                                        horizontal: 15),
                                                 border: OutlineInputBorder(),
                                                 filled: true,
                                                 fillColor: Colors.grey.shade200,
@@ -5386,9 +5403,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       fontWeight: FontWeight.normal,
                                       color: blueColor,
                                       fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 16
-                                          : 25,
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 16
+                                              : 25,
                                     ),
                                   ),
                                   SizedBox(height: 10),
@@ -5400,7 +5418,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       color: Colors.grey.shade50,
                                     ),
                                     child: Text(
-                                      dateProvider.getFormattedDateTimePreview(),
+                                      dateProvider
+                                          .getFormattedDateTimePreview(),
                                       style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,

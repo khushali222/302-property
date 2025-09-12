@@ -1821,6 +1821,9 @@ class _AddTenantState extends State<AddTenant> {
                                           borderColor: Color(
                                               0xFFCED4DA), // ADD BORDER COLOR
                                           borderWidth: 1.5, // ADD BORDER WIDTH
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]")), // only letters + spaces
+                                            ],
                                           validator: (value) {
                                             if (value == null ||
                                                 value.isEmpty) {
@@ -1858,6 +1861,9 @@ class _AddTenantState extends State<AddTenant> {
                                           isInRow:
                                               true, // ADD FOR ROW ALIGNMENT
                                           showElevation: false,
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]")), // only letters + spaces
+                                            ],
                                           validator: (value) {
                                             if (value == null ||
                                                 value.isEmpty) {

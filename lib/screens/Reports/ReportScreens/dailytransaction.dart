@@ -573,8 +573,13 @@ class _DailyTransactionsState extends State<DailyTransactions> {
   fetchReport() {
     setState(() {
       daterange = "Today";
-      fromDate.text = formatDate(DateTime.now().toString());
-      toDate.text = formatDate(DateTime.now().toString());
+      // Use DateProvider to format dates for display
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        String todayApiFormat = DateFormat('yyyy-MM-dd').format(DateTime.now());
+        fromDate.text = dateProvider.formatCurrentDate(todayApiFormat);
+        toDate.text = dateProvider.formatCurrentDate(todayApiFormat);
+      });
     });
     DateTime time = DateTime.now();
     DateTime date = DateFormat('yyyy-MM-dd').parse(time.toString());
@@ -1658,6 +1663,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
   // }
 
   Future<void> _pickDate(BuildContext context) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     DateTime? _selectedDate;
     DateTime? picked = await showDatePicker(
       context: context,
@@ -1683,11 +1689,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
       setState(() {
         _selectedDate = picked;
 
-        fromDate.text = DateFormat('yyyy-MM-dd')
-            .parse(picked.toString())
-            .toString()
-            .split(" ")[0];
-        fromDate.text = formatDate(fromDate.text);
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        fromDate.text = dateProvider.formatCurrentDate(apiFormatDate);
 
         // _futureDailytrnsaction =
         //     fetchDelinquentTenantsData(fromDate.text, toDate.text);
@@ -1698,6 +1701,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
   }
 
   Future<void> _endDate(BuildContext context) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     DateTime? _selectedDate;
     DateTime? picked = await showDatePicker(
       context: context,
@@ -1723,11 +1727,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
       setState(() {
         _selectedDate = picked;
 
-        toDate.text = DateFormat('yyyy-MM-dd')
-            .parse(picked.toString())
-            .toString()
-            .split(" ")[0];
-        toDate.text = formatDate(toDate.text);
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        toDate.text = dateProvider.formatCurrentDate(apiFormatDate);
         // _futureDailytrnsaction =
         //     fetchDelinquentTenantsData(fromDate.text, toDate.text);
       });
@@ -1742,6 +1743,41 @@ class _DailyTransactionsState extends State<DailyTransactions> {
   String? chargeType;
   String? selectedrenatalownerid;
   bool showTableData = false;
+
+  String _convertToApiFormat(String displayDate) {
+    if (displayDate.isEmpty) return "";
+    try {
+      DateTime? parsedDate;
+
+      // Try to parse the date using common formats
+      List<String> dateFormats = [
+        'MM/dd/yyyy',
+        'MM-dd-yyyy',
+        'yyyy-MM-dd',
+        'yyyy-MMM-dd', // Added for API format like "2025-Aug-22"
+        'dd/MM/yyyy',
+        'dd-MM-yyyy'
+      ];
+
+      for (String format in dateFormats) {
+        try {
+          parsedDate = DateFormat(format).parse(displayDate);
+          break;
+        } catch (e) {
+          continue;
+        }
+      }
+
+      if (parsedDate != null) {
+        return DateFormat('yyyy-MM-dd').format(parsedDate);
+      } else {
+        return displayDate; // Return original if parsing fails
+      }
+    } catch (e) {
+      return displayDate; // Return original if parsing fails
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -1964,7 +2000,10 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                             });
                                                           },
                                                           child: Text(
-                                                            '${rental.date ?? '-'}',
+                                                            dateProvider
+                                                                .formatCurrentDate(
+                                                                '${rental.date ?? '-'}')
+                                                           ,
                                                             style: TextStyle(
                                                               color: blueColor,
                                                               fontWeight:
@@ -2150,7 +2189,9 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                                 'Type:',
                                                                                 _getDisplayValue(tenant.paymentType),
                                                                                 'Txn Date:',
-                                                                                _getDisplayValue(tenant.entry?.first.date)),
+                                                                                _getDisplayValue(dateProvider
+                                                                                    .formatCurrentDate(
+                                                                                    '${tenant.entry?.first.date}'))),
                                                                             _buildTableRow(
                                                                               'Payment Details:',
                                                                               _getDisplayValue((tenant.cc_type != null && tenant.cc_number != null && tenant.cc_type!.isNotEmpty && tenant.cc_number!.isNotEmpty) ? "${tenant.cc_type} ${tenant.cc_number}" : "N/A"),
@@ -3383,35 +3424,60 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                           daterange = value;
                           if (value == "Today") {
                             customdate = false;
+                            final dateProvider = Provider.of<DateProvider>(
+                                context,
+                                listen: false);
+                            String todayApiFormat =
+                                DateFormat('yyyy-MM-dd').format(DateTime.now());
                             fromDate.text =
-                                formatDate(DateTime.now().toString());
-                            toDate.text = formatDate(DateTime.now().toString());
+                                dateProvider.formatCurrentDate(todayApiFormat);
+                            toDate.text =
+                                dateProvider.formatCurrentDate(todayApiFormat);
                           } else if (value == "This Week") {
                             DateTime now = DateTime.now();
-                            //  fromDate.text = formatDate(now.toString());
                             customdate = false;
-                            fromDate.text = formatDate(now
-                                .subtract(Duration(days: now.weekday - 1))
-                                .toString());
-                            toDate.text = formatDate(now
-                                .add(Duration(
-                                    days: DateTime.daysPerWeek - now.weekday))
-                                .toString());
+                            final dateProvider = Provider.of<DateProvider>(
+                                context,
+                                listen: false);
+                            String weekStartApiFormat = DateFormat('yyyy-MM-dd')
+                                .format(now
+                                    .subtract(Duration(days: now.weekday - 1)));
+                            String weekEndApiFormat = DateFormat('yyyy-MM-dd')
+                                .format(now.add(Duration(
+                                    days: DateTime.daysPerWeek - now.weekday)));
+                            fromDate.text = dateProvider
+                                .formatCurrentDate(weekStartApiFormat);
+                            toDate.text = dateProvider
+                                .formatCurrentDate(weekEndApiFormat);
                           } else if (value == "This Month") {
                             customdate = false;
                             DateTime now = DateTime.now();
-                            fromDate.text = formatDate(
-                                DateTime(now.year, now.month, 1).toString());
-                            toDate.text = formatDate(
-                                DateTime(now.year, now.month + 1, 0)
-                                    .toString());
+                            final dateProvider = Provider.of<DateProvider>(
+                                context,
+                                listen: false);
+                            String monthStartApiFormat =
+                                DateFormat('yyyy-MM-dd')
+                                    .format(DateTime(now.year, now.month, 1));
+                            String monthEndApiFormat = DateFormat('yyyy-MM-dd')
+                                .format(DateTime(now.year, now.month + 1, 0));
+                            fromDate.text = dateProvider
+                                .formatCurrentDate(monthStartApiFormat);
+                            toDate.text = dateProvider
+                                .formatCurrentDate(monthEndApiFormat);
                           } else if (value == "This Year") {
                             customdate = false;
                             DateTime now = DateTime.now();
-                            fromDate.text =
-                                formatDate(DateTime(now.year, 1, 1).toString());
-                            toDate.text = formatDate(
-                                DateTime(now.year, 12, 31).toString());
+                            final dateProvider = Provider.of<DateProvider>(
+                                context,
+                                listen: false);
+                            String yearStartApiFormat = DateFormat('yyyy-MM-dd')
+                                .format(DateTime(now.year, 1, 1));
+                            String yearEndApiFormat = DateFormat('yyyy-MM-dd')
+                                .format(DateTime(now.year, 12, 31));
+                            fromDate.text = dateProvider
+                                .formatCurrentDate(yearStartApiFormat);
+                            toDate.text = dateProvider
+                                .formatCurrentDate(yearEndApiFormat);
                           } else if (value == "Custom") {
                             customdate = true;
                           }
@@ -3649,7 +3715,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                             true; // Set to true when the button is pressed
                       });
                       _futureDailytrnsaction = fetchDelinquentTenantsData(
-                          fromDate.text, toDate.text); // Call the API
+                          _convertToApiFormat(fromDate.text),
+                          _convertToApiFormat(toDate.text)); // Call the API
                     },
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
