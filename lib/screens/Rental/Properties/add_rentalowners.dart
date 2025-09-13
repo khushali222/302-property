@@ -661,17 +661,17 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   controller: firstname,
                                                   cursorColor: blueColor,
                                                   decoration: InputDecoration(
-                                                    enabledBorder: firstnameerror
-                                                        ? OutlineInputBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10),
-                                                            borderSide: BorderSide(
-                                                                color: Colors
-                                                                    .red), // Set border color here
-                                                          )
-                                                        : InputBorder.none,
+                                                    // enabledBorder: firstnameerror
+                                                    //     ? OutlineInputBorder(
+                                                    //         borderRadius:
+                                                    //             BorderRadius
+                                                    //                 .circular(
+                                                    //                     10),
+                                                    //         borderSide: BorderSide(
+                                                    //             color: Colors
+                                                    //                 .red), // Set border color here
+                                                    //       )
+                                                    //     : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
                                                         EdgeInsets.all(14),
@@ -777,17 +777,17 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   controller: comname,
                                                   cursorColor: blueColor,
                                                   decoration: InputDecoration(
-                                                    enabledBorder: comnameerror
-                                                        ? OutlineInputBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10),
-                                                            borderSide: BorderSide(
-                                                                color: Colors
-                                                                    .red), // Set border color here
-                                                          )
-                                                        : InputBorder.none,
+                                                    // enabledBorder: comnameerror
+                                                    //     ? OutlineInputBorder(
+                                                    //         borderRadius:
+                                                    //             BorderRadius
+                                                    //                 .circular(
+                                                    //                     10),
+                                                    //         borderSide: BorderSide(
+                                                    //             color: Colors
+                                                    //                 .red), // Set border color here
+                                                    //       )
+                                                    //     : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
                                                         EdgeInsets.all(14),
@@ -895,18 +895,18 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   controller: primaryemail,
                                                   cursorColor: blueColor,
                                                   decoration: InputDecoration(
-                                                    enabledBorder:
-                                                        primaryemailerror
-                                                            ? OutlineInputBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
-                                                                borderSide: BorderSide(
-                                                                    color: Colors
-                                                                        .red), // Set border color here
-                                                              )
-                                                            : InputBorder.none,
+                                                    // enabledBorder:
+                                                    //     primaryemailerror
+                                                    //         ? OutlineInputBorder(
+                                                    //             borderRadius:
+                                                    //                 BorderRadius
+                                                    //                     .circular(
+                                                    //                         10),
+                                                    //             borderSide: BorderSide(
+                                                    //                 color: Colors
+                                                    //                     .red), // Set border color here
+                                                    //           )
+                                                    //         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
                                                         EdgeInsets.all(14),
@@ -1013,18 +1013,18 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   controller: alternativeemail,
                                                   cursorColor: blueColor,
                                                   decoration: InputDecoration(
-                                                    enabledBorder:
-                                                        alternativeerror
-                                                            ? OutlineInputBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
-                                                                borderSide: BorderSide(
-                                                                    color: Colors
-                                                                        .red), // Set border color here
-                                                              )
-                                                            : InputBorder.none,
+                                                    // enabledBorder:
+                                                    //     alternativeerror
+                                                    //         ? OutlineInputBorder(
+                                                    //             borderRadius:
+                                                    //                 BorderRadius
+                                                    //                     .circular(
+                                                    //                         10),
+                                                    //             borderSide: BorderSide(
+                                                    //                 color: Colors
+                                                    //                     .red), // Set border color here
+                                                    //           )
+                                                    //         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
                                                         EdgeInsets.all(14),
@@ -1144,17 +1144,17 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   controller: phonenum,
                                                   cursorColor: blueColor,
                                                   decoration: InputDecoration(
-                                                    enabledBorder: phonenumerror
-                                                        ? OutlineInputBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10),
-                                                            borderSide: BorderSide(
-                                                                color: Colors
-                                                                    .red), // Set border color here
-                                                          )
-                                                        : InputBorder.none,
+                                                    // enabledBorder: phonenumerror
+                                                    //     ? OutlineInputBorder(
+                                                    //         borderRadius:
+                                                    //             BorderRadius
+                                                    //                 .circular(
+                                                    //                     10),
+                                                    //         borderSide: BorderSide(
+                                                    //             color: Colors
+                                                    //                 .red), // Set border color here
+                                                    //       )
+                                                    //     : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
                                                         EdgeInsets.all(14),
@@ -1252,17 +1252,17 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   controller: homenum,
                                                   cursorColor: blueColor,
                                                   decoration: InputDecoration(
-                                                    enabledBorder: homenumerror
-                                                        ? OutlineInputBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10),
-                                                            borderSide: BorderSide(
-                                                                color: Colors
-                                                                    .red), // Set border color here
-                                                          )
-                                                        : InputBorder.none,
+                                                    // enabledBorder: homenumerror
+                                                    //     ? OutlineInputBorder(
+                                                    //         borderRadius:
+                                                    //             BorderRadius
+                                                    //                 .circular(
+                                                    //                     10),
+                                                    //         borderSide: BorderSide(
+                                                    //             color: Colors
+                                                    //                 .red), // Set border color here
+                                                    //       )
+                                                    //     : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
                                                         EdgeInsets.all(14),
@@ -1360,18 +1360,18 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   controller: businessnum,
                                                   cursorColor: blueColor,
                                                   decoration: InputDecoration(
-                                                    enabledBorder:
-                                                        businessnumerror
-                                                            ? OutlineInputBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
-                                                                borderSide: BorderSide(
-                                                                    color: Colors
-                                                                        .red), // Set border color here
-                                                              )
-                                                            : InputBorder.none,
+                                                    // enabledBorder:
+                                                    //     businessnumerror
+                                                    //         ? OutlineInputBorder(
+                                                    //             borderRadius:
+                                                    //                 BorderRadius
+                                                    //                     .circular(
+                                                    //                         10),
+                                                    //             borderSide: BorderSide(
+                                                    //                 color: Colors
+                                                    //                     .red), // Set border color here
+                                                    //           )
+                                                    //         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
                                                         EdgeInsets.all(14),
@@ -1478,17 +1478,17 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   controller: street2,
                                                   cursorColor: blueColor,
                                                   decoration: InputDecoration(
-                                                    enabledBorder: street2error
-                                                        ? OutlineInputBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10),
-                                                            borderSide: BorderSide(
-                                                                color: Colors
-                                                                    .red), // Set border color here
-                                                          )
-                                                        : InputBorder.none,
+                                                    // enabledBorder: street2error
+                                                    //     ? OutlineInputBorder(
+                                                    //         borderRadius:
+                                                    //             BorderRadius
+                                                    //                 .circular(
+                                                    //                     10),
+                                                    //         borderSide: BorderSide(
+                                                    //             color: Colors
+                                                    //                 .red), // Set border color here
+                                                    //       )
+                                                    //     : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
                                                         EdgeInsets.all(14),
@@ -1590,18 +1590,18 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                                 21, 43, 81, 1),
                                                         decoration:
                                                             InputDecoration(
-                                                          enabledBorder:
-                                                              city2error
-                                                                  ? OutlineInputBorder(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              10),
-                                                                      borderSide:
-                                                                          BorderSide(
-                                                                              color: Colors.red), // Error border color
-                                                                    )
-                                                                  : InputBorder
-                                                                      .none,
+                                                          // enabledBorder:
+                                                          //     city2error
+                                                          //         ? OutlineInputBorder(
+                                                          //             borderRadius:
+                                                          //                 BorderRadius.circular(
+                                                          //                     10),
+                                                          //             borderSide:
+                                                          //                 BorderSide(
+                                                          //                     color: Colors.red), // Error border color
+                                                          //           )
+                                                          //         : InputBorder
+                                                          //             .none,
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
@@ -1696,18 +1696,18 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                                 21, 43, 81, 1),
                                                         decoration:
                                                             InputDecoration(
-                                                          enabledBorder:
-                                                              state2error
-                                                                  ? OutlineInputBorder(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              10),
-                                                                      borderSide:
-                                                                          BorderSide(
-                                                                              color: Colors.red), // Error border color
-                                                                    )
-                                                                  : InputBorder
-                                                                      .none,
+                                                          // enabledBorder:
+                                                          //     state2error
+                                                          //         ? OutlineInputBorder(
+                                                          //             borderRadius:
+                                                          //                 BorderRadius.circular(
+                                                          //                     10),
+                                                          //             borderSide:
+                                                          //                 BorderSide(
+                                                          //                     color: Colors.red), // Error border color
+                                                          //           )
+                                                          //         : InputBorder
+                                                          //             .none,
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
@@ -1815,18 +1815,18 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                                 21, 43, 81, 1),
                                                         decoration:
                                                             InputDecoration(
-                                                          enabledBorder:
-                                                              county2error
-                                                                  ? OutlineInputBorder(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              10),
-                                                                      borderSide:
-                                                                          BorderSide(
-                                                                              color: Colors.red), // Error border color
-                                                                    )
-                                                                  : InputBorder
-                                                                      .none,
+                                                          // enabledBorder:
+                                                          //     county2error
+                                                          //         ? OutlineInputBorder(
+                                                          //             borderRadius:
+                                                          //                 BorderRadius.circular(
+                                                          //                     10),
+                                                          //             borderSide:
+                                                          //                 BorderSide(
+                                                          //                     color: Colors.red), // Error border color
+                                                          //           )
+                                                          //         : InputBorder
+                                                          //             .none,
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
@@ -1942,18 +1942,18 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                                 21, 43, 81, 1),
                                                         decoration:
                                                             InputDecoration(
-                                                          enabledBorder:
-                                                              code2error
-                                                                  ? OutlineInputBorder(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              10),
-                                                                      borderSide:
-                                                                          BorderSide(
-                                                                              color: Colors.red), // Error border color
-                                                                    )
-                                                                  : InputBorder
-                                                                      .none,
+                                                          // enabledBorder:
+                                                          //     code2error
+                                                          //         ? OutlineInputBorder(
+                                                          //             borderRadius:
+                                                          //                 BorderRadius.circular(
+                                                          //                     10),
+                                                          //             borderSide:
+                                                          //                 BorderSide(
+                                                          //                     color: Colors.red), // Error border color
+                                                          //           )
+                                                          //         : InputBorder
+                                                          //             .none,
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
@@ -2014,7 +2014,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                         if (firstname.text.trim().isEmpty) {
                           setState(() {
                             firstnameerror = true;
-                            firstnamemessage = "required";
+                            firstnamemessage = "Please enter name";
                           });
                         } else {
                           setState(() {
@@ -2024,7 +2024,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                         if (comname.text.trim().isEmpty) {
                           setState(() {
                             comnameerror = true;
-                            comnamemessage = "required";
+                            comnamemessage = "Please enter company name";
                           });
                         } else {
                           setState(() {
@@ -2034,7 +2034,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                         if (primaryemail.text.trim().isEmpty) {
                           setState(() {
                             primaryemailerror = true;
-                            primaryemailmessage = "required";
+                            primaryemailmessage = "Email is required";
                           });
                         } else if (!EmailValidator.validate(
                             primaryemail.text)) {
@@ -2081,7 +2081,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                         if (formattedPhoneNumber.isEmpty) {
                           setState(() {
                             phonenumerror = true;
-                            phonenummessage = "required";
+                            phonenummessage = "Please enter phone number";
                           });
                         } else if (formattedPhoneNumber.length != 10) {
                           setState(() {

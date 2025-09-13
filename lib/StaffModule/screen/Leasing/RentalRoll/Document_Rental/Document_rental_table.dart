@@ -177,14 +177,12 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                       builder: (context) => AddDocument(
                         leaseId: widget.leaseId,
                       )));
-                  // if (result == true) {
-                  //   setState(() {
-                  //     _futureRentersInsurance =
-                  //         RentersInsuranceService()
-                  //             .fetchRentersInsurance(widget.leaseId);
-                  //     //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                  //   });
-                  // }
+                  if (result == true) {
+                    setState(() {
+                      _futureRentersInsurance = fetchRentersInsuranceData();
+                      //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                    });
+                  }
                 },
                 child: Container(
                   height: (MediaQuery.of(context).size.width < 500)

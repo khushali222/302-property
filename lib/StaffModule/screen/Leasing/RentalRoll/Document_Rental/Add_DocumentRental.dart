@@ -478,13 +478,22 @@ class _AddDocumentState extends State<AddDocument> {
       var responseData = json.decode(response.body);
       print('response body ${response.body}');
       print('$Api_url/api/renter-insurance/add-policy');
+      // if (response.statusCode == 200) {
+      //   Fluttertoast.showToast(msg: responseData["Document added successfully"]);
+      //   //Navigator.pop(context, true);
+      //   return responseData;
+      // } else {
+      //   Fluttertoast.showToast(msg: responseData["message"]);
+      //   throw Exception('Failed to Insurance');
+      // }
       if (response.statusCode == 200) {
-        Fluttertoast.showToast(msg: responseData["Document added successfully"]);
-        //Navigator.pop(context, true);
+        // Use "message" instead of "Document added successfully"
+        Fluttertoast.showToast(msg: "Document added successfully");
+        Navigator.pop(context, true); // optional: close page after success
         return responseData;
       } else {
-        Fluttertoast.showToast(msg: responseData["message"]);
-        throw Exception('Failed to Insurance');
+        Fluttertoast.showToast(msg:"Failed to add document");
+        throw Exception('Failed to add document');
       }
     } catch (error) {
       print('Error: $error');

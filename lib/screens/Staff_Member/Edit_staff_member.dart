@@ -211,6 +211,9 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                           },
                                           controller: name,
                                           cursorColor: blueColor,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]")), // only letters + spaces
+                                          ],
                                           decoration: InputDecoration(
                                             hintText: "Enter staff member name",
                                             hintStyle: TextStyle(

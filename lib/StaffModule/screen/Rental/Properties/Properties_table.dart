@@ -1200,7 +1200,16 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                       properties.rentalOwnerData!.rentalOwnerPrimaryEmail!
                                           .toLowerCase()
                                           .contains(searchvalue.toLowerCase()) ||
-                                      properties.rentalOwnerData!.Address!.toLowerCase().contains(searchvalue.toLowerCase()))
+                                      properties.rentalOwnerData!.Address!.toLowerCase().contains(searchvalue.toLowerCase()) ||
+                                        (properties.tenantsData != null &&
+                                          properties.tenantsData!.any((tenant) =>
+                                          (tenant.tenantFirstName ?? '')
+                                              .toLowerCase()
+                                              .contains(searchvalue.toLowerCase()) ||
+                                              (tenant.tenantLastName ?? '')
+                                                  .toLowerCase()
+                                                  .contains(searchvalue.toLowerCase())))
+                              )
                                   .toList();
                             }
                             if (selectedApplicantStatus ==

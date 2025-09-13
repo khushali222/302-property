@@ -166,6 +166,9 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                           },
                                           controller: name,
                                           cursorColor: blueColor,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]")), // only letters + spaces
+                                          ],
                                           decoration: InputDecoration(
                                             hintText: "Enter staff member name",
                                             hintStyle: TextStyle(
