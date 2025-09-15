@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -20,7 +21,6 @@ import 'package:three_zero_two_property/Model/DelinquentTenantsModel.dart';
 import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/StaffModule/repository/AccountTotalsReports.dart';
-import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
@@ -69,7 +69,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
     });
     checkInternet();
     fetchRentalOwners();
-     // fetchpdfrentalowner(); // this for pdf
+    // fetchpdfrentalowner(); // this for pdf
     fetchReport();
   }
 
@@ -79,8 +79,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     final response = await http.get(
-        Uri.parse(
-            '${Api_url}/api/rental_owner/accounts-report/$id'),
+        Uri.parse('${Api_url}/api/rental_owner/accounts-report/$id'),
         headers: {
           "authorization": "CRM $token",
           "id": "CRM $id",
@@ -116,7 +115,8 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
     DateTime time = DateTime.now();
     DateTime date = DateFormat('yyyy-MM-dd').parse(time.toString());
     _futureAccountTotals = fetchAccountTotalsReportsData(
-        formatDate(date.toString()), formatDate(date.toString()),rentalownerid: selectedrenatalownerid);
+        formatDate(date.toString()), formatDate(date.toString()),
+        rentalownerid: selectedrenatalownerid);
   }
 
   Future<List<AccountTotalsReport>> fetchAccountTotalsReportsData(
@@ -658,12 +658,12 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                   'Rental Owner',
                   'Account',
                   pw.Align(
-                      alignment: pw.Alignment.centerRight,
-                      child: pw.Text('Amount',
-                          style: pw.TextStyle(
-                              color: PdfColors.white),),
-                      ),
-
+                    alignment: pw.Alignment.centerRight,
+                    child: pw.Text(
+                      'Amount',
+                      style: pw.TextStyle(color: PdfColors.white),
+                    ),
+                  ),
                 ],
                 data: _generateTableData(delinquentTenantsData),
                 headerStyle: pw.TextStyle(
@@ -706,15 +706,11 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
     // Set column widths
     sheet.getRangeByName('A1:C1').columnWidth = 20;
 
-    final List<String> headers = [
-      'Rental Owner',
-      'Account',
-      'Amount'
-    ];
+    final List<String> headers = ['Rental Owner', 'Account', 'Amount'];
 
     // Header cell style
     final syncXlsx.Style headerCellStyle =
-    workbook.styles.add('headerCellStyle');
+        workbook.styles.add('headerCellStyle');
     headerCellStyle.bold = true;
     headerCellStyle.backColor = '#5A86D5';
     headerCellStyle.fontColor = '#FFFFFF';
@@ -723,13 +719,13 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
 
     // Currency cell style
     final syncXlsx.Style currencyCellStyle =
-    workbook.styles.add('currencyCellStyle');
+        workbook.styles.add('currencyCellStyle');
     currencyCellStyle.numberFormat = '\$#,##0.00'; // Currency format
     currencyCellStyle.hAlign = syncXlsx.HAlignType.right; // Right-align amounts
 
     // Bold amount style
     final syncXlsx.Style boldAmountStyle =
-    workbook.styles.add('boldAmountStyle');
+        workbook.styles.add('boldAmountStyle');
     boldAmountStyle.bold = true;
     boldAmountStyle.numberFormat = '\$#,##0.00';
     boldAmountStyle.hAlign = syncXlsx.HAlignType.right;
@@ -757,23 +753,20 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
         sheet.getRangeByIndex(rowIndex, 1).setText('');
         sheet.getRangeByIndex(rowIndex, 2).setText(property.account ?? 'N/A');
         sheet.getRangeByIndex(rowIndex, 3).setNumber(property.amount);
-        sheet.getRangeByIndex(rowIndex, 3).cellStyle = currencyCellStyle; // Apply currency style
+        sheet.getRangeByIndex(rowIndex, 3).cellStyle =
+            currencyCellStyle; // Apply currency style
         rowIndex++;
       }
 
       // Subtotal
-      if(owner.rentalOwnerName != 'Grand Totals') {
+      if (owner.rentalOwnerName != 'Grand Totals') {
         sheet.getRangeByIndex(rowIndex, 1).setText('');
         sheet.getRangeByIndex(rowIndex, 2).setText('Subtotal');
-        sheet
-            .getRangeByIndex(rowIndex, 2)
-            .cellStyle
-            .bold = true;
+        sheet.getRangeByIndex(rowIndex, 2).cellStyle.bold = true;
         // sheet.getRangeByIndex(rowIndex, 2).setText(''); // Empty for Account
         sheet.getRangeByIndex(rowIndex, 3).setNumber(owner.subTotal ?? 0.0);
-        sheet
-            .getRangeByIndex(rowIndex, 3)
-            .cellStyle = boldAmountStyle; // Apply bold amount style
+        sheet.getRangeByIndex(rowIndex, 3).cellStyle =
+            boldAmountStyle; // Apply bold amount style
         rowIndex++;
       }
 
@@ -796,7 +789,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
 
     final Directory directory = Platform.isIOS
         ? await getApplicationDocumentsDirectory()
-        : Directory ('/storage/emulated/0/Download');
+        : Directory('/storage/emulated/0/Download');
 
     // Create directory if it doesn't exist (for Android)
     if (!await directory.exists() && !Platform.isIOS) {
@@ -814,11 +807,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
   Future<void> generateAccountTotalReportCsv(
       List<AccountTotalsReport> rentalOwnerReports) async {
     // Define headers for CSV
-    final List<String> headers = [
-      'Rental Owner',
-      'Account',
-      'Amount'
-    ];
+    final List<String> headers = ['Rental Owner', 'Account', 'Amount'];
 
     // Create a buffer to store CSV data
     final StringBuffer csvBuffer = StringBuffer();
@@ -839,11 +828,8 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
         csvBuffer.writeln([
           '',
           property.account,
-          property.amount ?? 0/0,
-
+          property.amount ?? 0 / 0,
         ].join(','));
-
-
 
         // Add surcharge row if applicable
         // if (property.surcharge != 0.0) {
@@ -862,18 +848,16 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
       }
 
       // Add subtotal row for the current rental owner
-      if(owner.rentalOwnerName != 'Grand Totals')
-      csvBuffer.writeln([
-        '',
-        'Subtotal ',
-        '${(owner.subTotal ?? 0.0).toStringAsFixed(2)}'
-      ].join(','));
+      if (owner.rentalOwnerName != 'Grand Totals')
+        csvBuffer.writeln([
+          '',
+          'Subtotal ',
+          '${(owner.subTotal ?? 0.0).toStringAsFixed(2)}'
+        ].join(','));
 
       // Accumulate grand total
       grandTotal += owner.subTotal ?? 0.0;
     }
-
-
 
     // Convert buffer to list of bytes for CSV file
     final List<int> bytes = utf8.encode(csvBuffer.toString());
@@ -1109,6 +1093,13 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                 e['rentalOwner_name'] ?? 'Unknown', // Default value for null
           } as Map<String, dynamic>;
         }).toList();
+
+        // Sort rental owners alphabetically by name
+        rentalowners.sort((a, b) {
+          String nameA = a['rentalOwner_name']?.toString().toLowerCase() ?? '';
+          String nameB = b['rentalOwner_name']?.toString().toLowerCase() ?? '';
+          return nameA.compareTo(nameB);
+        });
       });
       log(' rentalowners ${rentalowners.toString()}');
     } else {
@@ -2369,37 +2360,43 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Container(
-                  height: 42,
-                  //width: 160,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Colors.grey)),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: selectedrenatalownerid,
-                      padding: EdgeInsets.symmetric(horizontal: 4),
-                      hint: Text(
-                        "Rental Owner",
-                        style: TextStyle(fontSize: 14, color: Colors.black),
-                      ),
-                      items: rentalowners.map((property) {
-                        return DropdownMenuItem<String>(
-                          value: property['rentalowner_id'],
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * .34,
+                child: DropdownButtonHideUnderline(
+                  child: Material(
+                    borderRadius: BorderRadius.circular(8),
+                    child: DropdownButton2<String>(
+                      isExpanded: true,
+                      hint: const Row(
+                        children: [
+                          SizedBox(
+                            width: 4,
+                          ),
+                          Expanded(
                             child: Text(
-                              property['rentalOwner_name']!,
-                              style: const TextStyle(
+                              'Rental Owner',
+                              style: TextStyle(
                                 fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black87,
+                                color: Colors.black,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                        );
-                      }).toList(),
+                        ],
+                      ),
+                      items: rentalowners
+                          .map((property) => DropdownMenuItem<String>(
+                                value: property['rentalowner_id'],
+                                child: Text(
+                                  property['rentalOwner_name']!,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ))
+                          .toList(),
+                      value: selectedrenatalownerid,
                       onChanged: (value) {
                         setState(() {
                           selectedrenatalownerid = value;
@@ -2407,9 +2404,38 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                               fromDate.text, toDate.text,
                               rentalownerid: value);
                         });
-                        // Handle the selected charge type
+                        // Handle the selected rental owner
                         print(value);
                       },
+                      buttonStyleData: ButtonStyleData(
+                        height: 42,
+                        padding: const EdgeInsets.only(left: 14, right: 14),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: const Color(0xFF8A95A8),
+                          ),
+                          color: Colors.white,
+                        ),
+                        elevation: 0,
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        maxHeight: 250,
+                        width: 200,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        offset: const Offset(-20, 0),
+                        scrollbarTheme: ScrollbarThemeData(
+                          radius: const Radius.circular(40),
+                          thickness: MaterialStateProperty.all(6),
+                          thumbVisibility: MaterialStateProperty.all(true),
+                        ),
+                      ),
+                      menuItemStyleData: const MenuItemStyleData(
+                        height: 40,
+                        padding: EdgeInsets.only(left: 14, right: 14),
+                      ),
                     ),
                   ),
                 ),
@@ -2521,9 +2547,13 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                             DateTime now = DateTime.now();
                             //  fromDate.text = formatDate(now.toString());
                             customdate = false;
-                            fromDate.text = formatDate(now.subtract(Duration(days: now.weekday - 1)).toString());
-                            toDate.text = formatDate(now.add(Duration(
-                                    days: DateTime.daysPerWeek - now.weekday)).toString());
+                            fromDate.text = formatDate(now
+                                .subtract(Duration(days: now.weekday - 1))
+                                .toString());
+                            toDate.text = formatDate(now
+                                .add(Duration(
+                                    days: DateTime.daysPerWeek - now.weekday))
+                                .toString());
                           } else if (value == "This Month") {
                             customdate = false;
                             DateTime now = DateTime.now();
@@ -2550,10 +2580,10 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                           if (value != "Custom") {
                             _futureAccountTotals =
                                 fetchAccountTotalsReportsData(
-                                    fromDate.text, toDate.text,rentalownerid: selectedrenatalownerid);
+                                    fromDate.text, toDate.text,
+                                    rentalownerid: selectedrenatalownerid);
                             print('custom ${value}');
                           }
-
                         });
                         // Handle the selected charge type
                         print(value);
@@ -2661,12 +2691,10 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                           generateAccountTotalReportPdf(data);
                         } else if (value == 'XLSX' && data != null) {
                           print('XLSX');
-                           generateAccountTotalReportExcel(data);
-
+                          generateAccountTotalReportExcel(data);
                         } else if (value == 'CSV' && data != null) {
                           print('CSV');
                           generateAccountTotalReportCsv(data);
-
                         }
                       },
                       itemBuilder: (BuildContext context) =>

@@ -9,7 +9,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:zxcvbn/zxcvbn.dart';
 
-String image_url = "https://staging.cloudrentalmanager.com/api/images/get-file/";
+String image_url =
+    "https://staging.cloudrentalmanager.com/api/images/get-file/";
 //String image_url = "http://192.168.182.128:4000/api/images/get-file/";
 //String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
 
@@ -237,8 +238,8 @@ String formatPhoneNumberedit(String phoneNumber) {
 // }
 
 String? ValidatePassword(String password) {
-  if (password.length < 8 || password.length > 16) {
-    return 'Password must be between 8 and 16 characters.';
+  if (password.length < 8) {
+    return 'Password must be at least 8 characters.';
   }
   if (!RegExp(r'[A-Z]').hasMatch(password)) {
     return 'Must contain at least one uppercase letter.';
@@ -524,4 +525,3 @@ class CustomTableView extends StatelessWidget {
     );
   }
 }
-

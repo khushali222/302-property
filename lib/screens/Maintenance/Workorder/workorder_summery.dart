@@ -1786,15 +1786,15 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   Padding(
                                     padding: const EdgeInsets.all(14),
                                     child: Container(
-                                      child:
-                                      ClipRRect(
+                                      child: ClipRRect(
                                         borderRadius: BorderRadius.circular(14),
                                         child: CachedNetworkImage(
                                           imageUrl:
                                               "$image_url${summery.propertyData!.rental_image}",
                                           placeholder: (context, url) => Text(
                                               "${summery.propertyData!.rental_image}"),
-                                          errorWidget: (context, url, error) => Icon(
+                                          errorWidget: (context, url, error) =>
+                                              Icon(
                                             Icons.error,
                                             color: blueColor,
                                           ),
@@ -1826,8 +1826,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 Text(
                                   "${summery.propertyData!.rentaladress} ",
                                   textAlign: TextAlign.start,
-                                  style:
-                                      TextStyle(color: Color(0xFF3A4A57), fontSize: 13,fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      color: Color(0xFF3A4A57),
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -1850,19 +1852,31 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     children: [
                                       Text(
                                         "${summery.propertyData!.rental_city}, ",
-                                        style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold,color: Color(0xFF3A4A57)),
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFF3A4A57)),
                                       ),
                                       Text(
                                         "${summery.propertyData!.rental_state}, ",
-                                        style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold,color: Color(0xFF3A4A57)),
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFF3A4A57)),
                                       ),
                                       Text(
                                         "${summery.propertyData!.rental_country}, ",
-                                        style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold,color: Color(0xFF3A4A57)),
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFF3A4A57)),
                                       ),
                                       Text(
                                         "${summery.propertyData!.rental_postcode}",
-                                        style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold,color: Color(0xFF3A4A57)),
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFF3A4A57)),
                                       ),
                                     ],
                                   ),
@@ -1896,7 +1910,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
-                            child: Text('${summery.workSubject}',
+                            child: Text(
+                              '${summery.workSubject}',
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -1947,8 +1962,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 Text("Due Date", style: labelStyle),
                                 SizedBox(height: 4),
                                 Text(
-                                  dateProvider.formatCurrentDate(
-                                  summery.workorderUpdates?.last.date
+                                  dateProvider.formatCurrentDate(summery
+                                              .workorderUpdates
+                                              ?.last
+                                              .date
                                               ?.isEmpty ==
                                           true
                                       ? 'N/A'
@@ -2186,7 +2203,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       update.staffmemberName ?? "N/A",
                                       valueColor: blueColor),
                                   _buildLabelValue(
-                                      "Due Date",  dateProvider.formatCurrentDate(update.date ?? "N/A"),
+                                      "Due Date",
+                                      dateProvider.formatCurrentDate(
+                                          update.date ?? "N/A"),
                                       valueColor: blueColor),
                                 ],
                               ),
@@ -2614,7 +2633,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       height: 4,
                                     ),
                                     Text(
-                                        '${summery.workorderUpdates!.last.date!.isEmpty == true ? "N/A" :  dateProvider.formatCurrentDate( '${summery.workorderUpdates?.last.date?.toString()}')}',
+                                        '${summery.workorderUpdates!.last.date!.isEmpty == true ? "N/A" : dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date?.toString()}')}',
                                         style: TextStyle(
                                             color: blueColor,
                                             fontWeight: FontWeight.bold)),
@@ -3015,7 +3034,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     height: 4,
                                   ),
                                   Text(
-                                      '${summery.workorderUpdates!.last.date!.isEmpty == true ? "N/A" :dateProvider.formatCurrentDate( '${summery.workorderUpdates?.last.date?.toString()}')}',
+                                      '${summery.workorderUpdates!.last.date!.isEmpty == true ? "N/A" : dateProvider.formatCurrentDate('${summery.workorderUpdates?.last.date?.toString()}')}',
                                       style: TextStyle(
                                           color: blueColor,
                                           fontWeight: FontWeight.bold)),
@@ -4154,6 +4173,11 @@ class _Workorder_summeryState extends State<Workorder_summery>
     String? selectedStatus;
     TextEditingController message = TextEditingController();
     TextEditingController selectedDate = TextEditingController();
+
+    // Error state variables
+    String? assignedError;
+    String? dueDateError;
+    String? statusError;
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -4206,7 +4230,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Assigned',
+                                    'Assigned *',
                                     style: TextStyle(
                                       color: Colors.grey[600],
                                       fontWeight: FontWeight.w500,
@@ -4242,15 +4266,16 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                           color:
                                                               Color(0xFFb0b6c3),
                                                         ),
-                                                        overflow:
-                                                            TextOverflow.ellipsis,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                       ),
                                                     ),
                                                   ],
                                                 ),
                                                 items: staffs.keys
                                                     .map((staffmember_id) {
-                                                  return DropdownMenuItem<String>(
+                                                  return DropdownMenuItem<
+                                                      String>(
                                                     value: staffmember_id,
                                                     child: Text(
                                                       staffs[staffmember_id]!,
@@ -4272,24 +4297,27 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                     _selectedstaffId = value;
                                                     _selectedStaffs = staffs[
                                                         value]; // Store selected rental_adress
-                    
+
                                                     //StaffId = value.toString();
                                                     print(
                                                         'Selected Staffs: $_selectedStaffs');
                                                     // Fetch units for the selected property
                                                   });
                                                 },
-                                                buttonStyleData: ButtonStyleData(
+                                                buttonStyleData:
+                                                    ButtonStyleData(
                                                   height: 50,
                                                   width: 160,
-                                                  padding: const EdgeInsets.only(
-                                                      left: 14, right: 14),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 14, right: 14),
                                                   decoration: BoxDecoration(
                                                     borderRadius:
-                                                        BorderRadius.circular(8),
+                                                        BorderRadius.circular(
+                                                            8),
                                                     border: Border.all(
-                                                        color:
-                                                            Colors.grey.shade300),
+                                                        color: Colors
+                                                            .grey.shade300),
                                                     color: Colors.white,
                                                   ),
                                                   elevation: 0,
@@ -4302,25 +4330,28 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                   iconSize: 24,
                                                   iconEnabledColor:
                                                       Color(0xFFb0b6c3),
-                                                  iconDisabledColor: Colors.grey,
+                                                  iconDisabledColor:
+                                                      Colors.grey,
                                                 ),
                                                 dropdownStyleData:
                                                     DropdownStyleData(
                                                   decoration: BoxDecoration(
                                                     borderRadius:
-                                                        BorderRadius.circular(6),
+                                                        BorderRadius.circular(
+                                                            6),
                                                     color: Colors.white,
                                                   ),
                                                   scrollbarTheme:
                                                       ScrollbarThemeData(
                                                     radius:
-                                                        const Radius.circular(6),
-                                                    thickness:
-                                                        MaterialStateProperty.all(
+                                                        const Radius.circular(
                                                             6),
+                                                    thickness:
+                                                        MaterialStateProperty
+                                                            .all(6),
                                                     thumbVisibility:
-                                                        MaterialStateProperty.all(
-                                                            true),
+                                                        MaterialStateProperty
+                                                            .all(true),
                                                   ),
                                                 ),
                                                 menuItemStyleData:
@@ -4338,6 +4369,18 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                 },
                                               ),
                                             ),
+                                            if (assignedError != null)
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 4),
+                                                child: Text(
+                                                  assignedError!,
+                                                  style: TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                              ),
                                           ],
                                         ),
                                 ],
@@ -4349,7 +4392,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Due Date',
+                                    'Due Date *',
                                     style: TextStyle(
                                       color: Colors.grey[600],
                                       fontWeight: FontWeight.w500,
@@ -4360,8 +4403,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   Container(
                                     height: 50,
                                     decoration: BoxDecoration(
-                                      border:
-                                          Border.all(color: Colors.grey.shade300),
+                                      border: Border.all(
+                                          color: Colors.grey.shade300),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: TextFormField(
@@ -4390,7 +4433,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                 textButtonTheme:
                                                     TextButtonThemeData(
                                                   style: TextButton.styleFrom(
-                                                    foregroundColor: Colors.white,
+                                                    foregroundColor:
+                                                        Colors.white,
                                                     backgroundColor:
                                                         blueColor, // button text color
                                                   ),
@@ -4419,6 +4463,17 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       ),
                                     ),
                                   ),
+                                  if (dueDateError != null)
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 4),
+                                      child: Text(
+                                        dueDateError!,
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
                                 ],
                               ),
                             ),
@@ -4433,7 +4488,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Status',
+                                    'Status *',
                                     style: TextStyle(
                                       color: Colors.grey[600],
                                       fontWeight: FontWeight.w500,
@@ -4489,7 +4544,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                         padding: const EdgeInsets.only(
                                             left: 14, right: 14),
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                           border: Border.all(
                                               color: Colors.grey.shade300),
                                           color: Colors.white,
@@ -4504,20 +4560,23 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       ),
                                       dropdownStyleData: DropdownStyleData(
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(6),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
                                           color: Colors.white,
                                         ),
                                         scrollbarTheme: ScrollbarThemeData(
                                           radius: const Radius.circular(6),
-                                          thickness: MaterialStateProperty.all(6),
+                                          thickness:
+                                              MaterialStateProperty.all(6),
                                           thumbVisibility:
                                               MaterialStateProperty.all(true),
                                         ),
                                       ),
-                                      menuItemStyleData: const MenuItemStyleData(
+                                      menuItemStyleData:
+                                          const MenuItemStyleData(
                                         height: 40,
-                                        padding:
-                                            EdgeInsets.only(left: 14, right: 14),
+                                        padding: EdgeInsets.only(
+                                            left: 14, right: 14),
                                       ),
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
@@ -4527,6 +4586,17 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       },
                                     ),
                                   ),
+                                  if (statusError != null)
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 4),
+                                      child: Text(
+                                        statusError!,
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
                                 ],
                               ),
                             ),
@@ -4547,8 +4617,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   Container(
                                     height: 50,
                                     decoration: BoxDecoration(
-                                      border:
-                                          Border.all(color: Colors.grey.shade300),
+                                      border: Border.all(
+                                          color: Colors.grey.shade300),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: TextFormField(
@@ -4668,15 +4738,16 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
                                   child: Padding(
-                                    padding: EdgeInsets.only(top: 10, right: 10),
+                                    padding:
+                                        EdgeInsets.only(top: 10, right: 10),
                                     child: Wrap(
                                       alignment: WrapAlignment.start,
                                       crossAxisAlignment:
                                           WrapCrossAlignment.start,
                                       spacing: 8,
                                       runSpacing: 8,
-                                      children:
-                                          List.generate(_images.length, (index) {
+                                      children: List.generate(_images.length,
+                                          (index) {
                                         return Stack(
                                           clipBehavior: Clip.none, //
                                           children: [
@@ -4770,17 +4841,55 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             Expanded(
                               child: ElevatedButton(
                                 onPressed: () async {
+                                  // Clear previous errors
+                                  setState(() {
+                                    assignedError = null;
+                                    dueDateError = null;
+                                    statusError = null;
+                                  });
+
+                                  // Validate required fields
+                                  bool hasErrors = false;
+
+                                  if (_selectedstaffId == null ||
+                                      _selectedstaffId!.isEmpty) {
+                                    setState(() {
+                                      assignedError =
+                                          'Please select an assigned staff member';
+                                    });
+                                    hasErrors = true;
+                                  }
+
+                                  if (selectedDate.text.trim().isEmpty) {
+                                    setState(() {
+                                      dueDateError = 'Please select a due date';
+                                    });
+                                    hasErrors = true;
+                                  }
+
+                                  if (selectedStatus == null ||
+                                      selectedStatus!.isEmpty) {
+                                    setState(() {
+                                      statusError = 'Please select a status';
+                                    });
+                                    hasErrors = true;
+                                  }
+
+                                  if (hasErrors) {
+                                    return;
+                                  }
+
                                   setState(() {
                                     isLoading = true;
                                   });
-                    
+
                                   SharedPreferences prefs =
                                       await SharedPreferences.getInstance();
                                   final DateFormat formatter =
                                       DateFormat('yyyy-MM-dd HH:mm:ss');
                                   String notificationTime =
                                       formatter.format(DateTime.now());
-                    
+
                                   Map<String, dynamic> values = {
                                     "date": reverseFormatDate(
                                         selectedDate.text.trim()),
@@ -4789,21 +4898,23 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     "statusUpdatedBy": "Admin",
                                     "staffmember_name": _selectedStaffs,
                                     "staffmember_id": _selectedstaffId,
-                                    "workOrderUpdate_images": _uploadedFileNames!,
+                                    "workOrderUpdate_images":
+                                        _uploadedFileNames!,
                                     'notificationTime': notificationTime,
                                   };
-                    
+
                                   await WorkOrderRepository
                                           .updateworkorderSummary(
                                               values, widget.workorder_id!)
                                       .then((value) {
                                     setState(() {
                                       futureworkorderSummary =
-                                          WorkOrderRepository.getworkorderSummary(
-                                              widget.workorder_id!);
+                                          WorkOrderRepository
+                                              .getworkorderSummary(
+                                                  widget.workorder_id!);
                                     });
                                   });
-                    
+
                                   Navigator.of(context).pop();
                                   setState(() {
                                     isLoading = false;

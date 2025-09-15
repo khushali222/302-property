@@ -669,15 +669,20 @@ class _Signup2State extends State<Signup2> {
                           phoneerror = true;
                           phonemessage = "Phone Number is required";
                         });
-                      } else if (phonenumber.text.trim().length != 10) {
-                        setState(() {
-                          phoneerror = true;
-                          phonemessage = "Phone Number must be 10 digits";
-                        });
                       } else {
-                        setState(() {
-                          phoneerror = false;
-                        });
+                        // Extract only digits from the formatted phone number
+                        String digitsOnly =
+                            phonenumber.text.replaceAll(RegExp(r'\D'), '');
+                        if (digitsOnly.length != 10) {
+                          setState(() {
+                            phoneerror = true;
+                            phonemessage = "Phone Number must be 10 digits";
+                          });
+                        } else {
+                          setState(() {
+                            phoneerror = false;
+                          });
+                        }
                       }
                       // if(password.text.isEmpty){
                       //   setState(() {
