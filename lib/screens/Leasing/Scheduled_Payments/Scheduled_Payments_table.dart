@@ -853,6 +853,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                           .skip(currentPage * itemsPerPage)
                           .take(itemsPerPage)
                           .toList();
+                      print("lease id ${ snapshot.data?.first.leaseId}");
                       return SingleChildScrollView(
                         child: Column(
                           children: [

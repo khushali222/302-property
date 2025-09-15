@@ -195,7 +195,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       // appBar: widget302.,
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-     drawer: CustomDrawer(
+      drawer: CustomDrawer(
         currentpage: "Leases",
         dropdown: true,
       ),
@@ -271,7 +271,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                             child: Row(
                               children: [
                                 Text(
-                                  '${determineStatus(snapshot.data?.data?.startDate, snapshot.data?.data?.endDate) ?? "No status available"} ${snapshot.data?.data?.renewLeases != null && snapshot.data!.data!.renewLeases!.isNotEmpty ? " - Renewed" : ""}',
+                                  '${determineStatus(snapshot.data?.data?.startDate, snapshot.data?.data?.endDate)} ${snapshot.data?.data?.renewLeases != null && snapshot.data!.data!.renewLeases!.isNotEmpty ? " - Renewed" : ""}',
                                   style: TextStyle(
                                     color: _getStatusColor(determineStatus(
                                         snapshot.data?.data?.startDate,
@@ -738,7 +738,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       }
     }
 
-    return parsedDate!;
+    // If no format worked, return current date as fallback
+    return parsedDate ?? DateTime.now();
   }
 
   Color _getStatusColor(String status) {

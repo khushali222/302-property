@@ -109,6 +109,30 @@ class _Login_ScreenState extends State<Login_Screen> {
     _password = password;
   }
 
+  // Helper function to format error messages for better user experience
+  String _formatErrorMessage(String apiMessage) {
+    // Convert technical error messages to user-friendly ones
+    if (apiMessage.toLowerCase().contains('invalid') &&
+        (apiMessage.toLowerCase().contains('password') ||
+            apiMessage.toLowerCase().contains('admin'))) {
+      return "Invalid username or password.";
+    }
+    if (apiMessage.toLowerCase().contains('email') &&
+        apiMessage.toLowerCase().contains('not found')) {
+      return "Email address not found.";
+    }
+    if (apiMessage.toLowerCase().contains('account') &&
+        apiMessage.toLowerCase().contains('disabled')) {
+      return "Your account has been disabled. Please contact support.";
+    }
+    if (apiMessage.toLowerCase().contains('network') ||
+        apiMessage.toLowerCase().contains('connection')) {
+      return "Network error. Please check your connection and try again.";
+    }
+    // Return the original message if no specific formatting is needed
+    return apiMessage;
+  }
+
   Future<void> submitEmail() async {
     print("Calling  ${email.text}");
     // Make API call to check email
@@ -124,7 +148,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       List<dynamic> roles = data['data'];
       print(roles.length);
       if (roles.isEmpty) {
-        Fluttertoast.showToast(msg: "Email does not exist");
+        Fluttertoast.showToast(msg: "Email address not found.");
       } else {
         if (roles.length > 1) {
           setState(() {
@@ -167,7 +191,7 @@ class _Login_ScreenState extends State<Login_Screen> {
         }
       }
     } else {
-      Fluttertoast.showToast(msg: "Email is not exist");
+      Fluttertoast.showToast(msg: "Email address not found.");
     }
   }
 
@@ -1598,7 +1622,7 @@ class _Login_ScreenState extends State<Login_Screen> {
         loading = false;
       });
     } else {
-      Fluttertoast.showToast(msg: jsonData["message"]);
+      Fluttertoast.showToast(msg: _formatErrorMessage(jsonData["message"]));
       setState(() {
         loading = false;
       });
@@ -1644,7 +1668,7 @@ class _Login_ScreenState extends State<Login_Screen> {
         loading = false;
       });
     } else {
-      Fluttertoast.showToast(msg: jsonData["message"]);
+      Fluttertoast.showToast(msg: _formatErrorMessage(jsonData["message"]));
       setState(() {
         loading = false;
       });
@@ -1963,6 +1987,30 @@ class _Login_ScreenState extends State<Login_Screen> {
     _password = password;
   }
 
+  // Helper function to format error messages for better user experience
+  String _formatErrorMessage(String apiMessage) {
+    // Convert technical error messages to user-friendly ones
+    if (apiMessage.toLowerCase().contains('invalid') && 
+        (apiMessage.toLowerCase().contains('password') || 
+         apiMessage.toLowerCase().contains('admin'))) {
+      return "Invalid username or password.";
+    }
+    if (apiMessage.toLowerCase().contains('email') && 
+        apiMessage.toLowerCase().contains('not found')) {
+      return "Email address not found.";
+    }
+    if (apiMessage.toLowerCase().contains('account') && 
+        apiMessage.toLowerCase().contains('disabled')) {
+      return "Your account has been disabled. Please contact support.";
+    }
+    if (apiMessage.toLowerCase().contains('network') || 
+        apiMessage.toLowerCase().contains('connection')) {
+      return "Network error. Please check your connection and try again.";
+    }
+    // Return the original message if no specific formatting is needed
+    return apiMessage;
+  }
+
   Future<void> submitEmail() async {
     print("Calling  ${email.text}");
     // Make API call to check email
@@ -1978,7 +2026,7 @@ class _Login_ScreenState extends State<Login_Screen> {
       List<dynamic> roles = data['data'];
       print(roles.length);
       if (roles.isEmpty) {
-        Fluttertoast.showToast(msg: "Email does not exist");
+        Fluttertoast.showToast(msg: "Email address not found.");
       } else {
         if (roles.length > 1) {
           setState(() {
@@ -2007,7 +2055,7 @@ class _Login_ScreenState extends State<Login_Screen> {
         }
       }
     } else {
-      Fluttertoast.showToast(msg: "Email is not exist");
+      Fluttertoast.showToast(msg: "Email address not found.");
     }
   }
 
@@ -3361,7 +3409,7 @@ class _Login_ScreenState extends State<Login_Screen> {
         loading = false;
       });
     } else {
-      Fluttertoast.showToast(msg: jsonData["message"]);
+      Fluttertoast.showToast(msg: _formatErrorMessage(jsonData["message"]));
       setState(() {
         loading = false;
       });
@@ -3391,7 +3439,7 @@ class _Login_ScreenState extends State<Login_Screen> {
         loading = false;
       });
     } else {
-      Fluttertoast.showToast(msg: jsonData["message"]);
+      Fluttertoast.showToast(msg: _formatErrorMessage(jsonData["message"]));
       setState(() {
         loading = false;
       });

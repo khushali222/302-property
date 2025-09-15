@@ -278,7 +278,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                             child: Row(
                               children: [
                                 Text(
-                                  '${determineStatus(snapshot.data?.data?.startDate, snapshot.data?.data?.endDate) ?? "No status available"} ${snapshot.data?.data?.renewLeases != null && snapshot.data!.data!.renewLeases!.isNotEmpty ? " - Renewed" : ""}',
+                                  '${determineStatus(snapshot.data?.data?.startDate, snapshot.data?.data?.endDate)} ${snapshot.data?.data?.renewLeases != null && snapshot.data!.data!.renewLeases!.isNotEmpty ? " - Renewed" : ""}',
                                   style: TextStyle(
                                     color: _getStatusColor(determineStatus(
                                         snapshot.data?.data?.startDate,
@@ -700,7 +700,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       }
     }
 
-    return parsedDate!;
+    // If no format worked, return current date as fallback
+    return parsedDate ?? DateTime.now();
   }
 
   Color _getStatusColor(String status) {
@@ -3147,7 +3148,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                         ),
                                                                         TextSpan(
                                                                           text:
-                                                                          '${dateProvider.formatCurrentDate('${lease.startDate}')} to ${dateProvider.formatCurrentDate('${lease.endDate}')}',
+                                                                              '${dateProvider.formatCurrentDate('${lease.startDate}')} to ${dateProvider.formatCurrentDate('${lease.endDate}')}',
                                                                           style: const TextStyle(
                                                                               fontWeight: FontWeight.w700,
                                                                               color: Colors.grey),
