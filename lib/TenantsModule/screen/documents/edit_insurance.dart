@@ -45,6 +45,9 @@ class _edit_insuranceState extends State<edit_insurance> {
 
   List<String> _uploadedFileNames = [];
 
+  DateTime? effectiveDate;
+  DateTime? expirationDate;
+
   String _convertToApiFormat(String displayDate) {
     if (displayDate.isEmpty) return "";
     try {
@@ -148,7 +151,7 @@ class _edit_insuranceState extends State<edit_insurance> {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
     DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: effectiveDate ?? DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
@@ -173,8 +176,18 @@ class _edit_insuranceState extends State<edit_insurance> {
 
     if (selectedDate != null) {
       setState(() {
+        effectiveDate = selectedDate;
         String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
         effective.text = dateProvider.formatCurrentDate(apiFormatDate);
+
+        // If effective date is after expiration date, clear expiration date and show warning
+        if (expirationDate != null && effectiveDate!.isAfter(expirationDate!)) {
+          expirationDate = null;
+          expiration.text = '';
+          Fluttertoast.showToast(
+              msg:
+                  "Effective date cannot be after expiration date. Please select a new expiration date.");
+        }
       });
     }
   }
@@ -191,6 +204,14 @@ class _edit_insuranceState extends State<edit_insurance> {
     provider.text = widget.data.provider!;
     policy.text = widget.data.policyId!;
 
+    // Parse and set DateTime variables from existing data
+    try {
+      effectiveDate = DateTime.parse(widget.data.effectiveDate!);
+      expirationDate = DateTime.parse(widget.data.expirationDate!);
+    } catch (e) {
+      print('Error parsing dates: $e');
+    }
+
     // Use DateProvider to format dates for display
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
@@ -200,7 +221,7 @@ class _edit_insuranceState extends State<edit_insurance> {
           dateProvider.formatCurrentDate(widget.data.expirationDate!);
     });
 
-    liablity.text = widget.data.liabilityCoverage.toString()!;
+    liablity.text = widget.data.liabilityCoverage.toString();
     if (widget.data.policy != "") _uploadedFileNames.add(widget.data.policy!);
 
     initialProvider = provider.text;
@@ -217,8 +238,8 @@ class _edit_insuranceState extends State<edit_insurance> {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
     DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
+      initialDate: expirationDate ?? DateTime.now(),
+      firstDate: effectiveDate ?? DateTime.now(),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(
@@ -242,10 +263,38 @@ class _edit_insuranceState extends State<edit_insurance> {
 
     if (selectedDate != null) {
       setState(() {
+        expirationDate = selectedDate;
         String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
         expiration.text = dateProvider.formatCurrentDate(apiFormatDate);
+
+        // If expiration date is before or same as effective date, show warning
+        if (effectiveDate != null &&
+            (expirationDate!.isBefore(effectiveDate!) ||
+                expirationDate!.isAtSameMomentAs(effectiveDate!))) {
+          Fluttertoast.showToast(
+              msg: "Expiration date must be after effective date.");
+        }
       });
     }
+  }
+
+  bool _validateDates() {
+    // Check if both dates are selected
+    if (effectiveDate == null || expirationDate == null) {
+      Fluttertoast.showToast(
+          msg: "Please select both Effective Date and Expiration Date");
+      return false;
+    }
+
+    // Check if expiration date is after effective date
+    if (expirationDate!.isBefore(effectiveDate!) ||
+        expirationDate!.isAtSameMomentAs(effectiveDate!)) {
+      Fluttertoast.showToast(
+          msg: "Expiration Date must be after Effective Date");
+      return false;
+    }
+
+    return true;
   }
 
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
@@ -432,6 +481,7 @@ class _edit_insuranceState extends State<edit_insurance> {
                                   decimal: true),
                               hintText: '\$0.0',
                               controller: liablity,
+                              textInputAction: TextInputAction.done,
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(RegExp(
                                     r'^\d*\.?\d{0,2}')), // allows decimals
@@ -535,24 +585,27 @@ class _edit_insuranceState extends State<edit_insurance> {
                             // },
                             onPressed: () {
                               if (_formkey.currentState!.validate()) {
-                                // Check if any field has changed
-                                if (provider.text != initialProvider ||
-                                    policy.text != initialPolicy ||
-                                    _convertToApiFormat(
-                                            effective.text.trim()) !=
-                                        _convertToApiFormat(
-                                            initialEffective.trim()) ||
-                                    _convertToApiFormat(
-                                            expiration.text.trim()) !=
-                                        _convertToApiFormat(
-                                            initialExpiration.trim()) ||
-                                    liablity.text != initialLiability ||
-                                    !listEquals(_uploadedFileNames,
-                                        initialUploadedFileNames)) {
-                                  editinsurance(widget.data.tenantInsuranceId!);
-                                } else {
-                                  print("no changes made");
-                                  Navigator.of(context).pop(true);
+                                if (_validateDates()) {
+                                  // Check if any field has changed
+                                  if (provider.text != initialProvider ||
+                                      policy.text != initialPolicy ||
+                                      _convertToApiFormat(
+                                              effective.text.trim()) !=
+                                          _convertToApiFormat(
+                                              initialEffective.trim()) ||
+                                      _convertToApiFormat(
+                                              expiration.text.trim()) !=
+                                          _convertToApiFormat(
+                                              initialExpiration.trim()) ||
+                                      liablity.text != initialLiability ||
+                                      !listEquals(_uploadedFileNames,
+                                          initialUploadedFileNames)) {
+                                    editinsurance(
+                                        widget.data.tenantInsuranceId!);
+                                  } else {
+                                    print("no changes made");
+                                    Navigator.of(context).pop(true);
+                                  }
                                 }
                               }
                             },

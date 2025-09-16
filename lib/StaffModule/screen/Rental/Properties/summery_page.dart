@@ -4242,7 +4242,7 @@ class _Summery_pageState extends State<Summery_page>
                               Padding(
                                 padding: EdgeInsets.all(12.0),
                                 child: Text(
-                                  "Purchase Price",
+                                  "Parcel Number #",
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Color(0xFF1A2F5B),
@@ -4253,7 +4253,8 @@ class _Summery_pageState extends State<Summery_page>
                               Padding(
                                 padding: EdgeInsets.all(12.0),
                                 child: Text(
-                                  "Parcel Number #",
+                                  "Purchase Price",
+                                  textAlign: TextAlign.right,
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Color(0xFF1A2F5B),
@@ -4284,10 +4285,10 @@ class _Summery_pageState extends State<Summery_page>
                               Padding(
                                 padding: EdgeInsets.all(12.0),
                                 child: Text(
-                                  (rentalDetails.purchasePrice == null ||
-                                          rentalDetails.purchasePrice == 0)
+                                  (rentalDetails.parcelNumber == null ||
+                                      rentalDetails.parcelNumber!.isEmpty)
                                       ? "N/A"
-                                      : "\$${rentalDetails.purchasePrice!.toStringAsFixed(0)}",
+                                      : rentalDetails.parcelNumber!,
                                   style: TextStyle(
                                       fontSize: 14, color: Colors.black),
                                 ),
@@ -4295,14 +4296,16 @@ class _Summery_pageState extends State<Summery_page>
                               Padding(
                                 padding: EdgeInsets.all(12.0),
                                 child: Text(
-                                  (rentalDetails.parcelNumber == null ||
-                                          rentalDetails.parcelNumber!.isEmpty)
+                                  (rentalDetails.purchasePrice == null ||
+                                          rentalDetails.purchasePrice == 0)
                                       ? "N/A"
-                                      : rentalDetails.parcelNumber!,
+                                      : "\$${rentalDetails.purchasePrice!.toStringAsFixed(0)}",
+                                  textAlign: TextAlign.right,
                                   style: TextStyle(
                                       fontSize: 14, color: Colors.black),
                                 ),
                               ),
+
                             ],
                           ),
                         ],
@@ -15928,16 +15931,16 @@ class _Summery_pageState extends State<Summery_page>
                                                                 _getDisplayValue(
                                                                     workOrder
                                                                         .workCategory),
-                                                                'Assign:',
+                                                                'Assign :',
                                                                 _getDisplayValue(
                                                                     workOrder
                                                                         .staffmemberName)),
                                                             _buildTableRow(
-                                                                'Created At:',
+                                                                'Created On :',
                                                                 dateProvider
                                                                     .formatCurrentDate(
                                                                         '${workOrder.createdAt}'),
-                                                                'Updated At:',
+                                                                'Updated At :',
                                                                 dateProvider
                                                                     .formatCurrentDate(
                                                                         '${workOrder.createdAt}')),

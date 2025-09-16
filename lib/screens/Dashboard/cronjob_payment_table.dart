@@ -89,7 +89,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
           ),
           child: Center(
             child: Text(
-              "Payments Last 7 days",
+              "Payments Last 7 Days",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
@@ -1699,7 +1699,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                             Padding(
                               padding: EdgeInsets.only(left: 5),
                               child: Text(
-                                "Payments Last 7 days",
+                                "Payments Last 7 Days",
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: blueColor,
@@ -1821,7 +1821,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                         children: [
                           SizedBox(height: 10),
                           Text(
-                            "Payment Last 7 Days",
+                            "Payments Last 7 Days",
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,

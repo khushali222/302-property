@@ -1821,9 +1821,11 @@ class _AddTenantState extends State<AddTenant> {
                                           borderColor: Color(
                                               0xFFCED4DA), // ADD BORDER COLOR
                                           borderWidth: 1.5, // ADD BORDER WIDTH
-                                            inputFormatters: [
-                                              FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]")), // only letters + spaces
-                                            ],
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.allow(
+                                                RegExp(
+                                                    r"[a-zA-Z\s]")), // only letters + spaces
+                                          ],
                                           validator: (value) {
                                             if (value == null ||
                                                 value.isEmpty) {
@@ -1861,9 +1863,11 @@ class _AddTenantState extends State<AddTenant> {
                                           isInRow:
                                               true, // ADD FOR ROW ALIGNMENT
                                           showElevation: false,
-                                            inputFormatters: [
-                                              FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]")), // only letters + spaces
-                                            ],
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.allow(
+                                                RegExp(
+                                                    r"[a-zA-Z\s]")), // only letters + spaces
+                                          ],
                                           validator: (value) {
                                             if (value == null ||
                                                 value.isEmpty) {
@@ -2807,6 +2811,7 @@ class CustomTextField extends StatefulWidget {
   final double? borderWidth; // NEW PARAMETER FOR BORDER WIDTH
   final bool showElevation; // NEW PARAMETER TO CONTROL ELEVATION AND SHADOW
   final int? errorMaxLines; // NEW PARAMETER FOR ERROR MESSAGE MAX LINES
+  final TextInputAction? textInputAction; // NEW PARAMETER FOR TEXT INPUT ACTION
 
   CustomTextField(
       {Key? key,
@@ -2846,7 +2851,8 @@ class CustomTextField extends StatefulWidget {
       this.borderWidth, // BORDER WIDTH PARAMETER
       this.showElevation =
           true, // DEFAULT TO TRUE TO MAINTAIN EXISTING BEHAVIOR
-      this.errorMaxLines // PARAMETER FOR ERROR MESSAGE MAX LINES
+      this.errorMaxLines, // PARAMETER FOR ERROR MESSAGE MAX LINES
+      this.textInputAction // PARAMETER FOR TEXT INPUT ACTION
       })
       : super(key: key);
 
@@ -3123,6 +3129,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       obscureText: widget.obscureText,
                       readOnly: widget.readOnnly,
                       keyboardType: widget.keyboardType,
+                      textInputAction: widget.textInputAction,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           state.validate();

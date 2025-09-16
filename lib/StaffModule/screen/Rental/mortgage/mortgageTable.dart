@@ -757,9 +757,8 @@ class _MortgageTableState extends State<MortgageTable> {
                                                             _buildTableRow(
                                                               'Mortgage#',
                                                               _getDisplayValue(
-                                                                  _formatCurrency(
-                                                                      mortgage[
-                                                                          'mortgage_no'])),
+                                                                  mortgage[
+                                                                  'mortgage_no']),
                                                               '',
                                                               _getDisplayValue(
                                                                   ''),

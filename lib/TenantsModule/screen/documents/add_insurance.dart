@@ -42,6 +42,9 @@ class _add_insuranceState extends State<add_insurance> {
 
   List<String> _uploadedFileNames = [];
 
+  DateTime? effectiveDate;
+  DateTime? expirationDate;
+
   String _convertToApiFormat(String displayDate) {
     if (displayDate.isEmpty) return "";
     try {
@@ -145,7 +148,7 @@ class _add_insuranceState extends State<add_insurance> {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
     DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: effectiveDate ?? DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
@@ -170,8 +173,18 @@ class _add_insuranceState extends State<add_insurance> {
 
     if (selectedDate != null) {
       setState(() {
+        effectiveDate = selectedDate;
         String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
         effective.text = dateProvider.formatCurrentDate(apiFormatDate);
+
+        // If effective date is after expiration date, clear expiration date and show warning
+        if (expirationDate != null && effectiveDate!.isAfter(expirationDate!)) {
+          expirationDate = null;
+          expiration.text = '';
+          Fluttertoast.showToast(
+              msg:
+                  "Effective date cannot be after expiration date. Please select a new expiration date.");
+        }
       });
     }
   }
@@ -180,8 +193,8 @@ class _add_insuranceState extends State<add_insurance> {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
     DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
+      initialDate: expirationDate ?? DateTime.now(),
+      firstDate: effectiveDate ?? DateTime.now(),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(
@@ -205,10 +218,38 @@ class _add_insuranceState extends State<add_insurance> {
 
     if (selectedDate != null) {
       setState(() {
+        expirationDate = selectedDate;
         String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
         expiration.text = dateProvider.formatCurrentDate(apiFormatDate);
+
+        // If expiration date is before or same as effective date, show warning
+        if (effectiveDate != null &&
+            (expirationDate!.isBefore(effectiveDate!) ||
+                expirationDate!.isAtSameMomentAs(effectiveDate!))) {
+          Fluttertoast.showToast(
+              msg: "Expiration date must be after effective date.");
+        }
       });
     }
+  }
+
+  bool _validateDates() {
+    // Check if both dates are selected
+    if (effectiveDate == null || expirationDate == null) {
+      Fluttertoast.showToast(
+          msg: "Please select both Effective Date and Expiration Date");
+      return false;
+    }
+
+    // Check if expiration date is after effective date
+    if (expirationDate!.isBefore(effectiveDate!) ||
+        expirationDate!.isAtSameMomentAs(effectiveDate!)) {
+      Fluttertoast.showToast(
+          msg: "Expiration Date must be after Effective Date");
+      return false;
+    }
+
+    return true;
   }
 
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
@@ -401,6 +442,7 @@ class _add_insuranceState extends State<add_insurance> {
                                   decimal: true),
                               hintText: '\$0.0',
                               controller: liablity,
+                              textInputAction: TextInputAction.done,
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(RegExp(
                                     r'^\d*\.?\d{0,2}')), // allows decimals
@@ -497,27 +539,24 @@ class _add_insuranceState extends State<add_insurance> {
                               ),
                             ),
                             onPressed: () {
-                              // //print("calling 111");
-                              // if(_formkey.currentState!.validate()){
-                              // //  print("calling 22");
-                              //   addinsurance();
-                              // }
                               if (_formkey.currentState!.validate()) {
-                                setState(() {
-                                  isLoading = true; // Show loading spinner
-                                });
-                                addinsurance().then((_) {
+                                if (_validateDates()) {
                                   setState(() {
-                                    isLoading =
-                                        false; // Hide loading spinner after adding insurance
+                                    isLoading = true; // Show loading spinner
                                   });
-                                }).catchError((error) {
-                                  setState(() {
-                                    isLoading =
-                                        false; // Hide loading spinner in case of error
+                                  addinsurance().then((_) {
+                                    setState(() {
+                                      isLoading =
+                                          false; // Hide loading spinner after adding insurance
+                                    });
+                                  }).catchError((error) {
+                                    setState(() {
+                                      isLoading =
+                                          false; // Hide loading spinner in case of error
+                                    });
+                                    // Optionally, handle the error here, such as showing a message
                                   });
-                                  // Optionally, handle the error here, such as showing a message
-                                });
+                                }
                               }
                             },
                             child: isLoading

@@ -201,6 +201,18 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     return null;
   }
 
+  String? _validateMortgageNumber(String? value) {
+    if (value != null && value.isNotEmpty) {
+      // Remove all non-digit characters to check length
+      String digitsOnly = value.replaceAll(RegExp(r'[^\d]'), '');
+
+      if (digitsOnly.length < 3) {
+        return 'Mortgage number must be at least 3 digits';
+      }
+    }
+    return null;
+  }
+
   String? _validateProperties() {
     if (_selectedProperties.isEmpty) {
       return 'At least one property must be selected';
@@ -717,7 +729,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       inputFormatters: [PhoneNumberFormatter()],
                       validator: (value) {
                         String? requiredError =
-                        _validateRequired(value, 'Bank contact number');
+                            _validateRequired(value, 'Bank contact number');
                         if (requiredError != null) return requiredError;
                         return _validatePhone(value);
                       },
@@ -754,7 +766,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       inputFormatters: [PhoneNumberFormatter()],
                       validator: (value) {
                         String? requiredError =
-                        _validateRequired(value, 'Manager phone');
+                            _validateRequired(value, 'Manager phone');
                         if (requiredError != null) return requiredError;
                         return _validatePhone(value);
                       },
@@ -775,12 +787,11 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       controller: _mortgageNumberController,
                       label: 'Mortgage Number *',
                       hint: 'Enter mortgage number',
-                      inputFormatters: [PhoneNumberFormatter()],
                       validator: (value) {
                         String? requiredError =
-                        _validateRequired(value, 'Mortgage number');
+                            _validateRequired(value, 'Mortgage number');
                         if (requiredError != null) return requiredError;
-                        return _validatePhone(value);
+                        return _validateMortgageNumber(value);
                       },
                     ),
                     const SizedBox(height: 16),
@@ -889,7 +900,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       inputFormatters: [PhoneNumberFormatter()],
                       validator: (value) {
                         String? requiredError =
-                        _validateRequired(value, 'Borrower phone');
+                            _validateRequired(value, 'Borrower phone');
                         if (requiredError != null) return requiredError;
                         return _validatePhone(value);
                       },
@@ -903,82 +914,140 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       validator: _validateEmail,
                     ),
                     const SizedBox(height: 32),
+                    Container(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed:
+                              _isLoading ? null : () => Navigator.pop(context),
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                side: BorderSide(color: blueColor),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: Text(
+                                'Cancel',
+                                style: TextStyle(
+                                  color: blueColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: _isLoading ? null : _saveForm,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: blueColor,
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: _isLoading
+                                  ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                                ),
+                              )
+                                  : Text(
+                                widget.mortgageId != null ? 'Update' : 'Save',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 32),
                   ],
                 ),
               ),
             ),
-
             // Action Buttons
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    spreadRadius: 1,
-                    blurRadius: 5,
-                    offset: const Offset(0, -2),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed:
-                          _isLoading ? null : () => Navigator.pop(context),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        side: BorderSide(color: blueColor),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: Text(
-                        'Cancel',
-                        style: TextStyle(
-                          color: blueColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _saveForm,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: blueColor,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: _isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
-                            )
-                          : Text(
-                              widget.mortgageId != null ? 'Update' : 'Save',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            // Container(
+            //   padding: const EdgeInsets.all(16.0),
+            //   decoration: BoxDecoration(
+            //     color: Colors.white,
+            //     boxShadow: [
+            //       BoxShadow(
+            //         color: Colors.grey.withOpacity(0.2),
+            //         spreadRadius: 1,
+            //         blurRadius: 5,
+            //         offset: const Offset(0, -2),
+            //       ),
+            //     ],
+            //   ),
+            //   child: Row(
+            //     children: [
+            //       Expanded(
+            //         child: OutlinedButton(
+            //           onPressed:
+            //               _isLoading ? null : () => Navigator.pop(context),
+            //           style: OutlinedButton.styleFrom(
+            //             padding: const EdgeInsets.symmetric(vertical: 16),
+            //             side: BorderSide(color: blueColor),
+            //             shape: RoundedRectangleBorder(
+            //               borderRadius: BorderRadius.circular(8),
+            //             ),
+            //           ),
+            //           child: Text(
+            //             'Cancel',
+            //             style: TextStyle(
+            //               color: blueColor,
+            //               fontSize: 16,
+            //               fontWeight: FontWeight.w600,
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //       const SizedBox(width: 16),
+            //       Expanded(
+            //         child: ElevatedButton(
+            //           onPressed: _isLoading ? null : _saveForm,
+            //           style: ElevatedButton.styleFrom(
+            //             backgroundColor: blueColor,
+            //             padding: const EdgeInsets.symmetric(vertical: 16),
+            //             shape: RoundedRectangleBorder(
+            //               borderRadius: BorderRadius.circular(8),
+            //             ),
+            //           ),
+            //           child: _isLoading
+            //               ? const SizedBox(
+            //                   height: 20,
+            //                   width: 20,
+            //                   child: CircularProgressIndicator(
+            //                     strokeWidth: 2,
+            //                     valueColor:
+            //                         AlwaysStoppedAnimation<Color>(Colors.white),
+            //                   ),
+            //                 )
+            //               : Text(
+            //                   widget.mortgageId != null ? 'Update' : 'Save',
+            //                   style: const TextStyle(
+            //                     color: Colors.white,
+            //                     fontSize: 16,
+            //                     fontWeight: FontWeight.w600,
+            //                   ),
+            //                 ),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),
