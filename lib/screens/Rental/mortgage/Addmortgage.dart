@@ -6,6 +6,8 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:provider/provider.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 
 // Custom Phone Number Formatter
 class PhoneNumberFormatter extends TextInputFormatter {
@@ -169,18 +171,24 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     );
     if (picked != null) {
       setState(() {
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        String displayFormat = dateProvider.formatCurrentDate(apiFormatDate);
+
         if (controller == _startDateController) {
           _startDate = picked;
-          controller.text = DateFormat('dd/MMM/yyyy').format(picked);
+          controller.text = displayFormat;
         } else if (controller == _endDateController) {
           _endDate = picked;
-          controller.text = DateFormat('dd/MMM/yyyy').format(picked);
+          controller.text = displayFormat;
         } else if (controller == _lastPaymentDateController) {
           _lastPaymentDate = picked;
-          controller.text = DateFormat('dd/MMM/yyyy').format(picked);
+          controller.text = displayFormat;
         } else if (controller == _nextPaymentDateController) {
           _nextPaymentDate = picked;
-          controller.text = DateFormat('dd/MMM/yyyy').format(picked);
+          controller.text = displayFormat;
         }
       });
     }
@@ -474,10 +482,43 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         _loanAmountController.text = mortgageData['loan_amount'].toString();
         print(mortgageData['interest_rate']);
         _interestRateController.text = mortgageData['interest_rate'].toString();
-        _startDateController.text = mortgageData['start_date'] ?? '';
-        _endDateController.text = mortgageData['end_date'] ?? '';
-        // mortgageData['status'] first letter make a so that.. because active is not match with Active
 
+        // Format dates properly for display using DateProvider
+        if (mortgageData['start_date'] != null &&
+            mortgageData['start_date'].toString().isNotEmpty) {
+          try {
+            _startDate = DateTime.parse(mortgageData['start_date']);
+            // Use DateProvider to format according to user's preference
+            final dateProvider =
+                Provider.of<DateProvider>(context, listen: false);
+            String apiFormatDate = DateFormat('yyyy-MM-dd').format(_startDate!);
+            _startDateController.text =
+                dateProvider.formatCurrentDate(apiFormatDate);
+          } catch (e) {
+            _startDateController.text = '';
+          }
+        } else {
+          _startDateController.text = '';
+        }
+
+        if (mortgageData['end_date'] != null &&
+            mortgageData['end_date'].toString().isNotEmpty) {
+          try {
+            _endDate = DateTime.parse(mortgageData['end_date']);
+            // Use DateProvider to format according to user's preference
+            final dateProvider =
+                Provider.of<DateProvider>(context, listen: false);
+            String apiFormatDate = DateFormat('yyyy-MM-dd').format(_endDate!);
+            _endDateController.text =
+                dateProvider.formatCurrentDate(apiFormatDate);
+          } catch (e) {
+            _endDateController.text = '';
+          }
+        } else {
+          _endDateController.text = '';
+        }
+
+        // mortgageData['status'] first letter make a so that.. because active is not match with Active
         _statusController.text =
             mortgageData['status'].toString().toUpperCase().substring(0, 1) +
                 mortgageData['status'].toString().substring(1);
@@ -485,10 +526,45 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         //_statusController.text = mortgageData['status'] ?? '';
         _remainingBalanceController.text =
             mortgageData['remaining_balance'].toString();
-        _lastPaymentDateController.text =
-            mortgageData['last_payment_date'] ?? '';
-        _nextPaymentDateController.text =
-            mortgageData['next_payment_date'] ?? '';
+
+        // Format payment dates properly for display using DateProvider
+        if (mortgageData['last_payment_date'] != null &&
+            mortgageData['last_payment_date'].toString().isNotEmpty) {
+          try {
+            _lastPaymentDate =
+                DateTime.parse(mortgageData['last_payment_date']);
+            // Use DateProvider to format according to user's preference
+            final dateProvider =
+                Provider.of<DateProvider>(context, listen: false);
+            String apiFormatDate =
+                DateFormat('yyyy-MM-dd').format(_lastPaymentDate!);
+            _lastPaymentDateController.text =
+                dateProvider.formatCurrentDate(apiFormatDate);
+          } catch (e) {
+            _lastPaymentDateController.text = '';
+          }
+        } else {
+          _lastPaymentDateController.text = '';
+        }
+
+        if (mortgageData['next_payment_date'] != null &&
+            mortgageData['next_payment_date'].toString().isNotEmpty) {
+          try {
+            _nextPaymentDate =
+                DateTime.parse(mortgageData['next_payment_date']);
+            // Use DateProvider to format according to user's preference
+            final dateProvider =
+                Provider.of<DateProvider>(context, listen: false);
+            String apiFormatDate =
+                DateFormat('yyyy-MM-dd').format(_nextPaymentDate!);
+            _nextPaymentDateController.text =
+                dateProvider.formatCurrentDate(apiFormatDate);
+          } catch (e) {
+            _nextPaymentDateController.text = '';
+          }
+        } else {
+          _nextPaymentDateController.text = '';
+        }
 
         // Borrower Information
         _borrowerFirstNameController.text =
@@ -501,37 +577,6 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         _borrowerPhoneController.text = mortgageData['borrower_phone'] ?? '';
         _borrowerEmailController.text = mortgageData['borrower_email'] ?? '';
 
-        // Handle dates
-        if (mortgageData['start_date'] != null) {
-          try {
-            _startDate = DateTime.parse(mortgageData['start_date']);
-          } catch (e) {
-            // Handle invalid date format
-          }
-        }
-        if (mortgageData['end_date'] != null) {
-          try {
-            _endDate = DateTime.parse(mortgageData['end_date']);
-          } catch (e) {
-            // Handle invalid date format
-          }
-        }
-        if (mortgageData['last_payment_date'] != null) {
-          try {
-            _lastPaymentDate =
-                DateTime.parse(mortgageData['last_payment_date']);
-          } catch (e) {
-            // Handle invalid date format
-          }
-        }
-        if (mortgageData['next_payment_date'] != null) {
-          try {
-            _nextPaymentDate =
-                DateTime.parse(mortgageData['next_payment_date']);
-          } catch (e) {
-            // Handle invalid date format
-          }
-        }
         print(mortgageData['properties']);
 
         // Handle properties selection
@@ -970,10 +1015,12 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                         children: [
                           Expanded(
                             child: OutlinedButton(
-                              onPressed:
-                              _isLoading ? null : () => Navigator.pop(context),
+                              onPressed: _isLoading
+                                  ? null
+                                  : () => Navigator.pop(context),
                               style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
                                 side: BorderSide(color: blueColor),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
@@ -995,29 +1042,33 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                               onPressed: _isLoading ? null : _saveForm,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: blueColor,
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
                               child: _isLoading
                                   ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.white),
-                                ),
-                              )
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                Colors.white),
+                                      ),
+                                    )
                                   : Text(
-                                widget.mortgageId != null ? 'Update' : 'Save',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
+                                      widget.mortgageId != null
+                                          ? 'Update'
+                                          : 'Save',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                             ),
                           ),
                         ],

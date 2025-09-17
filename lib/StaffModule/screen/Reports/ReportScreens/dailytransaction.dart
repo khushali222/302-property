@@ -1299,7 +1299,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
 
   @override
   Widget build(BuildContext context) {
-     final dateProvider = Provider.of<DateProvider>(context);
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       appBar: widget_302_Staff.App_Bar(context: context),
       drawer: CustomDrawerStaff(
@@ -1521,7 +1521,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                           child: Text(
                                                             dateProvider
                                                                 .formatCurrentDate(
-                                                                '${rental.date ?? '-'}'),
+                                                                    '${rental.date ?? '-'}'),
                                                             style: TextStyle(
                                                               color: blueColor,
                                                               fontWeight:
@@ -1707,9 +1707,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                                 'Type:',
                                                                                 _getDisplayValue(tenant.paymentType),
                                                                                 'Txn Date:',
-                                                                                _getDisplayValue(dateProvider
-                                                                                    .formatCurrentDate(
-                                                                                    '${tenant.entry?.first.date}'))),
+                                                                                _getDisplayValue(dateProvider.formatCurrentDate('${tenant.entry?.first.date}'))),
                                                                             _buildTableRow(
                                                                               'Payment Details:',
                                                                               _getDisplayValue((tenant.cc_type != null && tenant.cc_number != null && tenant.cc_type!.isNotEmpty && tenant.cc_number!.isNotEmpty) ? "${tenant.cc_type} ${tenant.cc_number}" : "N/A"),

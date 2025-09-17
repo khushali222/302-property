@@ -514,8 +514,7 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType: TextInputType.numberWithOptions(
-                                  decimal: true),
+                              keyboardType: TextInputType.number,
                               hintText: '\$0.0',
                               controller: liablity,
                               textInputAction: TextInputAction.done,

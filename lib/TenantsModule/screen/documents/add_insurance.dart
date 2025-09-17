@@ -438,8 +438,7 @@ class _add_insuranceState extends State<add_insurance> {
                             //   },
                             // ),
                             CustomTextField(
-                              keyboardType: TextInputType.numberWithOptions(
-                                  decimal: true),
+                              keyboardType: TextInputType.number,
                               hintText: '\$0.0',
                               controller: liablity,
                               textInputAction: TextInputAction.done,

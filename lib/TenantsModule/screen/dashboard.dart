@@ -32,6 +32,7 @@ import '../../widgets/barchart.dart';
 import '../widgets/chart.dart';
 import 'profile.dart';
 import 'financial/financial_table.dart';
+
 class DashboardData {
   // int tenantCount = 0;
   // int rentalCount = 0;
@@ -43,9 +44,9 @@ class DashboardData {
   List<int> amountList = [];
 
   List<String> ico = [
-   // "assets/images/Properti-icon.svg",
+    // "assets/images/Properti-icon.svg",
     "assets/images/workorder-icon.svg",
-        "assets/images/tenants/balance.svg",
+    "assets/images/tenants/balance.svg",
     "assets/images/tenants/rent.svg",
     "assets/images/tenants/duedate.svg",
     "assets/images/tenants/leaseicon.svg",
@@ -57,25 +58,18 @@ class DashboardData {
     CupertinoIcons.money_dollar,
     Icons.hourglass_bottom_rounded,
     Icons.calendar_month
-
-
   ];
 
-
-
   List<String> titles = [
-
     "Work Orders",
     "Balance",
-    "Monthly Rent",
-        "Due Date",
+    "Monthly Rent", // This will be updated dynamically
+    "Due Date",
     "Lease End Date",
-
-
   ];
 
   List<Color> colorc = [
-   blueColor,
+    blueColor,
     const Color.fromRGBO(40, 60, 95, 1),
     const Color.fromRGBO(50, 75, 119, 1),
     const Color.fromRGBO(60, 89, 142, 1),
@@ -83,7 +77,7 @@ class DashboardData {
   ];
 
   List<Color> colors = [
-   blueColor,
+    blueColor,
     const Color.fromRGBO(40, 60, 95, 1),
     const Color.fromRGBO(50, 75, 119, 1),
     const Color.fromRGBO(60, 89, 142, 1),
@@ -105,6 +99,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
   String firstname = '';
   String lastname = '';
   bool loading = false;
+  String rentCycle = 'Monthly'; // Default value
   Future<void> fetchDatacount() async {
     /*setState(() {
       loading = true;
@@ -115,30 +110,32 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
       String? admin_id = prefs.getString("adminId");
       String? token = prefs.getString('token');
 
-      final response =
-      await http.get(
-          Uri.parse('${Api_url}/api/tenant/count/${id!}'),
-          headers: {
-           "id":"CRM $id",
-           "authorization": "CRM $token",
-            "Content-Type": "application/json"
-          }
-
-      );
+      final response = await http
+          .get(Uri.parse('${Api_url}/api/tenant/count/${id!}'), headers: {
+        "id": "CRM $id",
+        "authorization": "CRM $token",
+        "Content-Type": "application/json"
+      });
       print(response.body);
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
         print(jsonData);
         setState(() {
           //countList[0] = jsonData["data"]['all_workorders'];
-        //  countList[1] = jsonData['rentalCount'];
+          //  countList[1] = jsonData['rentalCount'];
           countList[2] = jsonData["data"]['rent'];
-          countList[3] = convertDateFormat( jsonData["data"]['due_date'].toString());
-          countList[4] = convertDateFormat(jsonData["data"]['end_date'].toString());
-          countList[1] = double.parse(jsonData["data"]['balance'].toString()).toStringAsFixed(2);
+          countList[3] =
+              convertDateFormat(jsonData["data"]['due_date'].toString());
+          countList[4] =
+              convertDateFormat(jsonData["data"]['end_date'].toString());
+          countList[1] = double.parse(jsonData["data"]['balance'].toString())
+              .toStringAsFixed(2);
           countList[1] = double.parse(countList[1]) < 0
               ? "-\$${double.parse(countList[1]).abs()}"
               : "\$${countList[1]}";
+          rentCycle = jsonData["data"]['rentCycle'] ??
+              'Monthly'; // Store rent cycle from API
+          print("rent cycle $rentCycle");
           loading = false;
         });
       } else {
@@ -152,10 +149,9 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
         countList[4] = "--/--/----";
       });
       print('Error fetching data: $e');
-    } finally {
-
-    }
+    } finally {}
   }
+
   Future<void> fetchDatafinancial() async {
     /*setState(() {
       loading = true;
@@ -167,24 +163,20 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
       String? token = prefs.getString('token');
       print(id);
       print(token);
-      final response =
-      await http.get(
+      final response = await http.get(
           Uri.parse('${Api_url}/api/payment/tenant_financial/${id!}'),
           headers: {
-            "id":"CRM $id",
+            "id": "CRM $id",
             "authorization": "CRM $token",
             "Content-Type": "application/json"
-          }
-
-      );
+          });
       print(response.body);
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
         print(jsonData);
         print(jsonData["totalBalance"]);
         setState(() {
-         // countList[0] = jsonData['property_staffMember'];
-
+          // countList[0] = jsonData['property_staffMember'];
 
           /*  countList[2] = jsonData['vendorCount'];
           countList[3] = jsonData['applicantCount'];
@@ -202,6 +194,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
       });
     }
   }
+
   int newworkorder = 0;
   int overdueworkorder = 0;
   double currentMonthRentDue = 0.0;
@@ -217,29 +210,27 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     print(admin_id);
-    final response =
-    await http.get(
+    final response = await http.get(
         Uri.parse('${Api_url}/api/tenant/dashboard_workorder/$id'),
         headers: {
           "authorization": "CRM $token",
-          "id":"CRM $id",
+          "id": "CRM $id",
           "Content-Type": "application/json"
-        }
-    );
-   //print('${Api_url}/api/payment/admin_balance/$id');
+        });
+    //print('${Api_url}/api/payment/admin_balance/$id');
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       print(jsonData);
       if (jsonData["statusCode"] == 200) {
         final data = jsonData["data"];
         setState(() {
-         var newwork = data["new_workorders"];
-         var overdue = data["overdue_workorders"];
-         print(newwork);
-         newworkorder = newwork;
-         overdueworkorder = overdue;
-         countList[0] = data["all_workorders"];
-         print(data);
+          var newwork = data["new_workorders"];
+          var overdue = data["overdue_workorders"];
+          print(newwork);
+          newworkorder = newwork;
+          overdueworkorder = overdue;
+          countList[0] = data["all_workorders"];
+          print(data);
         });
       } else {
         throw Exception('Failed to load data');
@@ -248,6 +239,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
       throw Exception('Failed to load data');
     }
   }
+
   Future<bool> _showExitPopup(BuildContext context) async {
     bool exitConfirmed = false;
 
@@ -317,19 +309,16 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
 
     return exitConfirmed;
   }
+
   late DashboardData dashboardData;
-  List<dynamic> countList = [0,0,0,"",""];
+  List<dynamic> countList = [0, 0, 0, "", ""];
   List<int> amountList = List.filled(2, 0);
   String convertDateFormat(String dateStr) {
-    DateTime parsedDate = DateTime.parse(dateStr);
-    final dateProvider = Provider.of<DateProvider>(context,listen: false);
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     return dateProvider.formatCurrentDate(dateStr);
-    String formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
-    return formattedDate;
   }
 
-
-  ConnectivityResult? _connectivityResult ;
+  ConnectivityResult? _connectivityResult;
 
   @override
   void initState() {
@@ -342,22 +331,21 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
     });
     checkInternet();
     dashboardData =
-        DashboardData(countList: [0,0,0,"",""], amountList: [0, 0]);
+        DashboardData(countList: [0, 0, 0, "", ""], amountList: [0, 0]);
     fetchDatacount();
     fetchData();
     _loadName();
     fetchDatafinancial();
   }
 
-  void checkInternet()async{
-
+  void checkInternet() async {
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
     setState(() {
       _connectivityResult = connectiondata;
     });
-
   }
+
   Future<void> _loadName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -381,329 +369,467 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
       child: Scaffold(
         key: key,
         backgroundColor: Colors.white,
-        drawer: CustomDrawer(currentpage: 'Dashboard',),
-        appBar: widget_302.App_Bar(context: context,onDrawerIconPressed: () {
-          print("calling appbar");
-          key.currentState!.openDrawer();
-         // Scaffold.of(context).openDrawer();
-        },),
-        body:
-        _connectivityResult !=ConnectivityResult.none ?
-        Center(
-            child: loading
-                ? const SpinKitFadingCircle(
-              color: Colors.black,
-              size: 50.0,
-            )
-                : ListView(
-              children: [
-                // Material(
-                //   elevation: 3,
-                //   child: Divider(
-                //     height: 1,
-                //     color: Colors.transparent,
-                //   ),
-                // ),
-                SizedBox(height: 10,),
-                LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
-                    return Row(
-                      children: [
-                        SizedBox(width: width * 0.05),
-                        Container(
-                          color: Color.fromRGBO(2, 121, 210, 1),
-                          margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.012,),
-                          width: 3,
-                          child: Column(
-                            children: [
-
-                              Container(
-                                height: MediaQuery.of(context).size.height * 0.012 +
-                                    MediaQuery.of(context).size.width * 0.04 +
-                                    3 +
-                                    16,
-                              ),
-                            ],
+        drawer: CustomDrawer(
+          currentpage: 'Dashboard',
+        ),
+        appBar: widget_302.App_Bar(
+          context: context,
+          onDrawerIconPressed: () {
+            print("calling appbar");
+            key.currentState!.openDrawer();
+            // Scaffold.of(context).openDrawer();
+          },
+        ),
+        body: _connectivityResult != ConnectivityResult.none
+            ? Center(
+                child: loading
+                    ? const SpinKitFadingCircle(
+                        color: Colors.black,
+                        size: 50.0,
+                      )
+                    : ListView(
+                        children: [
+                          // Material(
+                          //   elevation: 3,
+                          //   child: Divider(
+                          //     height: 1,
+                          //     color: Colors.transparent,
+                          //   ),
+                          // ),
+                          SizedBox(
+                            height: 10,
                           ),
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: MediaQuery.of(context).size.height * 0.012),
-                            Row(
-                              children: [
-                                SizedBox(width: width * 0.05),
-                                SizedBox(
-                                  width:300,
-                                  child: Text(
-                                    "Hello $firstname $lastname, Welcome back",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: MediaQuery.of(context).size.width > 500
-                                          ? MediaQuery.of(context).size.width * 0.03
-                                          : MediaQuery.of(context).size.width * 0.04,
+                          LayoutBuilder(
+                            builder: (BuildContext context,
+                                BoxConstraints constraints) {
+                              return Row(
+                                children: [
+                                  SizedBox(width: width * 0.05),
+                                  Container(
+                                    color: Color.fromRGBO(2, 121, 210, 1),
+                                    margin: EdgeInsets.only(
+                                      top: MediaQuery.of(context).size.height *
+                                          0.012,
                                     ),
-                                    maxLines: 2, // Allows wrapping into two lines
-                                    overflow: TextOverflow.visible, // Ensures the text wraps naturally
-                                    softWrap: true, // Enables line wrapping
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            //   SizedBox(height: 3),
-                            // My Dashboard
-                            Row(
-                              children: [
-                                SizedBox(width: width * 0.05),
-                                Text(
-                                  "My Dashboard",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  },
-                ),
-                //welcome
-
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    if (constraints.maxWidth > 600) {
-                      // Tablet layout - horizontal
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                            left: 35, right: 80, top: 20),
-                        child: Wrap(
-                          alignment: WrapAlignment.start,
-                          spacing: MediaQuery.of(context).size.width * 0.02,
-                          runSpacing:
-                          MediaQuery.of(context).size.width * 0.02,
-                          children: List.generate(
-                            5,
-                                (index) => InkWell(
-                                  onTap: (){
-                                    if(dashboardData.titles[index] == "Work Orders" && permissions!.workorderView){
-                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>WorkOrderTable()));
-                                    }
-                                    if(dashboardData.titles[index] == "Balance" && permissions!.financialView){
-                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>FinancialTable()));
-                                    }
-                                  },
-                                  child: SizedBox(
-                                                              width:
-                                                              160, // Ensure SizedBox has defined width
-                                                              height:
-                                                              160, // Ensure SizedBox has defined height
-                                                              child: Material(
-                                  elevation: 3,
-                                  borderRadius: BorderRadius.circular(1),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: dashboardData.colorc[index],
-                                      borderRadius: BorderRadius.circular(1),
-                                    ),
+                                    width: 3,
                                     child: Column(
                                       children: [
-                                        const SizedBox(height: 10),
-                                        Row(
-                                          children: [
-                                            const SizedBox(width: 10),
-                                            Material(
-                                              elevation: 5,
-                                              borderRadius:
-                                              BorderRadius.circular(20),
-                                              child: Container(
-                                                height: 40,
-                                                width: 40,
-                                                padding:
-                                                const EdgeInsets.all(10),
-                                                decoration: BoxDecoration(
-                                                  color: dashboardData
-                                                      .colors[index],
-                                                  borderRadius:
-                                                  BorderRadius.circular(
-                                                      20),
-                                                ),
-                                                child: SvgPicture.asset(
-                                                  "${dashboardData.icons[index]}",
-                                                  fit: BoxFit.cover,
-                                                  height: 27,
-                                                  width: 27,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Row(
-                                          children: [
-                                            const SizedBox(width: 10),
-                                            Text(
-                                              countList[index].toString(),
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 22,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Row(
-                                          children: [
-                                            const SizedBox(width: 10),
-                                            Text(
-                                              dashboardData.titles[index],
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 18,
-                                              ),
-                                            ),
-                                          ],
+                                        Container(
+                                          height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.012 +
+                                              MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.04 +
+                                              3 +
+                                              16,
                                         ),
                                       ],
                                     ),
                                   ),
-                                                              ),
-                                                            ),
-                                ),
-                          ),
-                        ),
-                      );
-                    } else {
-                      // Phone layout - vertical
-                      return Column(
-                        children: [
-                          SizedBox(
-                              height:
-                              MediaQuery.of(context).size.width * 0.07),
-                          Padding(
-                            padding:
-                            const EdgeInsets.only(left: 15, right: 15),
-                            child: GridView.builder(
-                              itemCount: 5,
-                              gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount:
-                                2, // Number of items per row
-                                crossAxisSpacing:
-                                MediaQuery.of(context).size.width *
-                                    0.06,
-                                mainAxisSpacing:
-                                MediaQuery.of(context).size.width *
-                                    0.06,
-                                childAspectRatio:
-                                1.9, // Adjust as needed for your design
-                              ),
-                              itemBuilder: (context, index) {
-                                return InkWell(
-                                  onTap: (){
-                                    print("calling");
-                                    if(dashboardData.titles[index] == "Work Orders" && permissions!.workorderView){
-                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>WorkOrderTable()));
-                                    }
-                                    if(dashboardData.titles[index] == "Balance" && permissions!.financialView){
-                                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>FinancialTable()));
-                                    }
-                                  },
-                                  child:     Container(
-                                    width: MediaQuery.of(context).size.width * .5,
-                                    height: 90,
-                                    decoration: BoxDecoration(
-                                        color: dashboardData.colorc[index],
-                                        borderRadius: BorderRadius.circular(10)
-                                    ),
-                                    child: Stack(
-                                      clipBehavior: Clip.none,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(vertical: 0.0,horizontal:0 ),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Divider(color:   Color.fromRGBO(219, 237, 244, 1),thickness: 2,),
-                                              Padding(
-                                                padding: const EdgeInsets.only(left:8.0),
-                                                child: Row(
-                                                  children: [
-                                                    Text(" ${dashboardData.titles[index]}" ,style: TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight: FontWeight.normal,color: Colors.white
-                                                    ),),
-                                                    SizedBox(width: 10,),
-                                                    if(index == 0 || index ==1)
-                                                    Icon(Icons.arrow_forward , color:   Color.fromRGBO(219, 237, 244, 1),)
-                                                  ],
-                                                ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.012),
+                                      Row(
+                                        children: [
+                                          SizedBox(width: width * 0.05),
+                                          SizedBox(
+                                            width: 300,
+                                            child: Text(
+                                              "Hello $firstname $lastname, Welcome back",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: MediaQuery.of(context)
+                                                            .size
+                                                            .width >
+                                                        500
+                                                    ? MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.03
+                                                    : MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.04,
                                               ),
-                                              SizedBox(height: 10,),
-
-                                            ],
+                                              maxLines:
+                                                  2, // Allows wrapping into two lines
+                                              overflow: TextOverflow
+                                                  .visible, // Ensures the text wraps naturally
+                                              softWrap:
+                                                  true, // Enables line wrapping
+                                            ),
                                           ),
-                                        ),
-                                        Positioned(
-                                          left: 10,
-                                          top: -15,
+                                        ],
+                                      ),
+
+                                      //   SizedBox(height: 3),
+                                      // My Dashboard
+                                      Row(
+                                        children: [
+                                          SizedBox(width: width * 0.05),
+                                          Text(
+                                            "My Dashboard",
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                          //welcome
+
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              if (constraints.maxWidth > 600) {
+                                // Tablet layout - horizontal
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 35, right: 80, top: 20),
+                                  child: Wrap(
+                                    alignment: WrapAlignment.start,
+                                    spacing: MediaQuery.of(context).size.width *
+                                        0.02,
+                                    runSpacing:
+                                        MediaQuery.of(context).size.width *
+                                            0.02,
+                                    children: List.generate(
+                                      5,
+                                      (index) => InkWell(
+                                        onTap: () {
+                                          if (dashboardData.titles[index] ==
+                                                  "Work Orders" &&
+                                              permissions!.workorderView) {
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        WorkOrderTable()));
+                                          }
+                                          if (dashboardData.titles[index] ==
+                                                  "Balance" &&
+                                              permissions!.financialView) {
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        FinancialTable()));
+                                          }
+                                        },
+                                        child: SizedBox(
+                                          width:
+                                              160, // Ensure SizedBox has defined width
+                                          height:
+                                              160, // Ensure SizedBox has defined height
                                           child: Material(
-                                            elevation: 6,
-                                            borderRadius: BorderRadius.circular(10),
+                                            elevation: 3,
+                                            borderRadius:
+                                                BorderRadius.circular(1),
                                             child: Container(
-                                              height: 40,
-                                              width: 40,
                                               decoration: BoxDecoration(
-                                                  border: Border.all(color: Color.fromRGBO(91, 134, 213, 1)),
-                                                  color: Colors.white,
-                                                  borderRadius: BorderRadius.circular(10)
+                                                color:
+                                                    dashboardData.colorc[index],
+                                                borderRadius:
+                                                    BorderRadius.circular(1),
                                               ),
-                                              child: Center(
-                                                child:  SvgPicture.asset(
-                                                  "${dashboardData.ico[index]}",
-                                                  fit: BoxFit.contain,
-                                                  height: 23,
-                                                  width: 23,
-                                                  color: dashboardData.colorc[index],
-                                                ),
+                                              child: Column(
+                                                children: [
+                                                  const SizedBox(height: 10),
+                                                  Row(
+                                                    children: [
+                                                      const SizedBox(width: 10),
+                                                      Material(
+                                                        elevation: 5,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20),
+                                                        child: Container(
+                                                          height: 40,
+                                                          width: 40,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(10),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: dashboardData
+                                                                .colors[index],
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20),
+                                                          ),
+                                                          child:
+                                                              SvgPicture.asset(
+                                                            "${dashboardData.icons[index]}",
+                                                            fit: BoxFit.cover,
+                                                            height: 27,
+                                                            width: 27,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  Row(
+                                                    children: [
+                                                      const SizedBox(width: 10),
+                                                      Text(
+                                                        countList[index]
+                                                            .toString(),
+                                                        style: const TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 22,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  Row(
+                                                    children: [
+                                                      const SizedBox(width: 10),
+                                                      Text(
+                                                        index == 2
+                                                            ? "${rentCycle} Rent"
+                                                            : dashboardData
+                                                                .titles[index],
+                                                        style: const TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 18,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ),
                                         ),
-                                        Positioned(
-                                          right:index == 3 || index == 4 ? 10: 10,
-                                          top: 10,
-                                          child: Text("${ countList[index].toString()}",style: TextStyle(
-                                              fontSize: index == 3 || index == 4 ? 14 : 16,
-                                              fontWeight: FontWeight.bold,color:   Color.fromRGBO(219, 237, 244, 1)
-                                          )),
-                                        ),
-                                      ],
+                                      ),
                                     ),
                                   ),
                                 );
-                              },
-                              shrinkWrap:
-                              true, // If you want the GridView to take only the space it needs
-                              physics:
-                              const NeverScrollableScrollPhysics(), // If you don't want it to scroll
-                            ),
-                          )
-                        ],
-                      );
-                    }
-                  },
-                ),
+                              } else {
+                                // Phone layout - vertical
+                                return Column(
+                                  children: [
+                                    SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                0.07),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 15, right: 15),
+                                      child: GridView.builder(
+                                        itemCount: 5,
+                                        gridDelegate:
+                                            SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount:
+                                              2, // Number of items per row
+                                          crossAxisSpacing:
+                                              MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.06,
+                                          mainAxisSpacing:
+                                              MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.06,
+                                          childAspectRatio:
+                                              1.9, // Adjust as needed for your design
+                                        ),
+                                        itemBuilder: (context, index) {
+                                          return InkWell(
+                                            onTap: () {
+                                              print("calling");
+                                              if (dashboardData.titles[index] ==
+                                                      "Work Orders" &&
+                                                  permissions!.workorderView) {
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            WorkOrderTable()));
+                                              }
+                                              if (dashboardData.titles[index] ==
+                                                      "Balance" &&
+                                                  permissions!.financialView) {
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            FinancialTable()));
+                                              }
+                                            },
+                                            child: Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .5,
+                                              height: 90,
+                                              decoration: BoxDecoration(
+                                                  color: dashboardData
+                                                      .colorc[index],
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              child: Stack(
+                                                clipBehavior: Clip.none,
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 0.0,
+                                                        horizontal: 0),
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Divider(
+                                                          color: Color.fromRGBO(
+                                                              219, 237, 244, 1),
+                                                          thickness: 2,
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  left: 8.0),
+                                                          child: Row(
+                                                            children: [
+                                                              Text(
+                                                                " ${index == 2 ? "${rentCycle} Rent" : dashboardData.titles[index]}",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .normal,
+                                                                    color: Colors
+                                                                        .white),
+                                                              ),
+                                                              SizedBox(
+                                                                width: 10,
+                                                              ),
+                                                              if (index == 0 ||
+                                                                  index == 1)
+                                                                Icon(
+                                                                  Icons
+                                                                      .arrow_forward,
+                                                                  color: Color
+                                                                      .fromRGBO(
+                                                                          219,
+                                                                          237,
+                                                                          244,
+                                                                          1),
+                                                                )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Positioned(
+                                                    left: 10,
+                                                    top: -15,
+                                                    child: Material(
+                                                      elevation: 6,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      child: Container(
+                                                        height: 40,
+                                                        width: 40,
+                                                        decoration: BoxDecoration(
+                                                            border: Border.all(
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                        91,
+                                                                        134,
+                                                                        213,
+                                                                        1)),
+                                                            color: Colors.white,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10)),
+                                                        child: Center(
+                                                          child:
+                                                              SvgPicture.asset(
+                                                            "${dashboardData.ico[index]}",
+                                                            fit: BoxFit.contain,
+                                                            height: 23,
+                                                            width: 23,
+                                                            color: dashboardData
+                                                                .colorc[index],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Positioned(
+                                                    right:
+                                                        index == 3 || index == 4
+                                                            ? 10
+                                                            : 10,
+                                                    top: 10,
+                                                    child: Text(
+                                                        "${countList[index].toString()}",
+                                                        style: TextStyle(
+                                                            fontSize: index ==
+                                                                        3 ||
+                                                                    index == 4
+                                                                ? 14
+                                                                : 16,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Color.fromRGBO(
+                                                                    219,
+                                                                    237,
+                                                                    244,
+                                                                    1))),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        shrinkWrap:
+                                            true, // If you want the GridView to take only the space it needs
+                                        physics:
+                                            const NeverScrollableScrollPhysics(), // If you don't want it to scroll
+                                      ),
+                                    )
+                                  ],
+                                );
+                              }
+                            },
+                          ),
 
-                /*  SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+                          /*  SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                 Row(
                   children: [
                     SizedBox(
@@ -1050,202 +1176,177 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                   ],
 
                 ),*/
-                // LayoutBuilder(builder: (context, BoxConstraints) {
-                //   if (BoxConstraints.maxWidth > 500) {
-                //     return Container();
-                //   } else {
-                //     return Container();
-                //   }
-                // }),
+                          // LayoutBuilder(builder: (context, BoxConstraints) {
+                          //   if (BoxConstraints.maxWidth > 500) {
+                          //     return Container();
+                          //   } else {
+                          //     return Container();
+                          //   }
+                          // }),
 
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    if (constraints.maxWidth > 600) {
-                      // Tablet layout - horizontal
-                      return  Padding(
-                        padding: const EdgeInsets.only( left: 15),
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 20),
-                            Row(
-                              children: [
-                                Expanded(
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              if (constraints.maxWidth > 600) {
+                                // Tablet layout - horizontal
+                                return Padding(
+                                  padding: const EdgeInsets.only(left: 15),
                                   child: Column(
                                     children: [
-                                      Container(
-                                        height: 150,
-                                        margin: EdgeInsets.symmetric(horizontal: width * .025), // Adjusted for equal spacing
-                                        decoration:  BoxDecoration(
-                                            borderRadius: BorderRadius.all(Radius.circular(7)),
-                                            border: Border.all(color: blueColor )
-                                        ),
-                                        child: Material(
-                                          //   elevation: 3,
-                                          borderRadius: const BorderRadius.all(Radius.circular(5)),
-                                          child: Column(
-                                            children: [
-                                              Expanded(
-                                                flex: 3,
-                                                child: Container(
-                                                  decoration: const BoxDecoration(
-                                                    color: Color.fromRGBO(50, 75, 119, 1),
-                                                    borderRadius: BorderRadius.vertical(top: Radius.circular(6)),
-                                                  ),
-                                                  child: const Center(
-                                                    child: Text(
-                                                      "New Work Order",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 14,
-                                                          fontWeight: FontWeight.bold),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 7,
-                                                child: Container(
-                                                  decoration: const BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                      children: [
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                                          children: [
-                                                            const Text(
-                                                              "Total: ",
-                                                              style: TextStyle(
-                                                                fontSize: 16,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Color.fromRGBO(90, 134, 213, 1),),
-                                                            ),
-                                                            Text(
-                                                              "${newworkorder}",
-                                                              style: const TextStyle(
-                                                                  fontSize: 16,
-                                                                  color: Color.fromRGBO(90, 134, 213, 1),
-                                                                  fontWeight: FontWeight.bold),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        InkWell(
-                                                          onTap: () {
-                                                            if(permissions!.workorderView)
-                                                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => WorkOrderTable()));
-                                                          },
-                                                          child: Container(
-                                                            margin: EdgeInsets.symmetric(vertical: 12),
-                                                            width: 100,
-                                                            height: 30,
-                                                            decoration: BoxDecoration(
-                                                              color: blueColor,
-                                                              borderRadius: BorderRadius.circular(5),
-                                                            ),
-                                                            child: const Center(
-                                                              child: Text(
-                                                                "View All",
-                                                                style: TextStyle(color: Colors.white),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
                                       const SizedBox(height: 20),
-                                      Container(
-                                        height: 150,
-                                        margin: EdgeInsets.symmetric(horizontal: width * .025), // Adjusted for equal spacing
-                                        decoration:  BoxDecoration(
-                                            borderRadius: BorderRadius.all(Radius.circular(7)),
-                                            border: Border.all(color: Color.fromRGBO(91, 134, 213, 1) )
-                                        ),
-                                        child: Material(
-                                          //  elevation: 3,
-                                          borderRadius: const BorderRadius.all(Radius.circular(7)),
-                                          child: Column(
-                                            children: [
-                                              Expanded(
-                                                flex: 3,
-                                                child: Container(
-                                                  decoration: const BoxDecoration(
-                                                    color: Color.fromRGBO(91, 134, 213, 1),
-                                                    borderRadius: BorderRadius.vertical(top: Radius.circular(6)),
-                                                  ),
-                                                  child: const Center(
-                                                    child: Text(
-                                                      "Overdue Work Order",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 14,
-                                                          fontWeight: FontWeight.bold),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 7,
-                                                child: Container(
-                                                  decoration: const BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              children: [
+                                                Container(
+                                                  height: 150,
+                                                  margin: EdgeInsets.symmetric(
+                                                      horizontal: width *
+                                                          .025), // Adjusted for equal spacing
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  7)),
+                                                      border: Border.all(
+                                                          color: blueColor)),
+                                                  child: Material(
+                                                    //   elevation: 3,
+                                                    borderRadius:
+                                                        const BorderRadius.all(
+                                                            Radius.circular(5)),
                                                     child: Column(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
                                                       children: [
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                                          children: [
-                                                            const Text(
-                                                              "Total: ",
-                                                              style: TextStyle(
-                                                                fontSize: 16,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Color.fromRGBO(90, 134, 213, 1),),
-                                                            ),
-                                                            Text(
-                                                              "${overdueworkorder}",
-                                                              style: const TextStyle(
-                                                                  fontSize: 16,
-                                                                  color: Color.fromRGBO(90, 134, 213, 1),
-                                                                  fontWeight: FontWeight.bold),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        InkWell(
-                                                          onTap: () {
-                                                            if(permissions!.workorderView)
-                                                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => WorkOrderTable()));
-                                                          },
+                                                        Expanded(
+                                                          flex: 3,
                                                           child: Container(
-                                                            margin: EdgeInsets.symmetric(vertical: 12),
-                                                            width: 100,
-                                                            height: 30,
-                                                            decoration: BoxDecoration(
-                                                              color: Color.fromRGBO(91, 134, 213, 1),
-                                                              borderRadius: BorderRadius.circular(5),
+                                                            decoration:
+                                                                const BoxDecoration(
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                      50,
+                                                                      75,
+                                                                      119,
+                                                                      1),
+                                                              borderRadius:
+                                                                  BorderRadius.vertical(
+                                                                      top: Radius
+                                                                          .circular(
+                                                                              6)),
                                                             ),
                                                             child: const Center(
                                                               child: Text(
-                                                                "View All",
-                                                                style: TextStyle(color: Colors.white),
+                                                                "New Work Order",
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                          flex: 7,
+                                                          child: Container(
+                                                            decoration:
+                                                                const BoxDecoration(
+                                                              color:
+                                                                  Colors.white,
+                                                              borderRadius: BorderRadius.vertical(
+                                                                  bottom: Radius
+                                                                      .circular(
+                                                                          15)),
+                                                            ),
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(8.0),
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      const Text(
+                                                                        "Total: ",
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontSize:
+                                                                              16,
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                          color: Color.fromRGBO(
+                                                                              90,
+                                                                              134,
+                                                                              213,
+                                                                              1),
+                                                                        ),
+                                                                      ),
+                                                                      Text(
+                                                                        "${newworkorder}",
+                                                                        style: const TextStyle(
+                                                                            fontSize:
+                                                                                16,
+                                                                            color: Color.fromRGBO(
+                                                                                90,
+                                                                                134,
+                                                                                213,
+                                                                                1),
+                                                                            fontWeight:
+                                                                                FontWeight.bold),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  InkWell(
+                                                                    onTap: () {
+                                                                      if (permissions!
+                                                                          .workorderView)
+                                                                        Navigator.of(context).push(MaterialPageRoute(
+                                                                            builder: (context) =>
+                                                                                WorkOrderTable()));
+                                                                    },
+                                                                    child:
+                                                                        Container(
+                                                                      margin: EdgeInsets.symmetric(
+                                                                          vertical:
+                                                                              12),
+                                                                      width:
+                                                                          100,
+                                                                      height:
+                                                                          30,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color:
+                                                                            blueColor,
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(5),
+                                                                      ),
+                                                                      child:
+                                                                          const Center(
+                                                                        child:
+                                                                            Text(
+                                                                          "View All",
+                                                                          style:
+                                                                              TextStyle(color: Colors.white),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
                                                           ),
@@ -1254,35 +1355,199 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
+                                                const SizedBox(height: 20),
+                                                Container(
+                                                  height: 150,
+                                                  margin: EdgeInsets.symmetric(
+                                                      horizontal: width *
+                                                          .025), // Adjusted for equal spacing
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  7)),
+                                                      border: Border.all(
+                                                          color: Color.fromRGBO(
+                                                              91,
+                                                              134,
+                                                              213,
+                                                              1))),
+                                                  child: Material(
+                                                    //  elevation: 3,
+                                                    borderRadius:
+                                                        const BorderRadius.all(
+                                                            Radius.circular(7)),
+                                                    child: Column(
+                                                      children: [
+                                                        Expanded(
+                                                          flex: 3,
+                                                          child: Container(
+                                                            decoration:
+                                                                const BoxDecoration(
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                      91,
+                                                                      134,
+                                                                      213,
+                                                                      1),
+                                                              borderRadius:
+                                                                  BorderRadius.vertical(
+                                                                      top: Radius
+                                                                          .circular(
+                                                                              6)),
+                                                            ),
+                                                            child: const Center(
+                                                              child: Text(
+                                                                "Overdue Work Order",
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                          flex: 7,
+                                                          child: Container(
+                                                            decoration:
+                                                                const BoxDecoration(
+                                                              color:
+                                                                  Colors.white,
+                                                              borderRadius: BorderRadius.vertical(
+                                                                  bottom: Radius
+                                                                      .circular(
+                                                                          15)),
+                                                            ),
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(8.0),
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      const Text(
+                                                                        "Total: ",
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontSize:
+                                                                              16,
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                          color: Color.fromRGBO(
+                                                                              90,
+                                                                              134,
+                                                                              213,
+                                                                              1),
+                                                                        ),
+                                                                      ),
+                                                                      Text(
+                                                                        "${overdueworkorder}",
+                                                                        style: const TextStyle(
+                                                                            fontSize:
+                                                                                16,
+                                                                            color: Color.fromRGBO(
+                                                                                90,
+                                                                                134,
+                                                                                213,
+                                                                                1),
+                                                                            fontWeight:
+                                                                                FontWeight.bold),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  InkWell(
+                                                                    onTap: () {
+                                                                      if (permissions!
+                                                                          .workorderView)
+                                                                        Navigator.of(context).push(MaterialPageRoute(
+                                                                            builder: (context) =>
+                                                                                WorkOrderTable()));
+                                                                    },
+                                                                    child:
+                                                                        Container(
+                                                                      margin: EdgeInsets.symmetric(
+                                                                          vertical:
+                                                                              12),
+                                                                      width:
+                                                                          100,
+                                                                      height:
+                                                                          30,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: Color.fromRGBO(
+                                                                            91,
+                                                                            134,
+                                                                            213,
+                                                                            1),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(5),
+                                                                      ),
+                                                                      child:
+                                                                          const Center(
+                                                                        child:
+                                                                            Text(
+                                                                          "View All",
+                                                                          style:
+                                                                              TextStyle(color: Colors.white),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
+                                          Expanded(
+                                            child: PieCharts(
+                                              dataMap: {
+                                                "New Work Orders":
+                                                    newworkorder.toDouble(),
+                                                "Overdue Work Orders":
+                                                    overdueworkorder.toDouble()
+                                              },
+                                            ),
+                                          ),
+                                        ],
                                       ),
+                                      const SizedBox(height: 10),
                                     ],
                                   ),
-                                ),
-                                Expanded(
-                                  child: PieCharts(dataMap: {
-                                    "New Work Orders": newworkorder.toDouble(),
-                                    "Overdue Work Orders":overdueworkorder.toDouble()
-                                  },),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-
-                          ],
-                        ),
-                      );
-                    } else {
-                      // Phone layout - vertical
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 20),
-                           /* Row(
+                                );
+                              } else {
+                                // Phone layout - vertical
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 5.0),
+                                  child: Column(
+                                    children: [
+                                      const SizedBox(height: 20),
+                                      /* Row(
                               children: [
                                 Expanded(
                                   child: Container(
@@ -1477,152 +1742,230 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                               ],
                             ),*/
 
-                            Container(
-                              width: MediaQuery.of(context).size.width * .91,
-                              height: 130,
-                              decoration: BoxDecoration(
-                                color: blueColor,
-                                borderRadius: BorderRadius.circular(6)
-                              ),
-                              child: Stack(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 10.0,horizontal: 13),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text("New Work Orders" ,style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.normal,color: Colors.white
-                                        ),),
-                                  SizedBox(height: 10,),
-                                        Text("Total : ${newworkorder}" ,style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,color: Color.fromRGBO(226, 240, 245, 1)
-                                        ),),
-                                        SizedBox(height: 10,),
-                                        InkWell(
-                                          onTap: () {
-                                            if(permissions!.workorderView)
-                                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => WorkOrderTable(filter: "New",)));
-                                          },
-                                          child: Container(
-                                            height: 30,
-                                            width: 100,
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.circular(10)
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .91,
+                                        height: 130,
+                                        decoration: BoxDecoration(
+                                            color: blueColor,
+                                            borderRadius:
+                                                BorderRadius.circular(6)),
+                                        child: Stack(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 10.0,
+                                                      horizontal: 13),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "New Work Orders",
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        color: Colors.white),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Text(
+                                                    "Total : ${newworkorder}",
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Color.fromRGBO(
+                                                            226, 240, 245, 1)),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      if (permissions!
+                                                          .workorderView)
+                                                        Navigator.of(context).push(
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        WorkOrderTable(
+                                                                          filter:
+                                                                              "New",
+                                                                        )));
+                                                    },
+                                                    child: Container(
+                                                      height: 30,
+                                                      width: 100,
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      10)),
+                                                      child: Center(
+                                                          child: Text(
+                                                              "View All",
+                                                              style: TextStyle(
+                                                                  fontSize: 16,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color:
+                                                                      blueColor))),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
                                             ),
-                                            child: Center(child: Text("View All",style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,color: blueColor
-                                            ))),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Positioned(
-                                    right: 20,
-                                    bottom: 20,
-                                    child: FaIcon(
-                                      FontAwesomeIcons.fileInvoice,
-                                      size: 60,
-                                      color:
-                                      Color.fromRGBO(219, 237, 244, 1)
-                                         ,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Container(
-                              width: MediaQuery.of(context).size.width * .91,
-                              height: 130,
-                              decoration: BoxDecoration(
-                                  color:  Color.fromRGBO(91, 134, 213, 1),
-                                  borderRadius: BorderRadius.circular(6)
-                              ),
-                              child: Stack(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 10.0,horizontal: 13),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text("Overdue Work Orders" ,style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.normal,color: Colors.white
-                                        ),),
-                                        SizedBox(height: 10,),
-                                        Text("Total : ${overdueworkorder}" ,style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,color: Color.fromRGBO(226, 240, 245, 1)
-                                        ),),
-                                        SizedBox(height: 10,),
-                                        InkWell(
-                                          onTap: () {
-                                            if(permissions!.workorderView)
-                                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => WorkOrderTable(filter: "Over Due",)));
-                                          },
-                                          child: Container(
-                                            height: 30,
-                                            width: 100,
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.circular(10)
+                                            Positioned(
+                                              right: 20,
+                                              bottom: 20,
+                                              child: FaIcon(
+                                                FontAwesomeIcons.fileInvoice,
+                                                size: 60,
+                                                color: Color.fromRGBO(
+                                                    219, 237, 244, 1),
+                                              ),
                                             ),
-                                            child: Center(child: Text("View All",style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,color:  Color.fromRGBO(91, 134, 213, 1)
-                                            ))),
-                                          ),
-                                        )
-                                      ],
-                                    ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .91,
+                                        height: 130,
+                                        decoration: BoxDecoration(
+                                            color:
+                                                Color.fromRGBO(91, 134, 213, 1),
+                                            borderRadius:
+                                                BorderRadius.circular(6)),
+                                        child: Stack(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 10.0,
+                                                      horizontal: 13),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "Overdue Work Orders",
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        color: Colors.white),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Text(
+                                                    "Total : ${overdueworkorder}",
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Color.fromRGBO(
+                                                            226, 240, 245, 1)),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      if (permissions!
+                                                          .workorderView)
+                                                        Navigator.of(context).push(
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        WorkOrderTable(
+                                                                          filter:
+                                                                              "Over Due",
+                                                                        )));
+                                                    },
+                                                    child: Container(
+                                                      height: 30,
+                                                      width: 100,
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      10)),
+                                                      child: Center(
+                                                          child: Text(
+                                                              "View All",
+                                                              style: TextStyle(
+                                                                  fontSize: 16,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Color
+                                                                      .fromRGBO(
+                                                                          91,
+                                                                          134,
+                                                                          213,
+                                                                          1)))),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            Positioned(
+                                              right: 20,
+                                              bottom: 20,
+                                              child: FaIcon(
+                                                FontAwesomeIcons.hourglassEnd,
+                                                size: 60,
+                                                color: Color.fromRGBO(
+                                                    219, 237, 244, 1),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 30),
+                                      if (newworkorder != 0 ||
+                                          overdueworkorder != 0)
+                                        PieCharts(
+                                          dataMap: {
+                                            "New Work Orders":
+                                                newworkorder.toDouble(),
+                                            "Overdue Work Orders":
+                                                overdueworkorder.toDouble()
+                                          },
+                                        ),
+                                      const SizedBox(height: 10),
+                                    ],
                                   ),
-                                  Positioned(
-                                    right: 20,
-                                    bottom: 20,
-                                    child: FaIcon(
-                                      FontAwesomeIcons.hourglassEnd,
-                                      size: 60,
-                                      color:
-                                      Color.fromRGBO(219, 237, 244, 1)
-                                      ,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 30),
+                                );
+                              }
+                            },
+                          ),
 
-                            if(newworkorder != 0 || overdueworkorder !=0)
-                            PieCharts(dataMap: {
-                              "New Work Orders": newworkorder.toDouble(),
-                              "Overdue Work Orders":overdueworkorder.toDouble()
-                            },),
-                            const SizedBox(height: 10),
-                          ],
-                        ),
-                      );
+                          // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+                          // PieCharts(),
+                          // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+                          // Barchart()
+                          const SizedBox(
+                            height: 20,
+                          ),
 
-                    }
-                  },
-                ),
-
-                // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-                // PieCharts(),
-                // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-                // Barchart()
-                const SizedBox(
-                  height: 20,
-                ),
-
-               /* Container(
+                          /* Container(
                   height: 180,
                   margin: EdgeInsets.symmetric(horizontal:
                      width * 0.05,
@@ -1642,7 +1985,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                     ),
                   ),
                 ),*/
-              /*  LayoutBuilder(
+                          /*  LayoutBuilder(
                   builder:
                       (BuildContext context, BoxConstraints constraints) {
                     // Check if the device width is less than 600 (considered as phone screen)
@@ -1695,32 +2038,33 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                     }
                   },
                 ),*/
-              ],
-            )):SizedBox(
-          width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Lottie.asset(
-                'assets/no_internet.json',
-                width: 200,
-                height: 200,
-                fit: BoxFit.fill,
+                        ],
+                      ))
+            : SizedBox(
+                width: double.infinity,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Lottie.asset(
+                      'assets/no_internet.json',
+                      width: 200,
+                      height: 200,
+                      fit: BoxFit.fill,
+                    ),
+                    Text(
+                      'No Internet',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      'Check your internet connection',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
               ),
-              Text(
-                'No Internet',
-                style: TextStyle(
-                    fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                'Check your internet connection',
-                style: TextStyle(
-                    fontSize: 16, fontWeight: FontWeight.w500),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

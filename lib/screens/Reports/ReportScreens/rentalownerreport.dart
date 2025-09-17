@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -2867,29 +2868,33 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Container(
-                  height: 50,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: Colors.grey),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
+                child: DropdownButtonHideUnderline(
+                  child: Material(
+                    elevation: 3,
+                    borderRadius: BorderRadius.circular(8),
+                    child: DropdownButton2<String>(
                       isExpanded: true,
-                      hint: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 5),
-                        child: Text(
-                          selectedRentalOwnerIds.isEmpty
-                              ? "Select Rental Owners"
-                              : selectedRentalOwnerIds
-                                  .map((id) => rentalowners.firstWhere(
-                                      (owner) =>
+                      hint: Row(
+                        children: [
+                          SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              selectedRentalOwnerIds.isEmpty
+                                  ? "Select Rental Owners"
+                                  : selectedRentalOwnerIds.length == 1
+                                      ? rentalowners.firstWhere((owner) =>
                                           owner['rentalowner_id'] ==
-                                          id)['rentalOwner_name'])
-                                  .join(', '),
-                          style: TextStyle(fontSize: 14, color: Colors.black),
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                                          selectedRentalOwnerIds
+                                              .first)['rentalOwner_name']
+                                      : "${selectedRentalOwnerIds.length} Rental Owners Selected",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                       items: rentalowners.map((owner) {
                         return DropdownMenuItem<String>(
@@ -2929,7 +2934,39 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                           ),
                         );
                       }).toList(),
-                      onChanged: (_) {},
+                      value:
+                          null, // Since we're using multi-select, we don't set a single value
+                      onChanged: (_) {}, // Keep the existing functionality
+                      buttonStyleData: ButtonStyleData(
+                        height: 50,
+                        width: double.infinity,
+                        padding: const EdgeInsets.only(left: 14, right: 14),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: const Color(0xFF8A95A8),
+                          ),
+                          color: Colors.white,
+                        ),
+                        elevation: 0,
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        maxHeight: 250,
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        offset: const Offset(-20, 0),
+                        scrollbarTheme: ScrollbarThemeData(
+                          radius: const Radius.circular(40),
+                          thickness: MaterialStateProperty.all(6),
+                          thumbVisibility: MaterialStateProperty.all(true),
+                        ),
+                      ),
+                      menuItemStyleData: const MenuItemStyleData(
+                        height: 50,
+                        padding: EdgeInsets.only(left: 14, right: 14),
+                      ),
                     ),
                   ),
                 ),
