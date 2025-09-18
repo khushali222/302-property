@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Rental/mortgage/mortgage_summery.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
@@ -9,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 
 class PropertyMortgageTable extends StatefulWidget {
   final String propertyId;
@@ -308,9 +310,10 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
   }
 
   String _formatCurrency(dynamic amount) {
-    if (amount == null) return '\$0';
+    if (amount == null) return '\$0.00';
     final numValue = amount is String ? double.tryParse(amount) ?? 0 : amount;
-    return '\$${numValue.toStringAsFixed(2)}';
+    final formatter = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
+    return formatter.format(numValue);
   }
 
   Widget _buildHeaders() {
@@ -325,12 +328,12 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(
-              "    Bank",
+              "    Borrower",
               style: TextStyle(
                   color: const Color(0xFF1E3A8A), fontWeight: FontWeight.bold),
             ),
             Text(
-              "Status    ",
+              "Status      ",
               style: TextStyle(
                   color: const Color(0xFF1E3A8A), fontWeight: FontWeight.bold),
             ),
@@ -495,8 +498,9 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
         // Content Section
         _isLoading
             ? const Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1E3A8A)),
+                child: SpinKitFadingCircle(
+                  color: Colors.black,
+                  size: 50.0,
                 ),
               )
             : _filteredMortgages.isEmpty
@@ -561,15 +565,14 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
                                         padding: const EdgeInsets.all(2.0),
                                         child: Row(
                                           mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                              MainAxisAlignment.start,
                                           crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                              CrossAxisAlignment.center,
                                           children: <Widget>[
                                             InkWell(
                                               onTap: () {
                                                 setState(() {
-                                                  if (expandedIndex ==
-                                                      index) {
+                                                  if (expandedIndex == index) {
                                                     expandedIndex = null;
                                                   } else {
                                                     expandedIndex = index;
@@ -577,42 +580,37 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
                                                 });
                                               },
                                               child: Container(
-                                                margin:
-                                                const EdgeInsets.only(
+                                                margin: const EdgeInsets.only(
                                                     left: 5, right: 5),
                                                 padding: !isExpanded
                                                     ? const EdgeInsets.only(
-                                                    bottom: 10)
+                                                        bottom: 10)
                                                     : const EdgeInsets.only(
-                                                    top: 10),
+                                                        top: 10),
                                                 child: FaIcon(
                                                   isExpanded
-                                                      ? FontAwesomeIcons
-                                                      .sortUp
+                                                      ? FontAwesomeIcons.sortUp
                                                       : FontAwesomeIcons
-                                                      .sortDown,
+                                                          .sortDown,
                                                   size: 20,
-                                                  color: const Color(
-                                                      0xFF1E3A8A),
+                                                  color:
+                                                      const Color(0xFF1E3A8A),
                                                 ),
                                               ),
                                             ),
                                             Expanded(
                                               flex: 3,
                                               child: Padding(
-                                                padding:
-                                                const EdgeInsets.only(
+                                                padding: const EdgeInsets.only(
                                                     left: 8.0),
                                                 child: InkWell(
                                                   onTap: () {
                                                     setState(() {
                                                       if (expandedIndex ==
                                                           index) {
-                                                        expandedIndex =
-                                                        null;
+                                                        expandedIndex = null;
                                                       } else {
-                                                        expandedIndex =
-                                                            index;
+                                                        expandedIndex = index;
                                                       }
                                                     });
                                                   },
@@ -621,13 +619,11 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
                                                       children: [
                                                         TextSpan(
                                                           text:
-                                                          '${mortgage['bank_name'] ?? 'N/A'}',
+                                                              '${mortgage['borrower_first_name'] ?? 'N/A'} ${mortgage['borrower_last_name'] ?? 'N/A'}',
                                                           style: TextStyle(
-                                                            color:
-                                                            blueColor,
+                                                            color: blueColor,
                                                             fontWeight:
-                                                            FontWeight
-                                                                .bold,
+                                                                FontWeight.bold,
                                                             fontSize: 13,
                                                           ),
                                                         ),
@@ -642,18 +638,16 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
                                               child: Container(
                                                 margin: EdgeInsets.only(
                                                     left: 50, right: 5),
-                                                padding: const EdgeInsets
-                                                    .symmetric(
-                                                    horizontal: 8,
-                                                    vertical: 6),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 6),
                                                 decoration: BoxDecoration(
                                                   color: _getStatusColor(
-                                                      mortgage[
-                                                      'status'])
+                                                          mortgage['status'])
                                                       .withOpacity(0.1),
                                                   borderRadius:
-                                                  BorderRadius.circular(
-                                                      12),
+                                                      BorderRadius.circular(12),
                                                   border: Border.all(
                                                     color: _getStatusColor(
                                                         mortgage['status']),
@@ -663,15 +657,14 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
                                                 child: Center(
                                                   child: Text(
                                                     (mortgage['status'] ??
-                                                        'unknown')
+                                                            'unknown')
                                                         .toString()
                                                         .toUpperCase(),
                                                     style: TextStyle(
                                                       color: _getStatusColor(
-                                                          mortgage[
-                                                          'status']),
+                                                          mortgage['status']),
                                                       fontWeight:
-                                                      FontWeight.w600,
+                                                          FontWeight.w600,
                                                       fontSize: 10,
                                                     ),
                                                   ),
@@ -839,7 +832,7 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
                                                           'Mortgage#',
                                                           _getDisplayValue(
                                                               mortgage[
-                                                                      'mortgage_no']),
+                                                                  'mortgage_no']),
                                                           '',
                                                           _getDisplayValue(''),
                                                         ),

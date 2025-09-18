@@ -9,6 +9,9 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 
+import '../../../widgets/appbar.dart';
+import '../../../widgets/custom_drawer.dart';
+
 // Custom Phone Number Formatter
 class PhoneNumberFormatter extends TextInputFormatter {
   @override
@@ -725,18 +728,52 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.mortgageId != null
-            ? 'Edit Mortgage Information'
-            : 'Add Mortgage Information'),
-        backgroundColor: blueColor,
-        foregroundColor: Colors.white,
-        elevation: 0,
+      appBar: widget_302.App_Bar(context: context),
+      backgroundColor: Colors.white,
+      drawer: CustomDrawer(
+        currentpage: "Properties",
+        dropdown: true,
       ),
       body: Form(
         key: _formKey,
         child: Column(
           children: [
+            SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(5.0),
+                child: Container(
+                  height: 45,
+                  width: double.infinity,
+                  padding: EdgeInsets.only(top: 10, left: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5.0),
+                    color: blueColor,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        offset: Offset(0.0, 1.0),
+                        blurRadius: 6.0,
+                      ),
+                    ],
+                  ),
+                  //if appliance is not null then show edit else show add
+                  child: Text(
+                    widget.mortgageId != null
+                        ? 'Edit Mortgage Information'
+                        : 'Add Mortgage Information',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+              ),
+            ),
             Expanded(
               child: SingleChildScrollView(
                 controller: _scrollController,
@@ -745,7 +782,6 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Property Selection Section
-
                     if (_isLoadingProperties)
                       Container(
                         padding: const EdgeInsets.all(16),

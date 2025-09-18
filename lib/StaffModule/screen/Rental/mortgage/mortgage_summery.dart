@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../provider/dateProvider.dart';
 import '../../../widgets/appbar.dart';
@@ -94,9 +95,10 @@ class _MortgageSummaryState extends State<MortgageSummary> {
   }
 
   String _formatCurrency(dynamic amount) {
-    if (amount == null) return '\$0';
+    if (amount == null) return '\$0.00';
     final numValue = amount is String ? double.tryParse(amount) ?? 0 : amount;
-    return '\$${numValue.toStringAsFixed(2)}';
+    final formatter = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
+    return formatter.format(numValue);
   }
 
   String _formatDate(String? dateString) {
@@ -393,15 +395,22 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                   _buildInfoCard(
                     title: 'Important Dates',
                     children: [
-                      _buildDateRow('Start Date',
-                          dateProvider.formatCurrentDate('${_formatDate(mortgageData!['start_date'])}')
-                      ),
                       _buildDateRow(
-                          'End Date',dateProvider.formatCurrentDate('${_formatDate(mortgageData!['end_date'])}') ),
-                      _buildDateRow('Last Payment',
-                          dateProvider.formatCurrentDate('${_formatDate(mortgageData!['last_payment_date'])}')   ),
-                      _buildDateRow('Next Payment',
-                          dateProvider.formatCurrentDate('${_formatDate(mortgageData!['next_payment_date'])}') ),
+                          'Start Date',
+                          dateProvider.formatCurrentDate(
+                              '${_formatDate(mortgageData!['start_date'])}')),
+                      _buildDateRow(
+                          'End Date',
+                          dateProvider.formatCurrentDate(
+                              '${_formatDate(mortgageData!['end_date'])}')),
+                      _buildDateRow(
+                          'Last Payment',
+                          dateProvider.formatCurrentDate(
+                              '${_formatDate(mortgageData!['last_payment_date'])}')),
+                      _buildDateRow(
+                          'Next Payment',
+                          dateProvider.formatCurrentDate(
+                              '${_formatDate(mortgageData!['next_payment_date'])}')),
                     ],
                   ),
 

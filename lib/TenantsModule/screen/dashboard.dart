@@ -7,30 +7,20 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/work_order/workorder_table.dart';
 import 'package:three_zero_two_property/TenantsModule/widgets/custom_drawer.dart';
-import 'package:three_zero_two_property/screens/Maintenance/Workorder/Workorder_table.dart';
 import '../../provider/dateProvider.dart';
 import '../repository/permission_provider.dart';
 import '../widgets/pie_chart.dart';
-import 'package:three_zero_two_property/screens/Rental/Properties/properties.dart';
-import 'property/property_table.dart';
 import '../widgets/appbar.dart';
 import 'package:http/http.dart' as http;
 import '../../constant/constant.dart';
-import '../widgets/drawer_tiles.dart';
-
-import '../../widgets/barchart.dart';
-import '../widgets/chart.dart';
-import 'profile.dart';
 import 'financial/financial_table.dart';
 
 class DashboardData {

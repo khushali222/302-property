@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Rental/mortgage/mortgage_summery.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
@@ -77,6 +78,12 @@ class _MortgageTableState extends State<MortgageTable> {
         if (data['success'] == true && data['data'] != null) {
           setState(() {
             _mortgages = List<Map<String, dynamic>>.from(data['data']);
+            // Sort by mortgage number in descending order
+            _mortgages.sort((a, b) {
+              String mortgageA = (a['mortgage_no'] ?? '').toString();
+              String mortgageB = (b['mortgage_no'] ?? '').toString();
+              return mortgageB.compareTo(mortgageA);
+            });
             _filteredMortgages = List.from(_mortgages);
           });
         } else {
@@ -169,6 +176,12 @@ class _MortgageTableState extends State<MortgageTable> {
           'borrower_last_name': 'Smith',
         },
       ];
+      // Sort by mortgage number in descending order
+      _mortgages.sort((a, b) {
+        String mortgageA = (a['mortgage_no'] ?? '').toString();
+        String mortgageB = (b['mortgage_no'] ?? '').toString();
+        return mortgageB.compareTo(mortgageA);
+      });
       _filteredMortgages = List.from(_mortgages);
     });
   }
@@ -300,9 +313,10 @@ class _MortgageTableState extends State<MortgageTable> {
   }
 
   String _formatCurrency(dynamic amount) {
-    if (amount == null) return '\$0';
+    if (amount == null) return '\$0.00';
     final numValue = amount is String ? double.tryParse(amount) ?? 0 : amount;
-    return '\$${numValue.toStringAsFixed(2)}';
+    final formatter = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
+    return formatter.format(numValue);
   }
 
   String _formatDate(String? dateString) {
@@ -524,10 +538,10 @@ class _MortgageTableState extends State<MortgageTable> {
           // Content Section
           Expanded(
             child: _isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(Color(0xFF1E3A8A)),
+                ? Center(
+                    child: SpinKitFadingCircle(
+                      color: Colors.black,
+                      size: 50.0,
                     ),
                   )
                 : _filteredMortgages.isEmpty
@@ -758,7 +772,7 @@ class _MortgageTableState extends State<MortgageTable> {
                                                               'Mortgage#',
                                                               _getDisplayValue(
                                                                   mortgage[
-                                                                  'mortgage_no']),
+                                                                      'mortgage_no']),
                                                               '',
                                                               _getDisplayValue(
                                                                   ''),
