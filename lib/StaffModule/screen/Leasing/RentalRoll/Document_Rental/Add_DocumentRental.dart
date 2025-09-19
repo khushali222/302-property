@@ -25,7 +25,7 @@ import '../../../../widgets/custom_drawer.dart';
 
 class AddDocument extends StatefulWidget {
   String leaseId;
-  AddDocument({super.key,required this.leaseId});
+  AddDocument({super.key, required this.leaseId});
 
   @override
   State<AddDocument> createState() => _AddDocumentState();
@@ -52,12 +52,11 @@ class _AddDocumentState extends State<AddDocument> {
   List<File> _pdfFiles = [];
 
   List<String> _uploadedFileNames = [];
+  String? _fileUploadError;
 
   File? _image;
   List<File> _images = [];
   String? _uploadedFileName;
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +96,7 @@ class _AddDocumentState extends State<AddDocument> {
                         const SizedBox(
                           height: 8,
                         ),
-                         Text('Name *',
+                        Text('Name *',
                             style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
@@ -119,7 +118,7 @@ class _AddDocumentState extends State<AddDocument> {
                         const SizedBox(
                           height: 12,
                         ),
-                         Text('Document Type *',
+                        Text('Document Type *',
                             style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
@@ -164,19 +163,20 @@ class _AddDocumentState extends State<AddDocument> {
                                         ),
                                         items: items
                                             .map((String item) =>
-                                            DropdownMenuItem<String>(
-                                              value: item,
-                                              child: Text(
-                                                item,
-                                                style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                ),
-                                                overflow:
-                                                TextOverflow.ellipsis,
-                                              ),
-                                            ))
+                                                DropdownMenuItem<String>(
+                                                  value: item,
+                                                  child: Text(
+                                                    item,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ))
                                             .toList(),
                                         value: selectedValue,
                                         onChanged: (value) {
@@ -191,7 +191,7 @@ class _AddDocumentState extends State<AddDocument> {
                                               left: 14, right: 14),
                                           decoration: BoxDecoration(
                                             borderRadius:
-                                            BorderRadius.circular(10),
+                                                BorderRadius.circular(10),
                                             border: Border.all(
                                               color: Colors.black26,
                                             ),
@@ -204,20 +204,20 @@ class _AddDocumentState extends State<AddDocument> {
                                           width: 200,
                                           decoration: BoxDecoration(
                                             borderRadius:
-                                            BorderRadius.circular(14),
+                                                BorderRadius.circular(14),
                                             //color: Colors.redAccent,
                                           ),
                                           offset: const Offset(-20, 0),
                                           scrollbarTheme: ScrollbarThemeData(
                                             radius: const Radius.circular(40),
                                             thickness:
-                                            MaterialStateProperty.all(6),
+                                                MaterialStateProperty.all(6),
                                             thumbVisibility:
-                                            MaterialStateProperty.all(true),
+                                                MaterialStateProperty.all(true),
                                           ),
                                         ),
                                         menuItemStyleData:
-                                        const MenuItemStyleData(
+                                            const MenuItemStyleData(
                                           height: 40,
                                           padding: EdgeInsets.only(
                                               left: 14, right: 14),
@@ -245,11 +245,11 @@ class _AddDocumentState extends State<AddDocument> {
                         const SizedBox(
                           height: 12,
                         ),
-                         Text('Upload file *',
+                        Text('Upload file *',
                             style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
-                                color:blueColor)),
+                                color: blueColor)),
                         const SizedBox(
                           height: 5,
                         ),
@@ -268,21 +268,35 @@ class _AddDocumentState extends State<AddDocument> {
                             ),
                             onPressed: () async {
                               _pickPdfFiles().then((_) {
-                                setState(
-                                        () {}); // Rebuild the widget after selecting the image
+                                setState(() {
+                                  _fileUploadError =
+                                      null; // Clear error when file is selected
+                                }); // Rebuild the widget after selecting the image
                               });
                             },
                             child: Text(
                               'Upload here',
-                              style: TextStyle(color: Color(0xFFf7f8f9),fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  color: Color(0xFFf7f8f9),
+                                  fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
+                        if (_fileUploadError != null)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 14, top: 8),
+                            child: Text(
+                              _fileUploadError!,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
                         SingleChildScrollView(
                           child: Column(
                             children: _uploadedFileNames.map((fileName) {
-                              int index =
-                              _uploadedFileNames.indexOf(fileName);
+                              int index = _uploadedFileNames.indexOf(fileName);
                               return ListTile(
                                 title: Text(
                                   fileName,
@@ -296,6 +310,8 @@ class _AddDocumentState extends State<AddDocument> {
                                   onPressed: () {
                                     setState(() {
                                       _uploadedFileNames.removeAt(index);
+                                      _fileUploadError =
+                                          null; // Clear error when file is removed
                                     });
                                   },
                                   icon: const FaIcon(
@@ -307,14 +323,13 @@ class _AddDocumentState extends State<AddDocument> {
                             }).toList(),
                           ),
                         ),
-
                       ],
                     ),
                   ),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 16 ,right: 16),
+                padding: const EdgeInsets.only(left: 16, right: 16),
                 child: Row(
                   children: [
                     Container(
@@ -328,7 +343,27 @@ class _AddDocumentState extends State<AddDocument> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0))),
                             onPressed: () async {
-                              if (_formkey.currentState?.validate() ?? false) {
+                              // Clear previous file upload error
+                              setState(() {
+                                _fileUploadError = null;
+                              });
+
+                              // Validate file upload
+                              bool hasFileError = false;
+                              if (_uploadedFileNames.isEmpty) {
+                                setState(() {
+                                  _fileUploadError =
+                                      'Please upload at least one file';
+                                });
+                                hasFileError = true;
+                              }
+
+                              // Validate form fields
+                              bool isFormValid =
+                                  _formkey.currentState?.validate() ?? false;
+
+                              // Only proceed if both validations pass
+                              if (isFormValid && !hasFileError) {
                                 print('valid');
                                 addDocument();
                                 //_submitApplicantAndLease();
@@ -339,7 +374,12 @@ class _AddDocumentState extends State<AddDocument> {
                             },
                             child: const Text(
                               'Create Document',
-                              style: TextStyle(color: Color(0xFFf7f8f9,),fontSize: 15,fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  color: Color(
+                                    0xFFf7f8f9,
+                                  ),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
                             ))),
                     const SizedBox(
                       width: 8,
@@ -358,9 +398,11 @@ class _AddDocumentState extends State<AddDocument> {
                               Navigator.pop(context);
                               firstName.clear();
                             },
-                            child:  Text(
+                            child: Text(
                               'Cancel',
-                              style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold),
                             )))
                   ],
                 ),
@@ -371,6 +413,7 @@ class _AddDocumentState extends State<AddDocument> {
       ),
     );
   }
+
   Future<void> _pickPdfFiles() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -434,9 +477,8 @@ class _AddDocumentState extends State<AddDocument> {
     } else {
       throw Exception('Failed to upload file: ${responseBody['message']}');
     }
-
-
   }
+
   addDocument() async {
     setState(() {
       isLoading = true; // Start loading
@@ -456,11 +498,11 @@ class _AddDocumentState extends State<AddDocument> {
         "document_id": DateTime.now().millisecondsSinceEpoch,
         "file_name": firstName.text.trim(),
         "file_type": selectedValue,
-        "document_name": _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : "",
+        "document_name":
+            _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : "",
         "document_type": "application/pdf",
         "created_date": DateFormat("yyyy-MM-dd h:mm:ss").format(DateTime.now()),
         "created_by": id, // Ensure it's properly formatted
-
       };
 
       print(jsonEncode(values)); // Debugging: Check final JSON format
@@ -492,7 +534,7 @@ class _AddDocumentState extends State<AddDocument> {
         Navigator.pop(context, true); // optional: close page after success
         return responseData;
       } else {
-        Fluttertoast.showToast(msg:"Failed to add document");
+        Fluttertoast.showToast(msg: "Failed to add document");
         throw Exception('Failed to add document');
       }
     } catch (error) {
@@ -504,6 +546,4 @@ class _AddDocumentState extends State<AddDocument> {
       });
     }
   }
-
-
 }

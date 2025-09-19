@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -11,13 +13,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:provider/provider.dart';
 import '../../../../provider/dateProvider.dart';
+import '../../../../widgets/appbar.dart';
+import '../../../../widgets/custom_drawer.dart';
 
 class Add_property_Tax extends StatefulWidget {
   // pass the mortgage data to this screen from the previous screen
   final Map<String, dynamic>? taxData;
   final String? taxId; // For editing existing mortgages
+  final String? propertyId; // Property ID for creating new tax records
 
-  const Add_property_Tax({Key? key, this.taxId, this.taxData})
+  const Add_property_Tax({Key? key, this.taxId, this.taxData, this.propertyId})
       : super(key: key);
 
   @override
@@ -36,6 +41,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
   final _paidDateController = TextEditingController();
   final _statusController = TextEditingController();
   final _taxYearController = TextEditingController();
+  final _notesController = TextEditingController();
 
   // Selected dates
   DateTime? _dueDate;
@@ -53,6 +59,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
   List<String> _yearOptions = [];
 
   bool _isLoading = false;
+  bool _hasValidated = false; // Track if validation has been attempted
 
   String _convertToApiFormat(String displayDate) {
     if (displayDate.isEmpty) return "";
@@ -96,6 +103,8 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
 
     if (widget.taxId != null && widget.taxData != null) {
       _populateFormWithData(widget.taxData!);
+      // Don't show validation errors for pre-populated data
+      _hasValidated = false;
     }
   }
 
@@ -107,6 +116,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
     _paidDateController.dispose();
     _statusController.dispose();
     _taxYearController.dispose();
+    _notesController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -169,15 +179,16 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
   }
 
   String? _validateAmount(String? value) {
-    if (value != null && value.isNotEmpty) {
-      final amountRegex = RegExp(r'^\$?\d+(\.\d{1,2})?$');
-      if (!amountRegex.hasMatch(value)) {
-        return 'Please enter a valid amount';
-      }
-      final amount = double.tryParse(value.replaceAll('\$', ''));
-      if (amount == null || amount <= 0) {
-        return 'Amount must be greater than 0';
-      }
+    if (value == null || value.trim().isEmpty) {
+      return 'This field is required';
+    }
+    final amountRegex = RegExp(r'^\$?\d+(\.\d{1,2})?$');
+    if (!amountRegex.hasMatch(value)) {
+      return 'Please enter a valid amount';
+    }
+    final amount = double.tryParse(value.replaceAll('\$', ''));
+    if (amount == null || amount <= 0) {
+      return 'Amount must be greater than 0';
     }
     return null;
   }
@@ -192,6 +203,13 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
             taxData['assessment_value']?.toString() ?? '';
         _taxYearController.text = taxData['tax_year']?.toString() ?? '';
         _statusController.text = taxData['status'] ?? '';
+        _notesController.text = taxData['notes'] ?? '';
+
+        // Handle existing receipt
+        _existingReceipt = taxData['receipt'];
+        if (_existingReceipt != null && _existingReceipt!.isNotEmpty) {
+          _uploadedFileNames.add(_existingReceipt!);
+        }
 
         // Handle dates using DateProvider
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -223,7 +241,65 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
   }
 
   void _saveForm() async {
-    if (_formKey.currentState!.validate()) {
+    print('=== SAVE FORM STARTED ===');
+
+    // Set validation flag to show error messages
+    setState(() {
+      _hasValidated = true;
+    });
+
+    // Manual validation
+    bool isValid = true;
+
+    // Validate all required fields
+    if (_taxYearController.text.trim().isEmpty) {
+      isValid = false;
+    }
+    if (_taxAuthorityController.text.trim().isEmpty) {
+      isValid = false;
+    }
+    if (_taxAmountController.text.trim().isEmpty) {
+      isValid = false;
+    }
+    if (_assessmentController.text.trim().isEmpty) {
+      isValid = false;
+    }
+    if (_dueDateController.text.trim().isEmpty) {
+      isValid = false;
+    }
+    if (_statusController.text.trim().isEmpty) {
+      isValid = false;
+    }
+
+    // Validate amount fields
+    if (_taxAmountController.text.isNotEmpty) {
+      final amountRegex = RegExp(r'^\$?\d+(\.\d{1,2})?$');
+      if (!amountRegex.hasMatch(_taxAmountController.text)) {
+        isValid = false;
+      } else {
+        final amount =
+            double.tryParse(_taxAmountController.text.replaceAll('\$', ''));
+        if (amount == null || amount <= 0) {
+          isValid = false;
+        }
+      }
+    }
+
+    if (_assessmentController.text.isNotEmpty) {
+      final amountRegex = RegExp(r'^\$?\d+(\.\d{1,2})?$');
+      if (!amountRegex.hasMatch(_assessmentController.text)) {
+        isValid = false;
+      } else {
+        final amount =
+            double.tryParse(_assessmentController.text.replaceAll('\$', ''));
+        if (amount == null || amount <= 0) {
+          isValid = false;
+        }
+      }
+    }
+
+    if (isValid) {
+      print('=== VALIDATION PASSED ===');
       setState(() {
         _isLoading = true;
       });
@@ -233,8 +309,13 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
         String? token = prefs.getString('token');
         String? id = prefs.getString('adminId');
 
+        print('Token: ${token != null ? "Present" : "Missing"}');
+        print('Admin ID: ${id != null ? "Present" : "Missing"}');
+
         // Prepare the tax data according to your API structure
         final taxData = {
+          'propertyId': widget.propertyId, // Include property ID
+          'admin_id': id, // Add admin_id field
           'tax_authority': _taxAuthorityController.text.trim(),
           'tax_amount':
               double.tryParse(_taxAmountController.text.replaceAll('\$', '')) ??
@@ -249,14 +330,38 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
           'paid_date': _paidDateController.text.isNotEmpty
               ? _convertToApiFormat(_paidDateController.text.trim())
               : null,
-          'status': _statusController.text.trim().toLowerCase(),
+          'status':
+              _statusController.text.trim(), // Keep original capitalization
+          'notes': _notesController.text.trim(),
+          'receipt':
+              _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : null,
         };
+
+        print('=== TAX DATA TO SEND ===');
+        print('Property ID: ${widget.propertyId}');
+        print('Admin ID: $id');
+        print('Tax Authority: ${_taxAuthorityController.text.trim()}');
+        print('Tax Amount: ${_taxAmountController.text}');
+        print('Assessment Value: ${_assessmentController.text}');
+        print('Tax Year: ${_taxYearController.text.trim()}');
+        print('Due Date: ${_dueDateController.text}');
+        print('Paid Date: ${_paidDateController.text}');
+        print('Status: ${_statusController.text.trim()}');
+        print('Notes: ${_notesController.text.trim()}');
+        print(
+            'Receipt: ${_uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : "None"}');
+        print('Full Tax Data: $taxData');
 
         http.Response response;
         String apiUrl = '$Api_url/api/taxes';
 
+        print('=== API REQUEST ===');
+        print('API URL: $apiUrl');
+        print('Is Edit Mode: ${widget.taxId != null}');
+
         if (widget.taxId != null) {
           // Update existing tax (PUT)
+          print('Making PUT request to: $apiUrl/${widget.taxId}');
           response = await http
               .put(
                 Uri.parse('$apiUrl/${widget.taxId}'),
@@ -270,6 +375,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
               .timeout(const Duration(seconds: 30));
         } else {
           // Create new tax (POST)
+          print('Making POST request to: $apiUrl');
           response = await http
               .post(
                 Uri.parse(apiUrl),
@@ -283,7 +389,14 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
               .timeout(const Duration(seconds: 30));
         }
 
+        print('=== API RESPONSE ===');
+        print('Status Code: ${response.statusCode}');
+        print('Response Body: ${response.body}');
+
         if (response.statusCode == 200 || response.statusCode == 201) {
+          print('=== SUCCESS ===');
+          print(
+              'Tax record ${widget.taxId != null ? "updated" : "created"} successfully!');
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -293,13 +406,21 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
                 backgroundColor: Colors.green,
               ),
             );
+            print('=== NAVIGATING BACK ===');
             Navigator.pop(context);
           }
         } else {
+          print('=== ERROR ===');
+          print('Failed to save tax record. Status: ${response.statusCode}');
+          // Reset validation flag if form submission fails
+          setState(() {
+            _hasValidated = false;
+          });
           if (mounted) {
             final errorData = json.decode(response.body);
             final errorMessage =
                 errorData['message'] ?? 'Failed to save tax record';
+            print('Error Message: $errorMessage');
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(errorMessage),
@@ -309,6 +430,8 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
           }
         }
       } catch (e) {
+        print('=== EXCEPTION ===');
+        print('Exception occurred: $e');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -318,13 +441,18 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
           );
         }
       } finally {
+        print('=== FINALLY BLOCK ===');
         if (mounted) {
           setState(() {
             _isLoading = false;
           });
         }
       }
+    } else {
+      print('=== VALIDATION FAILED ===');
+      print('Form validation failed, not submitting');
     }
+    print('=== SAVE FORM ENDED ===');
   }
 
   //for image
@@ -334,6 +462,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
   String? _uploadedFileName;
   List<String> _uploadedFileNames = [];
   List<String> _imageUrls = [];
+  String? _existingReceipt; // Store existing receipt filename from API
   Future<String?> uploadImage(File imageFile) async {
     print(imageFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
@@ -360,7 +489,10 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
 
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
     if (image != null) {
       setState(() {
         _image = File(image.path);
@@ -370,8 +502,72 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
     }
   }
 
+  Future<void> _pickFile() async {
+    try {
+      // Open file picker directly with all supported file types
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: [
+          'pdf',
+          'jpg',
+          'jpeg',
+          'png',
+          'gif',
+          'bmp',
+          'tiff',
+          'webp'
+        ],
+        allowMultiple: false,
+      );
+
+      if (result != null && result.files.single.path != null) {
+        File file = File(result.files.single.path!);
+        setState(() {
+          _images.add(file);
+        });
+        _uploadImage(file);
+      }
+    } catch (e) {
+      print('Error picking file: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error selecting file: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  bool _isValidFileType(String fileName) {
+    final supportedExtensions = [
+      '.pdf',
+      '.jpg',
+      '.jpeg',
+      '.png',
+      '.gif',
+      '.bmp',
+      '.tiff',
+      '.webp'
+    ];
+    final extension =
+        fileName.toLowerCase().substring(fileName.lastIndexOf('.'));
+    return supportedExtensions.contains(extension);
+  }
+
   Future<void> _uploadImage(File imageFile) async {
     try {
+      // Validate file type
+      if (!_isValidFileType(imageFile.path)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                'Unsupported file type. Please select PDF, JPG, PNG, GIF, BMP, TIFF, or WEBP files.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
       String? fileName = await uploadImage(imageFile);
       setState(() {
         _uploadedFileNames.add(fileName!);
@@ -380,23 +576,63 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
       });
     } catch (e) {
       print('Image upload failed: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('File upload failed: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title:
-            Text(widget.taxId != null ? 'Edit Tax Record' : 'Add Tax Record'),
-        backgroundColor: blueColor,
-        foregroundColor: Colors.white,
-        elevation: 0,
+      appBar: widget_302.App_Bar(context: context),
+      backgroundColor: Colors.white,
+      drawer: CustomDrawer(
+        currentpage: "Properties",
+        dropdown: true,
       ),
       body: Form(
         key: _formKey,
         child: Column(
           children: [
+            SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(5.0),
+                child: Container(
+                  height: 50.0,
+                  width: double.infinity,
+                  padding: EdgeInsets.only(top: 10, left: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5.0),
+                    color: blueColor,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        offset: Offset(0.0, 1.0),
+                        blurRadius: 6.0,
+                      ),
+                    ],
+                  ),
+                  //if appliance is not null then show edit else show add
+                  child: Text(
+                    widget.taxId != null ? 'Edit Tax Record' : 'Add Tax Record',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
             Expanded(
               child: SingleChildScrollView(
                 controller: _scrollController,
@@ -404,7 +640,9 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildSectionHeader('Add new tax record for this property'),
+                    _buildSectionHeader(widget.taxId != null
+                        ? 'Update tax record details'
+                        : 'Add new tax record for this property'),
                     const SizedBox(height: 16),
                     _buildDropdownField(
                       controller: _taxYearController,
@@ -429,6 +667,9 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
                       hint: '\$Enter Tax amount',
                       keyboardType: TextInputType.number,
                       validator: _validateAmount,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     _buildTextField(
@@ -437,6 +678,9 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
                       hint: '\$Enter assessment value',
                       keyboardType: TextInputType.number,
                       validator: _validateAmount,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     _buildDateField(
@@ -447,6 +691,8 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
                           .toUpperCase(),
                       onTap: () =>
                           _selectDate(context, _dueDateController, _dueDate),
+                      validator: (value) =>
+                          _validateRequired(value, 'Due date'),
                     ),
                     const SizedBox(height: 16),
                     _buildDateField(
@@ -467,12 +713,19 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
                       items: _statusOptions,
                     ),
                     const SizedBox(height: 16),
+                    _buildTextField(
+                      controller: _notesController,
+                      label: 'Notes',
+                      hint: 'Enter any additional notes (optional)',
+                      maxLines: 3,
+                    ),
+                    const SizedBox(height: 16),
                     Text("Receipt (Optional)"),
                     const SizedBox(height: 8),
-                    if (_images.isEmpty)
+                    if (_images.isEmpty && _existingReceipt == null)
                       GestureDetector(
                         onTap: () {
-                          _pickImage().then((_) {
+                          _pickFile().then((_) {
                             setState(() {});
                           });
                         },
@@ -496,7 +749,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
                               ),
                               SizedBox(height: 8),
                               Text(
-                                'Upload your Photo here',
+                                'Click to upload receipt',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 16,
@@ -506,23 +759,18 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
                               ),
                               SizedBox(height: 4),
                               Text(
-                                'Maximum File Size is 20MB',
+                                'Supported File Types: PDF, JPG, PNG, GIF, BMP, TIFF, WEBP',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.grey),
-                              ),
-                              Text(
-                                'Supported File Types are .png, .jpeg, .pdf, .csv',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.grey),
+                                style:
+                                    TextStyle(fontSize: 12, color: Colors.grey),
                               ),
                             ],
                           ),
                         ),
                       ),
-                    if (_images.isEmpty) SizedBox(height: 16),
-                    if (_images.isNotEmpty) ...[
+                    if (_images.isEmpty && _existingReceipt == null)
+                      SizedBox(height: 16),
+                    if (_images.isNotEmpty || _existingReceipt != null) ...[
                       Container(
                         width: double.infinity,
                         padding: EdgeInsets.all(10),
@@ -535,188 +783,184 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              // crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                GestureDetector(
-                                    onTap: () {
-                                      _pickImage().then((_) {
-                                        setState(() {});
-                                      });
-                                    },
-                                    child: Container(
-                                        height: 20,
-                                        width: 20,
-                                        decoration: BoxDecoration(
-                                          color: blueColor,
-                                          borderRadius:
-                                          BorderRadius.circular(7),
-                                        ),
-                                        child: Icon(
-                                          Icons.add,
-                                          color: Colors.white,
-                                          size: 15,
-                                        ))),
-                              ],
-                            ),
                             SizedBox(
                               height: 15,
                             ),
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Padding(
-                                padding: EdgeInsets.only(top: 10, right: 10),
-                                child: Wrap(
-                                  alignment: WrapAlignment.start,
-                                  crossAxisAlignment:
-                                  WrapCrossAlignment.start,
-                                  spacing: 8,
-                                  runSpacing: 8,
-                                  children:
-                                  List.generate(_images.length, (index) {
-                                    return Stack(
-                                      clipBehavior: Clip.none, //
+                            // Show receipt filenames as text
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Show existing receipt filename
+                                if (_existingReceipt != null)
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 8),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[100],
+                                      borderRadius: BorderRadius.circular(6),
+                                      border:
+                                          Border.all(color: Colors.grey[300]!),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Padding(
-                                          padding: EdgeInsets.all(4.0),
-                                          child: Container(
-                                            width: 80,
-                                            height: 80,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius.circular(8),
-                                              border: Border.all(
-                                                  color:
-                                                  Colors.grey.shade300),
+                                        Expanded(
+                                          child: Text(
+                                            _existingReceipt!,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black87,
                                             ),
-                                            child: ClipRRect(
-                                              borderRadius:
-                                              BorderRadius.circular(8),
-                                              child: Image.file(
-                                                _images[index],
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
+                                            overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
-                                        Positioned(
-                                          top: 0, //
-                                          right: 0, //
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                _images.removeAt(index);
-                                              });
-                                            },
-                                            child: Container(
-                                              width: 18,
-                                              height: 18,
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                shape: BoxShape.circle,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.black,
-                                                    blurRadius: 4,
-                                                  ),
-                                                ],
-                                              ),
-                                              child: Icon(
-                                                Icons.close,
-                                                size: 14,
-                                                color: Colors.black,
-                                              ),
-                                            ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              _existingReceipt = null;
+                                              _uploadedFileNames.removeWhere(
+                                                  (name) =>
+                                                      name == _existingReceipt);
+                                            });
+                                          },
+                                          child: Icon(
+                                            Icons.close,
+                                            size: 18,
+                                            color: Colors.red,
                                           ),
                                         ),
                                       ],
-                                    );
-                                  }),
-                                ),
-                              ),
+                                    ),
+                                  ),
+                                // Show newly uploaded file names
+                                ...List.generate(_images.length, (index) {
+                                  String fileName =
+                                      _uploadedFileNames.length > index
+                                          ? _uploadedFileNames[index]
+                                          : 'File ${index + 1}';
+                                  return Container(
+                                    margin: EdgeInsets.only(bottom: 8),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[100],
+                                      borderRadius: BorderRadius.circular(6),
+                                      border:
+                                          Border.all(color: Colors.grey[300]!),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            fileName,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black87,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              _images.removeAt(index);
+                                              if (index <
+                                                  _uploadedFileNames.length) {
+                                                _uploadedFileNames
+                                                    .removeAt(index);
+                                              }
+                                            });
+                                          },
+                                          child: Icon(
+                                            Icons.close,
+                                            size: 18,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }),
+                              ],
                             ),
                           ],
                         ),
                       ),
                     ],
-                    const SizedBox(height: 32),
+                    SizedBox(height: 32),
+                    Container(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: _isLoading
+                                  ? null
+                                  : () => Navigator.pop(context),
+                              style: OutlinedButton.styleFrom(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
+                                side: BorderSide(color: blueColor),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: Text(
+                                'Cancel',
+                                style: TextStyle(
+                                  color: blueColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: _isLoading ? null : _saveForm,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: blueColor,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: _isLoading
+                                  ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                Colors.white),
+                                      ),
+                                    )
+                                  : Text(
+                                      widget.taxId != null ? 'Update' : 'Save',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 32),
                   ],
                 ),
               ),
             ),
 
             // Action Buttons
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    spreadRadius: 1,
-                    blurRadius: 5,
-                    offset: const Offset(0, -2),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed:
-                          _isLoading ? null : () => Navigator.pop(context),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        side: BorderSide(color: blueColor),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: Text(
-                        'Cancel',
-                        style: TextStyle(
-                          color: blueColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _saveForm,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: blueColor,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: _isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
-                            )
-                          : Text(
-                              widget.taxId != null ? 'Update' : 'Save',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),
@@ -763,7 +1007,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
           controller: controller,
           keyboardType: keyboardType,
           maxLines: maxLines,
-          validator: validator,
+          validator: null, // Remove built-in validation
           inputFormatters: inputFormatters ?? [],
           decoration: InputDecoration(
             hintText: hint,
@@ -783,19 +1027,30 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(color: blueColor, width: 2),
             ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.red[300]!),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.red[500]!, width: 2),
-            ),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             suffixIcon: suffix,
           ),
         ),
+        if (validator != null && _hasValidated)
+          Builder(
+            builder: (context) {
+              final errorText = validator(controller.text);
+              if (errorText != null) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    errorText,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 12,
+                    ),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
       ],
     );
   }
@@ -805,6 +1060,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
     required String label,
     required String hint,
     required VoidCallback onTap,
+    String? Function(String?)? validator,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -823,6 +1079,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
           child: AbsorbPointer(
             child: TextFormField(
               controller: controller,
+              validator: null, // Remove built-in validation
               decoration: InputDecoration(
                 hintText: hint,
                 hintStyle: TextStyle(
@@ -851,6 +1108,25 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
             ),
           ),
         ),
+        if (validator != null && _hasValidated)
+          Builder(
+            builder: (context) {
+              final errorText = validator(controller.text);
+              if (errorText != null) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    errorText,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 12,
+                    ),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
       ],
     );
   }
@@ -874,51 +1150,97 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
           ),
         ),
         const SizedBox(height: 8),
-        DropdownButtonFormField<String>(
-          value: controller.text.isEmpty ? null : controller.text,
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(
-              color: Colors.grey[400],
-              fontSize: 14,
+        DropdownButtonHideUnderline(
+          child: Material(
+            elevation: 3,
+            borderRadius: BorderRadius.circular(8),
+            child: DropdownButton2<String>(
+              isExpanded: true,
+              hint: Row(
+                children: [
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      hint,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF8A95A8),
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+              items: items.map((String item) {
+                return DropdownMenuItem<String>(
+                  value: item,
+                  child: Text(
+                    item,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                );
+              }).toList(),
+              value: controller.text.isEmpty ? null : controller.text,
+              onChanged: (String? newValue) {
+                setState(() {
+                  controller.text = newValue ?? '';
+                });
+              },
+              buttonStyleData: ButtonStyleData(
+                height: 50,
+                padding: const EdgeInsets.only(left: 14, right: 14),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: const Color(0xFF8A95A8),
+                  ),
+                  color: Colors.white,
+                ),
+              ),
+              dropdownStyleData: DropdownStyleData(
+                maxHeight: 250,
+                width: 200,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                offset: const Offset(-20, 0),
+                scrollbarTheme: ScrollbarThemeData(
+                  radius: const Radius.circular(40),
+                  thickness: MaterialStateProperty.all(6),
+                  thumbVisibility: MaterialStateProperty.all(true),
+                ),
+              ),
+              menuItemStyleData: const MenuItemStyleData(
+                height: 40,
+                padding: EdgeInsets.only(left: 14, right: 14),
+              ),
             ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: blueColor, width: 2),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.red[300]!),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.red[500]!, width: 2),
-            ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
-          items: items.map((String item) {
-            return DropdownMenuItem<String>(
-              value: item,
-              child: Text(item),
-            );
-          }).toList(),
-          onChanged: (String? newValue) {
-            setState(() {
-              controller.text = newValue ?? '';
-            });
-          },
-          validator: validator,
-          icon: Icon(Icons.arrow_drop_down, color: blueColor),
         ),
+        if (validator != null && _hasValidated)
+          Builder(
+            builder: (context) {
+              final errorText = validator(controller.text);
+              if (errorText != null) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    errorText,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 12,
+                    ),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
       ],
     );
   }

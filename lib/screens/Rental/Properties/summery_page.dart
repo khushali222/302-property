@@ -13376,7 +13376,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                 dateProvider
                                                                     .formatCurrentDate(
                                                                         '${workOrder.createdAt}'),
-                                                                'Updated At :',
+                                                                'Updated On :',
                                                                 dateProvider
                                                                     .formatCurrentDate(
                                                                         '${workOrder.createdAt}')),

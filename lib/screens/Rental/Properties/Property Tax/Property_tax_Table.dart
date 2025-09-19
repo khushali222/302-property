@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Rental/mortgage/mortgage_summery.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/custom_drawer.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -13,6 +16,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../provider/dateProvider.dart';
 import 'Add_property_Tax.dart';
+import '../../../../widgets/file_viewer.dart';
 
 class Property_tax_Table extends StatefulWidget {
   final String propertyId;
@@ -65,6 +69,7 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
   }
 
   Future<void> _loadMortgages() async {
+    print('=== LOADING TAXES ===');
     setState(() {
       _isLoading = true;
     });
@@ -76,6 +81,7 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
 
       // Use property-specific API endpoint
       print('Loading tax for property ID: ${widget.propertyId}');
+      print('API URL: ${Api_url}/api/taxes/${widget.propertyId}');
       final response = await http.get(
         Uri.parse('${Api_url}/api/taxes/${widget.propertyId}'),
         headers: {
@@ -84,6 +90,9 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
           'id': 'CRM $id',
         },
       ).timeout(const Duration(seconds: 30));
+
+      print('Response Status: ${response.statusCode}');
+      print('Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -183,49 +192,136 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
   }
 
   void _openAddMortgageForm() {
+    print('=== OPENING ADD TAX FORM ===');
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const Add_property_Tax(),
+        builder: (context) => Add_property_Tax(
+          propertyId: widget.propertyId,
+        ),
       ),
     ).then((_) {
+      print('=== RETURNED FROM ADD TAX FORM ===');
+      print('Refreshing tax list...');
       // Refresh the mortgage list when returning from the form
       _loadMortgages();
     });
   }
 
   void _deleteMortgage(String id) {
-    showDialog(
+    _showDeleteAlert(context, id);
+  }
+
+  void _showDeleteAlert(BuildContext context, String id) {
+    Alert(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Delete Mortgage'),
-          content: const Text('Are you sure you want to delete this mortgage?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  _taxes.removeWhere((tax) => tax['_id'] == id);
-                  _filteredtax.removeWhere((tax) => tax['_id'] == id);
-                });
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Mortgage deleted successfully'),
-                    backgroundColor: Colors.green,
-                  ),
-                );
-              },
-              child: const Text('Delete', style: TextStyle(color: Colors.red)),
-            ),
-          ],
+      type: AlertType.warning,
+      title: "Are you sure?",
+      desc: "Once deleted, you will not be able to recover this tax record!",
+      style: AlertStyle(
+        backgroundColor: Colors.white,
+        //  overlayColor: Colors.black.withOpacity(.8)
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            print('Deleting tax record with ID: $id');
+
+            // Call API to delete the tax record
+            await _deleteTaxRecord(id);
+
+            Navigator.pop(context);
+          },
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
+        ),
+      ],
+    ).show();
+  }
+
+  Future<void> _deleteTaxRecord(String id) async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? adminId = prefs.getString('adminId');
+
+      print('=== DELETING TAX RECORD ===');
+      print('Tax ID: $id');
+      print('Admin ID: $adminId');
+
+      final response = await http.delete(
+        Uri.parse('${Api_url}/api/taxes/$id'),
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': 'CRM $token',
+          'id': 'CRM $adminId',
+        },
+      ).timeout(const Duration(seconds: 30));
+
+      print('Delete Response Status: ${response.statusCode}');
+      print('Delete Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true) {
+          // Remove from local lists
+          setState(() {
+            _taxes.removeWhere((tax) => tax['_id'] == id);
+            _filteredtax.removeWhere((tax) => tax['_id'] == id);
+          });
+
+          Fluttertoast.showToast(
+            msg: "Tax record deleted successfully",
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+          );
+        } else {
+          Fluttertoast.showToast(
+            msg: data['message'] ?? 'Failed to delete tax record',
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+          );
+        }
+      } else {
+        Fluttertoast.showToast(
+          msg: 'Failed to delete tax record',
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
         );
-      },
-    );
+      }
+    } catch (e) {
+      print('Error deleting tax record: $e');
+      Fluttertoast.showToast(
+        msg: 'Error deleting tax record: ${e.toString()}',
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   void _editMortgage(Map<String, dynamic> tax) {
@@ -235,6 +331,7 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
         builder: (context) => Add_property_Tax(
           taxId: tax['_id'],
           taxData: tax,
+          propertyId: widget.propertyId,
         ),
       ),
     ).then((_) {
@@ -248,6 +345,25 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
       context,
       MaterialPageRoute(
           builder: (context) => MortgageSummary(mortgageData: mortgage)),
+    );
+  }
+
+  void _viewReceipt(Map<String, dynamic> tax) {
+    final receipt = tax['receipt'];
+    if (receipt == null || receipt.toString().trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No receipt available for this tax record'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    // Show receipt in dialog
+    FileViewer.showReceiptDialog(
+      context,
+      receipt.toString(),
     );
   }
 
@@ -284,8 +400,9 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
     );
   }
 
-  TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel,
-      String rightValue) {
+  TableRow _buildTableRow(
+      String leftLabel, String leftValue, String rightLabel, String rightValue,
+      {VoidCallback? onRightTap, bool isRightClickable = false}) {
     return TableRow(
       children: [
         TableCell(
@@ -320,10 +437,28 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
                       fontWeight: FontWeight.bold, color: Color(0xFF1E3A8A)),
                 ),
                 const SizedBox(height: 2.0),
-                Text(
-                  rightValue,
-                  style: const TextStyle(color: Colors.grey),
-                ),
+                isRightClickable && onRightTap != null
+                    ? GestureDetector(
+                        onTap: onRightTap,
+                        child: Text(
+                          rightValue,
+                          style: TextStyle(
+                            color: rightValue == 'Tap to view'
+                                ? blueColor
+                                : Colors.grey,
+                            decoration: rightValue == 'Tap to view'
+                                ? TextDecoration.underline
+                                : null,
+                            fontWeight: rightValue == 'Tap to view'
+                                ? FontWeight.w500
+                                : FontWeight.normal,
+                          ),
+                        ),
+                      )
+                    : Text(
+                        rightValue,
+                        style: const TextStyle(color: Colors.grey),
+                      ),
               ],
             ),
           ),
@@ -467,8 +602,9 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
         // Content Section
         _isLoading
             ? const Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1E3A8A)),
+                child: SpinKitFadingCircle(
+                  color: Colors.black,
+                  size: 45,
                 ),
               )
             : _filteredtax.isEmpty
@@ -798,8 +934,32 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
                                                           'PAID DATE',
                                                           _formatDateSafely(
                                                               tax['paid_date']),
-                                                          '',
-                                                          '',
+                                                          'RECEIPT',
+                                                          tax['receipt'] !=
+                                                                      null &&
+                                                                  tax['receipt']
+                                                                      .toString()
+                                                                      .trim()
+                                                                      .isNotEmpty
+                                                              ? 'Tap to view'
+                                                              : 'No receipt',
+                                                          onRightTap: tax['receipt'] !=
+                                                                      null &&
+                                                                  tax['receipt']
+                                                                      .toString()
+                                                                      .trim()
+                                                                      .isNotEmpty
+                                                              ? () =>
+                                                                  _viewReceipt(
+                                                                      tax)
+                                                              : null,
+                                                          isRightClickable:
+                                                              tax['receipt'] !=
+                                                                      null &&
+                                                                  tax['receipt']
+                                                                      .toString()
+                                                                      .trim()
+                                                                      .isNotEmpty,
                                                         ),
                                                       ],
                                                     ),
@@ -870,38 +1030,6 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
                                                                 .edit,
                                                             size: 15,
                                                             color: Colors.green,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 5),
-                                                  GestureDetector(
-                                                    onTap: () =>
-                                                        _viewMortgage(tax),
-                                                    child: Container(
-                                                      height: 35,
-                                                      width: 35,
-                                                      decoration: BoxDecoration(
-                                                        color: Colors
-                                                            .grey.shade200,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                      ),
-                                                      child: const Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          FaIcon(
-                                                            FontAwesomeIcons
-                                                                .eye,
-                                                            size: 15,
-                                                            color: Colors.black,
                                                           ),
                                                         ],
                                                       ),
@@ -1030,16 +1158,18 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
   Color _getStatusColor(String? status) {
     if (status == null) return Colors.grey;
 
-    switch (status.toLowerCase()) {
-      case 'Paid':
+    switch (status.toLowerCase().trim()) {
+      case 'paid':
         return Colors.green;
-      case 'Cancelled':
-        return Colors.deepPurple.shade200;
-      case 'Overdue':
+      case 'cancelled':
+        return Colors.deepPurple.shade400;
+      case 'overdue':
         return Colors.red;
-      case 'Pending':
+      case 'pending':
         return Colors.orange;
       default:
+        print(
+            'Unknown status: "$status"'); // Debug print to see what status values you're getting
         return Colors.grey;
     }
   }
