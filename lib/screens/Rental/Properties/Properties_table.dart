@@ -1669,7 +1669,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                   // Update State
                                                                 }
                                                               },
-                                                              child: Container(
+                                                              child:
+                                                              Container(
                                                                 height: 35,
                                                                 width: 35,
                                                                 decoration: BoxDecoration(
@@ -1719,7 +1720,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                               properties: rentals,
                                                                             )));
                                                               },
-                                                              child: Container(
+                                                              child:
+                                                              Container(
                                                                 height: 35,
                                                                 width: 35,
                                                                 decoration:

@@ -14,9 +14,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../provider/dateProvider.dart';
+
+import '../../../../../provider/dateProvider.dart';
+import '../../../../../widgets/file_viewer.dart';
 import 'Add_property_Tax.dart';
-import '../../../../widgets/file_viewer.dart';
+
 
 class Property_tax_Table extends StatefulWidget {
   final String propertyId;
@@ -78,6 +80,7 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
+      String? satffid = prefs.getString("staff_id");
 
       // Use property-specific API endpoint
       print('Loading tax for property ID: ${widget.propertyId}');
@@ -87,7 +90,7 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
         headers: {
           'Content-Type': 'application/json',
           'authorization': 'CRM $token',
-          'id': 'CRM $id',
+          'id': 'CRM $satffid',
         },
       ).timeout(const Duration(seconds: 30));
 
@@ -265,6 +268,7 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? adminId = prefs.getString('adminId');
+      String? satffid = prefs.getString("staff_id");
 
       print('=== DELETING TAX RECORD ===');
       print('Tax ID: $id');
@@ -275,7 +279,7 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
         headers: {
           'Content-Type': 'application/json',
           'authorization': 'CRM $token',
-          'id': 'CRM $adminId',
+          'id': 'CRM $satffid',
         },
       ).timeout(const Duration(seconds: 30));
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
@@ -146,11 +147,12 @@ class _MortgageSummaryState extends State<MortgageSummary> {
           currentpage: "Mortgage Summary",
           dropdown: true,
         ),
-        body: const Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1E3A8A)),
+        body:  Center(
+          child: SpinKitFadingCircle(
+            color: Colors.black,
+            size: 45,
           ),
-        ),
+        )
       );
     }
 
