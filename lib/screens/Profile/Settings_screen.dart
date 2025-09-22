@@ -53,6 +53,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   TextEditingController late_fee = TextEditingController();
   TextEditingController duration = TextEditingController();
   TextEditingController durationmail = TextEditingController();
+  TextEditingController description = TextEditingController();
   TextEditingController replyToEmail = TextEditingController();
   TextEditingController categories = TextEditingController();
   late Future<List<categories_model>> futureCategories;
@@ -62,6 +63,11 @@ class _TabBarExampleState extends State<TabBarExample> {
   String latefee_id = "";
   bool isupdate = false;
   bool islatefeeupdate = false;
+  String calculationType = "fixed"; // "fixed" or "percent"
+  String selectedAccountId = "";
+  String selectedAccountName = "";
+  List<Setting4> accounts = [];
+  bool isLoadingAccounts = false;
   bool mailupdate = false;
   bool issurge = true;
   bool ismail = false;
@@ -76,7 +82,6 @@ class _TabBarExampleState extends State<TabBarExample> {
   bool ischargesetting = false;
   bool _isStaffUser = false;
   ConnectivityResult? _connectivityResult;
-  List<Setting4> accounts = [];
   String? selectedAccount;
   // 1. Add state variables
   List<allcategories_model> _dropdownCategories = [];
@@ -183,6 +188,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       SurchargeRepository(baseUrl: '${Api_url}');
   final latefeeRepository latefeerepository =
       latefeeRepository(baseUrl: '${Api_url}');
+  final accountRepository accountrepository = accountRepository();
   final mailserviceRepository mailrepository =
       mailserviceRepository(baseUrl: '${Api_url}');
 
@@ -237,6 +243,24 @@ class _TabBarExampleState extends State<TabBarExample> {
     }
   }
 
+  Future<void> fetchAccountsData() async {
+    setState(() {
+      isLoadingAccounts = true;
+    });
+    try {
+      List<Setting4> fetchedAccounts = await accountrepository.fetchAccounts();
+      setState(() {
+        accounts = fetchedAccounts;
+        isLoadingAccounts = false;
+      });
+    } catch (e) {
+      print('Failed to load accounts: $e');
+      setState(() {
+        isLoadingAccounts = false;
+      });
+    }
+  }
+
   Future<void> fetchlatefeeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
@@ -246,8 +270,15 @@ class _TabBarExampleState extends State<TabBarExample> {
         setState(() {
           islatefeeupdate = true;
           late_fee.text = latefee.late_fee;
-          duration.text = latefee.duration;
+          duration.text =
+              latefee.graceBalance.toString(); // Map to grace_balance field
           latefee_id = latefee.latefeeId;
+          calculationType = latefee.calculationType;
+          description.text = latefee.description;
+          // Set default to "Late Fee Income" if no account value from API
+          selectedAccountName = latefee.chargeAccount.isNotEmpty 
+              ? latefee.chargeAccount 
+              : "Late Fee Income";
         });
       }
     } catch (e) {
@@ -351,12 +382,17 @@ class _TabBarExampleState extends State<TabBarExample> {
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
-        "duration": duration.text.trim().isNotEmpty
-            ? double.parse(duration.text.trim())
+        "grace_balance": duration.text.trim().isNotEmpty
+            ? int.parse(duration.text.trim())
             : null,
         "late_fee": late_fee.text.trim().isNotEmpty
             ? double.parse(late_fee.text.trim())
             : null,
+        "calculation_type": calculationType,
+        "description":
+            description.text.trim().isNotEmpty ? description.text.trim() : null,
+        "charge_account":
+            selectedAccountName.isNotEmpty ? selectedAccountName : null,
       };
 
       bool success =
@@ -416,12 +452,17 @@ class _TabBarExampleState extends State<TabBarExample> {
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
-        "duration": duration.text.trim().isNotEmpty
+        "grace_balance": duration.text.trim().isNotEmpty
             ? int.parse(duration.text.trim())
             : null,
         "late_fee": late_fee.text.trim().isNotEmpty
             ? int.parse(late_fee.text.trim())
             : null,
+        "calculation_type": calculationType,
+        "description":
+            description.text.trim().isNotEmpty ? description.text.trim() : null,
+        "charge_account":
+            selectedAccountName.isNotEmpty ? selectedAccountName : null,
       };
 
       bool success =
@@ -1715,7 +1756,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                               ),
                               Expanded(
                                 child: InkWell(
-                                  onTap: () {
+                                  onTap: () async {
                                     setState(() {
                                       issurge = false;
                                       ismail = false;
@@ -1727,6 +1768,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ischargesetting = false;
                                       iscategories = false;
                                     });
+                                    await fetchAccountsData();
+                                    await fetchlatefeeData();
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -3572,6 +3615,175 @@ class _TabBarExampleState extends State<TabBarExample> {
                               SizedBox(
                                 height: 15,
                               ),
+                              Row(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Number Of Grace Period Days",
+                                        style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 20,
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Container(
+                                        height: 50,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .5,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: grey),
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                        ),
+                                        child: Stack(
+                                          children: [
+                                            Positioned.fill(
+                                              child: TextFormField(
+                                                controller: duration,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    //  passworderror = false;
+                                                  });
+                                                },
+                                                //  controller: password,
+                                                cursorColor: blueColor,
+                                                decoration: InputDecoration(
+                                                  // hintText: "Enter password",
+                                                  hintStyle: TextStyle(
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .037,
+                                                    color: Color(0xFF8A95A8),
+                                                  ),
+                                                  // enabledBorder: passworderror
+                                                  //     ? OutlineInputBorder(
+                                                  //   borderRadius:
+                                                  //   BorderRadius.circular(2),
+                                                  //   borderSide: BorderSide(
+                                                  //     color: Colors.red,
+                                                  //   ),
+                                                  // )
+                                                  //     : InputBorder.none,
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                      EdgeInsets.all(13),
+                                                  // suffixIcon: Icon(
+                                                  //   Icons.percent,
+                                                  //   color: blueColor,
+                                                  //   size: 18,
+                                                  // ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Row(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Late Fee Calculation",
+                                        style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 20,
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(height: 10),
+                                      Row(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Radio<String>(
+                                                value: "fixed",
+                                                groupValue: calculationType,
+                                                onChanged: (String? value) {
+                                                  setState(() {
+                                                    calculationType = value!;
+                                                  });
+                                                },
+                                                activeColor: blueColor,
+                                              ),
+                                              Text(
+                                                "Fixed",
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 14
+                                                          : 16,
+                                                  color: blueColor,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(width: 20),
+                                          Row(
+                                            children: [
+                                              Radio<String>(
+                                                value: "percent",
+                                                groupValue: calculationType,
+                                                onChanged: (String? value) {
+                                                  setState(() {
+                                                    calculationType = value!;
+                                                  });
+                                                },
+                                                activeColor: blueColor,
+                                              ),
+                                              Text(
+                                                "Percent",
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width <
+                                                              500
+                                                          ? 14
+                                                          : 16,
+                                                  color: blueColor,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
                               if (MediaQuery.of(context).size.width < 500)
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -3587,7 +3799,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              "Percentage",
+                                              calculationType == "fixed"
+                                                  ? "Amount"
+                                                  : "Percentage",
                                               style: TextStyle(
                                                   fontSize:
                                                       MediaQuery.of(context)
@@ -3649,11 +3863,23 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                             InputBorder.none,
                                                         contentPadding:
                                                             EdgeInsets.all(13),
-                                                        // suffixIcon: Icon(
-                                                        //   Icons.percent,
-                                                        //   color: blueColor,
-                                                        //   size: 18,
-                                                        // ),
+                                                        suffixIcon:
+                                                            calculationType ==
+                                                                    "percent"
+                                                                ? Icon(
+                                                                    Icons
+                                                                        .percent,
+                                                                    color:
+                                                                        blueColor,
+                                                                    size: 18,
+                                                                  )
+                                                                : Icon(
+                                                                    Icons
+                                                                        .attach_money,
+                                                                    color:
+                                                                        blueColor,
+                                                                    size: 18,
+                                                                  ),
                                                       ),
                                                     ),
                                                   ),
@@ -3671,7 +3897,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              "Duration",
+                                              "Grace Balance (\$)",
                                               style: TextStyle(
                                                   fontSize:
                                                       MediaQuery.of(context)
@@ -3958,7 +4184,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              "Percentage",
+                                              calculationType == "fixed"
+                                                  ? "Amount"
+                                                  : "Percentage",
                                               style: TextStyle(
                                                   fontSize:
                                                       MediaQuery.of(context)
@@ -4024,11 +4252,23 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                           contentPadding:
                                                               EdgeInsets.all(
                                                                   13),
-                                                          // suffixIcon: Icon(
-                                                          //   Icons.percent,
-                                                          //   color: blueColor,
-                                                          //   size: 18,
-                                                          // ),
+                                                          suffixIcon:
+                                                              calculationType ==
+                                                                      "percent"
+                                                                  ? Icon(
+                                                                      Icons
+                                                                          .percent,
+                                                                      color:
+                                                                          blueColor,
+                                                                      size: 18,
+                                                                    )
+                                                                  : Icon(
+                                                                      Icons
+                                                                          .attach_money,
+                                                                      color:
+                                                                          blueColor,
+                                                                      size: 18,
+                                                                    ),
                                                         ),
                                                       ),
                                                     ),
@@ -4126,6 +4366,386 @@ class _TabBarExampleState extends State<TabBarExample> {
                                               ),
                                             ),
                                           ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              SizedBox(height: 15),
+                              // Account Dropdown
+                              if (MediaQuery.of(context).size.width < 500)
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 2.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Charge Account",
+                                        style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 20,
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Container(
+                                        height: 50,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: grey),
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                        ),
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<String>(
+                                            value:
+                                                selectedAccountName.isNotEmpty
+                                                    ? selectedAccountName
+                                                    : null,
+                                            hint: Text(
+                                              "Select Account",
+                                              style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .037,
+                                                color: Color(0xFF8A95A8),
+                                              ),
+                                            ),
+                                            isExpanded: true,
+                                            items: [
+                                              // Static "Late Fee Income" option
+                                              DropdownMenuItem<String>(
+                                                value: "Late Fee Income",
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 13),
+                                                  child: Text(
+                                                    "Late Fee Income",
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .037,
+                                                      color: blueColor,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              // Dynamic accounts from API
+                                              ...accounts
+                                                  .map((Setting4 account) {
+                                                return DropdownMenuItem<String>(
+                                                  value: account.account ?? '',
+                                                  child: Padding(
+                                                    padding: EdgeInsets.symmetric(
+                                                        horizontal: 13),
+                                                    child: Text(
+                                                      account.account ?? '',
+                                                      style: TextStyle(
+                                                        fontSize:
+                                                            MediaQuery.of(context)
+                                                                    .size
+                                                                    .width *
+                                                                .037,
+                                                        color: blueColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                            ],
+                                            onChanged: (String? newValue) {
+                                              setState(() {
+                                                selectedAccountName = newValue ?? '';
+                                                // Handle static "Late Fee Income" option
+                                                if (newValue == "Late Fee Income") {
+                                                  selectedAccountId = "";
+                                                } else {
+                                                  // Find the account ID for the selected account
+                                                  Setting4? selectedAccount =
+                                                      accounts.firstWhere(
+                                                    (account) =>
+                                                        account.account ==
+                                                        newValue,
+                                                    orElse: () => Setting4(),
+                                                  );
+                                                  selectedAccountId =
+                                                      selectedAccount.accountId ??
+                                                          '';
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              if (MediaQuery.of(context).size.width > 500)
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 2.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Charge Account",
+                                        style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 15
+                                                : 20,
+                                            color: Color(0xFF8A95A8),
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Material(
+                                        elevation: 4,
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Container(
+                                          height: 50,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .6,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton<String>(
+                                              value:
+                                                  selectedAccountName.isNotEmpty
+                                                      ? selectedAccountName
+                                                      : null,
+                                              hint: Text(
+                                                "Select Account",
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .037,
+                                                  color: Color(0xFF8A95A8),
+                                                ),
+                                              ),
+                                              isExpanded: true,
+                                              items: [
+                                                // Static "Late Fee Income" option
+                                                DropdownMenuItem<String>(
+                                                  value: "Late Fee Income",
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 13),
+                                                    child: Text(
+                                                      "Late Fee Income",
+                                                      style: TextStyle(
+                                                        fontSize: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .037,
+                                                        color: blueColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                // Dynamic accounts from API
+                                                ...accounts
+                                                    .map((Setting4 account) {
+                                                  return DropdownMenuItem<String>(
+                                                    value: account.account ?? '',
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 13),
+                                                      child: Text(
+                                                        account.account ?? '',
+                                                        style: TextStyle(
+                                                          fontSize: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              .037,
+                                                          color: blueColor,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                              }).toList(),
+                                            ],
+                                              onChanged: (String? newValue) {
+                                                setState(() {
+                                                  selectedAccountName = newValue ?? '';
+                                                  // Handle static "Late Fee Income" option
+                                                  if (newValue == "Late Fee Income") {
+                                                    selectedAccountId = "";
+                                                  } else {
+                                                    // Find the account ID for the selected account
+                                                    Setting4? selectedAccount =
+                                                        accounts.firstWhere(
+                                                      (account) =>
+                                                          account.account ==
+                                                          newValue,
+                                                      orElse: () => Setting4(),
+                                                    );
+                                                    selectedAccountId =
+                                                        selectedAccount
+                                                                .accountId ??
+                                                            '';
+                                                  }
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              SizedBox(height: 15),
+                              // Description Field
+                              if (MediaQuery.of(context).size.width < 500)
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 2.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Description",
+                                        style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                .size
+                                                .width <
+                                                500
+                                                ? 15
+                                                : 20,
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Container(
+                                        height: 50,
+                                        width:
+                                        MediaQuery.of(context).size.width,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: grey),
+                                          color: Colors.white,
+                                          borderRadius:
+                                          BorderRadius.circular(5),
+                                        ),
+                                        child: Stack(
+                                          children: [
+                                            Positioned.fill(
+                                              child: TextFormField(
+                                                controller: description,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    //  passworderror = false;
+                                                  });
+                                                },
+                                                cursorColor: blueColor,
+                                                decoration: InputDecoration(
+                                                  hintStyle: TextStyle(
+                                                    fontSize:
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                        .037,
+                                                    color: Color(0xFF8A95A8),
+                                                  ),
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                  EdgeInsets.all(13),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              if (MediaQuery.of(context).size.width > 500)
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 2.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Description",
+                                        style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                .size
+                                                .width <
+                                                500
+                                                ? 15
+                                                : 20,
+                                            color: Color(0xFF8A95A8),
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Material(
+                                        elevation: 4,
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Container(
+                                          height: 50,
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              .6,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                            BorderRadius.circular(10),
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              Positioned.fill(
+                                                child: TextFormField(
+                                                  controller: description,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      //  passworderror = false;
+                                                    });
+                                                  },
+                                                  cursorColor: blueColor,
+                                                  decoration: InputDecoration(
+                                                    hintStyle: TextStyle(
+                                                      fontSize:
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                          .037,
+                                                      color: Color(0xFF8A95A8),
+                                                    ),
+                                                    border: InputBorder.none,
+                                                    contentPadding:
+                                                    EdgeInsets.all(13),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ],
