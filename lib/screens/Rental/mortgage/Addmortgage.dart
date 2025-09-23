@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -788,9 +789,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                         child: Center(
                           child: Column(
                             children: [
-                              CircularProgressIndicator(
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(blueColor),
+                              SpinKitFadingCircle(
+                                color: Colors.black,
+                                size: 50.0,
                               ),
                               SizedBox(height: 8),
                               Text('Loading properties...'),

@@ -98,12 +98,38 @@ class _Lease_tableState extends State<Lease_table> {
   }
 
   void sortData(List<Lease1> data) {
-    // Always apply default sort by startDate in descending order (newest first)
+    // Always apply default sort by remaining days in descending order (highest remaining days first)
     data.sort((a, b) {
-      if (a.startDate == null && b.startDate == null) return 0;
-      if (a.startDate == null) return 1;
-      if (b.startDate == null) return -1;
-      return b.startDate!.compareTo(a.startDate!); // Descending order
+      // Handle null or "---" values for remaining days
+      String aDays = a.remainingDays ?? "---";
+      String bDays = b.remainingDays ?? "---";
+
+      // Debug logging
+      print(
+          "DEBUG: Sorting - Lease A: ${a.rentalAddress}, remainingDays: '$aDays'");
+      print(
+          "DEBUG: Sorting - Lease B: ${b.rentalAddress}, remainingDays: '$bDays'");
+
+      // If both are "---", they are equal
+      if (aDays == "---" && bDays == "---") return 0;
+
+      // If one is "---", put it at the end
+      if (aDays == "---") return 1;
+      if (bDays == "---") return -1;
+
+      // Parse numeric values and sort in descending order
+      try {
+        double aValue = double.parse(aDays);
+        double bValue = double.parse(bDays);
+        int result = bValue.compareTo(aValue); // Descending order
+        print(
+            "DEBUG: Numeric comparison - A: $aValue, B: $bValue, Result: $result");
+        return result;
+      } catch (e) {
+        // If parsing fails, fall back to string comparison
+        print("DEBUG: Parse error: $e, falling back to string comparison");
+        return bDays.compareTo(aDays);
+      }
     });
 
     // Apply user-selected sorting only if explicitly chosen
@@ -918,6 +944,13 @@ class _Lease_tableState extends State<Lease_table> {
                           } else {
                             var data = snapshot.data!;
 
+                            // Debug logging to see raw data
+                            print("DEBUG: Raw lease data from API:");
+                            for (int i = 0; i < data.length && i < 3; i++) {
+                              print(
+                                  "DEBUG: Lease $i - Address: ${data[i].rentalAddress}, remainingDays: '${data[i].remainingDays}'");
+                            }
+
 // Apply the search filter first
                             if (searchValue != null &&
                                 searchValue.isNotEmpty &&
@@ -983,7 +1016,8 @@ class _Lease_tableState extends State<Lease_table> {
                               data = data;
                             }
 
-                            data = data.reversed.toList();
+                            // Remove data.reversed.toList() to let sortData handle the ordering
+                            // data = data.reversed.toList();
                             sortData(data);
                             final totalPages =
                                 (data.length / itemsPerPage).ceil();
@@ -1650,7 +1684,8 @@ class _Lease_tableState extends State<Lease_table> {
                                         false))
                                 .toList();
                           }
-                          filteredData = filteredData?.reversed.toList();
+                          // Remove filteredData?.reversed.toList() to let sortData handle the ordering
+                          // filteredData = filteredData?.reversed.toList();
                           _tableData = filteredData!;
                           totalrecords = _tableData.length;
                           return Padding(

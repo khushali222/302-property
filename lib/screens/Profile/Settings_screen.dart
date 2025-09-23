@@ -52,6 +52,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   TextEditingController flat = TextEditingController();
   TextEditingController late_fee = TextEditingController();
   TextEditingController duration = TextEditingController();
+  TextEditingController grace_balance = TextEditingController();
   TextEditingController durationmail = TextEditingController();
   TextEditingController description = TextEditingController();
   TextEditingController replyToEmail = TextEditingController();
@@ -270,14 +271,14 @@ class _TabBarExampleState extends State<TabBarExample> {
         setState(() {
           islatefeeupdate = true;
           late_fee.text = latefee.late_fee;
-          duration.text =
-              latefee.graceBalance.toString(); // Map to grace_balance field
+          duration.text = latefee.duration.toString();
+          grace_balance.text = latefee.graceBalance.toString();
           latefee_id = latefee.latefeeId;
           calculationType = latefee.calculationType;
           description.text = latefee.description;
           // Set default to "Late Fee Income" if no account value from API
-          selectedAccountName = latefee.chargeAccount.isNotEmpty 
-              ? latefee.chargeAccount 
+          selectedAccountName = latefee.chargeAccount.isNotEmpty
+              ? latefee.chargeAccount
               : "Late Fee Income";
         });
       }
@@ -382,8 +383,11 @@ class _TabBarExampleState extends State<TabBarExample> {
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
-        "grace_balance": duration.text.trim().isNotEmpty
+        "duration": duration.text.trim().isNotEmpty
             ? int.parse(duration.text.trim())
+            : null,
+        "grace_balance": grace_balance.text.trim().isNotEmpty
+            ? int.parse(grace_balance.text.trim())
             : null,
         "late_fee": late_fee.text.trim().isNotEmpty
             ? double.parse(late_fee.text.trim())
@@ -452,8 +456,11 @@ class _TabBarExampleState extends State<TabBarExample> {
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
-        "grace_balance": duration.text.trim().isNotEmpty
+        "duration": duration.text.trim().isNotEmpty
             ? int.parse(duration.text.trim())
+            : null,
+        "grace_balance": grace_balance.text.trim().isNotEmpty
+            ? int.parse(grace_balance.text.trim())
             : null,
         "late_fee": late_fee.text.trim().isNotEmpty
             ? int.parse(late_fee.text.trim())
@@ -3926,7 +3933,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 children: [
                                                   Positioned.fill(
                                                     child: TextFormField(
-                                                      controller: duration,
+                                                      controller: grace_balance,
                                                       onChanged: (value) {
                                                         setState(() {
                                                           //  passworderror = false;
@@ -4447,16 +4454,17 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 return DropdownMenuItem<String>(
                                                   value: account.account ?? '',
                                                   child: Padding(
-                                                    padding: EdgeInsets.symmetric(
-                                                        horizontal: 13),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 13),
                                                     child: Text(
                                                       account.account ?? '',
                                                       style: TextStyle(
-                                                        fontSize:
-                                                            MediaQuery.of(context)
-                                                                    .size
-                                                                    .width *
-                                                                .037,
+                                                        fontSize: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .037,
                                                         color: blueColor,
                                                       ),
                                                     ),
@@ -4466,9 +4474,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             ],
                                             onChanged: (String? newValue) {
                                               setState(() {
-                                                selectedAccountName = newValue ?? '';
+                                                selectedAccountName =
+                                                    newValue ?? '';
                                                 // Handle static "Late Fee Income" option
-                                                if (newValue == "Late Fee Income") {
+                                                if (newValue ==
+                                                    "Late Fee Income") {
                                                   selectedAccountId = "";
                                                 } else {
                                                   // Find the account ID for the selected account
@@ -4480,7 +4490,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                     orElse: () => Setting4(),
                                                   );
                                                   selectedAccountId =
-                                                      selectedAccount.accountId ??
+                                                      selectedAccount
+                                                              .accountId ??
                                                           '';
                                                 }
                                               });
@@ -4568,8 +4579,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 // Dynamic accounts from API
                                                 ...accounts
                                                     .map((Setting4 account) {
-                                                  return DropdownMenuItem<String>(
-                                                    value: account.account ?? '',
+                                                  return DropdownMenuItem<
+                                                      String>(
+                                                    value:
+                                                        account.account ?? '',
                                                     child: Padding(
                                                       padding:
                                                           EdgeInsets.symmetric(
@@ -4587,13 +4600,15 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                       ),
                                                     ),
                                                   );
-                                              }).toList(),
-                                            ],
+                                                }).toList(),
+                                              ],
                                               onChanged: (String? newValue) {
                                                 setState(() {
-                                                  selectedAccountName = newValue ?? '';
+                                                  selectedAccountName =
+                                                      newValue ?? '';
                                                   // Handle static "Late Fee Income" option
-                                                  if (newValue == "Late Fee Income") {
+                                                  if (newValue ==
+                                                      "Late Fee Income") {
                                                     selectedAccountId = "";
                                                   } else {
                                                     // Find the account ID for the selected account
@@ -4626,15 +4641,15 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       horizontal: 2.0),
                                   child: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "Description",
                                         style: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
+                                                        .size
+                                                        .width <
+                                                    500
                                                 ? 15
                                                 : 20,
                                             color: blueColor,
@@ -4644,12 +4659,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       Container(
                                         height: 50,
                                         width:
-                                        MediaQuery.of(context).size.width,
+                                            MediaQuery.of(context).size.width,
                                         decoration: BoxDecoration(
                                           border: Border.all(color: grey),
                                           color: Colors.white,
                                           borderRadius:
-                                          BorderRadius.circular(5),
+                                              BorderRadius.circular(5),
                                         ),
                                         child: Stack(
                                           children: [
@@ -4665,15 +4680,15 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                     fontSize:
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        .037,
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .037,
                                                     color: Color(0xFF8A95A8),
                                                   ),
                                                   border: InputBorder.none,
                                                   contentPadding:
-                                                  EdgeInsets.all(13),
+                                                      EdgeInsets.all(13),
                                                 ),
                                               ),
                                             ),
@@ -4689,15 +4704,15 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       horizontal: 2.0),
                                   child: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "Description",
                                         style: TextStyle(
                                             fontSize: MediaQuery.of(context)
-                                                .size
-                                                .width <
-                                                500
+                                                        .size
+                                                        .width <
+                                                    500
                                                 ? 15
                                                 : 20,
                                             color: Color(0xFF8A95A8),
@@ -4710,13 +4725,13 @@ class _TabBarExampleState extends State<TabBarExample> {
                                         child: Container(
                                           height: 50,
                                           width: MediaQuery.of(context)
-                                              .size
-                                              .width *
+                                                  .size
+                                                  .width *
                                               .6,
                                           decoration: BoxDecoration(
                                             color: Colors.white,
                                             borderRadius:
-                                            BorderRadius.circular(10),
+                                                BorderRadius.circular(10),
                                           ),
                                           child: Stack(
                                             children: [
@@ -4732,15 +4747,15 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   decoration: InputDecoration(
                                                     hintStyle: TextStyle(
                                                       fontSize:
-                                                      MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                          .037,
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .037,
                                                       color: Color(0xFF8A95A8),
                                                     ),
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                    EdgeInsets.all(13),
+                                                        EdgeInsets.all(13),
                                                   ),
                                                 ),
                                               ),

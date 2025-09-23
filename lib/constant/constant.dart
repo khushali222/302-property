@@ -93,11 +93,44 @@ String reverseFormatDate(String formattedDate) {
   }
 
   try {
-    print(formattedDate);
-    // Try parsing the date
-    DateTime dateTime = DateFormat('dd-MM-yyyy').parse(formattedDate);
-    // Return the formatted date in 'yyyy-MM-dd' format
-    return DateFormat('yyyy-MM-dd').format(dateTime);
+    print("reverseFormatDate input: $formattedDate");
+
+    // List of possible date formats that DateProvider might return
+    List<String> dateFormats = [
+      'MM/dd/yyyy',
+      'M/d/yyyy',
+      'dd-MM-yyyy',
+      'd-M-yyyy',
+      'yyyy-MM-dd',
+      'yyyy-M-d',
+      'MM-dd-yyyy',
+      'M-d-yyyy',
+      'dd/MM/yyyy',
+      'd/M/yyyy'
+    ];
+
+    DateTime? parsedDate;
+
+    // Try to parse the date using different formats
+    for (String format in dateFormats) {
+      try {
+        parsedDate = DateFormat(format).parse(formattedDate);
+        print("Successfully parsed with format: $format");
+        break;
+      } catch (e) {
+        continue;
+      }
+    }
+
+    if (parsedDate == null) {
+      print("Could not parse date: $formattedDate");
+      return ""; // Return empty string if parsing fails
+    }
+
+    // Return the formatted date in 'yyyy-MM-dd' format for API
+    String result = DateFormat('yyyy-MM-dd').format(parsedDate);
+    print("reverseFormatDate output: $result");
+    return result;
   } catch (e) {
     print("Error while formatting date: $e");
     return ""; // Return an empty string if there is an error

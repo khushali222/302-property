@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -8,10 +7,8 @@ import 'package:three_zero_two_property/screens/Rental/Properties/moveout/reposi
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../../../model/properties_summery.dart';
-import '../../../../model/LeaseSummary.dart';
 import '../../../../model/properties.dart';
 import '../../../../model/unitsummery_propeties.dart';
-import '../../../../repository/lease.dart';
 import '../../../../repository/properties_summery.dart';
 import '../../../../widgets/appbar.dart';
 import '../../../../widgets/custom_drawer.dart';
@@ -54,7 +51,7 @@ class _Moveout_propertiesState extends State<Moveout_properties> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-     drawer: CustomDrawer(
+      drawer: CustomDrawer(
         currentpage: "Leases",
         dropdown: true,
       ),
@@ -83,16 +80,16 @@ class _Moveout_propertiesState extends State<Moveout_properties> {
 
   Widget buildMoveout(TenantData tenant, {List<TenantData>? tenants}) {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
-    widget.moveOutDate = formatDate(tenant.endDate!);
-    startdateController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    widget.moveOutDate = dateProvider.formatCurrentDate(tenant.endDate!);
+    startdateController.text = dateProvider
+        .formatCurrentDate(DateTime.now().toIso8601String().split('T')[0]);
     // Convert to stateful list to track selection changes
     Map<String, TextEditingController> startDateControllers = {};
     Map<String, TextEditingController> moveoutDateControllers = {};
-    Map<String, String> moveOutDates = {};
 
-   //List<TenantData> selectedTenants = tenants ?? [];
+    //List<TenantData> selectedTenants = tenants ?? [];
     List<TenantData> selectedTenants =
-    tenants!.where((t) => t.moveoutDate == null).toList();
+        tenants!.where((t) => t.moveoutDate == null).toList();
 
     for (var t in selectedTenants!) {
       if (!startDateControllers.containsKey(t.tenantId)) {
@@ -103,9 +100,10 @@ class _Moveout_propertiesState extends State<Moveout_properties> {
       }
 
       // Set default values for each tenant
-      startDateControllers[t.tenantId!.first]!.text =
-          DateFormat('yyyy-MM-dd').format(DateTime.now());
-      moveoutDateControllers[t.tenantId!.first]!.text = formatDate(t.endDate!);
+      startDateControllers[t.tenantId!.first]!.text = dateProvider
+          .formatCurrentDate(DateTime.now().toIso8601String().split('T')[0]);
+      moveoutDateControllers[t.tenantId!.first]!.text =
+          dateProvider.formatCurrentDate(t.endDate!);
 
       // Set default selection
       t.isSelected = (t.tenantId == tenant.tenantId);
@@ -214,8 +212,8 @@ class _Moveout_propertiesState extends State<Moveout_properties> {
                                           ? 15
                                           : 17,
                                 ))),
-                            buildTableCell(
-                                Text('${tenant.startDate} to ${tenant.endDate}')),
+                            buildTableCell(Text(
+                                '${dateProvider.formatCurrentDate(tenant.startDate!)} to ${dateProvider.formatCurrentDate(tenant.endDate!)}')),
                           ],
                         ),
                       ],
@@ -273,68 +271,71 @@ class _Moveout_propertiesState extends State<Moveout_properties> {
                         ),
                       ),
                       //if (tenant.isSelected)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10, bottom: 10),
-                          child: Table(
-                            border: TableBorder.all(color: blueColor),
-                            columnWidths: {
-                              0: FlexColumnWidth(2),
-                              1: FlexColumnWidth(3),
-                            },
-                            children: [
-                              TableRow(
-                                children: [
-                                  buildTableCell(Text('Tenants',
-                                      style: TextStyle(
-                                        color: blueColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 15
-                                                : 17,
-                                      ))),
-                                  buildTableCell(Text(
-                                      '${tenant.firstName} ${tenant.lastName}')),
-                                ],
-                              ),
-                              TableRow(
-                                children: [
-                                  buildTableCell(Text('Notice Given Date',
-                                      style: TextStyle(
-                                        color: blueColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 15
-                                                : 17,
-                                      ))),
-                                  buildTableCell(buildDateField(
-                                      startDateControllers[
-                                          tenant.tenantId!.first]!, enabled: tenant.isSelected!,)),
-                                ],
-                              ),
-                              TableRow(
-                                children: [
-                                  buildTableCell(Text('Move-Out Date',
-                                      style: TextStyle(
-                                        color: blueColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 15
-                                                : 17,
-                                      ))),
-                                  buildTableCell(buildDateField(
-                                      moveoutDateControllers[
-                                          tenant.tenantId!.first]!,  enabled: tenant.isSelected!,)),
-                                ],
-                              ),
-                            ],
-                          ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
+                        child: Table(
+                          border: TableBorder.all(color: blueColor),
+                          columnWidths: {
+                            0: FlexColumnWidth(2),
+                            1: FlexColumnWidth(3),
+                          },
+                          children: [
+                            TableRow(
+                              children: [
+                                buildTableCell(Text('Tenants',
+                                    style: TextStyle(
+                                      color: blueColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 17,
+                                    ))),
+                                buildTableCell(Text(
+                                    '${tenant.firstName} ${tenant.lastName}')),
+                              ],
+                            ),
+                            TableRow(
+                              children: [
+                                buildTableCell(Text('Notice Given Date',
+                                    style: TextStyle(
+                                      color: blueColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 17,
+                                    ))),
+                                buildTableCell(buildDateField(
+                                  startDateControllers[tenant.tenantId!.first]!,
+                                  enabled: tenant.isSelected!,
+                                )),
+                              ],
+                            ),
+                            TableRow(
+                              children: [
+                                buildTableCell(Text('Move-Out Date',
+                                    style: TextStyle(
+                                      color: blueColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 15
+                                              : 17,
+                                    ))),
+                                buildTableCell(buildDateField(
+                                  moveoutDateControllers[
+                                      tenant.tenantId!.first]!,
+                                  enabled: tenant.isSelected!,
+                                )),
+                              ],
+                            ),
+                          ],
                         ),
+                      ),
                     ],
                   );
                 }).toList(),
@@ -398,8 +399,8 @@ class _Moveout_propertiesState extends State<Moveout_properties> {
                             'tenant_id': tenant.tenantId!.first,
                             'lease_id': tenant.leaseId,
                             'moveout_notice_given_date':
-                                moveoutNoticeGivenDate!,
-                            'moveout_date': moveoutdate!,
+                                reverseFormatDate(moveoutNoticeGivenDate!),
+                            'moveout_date': reverseFormatDate(moveoutdate!),
                           });
                         }
                       }
@@ -410,8 +411,10 @@ class _Moveout_propertiesState extends State<Moveout_properties> {
                               adminId: id!,
                               tenantId: tenantId,
                               leaseId: tenant.leaseId,
-                              moveoutDate: widget.moveOutDate,
-                              moveoutNoticeGivenDate: startdateController.text,
+                              moveoutDate:
+                                  reverseFormatDate(widget.moveOutDate),
+                              moveoutNoticeGivenDate:
+                                  reverseFormatDate(startdateController.text),
                               multitenantdata: multipletenant)
                           .then((value) {
                         setState(() {
@@ -521,9 +524,10 @@ class _Moveout_propertiesState extends State<Moveout_properties> {
                     );
                     if (pickedDate != null) {
                       // setState(() {
-                      controller.text = widget.moveOutDate!;
-                      controller.text =
-                          DateFormat('yyyy-MM-dd').format(pickedDate);
+                      final dateProvider =
+                          Provider.of<DateProvider>(context, listen: false);
+                      controller.text = dateProvider.formatCurrentDate(
+                          pickedDate.toIso8601String().split('T')[0]);
                       //});
                     }
                   },

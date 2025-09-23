@@ -97,15 +97,50 @@ class _Lease_tableState extends State<Lease_table> {
   }
 
   void sortData(List<Lease1> data) {
-    if (sorting1) {
+    // Always apply default sort by remaining days in descending order (highest remaining days first)
+    data.sort((a, b) {
+      // Handle null or "---" values for remaining days
+      String aDays = a.remainingDays ?? "---";
+      String bDays = b.remainingDays ?? "---";
+
+      // Debug logging
+      print(
+          "DEBUG: Sorting - Lease A: ${a.rentalAddress}, remainingDays: '$aDays'");
+      print(
+          "DEBUG: Sorting - Lease B: ${b.rentalAddress}, remainingDays: '$bDays'");
+
+      // If both are "---", they are equal
+      if (aDays == "---" && bDays == "---") return 0;
+
+      // If one is "---", put it at the end
+      if (aDays == "---") return 1;
+      if (bDays == "---") return -1;
+
+      // Parse numeric values and sort in descending order
+      try {
+        double aValue = double.parse(aDays);
+        double bValue = double.parse(bDays);
+        int result = bValue.compareTo(aValue); // Descending order
+        print(
+            "DEBUG: Numeric comparison - A: $aValue, B: $bValue, Result: $result");
+        return result;
+      } catch (e) {
+        // If parsing fails, fall back to string comparison
+        print("DEBUG: Parse error: $e, falling back to string comparison");
+        return bDays.compareTo(aDays);
+      }
+    });
+
+    // Apply user-selected sorting only if explicitly chosen
+    if (sorting1 && !sorting2 && !sorting3) {
       data.sort((a, b) => ascending1
           ? a.tenantNames!.compareTo(b.tenantNames!)
           : b.tenantNames!.compareTo(a.tenantNames!));
-    } else if (sorting2) {
+    } else if (sorting2 && !sorting1 && !sorting3) {
       data.sort((a, b) => ascending2
           ? a.startDate!.compareTo(b.startDate!)
           : b.startDate!.compareTo(a.startDate!));
-    } else if (sorting3) {
+    } else if (sorting3 && !sorting1 && !sorting2) {
       data.sort((a, b) => ascending3
           ? a.endDate!.compareTo(b.endDate!)
           : b.endDate!.compareTo(a.endDate!));
@@ -156,8 +191,12 @@ class _Lease_tableState extends State<Lease_table> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Lease", style: TextStyle(color: blueColor, fontWeight: FontWeight.bold))
-                        : Text("Lease", style: TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
+                        ? Text("Lease",
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold))
+                        : Text("Lease",
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
@@ -208,7 +247,8 @@ class _Lease_tableState extends State<Lease_table> {
                   children: [
                     Text("   Rent Cycle",
                         style: TextStyle(
-                            color: blueColor, fontWeight: FontWeight.bold,
+                          color: blueColor,
+                          fontWeight: FontWeight.bold,
                           fontSize: MediaQuery.of(context).size.width < 350
                               ? 12.0
                               : 14.0,
@@ -263,7 +303,8 @@ class _Lease_tableState extends State<Lease_table> {
                   children: [
                     Text("   Lease End",
                         style: TextStyle(
-                            color: blueColor, fontWeight: FontWeight.bold,
+                          color: blueColor,
+                          fontWeight: FontWeight.bold,
                           fontSize: MediaQuery.of(context).size.width < 350
                               ? 12.0
                               : 14.0,
@@ -607,7 +648,7 @@ class _Lease_tableState extends State<Lease_table> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-     drawer: CustomDrawer(
+      drawer: CustomDrawer(
         currentpage: "Leases",
         dropdown: true,
       ),
@@ -922,6 +963,13 @@ class _Lease_tableState extends State<Lease_table> {
                           } else {
                             var data = snapshot.data!;
 
+                            // Debug logging to see raw data
+                            print("DEBUG: Raw lease data from API:");
+                            for (int i = 0; i < data.length && i < 3; i++) {
+                              print(
+                                  "DEBUG: Lease $i - Address: ${data[i].rentalAddress}, remainingDays: '${data[i].remainingDays}'");
+                            }
+
 // Apply the search filter first
                             if (searchValue != null &&
                                 searchValue.isNotEmpty &&
@@ -1022,7 +1070,8 @@ class _Lease_tableState extends State<Lease_table> {
                               data = data;
                             }
                             //  }
-                            data = data.reversed.toList();
+                            // Remove data.reversed.toList() to let sortData handle the ordering
+                            // data = data.reversed.toList();
 
                             sortData(data);
                             final totalPages =
@@ -1056,7 +1105,7 @@ class _Lease_tableState extends State<Lease_table> {
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
                                           margin:
-                                          EdgeInsets.symmetric(vertical: 6),
+                                              EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
                                                 ? Color(0xFFF4F8FF)
@@ -1064,7 +1113,7 @@ class _Lease_tableState extends State<Lease_table> {
                                             border: Border.all(
                                                 color: Color(0xFFDBE0E5)),
                                             borderRadius:
-                                            BorderRadius.circular(10),
+                                                BorderRadius.circular(10),
                                           ),
                                           child: Column(
                                             children: <Widget>[
@@ -1478,8 +1527,8 @@ class _Lease_tableState extends State<Lease_table> {
                                                         // ),
                                                         Row(
                                                           mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .end,
+                                                              MainAxisAlignment
+                                                                  .end,
                                                           children: [
                                                             GestureDetector(
                                                               onTap: () {
@@ -1487,26 +1536,24 @@ class _Lease_tableState extends State<Lease_table> {
                                                                     context,
                                                                     lease);
                                                               },
-                                                              child:
-                                                              Container(
+                                                              child: Container(
                                                                 height: 35,
                                                                 width: 35,
                                                                 decoration: BoxDecoration(
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                        8),
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                8),
                                                                     color: Colors
                                                                         .red
-                                                                        .shade50
-                                                                ),
+                                                                        .shade50),
                                                                 child: Row(
                                                                   mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
+                                                                      MainAxisAlignment
+                                                                          .center,
                                                                   crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
+                                                                      CrossAxisAlignment
+                                                                          .center,
                                                                   children: [
                                                                     FaIcon(
                                                                       FontAwesomeIcons
@@ -1525,32 +1572,31 @@ class _Lease_tableState extends State<Lease_table> {
                                                             GestureDetector(
                                                               onTap: () async {
                                                                 Provider.of<SelectedCosignersProvider>(
-                                                                    context,
-                                                                    listen:
-                                                                    false)
+                                                                        context,
+                                                                        listen:
+                                                                            false)
                                                                     .clearCosigner();
                                                                 Provider.of<SelectedTenantsProvider>(
-                                                                    context,
-                                                                    listen:
-                                                                    false)
+                                                                        context,
+                                                                        listen:
+                                                                            false)
                                                                     .clearTenant();
                                                                 // handleEdit(Propertytype);
                                                                 var check = await Navigator.push(
                                                                     context,
                                                                     MaterialPageRoute(
                                                                         builder: (context) => Edit_lease(
-                                                                          lease: lease,
-                                                                          leaseId: lease.leaseId!,
-                                                                        )));
+                                                                              lease: lease,
+                                                                              leaseId: lease.leaseId!,
+                                                                            )));
                                                                 if (check ==
                                                                     true) {
-                                                                  setState(
-                                                                          () {
-                                                                        futureLease =
-                                                                            LeaseRepository()
-                                                                                .fetchLease("");
-                                                                        //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                                                                      });
+                                                                  setState(() {
+                                                                    futureLease =
+                                                                        LeaseRepository()
+                                                                            .fetchLease("");
+                                                                    //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                                                                  });
                                                                 }
                                                               },
                                                               child: Container(
@@ -1558,19 +1604,19 @@ class _Lease_tableState extends State<Lease_table> {
                                                                 width: 35,
                                                                 decoration: BoxDecoration(
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                        8),
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                8),
                                                                     color: Colors
                                                                         .green
                                                                         .shade50), // color:Colors.grey[100],
                                                                 child: Row(
                                                                   mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
+                                                                      MainAxisAlignment
+                                                                          .center,
                                                                   crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
+                                                                      CrossAxisAlignment
+                                                                          .center,
                                                                   children: [
                                                                     FaIcon(
                                                                       FontAwesomeIcons
@@ -1591,31 +1637,32 @@ class _Lease_tableState extends State<Lease_table> {
                                                                 Navigator.push(
                                                                     context,
                                                                     MaterialPageRoute(
-                                                                        builder: (context) => SummeryPageLease(
-                                                                          leaseId: lease.leaseId!,
-                                                                          enddate: lease.endDate,
-                                                                        )));
+                                                                        builder: (context) =>
+                                                                            SummeryPageLease(
+                                                                              leaseId: lease.leaseId!,
+                                                                              enddate: lease.endDate,
+                                                                            )));
                                                               },
                                                               child: Container(
                                                                 height: 35,
                                                                 width: 35,
                                                                 decoration:
-                                                                BoxDecoration(
+                                                                    BoxDecoration(
                                                                   color: Colors
                                                                       .grey
                                                                       .shade200,
                                                                   borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                      8),
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
                                                                 ),
                                                                 child: Row(
                                                                   mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
+                                                                      MainAxisAlignment
+                                                                          .center,
                                                                   crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
+                                                                      CrossAxisAlignment
+                                                                          .center,
                                                                   children: [
                                                                     FaIcon(
                                                                       FontAwesomeIcons
@@ -1626,7 +1673,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                                     ),
                                                                     SizedBox(
                                                                         width:
-                                                                        2),
+                                                                            2),
                                                                   ],
                                                                 ),
                                                               ),
@@ -1826,7 +1873,8 @@ class _Lease_tableState extends State<Lease_table> {
                                         false))
                                 .toList();
                           }
-                          filteredData = filteredData?.reversed.toList();
+                          // Remove filteredData?.reversed.toList() to let sortData handle the ordering
+                          // filteredData = filteredData?.reversed.toList();
                           _tableData = filteredData!;
                           totalrecords = _tableData.length;
                           return Padding(
