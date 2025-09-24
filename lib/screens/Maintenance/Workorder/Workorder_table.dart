@@ -219,11 +219,11 @@ class _Workorder_tableState extends State<Workorder_table> {
                     // Sorting logic here
                   });
                 },
-                child: Row(
+                child: const Row(
                   children: [
-                    const Text("      Billable ",
+                    Text("      Billable ",
                         style: TextStyle(color: Colors.white)),
-                    const SizedBox(width: 5),
+                    SizedBox(width: 5),
                   ],
                 ),
               ),
@@ -293,14 +293,14 @@ class _Workorder_tableState extends State<Workorder_table> {
       ),
       content: Column(
         children: <Widget>[
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           SizedBox(
             height: 45,
             child: TextField(
               controller: reason,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Enter reason for deletion',
                   contentPadding: EdgeInsets.only(top: 8, left: 15)),
@@ -620,7 +620,7 @@ class _Workorder_tableState extends State<Workorder_table> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   //add Data
                   Padding(
                     padding: const EdgeInsets.only(left: 0, right: 0),
@@ -927,7 +927,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                       height: 200,
                                       width: 200,
                                     ),
-                                    SizedBox(height: 10),
+                                    const SizedBox(height: 10),
                                     Text(
                                       "No Data Available",
                                       style: TextStyle(
@@ -1025,16 +1025,16 @@ class _Workorder_tableState extends State<Workorder_table> {
                               VoidCallback onViewSummary,
                             ) {
                               return Container(
-                                margin: EdgeInsets.symmetric(vertical: 8),
-                                padding: EdgeInsets.all(14),
+                                margin: const EdgeInsets.symmetric(vertical: 8),
+                                padding: const EdgeInsets.all(14),
                                 decoration: BoxDecoration(
                                   color:
                                       currentPageData.indexOf(workOrder) % 2 ==
                                               0
-                                          ? Color(0xFFF4F8FF)
+                                          ? const Color(0xFFF4F8FF)
                                           : Colors.white,
                                   borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: Color(0xFFDBE0E5)),
+                                  border: Border.all(color: const Color(0xFFDBE0E5)),
                                   // boxShadow: [
                                   //   BoxShadow(
                                   //     color: Colors.black12,
@@ -1061,7 +1061,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                             ),
                                           ),
                                         ),
-                                        SizedBox(width: 5),
+                                        const SizedBox(width: 5),
                                         Expanded(
                                           flex: 3,
                                           child: Text(
@@ -1077,7 +1077,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                             maxLines: 2,
                                           ),
                                         ),
-                                        SizedBox(width: 30),
+                                        const SizedBox(width: 30),
                                         Expanded(
                                           flex: 3,
                                           child: Text(
@@ -1100,11 +1100,11 @@ class _Workorder_tableState extends State<Workorder_table> {
                                     if (isExpanded)
                                       Column(
                                         children: [
-                                          Divider(thickness: 2),
-                                          SizedBox(height: 4),
+                                          const Divider(thickness: 2),
+                                          const SizedBox(height: 4),
                                           Row(
                                             children: [
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 25,
                                               ),
                                               Expanded(
@@ -1118,33 +1118,33 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             fontSize: 13)),
-                                                    SizedBox(height: 2),
+                                                    const SizedBox(height: 2),
                                                     Text(
                                                       workOrder.workOrderData
                                                               ?.status ??
                                                           "-",
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           fontSize: 12),
                                                     ),
-                                                    SizedBox(height: 8),
+                                                    const SizedBox(height: 8),
                                                     Text('Due Date:',
                                                         style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             fontSize: 13)),
-                                                    SizedBox(height: 2),
+                                                    const SizedBox(height: 2),
                                                     Text(
                                                       dateProvider.formatCurrentDate(
                                                               '${workOrder.workOrderData?.date}') ??
                                                           "-",
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           fontSize: 12),
                                                     ),
                                                   ],
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 35,
                                               ),
                                               // Spacer(),
@@ -1159,40 +1159,40 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             fontSize: 13)),
-                                                    SizedBox(height: 2),
+                                                    const SizedBox(height: 2),
                                                     Text(
                                                       workOrder.workOrderData
                                                                   ?.isBillable ==
                                                               true
                                                           ? "Yes"
                                                           : "No",
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           fontSize: 12),
                                                     ),
-                                                    SizedBox(height: 8),
+                                                    const SizedBox(height: 8),
                                                     Text('Created:',
                                                         style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             fontSize: 13)),
-                                                    SizedBox(height: 2),
+                                                    const SizedBox(height: 2),
                                                     Text(
                                                       dateProvider.formatCurrentDate(
                                                               '${workOrder.workOrderData?.createdAt}') ??
                                                           "-",
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           fontSize: 12),
                                                     ),
                                                   ],
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 4,
                                               ),
                                             ],
                                           ),
-                                          SizedBox(height: 15),
+                                          const SizedBox(height: 15),
                                           Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.end,
@@ -1208,7 +1208,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                               8),
                                                       color:
                                                           Colors.red.shade50),
-                                                  child: Row(
+                                                  child: const Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
                                                             .center,
@@ -1226,7 +1226,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 5,
                                               ),
                                               GestureDetector(
@@ -1240,7 +1240,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                               8),
                                                       color: Colors.green
                                                           .shade50), // color:Colors.grey[100],
-                                                  child: Row(
+                                                  child: const Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
                                                             .center,
@@ -1257,7 +1257,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 5,
                                               ),
                                               GestureDetector(
@@ -1271,7 +1271,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                         BorderRadius.circular(
                                                             8),
                                                   ),
-                                                  child: Row(
+                                                  child: const Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
                                                             .center,
@@ -1303,16 +1303,16 @@ class _Workorder_tableState extends State<Workorder_table> {
                                 children: [
                                   Container(
                                     decoration: BoxDecoration(
-                                        color: Color(0xFFF7F9FC),
+                                        color: const Color(0xFFF7F9FC),
                                         border: Border.all(
-                                            color: Color(0xFFDBE0E5)),
+                                            color: const Color(0xFFDBE0E5)),
                                         borderRadius: BorderRadius.circular(8)),
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         vertical: 15, horizontal: 8),
-                                    margin: EdgeInsets.only(bottom: 2),
+                                    margin: const EdgeInsets.only(bottom: 2),
                                     child: Row(
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 25,
                                         ),
                                         Expanded(
@@ -1326,7 +1326,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                             ),
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 30,
                                         ),
                                         Expanded(
@@ -1341,7 +1341,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                             textAlign: TextAlign.end,
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 8,
                                         ),
                                       ],
@@ -1405,19 +1405,19 @@ class _Workorder_tableState extends State<Workorder_table> {
                                     );
                                   }).toList(),
                                   if (data.length > itemsPerPage)
-                                    SizedBox(height: 20),
+                                    const SizedBox(height: 20),
                                   if (data.length > itemsPerPage)
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
                                         Row(
                                           children: [
-                                            SizedBox(width: 10),
+                                            const SizedBox(width: 10),
                                             Material(
                                               elevation: 3,
                                               child: Container(
                                                 height: 40,
-                                                padding: EdgeInsets.symmetric(
+                                                padding: const EdgeInsets.symmetric(
                                                     horizontal: 12.0),
                                                 decoration: BoxDecoration(
                                                   border: Border.all(
@@ -1495,7 +1495,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                         ),
                                       ],
                                     ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 10,
                                   ),
                                 ],
@@ -1520,11 +1520,11 @@ class _Workorder_tableState extends State<Workorder_table> {
                     height: 200,
                     fit: BoxFit.fill,
                   ),
-                  Text(
+                  const Text(
                     'No Internet',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     'Check your internet connection',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
@@ -1540,7 +1540,7 @@ class _Workorder_tableState extends State<Workorder_table> {
       children: [
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(4.0),
+            padding: const EdgeInsets.all(4.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1549,7 +1549,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 2.0), // Space between label and value
+                const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   leftValue,
                   style: TextStyle(color: grey),
@@ -1560,7 +1560,7 @@ class _Workorder_tableState extends State<Workorder_table> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(4.0),
+            padding: const EdgeInsets.all(4.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1569,7 +1569,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 2.0), // Space between label and value
+                const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   rightValue,
                   style: TextStyle(color: grey),

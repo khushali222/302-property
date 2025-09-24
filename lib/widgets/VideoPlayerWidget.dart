@@ -70,15 +70,15 @@ class _VideoPlayerDialogState extends State<VideoPlayerDialog> {
             clipBehavior: Clip.none,
             children: [
               Container(
-                padding: EdgeInsets.all(00),
+                padding: const EdgeInsets.all(00),
                 child: _chewieController != null &&
                     _chewieController!.videoPlayerController.value.isInitialized
                     ? AspectRatio(
                   aspectRatio: _videoPlayerController.value.aspectRatio,
                   child: Chewie(controller: _chewieController!),
                 )
-                    : Padding(
-                  padding: const EdgeInsets.all(60),
+                    : const Padding(
+                  padding: EdgeInsets.all(60),
                   child: Center(
                     child: SpinKitFadingCircle(
                       color: Colors.white,
@@ -91,7 +91,7 @@ class _VideoPlayerDialogState extends State<VideoPlayerDialog> {
                 top: -50, // Moves the close button above the container
                 right: 0,
                 child: IconButton(
-                  icon: Icon(Icons.close, color: Colors.white, size: 30),
+                  icon: const Icon(Icons.close, color: Colors.white, size: 30),
                   onPressed: () => Navigator.pop(context),
                 ),
               ),

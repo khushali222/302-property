@@ -81,9 +81,9 @@ class _Vendor_tableState extends State<Vendor_table> {
       //   ),
       // ),
       decoration: BoxDecoration(
-          color: Color(0xFFF4F8FF),
+          color: const Color(0xFFF4F8FF),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Color(0xFFDBE0E5))),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -96,7 +96,7 @@ class _Vendor_tableState extends State<Vendor_table> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -130,10 +130,10 @@ class _Vendor_tableState extends State<Vendor_table> {
                         ? Text("Name ", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold))
                         : Text("Name", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
+                    const SizedBox(width: 3),
                     ascending1
                         ? Padding(
-                            padding:  EdgeInsets.only(top: 7, left: 2),
+                            padding:  const EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
@@ -141,7 +141,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                             ),
                           )
                         : Padding(
-                            padding:  EdgeInsets.only(bottom: 7, left: 2),
+                            padding:  const EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -178,10 +178,10 @@ class _Vendor_tableState extends State<Vendor_table> {
                 child: Row(
                   children: [
                     Text("  Phone  Number", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     ascending2
                         ? Padding(
-                            padding:  EdgeInsets.only(top: 7, left: 2),
+                            padding:  const EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
@@ -189,7 +189,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                             ),
                           )
                         : Padding(
-                            padding:  EdgeInsets.only(bottom: 7, left: 2),
+                            padding:  const EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -320,14 +320,14 @@ class _Vendor_tableState extends State<Vendor_table> {
       desc: "Once deleted, you will not be able to recover this vendor!",
       content: Column(
         children: <Widget>[
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           SizedBox(
             height: 45,
             child: TextField(
               controller: reason,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Enter reason for deletion',
                   contentPadding: EdgeInsets.only(top: 8, left: 15)),
@@ -335,12 +335,12 @@ class _Vendor_tableState extends State<Vendor_table> {
           ),
         ],
       ),
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -511,7 +511,7 @@ class _Vendor_tableState extends State<Vendor_table> {
           color: Colors.white,
           child: Container(
             height: 55,
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(4.0),
@@ -530,17 +530,17 @@ class _Vendor_tableState extends State<Vendor_table> {
                     _changeRowsPerPage(newValue);
                   }
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_drop_down,
                   size: 40,
                 ),
-                style: TextStyle(color: Colors.black, fontSize: 17),
+                style: const TextStyle(color: Colors.black, fontSize: 17),
                 dropdownColor: Colors.white,
               ),
             ),
           ),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         IconButton(
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
@@ -557,7 +557,7 @@ class _Vendor_tableState extends State<Vendor_table> {
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         IconButton(
           icon: FaIcon(
@@ -662,7 +662,7 @@ class _Vendor_tableState extends State<Vendor_table> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   //add propertytype
                   Padding(
                     padding: const EdgeInsets.only(left: 0, right: 0),
@@ -694,7 +694,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                             // }
                             final result = await Navigator.of(context).push(
                                 MaterialPageRoute(
-                                    builder: (context) => Add_vendor()));
+                                    builder: (context) => const Add_vendor()));
                             if (result == true) {
                               setState(() {
                                 futurePropertyTypes =
@@ -738,27 +738,27 @@ class _Vendor_tableState extends State<Vendor_table> {
                           ),
                         ),
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 6),
+                          const SizedBox(width: 6),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 22),
+                          const SizedBox(width: 22),
                       ],
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   //search
                   Padding(
                     padding: const EdgeInsets.only(left: 11, right: 11),
                     child: Row(
                       children: [
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 24),
+                          const SizedBox(width: 24),
                         Material(
                           elevation: 3,
                           borderRadius: BorderRadius.circular(8),
                           child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
                             // height: 40,
                             height: MediaQuery.of(context).size.width < 500
                                 ? 45
@@ -770,7 +770,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(8),
                                 // border: Border.all(color: Colors.grey),
-                                border: Border.all(color: Color(0xFF8A95A8))),
+                                border: Border.all(color: const Color(0xFF8A95A8))),
                             child: Stack(
                               children: [
                                 Positioned.fill(
@@ -805,9 +805,9 @@ class _Vendor_tableState extends State<Vendor_table> {
                                               ? 14
                                               : 18,
                                           // fontWeight: FontWeight.bold,
-                                          color: Color(0xFF8A95A8),
+                                          color: const Color(0xFF8A95A8),
                                         ),
-                                        contentPadding: EdgeInsets.only(
+                                        contentPadding: const EdgeInsets.only(
                                             left: 5, bottom: 10, top: 4)),
                                   ),
                                 ),
@@ -854,7 +854,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                     ),
                   ),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                   if (MediaQuery.of(context).size.width < 500)
                     Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -881,7 +881,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                       height: 200,
                                       width: 200,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     Text(
@@ -923,9 +923,9 @@ class _Vendor_tableState extends State<Vendor_table> {
                             return SingleChildScrollView(
                               child: Column(
                                 children: [
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   _buildHeaders(),
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   Container(
                                     // decoration: BoxDecoration(
                                     //     border: Border.all(
@@ -956,13 +956,13 @@ class _Vendor_tableState extends State<Vendor_table> {
                                           //   border: Border.all(color: blueColor),
                                           // ),
                                           margin:
-                                          EdgeInsets.symmetric(vertical: 6),
+                                          const EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
-                                                ? Color(0xFFF4F8FF)
+                                                ? const Color(0xFFF4F8FF)
                                                 : Colors.white,
                                             border: Border.all(
-                                                color: Color(0xFFDBE0E5)),
+                                                color: const Color(0xFFDBE0E5)),
                                             borderRadius:
                                             BorderRadius.circular(10),
                                           ),
@@ -1008,12 +1008,12 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                         },
                                                         child: Container(
                                                           margin:
-                                                              EdgeInsets.only(
+                                                              const EdgeInsets.only(
                                                                   left: 5),
                                                           padding: !isExpanded
-                                                              ? EdgeInsets.only(
+                                                              ? const EdgeInsets.only(
                                                                   bottom: 10)
-                                                              : EdgeInsets.only(
+                                                              : const EdgeInsets.only(
                                                                   top: 10),
                                                           child: FaIcon(
                                                             isExpanded
@@ -1161,9 +1161,9 @@ class _Vendor_tableState extends State<Vendor_table> {
                                               ),
                                               if (isExpanded)
                                                 Container(
-                                                  padding: EdgeInsets.symmetric(
+                                                  padding: const EdgeInsets.symmetric(
                                                       horizontal: 2.0),
-                                                  margin: EdgeInsets.only(
+                                                  margin: const EdgeInsets.only(
                                                       bottom: 2),
                                                   child: SingleChildScrollView(
                                                     child: Column(
@@ -1306,7 +1306,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                       ),*/
                                                           ],
                                                         ),
-                                                        SizedBox(
+                                                        const SizedBox(
                                                           height: 10,
                                                         ),
                                                         Row(
@@ -1347,7 +1347,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                                         BorderRadius
                                                                             .circular(8),
                                                                   ), // color:Colors.grey[100],
-                                                                  child: Row(
+                                                                  child: const Row(
                                                                     mainAxisAlignment:
                                                                         MainAxisAlignment
                                                                             .center,
@@ -1379,7 +1379,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                                 ),
                                                               ),
                                                             ),
-                                                            SizedBox(
+                                                            const SizedBox(
                                                               width: 5,
                                                             ),
                                                             Expanded(
@@ -1405,7 +1405,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                                         BorderRadius
                                                                             .circular(8),
                                                                   ),
-                                                                  child: Row(
+                                                                  child: const Row(
                                                                     mainAxisAlignment:
                                                                         MainAxisAlignment
                                                                             .center,
@@ -1450,19 +1450,19 @@ class _Vendor_tableState extends State<Vendor_table> {
                                       }).toList(),
                                     ),
                                   ),
-                                  SizedBox(height: 20),
+                                  const SizedBox(height: 20),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       Row(
                                         children: [
                                           // Text('Rows per page:'),
-                                          SizedBox(width: 10),
+                                          const SizedBox(width: 10),
                                           Material(
                                             elevation: 3,
                                             child: Container(
                                               height: 40,
-                                              padding: EdgeInsets.symmetric(
+                                              padding: const EdgeInsets.symmetric(
                                                   horizontal: 12.0),
                                               decoration: BoxDecoration(
                                                 border: Border.all(
@@ -1592,7 +1592,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                     height: 200,
                                     width: 200,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 10,
                                   ),
                                   Text(
@@ -1638,7 +1638,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                 .91,
                                             child: Table(
                                               defaultColumnWidth:
-                                                  IntrinsicColumnWidth(),
+                                                  const IntrinsicColumnWidth(),
                                               children: [
                                                 TableRow(
                                                   decoration: BoxDecoration(
@@ -1664,7 +1664,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                   ],
                                                 ),
                                                 TableRow(
-                                                  decoration: BoxDecoration(
+                                                  decoration: const BoxDecoration(
                                                     border: Border.symmetric(
                                                         horizontal:
                                                             BorderSide.none),
@@ -1715,13 +1715,13 @@ class _Vendor_tableState extends State<Vendor_table> {
                                             ),
                                           ),
                                         ),
-                                        SizedBox(height: 25),
+                                        const SizedBox(height: 25),
                                         _buildPaginationControls(),
                                       ],
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 25),
+                                const SizedBox(height: 25),
                               ],
                             ),
                           );
@@ -1743,11 +1743,11 @@ class _Vendor_tableState extends State<Vendor_table> {
                     height: 200,
                     fit: BoxFit.fill,
                   ),
-                  Text(
+                  const Text(
                     'No Internet',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     'Check your internet connection',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),

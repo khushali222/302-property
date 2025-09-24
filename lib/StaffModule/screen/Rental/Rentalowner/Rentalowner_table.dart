@@ -220,16 +220,16 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-          color: Color(0xFFF4F8FF),
+          color: const Color(0xFFF4F8FF),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Color(0xFFDBE0E5))),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -265,7 +265,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                         : Text("Name",
                         style: TextStyle(color: blueColor, fontSize: 18)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
+                    const SizedBox(width: 3),
                     ascending1
                         ? Padding(
                       padding: const EdgeInsets.only(top: 7, left: 2),
@@ -312,10 +312,10 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                 },
                 child: Row(
                   children: [
-                    SizedBox(width: 15),
+                    const SizedBox(width: 15),
                     Text("Phone",
                         style: TextStyle(color: blueColor, fontSize: 18)),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     ascending2
                         ? Padding(
                       padding: const EdgeInsets.only(top: 7, left: 2),
@@ -434,17 +434,17 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this RentalOwner!",
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       content: Column(
         children: <Widget>[
-          SizedBox(height: 10,),
+          const SizedBox(height: 10,),
           SizedBox(
             height: 45,
             child: TextField(
               controller: reason,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Enter reason for deletion',
                   contentPadding: EdgeInsets.only(top: 8,left: 15)
@@ -456,7 +456,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
             buttons: [
 
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -556,14 +556,14 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
       title: "Plan Limitation",
       desc:
           "The limit for adding rentalowners according to the plan has been reached.",
-      style: AlertStyle(
+      style: const AlertStyle(
           backgroundColor: Color.fromRGBO(255, 255, 255, 1),
           descStyle: TextStyle(fontSize: 14)
           //  overlayColor: Colors.black.withOpacity(.8)
           ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "OK",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -589,7 +589,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
       SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.all(0),
               child: Row(
@@ -622,7 +622,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                       // }
                       final result = await Navigator.of(context).push(
                           MaterialPageRoute(
-                              builder: (context) => Add_rentalowners()));
+                              builder: (context) => const Add_rentalowners()));
                       if (result != "") {
                         setState(() {
                           futureRentalOwners =
@@ -658,21 +658,21 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                     ),
                   ),
                   if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 6),
+                    const SizedBox(width: 6),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 22),
+                    const SizedBox(width: 22),
                 ],
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Padding(
-              padding: EdgeInsets.only(left: 11, right: 11),
+              padding: const EdgeInsets.only(left: 11, right: 11),
               child: Row(
                 children: [
                   if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 2),
+                    const SizedBox(width: 2),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 19),
+                    const SizedBox(width: 19),
                   Expanded(
                     child: Material(
                       elevation: 3,
@@ -687,7 +687,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Color(0xFF8A95A8)),
+                          border: Border.all(color: const Color(0xFF8A95A8)),
                         ),
                         child: TextField(
                           style: TextStyle(
@@ -706,13 +706,13 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                             border: InputBorder.none,
                             hintText: "Search here...",
                             hintStyle: TextStyle(
-                                color: Color(0xFF8A95A8),
+                                color: const Color(0xFF8A95A8),
                                 fontSize:
                                 MediaQuery.of(context).size.width <
                                     500
                                     ? 14
                                     : 18),
-                            contentPadding: (EdgeInsets.only(
+                            contentPadding: (const EdgeInsets.only(
                                 left: 8, bottom: 13, top: 5)),
                           ),
                         ),
@@ -749,14 +749,14 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                   //   ],
                   // ),
                   if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 25),
+                    const SizedBox(width: 25),
                 ],
               ),
             ),
             if (MediaQuery.of(context).size.width > 500)
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
             if (MediaQuery.of(context).size.width < 500)
               Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -783,7 +783,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                 height: 200,
                                 width: 200,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                               Text(
@@ -834,9 +834,9 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             _buildHeaders(),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Container(
                               // decoration: BoxDecoration(
                               //     borderRadius: BorderRadius.circular(10),
@@ -859,13 +859,13 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
                                     margin:
-                                    EdgeInsets.symmetric(vertical: 6),
+                                    const EdgeInsets.symmetric(vertical: 6),
                                     decoration: BoxDecoration(
                                       color: index % 2 != 0
-                                          ? Color(0xFFF4F8FF)
+                                          ? const Color(0xFFF4F8FF)
                                           : Colors.white,
                                       border: Border.all(
-                                          color: Color(0xFFDBE0E5)),
+                                          color: const Color(0xFFDBE0E5)),
                                       borderRadius:
                                       BorderRadius.circular(10),
                                     ),
@@ -911,13 +911,13 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                   },
                                                   child: Container(
                                                     margin:
-                                                    EdgeInsets.only(
+                                                    const EdgeInsets.only(
                                                         left: 5,
                                                         right: 5),
                                                     padding: !isExpanded
-                                                        ? EdgeInsets.only(
+                                                        ? const EdgeInsets.only(
                                                         bottom: 10)
-                                                        : EdgeInsets.only(
+                                                        : const EdgeInsets.only(
                                                         top: 10),
                                                     child: FaIcon(
                                                       isExpanded
@@ -987,8 +987,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                         ),
                                         if (isExpanded)
                                           Container(
-                                            padding: EdgeInsets.all(16),
-                                            decoration: BoxDecoration(
+                                            padding: const EdgeInsets.all(16),
+                                            decoration: const BoxDecoration(
                                               border: Border(
                                                 top: BorderSide(
                                                     color:
@@ -1052,7 +1052,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                       ),
                                                     ],
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 10,
                                                   ),
                                                   Row(
@@ -1080,7 +1080,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                                   .red
                                                                   .shade50
                                                           ),
-                                                          child: Row(
+                                                          child: const Row(
                                                             mainAxisAlignment:
                                                             MainAxisAlignment
                                                                 .center,
@@ -1099,7 +1099,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 5,
                                                       ),
                                                       GestureDetector(
@@ -1130,7 +1130,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                               color: Colors
                                                                   .green
                                                                   .shade50), // color:Colors.grey[100],
-                                                          child: Row(
+                                                          child: const Row(
                                                             mainAxisAlignment:
                                                             MainAxisAlignment
                                                                 .center,
@@ -1149,7 +1149,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 5,
                                                       ),
                                                       GestureDetector(
@@ -1176,7 +1176,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                                 .circular(
                                                                 8),
                                                           ),
-                                                          child: Row(
+                                                          child: const Row(
                                                             mainAxisAlignment:
                                                             MainAxisAlignment
                                                                 .center,
@@ -1212,7 +1212,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                 }).toList(),
                               ),
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             if (data.length > itemsPerPage)
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -1220,12 +1220,12 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                   Row(
                                     children: [
                                       // Text('Rows per page:'),
-                                      SizedBox(width: 10),
+                                      const SizedBox(width: 10),
                                       Material(
                                         elevation: 3,
                                         child: Container(
                                           height: 40,
-                                          padding: EdgeInsets.symmetric(
+                                          padding: const EdgeInsets.symmetric(
                                               horizontal: 12.0),
                                           decoration: BoxDecoration(
                                             border: Border.all(
@@ -1355,7 +1355,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                               height: 200,
                               width: 200,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             Text(
@@ -1401,7 +1401,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                               MediaQuery.of(context).size.width * .91,
                               child: Table(
                                 defaultColumnWidth:
-                                IntrinsicColumnWidth(),
+                                const IntrinsicColumnWidth(),
                                 children: [
                                   TableRow(
                                     decoration: BoxDecoration(
@@ -1426,7 +1426,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                     ],
                                   ),
                                   TableRow(
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                       border: Border.symmetric(
                                           horizontal: BorderSide.none),
                                     ),
@@ -1442,13 +1442,13 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                     TableRow(
                                       decoration: BoxDecoration(
                                         border: Border(
-                                          left: BorderSide(
+                                          left: const BorderSide(
                                               color: Color.fromRGBO(
                                                   21, 43, 81, 1)),
-                                          right: BorderSide(
+                                          right: const BorderSide(
                                               color: Color.fromRGBO(
                                                   21, 43, 81, 1)),
-                                          top: BorderSide(
+                                          top: const BorderSide(
                                               color: Color.fromRGBO(
                                                   21, 43, 81, 1)),
                                           bottom:
@@ -1482,8 +1482,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                             ),
                           ),
                           if (_tableData.isEmpty)
-                            Text("No Search Records Found"),
-                          SizedBox(height: 25),
+                            const Text("No Search Records Found"),
+                          const SizedBox(height: 25),
                           _buildPaginationControls(),
                         ],
                       ),
@@ -1506,12 +1506,12 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
               height: 200,
               fit: BoxFit.fill,
             ),
-            Text(
+            const Text(
               'No Internet',
               style: TextStyle(
                   fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            Text(
+            const Text(
               'Check your internet connection',
               style: TextStyle(
                   fontSize: 16, fontWeight: FontWeight.w500),
@@ -1620,7 +1620,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
           color: Colors.white,
           child: Container(
             height: 55,
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(4.0),
@@ -1639,17 +1639,17 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                     _changeRowsPerPage(newValue);
                   }
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_drop_down,
                   size: 40,
                 ),
-                style: TextStyle(color: Colors.black, fontSize: 17),
+                style: const TextStyle(color: Colors.black, fontSize: 17),
                 dropdownColor: Colors.white,
               ),
             ),
           ),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         IconButton(
           icon: FaIcon(
             size: 30,
@@ -1667,7 +1667,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         IconButton(
           icon: FaIcon(

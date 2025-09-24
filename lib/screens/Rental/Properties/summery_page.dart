@@ -278,7 +278,7 @@ class _Summery_pageState extends State<Summery_page>
           .clamp(0.0, _scrollController.position.maxScrollExtent);
       _scrollController.animateTo(
         newOffset,
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     }
@@ -293,7 +293,7 @@ class _Summery_pageState extends State<Summery_page>
           .clamp(0.0, _scrollController.position.maxScrollExtent);
       _scrollController.animateTo(
         newOffset,
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     }
@@ -670,9 +670,9 @@ class _Summery_pageState extends State<Summery_page>
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-          color: Color(0xFFF4F8FF),
+          color: const Color(0xFFF4F8FF),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Color(0xFFDBE0E5))),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -685,7 +685,7 @@ class _Summery_pageState extends State<Summery_page>
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -723,18 +723,18 @@ class _Summery_pageState extends State<Summery_page>
                             style: TextStyle(
                                 color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 1),
+                    const SizedBox(width: 1),
                     ascending1
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -773,18 +773,18 @@ class _Summery_pageState extends State<Summery_page>
                     Text("   Status",
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold)),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     ascending2
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -824,7 +824,7 @@ class _Summery_pageState extends State<Summery_page>
                     Text("       Billable ",
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold)),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                   ],
                 ),
               ),
@@ -946,7 +946,7 @@ class _Summery_pageState extends State<Summery_page>
           color: Colors.white,
           child: Container(
             height: 55,
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(4.0),
@@ -965,17 +965,17 @@ class _Summery_pageState extends State<Summery_page>
                     _changeRowsPerPage(newValue);
                   }
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_drop_down,
                   size: 40,
                 ),
-                style: TextStyle(color: Colors.black, fontSize: 17),
+                style: const TextStyle(color: Colors.black, fontSize: 17),
                 dropdownColor: Colors.white,
               ),
             ),
           ),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         IconButton(
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
@@ -992,7 +992,7 @@ class _Summery_pageState extends State<Summery_page>
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         IconButton(
           icon: FaIcon(
@@ -1060,9 +1060,9 @@ class _Summery_pageState extends State<Summery_page>
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-          color: Color(0xFFF4F8FF),
+          color: const Color(0xFFF4F8FF),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Color(0xFFDBE0E5))),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -1075,7 +1075,7 @@ class _Summery_pageState extends State<Summery_page>
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -1116,18 +1116,18 @@ class _Summery_pageState extends State<Summery_page>
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
+                    const SizedBox(width: 3),
                     ascending1multi
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -1167,18 +1167,18 @@ class _Summery_pageState extends State<Summery_page>
                             color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 18)),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     ascending2multi
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -1281,7 +1281,7 @@ class _Summery_pageState extends State<Summery_page>
           color: Colors.white,
           child: Container(
             height: 55,
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(4.0),
@@ -1300,17 +1300,17 @@ class _Summery_pageState extends State<Summery_page>
                     _changeRowsPerPagemulti(newValue);
                   }
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_drop_down,
                   size: 40,
                 ),
-                style: TextStyle(color: Colors.black, fontSize: 17),
+                style: const TextStyle(color: Colors.black, fontSize: 17),
                 dropdownColor: Colors.white,
               ),
             ),
           ),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         IconButton(
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
@@ -1327,7 +1327,7 @@ class _Summery_pageState extends State<Summery_page>
         ),
         Text(
           'Page ${_currentPagemulti + 1} of $numorpages',
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         IconButton(
           icon: FaIcon(
@@ -1383,7 +1383,7 @@ class _Summery_pageState extends State<Summery_page>
     return Container(
       decoration: BoxDecoration(
         color: blueColor,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(13),
           topRight: Radius.circular(13),
         ),
@@ -1394,7 +1394,7 @@ class _Summery_pageState extends State<Summery_page>
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -1424,15 +1424,15 @@ class _Summery_pageState extends State<Summery_page>
                 child: Row(
                   children: [
                     width < 400
-                        ? Text(" Contact\nName",
+                        ? const Text(" Contact\nName",
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.white, fontSize: 14))
-                        : Text(" Contact\nName",
+                        : const Text(" Contact\nName",
                             textAlign: TextAlign.center,
                             style:
                                 TextStyle(color: Colors.white, fontSize: 14)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
+                    const SizedBox(width: 3),
                   ],
                 ),
               ),
@@ -1459,7 +1459,7 @@ class _Summery_pageState extends State<Summery_page>
                     // Sorting logic here
                   });
                 },
-                child: Row(
+                child: const Row(
                   children: [
                     Text("Company \nName",
                         textAlign: TextAlign.center,
@@ -1492,10 +1492,10 @@ class _Summery_pageState extends State<Summery_page>
                     // Sorting logic here
                   });
                 },
-                child: Row(
+                child: const Row(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
+                      padding: EdgeInsets.only(left: 8.0),
                       child: Text("   Phone\n   Number",
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.white, fontSize: 14)),
@@ -1608,7 +1608,7 @@ class _Summery_pageState extends State<Summery_page>
           color: Colors.white,
           child: Container(
             height: 55,
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(4.0),
@@ -1627,17 +1627,17 @@ class _Summery_pageState extends State<Summery_page>
                     _changeRowsPerPagerent(newValue);
                   }
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_drop_down,
                   size: 40,
                 ),
-                style: TextStyle(color: Colors.black, fontSize: 17),
+                style: const TextStyle(color: Colors.black, fontSize: 17),
                 dropdownColor: Colors.white,
               ),
             ),
           ),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         IconButton(
           icon: FaIcon(
             size: 30,
@@ -1654,7 +1654,7 @@ class _Summery_pageState extends State<Summery_page>
         ),
         Text(
           'Page ${_currentPagerent + 1} of $numorpages',
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         IconButton(
           icon: FaIcon(
@@ -1747,7 +1747,7 @@ class _Summery_pageState extends State<Summery_page>
                       Text(
                           '${widget.properties.propertyTypeData?.propertyType}',
                           style: TextStyle(
-                            color: Color(0xFF8A95A8),
+                            color: const Color(0xFF8A95A8),
                             fontWeight: FontWeight.bold,
                             fontSize: MediaQuery.of(context).size.width < 500
                                 ? 13
@@ -1853,7 +1853,7 @@ class _Summery_pageState extends State<Summery_page>
                     // ),
                   ),*/
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     height: 45,
                     decoration: BoxDecoration(
                       color: Colors.transparent,
@@ -1914,7 +1914,7 @@ class _Summery_pageState extends State<Summery_page>
                                     size: 36,
                                   ),
                                   padding: EdgeInsets.zero,
-                                  constraints: BoxConstraints(),
+                                  constraints: const BoxConstraints(),
                                 ),
                               ),
 
@@ -1923,7 +1923,7 @@ class _Summery_pageState extends State<Summery_page>
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 controller: _scrollController,
-                                physics: BouncingScrollPhysics(),
+                                physics: const BouncingScrollPhysics(),
                                 child: Row(
                                   children: tabItems.map((tab) {
                                     int tabIndex = tab["index"];
@@ -1931,7 +1931,7 @@ class _Summery_pageState extends State<Summery_page>
 
                                     return Container(
                                       margin:
-                                          EdgeInsets.symmetric(horizontal: 3),
+                                          const EdgeInsets.symmetric(horizontal: 3),
                                       child: GestureDetector(
                                         onTap: () {
                                           setState(() {
@@ -1948,7 +1948,7 @@ class _Summery_pageState extends State<Summery_page>
                                           });
                                         },
                                         child: Container(
-                                          padding: EdgeInsets.symmetric(
+                                          padding: const EdgeInsets.symmetric(
                                               vertical: 0, horizontal: 16),
                                           decoration: BoxDecoration(
                                             color: _selectedIndex == tabIndex
@@ -1969,7 +1969,7 @@ class _Summery_pageState extends State<Summery_page>
                                                           color: blueColor
                                                               .withOpacity(0.3),
                                                           blurRadius: 4,
-                                                          offset: Offset(0, 2),
+                                                          offset: const Offset(0, 2),
                                                         )
                                                       ]
                                                     : [
@@ -1977,7 +1977,7 @@ class _Summery_pageState extends State<Summery_page>
                                                           color: Colors.grey
                                                               .withOpacity(0.1),
                                                           blurRadius: 2,
-                                                          offset: Offset(0, 1),
+                                                          offset: const Offset(0, 1),
                                                         )
                                                       ],
                                           ),
@@ -2021,7 +2021,7 @@ class _Summery_pageState extends State<Summery_page>
                                     size: 36,
                                   ),
                                   padding: EdgeInsets.zero,
-                                  constraints: BoxConstraints(),
+                                  constraints: const BoxConstraints(),
                                 ),
                               ),
                           ],
@@ -2069,11 +2069,11 @@ class _Summery_pageState extends State<Summery_page>
                     height: 200,
                     fit: BoxFit.fill,
                   ),
-                  Text(
+                  const Text(
                     'No Internet',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     'Check your internet connection',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
@@ -2119,7 +2119,7 @@ class _Summery_pageState extends State<Summery_page>
                     activeColor: isCheckedlease ? blueColor : Colors.black,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 8,
                 ),
                 Text(
@@ -2153,7 +2153,7 @@ class _Summery_pageState extends State<Summery_page>
                         children: [
                           Image.asset("assets/images/no_data.jpg",
                               height: 200, width: 200),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Text(
                             "No Lease Data Available",
                             style: TextStyle(
@@ -2269,19 +2269,19 @@ class _Summery_pageState extends State<Summery_page>
                           },
                           blueColor: blueColor,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Row(
                               children: [
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 Material(
                                   elevation: 3,
                                   child: Container(
                                     height: 40,
                                     padding:
-                                        EdgeInsets.symmetric(horizontal: 12.0),
+                                        const EdgeInsets.symmetric(horizontal: 12.0),
                                     decoration: BoxDecoration(
                                       border: Border.all(color: Colors.grey),
                                     ),
@@ -2396,7 +2396,7 @@ class _Summery_pageState extends State<Summery_page>
                         children: [
                           Image.asset("assets/images/no_data.jpg",
                               height: 200, width: 200),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Text(
                             "No Revenue Data Available",
                             style: TextStyle(
@@ -2440,7 +2440,7 @@ class _Summery_pageState extends State<Summery_page>
                   return SingleChildScrollView(
                     child: Column(
                       children: [
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         CustomAdminRevenueTable(
                           revenueData: currentPageData,
                           onSort: (columnIndex) {
@@ -2466,19 +2466,19 @@ class _Summery_pageState extends State<Summery_page>
                           },
                           blueColor: blueColor,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Row(
                               children: [
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 Material(
                                   elevation: 3,
                                   child: Container(
                                     height: 40,
                                     padding:
-                                        EdgeInsets.symmetric(horizontal: 12.0),
+                                        const EdgeInsets.symmetric(horizontal: 12.0),
                                     decoration: BoxDecoration(
                                       border: Border.all(color: Colors.grey),
                                     ),
@@ -2765,11 +2765,11 @@ class _Summery_pageState extends State<Summery_page>
                               ),
                             ),
                             if (MediaQuery.of(context).size.width < 500)
-                              SizedBox(
+                              const SizedBox(
                                 width: 15,
                               ),
                             if (MediaQuery.of(context).size.width > 500)
-                              SizedBox(
+                              const SizedBox(
                                 width: 25,
                               ),
                             Expanded(
@@ -2793,13 +2793,13 @@ class _Summery_pageState extends State<Summery_page>
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 5),
+                                  const SizedBox(height: 5),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10),
                                     child: Text('Address',
                                         style: TextStyle(
-                                          color: Color(0xFF8A95A8),
+                                          color: const Color(0xFF8A95A8),
                                           fontSize: MediaQuery.of(context)
                                                       .size
                                                       .width <
@@ -2808,7 +2808,7 @@ class _Summery_pageState extends State<Summery_page>
                                               : 18,
                                         )),
                                   ),
-                                  SizedBox(height: 5),
+                                  const SizedBox(height: 5),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10),
@@ -2825,7 +2825,7 @@ class _Summery_pageState extends State<Summery_page>
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                  SizedBox(height: 5),
+                                  const SizedBox(height: 5),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10),
@@ -2843,7 +2843,7 @@ class _Summery_pageState extends State<Summery_page>
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 5),
+                                  const SizedBox(height: 5),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10),
@@ -2905,12 +2905,12 @@ class _Summery_pageState extends State<Summery_page>
                             ),
                           ],
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         Row(
                           children: [
-                            SizedBox(
+                            const SizedBox(
                               width: 15,
                             ),
                             Container(
@@ -2932,13 +2932,13 @@ class _Summery_pageState extends State<Summery_page>
                                         () {}); // Rebuild the widget after selecting the image
                                   });
                                 },
-                                child: Text(
+                                child: const Text(
                                   'Upload',
                                   style: TextStyle(color: Color(0xFFf7f8f9)),
                                 ),
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 8,
                             ),
                             if (_imageUrls.isNotEmpty ||
@@ -2959,7 +2959,7 @@ class _Summery_pageState extends State<Summery_page>
                                   onPressed: () async {
                                     _removeImage();
                                   },
-                                  child: Text(
+                                  child: const Text(
                                     'Delete',
                                     style: TextStyle(color: Color(0xFFf7f8f9)),
                                   ),
@@ -2977,11 +2977,11 @@ class _Summery_pageState extends State<Summery_page>
                 Row(
                   children: [
                     if (MediaQuery.of(context).size.width > 500)
-                      SizedBox(
+                      const SizedBox(
                         width: 6,
                       ),
                     if (MediaQuery.of(context).size.width < 500)
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                     Text(
@@ -2995,9 +2995,9 @@ class _Summery_pageState extends State<Summery_page>
                   ],
                 ),
                 if (MediaQuery.of(context).size.width > 500)
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                 if (MediaQuery.of(context).size.width > 500)
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                 if (MediaQuery.of(context).size.width < 500)
                   Padding(
                     padding: const EdgeInsets.all(5.0),
@@ -3006,7 +3006,7 @@ class _Summery_pageState extends State<Summery_page>
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return Center(
+                          return const Center(
                               child: SpinKitFadingCircle(
                             color: Colors.black,
                             size: 40.0,
@@ -3028,7 +3028,7 @@ class _Summery_pageState extends State<Summery_page>
                                     height: 200,
                                     width: 200,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 10,
                                   ),
                                   Text(
@@ -3079,7 +3079,7 @@ class _Summery_pageState extends State<Summery_page>
                           return SingleChildScrollView(
                             child: Column(
                               children: [
-                                SizedBox(height: 5),
+                                const SizedBox(height: 5),
                                 //  _buildHeadersrent(),
                                 // SizedBox(height: 20),
                                 Container(
@@ -3094,19 +3094,19 @@ class _Summery_pageState extends State<Summery_page>
                                       //return CustomExpansionTile(data: Propertytype, index: index);
                                       return Container(
                                         decoration: BoxDecoration(
-                                          color: Color(0xFFEAF1FB),
+                                          color: const Color(0xFFEAF1FB),
                                           borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(16),
-                                            topRight: Radius.circular(16),
+                                            topLeft: const Radius.circular(16),
+                                            topRight: const Radius.circular(16),
                                             bottomLeft: isExpanded
                                                 ? Radius.zero
-                                                : Radius.circular(16),
+                                                : const Radius.circular(16),
                                             bottomRight: isExpanded
                                                 ? Radius.zero
-                                                : Radius.circular(16),
+                                                : const Radius.circular(16),
                                           ),
                                           border: Border.all(
-                                            color: Color(
+                                            color: const Color(
                                                 0x4D636363), // Translucent gray border
                                             width: 1.0,
                                           ),
@@ -3151,12 +3151,12 @@ class _Summery_pageState extends State<Summery_page>
                                                         });
                                                       },
                                                       child: Container(
-                                                        margin: EdgeInsets.only(
+                                                        margin: const EdgeInsets.only(
                                                             left: 5, right: 5),
                                                         padding: !isExpanded
-                                                            ? EdgeInsets.only(
+                                                            ? const EdgeInsets.only(
                                                                 bottom: 10)
-                                                            : EdgeInsets.only(
+                                                            : const EdgeInsets.only(
                                                                 top: 10),
                                                         child: FaIcon(
                                                           isExpanded
@@ -3169,7 +3169,7 @@ class _Summery_pageState extends State<Summery_page>
                                                         ),
                                                       ),
                                                     ),
-                                                    SizedBox(width: 8),
+                                                    const SizedBox(width: 8),
                                                     Text(
                                                       'Rental Owner',
                                                       style: TextStyle(
@@ -3186,7 +3186,7 @@ class _Summery_pageState extends State<Summery_page>
                                             if (isExpanded)
                                               Container(
                                                 width: double.infinity,
-                                                decoration: BoxDecoration(
+                                                decoration: const BoxDecoration(
                                                   color: Colors.white,
                                                   border: Border(
                                                     top: BorderSide(
@@ -3219,7 +3219,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                   CrossAxisAlignment
                                                                       .start,
                                                               children: <Widget>[
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                     height: 3),
                                                                 SizedBox(
                                                                   height: MediaQuery.of(
@@ -3242,7 +3242,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                       TextSpan(
                                                                         text:
                                                                             '\n${(rentals.rentalOwnerData?.rentalOwnerName ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerName}',
-                                                                        style: TextStyle(
+                                                                        style: const TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.w700,
                                                                             color: Colors.grey),
@@ -3250,7 +3250,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                     ],
                                                                   ),
                                                                 ),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                     height: 8),
                                                                 Text.rich(
                                                                   TextSpan(
@@ -3266,7 +3266,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                       TextSpan(
                                                                         text:
                                                                             '\n${(rentals.rentalOwnerData?.rentalOwnerCompanyName ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerCompanyName}',
-                                                                        style: TextStyle(
+                                                                        style: const TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.w700,
                                                                             color: Colors.grey),
@@ -3274,7 +3274,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                     ],
                                                                   ),
                                                                 ),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                     height: 8),
                                                                 Text.rich(
                                                                   TextSpan(
@@ -3290,7 +3290,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                       TextSpan(
                                                                         text:
                                                                             '\n${(rentals.rentalOwnerData?.rentalOwnerPrimaryEmail ?? "").isEmpty ? 'N/A' : rentals.rentalOwnerData?.rentalOwnerPrimaryEmail}',
-                                                                        style: TextStyle(
+                                                                        style: const TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.w700,
                                                                             color: Colors.grey), // Light and grey
@@ -3298,7 +3298,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                     ],
                                                                   ),
                                                                 ),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                     height: 8),
                                                                 Text.rich(
                                                                   TextSpan(
@@ -3314,7 +3314,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                       TextSpan(
                                                                         text:
                                                                             "\n${formatPhoneNumber(rentals.rentalOwnerData?.rentalOwnerPhoneNumber ?? "N/A")}",
-                                                                        style: TextStyle(
+                                                                        style: const TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.w700,
                                                                             color: Colors.grey),
@@ -3329,7 +3329,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                           .height *
                                                                       .01,
                                                                 ),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                     height: 3),
                                                               ],
                                                             ),
@@ -3462,7 +3462,7 @@ class _Summery_pageState extends State<Summery_page>
                     future: futurerentalowners,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
+                        return const Center(
                             child: SpinKitFadingCircle(
                           color: Colors.black,
                           size: 40.0,
@@ -3482,7 +3482,7 @@ class _Summery_pageState extends State<Summery_page>
                                   height: 200,
                                   width: 200,
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 Text(
@@ -3527,7 +3527,7 @@ class _Summery_pageState extends State<Summery_page>
                                 child: Container(
                                   // width: MediaQuery.of(context).size.width * .91,
                                   child: Table(
-                                    defaultColumnWidth: IntrinsicColumnWidth(),
+                                    defaultColumnWidth: const IntrinsicColumnWidth(),
                                     children: [
                                       TableRow(
                                         decoration:
@@ -3572,7 +3572,7 @@ class _Summery_pageState extends State<Summery_page>
                                         ],
                                       ),
                                       TableRow(
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                           border: Border.symmetric(
                                               horizontal: BorderSide.none),
                                         ),
@@ -3587,13 +3587,13 @@ class _Summery_pageState extends State<Summery_page>
                                         TableRow(
                                           decoration: BoxDecoration(
                                             border: Border(
-                                              left: BorderSide(
+                                              left: const BorderSide(
                                                   color: Color.fromRGBO(
                                                       21, 43, 81, 1)),
-                                              right: BorderSide(
+                                              right: const BorderSide(
                                                   color: Color.fromRGBO(
                                                       21, 43, 81, 1)),
-                                              top: BorderSide(
+                                              top: const BorderSide(
                                                   color: Color.fromRGBO(
                                                       21, 43, 81, 1)),
                                               bottom: i ==
@@ -3630,8 +3630,8 @@ class _Summery_pageState extends State<Summery_page>
                                 ),
                               ),
                               if (_tableDatarent.isEmpty)
-                                Text("No Search Records Found"),
-                              SizedBox(height: 25),
+                                const Text("No Search Records Found"),
+                              const SizedBox(height: 25),
                               _buildPaginationControlsrent(),
                             ],
                           ),
@@ -3642,7 +3642,7 @@ class _Summery_pageState extends State<Summery_page>
                 const SizedBox(
                   height: 10,
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     Padding(
@@ -3656,7 +3656,7 @@ class _Summery_pageState extends State<Summery_page>
                         ),
                       ),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
@@ -3724,7 +3724,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   fontWeight: FontWeight.bold,
                                                   color: blueColor),
                                             ),
-                                            SizedBox(height: 6),
+                                            const SizedBox(height: 6),
                                             InkWell(
                                               onTap: () async {
                                                 final DateTime? picked =
@@ -3779,7 +3779,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   decoration: InputDecoration(
                                                     hintText:
                                                         'Enter purchase date',
-                                                    suffixIcon: Icon(
+                                                    suffixIcon: const Icon(
                                                         Icons.calendar_today),
                                                     border: OutlineInputBorder(
                                                       borderRadius:
@@ -3790,14 +3790,14 @@ class _Summery_pageState extends State<Summery_page>
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(height: 16),
+                                            const SizedBox(height: 16),
                                             Text(
                                               "Purchase Price",
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color: blueColor),
                                             ),
-                                            SizedBox(height: 6),
+                                            const SizedBox(height: 6),
                                             TextField(
                                               controller:
                                                   purchasePriceController,
@@ -3812,14 +3812,14 @@ class _Summery_pageState extends State<Summery_page>
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(height: 16),
+                                            const SizedBox(height: 16),
                                             Text(
                                               "Parcel Number",
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color: blueColor),
                                             ),
-                                            SizedBox(height: 6),
+                                            const SizedBox(height: 6),
                                             TextField(
                                               controller:
                                                   parcelNumberController,
@@ -3838,7 +3838,7 @@ class _Summery_pageState extends State<Summery_page>
                                         TextButton(
                                           onPressed: () =>
                                               Navigator.pop(context),
-                                          child: Text('Cancel'),
+                                          child: const Text('Cancel'),
                                         ),
                                         ElevatedButton(
                                           style: ElevatedButton.styleFrom(
@@ -3915,7 +3915,7 @@ class _Summery_pageState extends State<Summery_page>
                                               );
                                             }
                                           },
-                                          child: Text(
+                                          child: const Text(
                                             'Save',
                                             style:
                                                 TextStyle(color: Colors.white),
@@ -3928,24 +3928,24 @@ class _Summery_pageState extends State<Summery_page>
                               },
                             );
                           },
-                          child: Text(
+                          child: const Text(
                             'Edit',
                             style: TextStyle(color: Color(0xFFf7f8f9)),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
                   ],
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Padding(
                   padding: const EdgeInsets.only(left: 6, right: 6),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Color(0xFFF4F8FF),
+                      color: const Color(0xFFF4F8FF),
                       borderRadius:
                           BorderRadius.circular(16), // Increased corner radius
                       border: Border.all(color: Colors.grey.shade300),
@@ -3971,10 +3971,10 @@ class _Summery_pageState extends State<Summery_page>
                           // Header Row
                           TableRow(
                             decoration: BoxDecoration(
-                              color: Color(0xFF1A2F5B).withOpacity(0.08),
+                              color: const Color(0xFF1A2F5B).withOpacity(0.08),
                             ),
                             children: [
-                              Padding(
+                              const Padding(
                                 padding: EdgeInsets.all(12.0),
                                 child: Text(
                                   "Purchase Date",
@@ -3985,7 +3985,7 @@ class _Summery_pageState extends State<Summery_page>
                                   ),
                                 ),
                               ),
-                              Padding(
+                              const Padding(
                                 padding: EdgeInsets.all(12.0),
                                 child: Text(
                                   "Parcel Number #",
@@ -3996,7 +3996,7 @@ class _Summery_pageState extends State<Summery_page>
                                   ),
                                 ),
                               ),
-                              Padding(
+                              const Padding(
                                 padding: EdgeInsets.all(12.0),
                                 child: Text(
                                   "Purchase Price",
@@ -4012,42 +4012,42 @@ class _Summery_pageState extends State<Summery_page>
                           ),
                           // Data Row
                           TableRow(
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: Colors.white,
                             ),
                             children: [
                               Padding(
-                                padding: EdgeInsets.all(12.0),
+                                padding: const EdgeInsets.all(12.0),
                                 child: Text(
                                   (rentalDetails.purchaseDate == null ||
                                           rentalDetails.purchaseDate!.isEmpty)
                                       ? "N/A"
                                       : dateProvider.formatCurrentDate(
                                           '${rentalDetails.purchaseDate!}'),
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 14, color: Colors.black),
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.all(12.0),
+                                padding: const EdgeInsets.all(12.0),
                                 child: Text(
                                   (rentalDetails.parcelNumber == null ||
                                           rentalDetails.parcelNumber!.isEmpty)
                                       ? "N/A"
                                       : rentalDetails.parcelNumber!,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 14, color: Colors.black),
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.all(12.0),
+                                padding: const EdgeInsets.all(12.0),
                                 child: Text(
                                   (rentalDetails.purchasePrice == null ||
                                           rentalDetails.purchasePrice == 0)
                                       ? "N/A"
                                       : "\$${rentalDetails.purchasePrice!.toStringAsFixed(0)}",
                                   textAlign: TextAlign.right,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 14, color: Colors.black),
                                 ),
                               ),
@@ -4058,15 +4058,15 @@ class _Summery_pageState extends State<Summery_page>
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     if (MediaQuery.of(context).size.width > 500)
-                      SizedBox(
+                      const SizedBox(
                         width: 6,
                       ),
                     if (MediaQuery.of(context).size.width < 500)
-                      SizedBox(
+                      const SizedBox(
                         width: 5,
                       ),
                     Text(
@@ -4084,17 +4084,17 @@ class _Summery_pageState extends State<Summery_page>
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: Color(0xFFEAF1FB),
+                    color: const Color(0xFFEAF1FB),
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16),
+                      topLeft: const Radius.circular(16),
+                      topRight: const Radius.circular(16),
                       bottomLeft:
-                          staffExpanded ? Radius.zero : Radius.circular(16),
+                          staffExpanded ? Radius.zero : const Radius.circular(16),
                       bottomRight:
-                          staffExpanded ? Radius.zero : Radius.circular(16),
+                          staffExpanded ? Radius.zero : const Radius.circular(16),
                     ),
                     border: Border.all(
-                      color: Color(0x4D636363), // Translucent gray border
+                      color: const Color(0x4D636363), // Translucent gray border
                       width: 1.0,
                     ),
                   ),
@@ -4115,10 +4115,10 @@ class _Summery_pageState extends State<Summery_page>
                                   });
                                 },
                                 child: Container(
-                                  margin: EdgeInsets.only(left: 5, right: 5),
+                                  margin: const EdgeInsets.only(left: 5, right: 5),
                                   padding: !staffExpanded
-                                      ? EdgeInsets.only(bottom: 10)
-                                      : EdgeInsets.only(top: 10),
+                                      ? const EdgeInsets.only(bottom: 10)
+                                      : const EdgeInsets.only(top: 10),
                                   child: FaIcon(
                                     staffExpanded
                                         ? FontAwesomeIcons.sortUp
@@ -4128,7 +4128,7 @@ class _Summery_pageState extends State<Summery_page>
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Text(
                                 'Staff Details',
                                 style: TextStyle(
@@ -4144,7 +4144,7 @@ class _Summery_pageState extends State<Summery_page>
                       if (staffExpanded)
                         Container(
                           width: double.infinity,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Colors.white,
                             border: Border(
                               top: BorderSide(
@@ -4177,7 +4177,7 @@ class _Summery_pageState extends State<Summery_page>
                                         ? rentalDetails
                                             .staffMemberData!.staffmemberName!
                                         : 'N/A',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontWeight: FontWeight.w700,
                                         color: Colors.grey),
                                   ),
@@ -4384,7 +4384,7 @@ class _Summery_pageState extends State<Summery_page>
                           height: 200,
                           width: 200,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         Text(
@@ -4468,7 +4468,7 @@ class _Summery_pageState extends State<Summery_page>
                           //       ],
                           //     ),
                           //   ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Wrap(
@@ -4525,7 +4525,7 @@ class _Summery_pageState extends State<Summery_page>
                               );
                             }),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                         ],
@@ -4576,7 +4576,7 @@ class _Summery_pageState extends State<Summery_page>
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Text(
                     "Select Recurring Cards",
                     style: TextStyle(
@@ -4588,7 +4588,7 @@ class _Summery_pageState extends State<Summery_page>
                   Divider(
                     color: grey,
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Expanded(
                     child: FutureBuilder<List<Map<String, dynamic>>>(
                       future: Future.wait(
@@ -4628,7 +4628,7 @@ class _Summery_pageState extends State<Summery_page>
 
                           // If no tenants have valid cards, show a message
                           if (tenantsWithCards.isEmpty) {
-                            return Center(
+                            return const Center(
                                 child: Text('No tenants with valid cards.'));
                           }
                           List<List<BillingData>> Cardsdata = tenantsWithCards
@@ -4645,7 +4645,7 @@ class _Summery_pageState extends State<Summery_page>
                             builder: (context, setState) {
                               return ListView.builder(
                                 shrinkWrap: true,
-                                physics: ClampingScrollPhysics(),
+                                physics: const ClampingScrollPhysics(),
                                 itemCount: tenantCardControllers.length,
                                 itemBuilder: (context, index) {
                                   TenantData tenantsdata =
@@ -4682,7 +4682,7 @@ class _Summery_pageState extends State<Summery_page>
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        SizedBox(height: 5),
+                                        const SizedBox(height: 5),
                                         Row(
                                           children: [
                                             Container(
@@ -4692,7 +4692,7 @@ class _Summery_pageState extends State<Summery_page>
                                                 borderRadius:
                                                     BorderRadius.circular(5),
                                               ),
-                                              padding: EdgeInsets.symmetric(
+                                              padding: const EdgeInsets.symmetric(
                                                   horizontal: 2),
                                               child:
                                                   DropdownButtonHideUnderline(
@@ -4709,7 +4709,7 @@ class _Summery_pageState extends State<Summery_page>
                                                             .centerLeft,
                                                         child: Text(
                                                           card.ccNumber!, // Only display ccNumber in selected state
-                                                          style: TextStyle(
+                                                          style: const TextStyle(
                                                               fontSize: 16,
                                                               fontWeight:
                                                                   FontWeight
@@ -4731,7 +4731,7 @@ class _Summery_pageState extends State<Summery_page>
                                                         children: [
                                                           Text(
                                                             card.ccNumber!,
-                                                            style: TextStyle(
+                                                            style: const TextStyle(
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold),
@@ -4739,7 +4739,7 @@ class _Summery_pageState extends State<Summery_page>
                                                           Text(
                                                             card.binResult ??
                                                                 '',
-                                                            style: TextStyle(
+                                                            style: const TextStyle(
                                                                 color: Colors
                                                                     .grey),
                                                           ),
@@ -4789,7 +4789,7 @@ class _Summery_pageState extends State<Summery_page>
                         } else if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
                         } else {
-                          return Center(
+                          return const Center(
                             child: SpinKitFadingCircle(
                               color: Colors.black,
                               size: 40.0,
@@ -4808,9 +4808,9 @@ class _Summery_pageState extends State<Summery_page>
                     },
                     child: Row(
                       children: [
-                        SizedBox(width: 15),
-                        Icon(Icons.add, color: Colors.green, size: 30),
-                        SizedBox(width: 6),
+                        const SizedBox(width: 15),
+                        const Icon(Icons.add, color: Colors.green, size: 30),
+                        const SizedBox(width: 6),
                         Text(
                           "Add Row",
                           style: TextStyle(
@@ -4847,7 +4847,7 @@ class _Summery_pageState extends State<Summery_page>
                           ),
                         ),
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                     ],
                   ),
                 ],
@@ -4903,7 +4903,7 @@ class _Summery_pageState extends State<Summery_page>
                         ),
                       ),
                     ),
-                    SizedBox(width: 2),
+                    const SizedBox(width: 2),
                   ],
                 ),
                 const SizedBox(height: 6),
@@ -4915,7 +4915,7 @@ class _Summery_pageState extends State<Summery_page>
                       style: TextStyle(
                         fontSize:
                             MediaQuery.of(context).size.width < 500 ? 15 : 17,
-                        color: Color(0xFF8A95A8),
+                        color: const Color(0xFF8A95A8),
                       ),
                     ),
                   ],
@@ -4977,7 +4977,7 @@ class _Summery_pageState extends State<Summery_page>
                       size: 17,
                       color: blueColor,
                     ),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     Text(
                       "Move out",
                       style: TextStyle(
@@ -5031,7 +5031,7 @@ class _Summery_pageState extends State<Summery_page>
                       size: 17,
                       color: blueColor,
                     ),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     Text(
                       "Move In",
                       style: TextStyle(
@@ -5058,7 +5058,7 @@ class _Summery_pageState extends State<Summery_page>
                 fontWeight: FontWeight.w500,
               ),
             ),
-            SizedBox(width: 5),
+            const SizedBox(width: 5),
             Text(
               '${dateProvider.formatCurrentDate('${tenant.endDate}')}',
               style: TextStyle(
@@ -5115,7 +5115,7 @@ class _Summery_pageState extends State<Summery_page>
             ),
           ],
         ),
-        if (tenant.moveoutDate != null) SizedBox(height: 10),
+        if (tenant.moveoutDate != null) const SizedBox(height: 10),
         if (tenant.moveoutDate != null)
           Row(
             children: [
@@ -5130,7 +5130,7 @@ class _Summery_pageState extends State<Summery_page>
                     color: blueColor,
                     fontWeight: FontWeight.bold),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 5,
               ),
               Text(
@@ -5143,7 +5143,7 @@ class _Summery_pageState extends State<Summery_page>
               ),
             ],
           ),
-        if (tenant.moveoutDate != null) SizedBox(height: 8),
+        if (tenant.moveoutDate != null) const SizedBox(height: 8),
         if (tenant.moveoutDate != null)
           Row(
             children: [
@@ -5158,7 +5158,7 @@ class _Summery_pageState extends State<Summery_page>
                     color: blueColor,
                     fontWeight: FontWeight.bold),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 5,
               ),
               Text(
@@ -5171,7 +5171,7 @@ class _Summery_pageState extends State<Summery_page>
               ),
             ],
           ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
       ],
     );
   }
@@ -5217,17 +5217,17 @@ class _Summery_pageState extends State<Summery_page>
                     fontSize:
                         MediaQuery.of(context).size.width < 500 ? 18 : 22),
               ),
-              SizedBox(height: 13),
+              const SizedBox(height: 13),
               Text(
                 "Select tenants to move out. If everyone is moving, the lease will end on the last move-out date. If some tenants are staying, you'll need to renew the lease. Note: Renters insurance policies will be permanently deleted upon move-out.",
                 textAlign: TextAlign.justify,
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
-                  color: Color(0xFF8A95A8),
+                  color: const Color(0xFF8A95A8),
                 ),
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
 
               Column(
                 children: [
@@ -5244,7 +5244,7 @@ class _Summery_pageState extends State<Summery_page>
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Container(
@@ -5261,8 +5261,8 @@ class _Summery_pageState extends State<Summery_page>
                         ),
                       ),
                       columnWidths: {
-                        0: FlexColumnWidth(2),
-                        1: FlexColumnWidth(3),
+                        0: const FlexColumnWidth(2),
+                        1: const FlexColumnWidth(3),
                       },
                       children: [
                         TableRow(
@@ -5314,7 +5314,7 @@ class _Summery_pageState extends State<Summery_page>
                       ],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                 ],
@@ -5331,7 +5331,7 @@ class _Summery_pageState extends State<Summery_page>
                   ),
                 ],
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
 
               // List of checkboxes for tenants
               Column(
@@ -5351,7 +5351,7 @@ class _Summery_pageState extends State<Summery_page>
                                 });
                               },
                             ),
-                            SizedBox(width: 8),
+                            const SizedBox(width: 8),
                             Text("${tenant.firstName} ${tenant.lastName}"),
                           ],
                         ),
@@ -5360,8 +5360,8 @@ class _Summery_pageState extends State<Summery_page>
                         Table(
                           border: TableBorder.all(color: blueColor),
                           columnWidths: {
-                            0: FlexColumnWidth(2),
-                            1: FlexColumnWidth(3),
+                            0: const FlexColumnWidth(2),
+                            1: const FlexColumnWidth(3),
                           },
                           children: [
                             TableRow(
@@ -5421,7 +5421,7 @@ class _Summery_pageState extends State<Summery_page>
                 }).toList(),
               ),
 
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -5432,12 +5432,12 @@ class _Summery_pageState extends State<Summery_page>
                     },
                     child: Material(
                       elevation: 3,
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                      borderRadius: const BorderRadius.all(Radius.circular(5)),
                       child: Container(
                         height:
                             MediaQuery.of(context).size.width < 500 ? 40 : 50,
                         width: 90,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.all(Radius.circular(5)),
                         ),
@@ -5454,7 +5454,7 @@ class _Summery_pageState extends State<Summery_page>
                       ),
                     ),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   InkWell(
                     onTap: () async {
                       String? tenantId =
@@ -5509,7 +5509,7 @@ class _Summery_pageState extends State<Summery_page>
                     },
                     child: Material(
                       elevation: 3,
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                      borderRadius: const BorderRadius.all(Radius.circular(5)),
                       child: Container(
                         height:
                             MediaQuery.of(context).size.width < 500 ? 40 : 50,
@@ -5517,7 +5517,7 @@ class _Summery_pageState extends State<Summery_page>
                             MediaQuery.of(context).size.width < 500 ? 100 : 130,
                         decoration: BoxDecoration(
                           color: blueColor,
-                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                          borderRadius: const BorderRadius.all(Radius.circular(5)),
                         ),
                         child: Center(
                             child: Text(
@@ -5535,7 +5535,7 @@ class _Summery_pageState extends State<Summery_page>
                   ),
                 ],
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
             ],
           ),
         );
@@ -5554,7 +5554,7 @@ class _Summery_pageState extends State<Summery_page>
 
   Widget buildDateField(TextEditingController controller) {
     return Padding(
-      padding: EdgeInsets.only(left: 5, right: 2),
+      padding: const EdgeInsets.only(left: 5, right: 2),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.grey[300],
@@ -5562,14 +5562,14 @@ class _Summery_pageState extends State<Summery_page>
         ),
         child: Center(
           child: Padding(
-            padding: EdgeInsets.only(left: 5),
+            padding: const EdgeInsets.only(left: 5),
             child: TextField(
               controller: controller,
               decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: 'Select Date',
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.calendar_today),
+                  icon: const Icon(Icons.calendar_today),
                   onPressed: () async {
                     DateTime? pickedDate = await showDatePicker(
                       context: context,
@@ -5666,7 +5666,7 @@ class _Summery_pageState extends State<Summery_page>
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(3),
-              border: Border.all(color: Color(0xFF8A95A8)),
+              border: Border.all(color: const Color(0xFF8A95A8)),
             ),
             child: DropdownButtonFormField<String>(
               value: currentValue.isEmpty ? null : currentValue,
@@ -5681,7 +5681,7 @@ class _Summery_pageState extends State<Summery_page>
                 filled: true,
                 fillColor: Colors.white,
                 contentPadding:
-                    EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(3),
                   borderSide: BorderSide.none,
@@ -5844,7 +5844,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                               .bold,
                                                                     ),
                                                                   ),
-                                                                  Spacer(),
+                                                                  const Spacer(),
                                                                   Align(
                                                                     alignment:
                                                                         Alignment
@@ -5977,7 +5977,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                               3),
                                                                   child:
                                                                       Container(
-                                                                    padding: EdgeInsets.symmetric(
+                                                                    padding: const EdgeInsets.symmetric(
                                                                         horizontal:
                                                                             10),
                                                                     decoration:
@@ -5989,7 +5989,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                               3),
                                                                       border: Border.all(
                                                                           color:
-                                                                              Color(0xFF8A95A8)),
+                                                                              const Color(0xFF8A95A8)),
                                                                     ),
                                                                     child:
                                                                         DropdownButtonHideUnderline(
@@ -6000,7 +6000,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                         value: bath3.text.isNotEmpty
                                                                             ? bath3.text
                                                                             : null,
-                                                                        hint: Text(
+                                                                        hint: const Text(
                                                                             'Select Bath'),
                                                                         items: bathArray.map((String
                                                                             value) {
@@ -6055,7 +6055,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                               3),
                                                                   child:
                                                                       Container(
-                                                                    padding: EdgeInsets.symmetric(
+                                                                    padding: const EdgeInsets.symmetric(
                                                                         horizontal:
                                                                             10),
                                                                     decoration:
@@ -6067,7 +6067,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                               3),
                                                                       border: Border.all(
                                                                           color:
-                                                                              Color(0xFF8A95A8)),
+                                                                              const Color(0xFF8A95A8)),
                                                                     ),
                                                                     child:
                                                                         DropdownButtonHideUnderline(
@@ -6078,7 +6078,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                         value: bed3.text.isNotEmpty
                                                                             ? bed3.text
                                                                             : null,
-                                                                        hint: Text(
+                                                                        hint: const Text(
                                                                             'Select Bed'),
                                                                         items: roomsArray.map((String
                                                                             value) {
@@ -6190,7 +6190,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                   height: 80,
                                                                                   width: 80,
                                                                                   fit: BoxFit.cover,
-                                                                                  placeholder: (context, url) => CircularProgressIndicator(),
+                                                                                  placeholder: (context, url) => const CircularProgressIndicator(),
                                                                                   errorWidget: (context, url, error) => Image.asset(
                                                                                     "assets/images/no_image.jpg",
                                                                                     fit: BoxFit.fill,
@@ -6305,7 +6305,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                           color:
                                                                               blueColor,
                                                                           borderRadius:
-                                                                              BorderRadius.all(
+                                                                              const BorderRadius.all(
                                                                             Radius.circular(5),
                                                                           ),
                                                                         ),
@@ -6611,7 +6611,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                   height: 80,
                                                                                   width: 80,
                                                                                   fit: BoxFit.cover,
-                                                                                  placeholder: (context, url) => CircularProgressIndicator(),
+                                                                                  placeholder: (context, url) => const CircularProgressIndicator(),
                                                                                   errorWidget: (context, url, error) => Image.asset(
                                                                                     "assets/images/no_image.jpg",
                                                                                     fit: BoxFit.fill,
@@ -6716,7 +6716,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                           color:
                                                                               blueColor,
                                                                           borderRadius:
-                                                                              BorderRadius.all(
+                                                                              const BorderRadius.all(
                                                                             Radius.circular(5),
                                                                           ),
                                                                         ),
@@ -6821,7 +6821,7 @@ class _Summery_pageState extends State<Summery_page>
                                 ),
                                 Row(
                                   children: [
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 15,
                                     ),
                                     SizedBox(
@@ -6876,7 +6876,7 @@ class _Summery_pageState extends State<Summery_page>
                                         ),
                                       ),
                                     ),
-                                    Spacer(),
+                                    const Spacer(),
                                     Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -6897,7 +6897,7 @@ class _Summery_pageState extends State<Summery_page>
                                                 fontWeight: FontWeight.bold),
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         SizedBox(
@@ -6928,7 +6928,7 @@ class _Summery_pageState extends State<Summery_page>
                                             ),
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 5,
                                         ),
                                         SizedBox(
@@ -7004,11 +7004,11 @@ class _Summery_pageState extends State<Summery_page>
                                         // ),
                                       ],
                                     ),
-                                    Spacer(),
+                                    const Spacer(),
                                     if (MediaQuery.of(context).size.width > 500)
                                       Row(
                                         children: [
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 10,
                                           ),
                                           Container(
@@ -7028,7 +7028,7 @@ class _Summery_pageState extends State<Summery_page>
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
                                               children: [
-                                                SizedBox(
+                                                const SizedBox(
                                                   height: 10,
                                                 ),
                                                 SizedBox(
@@ -7090,12 +7090,12 @@ class _Summery_pageState extends State<Summery_page>
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(
+                                                const SizedBox(
                                                   height: 10,
                                                 ),
                                                 Padding(
                                                   padding:
-                                                      EdgeInsets.only(left: 10),
+                                                      const EdgeInsets.only(left: 10),
                                                   child: SizedBox(
                                                     //  width: double.infinity,
                                                     child: Text(
@@ -7162,7 +7162,7 @@ class _Summery_pageState extends State<Summery_page>
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(
+                                                const SizedBox(
                                                   height: 20,
                                                 ),
                                               ],
@@ -7170,7 +7170,7 @@ class _Summery_pageState extends State<Summery_page>
                                           ),
                                         ],
                                       ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 15,
                                     ),
                                   ],
@@ -7194,7 +7194,7 @@ class _Summery_pageState extends State<Summery_page>
                                       child: Column(
                                         children: [
                                           Padding(
-                                            padding: EdgeInsets.all(8.0),
+                                            padding: const EdgeInsets.all(8.0),
                                             child: SizedBox(
                                               width: double.infinity,
                                               child: Text(
@@ -7268,7 +7268,7 @@ class _Summery_pageState extends State<Summery_page>
                                             ),
                                           ),
                                           Padding(
-                                            padding: EdgeInsets.all(8.0),
+                                            padding: const EdgeInsets.all(8.0),
                                             child: SizedBox(
                                               width: double.infinity,
                                               child: Text(
@@ -7330,7 +7330,7 @@ class _Summery_pageState extends State<Summery_page>
                                               ),
                                             ),
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             height: 20,
                                           ),
                                         ],
@@ -7402,23 +7402,23 @@ class _Summery_pageState extends State<Summery_page>
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                            Spacer(),
+                                            const Spacer(),
                                             Align(
                                               alignment: Alignment.centerRight,
                                               child: InkWell(
                                                 onTap: () {
                                                   Navigator.pop(context);
                                                 },
-                                                child: Icon(Icons.close,
+                                                child: const Icon(Icons.close,
                                                     color: Colors.black),
                                               ),
                                             ),
                                           ],
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 10,
                                         ),
-                                        Row(
+                                        const Row(
                                           children: [
                                             Text(
                                               "Unit Number *",
@@ -7428,7 +7428,7 @@ class _Summery_pageState extends State<Summery_page>
                                             ),
                                           ],
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 10,
                                         ),
                                         Padding(
@@ -7456,29 +7456,29 @@ class _Summery_pageState extends State<Summery_page>
                                                     OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                       color: Color(0xFF8A95A8)),
                                                 ),
                                                 focusedBorder:
                                                     OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                       color: Color(0xFF8A95A8),
                                                       width: 2),
                                                 ),
                                                 contentPadding:
-                                                    EdgeInsets.symmetric(
+                                                    const EdgeInsets.symmetric(
                                                         vertical: 10.0,
                                                         horizontal: 10.0),
                                               ),
                                             ),
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 10,
                                         ),
-                                        Row(
+                                        const Row(
                                           children: [
                                             Text(
                                               "Street Address *",
@@ -7513,29 +7513,29 @@ class _Summery_pageState extends State<Summery_page>
                                                     OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                       color: Color(0xFF8A95A8)),
                                                 ),
                                                 focusedBorder:
                                                     OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                       color: Color(0xFF8A95A8),
                                                       width: 2),
                                                 ),
                                                 contentPadding:
-                                                    EdgeInsets.symmetric(
+                                                    const EdgeInsets.symmetric(
                                                         vertical: 10.0,
                                                         horizontal: 10.0),
                                               ),
                                             ),
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 10,
                                         ),
-                                        Row(
+                                        const Row(
                                           children: [
                                             Text(
                                               "SQFT *",
@@ -7570,29 +7570,29 @@ class _Summery_pageState extends State<Summery_page>
                                                     OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                       color: Color(0xFF8A95A8)),
                                                 ),
                                                 focusedBorder:
                                                     OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                       color: Color(0xFF8A95A8),
                                                       width: 2),
                                                 ),
                                                 contentPadding:
-                                                    EdgeInsets.symmetric(
+                                                    const EdgeInsets.symmetric(
                                                         vertical: 10.0,
                                                         horizontal: 10.0),
                                               ),
                                             ),
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 10,
                                         ),
-                                        Row(
+                                        const Row(
                                           children: [
                                             Text(
                                               "Bath",
@@ -7610,14 +7610,14 @@ class _Summery_pageState extends State<Summery_page>
                                             borderRadius:
                                                 BorderRadius.circular(3),
                                             child: Container(
-                                              padding: EdgeInsets.symmetric(
+                                              padding: const EdgeInsets.symmetric(
                                                   horizontal: 10),
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
                                                 borderRadius:
                                                     BorderRadius.circular(3),
                                                 border: Border.all(
-                                                    color: Color(0xFF8A95A8)),
+                                                    color: const Color(0xFF8A95A8)),
                                               ),
                                               child:
                                                   DropdownButtonHideUnderline(
@@ -7627,7 +7627,7 @@ class _Summery_pageState extends State<Summery_page>
                                                           .contains(bath3.text)
                                                       ? bath3.text
                                                       : null,
-                                                  hint: Text('Select Bath'),
+                                                  hint: const Text('Select Bath'),
                                                   items: bathArray
                                                       .map((String value) {
                                                     return DropdownMenuItem<
@@ -7648,10 +7648,10 @@ class _Summery_pageState extends State<Summery_page>
                                             ),
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 10,
                                         ),
-                                        Row(
+                                        const Row(
                                           children: [
                                             Text(
                                               "Bed",
@@ -7669,14 +7669,14 @@ class _Summery_pageState extends State<Summery_page>
                                             borderRadius:
                                                 BorderRadius.circular(3),
                                             child: Container(
-                                              padding: EdgeInsets.symmetric(
+                                              padding: const EdgeInsets.symmetric(
                                                   horizontal: 10),
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
                                                 borderRadius:
                                                     BorderRadius.circular(3),
                                                 border: Border.all(
-                                                    color: Color(0xFF8A95A8)),
+                                                    color: const Color(0xFF8A95A8)),
                                               ),
                                               child:
                                                   DropdownButtonHideUnderline(
@@ -7686,7 +7686,7 @@ class _Summery_pageState extends State<Summery_page>
                                                           .contains(bed3.text)
                                                       ? bed3.text
                                                       : null,
-                                                  hint: Text('Select Bed'),
+                                                  hint: const Text('Select Bed'),
                                                   items: roomsArray
                                                       .map((String value) {
                                                     return DropdownMenuItem<
@@ -7707,10 +7707,10 @@ class _Summery_pageState extends State<Summery_page>
                                             ),
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 10,
                                         ),
-                                        Row(
+                                        const Row(
                                           children: [
                                             Text(
                                               'Photo',
@@ -7719,7 +7719,7 @@ class _Summery_pageState extends State<Summery_page>
                                             ),
                                           ],
                                         ),
-                                        SizedBox(height: 8.0),
+                                        const SizedBox(height: 8.0),
                                         if (_images.isEmpty)
                                           Row(
                                             children: [
@@ -7730,7 +7730,7 @@ class _Summery_pageState extends State<Summery_page>
                                                         () {}); // Rebuild the widget after selecting the image
                                                   });
                                                 },
-                                                child: Text(
+                                                child: const Text(
                                                   '+ Add',
                                                   style: TextStyle(
                                                       color: Colors.green),
@@ -7739,7 +7739,7 @@ class _Summery_pageState extends State<Summery_page>
                                             ],
                                           ),
                                         if (_images.isEmpty)
-                                          SizedBox(
+                                          const SizedBox(
                                             height: 10,
                                           ),
                                         _images.isNotEmpty
@@ -7769,7 +7769,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                 children: [
                                                                   Row(
                                                                     children: [
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         width:
                                                                             60,
                                                                       ),
@@ -7782,7 +7782,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                           });
                                                                         },
                                                                         child:
-                                                                            Icon(
+                                                                            const Icon(
                                                                           Icons
                                                                               .close,
                                                                           color:
@@ -7825,14 +7825,14 @@ class _Summery_pageState extends State<Summery_page>
                                                   ),
                                                 ],
                                               )
-                                            : Center(
+                                            : const Center(
                                                 child:
                                                     Text("No images selected."),
                                               ),
-                                        SizedBox(height: 8.0),
+                                        const SizedBox(height: 8.0),
                                         Row(
                                           children: [
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 0,
                                             ),
                                             GestureDetector(
@@ -7921,7 +7921,7 @@ class _Summery_pageState extends State<Summery_page>
                                               },
                                               child: Material(
                                                 elevation: 3,
-                                                borderRadius: BorderRadius.all(
+                                                borderRadius: const BorderRadius.all(
                                                   Radius.circular(5),
                                                 ),
                                                 child: Container(
@@ -7930,11 +7930,11 @@ class _Summery_pageState extends State<Summery_page>
                                                   decoration: BoxDecoration(
                                                     color: blueColor,
                                                     borderRadius:
-                                                        BorderRadius.all(
+                                                        const BorderRadius.all(
                                                       Radius.circular(5),
                                                     ),
                                                   ),
-                                                  child: Center(
+                                                  child: const Center(
                                                       child: Text(
                                                     "Save",
                                                     style: TextStyle(
@@ -7945,20 +7945,20 @@ class _Summery_pageState extends State<Summery_page>
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(width: 10),
+                                            const SizedBox(width: 10),
                                             GestureDetector(
                                               onTap: () {
                                                 Navigator.pop(context);
                                               },
                                               child: Material(
                                                 elevation: 3,
-                                                borderRadius: BorderRadius.all(
+                                                borderRadius: const BorderRadius.all(
                                                   Radius.circular(5),
                                                 ),
                                                 child: Container(
                                                   height: 30,
                                                   width: 80,
-                                                  decoration: BoxDecoration(
+                                                  decoration: const BoxDecoration(
                                                     color: Colors.white,
                                                     borderRadius:
                                                         BorderRadius.all(
@@ -7978,9 +7978,9 @@ class _Summery_pageState extends State<Summery_page>
                                             ),
                                           ],
                                         ),
-                                        SizedBox(height: 8.0),
+                                        const SizedBox(height: 8.0),
                                         if (iserror)
-                                          Text(
+                                          const Text(
                                             "Please fill in all fields correctly.",
                                             style: TextStyle(
                                                 color: Colors.redAccent),
@@ -8020,23 +8020,23 @@ class _Summery_pageState extends State<Summery_page>
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                            Spacer(),
+                                            const Spacer(),
                                             Align(
                                               alignment: Alignment.centerRight,
                                               child: InkWell(
                                                 onTap: () {
                                                   Navigator.pop(context);
                                                 },
-                                                child: Icon(Icons.close,
+                                                child: const Icon(Icons.close,
                                                     color: Colors.black),
                                               ),
                                             ),
                                           ],
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 10,
                                         ),
-                                        Row(
+                                        const Row(
                                           children: [
                                             Text(
                                               "Unit Number *",
@@ -8046,7 +8046,7 @@ class _Summery_pageState extends State<Summery_page>
                                             ),
                                           ],
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 10,
                                         ),
                                         Padding(
@@ -8074,29 +8074,29 @@ class _Summery_pageState extends State<Summery_page>
                                                     OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                       color: Color(0xFF8A95A8)),
                                                 ),
                                                 focusedBorder:
                                                     OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                       color: Color(0xFF8A95A8),
                                                       width: 2),
                                                 ),
                                                 contentPadding:
-                                                    EdgeInsets.symmetric(
+                                                    const EdgeInsets.symmetric(
                                                         vertical: 10.0,
                                                         horizontal: 10.0),
                                               ),
                                             ),
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 10,
                                         ),
-                                        Row(
+                                        const Row(
                                           children: [
                                             Text(
                                               "Street Address *",
@@ -8131,29 +8131,29 @@ class _Summery_pageState extends State<Summery_page>
                                                     OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                       color: Color(0xFF8A95A8)),
                                                 ),
                                                 focusedBorder:
                                                     OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                       color: Color(0xFF8A95A8),
                                                       width: 2),
                                                 ),
                                                 contentPadding:
-                                                    EdgeInsets.symmetric(
+                                                    const EdgeInsets.symmetric(
                                                         vertical: 10.0,
                                                         horizontal: 10.0),
                                               ),
                                             ),
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 10,
                                         ),
-                                        Row(
+                                        const Row(
                                           children: [
                                             Text(
                                               "SQFT *",
@@ -8188,29 +8188,29 @@ class _Summery_pageState extends State<Summery_page>
                                                     OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                       color: Color(0xFF8A95A8)),
                                                 ),
                                                 focusedBorder:
                                                     OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(3),
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                       color: Color(0xFF8A95A8),
                                                       width: 2),
                                                 ),
                                                 contentPadding:
-                                                    EdgeInsets.symmetric(
+                                                    const EdgeInsets.symmetric(
                                                         vertical: 10.0,
                                                         horizontal: 10.0),
                                               ),
                                             ),
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 10,
                                         ),
-                                        Row(
+                                        const Row(
                                           children: [
                                             Text(
                                               'Photo',
@@ -8219,7 +8219,7 @@ class _Summery_pageState extends State<Summery_page>
                                             ),
                                           ],
                                         ),
-                                        SizedBox(height: 8.0),
+                                        const SizedBox(height: 8.0),
                                         if (_images.isEmpty)
                                           Row(
                                             children: [
@@ -8230,7 +8230,7 @@ class _Summery_pageState extends State<Summery_page>
                                                         () {}); // Rebuild the widget after selecting the image
                                                   });
                                                 },
-                                                child: Text(
+                                                child: const Text(
                                                   '+ Add',
                                                   style: TextStyle(
                                                       color: Colors.green),
@@ -8239,7 +8239,7 @@ class _Summery_pageState extends State<Summery_page>
                                             ],
                                           ),
                                         if (_images.isEmpty)
-                                          SizedBox(height: 8.0),
+                                          const SizedBox(height: 8.0),
                                         _images.isNotEmpty
                                             ? Row(
                                                 children: [
@@ -8267,7 +8267,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                 children: [
                                                                   Row(
                                                                     children: [
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         width:
                                                                             60,
                                                                       ),
@@ -8280,7 +8280,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                           });
                                                                         },
                                                                         child:
-                                                                            Icon(
+                                                                            const Icon(
                                                                           Icons
                                                                               .close,
                                                                           color:
@@ -8323,14 +8323,14 @@ class _Summery_pageState extends State<Summery_page>
                                                   ),
                                                 ],
                                               )
-                                            : Center(
+                                            : const Center(
                                                 child:
                                                     Text("No images selected."),
                                               ),
-                                        SizedBox(height: 8.0),
+                                        const SizedBox(height: 8.0),
                                         Row(
                                           children: [
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 0,
                                             ),
                                             GestureDetector(
@@ -8407,7 +8407,7 @@ class _Summery_pageState extends State<Summery_page>
                                               },
                                               child: Material(
                                                 elevation: 3,
-                                                borderRadius: BorderRadius.all(
+                                                borderRadius: const BorderRadius.all(
                                                   Radius.circular(5),
                                                 ),
                                                 child: Container(
@@ -8416,11 +8416,11 @@ class _Summery_pageState extends State<Summery_page>
                                                   decoration: BoxDecoration(
                                                     color: blueColor,
                                                     borderRadius:
-                                                        BorderRadius.all(
+                                                        const BorderRadius.all(
                                                       Radius.circular(5),
                                                     ),
                                                   ),
-                                                  child: Center(
+                                                  child: const Center(
                                                       child: Text(
                                                     "Save",
                                                     style: TextStyle(
@@ -8431,20 +8431,20 @@ class _Summery_pageState extends State<Summery_page>
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(width: 10),
+                                            const SizedBox(width: 10),
                                             GestureDetector(
                                               onTap: () {
                                                 Navigator.pop(context);
                                               },
                                               child: Material(
                                                 elevation: 3,
-                                                borderRadius: BorderRadius.all(
+                                                borderRadius: const BorderRadius.all(
                                                   Radius.circular(5),
                                                 ),
                                                 child: Container(
                                                   height: 30,
                                                   width: 80,
-                                                  decoration: BoxDecoration(
+                                                  decoration: const BoxDecoration(
                                                     color: Colors.white,
                                                     borderRadius:
                                                         BorderRadius.all(
@@ -8464,9 +8464,9 @@ class _Summery_pageState extends State<Summery_page>
                                             ),
                                           ],
                                         ),
-                                        SizedBox(height: 8.0),
+                                        const SizedBox(height: 8.0),
                                         if (iserror)
-                                          Text(
+                                          const Text(
                                             "Please fill in all fields correctly.",
                                             style: TextStyle(
                                                 color: Colors.redAccent),
@@ -8523,7 +8523,7 @@ class _Summery_pageState extends State<Summery_page>
                     future: futureUnitsummery,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
+                        return const Center(
                             child: SpinKitFadingCircle(
                           color: Colors.black,
                           size: 40.0,
@@ -8543,7 +8543,7 @@ class _Summery_pageState extends State<Summery_page>
                                   height: 200,
                                   width: 200,
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 Text(
@@ -8578,9 +8578,9 @@ class _Summery_pageState extends State<Summery_page>
                         return SingleChildScrollView(
                           child: Column(
                             children: [
-                              SizedBox(height: 20),
+                              const SizedBox(height: 20),
                               _buildHeadersmulti(),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                               Container(
                                 child: Column(
                                   children: currentPageData
@@ -8592,13 +8592,13 @@ class _Summery_pageState extends State<Summery_page>
                                     unit_properties Propertytype = entry.value;
                                     //return CustomExpansionTile(data: Propertytype, index: index);
                                     return Container(
-                                      margin: EdgeInsets.symmetric(vertical: 6),
+                                      margin: const EdgeInsets.symmetric(vertical: 6),
                                       decoration: BoxDecoration(
                                         color: index % 2 != 0
-                                            ? Color(0xFFF4F8FF)
+                                            ? const Color(0xFFF4F8FF)
                                             : Colors.white,
                                         border: Border.all(
-                                            color: Color(0xFFDBE0E5)),
+                                            color: const Color(0xFFDBE0E5)),
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       // decoration: BoxDecoration(
@@ -8642,12 +8642,12 @@ class _Summery_pageState extends State<Summery_page>
                                                       });
                                                     },
                                                     child: Container(
-                                                      margin: EdgeInsets.only(
+                                                      margin: const EdgeInsets.only(
                                                           left: 5),
                                                       padding: !isExpanded
-                                                          ? EdgeInsets.only(
+                                                          ? const EdgeInsets.only(
                                                               bottom: 10)
-                                                          : EdgeInsets.only(
+                                                          : const EdgeInsets.only(
                                                               top: 10),
                                                       child: FaIcon(
                                                         isExpanded
@@ -8706,10 +8706,10 @@ class _Summery_pageState extends State<Summery_page>
                                           ),
                                           if (isExpanded)
                                             Container(
-                                              padding: EdgeInsets.symmetric(
+                                              padding: const EdgeInsets.symmetric(
                                                   horizontal: 2.0),
                                               margin:
-                                                  EdgeInsets.only(bottom: 2),
+                                                  const EdgeInsets.only(bottom: 2),
                                               child: SingleChildScrollView(
                                                 child: Column(
                                                   children: [
@@ -9476,22 +9476,22 @@ class _Summery_pageState extends State<Summery_page>
                                                                                       fontWeight: FontWeight.bold,
                                                                                     ),
                                                                                   ),
-                                                                                  Spacer(),
+                                                                                  const Spacer(),
                                                                                   Align(
                                                                                     alignment: Alignment.centerRight,
                                                                                     child: InkWell(
                                                                                       onTap: () {
                                                                                         Navigator.pop(context);
                                                                                       },
-                                                                                      child: Icon(Icons.close, color: Colors.black),
+                                                                                      child: const Icon(Icons.close, color: Colors.black),
                                                                                     ),
                                                                                   ),
                                                                                 ],
                                                                               ),
-                                                                              SizedBox(
+                                                                              const SizedBox(
                                                                                 height: 10,
                                                                               ),
-                                                                              Row(
+                                                                              const Row(
                                                                                 children: [
                                                                                   Text(
                                                                                     "Unit Number *",
@@ -9499,7 +9499,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                   ),
                                                                                 ],
                                                                               ),
-                                                                              SizedBox(
+                                                                              const SizedBox(
                                                                                 height: 10,
                                                                               ),
                                                                               Padding(
@@ -9522,21 +9522,21 @@ class _Summery_pageState extends State<Summery_page>
                                                                                       ),
                                                                                       enabledBorder: OutlineInputBorder(
                                                                                         borderRadius: BorderRadius.circular(3),
-                                                                                        borderSide: BorderSide(color: Color(0xFF8A95A8)),
+                                                                                        borderSide: const BorderSide(color: Color(0xFF8A95A8)),
                                                                                       ),
                                                                                       focusedBorder: OutlineInputBorder(
                                                                                         borderRadius: BorderRadius.circular(3),
-                                                                                        borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                                                        borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
                                                                                       ),
-                                                                                      contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                                                      contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                                                                                     ),
                                                                                   ),
                                                                                 ),
                                                                               ),
-                                                                              SizedBox(
+                                                                              const SizedBox(
                                                                                 height: 10,
                                                                               ),
-                                                                              Row(
+                                                                              const Row(
                                                                                 children: [
                                                                                   Text(
                                                                                     "Street Address *",
@@ -9564,21 +9564,21 @@ class _Summery_pageState extends State<Summery_page>
                                                                                       ),
                                                                                       enabledBorder: OutlineInputBorder(
                                                                                         borderRadius: BorderRadius.circular(3),
-                                                                                        borderSide: BorderSide(color: Color(0xFF8A95A8)),
+                                                                                        borderSide: const BorderSide(color: Color(0xFF8A95A8)),
                                                                                       ),
                                                                                       focusedBorder: OutlineInputBorder(
                                                                                         borderRadius: BorderRadius.circular(3),
-                                                                                        borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                                                        borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
                                                                                       ),
-                                                                                      contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                                                      contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                                                                                     ),
                                                                                   ),
                                                                                 ),
                                                                               ),
-                                                                              SizedBox(
+                                                                              const SizedBox(
                                                                                 height: 10,
                                                                               ),
-                                                                              Row(
+                                                                              const Row(
                                                                                 children: [
                                                                                   Text(
                                                                                     "SQFT *",
@@ -9606,21 +9606,21 @@ class _Summery_pageState extends State<Summery_page>
                                                                                       ),
                                                                                       enabledBorder: OutlineInputBorder(
                                                                                         borderRadius: BorderRadius.circular(3),
-                                                                                        borderSide: BorderSide(color: Color(0xFF8A95A8)),
+                                                                                        borderSide: const BorderSide(color: Color(0xFF8A95A8)),
                                                                                       ),
                                                                                       focusedBorder: OutlineInputBorder(
                                                                                         borderRadius: BorderRadius.circular(3),
-                                                                                        borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                                                        borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
                                                                                       ),
-                                                                                      contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                                                      contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                                                                                     ),
                                                                                   ),
                                                                                 ),
                                                                               ),
-                                                                              SizedBox(
+                                                                              const SizedBox(
                                                                                 height: 10,
                                                                               ),
-                                                                              Row(
+                                                                              const Row(
                                                                                 children: [
                                                                                   Text(
                                                                                     "Bath",
@@ -9674,10 +9674,10 @@ class _Summery_pageState extends State<Summery_page>
                                                                               //     ),
                                                                               //   ),
                                                                               // ),
-                                                                              SizedBox(
+                                                                              const SizedBox(
                                                                                 height: 10,
                                                                               ),
-                                                                              Row(
+                                                                              const Row(
                                                                                 children: [
                                                                                   Text(
                                                                                     "Bed",
@@ -9731,10 +9731,10 @@ class _Summery_pageState extends State<Summery_page>
                                                                               //     ),
                                                                               //   ),
                                                                               // ),
-                                                                              SizedBox(
+                                                                              const SizedBox(
                                                                                 height: 10,
                                                                               ),
-                                                                              Row(
+                                                                              const Row(
                                                                                 children: [
                                                                                   Text(
                                                                                     'Photo',
@@ -9742,7 +9742,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                   ),
                                                                                 ],
                                                                               ),
-                                                                              SizedBox(height: 8.0),
+                                                                              const SizedBox(height: 8.0),
                                                                               if (_images.isEmpty && _imageUrls.isEmpty)
                                                                                 Row(
                                                                                   children: [
@@ -9752,7 +9752,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                           setState(() {}); // Rebuild the widget after selecting the image
                                                                                         });
                                                                                       },
-                                                                                      child: Text(
+                                                                                      child: const Text(
                                                                                         '+ Add',
                                                                                         style: TextStyle(color: Colors.green),
                                                                                       ),
@@ -9760,7 +9760,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                   ],
                                                                                 ),
                                                                               if (_images.isEmpty && _imageUrls.isEmpty)
-                                                                                SizedBox(height: 8.0),
+                                                                                const SizedBox(height: 8.0),
                                                                               _images.isNotEmpty || _imageUrls.isNotEmpty
                                                                                   ? Row(
                                                                                       children: [
@@ -9880,10 +9880,10 @@ class _Summery_pageState extends State<Summery_page>
                                                                                   : const Center(
                                                                                       child: Text("No images selected."),
                                                                                     ),
-                                                                              SizedBox(height: 8.0),
+                                                                              const SizedBox(height: 8.0),
                                                                               Row(
                                                                                 children: [
-                                                                                  SizedBox(
+                                                                                  const SizedBox(
                                                                                     width: 0,
                                                                                   ),
                                                                                   GestureDetector(
@@ -9937,7 +9937,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         width: 80,
                                                                                         decoration: BoxDecoration(
                                                                                           color: blueColor,
-                                                                                          borderRadius: BorderRadius.all(
+                                                                                          borderRadius: const BorderRadius.all(
                                                                                             Radius.circular(5),
                                                                                           ),
                                                                                         ),
@@ -9949,20 +9949,20 @@ class _Summery_pageState extends State<Summery_page>
                                                                                       ),
                                                                                     ),
                                                                                   ),
-                                                                                  SizedBox(width: 10),
+                                                                                  const SizedBox(width: 10),
                                                                                   GestureDetector(
                                                                                     onTap: () {
                                                                                       Navigator.pop(context);
                                                                                     },
                                                                                     child: Material(
                                                                                       elevation: 3,
-                                                                                      borderRadius: BorderRadius.all(
+                                                                                      borderRadius: const BorderRadius.all(
                                                                                         Radius.circular(5),
                                                                                       ),
                                                                                       child: Container(
                                                                                         height: 30,
                                                                                         width: 80,
-                                                                                        decoration: BoxDecoration(
+                                                                                        decoration: const BoxDecoration(
                                                                                           color: Colors.white,
                                                                                           borderRadius: BorderRadius.all(
                                                                                             Radius.circular(5),
@@ -9978,9 +9978,9 @@ class _Summery_pageState extends State<Summery_page>
                                                                                   ),
                                                                                 ],
                                                                               ),
-                                                                              SizedBox(height: 8.0),
+                                                                              const SizedBox(height: 8.0),
                                                                               if (iserror)
-                                                                                Text(
+                                                                                const Text(
                                                                                   "Please fill in all fields correctly.",
                                                                                   style: TextStyle(color: Colors.redAccent),
                                                                                 ),
@@ -10442,22 +10442,22 @@ class _Summery_pageState extends State<Summery_page>
                                                                                       fontWeight: FontWeight.bold,
                                                                                     ),
                                                                                   ),
-                                                                                  Spacer(),
+                                                                                  const Spacer(),
                                                                                   Align(
                                                                                     alignment: Alignment.centerRight,
                                                                                     child: InkWell(
                                                                                       onTap: () {
                                                                                         Navigator.pop(context);
                                                                                       },
-                                                                                      child: Icon(Icons.close, color: Colors.black),
+                                                                                      child: const Icon(Icons.close, color: Colors.black),
                                                                                     ),
                                                                                   ),
                                                                                 ],
                                                                               ),
-                                                                              SizedBox(
+                                                                              const SizedBox(
                                                                                 height: 10,
                                                                               ),
-                                                                              Row(
+                                                                              const Row(
                                                                                 children: [
                                                                                   Text(
                                                                                     "Unit Number *",
@@ -10465,7 +10465,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                   ),
                                                                                 ],
                                                                               ),
-                                                                              SizedBox(
+                                                                              const SizedBox(
                                                                                 height: 10,
                                                                               ),
                                                                               Padding(
@@ -10488,21 +10488,21 @@ class _Summery_pageState extends State<Summery_page>
                                                                                       ),
                                                                                       enabledBorder: OutlineInputBorder(
                                                                                         borderRadius: BorderRadius.circular(3),
-                                                                                        borderSide: BorderSide(color: Color(0xFF8A95A8)),
+                                                                                        borderSide: const BorderSide(color: Color(0xFF8A95A8)),
                                                                                       ),
                                                                                       focusedBorder: OutlineInputBorder(
                                                                                         borderRadius: BorderRadius.circular(3),
-                                                                                        borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                                                        borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
                                                                                       ),
-                                                                                      contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                                                      contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                                                                                     ),
                                                                                   ),
                                                                                 ),
                                                                               ),
-                                                                              SizedBox(
+                                                                              const SizedBox(
                                                                                 height: 10,
                                                                               ),
-                                                                              Row(
+                                                                              const Row(
                                                                                 children: [
                                                                                   Text(
                                                                                     "Street Address *",
@@ -10530,21 +10530,21 @@ class _Summery_pageState extends State<Summery_page>
                                                                                       ),
                                                                                       enabledBorder: OutlineInputBorder(
                                                                                         borderRadius: BorderRadius.circular(3),
-                                                                                        borderSide: BorderSide(color: Color(0xFF8A95A8)),
+                                                                                        borderSide: const BorderSide(color: Color(0xFF8A95A8)),
                                                                                       ),
                                                                                       focusedBorder: OutlineInputBorder(
                                                                                         borderRadius: BorderRadius.circular(3),
-                                                                                        borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                                                        borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
                                                                                       ),
-                                                                                      contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                                                      contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                                                                                     ),
                                                                                   ),
                                                                                 ),
                                                                               ),
-                                                                              SizedBox(
+                                                                              const SizedBox(
                                                                                 height: 10,
                                                                               ),
-                                                                              Row(
+                                                                              const Row(
                                                                                 children: [
                                                                                   Text(
                                                                                     "SQFT *",
@@ -10572,21 +10572,21 @@ class _Summery_pageState extends State<Summery_page>
                                                                                       ),
                                                                                       enabledBorder: OutlineInputBorder(
                                                                                         borderRadius: BorderRadius.circular(3),
-                                                                                        borderSide: BorderSide(color: Color(0xFF8A95A8)),
+                                                                                        borderSide: const BorderSide(color: Color(0xFF8A95A8)),
                                                                                       ),
                                                                                       focusedBorder: OutlineInputBorder(
                                                                                         borderRadius: BorderRadius.circular(3),
-                                                                                        borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
+                                                                                        borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
                                                                                       ),
-                                                                                      contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                                                                      contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                                                                                     ),
                                                                                   ),
                                                                                 ),
                                                                               ),
-                                                                              SizedBox(
+                                                                              const SizedBox(
                                                                                 height: 10,
                                                                               ),
-                                                                              Row(
+                                                                              const Row(
                                                                                 children: [
                                                                                   Text(
                                                                                     'Photo',
@@ -10594,7 +10594,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                   ),
                                                                                 ],
                                                                               ),
-                                                                              SizedBox(height: 8.0),
+                                                                              const SizedBox(height: 8.0),
                                                                               if (_images.isEmpty && _imageUrls.isEmpty)
                                                                                 Row(
                                                                                   children: [
@@ -10604,7 +10604,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                           setState(() {}); // Rebuild the widget after selecting the image
                                                                                         });
                                                                                       },
-                                                                                      child: Text(
+                                                                                      child: const Text(
                                                                                         '+ Add',
                                                                                         style: TextStyle(color: Colors.green),
                                                                                       ),
@@ -10612,7 +10612,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                   ],
                                                                                 ),
                                                                               if (_images.isEmpty && _imageUrls.isEmpty)
-                                                                                SizedBox(height: 8.0),
+                                                                                const SizedBox(height: 8.0),
                                                                               _images.isNotEmpty || _imageUrls.isNotEmpty
                                                                                   ? Row(
                                                                                       children: [
@@ -10732,10 +10732,10 @@ class _Summery_pageState extends State<Summery_page>
                                                                                   : const Center(
                                                                                       child: Text("No images selected."),
                                                                                     ),
-                                                                              SizedBox(height: 8.0),
+                                                                              const SizedBox(height: 8.0),
                                                                               Row(
                                                                                 children: [
-                                                                                  SizedBox(
+                                                                                  const SizedBox(
                                                                                     width: 0,
                                                                                   ),
                                                                                   GestureDetector(
@@ -10789,7 +10789,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                         width: 80,
                                                                                         decoration: BoxDecoration(
                                                                                           color: blueColor,
-                                                                                          borderRadius: BorderRadius.all(
+                                                                                          borderRadius: const BorderRadius.all(
                                                                                             Radius.circular(5),
                                                                                           ),
                                                                                         ),
@@ -10801,20 +10801,20 @@ class _Summery_pageState extends State<Summery_page>
                                                                                       ),
                                                                                     ),
                                                                                   ),
-                                                                                  SizedBox(width: 10),
+                                                                                  const SizedBox(width: 10),
                                                                                   GestureDetector(
                                                                                     onTap: () {
                                                                                       Navigator.pop(context);
                                                                                     },
                                                                                     child: Material(
                                                                                       elevation: 3,
-                                                                                      borderRadius: BorderRadius.all(
+                                                                                      borderRadius: const BorderRadius.all(
                                                                                         Radius.circular(5),
                                                                                       ),
                                                                                       child: Container(
                                                                                         height: 30,
                                                                                         width: 80,
-                                                                                        decoration: BoxDecoration(
+                                                                                        decoration: const BoxDecoration(
                                                                                           color: Colors.white,
                                                                                           borderRadius: BorderRadius.all(
                                                                                             Radius.circular(5),
@@ -10830,9 +10830,9 @@ class _Summery_pageState extends State<Summery_page>
                                                                                   ),
                                                                                 ],
                                                                               ),
-                                                                              SizedBox(height: 8.0),
+                                                                              const SizedBox(height: 8.0),
                                                                               if (iserror)
-                                                                                Text(
+                                                                                const Text(
                                                                                   "Please fill in all fields correctly.",
                                                                                   style: TextStyle(color: Colors.redAccent),
                                                                                 ),
@@ -10858,7 +10858,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                 color: Colors
                                                                     .green
                                                                     .shade50), // color:Colors.grey[100],
-                                                            child: Row(
+                                                            child: const Row(
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
                                                                       .center,
@@ -10877,7 +10877,7 @@ class _Summery_pageState extends State<Summery_page>
                                                             ),
                                                           ),
                                                         ),
-                                                        SizedBox(
+                                                        const SizedBox(
                                                           width: 10,
                                                         ),
                                                         GestureDetector(
@@ -10902,7 +10902,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                       .circular(
                                                                           8),
                                                             ),
-                                                            child: Row(
+                                                            child: const Row(
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
                                                                       .center,
@@ -10923,12 +10923,12 @@ class _Summery_pageState extends State<Summery_page>
                                                             ),
                                                           ),
                                                         ),
-                                                        SizedBox(
+                                                        const SizedBox(
                                                           width: 15,
                                                         ),
                                                       ],
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height:10 ,
                                                     ),
                                                   ],
@@ -10942,19 +10942,19 @@ class _Summery_pageState extends State<Summery_page>
                                   }).toList(),
                                 ),
                               ),
-                              SizedBox(height: 20),
+                              const SizedBox(height: 20),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Row(
                                     children: [
                                       // Text('Rows per page:'),
-                                      SizedBox(width: 10),
+                                      const SizedBox(width: 10),
                                       Material(
                                         elevation: 3,
                                         child: Container(
                                           height: 40,
-                                          padding: EdgeInsets.symmetric(
+                                          padding: const EdgeInsets.symmetric(
                                               horizontal: 12.0),
                                           decoration: BoxDecoration(
                                             border:
@@ -11055,7 +11055,7 @@ class _Summery_pageState extends State<Summery_page>
                 future: futureUnitsummery,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
+                    return const Center(
                       child: SpinKitFadingCircle(
                         color: Colors.black,
                         size: 55.0,
@@ -11076,7 +11076,7 @@ class _Summery_pageState extends State<Summery_page>
                               height: 200,
                               width: 200,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             Text(
@@ -11117,7 +11117,7 @@ class _Summery_pageState extends State<Summery_page>
                     return SingleChildScrollView(
                       child: Column(
                         children: [
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Container(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
@@ -11131,7 +11131,7 @@ class _Summery_pageState extends State<Summery_page>
                                           .91,
                                       child: Table(
                                         defaultColumnWidth:
-                                            IntrinsicColumnWidth(),
+                                            const IntrinsicColumnWidth(),
                                         children: [
                                           TableRow(
                                             decoration: BoxDecoration(
@@ -11160,7 +11160,7 @@ class _Summery_pageState extends State<Summery_page>
                                             ],
                                           ),
                                           TableRow(
-                                            decoration: BoxDecoration(
+                                            decoration: const BoxDecoration(
                                               border: Border.symmetric(
                                                   horizontal: BorderSide.none),
                                             ),
@@ -11218,13 +11218,13 @@ class _Summery_pageState extends State<Summery_page>
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.center,
                                                   children: [
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 13,
                                                     ),
                                                     Container(
                                                       child: Row(
                                                         children: [
-                                                          SizedBox(
+                                                          const SizedBox(
                                                             width: 10,
                                                           ),
                                                           InkWell(
@@ -11601,7 +11601,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                           width: 80,
                                                                                           decoration: BoxDecoration(
                                                                                             color: blueColor,
-                                                                                            borderRadius: BorderRadius.all(
+                                                                                            borderRadius: const BorderRadius.all(
                                                                                               Radius.circular(5),
                                                                                             ),
                                                                                           ),
@@ -11929,7 +11929,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                                           width: 80,
                                                                                           decoration: BoxDecoration(
                                                                                             color: blueColor,
-                                                                                            borderRadius: BorderRadius.all(
+                                                                                            borderRadius: const BorderRadius.all(
                                                                                               Radius.circular(5),
                                                                                             ),
                                                                                           ),
@@ -12007,13 +12007,13 @@ class _Summery_pageState extends State<Summery_page>
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 25),
+                                  const SizedBox(height: 25),
                                   _buildPaginationControlsmulti(),
                                 ],
                               ),
                             ),
                           ),
-                          SizedBox(height: 25),
+                          const SizedBox(height: 25),
                         ],
                       ),
                     );
@@ -12139,7 +12139,7 @@ class _Summery_pageState extends State<Summery_page>
                   ),
                   Row(
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         width: 15,
                       ),
                       SizedBox(
@@ -12177,7 +12177,7 @@ class _Summery_pageState extends State<Summery_page>
                           ),
                         ),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -12207,7 +12207,7 @@ class _Summery_pageState extends State<Summery_page>
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 5,
                           ),
                           SizedBox(
@@ -12231,7 +12231,7 @@ class _Summery_pageState extends State<Summery_page>
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 5,
                           ),
                           SizedBox(
@@ -12296,11 +12296,11 @@ class _Summery_pageState extends State<Summery_page>
                           // ),
                         ],
                       ),
-                      Spacer(),
+                      const Spacer(),
                       if (MediaQuery.of(context).size.width > 500)
                         Row(
                           children: [
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             Container(
@@ -12317,7 +12317,7 @@ class _Summery_pageState extends State<Summery_page>
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 10,
                                   ),
                                   SizedBox(
@@ -12378,11 +12378,11 @@ class _Summery_pageState extends State<Summery_page>
                                       ),
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 10,
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.only(left: 10),
+                                    padding: const EdgeInsets.only(left: 10),
                                     child: SizedBox(
                                       //  width: double.infinity,
                                       child: Text(
@@ -12438,7 +12438,7 @@ class _Summery_pageState extends State<Summery_page>
                                       ),
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 20,
                                   ),
                                 ],
@@ -12446,7 +12446,7 @@ class _Summery_pageState extends State<Summery_page>
                             ),
                           ],
                         ),
-                      SizedBox(
+                      const SizedBox(
                         width: 15,
                       ),
                     ],
@@ -12525,7 +12525,7 @@ class _Summery_pageState extends State<Summery_page>
                         child: Column(
                           children: [
                             Padding(
-                              padding: EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(8.0),
                               child: SizedBox(
                                 width: double.infinity,
                                 child: Text(
@@ -12578,7 +12578,7 @@ class _Summery_pageState extends State<Summery_page>
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(8.0),
                               child: SizedBox(
                                 width: double.infinity,
                                 child: Text(
@@ -12628,7 +12628,7 @@ class _Summery_pageState extends State<Summery_page>
                                 ),
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 20,
                             ),
                           ],
@@ -12686,7 +12686,7 @@ class _Summery_pageState extends State<Summery_page>
     return SingleChildScrollView(
       child: Column(
         children: [
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           //add Data
@@ -12695,13 +12695,13 @@ class _Summery_pageState extends State<Summery_page>
             padding: const EdgeInsets.only(left: 11, right: 11),
             child: Row(
               children: [
-                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 2),
-                if (MediaQuery.of(context).size.width > 500) SizedBox(width: 8),
+                if (MediaQuery.of(context).size.width < 500) const SizedBox(width: 2),
+                if (MediaQuery.of(context).size.width > 500) const SizedBox(width: 8),
                 Material(
                   elevation: 3,
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     // height: 40,
                     height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
                     width: MediaQuery.of(context).size.width < 500
@@ -12711,7 +12711,7 @@ class _Summery_pageState extends State<Summery_page>
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(8),
                         // border: Border.all(color: Colors.grey),
-                        border: Border.all(color: Color(0xFF8A95A8))),
+                        border: Border.all(color: const Color(0xFF8A95A8))),
                     child: Stack(
                       children: [
                         Positioned.fill(
@@ -12742,9 +12742,9 @@ class _Summery_pageState extends State<Summery_page>
                                           ? 14
                                           : 18,
                                   // fontWeight: FontWeight.bold,
-                                  color: Color(0xFF8A95A8),
+                                  color: const Color(0xFF8A95A8),
                                 ),
-                                contentPadding: EdgeInsets.only(
+                                contentPadding: const EdgeInsets.only(
                                     left: 5, bottom: 10, top: 5)),
                           ),
                         ),
@@ -12752,7 +12752,7 @@ class _Summery_pageState extends State<Summery_page>
                     ),
                   ),
                 ),
-                Spacer(),
+                const Spacer(),
                 DropdownButtonHideUnderline(
                   child: Material(
                     elevation: 3,
@@ -12809,7 +12809,7 @@ class _Summery_pageState extends State<Summery_page>
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
                             // color: Colors.black26,
-                            color: Color(0xFF8A95A8),
+                            color: const Color(0xFF8A95A8),
                           ),
                           color: Colors.white,
                         ),
@@ -12836,22 +12836,22 @@ class _Summery_pageState extends State<Summery_page>
                     ),
                   ),
                 ),
-                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 2),
-                if (MediaQuery.of(context).size.width > 500) SizedBox(width: 8),
+                if (MediaQuery.of(context).size.width < 500) const SizedBox(width: 2),
+                if (MediaQuery.of(context).size.width > 500) const SizedBox(width: 8),
               ],
             ),
           ),
           // SizedBox(height: 15),
-          if (MediaQuery.of(context).size.width > 500) SizedBox(height: 20),
-          if (MediaQuery.of(context).size.width < 500) SizedBox(height: 15),
+          if (MediaQuery.of(context).size.width > 500) const SizedBox(height: 20),
+          if (MediaQuery.of(context).size.width < 500) const SizedBox(height: 15),
           //search
           Padding(
             padding: const EdgeInsets.only(left: 11, right: 11),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 5),
-                if (MediaQuery.of(context).size.width > 500) SizedBox(width: 8),
+                if (MediaQuery.of(context).size.width < 500) const SizedBox(width: 5),
+                if (MediaQuery.of(context).size.width > 500) const SizedBox(width: 8),
                 Row(
                   children: [
                     Text(
@@ -12864,11 +12864,11 @@ class _Summery_pageState extends State<Summery_page>
                               : 12),
                     ),
                     if (MediaQuery.of(context).size.width < 500)
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                     if (MediaQuery.of(context).size.width > 500)
-                      SizedBox(width: 20),
+                      const SizedBox(width: 20),
                     SizedBox(
                       width: MediaQuery.of(context).size.width < 500 ? 24 : 50,
                       height: MediaQuery.of(context).size.width < 500 ? 24 : 50,
@@ -12884,7 +12884,7 @@ class _Summery_pageState extends State<Summery_page>
                     ),
                   ],
                 ),
-                Spacer(),
+                const Spacer(),
                 GestureDetector(
                   onTap: () async {
                     final result =
@@ -12932,12 +12932,12 @@ class _Summery_pageState extends State<Summery_page>
                     ),
                   ),
                 ),
-                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 2),
-                if (MediaQuery.of(context).size.width > 500) SizedBox(width: 8),
+                if (MediaQuery.of(context).size.width < 500) const SizedBox(width: 2),
+                if (MediaQuery.of(context).size.width > 500) const SizedBox(width: 8),
               ],
             ),
           ),
-          if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
+          if (MediaQuery.of(context).size.width > 500) const SizedBox(height: 25),
           if (MediaQuery.of(context).size.width < 500)
             Padding(
               padding: const EdgeInsets.all(10.0),
@@ -12945,7 +12945,7 @@ class _Summery_pageState extends State<Summery_page>
                 future: futureworkordersummery,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
+                    return const Center(
                         child: SpinKitFadingCircle(
                       color: Colors.black,
                       size: 40.0,
@@ -12963,7 +12963,7 @@ class _Summery_pageState extends State<Summery_page>
                               height: 200,
                               width: 200,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             Text(
@@ -13037,9 +13037,9 @@ class _Summery_pageState extends State<Summery_page>
                     return SingleChildScrollView(
                       child: Column(
                         children: [
-                          if (data.isNotEmpty) SizedBox(height: 10),
+                          if (data.isNotEmpty) const SizedBox(height: 10),
                           if (data.isNotEmpty) _buildHeaders(),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           if (data.isNotEmpty)
                             Container(
                               child: Column(
@@ -13052,13 +13052,13 @@ class _Summery_pageState extends State<Summery_page>
                                   propertiesworkData workOrder = entry.value;
                                   //return CustomExpansionTile(data: Data, index: index);
                                   return Container(
-                                    margin: EdgeInsets.symmetric(vertical: 6),
+                                    margin: const EdgeInsets.symmetric(vertical: 6),
                                     decoration: BoxDecoration(
                                       color: index % 2 != 0
-                                          ? Color(0xFFF4F8FF)
+                                          ? const Color(0xFFF4F8FF)
                                           : Colors.white,
                                       border:
-                                          Border.all(color: Color(0xFFDBE0E5)),
+                                          Border.all(color: const Color(0xFFDBE0E5)),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: Column(
@@ -13098,12 +13098,12 @@ class _Summery_pageState extends State<Summery_page>
                                                     });
                                                   },
                                                   child: Container(
-                                                    margin: EdgeInsets.only(
+                                                    margin: const EdgeInsets.only(
                                                         left: 5, right: 8),
                                                     padding: !isExpanded
-                                                        ? EdgeInsets.only(
+                                                        ? const EdgeInsets.only(
                                                             bottom: 10)
-                                                        : EdgeInsets.only(
+                                                        : const EdgeInsets.only(
                                                             top: 10),
                                                     child: FaIcon(
                                                       isExpanded
@@ -13191,9 +13191,9 @@ class _Summery_pageState extends State<Summery_page>
                                         ),
                                         if (isExpanded)
                                           Container(
-                                            padding: EdgeInsets.symmetric(
+                                            padding: const EdgeInsets.symmetric(
                                                 horizontal: 2),
-                                            margin: EdgeInsets.only(bottom: 1),
+                                            margin: const EdgeInsets.only(bottom: 1),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
@@ -13356,8 +13356,8 @@ class _Summery_pageState extends State<Summery_page>
                                                       Expanded(
                                                         child: Table(
                                                           columnWidths: {
-                                                            0: FlexColumnWidth(), // Distribute columns equally
-                                                            1: FlexColumnWidth(),
+                                                            0: const FlexColumnWidth(), // Distribute columns equally
+                                                            1: const FlexColumnWidth(),
                                                             // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                                             // 1: FlexColumnWidth(),
                                                           },
@@ -13383,7 +13383,7 @@ class _Summery_pageState extends State<Summery_page>
                                                           ],
                                                         ),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 5,
                                                       ),
                                                       // Column(
@@ -13433,7 +13433,7 @@ class _Summery_pageState extends State<Summery_page>
                                                       // ),
                                                     ],
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 10,
                                                   ),
                                                   Row(
@@ -13464,7 +13464,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                     .circular(
                                                                         8),
                                                           ),
-                                                          child: Row(
+                                                          child: const Row(
                                                             mainAxisAlignment:
                                                                 MainAxisAlignment
                                                                     .center,
@@ -13485,12 +13485,12 @@ class _Summery_pageState extends State<Summery_page>
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 20,
                                                       ),
                                                     ],
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 15,
                                                   ),
                                                 ],
@@ -13504,7 +13504,7 @@ class _Summery_pageState extends State<Summery_page>
                                 }).toList(),
                               ),
                             ),
-                          if (data.isNotEmpty) SizedBox(height: 20),
+                          if (data.isNotEmpty) const SizedBox(height: 20),
                           if (data.isEmpty)
                             Container(
                               height: MediaQuery.of(context).size.height * .5,
@@ -13518,7 +13518,7 @@ class _Summery_pageState extends State<Summery_page>
                                       height: 200,
                                       width: 200,
                                     ),
-                                    SizedBox(height: 10),
+                                    const SizedBox(height: 10),
                                     Text(
                                       "No Data Available",
                                       style: TextStyle(
@@ -13537,12 +13537,12 @@ class _Summery_pageState extends State<Summery_page>
                                 Row(
                                   children: [
                                     // Text('Rows per page:'),
-                                    SizedBox(width: 10),
+                                    const SizedBox(width: 10),
                                     Material(
                                       elevation: 3,
                                       child: Container(
                                         height: 40,
-                                        padding: EdgeInsets.symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                             horizontal: 12.0),
                                         decoration: BoxDecoration(
                                           border:
@@ -13641,7 +13641,7 @@ class _Summery_pageState extends State<Summery_page>
               future: futureworkordersummery,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
+                  return const Center(
                     child: SpinKitFadingCircle(
                       color: Colors.black,
                       size: 55.0,
@@ -13662,7 +13662,7 @@ class _Summery_pageState extends State<Summery_page>
                             height: 200,
                             width: 200,
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Text(
@@ -13723,7 +13723,7 @@ class _Summery_pageState extends State<Summery_page>
                                     //     .91,
                                     child: Table(
                                       defaultColumnWidth:
-                                          IntrinsicColumnWidth(),
+                                          const IntrinsicColumnWidth(),
                                       children: [
                                         TableRow(
                                           decoration: BoxDecoration(
@@ -13760,7 +13760,7 @@ class _Summery_pageState extends State<Summery_page>
                                           ],
                                         ),
                                         TableRow(
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             border: Border.symmetric(
                                                 horizontal: BorderSide.none),
                                           ),
@@ -13827,13 +13827,13 @@ class _Summery_pageState extends State<Summery_page>
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 25),
+                                const SizedBox(height: 25),
                                 _buildPaginationControls(),
                               ],
                             ),
                           ),
                         ),
-                        SizedBox(height: 25),
+                        const SizedBox(height: 25),
                       ],
                     ),
                   );
@@ -13851,7 +13851,7 @@ class _Summery_pageState extends State<Summery_page>
       children: [
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(4.0),
+            padding: const EdgeInsets.all(4.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -13860,7 +13860,7 @@ class _Summery_pageState extends State<Summery_page>
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 2.0), // Space between label and value
+                const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   leftValue,
                   style: TextStyle(color: grey),
@@ -13871,7 +13871,7 @@ class _Summery_pageState extends State<Summery_page>
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(4.0),
+            padding: const EdgeInsets.all(4.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -13880,7 +13880,7 @@ class _Summery_pageState extends State<Summery_page>
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 2.0), // Space between label and value
+                const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   rightValue,
                   style: TextStyle(color: grey),
@@ -14050,7 +14050,7 @@ class _LeasesTableState extends State<LeasesTable> {
           color: Colors.white,
           child: Container(
             height: 55,
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(4.0),
@@ -14069,17 +14069,17 @@ class _LeasesTableState extends State<LeasesTable> {
                     _changeRowsPerPage(newValue);
                   }
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_drop_down,
                   size: 40,
                 ),
-                style: TextStyle(color: Colors.black, fontSize: 17),
+                style: const TextStyle(color: Colors.black, fontSize: 17),
                 dropdownColor: Colors.white,
               ),
             ),
           ),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         IconButton(
           icon: FaIcon(
             size: 30,
@@ -14096,7 +14096,7 @@ class _LeasesTableState extends State<LeasesTable> {
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         IconButton(
           icon: FaIcon(
@@ -14194,7 +14194,7 @@ class _LeasesTableState extends State<LeasesTable> {
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this RentalOwner!",
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       buttons: [
@@ -14213,7 +14213,7 @@ class _LeasesTableState extends State<LeasesTable> {
           ),
         ),
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -14267,7 +14267,7 @@ class _LeasesTableState extends State<LeasesTable> {
     return Container(
       decoration: BoxDecoration(
         color: blueColor,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(13),
           topRight: Radius.circular(13),
         ),
@@ -14278,7 +14278,7 @@ class _LeasesTableState extends State<LeasesTable> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -14308,21 +14308,21 @@ class _LeasesTableState extends State<LeasesTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Status", style: TextStyle(color: Colors.white))
-                        : Text("Status", style: TextStyle(color: Colors.white)),
+                        ? const Text("Status", style: TextStyle(color: Colors.white))
+                        : const Text("Status", style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
+                    const SizedBox(width: 3),
                     ascending1
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 5),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 5),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -14357,19 +14357,19 @@ class _LeasesTableState extends State<LeasesTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Tenants", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                    const Text("Tenants", style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 5),
                     ascending2
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -14405,19 +14405,19 @@ class _LeasesTableState extends State<LeasesTable> {
                 },
                 child: Row(
                   children: [
-                    Text("   Type", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                    const Text("   Type", style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 5),
                     ascending3
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -14446,15 +14446,15 @@ class _LeasesTableState extends State<LeasesTable> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             child: Row(
               children: [
                 if (MediaQuery.of(context).size.width < 500)
-                  SizedBox(
+                  const SizedBox(
                     width: 10,
                   ),
                 if (MediaQuery.of(context).size.width > 500)
-                  SizedBox(
+                  const SizedBox(
                     width: 20,
                   ),
                 Text(
@@ -14475,7 +14475,7 @@ class _LeasesTableState extends State<LeasesTable> {
                 future: futureLease,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
+                    return const Center(
                         child: SpinKitFadingCircle(
                       color: Colors.black,
                       size: 40.0,
@@ -14483,7 +14483,7 @@ class _LeasesTableState extends State<LeasesTable> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(
+                    return const Center(
                         child: Text(
                             'You don\'t have any lease for this unit right now ..'));
                   } else {
@@ -14513,13 +14513,13 @@ class _LeasesTableState extends State<LeasesTable> {
                     return SingleChildScrollView(
                       child: Column(
                         children: [
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           _buildHeaders(),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           Container(
                             decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: Color.fromRGBO(152, 162, 179, .5))),
+                                    color: const Color.fromRGBO(152, 162, 179, .5))),
                             // decoration: BoxDecoration(
                             //     border: Border.all(color: blueColor)),
                             child: Column(
@@ -14536,7 +14536,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                         : blueColor.withOpacity(0.09),
                                     border: Border.all(
                                         color:
-                                            Color.fromRGBO(152, 162, 179, .5)),
+                                            const Color.fromRGBO(152, 162, 179, .5)),
                                   ),
                                   // decoration: BoxDecoration(
                                   //   border: Border.all(color: blueColor),
@@ -14579,11 +14579,11 @@ class _LeasesTableState extends State<LeasesTable> {
                                                 },
                                                 child: Container(
                                                   margin:
-                                                      EdgeInsets.only(left: 5),
+                                                      const EdgeInsets.only(left: 5),
                                                   padding: !isExpanded
-                                                      ? EdgeInsets.only(
+                                                      ? const EdgeInsets.only(
                                                           bottom: 10)
-                                                      : EdgeInsets.only(
+                                                      : const EdgeInsets.only(
                                                           top: 10),
                                                   child: FaIcon(
                                                     isExpanded
@@ -14596,7 +14596,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 4,
                                               ),
                                               Expanded(
@@ -14663,9 +14663,9 @@ class _LeasesTableState extends State<LeasesTable> {
                                       ),
                                       if (isExpanded)
                                         Container(
-                                          padding: EdgeInsets.symmetric(
+                                          padding: const EdgeInsets.symmetric(
                                               horizontal: 8.0),
-                                          margin: EdgeInsets.only(bottom: 20),
+                                          margin: const EdgeInsets.only(bottom: 20),
                                           child: SingleChildScrollView(
                                             child: Column(
                                               children: [
@@ -14704,7 +14704,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                                                 TextSpan(
                                                                   text:
                                                                       '${dateProvider.formatCurrentDate('${rentals.startDate}')} - ${dateProvider.formatCurrentDate('${rentals.endDate}')}',
-                                                                  style: TextStyle(
+                                                                  style: const TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .w700,
@@ -14737,7 +14737,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                                                 TextSpan(
                                                                   text:
                                                                       '${rentals.amount}',
-                                                                  style: TextStyle(
+                                                                  style: const TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .w700,
@@ -14763,19 +14763,19 @@ class _LeasesTableState extends State<LeasesTable> {
                               }).toList(),
                             ),
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Row(
                                 children: [
                                   // Text('Rows per page:'),
-                                  SizedBox(width: 10),
+                                  const SizedBox(width: 10),
                                   Material(
                                     elevation: 3,
                                     child: Container(
                                       height: 40,
-                                      padding: EdgeInsets.symmetric(
+                                      padding: const EdgeInsets.symmetric(
                                           horizontal: 12.0),
                                       decoration: BoxDecoration(
                                         border: Border.all(color: Colors.grey),
@@ -14873,7 +14873,7 @@ class _LeasesTableState extends State<LeasesTable> {
               future: futureLease,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
+                  return const Center(
                       child: SpinKitFadingCircle(
                     color: Colors.black,
                     size: 40.0,
@@ -14881,7 +14881,7 @@ class _LeasesTableState extends State<LeasesTable> {
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(
+                  return const Center(
                       child: Text(
                           'You don\'t have any lease for this unit right now ..'));
                 } else {
@@ -14915,7 +14915,7 @@ class _LeasesTableState extends State<LeasesTable> {
                           child: Container(
                             width: MediaQuery.of(context).size.width * .91,
                             child: Table(
-                              defaultColumnWidth: IntrinsicColumnWidth(),
+                              defaultColumnWidth: const IntrinsicColumnWidth(),
                               children: [
                                 TableRow(
                                   decoration:
@@ -14934,7 +14934,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                   ],
                                 ),
                                 TableRow(
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     border: Border.symmetric(
                                         horizontal: BorderSide.none),
                                   ),
@@ -14974,8 +14974,8 @@ class _LeasesTableState extends State<LeasesTable> {
                             ),
                           ),
                         ),
-                        if (_tableData.isEmpty) Text("No Search Records Found"),
-                        SizedBox(height: 25),
+                        if (_tableData.isEmpty) const Text("No Search Records Found"),
+                        const SizedBox(height: 25),
                         _buildPaginationControls(),
                       ],
                     ),
@@ -15382,7 +15382,7 @@ void showCommonPopup({
                                           children: [
                                             Row(
                                               children: [
-                                                SizedBox(
+                                                const SizedBox(
                                                   width: 60,
                                                 ),
                                                 GestureDetector(
@@ -15391,7 +15391,7 @@ void showCommonPopup({
                                                       images?.removeAt(index);
                                                     });
                                                   },
-                                                  child: Icon(
+                                                  child: const Icon(
                                                     Icons.close,
                                                     color: Colors.grey,
                                                   ),
@@ -15425,7 +15425,7 @@ void showCommonPopup({
                             ),
                           ],
                         )
-                      : Center(
+                      : const Center(
                           child: Text("No images selected."),
                         ),
 
@@ -15452,14 +15452,14 @@ void showCommonPopup({
                                           children: [
                                             Row(
                                               children: [
-                                                SizedBox(width: 60),
+                                                const SizedBox(width: 60),
                                                 GestureDetector(
                                                   onTap: () {
                                                     setState(() {
                                                       imageUrls.removeAt(index);
                                                     });
                                                   },
-                                                  child: Icon(
+                                                  child: const Icon(
                                                     Icons.close,
                                                     color: Colors.grey,
                                                   ),
@@ -15480,7 +15480,7 @@ void showCommonPopup({
                                                     fit: BoxFit.cover,
                                                     errorBuilder: (context,
                                                         error, stackTrace) {
-                                                      return Icon(Icons
+                                                      return const Icon(Icons
                                                           .error); // Placeholder for errors
                                                     },
                                                   ),
@@ -15497,7 +15497,7 @@ void showCommonPopup({
                             ),
                           ],
                         )
-                      : Center(child: Text("No images selected.")),
+                      : const Center(child: Text("No images selected.")),
                   const SizedBox(height: 8.0),
 
                   Row(
@@ -15519,7 +15519,7 @@ void showCommonPopup({
                             width: 80,
                             decoration: BoxDecoration(
                               color: blueColor,
-                              borderRadius: BorderRadius.all(
+                              borderRadius: const BorderRadius.all(
                                 Radius.circular(5),
                               ),
                             ),

@@ -53,7 +53,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
       }
     }
     // Show a message to select an owner
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Please select an owner.'),
     ));
   }
@@ -257,19 +257,19 @@ class _AddRentalownersState extends State<AddRentalowners> {
                   borderRadius: BorderRadius.circular(5.0),
                   child: Container(
                     height: 50.0,
-                    padding: EdgeInsets.only(top: 14, left: 10),
+                    padding: const EdgeInsets.only(top: 14, left: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
                       color: blueColor,
                       boxShadow: [
-                        BoxShadow(
+                        const BoxShadow(
                           color: Colors.grey,
                           offset: Offset(0.0, 1.0),
                           blurRadius: 6.0,
                         ),
                       ],
                     ),
-                    child: Text(
+                    child: const Text(
                       "Add Rental Owner",
                       style: TextStyle(
                         color: Colors.white,
@@ -279,7 +279,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                     ),
                   ),
                 ),
-                SizedBox(height: 25),
+                const SizedBox(height: 25),
                 Row(
                   children: [
                     SizedBox(
@@ -295,7 +295,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                         activeColor: isChecked ? blueColor : Colors.black,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
                     Expanded(
@@ -303,7 +303,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                         "choose an existing rental owner",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF8A95A8),
+                            color: const Color(0xFF8A95A8),
                             fontSize: MediaQuery.of(context).size.width < 500
                                 ? 16
                                 : 18),
@@ -311,11 +311,11 @@ class _AddRentalownersState extends State<AddRentalowners> {
                     ),
                   ],
                 ),
-                SizedBox(height: 25),
+                const SizedBox(height: 25),
                 isChecked
                     ? Column(
                         children: [
-                          SizedBox(height: 2.0),
+                          const SizedBox(height: 2.0),
                           Row(
                             children: [
                               Expanded(
@@ -332,13 +332,13 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                       // color: Colors
                                       //     .white,
                                       border:
-                                          Border.all(color: Color(0xFF8A95A8)),
+                                          Border.all(color: const Color(0xFF8A95A8)),
                                     ),
                                     child: Stack(
                                       children: [
                                         Positioned.fill(
                                           child: TextField(
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               color: Colors.black,
                                               fontSize: 13,
                                             ),
@@ -362,14 +362,14 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                             cursorColor: blueColor,
                                             decoration: InputDecoration(
                                               border: InputBorder.none,
-                                              contentPadding: EdgeInsets.only(
+                                              contentPadding: const EdgeInsets.only(
                                                   top: 13,
                                                   bottom: 13,
                                                   left: 14),
                                               hintText:
                                                   "Search by first and last name",
                                               hintStyle: TextStyle(
-                                                color: Color(0xFF8A95A8),
+                                                color: const Color(0xFF8A95A8),
                                                 fontSize: MediaQuery.of(context)
                                                             .size
                                                             .width <
@@ -387,7 +387,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 16.0),
+                          const SizedBox(height: 16.0),
                           Row(
                             children: [
                               Expanded(
@@ -602,13 +602,13 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                 children: [
                                   Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                       Text(
                                         "Contact Name",
                                         style: TextStyle(
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                         .size
@@ -619,12 +619,12 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 8,
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                       Expanded(
@@ -675,7 +675,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     //     : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        EdgeInsets.all(14),
+                                                        const EdgeInsets.all(14),
                                                     hintText: "Enter name",
                                                     hintStyle: TextStyle(
                                                       color: Colors.grey[600],
@@ -694,7 +694,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                     ],
@@ -702,29 +702,29 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                   firstnameerror
                                       ? Row(
                                           children: [
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 20,
                                             ),
                                             Text(
                                               firstnamemessage,
                                               style:
-                                                  TextStyle(color: Colors.red),
+                                                  const TextStyle(color: Colors.red),
                                             ),
                                           ],
                                         )
                                       : Container(),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 15,
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                       Text(
                                         "Company Name",
                                         style: TextStyle(
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                         .size
@@ -735,12 +735,12 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 8,
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                       Expanded(
@@ -791,7 +791,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     //     : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        EdgeInsets.all(14),
+                                                        const EdgeInsets.all(14),
                                                     hintText:
                                                         "Enter company name",
                                                     hintStyle: TextStyle(
@@ -811,7 +811,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                     ],
@@ -819,29 +819,29 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                   comnameerror
                                       ? Row(
                                           children: [
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 20,
                                             ),
                                             Text(
                                               comnamemessage,
                                               style:
-                                                  TextStyle(color: Colors.red),
+                                                  const TextStyle(color: Colors.red),
                                             ),
                                           ],
                                         )
                                       : Container(),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 15,
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                       Text(
                                         "Primary Email",
                                         style: TextStyle(
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                         .size
@@ -852,12 +852,12 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 8,
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                       Expanded(
@@ -910,7 +910,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     //         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        EdgeInsets.all(14),
+                                                        const EdgeInsets.all(14),
                                                     hintText:
                                                         "Enter primary email",
                                                     hintStyle: TextStyle(
@@ -930,7 +930,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                     ],
@@ -938,29 +938,29 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                   primaryemailerror
                                       ? Row(
                                           children: [
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 20,
                                             ),
                                             Text(
                                               primaryemailmessage,
                                               style:
-                                                  TextStyle(color: Colors.red),
+                                                  const TextStyle(color: Colors.red),
                                             ),
                                           ],
                                         )
                                       : Container(),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 15,
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                       Text(
                                         "Alternative Email",
                                         style: TextStyle(
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                         .size
@@ -971,12 +971,12 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 8,
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                       Expanded(
@@ -1028,7 +1028,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     //         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        EdgeInsets.all(14),
+                                                        const EdgeInsets.all(14),
                                                     hintText:
                                                         "Enter alternative email",
                                                     hintStyle: TextStyle(
@@ -1048,7 +1048,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                     ],
@@ -1056,29 +1056,29 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                   alternativeerror
                                       ? Row(
                                           children: [
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 20,
                                             ),
                                             Text(
                                               alternativemessage,
                                               style:
-                                                  TextStyle(color: Colors.red),
+                                                  const TextStyle(color: Colors.red),
                                             ),
                                           ],
                                         )
                                       : Container(),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 15,
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                       Text(
                                         "Phone Numbers",
                                         style: TextStyle(
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                         .size
@@ -1089,12 +1089,12 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 8,
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                       Expanded(
@@ -1158,7 +1158,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     //     : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        EdgeInsets.all(14),
+                                                        const EdgeInsets.all(14),
                                                     hintText:
                                                         "Enter phone number",
                                                     hintStyle: TextStyle(
@@ -1178,7 +1178,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                     ],
@@ -1186,23 +1186,23 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                   phonenumerror
                                       ? Row(
                                           children: [
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 20,
                                             ),
                                             Text(
                                               phonenummessage,
                                               style:
-                                                  TextStyle(color: Colors.red),
+                                                  const TextStyle(color: Colors.red),
                                             ),
                                           ],
                                         )
                                       : Container(),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 15,
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                       Expanded(
@@ -1266,7 +1266,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     //     : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        EdgeInsets.all(14),
+                                                        const EdgeInsets.all(14),
                                                     hintText:
                                                         "Enter home number",
                                                     hintStyle: TextStyle(
@@ -1286,7 +1286,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                     ],
@@ -1294,23 +1294,23 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                   homenumerror
                                       ? Row(
                                           children: [
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 20,
                                             ),
                                             Text(
                                               homenummessage,
                                               style:
-                                                  TextStyle(color: Colors.red),
+                                                  const TextStyle(color: Colors.red),
                                             ),
                                           ],
                                         )
                                       : Container(),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 15,
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                       Expanded(
@@ -1375,7 +1375,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     //         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        EdgeInsets.all(14),
+                                                        const EdgeInsets.all(14),
                                                     hintText:
                                                         "Enter business number",
                                                     hintStyle: TextStyle(
@@ -1395,7 +1395,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                     ],
@@ -1403,29 +1403,29 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                   businessnumerror
                                       ? Row(
                                           children: [
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 20,
                                             ),
                                             Text(
                                               businessnummessage,
                                               style:
-                                                  TextStyle(color: Colors.red),
+                                                  const TextStyle(color: Colors.red),
                                             ),
                                           ],
                                         )
                                       : Container(),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 15,
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                       Text(
                                         "Address Information",
                                         style: TextStyle(
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                         .size
@@ -1436,12 +1436,12 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 8,
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                       Expanded(
@@ -1492,7 +1492,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                     //     : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        EdgeInsets.all(14),
+                                                        const EdgeInsets.all(14),
                                                     hintText:
                                                         "Enter street address",
                                                     hintStyle: TextStyle(
@@ -1512,7 +1512,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                     ],
@@ -1521,10 +1521,10 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                       ? Center(
                                           child: Text(
                                           street2message,
-                                          style: TextStyle(color: Colors.red),
+                                          style: const TextStyle(color: Colors.red),
                                         ))
                                       : Container(),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 15,
                                   ),
                                   Padding(
@@ -1543,7 +1543,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                               Text(
                                                 "City",
                                                 style: TextStyle(
-                                                  color: Color(0xFF8A95A8),
+                                                  color: const Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold,
                                                   fontSize:
                                                       MediaQuery.of(context)
@@ -1554,7 +1554,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                           : 18,
                                                 ),
                                               ),
-                                              SizedBox(height: 5),
+                                              const SizedBox(height: 5),
                                               Container(
                                                 height: 50,
                                                 decoration: BoxDecoration(
@@ -1562,7 +1562,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   borderRadius:
                                                       BorderRadius.circular(10),
                                                   border: Border.all(
-                                                      color: Color(0xFF8A95A8)),
+                                                      color: const Color(0xFF8A95A8)),
                                                 ),
                                                 child: Stack(
                                                   children: [
@@ -1587,7 +1587,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                           });
                                                         },
                                                         cursorColor:
-                                                            Color.fromRGBO(
+                                                            const Color.fromRGBO(
                                                                 21, 43, 81, 1),
                                                         decoration:
                                                             InputDecoration(
@@ -1606,12 +1606,12 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
-                                                              EdgeInsets.all(
+                                                              const EdgeInsets.all(
                                                                   14),
                                                           hintText:
                                                               "Enter city",
                                                           hintStyle: TextStyle(
-                                                            color: Color(
+                                                            color: const Color(
                                                                 0xFF8A95A8),
                                                             fontSize: MediaQuery.of(
                                                                             context)
@@ -1627,19 +1627,19 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   ],
                                                 ),
                                               ),
-                                              SizedBox(height: 5),
+                                              const SizedBox(height: 5),
                                               city2error
                                                   ? Center(
                                                       child: Text(
                                                       city2message,
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           color: Colors.red),
                                                     ))
                                                   : Container(),
                                             ],
                                           ),
                                         ),
-                                        SizedBox(width: 16),
+                                        const SizedBox(width: 16),
                                         // Second Column
                                         Expanded(
                                           child: Column(
@@ -1649,7 +1649,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                               Text(
                                                 "State",
                                                 style: TextStyle(
-                                                  color: Color(0xFF8A95A8),
+                                                  color: const Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold,
                                                   fontSize:
                                                       MediaQuery.of(context)
@@ -1660,7 +1660,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                           : 18,
                                                 ),
                                               ),
-                                              SizedBox(height: 5),
+                                              const SizedBox(height: 5),
                                               Container(
                                                 height: 50,
                                                 decoration: BoxDecoration(
@@ -1668,7 +1668,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   borderRadius:
                                                       BorderRadius.circular(10),
                                                   border: Border.all(
-                                                      color: Color(0xFF8A95A8)),
+                                                      color: const Color(0xFF8A95A8)),
                                                 ),
                                                 child: Stack(
                                                   children: [
@@ -1693,7 +1693,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                           });
                                                         },
                                                         cursorColor:
-                                                            Color.fromRGBO(
+                                                            const Color.fromRGBO(
                                                                 21, 43, 81, 1),
                                                         decoration:
                                                             InputDecoration(
@@ -1712,12 +1712,12 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
-                                                              EdgeInsets.all(
+                                                              const EdgeInsets.all(
                                                                   14),
                                                           hintText:
                                                               "Enter state",
                                                           hintStyle: TextStyle(
-                                                            color: Color(
+                                                            color: const Color(
                                                                 0xFF8A95A8),
                                                             fontSize: MediaQuery.of(
                                                                             context)
@@ -1733,12 +1733,12 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   ],
                                                 ),
                                               ),
-                                              SizedBox(height: 5),
+                                              const SizedBox(height: 5),
                                               state2error
                                                   ? Center(
                                                       child: Text(
                                                       state2message,
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           color: Colors.red),
                                                     ))
                                                   : Container(),
@@ -1748,7 +1748,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                       ],
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 15,
                                   ),
                                   Padding(
@@ -1767,7 +1767,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                               Text(
                                                 "Country",
                                                 style: TextStyle(
-                                                  color: Color(0xFF8A95A8),
+                                                  color: const Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold,
                                                   fontSize:
                                                       MediaQuery.of(context)
@@ -1778,7 +1778,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                           : 18,
                                                 ),
                                               ),
-                                              SizedBox(height: 5),
+                                              const SizedBox(height: 5),
                                               Container(
                                                 height: 50,
                                                 decoration: BoxDecoration(
@@ -1786,7 +1786,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   borderRadius:
                                                       BorderRadius.circular(10),
                                                   border: Border.all(
-                                                      color: Color(0xFF8A95A8)),
+                                                      color: const Color(0xFF8A95A8)),
                                                 ),
                                                 child: Stack(
                                                   children: [
@@ -1812,7 +1812,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                           });
                                                         },
                                                         cursorColor:
-                                                            Color.fromRGBO(
+                                                            const Color.fromRGBO(
                                                                 21, 43, 81, 1),
                                                         decoration:
                                                             InputDecoration(
@@ -1831,12 +1831,12 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
-                                                              EdgeInsets.all(
+                                                              const EdgeInsets.all(
                                                                   14),
                                                           hintText:
                                                               "Enter country",
                                                           hintStyle: TextStyle(
-                                                            color: Color(
+                                                            color: const Color(
                                                                 0xFF8A95A8),
                                                             fontSize: MediaQuery.of(
                                                                             context)
@@ -1852,19 +1852,19 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   ],
                                                 ),
                                               ),
-                                              SizedBox(height: 5),
+                                              const SizedBox(height: 5),
                                               county2error
                                                   ? Center(
                                                       child: Text(
                                                       county2message,
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           color: Colors.red),
                                                     ))
                                                   : Container(),
                                             ],
                                           ),
                                         ),
-                                        SizedBox(width: 16),
+                                        const SizedBox(width: 16),
                                         // Second Column
                                         Expanded(
                                           child: Column(
@@ -1874,7 +1874,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                               Text(
                                                 "Zip Code",
                                                 style: TextStyle(
-                                                  color: Color(0xFF8A95A8),
+                                                  color: const Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold,
                                                   fontSize:
                                                       MediaQuery.of(context)
@@ -1885,7 +1885,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                           : 18,
                                                 ),
                                               ),
-                                              SizedBox(height: 5),
+                                              const SizedBox(height: 5),
                                               Container(
                                                 height: 50,
                                                 decoration: BoxDecoration(
@@ -1893,7 +1893,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   borderRadius:
                                                       BorderRadius.circular(10),
                                                   border: Border.all(
-                                                      color: Color(0xFF8A95A8)),
+                                                      color: const Color(0xFF8A95A8)),
                                                 ),
                                                 child: Stack(
                                                   children: [
@@ -1922,7 +1922,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                           });
                                                         },
                                                         cursorColor:
-                                                            Color.fromRGBO(
+                                                            const Color.fromRGBO(
                                                                 21, 43, 81, 1),
                                                         decoration:
                                                             InputDecoration(
@@ -1941,12 +1941,12 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
-                                                              EdgeInsets.all(
+                                                              const EdgeInsets.all(
                                                                   14),
                                                           hintText:
                                                               "Enter zip code",
                                                           hintStyle: TextStyle(
-                                                            color: Color(
+                                                            color: const Color(
                                                                 0xFF8A95A8),
                                                             fontSize: MediaQuery.of(
                                                                             context)
@@ -1962,12 +1962,12 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                                   ],
                                                 ),
                                               ),
-                                              SizedBox(height: 5),
+                                              const SizedBox(height: 5),
                                               code2error
                                                   ? Center(
                                                       child: Text(
                                                       code2message,
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           color: Colors.red),
                                                     ))
                                                   : Container(),
@@ -2311,7 +2311,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                               )),
                         ),
                       ),
-                SizedBox(height: 25),
+                const SizedBox(height: 25),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -2597,7 +2597,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             borderRadius: BorderRadius.circular(5.0),
                             color: blueColor,
                             boxShadow: [
-                              BoxShadow(
+                              const BoxShadow(
                                 color: Colors.grey,
                                 offset: Offset(0.0, 1.0), // (x,y)
                                 blurRadius: 6.0,
@@ -2606,11 +2606,11 @@ class _AddRentalownersState extends State<AddRentalowners> {
                           ),
                           child: Center(
                             child: isLoading
-                                ? SpinKitFadingCircle(
+                                ? const SpinKitFadingCircle(
                                     color: Colors.white,
                                     size: 25.0,
                                   )
-                                : Text(
+                                : const Text(
                                     "Add",
                                     style: TextStyle(
                                       color: Colors.white,
@@ -2636,7 +2636,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             borderRadius: BorderRadius.circular(5.0),
                             color: Colors.white,
                             boxShadow: [
-                              BoxShadow(
+                              const BoxShadow(
                                 color: Colors.grey,
                                 offset: Offset(0.0, 1.0), //(x,y)
                                 blurRadius: 6.0,
@@ -2645,7 +2645,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                           ),
                           child: Center(
                             child: isLoading
-                                ? SpinKitFadingCircle(
+                                ? const SpinKitFadingCircle(
                                     color: Colors.white,
                                     size: 25.0,
                                   )
@@ -2811,13 +2811,13 @@ class RentalOwnerSource extends DataTableSource {
             child: Container(
               //  color: Colors.redAccent,
               padding: EdgeInsets.zero,
-              child: FaIcon(
+              child: const FaIcon(
                 FontAwesomeIcons.edit,
                 size: 20,
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 4,
           ),
           InkWell(
@@ -2827,7 +2827,7 @@ class RentalOwnerSource extends DataTableSource {
             child: Container(
               //    color: Colors.redAccent,
               padding: EdgeInsets.zero,
-              child: FaIcon(
+              child: const FaIcon(
                 FontAwesomeIcons.trashCan,
                 size: 20,
               ),

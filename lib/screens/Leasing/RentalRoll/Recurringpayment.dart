@@ -300,7 +300,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 7,
                     ),
                     Row(
@@ -314,7 +314,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 7,
                     ),
                     Row(
@@ -328,7 +328,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 17,
                     ),
                     isLoading
@@ -356,7 +356,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                   .toList();
 
                               return Padding(
-                                padding: EdgeInsets.all(0),
+                                padding: const EdgeInsets.all(0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -367,7 +367,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                           fontWeight: FontWeight.bold,
                                           color: blueColor),
                                     ),
-                                    SizedBox(height: 8),
+                                    const SizedBox(height: 8),
                                     Column(
                                       children: List.generate(
                                           tenantDropdowns[index]!.length,
@@ -384,7 +384,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                             child: Row(
                                               children: [
                                                 // Card Dropdown
-                                                SizedBox(
+                                                const SizedBox(
                                                   width: 3,
                                                 ),
                                                 Column(
@@ -394,7 +394,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     if (isFirstRow)
-                                                      Row(
+                                                      const Row(
                                                         children: [
                                                           Text(
                                                             "Select a Card",
@@ -419,7 +419,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                 .size
                                                                 .width *
                                                             .51,
-                                                        padding: EdgeInsets
+                                                        padding: const EdgeInsets
                                                             .symmetric(
                                                                 horizontal: 8),
                                                         decoration:
@@ -429,7 +429,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(6),
-                                                          border: Border(
+                                                          border: const Border(
                                                             bottom: BorderSide(
                                                                 color: Colors
                                                                     .black,
@@ -444,7 +444,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                           child:
                                                               DropdownButton2<
                                                                   String>(
-                                                            hint: Text(
+                                                            hint: const Text(
                                                               'Select a Card',
                                                               style: TextStyle(
                                                                   fontSize: 14,
@@ -493,19 +493,19 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                               width: 30,
                                                                               child: Image.network("https://logo.clearbit.com/${card.ccType!.replaceAll(RegExp(r'[-\s]'), "").toLowerCase()}.com"),
                                                                             ),
-                                                                            SizedBox(width: 9),
+                                                                            const SizedBox(width: 9),
                                                                             Column(
                                                                               crossAxisAlignment: CrossAxisAlignment.start,
                                                                               children: [
-                                                                                Text("${card.ccNumber}", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                                                                                Text("${card.ccNumber}", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                                                                                 Row(
                                                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                   children: [
-                                                                                    Text("${card.binResult != null ?card.binResult : "N/A"}", style: TextStyle(fontSize: 11)),
-                                                                                    SizedBox(
+                                                                                    Text("${card.binResult != null ?card.binResult : "N/A"}", style: const TextStyle(fontSize: 11)),
+                                                                                    const SizedBox(
                                                                                       width: 52,
                                                                                     ),
-                                                                                    Text("${card.ccExp}", style: TextStyle(fontSize: 11)),
+                                                                                    Text("${card.ccExp}", style: const TextStyle(fontSize: 11)),
                                                                                   ],
                                                                                 ),
                                                                               ],
@@ -517,7 +517,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                   );
                                                                 }).toList()
                                                               else
-                                                                DropdownMenuItem<
+                                                                const DropdownMenuItem<
                                                                     String>(
                                                                   value: '',
                                                                   child: Text(
@@ -542,7 +542,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                     height: 40,
                                                                     color:
                                                                         blueColor, // Change to any color you prefer
-                                                                    child: Row(
+                                                                    child: const Row(
                                                                       mainAxisAlignment:
                                                                           MainAxisAlignment
                                                                               .start,
@@ -595,7 +595,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                           .centerLeft, // ✅ Center the selected card number
                                                                   child: Text(
                                                                     card.ccNumber!, // Show only CC number after selection
-                                                                    style: TextStyle(
+                                                                    style: const TextStyle(
                                                                         fontSize:
                                                                             14,
                                                                         fontWeight:
@@ -612,7 +612,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                       .zero,
                                                             ),
                                                             buttonStyleData:
-                                                                ButtonStyleData(
+                                                                const ButtonStyleData(
                                                               height: 50,
                                                             ),
                                                             iconStyleData:
@@ -663,7 +663,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                     ),
                                                   ],
                                                 ),
-                                                SizedBox(width: 12),
+                                                const SizedBox(width: 12),
 
                                                 // Day Dropdown
                                                 Column(
@@ -673,7 +673,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     if (isFirstRow)
-                                                      Row(
+                                                      const Row(
                                                         children: [
                                                           Text(
                                                             "Day of Month",
@@ -698,7 +698,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                 .size
                                                                 .width *
                                                             .36,
-                                                        padding: EdgeInsets
+                                                        padding: const EdgeInsets
                                                             .symmetric(
                                                                 horizontal: 12),
                                                         decoration:
@@ -708,7 +708,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(6),
-                                                          border: Border(
+                                                          border: const Border(
                                                             bottom: BorderSide(
                                                                 color: Colors
                                                                     .black,
@@ -723,7 +723,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                           child:
                                                               DropdownButton2<
                                                                   String>(
-                                                            hint: Text(
+                                                            hint: const Text(
                                                               'Day',
                                                               style: TextStyle(
                                                                   fontSize: 14,
@@ -766,7 +766,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                               });
                                                             },
                                                             buttonStyleData:
-                                                                ButtonStyleData(
+                                                                const ButtonStyleData(
                                                               height: 50,
                                                             ),
                                                             iconStyleData:
@@ -817,7 +817,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                     ),
                                                   ],
                                                 ),
-                                                SizedBox(width: 12),
+                                                const SizedBox(width: 12),
                                                 Column(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.start,
@@ -825,7 +825,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     if (isFirstRow)
-                                                      Row(
+                                                      const Row(
                                                         children: [
                                                           Text(
                                                             "Account",
@@ -850,7 +850,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                 .size
                                                                 .width *
                                                             .45,
-                                                        padding: EdgeInsets
+                                                        padding: const EdgeInsets
                                                             .symmetric(
                                                                 horizontal: 8),
                                                         decoration:
@@ -860,7 +860,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(6),
-                                                          border: Border(
+                                                          border: const Border(
                                                             bottom: BorderSide(
                                                                 color: Colors
                                                                     .black,
@@ -875,7 +875,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                           child:
                                                               DropdownButton2<
                                                                   String>(
-                                                            hint: Text(
+                                                            hint: const Text(
                                                               'select Account',
                                                               style: TextStyle(
                                                                   fontSize: 14,
@@ -906,10 +906,10 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                           Expanded(
                                                                             child:
                                                                                 Container(
-                                                                              child: Text("${card.account}", style: TextStyle(fontSize: 15)),
+                                                                              child: Text("${card.account}", style: const TextStyle(fontSize: 15)),
                                                                             ),
                                                                           ),
-                                                                          SizedBox(
+                                                                          const SizedBox(
                                                                               width: 5),
                                                                           // Column(
                                                                           //   crossAxisAlignment: CrossAxisAlignment.start,
@@ -922,7 +922,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                     );
                                                                   }).toList()
                                                                 : [
-                                                                    DropdownMenuItem<
+                                                                    const DropdownMenuItem<
                                                                         String>(
                                                                       value: '',
                                                                       child: Text(
@@ -940,7 +940,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                               });
                                                             },
                                                             buttonStyleData:
-                                                                ButtonStyleData(
+                                                                const ButtonStyleData(
                                                               height: 50,
                                                             ),
                                                             iconStyleData:
@@ -991,7 +991,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                     ),
                                                   ],
                                                 ),
-                                                SizedBox(
+                                                const SizedBox(
                                                   width: 10,
                                                 ),
                                                 Column(
@@ -1001,7 +1001,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     if (isFirstRow)
-                                                      Row(
+                                                      const Row(
                                                         children: [
                                                           Text(
                                                             "Amount",
@@ -1035,7 +1035,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                 BorderRadius
                                                                     .circular(
                                                                         6),
-                                                            border: Border(
+                                                            border: const Border(
                                                               bottom: BorderSide(
                                                                   color: Colors
                                                                       .black,
@@ -1058,7 +1058,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                               calculateTotal();
                                                               checkFieldsFilled();
                                                             },
-                                                            style: TextStyle(
+                                                            style: const TextStyle(
                                                                 fontSize: 14,
                                                                 fontWeight:
                                                                     FontWeight
@@ -1074,13 +1074,13 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                       12), // Subtle label styling
                                                               hintText:
                                                                   "Enter amount",
-                                                              hintStyle: TextStyle(
+                                                              hintStyle: const TextStyle(
                                                                   color: Colors
                                                                       .black,
                                                                   fontSize:
                                                                       14), // Lighter hint text
                                                               contentPadding:
-                                                                  EdgeInsets.symmetric(
+                                                                  const EdgeInsets.symmetric(
                                                                       vertical:
                                                                           10,
                                                                       horizontal:
@@ -1148,7 +1148,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                         CrossAxisAlignment
                                                             .start,
                                                     children: [
-                                                      if (isFirstRow) Text(""),
+                                                      if (isFirstRow) const Text(""),
                                                       GestureDetector(
                                                         onTap: () {
                                                           calculateTotal();
@@ -1162,7 +1162,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                                                 'tennt lengthh ${tenantDropdowns.length}');
                                                           });
                                                         },
-                                                        child: FaIcon(
+                                                        child: const FaIcon(
                                                           FontAwesomeIcons
                                                               .trashCan,
                                                           size: 20,
@@ -1201,13 +1201,13 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                               width: 40,
                                               decoration: BoxDecoration(
                                                   borderRadius:
-                                                      BorderRadius.all(
+                                                      const BorderRadius.all(
                                                           Radius.circular(6)),
                                                   border: Border.all(
                                                       color: Colors.blue,
                                                       style:
                                                           BorderStyle.solid)),
-                                              child: Icon(
+                                              child: const Icon(
                                                 Icons.add,
                                                 color: Colors.blue,
                                                 weight: 15,
@@ -1216,7 +1216,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                             ),
                                           ),
                                         ),
-                                        Spacer(),
+                                        const Spacer(),
                                         GestureDetector(
                                           onTap: () {
                                             scrollAllRows(index);
@@ -1228,7 +1228,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                               width: 40,
                                               decoration: BoxDecoration(
                                                   borderRadius:
-                                                      BorderRadius.all(
+                                                      const BorderRadius.all(
                                                           Radius.circular(6)),
                                                   border: Border.all(
                                                       color: Colors.blue,
@@ -1277,7 +1277,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                           color: blueColor,
                           fontSize: 14.5),
                     )),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Row(
@@ -1452,13 +1452,13 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: isloading
-                                    ? Center(
+                                    ? const Center(
                                         child: SpinKitFadingCircle(
                                           color: Colors.white,
                                           size: 25.0,
                                         ),
                                       )
-                                    : Center(
+                                    : const Center(
                                         child: Text(
                                         "     Save     ",
                                         style: TextStyle(
@@ -1479,8 +1479,8 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                 borderRadius: BorderRadius.circular(7),
                                 // border: Border.all(color: blueColor),
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
+                              child: const Padding(
+                                padding: EdgeInsets.all(8.0),
                                 child: Center(
                                     child: Text(
                                   "   Disable   ",
@@ -1497,7 +1497,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 4,
             ),
           ],

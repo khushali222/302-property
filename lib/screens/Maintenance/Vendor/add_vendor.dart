@@ -62,7 +62,7 @@ class _Add_vendorState extends State<Add_vendor> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 25,
                       ),
                       titleBar(
@@ -77,17 +77,17 @@ class _Add_vendorState extends State<Add_vendor> {
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10.0),
                               border: Border.all(
-                                color: Color.fromRGBO(21, 43, 103, 1),
+                                color: const Color.fromRGBO(21, 43, 103, 1),
                               )),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Vendor Name *',
+                              const Text('Vendor Name *',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.grey)),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                               CustomTextField(
@@ -123,15 +123,15 @@ class _Add_vendorState extends State<Add_vendor> {
                             return null;
                           },
                         ),*/
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
-                              Text('Phone Number *',
+                              const Text('Phone Number *',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.grey)),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                               CustomTextField(
@@ -169,15 +169,15 @@ class _Add_vendorState extends State<Add_vendor> {
                           hintText: 'Enter work number',
                           controller: workNumber,
                         ),*/
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
-                              Text('Email *',
+                              const Text('Email *',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.grey)),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                               CustomTextField(
@@ -208,15 +208,15 @@ class _Add_vendorState extends State<Add_vendor> {
                           hintText: 'Enter alternative email',
                           controller: alterEmail,
                         ),*/
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
-                              Text('Password *',
+                              const Text('Password *',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.grey)),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                               Row(
@@ -236,7 +236,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                       pass: true,
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                       width:
                                           10), // Add some space between the widgets
                                   InkWell(
@@ -260,7 +260,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         boxShadow: [
-                                          BoxShadow(
+                                          const BoxShadow(
                                             color: Colors.black26,
                                             offset: Offset(1.2, 1.2),
                                             blurRadius: 3.0,
@@ -276,7 +276,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                   ),
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 16,
                               ),
                               Padding(
@@ -313,20 +313,20 @@ class _Add_vendorState extends State<Add_vendor> {
                                           }
                                         },
                                         child: isLoading
-                                            ? Center(
+                                            ? const Center(
                                                 child: SpinKitFadingCircle(
                                                   color: Colors.white,
                                                   size: 55.0,
                                                 ),
                                               )
-                                            : Text(
+                                            : const Text(
                                                 'Add Vendor',
                                                 style: TextStyle(
                                                     color: Color(0xFFf7f8f9)),
                                               ),
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 8,
                                     ),
                                     Container(
@@ -338,7 +338,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                         child: ElevatedButton(
                                             style: ElevatedButton.styleFrom(
                                                 backgroundColor:
-                                                    Color(0xFFffffff),
+                                                    const Color(0xFFffffff),
                                                 shape: RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -346,7 +346,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                             onPressed: () {
                                               Navigator.pop(context);
                                             },
-                                            child: Text(
+                                            child: const Text(
                                               'Cancel',
                                               style: TextStyle(
                                                   color: Color(0xFF748097)),
@@ -370,7 +370,7 @@ class _Add_vendorState extends State<Add_vendor> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 25,
                     ),
                     titleBar(
@@ -385,17 +385,17 @@ class _Add_vendorState extends State<Add_vendor> {
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
                             border: Border.all(
-                              color: Color.fromRGBO(21, 43, 103, 1),
+                              color: const Color.fromRGBO(21, 43, 103, 1),
                             )),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Vendor Name *',
+                            const Text('Vendor Name *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey)),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             CustomTextField(
@@ -431,15 +431,15 @@ class _Add_vendorState extends State<Add_vendor> {
                           return null;
                         },
                       ),*/
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
-                            Text('Phone Number *',
+                            const Text('Phone Number *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey)),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             CustomTextField(
@@ -477,15 +477,15 @@ class _Add_vendorState extends State<Add_vendor> {
                         hintText: 'Enter work number',
                         controller: workNumber,
                       ),*/
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
-                            Text('Email *',
+                            const Text('Email *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey)),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             CustomTextField(
@@ -516,15 +516,15 @@ class _Add_vendorState extends State<Add_vendor> {
                         hintText: 'Enter alternative email',
                         controller: alterEmail,
                       ),*/
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
-                            Text('Password *',
+                            const Text('Password *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey)),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             Row(
@@ -544,7 +544,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                     pass: true,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                     width:
                                         10), // Add some space between the widgets
                                 InkWell(
@@ -568,7 +568,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       boxShadow: [
-                                        BoxShadow(
+                                        const BoxShadow(
                                           color: Colors.black26,
                                           offset: Offset(1.2, 1.2),
                                           blurRadius: 3.0,
@@ -583,7 +583,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                 ),
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 35,
                             ),
                             Padding(
@@ -618,13 +618,13 @@ class _Add_vendorState extends State<Add_vendor> {
                                         }
                                       },
                                       child: isLoading
-                                          ? Center(
+                                          ? const Center(
                                               child: SpinKitFadingCircle(
                                                 color: Colors.white,
                                                 size: 55.0,
                                               ),
                                             )
-                                          : Text(
+                                          : const Text(
                                               'Add Vendor',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
@@ -632,7 +632,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                             ),
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 8,
                                   ),
                                   Container(
@@ -644,7 +644,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                       child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                               backgroundColor:
-                                                  Color(0xFFffffff),
+                                                  const Color(0xFFffffff),
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -652,7 +652,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                           onPressed: () {
                                             Navigator.pop(context);
                                           },
-                                          child: Text(
+                                          child: const Text(
                                             'Cancel',
                                             style: TextStyle(
                                                 color: Color(0xFF748097)),
@@ -695,7 +695,7 @@ class _Add_vendorState extends State<Add_vendor> {
       //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Vendor added successfully')));
     } else {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Failed to add vendor')));
+          .showSnackBar(const SnackBar(content: Text('Failed to add vendor')));
     }
     setState(() {
       isLoading = false;
@@ -789,7 +789,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                   }
                   node.unfocus(); // Dismiss the keyboard
                 },
-                child: Padding(
+                child: const Padding(
                   padding: EdgeInsets.all(14.0),
                   child: Text(
                     "Done",
@@ -862,7 +862,7 @@ class CustomTextFieldState extends State<CustomTextField> {
               children: <Widget>[
                 Container(
                   height: 50,
-                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8.0),
@@ -870,7 +870,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.2),
-                        offset: Offset(4, 4),
+                        offset: const Offset(4, 4),
                         blurRadius: 3,
                       ),
                     ],
@@ -892,14 +892,14 @@ class CustomTextFieldState extends State<CustomTextField> {
                     decoration: InputDecoration(
                       suffixIcon: widget.suffixIcon,
                       hintStyle:
-                          TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                          const TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                       border: InputBorder.none,
                       hintText: widget.hintText,
                     ),
                   ),
                 ),
                 if (state.hasError)
-                  SizedBox(height: 24), // Reserve space for error message
+                  const SizedBox(height: 24), // Reserve space for error message
               ],
             );
           },
@@ -910,7 +910,7 @@ class CustomTextFieldState extends State<CustomTextField> {
             left: 8,
             child: Text(
               _errorMessage!,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.red,
                 fontSize: 12.0,
               ),

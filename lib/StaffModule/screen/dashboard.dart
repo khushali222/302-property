@@ -104,7 +104,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
     PropertiesTable(),
     Tenants_table(),
     Applicants_table(),
-    Vendor_table(),
+    const Vendor_table(),
     Workorder_table(),
   ];
   List<Data> nearestWorkOrders = [];
@@ -394,12 +394,12 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
       desc: "Do you want to exit the app?",
       style: AlertStyle(
         backgroundColor: Colors.white,
-        titleStyle: TextStyle(
+        titleStyle: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
           color: Colors.black,
         ),
-        descStyle: TextStyle(
+        descStyle: const TextStyle(
           fontSize: 16,
           color: Colors.black54,
         ),
@@ -408,13 +408,13 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
         overlayColor: Colors.black.withOpacity(0.5),
         alertBorder: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
-          side: BorderSide(color: Colors.blue, width: 2),
+          side: const BorderSide(color: Colors.blue, width: 2),
         ),
-        alertPadding: EdgeInsets.all(16.0),
+        alertPadding: const EdgeInsets.all(16.0),
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "No",
             style: TextStyle(
               color: Colors.white,
@@ -429,7 +429,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
           radius: BorderRadius.circular(8.0),
         ),
         DialogButton(
-          child: Text(
+          child: const Text(
             "Yes",
             style: TextStyle(
               color: Colors.white,
@@ -505,12 +505,12 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
               flex: 3,
               child: InkWell(
                 onTap: () {},
-                child: Row(
+                child: const Row(
                   children: [
-                    const Text("                Status",
+                    Text("                Status",
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 5),
+                    SizedBox(width: 5),
                   ],
                 ),
               ),
@@ -677,9 +677,9 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                   children: [
                                     Container(
                                       decoration: BoxDecoration(
-                                        color: Color(0xFFF7F9FC),
+                                        color: const Color(0xFFF7F9FC),
                                         border: Border.all(
-                                            color: Color(0xFF8A95A8)),
+                                            color: const Color(0xFF8A95A8)),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Padding(
@@ -702,11 +702,11 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                 TextSpan(
                                                   text:
                                                       "${nearstProperty!.rentalAddress!} ",
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold),
                                                 ),
-                                                TextSpan(
+                                                const TextSpan(
                                                   text:
                                                       "is your Current Property. See the open work orders below:",
                                                   style: TextStyle(
@@ -739,10 +739,10 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                           return Container(
                                             decoration: BoxDecoration(
                                               color: index % 2 != 0
-                                                  ? Color(0xFFF4F8FF)
+                                                  ? const Color(0xFFF4F8FF)
                                                   : Colors.white,
                                               border: Border.all(
-                                                  color: Color(0xFFDBE0E5)),
+                                                  color: const Color(0xFFDBE0E5)),
                                             ),
                                             // decoration: BoxDecoration(
                                             //   border: Border.all(color: blueColor),
@@ -802,15 +802,15 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                           },
                                                           child: Container(
                                                             margin:
-                                                                EdgeInsets.only(
+                                                                const EdgeInsets.only(
                                                                     left: 5,
                                                                     right: 8),
                                                             padding: !isExpanded
-                                                                ? EdgeInsets
+                                                                ? const EdgeInsets
                                                                     .only(
                                                                         bottom:
                                                                             10)
-                                                                : EdgeInsets
+                                                                : const EdgeInsets
                                                                     .only(
                                                                         top:
                                                                             10),
@@ -907,9 +907,9 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                 if (isExpanded)
                                                   Container(
                                                     padding:
-                                                        EdgeInsets.symmetric(
+                                                        const EdgeInsets.symmetric(
                                                             horizontal: 2),
-                                                    margin: EdgeInsets.only(
+                                                    margin: const EdgeInsets.only(
                                                         bottom: 1),
                                                     child:
                                                         SingleChildScrollView(
@@ -930,8 +930,8 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                               Expanded(
                                                                 child: Table(
                                                                   columnWidths: {
-                                                                    0: FlexColumnWidth(), // Distribute columns equally
-                                                                    1: FlexColumnWidth(),
+                                                                    0: const FlexColumnWidth(), // Distribute columns equally
+                                                                    1: const FlexColumnWidth(),
                                                                     // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                                                     // 1: FlexColumnWidth(),
                                                                   },
@@ -956,12 +956,12 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                                   ],
                                                                 ),
                                                               ),
-                                                              SizedBox(
+                                                              const SizedBox(
                                                                 width: 5,
                                                               ),
                                                             ],
                                                           ),
-                                                          SizedBox(
+                                                          const SizedBox(
                                                             height: 10,
                                                           ),
                                                           Row(
@@ -990,7 +990,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                                         CrossAxisAlignment
                                                                             .center,
                                                                     children: [
-                                                                      FaIcon(
+                                                                      const FaIcon(
                                                                         FontAwesomeIcons
                                                                             .eye,
                                                                         size:
@@ -1001,7 +1001,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                                       // SizedBox(
                                                                       //     width:
                                                                       //     2),
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         width:
                                                                             8,
                                                                       ),
@@ -1019,7 +1019,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                                   ),
                                                                 ),
                                                               ),
-                                                              SizedBox(
+                                                              const SizedBox(
                                                                 width: 8,
                                                               ),
                                                             ],
@@ -1035,7 +1035,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                         }).toList(),
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                   ],
@@ -1046,11 +1046,11 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 5,
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 2),
+                                    const Padding(
+                                      padding: EdgeInsets.only(left: 2),
                                       child: Text(
                                         "Properties Within 5 km",
                                         style: TextStyle(
@@ -1059,7 +1059,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 5,
                                     ),
                                     Padding(
@@ -1172,12 +1172,12 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                       height: 200,
                       fit: BoxFit.fill,
                     ),
-                    Text(
+                    const Text(
                       'No Internet',
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    Text(
+                    const Text(
                       'Check your internet connection',
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
@@ -1195,7 +1195,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
       children: [
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(4.0),
+            padding: const EdgeInsets.all(4.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1204,7 +1204,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 2.0), // Space between label and value
+                const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   leftValue,
                   style: TextStyle(color: grey),
@@ -1215,7 +1215,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -1224,7 +1224,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 2.0), // Space between label and value
+                const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   rightValue,
                   style: TextStyle(color: grey),
@@ -1306,9 +1306,9 @@ class _PropertyCardState extends State<PropertyCard> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       //  height: 50,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: const BorderRadius.only(
+        borderRadius: BorderRadius.only(
           topLeft: Radius.circular(5),
           topRight: Radius.circular(5),
         ),
@@ -1357,7 +1357,7 @@ class _PropertyCardState extends State<PropertyCard> {
                     Text("Status",
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold)),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                   ],
                 ),
               ),
@@ -1390,9 +1390,9 @@ class _PropertyCardState extends State<PropertyCard> {
         ? Container(
             margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
             decoration: BoxDecoration(
-              color: widget.index % 2 != 0 ? Color(0xFFF4F8FF) : Colors.white,
+              color: widget.index % 2 != 0 ? const Color(0xFFF4F8FF) : Colors.white,
               borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+              border: Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
               // border: Border.all(color: Colors.grey.shade300),
               // boxShadow: [
               //   BoxShadow(
@@ -1423,7 +1423,7 @@ class _PropertyCardState extends State<PropertyCard> {
                           Expanded(
                             child: Text(
                               rental.rentalAddress ?? 'No Address',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 14,
                                 color: Color(0xFF3A4A57),
                                 fontWeight: FontWeight.bold,
@@ -1446,7 +1446,7 @@ class _PropertyCardState extends State<PropertyCard> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // const SizedBox(height: 5),
-                            Divider(),
+                            const Divider(),
                             const SizedBox(height: 10),
                             _buildHeaders(),
                             // const SizedBox(height: 10),
@@ -1481,7 +1481,7 @@ class _PropertyCardState extends State<PropertyCard> {
                                           ? Colors.white
                                           : blueColor.withOpacity(0.09),
                                       border:
-                                          Border.all(color: Color(0xFFDBE0E5)),
+                                          Border.all(color: const Color(0xFFDBE0E5)),
                                     ),
                                     // decoration: BoxDecoration(
                                     //   border: Border.all(color: blueColor),
@@ -1533,12 +1533,12 @@ class _PropertyCardState extends State<PropertyCard> {
                                                     });
                                                   },
                                                   child: Container(
-                                                    margin: EdgeInsets.only(
+                                                    margin: const EdgeInsets.only(
                                                         left: 5, right: 8),
                                                     padding: !isExpanded
-                                                        ? EdgeInsets.only(
+                                                        ? const EdgeInsets.only(
                                                             bottom: 10)
-                                                        : EdgeInsets.only(
+                                                        : const EdgeInsets.only(
                                                             top: 10),
                                                     child: FaIcon(
                                                       isExpanded
@@ -1587,9 +1587,9 @@ class _PropertyCardState extends State<PropertyCard> {
                                         ),
                                         if (isExpanded)
                                           Container(
-                                            padding: EdgeInsets.symmetric(
+                                            padding: const EdgeInsets.symmetric(
                                                 horizontal: 2),
-                                            margin: EdgeInsets.only(bottom: 1),
+                                            margin: const EdgeInsets.only(bottom: 1),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
@@ -1608,8 +1608,8 @@ class _PropertyCardState extends State<PropertyCard> {
                                                       Expanded(
                                                         child: Table(
                                                           columnWidths: {
-                                                            0: FlexColumnWidth(), // Distribute columns equally
-                                                            1: FlexColumnWidth(),
+                                                            0: const FlexColumnWidth(), // Distribute columns equally
+                                                            1: const FlexColumnWidth(),
                                                             // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                                             // 1: FlexColumnWidth(),
                                                           },
@@ -1642,12 +1642,12 @@ class _PropertyCardState extends State<PropertyCard> {
                                                           ],
                                                         ),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 5,
                                                       ),
                                                     ],
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 10,
                                                   ),
                                                   Row(
@@ -1681,7 +1681,7 @@ class _PropertyCardState extends State<PropertyCard> {
                                                                   CrossAxisAlignment
                                                                       .center,
                                                               children: [
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                   width: 5,
                                                                 ),
                                                                 Image.asset(
@@ -1694,7 +1694,7 @@ class _PropertyCardState extends State<PropertyCard> {
                                                                 //   size: 15,
                                                                 //   color:blueColor,
                                                                 // ),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                   width: 8,
                                                                 ),
                                                                 Text(
@@ -1726,20 +1726,20 @@ class _PropertyCardState extends State<PropertyCard> {
                                 }).toList(),
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                           ],
                         ),
                       if (!hasWorkOrders)
-                        Column(
+                        const Column(
                           children: [
-                            const SizedBox(height: 5),
+                            SizedBox(height: 5),
                             Divider(),
-                            const SizedBox(height: 10),
+                            SizedBox(height: 10),
                             Text("No Work Orders",
                                 style: TextStyle(color: Colors.blueGrey)),
-                            const SizedBox(height: 10),
+                            SizedBox(height: 10),
                           ],
                         ),
                       // Add more fields if needed
@@ -1758,7 +1758,7 @@ class _PropertyCardState extends State<PropertyCard> {
       children: [
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(4.0),
+            padding: const EdgeInsets.all(4.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1767,7 +1767,7 @@ class _PropertyCardState extends State<PropertyCard> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 2.0), // Space between label and value
+                const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   leftValue,
                   style: TextStyle(color: grey),
@@ -1778,7 +1778,7 @@ class _PropertyCardState extends State<PropertyCard> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(4.0),
+            padding: const EdgeInsets.all(4.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1787,7 +1787,7 @@ class _PropertyCardState extends State<PropertyCard> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 2.0), // Space between label and value
+                const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   rightValue,
                   style: TextStyle(color: grey),

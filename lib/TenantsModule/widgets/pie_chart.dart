@@ -32,8 +32,8 @@ class PieCharts extends StatelessWidget {
   };
   final colorList = <Color>[
 
-    Color.fromRGBO(21,43,81,1),
-    Color.fromRGBO(90,134,213,1),
+    const Color.fromRGBO(21,43,81,1),
+    const Color.fromRGBO(90,134,213,1),
 
   ];
 
@@ -45,7 +45,7 @@ class PieCharts extends StatelessWidget {
 
     return  Container(
           height: 250,
-          margin: EdgeInsets.symmetric(horizontal: 10),
+          margin: const EdgeInsets.symmetric(horizontal: 10),
           child: PieChart(
             dataMap: dataMap,
             chartRadius: MediaQuery.of(context).size.width / 2,
@@ -59,7 +59,7 @@ class PieCharts extends StatelessWidget {
               ),
               showLegends: true,
             ),
-              chartValuesOptions:ChartValuesOptions(
+              chartValuesOptions:const ChartValuesOptions(
                   showChartValuesInPercentage:false,
                   showChartValues:false
               )

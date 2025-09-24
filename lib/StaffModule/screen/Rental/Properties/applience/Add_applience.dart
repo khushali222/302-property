@@ -226,21 +226,21 @@ class _AddApplienceState extends State<AddApplience> {
           errorBuilder: (context, error, stackTrace) {
             return Container(
               color: Colors.grey[200],
-              child: Icon(Icons.error),
+              child: const Icon(Icons.error),
             );
           },
         );
       } catch (e) {
         return Container(
           color: Colors.grey[200],
-          child: Icon(Icons.error),
+          child: const Icon(Icons.error),
         );
       }
     }
 
     return Container(
       color: Colors.grey[200],
-      child: Icon(Icons.image_not_supported),
+      child: const Icon(Icons.image_not_supported),
     );
   }
 
@@ -410,19 +410,19 @@ class _AddApplienceState extends State<AddApplience> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(5.0),
                     child: Container(
                       height: 50.0,
-                      padding: EdgeInsets.only(top: 10, left: 10),
+                      padding: const EdgeInsets.only(top: 10, left: 10),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5.0),
                         color: blueColor,
                         boxShadow: [
-                          BoxShadow(
+                          const BoxShadow(
                             color: Colors.grey,
                             offset: Offset(0.0, 1.0),
                             blurRadius: 6.0,
@@ -434,7 +434,7 @@ class _AddApplienceState extends State<AddApplience> {
                         widget.appliance != null
                             ? "Edit Infrastructure"
                             : "Add Infrastructure",
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
@@ -442,10 +442,10 @@ class _AddApplienceState extends State<AddApplience> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
-                  Padding(
+                  const Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(
                       'Infrastructure Name *',
@@ -458,8 +458,8 @@ class _AddApplienceState extends State<AddApplience> {
                     controller: _name,
                     keyboardType: TextInputType.text,
                   ),
-                  SizedBox(height: 8),
-                  Padding(
+                  const SizedBox(height: 8),
+                  const Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(
                       'Description',
@@ -472,15 +472,15 @@ class _AddApplienceState extends State<AddApplience> {
                     controller: _description,
                     keyboardType: TextInputType.text,
                   ),
-                  SizedBox(height: 8),
-                  Padding(
+                  const SizedBox(height: 8),
+                  const Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(
                       'Category *',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   //categories dropdwoun
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -562,8 +562,8 @@ class _AddApplienceState extends State<AddApplience> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 8),
-                  Padding(
+                  const SizedBox(height: 8),
+                  const Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(
                       'Type',
@@ -576,10 +576,10 @@ class _AddApplienceState extends State<AddApplience> {
                     controller: _type,
                     keyboardType: TextInputType.name,
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   if (!['Electrical', 'Exterior', 'Roof']
                       .contains(_selectedDropdownCategory?.name)) ...[
-                    Padding(
+                    const Padding(
                       padding: EdgeInsets.only(left: 10),
                       child: Text(
                         'Brand',
@@ -640,9 +640,9 @@ class _AddApplienceState extends State<AddApplience> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 8),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
+                    const SizedBox(height: 8),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 10),
                       child: Text(
                         'Model',
                         style: TextStyle(fontWeight: FontWeight.bold),
@@ -654,8 +654,8 @@ class _AddApplienceState extends State<AddApplience> {
                       controller: _model,
                       keyboardType: TextInputType.text,
                     ),
-                    SizedBox(height: 8),
-                    Padding(
+                    const SizedBox(height: 8),
+                    const Padding(
                       padding: EdgeInsets.only(left: 10),
                       child: Text(
                         'Serial Number',
@@ -668,10 +668,10 @@ class _AddApplienceState extends State<AddApplience> {
                       controller: _serialNumber,
                       keyboardType: TextInputType.text,
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                   ],
 
-                  Padding(
+                  const Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(
                       'Installed Date *',
@@ -680,8 +680,8 @@ class _AddApplienceState extends State<AddApplience> {
                   ),
                   dateField(
                       'Installed Date', _installedDate, context, setState),
-                  SizedBox(height: 8),
-                  Padding(
+                  const SizedBox(height: 8),
+                  const Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(
                       'Warranty Expiry',
@@ -690,8 +690,8 @@ class _AddApplienceState extends State<AddApplience> {
                   ),
                   dateField(
                       'Warranty Expiry', _warrantyExpiry, context, setState),
-                  SizedBox(height: 8),
-                  Padding(
+                  const SizedBox(height: 8),
+                  const Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(
                       'Last Maintenance Date',
@@ -700,8 +700,8 @@ class _AddApplienceState extends State<AddApplience> {
                   ),
                   dateField('Last Maintenance Date', _lastMaintenanceDate,
                       context, setState),
-                  SizedBox(height: 8),
-                  Padding(
+                  const SizedBox(height: 8),
+                  const Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(
                       'Status *',
@@ -762,8 +762,8 @@ class _AddApplienceState extends State<AddApplience> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 8),
-                  Padding(
+                  const SizedBox(height: 8),
+                  const Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(
                       'Maintenance Notes',
@@ -786,8 +786,8 @@ class _AddApplienceState extends State<AddApplience> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(2.0),
+                              const Padding(
+                                padding: EdgeInsets.all(2.0),
                                 child: Text(
                                   'Filters',
                                   style: TextStyle(
@@ -813,13 +813,13 @@ class _AddApplienceState extends State<AddApplience> {
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
-                                child: Text('Add Filter',
+                                child: const Text('Add Filter',
                                     style: TextStyle(color: Colors.white)),
                               ),
                             ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
+                          const Padding(
+                            padding: EdgeInsets.all(10.0),
                             child: Text(
                               'Optional: Add filters for HVAC systems',
                               style: TextStyle(
@@ -828,14 +828,14 @@ class _AddApplienceState extends State<AddApplience> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           if (showFiltersSection) ...[
                             ...filterControllers.asMap().entries.map((entry) {
                               int index = entry.key;
                               var controllers = entry.value;
                               return Container(
-                                margin: EdgeInsets.only(bottom: 16),
-                                padding: EdgeInsets.all(16),
+                                margin: const EdgeInsets.only(bottom: 16),
+                                padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
                                   border:
                                       Border.all(color: Colors.grey.shade300),
@@ -849,7 +849,7 @@ class _AddApplienceState extends State<AddApplience> {
                                       children: [
                                         Text('Filter ${index + 1}'),
                                         IconButton(
-                                          icon: Icon(
+                                          icon: const Icon(
                                               Icons.remove_circle_outline,
                                               color: Colors.red),
                                           onPressed: () {
@@ -860,14 +860,14 @@ class _AddApplienceState extends State<AddApplience> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(height: 8),
+                                    const SizedBox(height: 8),
                                     CustomTextFormField(
                                       labelText: '',
                                       hintText: 'Filter Name',
                                       controller: controllers['name']!,
                                       keyboardType: TextInputType.text,
                                     ),
-                                    SizedBox(height: 8),
+                                    const SizedBox(height: 8),
                                     CustomTextFormField(
                                       labelText: '',
                                       hintText: 'Filter Size (e.g., 16x20x1)',
@@ -883,7 +883,7 @@ class _AddApplienceState extends State<AddApplience> {
                       ),
                     ),
                   ],
-                  Padding(
+                  const Padding(
                     padding: EdgeInsets.only(left: 13),
                     child: Text(
                       'Image',
@@ -906,7 +906,7 @@ class _AddApplienceState extends State<AddApplience> {
                               },
                               child: Container(
                                 width: double.infinity,
-                                padding: EdgeInsets.all(16),
+                                padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
                                   border: Border.all(
                                       color: Colors.grey.shade300,
@@ -920,7 +920,7 @@ class _AddApplienceState extends State<AddApplience> {
                                       height: 50,
                                       width: 50,
                                     ),
-                                    SizedBox(height: 8),
+                                    const SizedBox(height: 8),
                                     Text(
                                       'Upload your Photo here',
                                       textAlign: TextAlign.center,
@@ -930,14 +930,14 @@ class _AddApplienceState extends State<AddApplience> {
                                         color: Colors.grey[700],
                                       ),
                                     ),
-                                    SizedBox(height: 4),
-                                    Text(
+                                    const SizedBox(height: 4),
+                                    const Text(
                                       'Maximum File Size is 20MB',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           fontSize: 12, color: Colors.grey),
                                     ),
-                                    Text(
+                                    const Text(
                                       'Supported File Types are .png, .jpeg, .pdf, .csv',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
@@ -951,7 +951,7 @@ class _AddApplienceState extends State<AddApplience> {
                         if (_imageUrl != null || _images.isNotEmpty)
                           Container(
                             width: double.infinity,
-                            padding: EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
                               border: Border.all(
                                   color: Colors.grey.shade300,
@@ -965,7 +965,7 @@ class _AddApplienceState extends State<AddApplience> {
                                   clipBehavior: Clip.none,
                                   children: [
                                     Padding(
-                                      padding: EdgeInsets.all(4.0),
+                                      padding: const EdgeInsets.all(4.0),
                                       child: Container(
                                         width: 80,
                                         height: 80,
@@ -996,7 +996,7 @@ class _AddApplienceState extends State<AddApplience> {
                                         child: Container(
                                           width: 18,
                                           height: 18,
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             color: Colors.white,
                                             shape: BoxShape.circle,
                                             boxShadow: [
@@ -1006,7 +1006,7 @@ class _AddApplienceState extends State<AddApplience> {
                                               ),
                                             ],
                                           ),
-                                          child: Icon(
+                                          child: const Icon(
                                             Icons.close,
                                             size: 14,
                                             color: Colors.black,
@@ -1026,7 +1026,7 @@ class _AddApplienceState extends State<AddApplience> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Expanded(
@@ -1046,7 +1046,7 @@ class _AddApplienceState extends State<AddApplience> {
                             } else if (!validateDates()) {
                               // Show error if dates are invalid
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
+                                const SnackBar(
                                   content: Text(
                                       'Please correct the date validation errors'),
                                   backgroundColor: Colors.red,
@@ -1100,7 +1100,7 @@ class _AddApplienceState extends State<AddApplience> {
 
                                       // Add a small delay to ensure unique timestamps for filter_ids
                                       await Future.delayed(
-                                          Duration(milliseconds: 2));
+                                          const Duration(milliseconds: 2));
                                     }
                                   }
 
@@ -1232,7 +1232,7 @@ class _AddApplienceState extends State<AddApplience> {
                               style: TextStyle(color: Colors.white)),
                         ),
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: TextButton(
                           onPressed: () => Navigator.of(context).pop(),
@@ -1278,7 +1278,7 @@ class _AddApplienceState extends State<AddApplience> {
                 (label == 'Warranty Expiry' ||
                     label == 'Last Maintenance Date')) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
+                const SnackBar(
                   content: Text('Please select Installed Date first'),
                   backgroundColor: Colors.red,
                 ),
@@ -1342,7 +1342,7 @@ class _AddApplienceState extends State<AddApplience> {
               hintText: 'Select $label',
               controller: controller,
               keyboardType: TextInputType.datetime,
-              suffixIcon: Icon(Icons.calendar_today, color: Colors.grey),
+              suffixIcon: const Icon(Icons.calendar_today, color: Colors.grey),
             ),
           ),
         ),
@@ -1351,7 +1351,7 @@ class _AddApplienceState extends State<AddApplience> {
             padding: const EdgeInsets.only(left: 12.0, top: 4.0),
             child: Text(
               errorText,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.red,
                 fontSize: 12,
               ),

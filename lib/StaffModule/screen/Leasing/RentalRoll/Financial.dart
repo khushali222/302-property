@@ -95,7 +95,7 @@ class _FinancialTableState extends State<FinancialTable> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text('Refund Amount'),
+              title: const Text('Refund Amount'),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -117,7 +117,7 @@ class _FinancialTableState extends State<FinancialTable> {
                           borderRadius: BorderRadius.circular(5.0),
                           color: blueColor,
                           boxShadow: [
-                            BoxShadow(
+                            const BoxShadow(
                               color: Colors.grey,
                               offset: Offset(0.0, 1.0),
                               blurRadius: 6.0,
@@ -135,8 +135,8 @@ class _FinancialTableState extends State<FinancialTable> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 10),
-                    Text("Date"),
+                    const SizedBox(height: 10),
+                    const Text("Date"),
                     buildCustomTextField(
                       onTap: () async {
                         DateTime? pickedDate = await showDatePicker(
@@ -178,15 +178,15 @@ class _FinancialTableState extends State<FinancialTable> {
                       hintText: 'Enter refund Date',
                       keyboardType: TextInputType.number,
                     ),
-                    SizedBox(height: 10),
-                    Text("Refund Amount"),
+                    const SizedBox(height: 10),
+                    const Text("Refund Amount"),
                     buildCustomTextField(
                       controller: _amountController,
                       hintText: 'Enter refund amount',
                       keyboardType: TextInputType.number,
                     ),
-                    SizedBox(height: 10),
-                    Text("Memo"),
+                    const SizedBox(height: 10),
+                    const Text("Memo"),
                     buildCustomTextField(
                       controller: _memoController,
                       hintText: 'Enter memo',
@@ -225,13 +225,13 @@ class _FinancialTableState extends State<FinancialTable> {
                             type: AlertType.error,
                             title: "Refund Failed!",
                             desc: "${message}",
-                            style: AlertStyle(
+                            style: const AlertStyle(
                               backgroundColor: Colors.white,
                               //  overlayColor: Colors.black.withOpacity(.8)
                             ),
                             buttons: [
                               DialogButton(
-                                child: Text(
+                                child: const Text(
                                   "Ok",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 18),
@@ -263,10 +263,10 @@ class _FinancialTableState extends State<FinancialTable> {
                         ),
                         child: Center(
                             child: isLoading
-                                ? CircularProgressIndicator(
+                                ? const CircularProgressIndicator(
                                     color: Colors.white,
                                   ) // Show loading indicator when isLoading is true
-                                : Text(
+                                : const Text(
                                     'Make Refund',
                                     style: TextStyle(
                                         fontSize: 14, color: Colors.white),
@@ -284,7 +284,7 @@ class _FinancialTableState extends State<FinancialTable> {
                           borderRadius: BorderRadius.circular(5),
                           color: Colors.white,
                         ),
-                        child: Center(child: Text('Cancel')),
+                        child: const Center(child: Text('Cancel')),
                       ),
                     ),
                   ],
@@ -422,14 +422,14 @@ class _FinancialTableState extends State<FinancialTable> {
       borderRadius: BorderRadius.circular(8.0),
       child: Container(
         height: 50,
-        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8.0),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.2),
-              offset: Offset(4, 4),
+              offset: const Offset(4, 4),
               blurRadius: 3,
             ),
           ],
@@ -441,7 +441,7 @@ class _FinancialTableState extends State<FinancialTable> {
           obscureText: false,
           readOnly: false,
           decoration: InputDecoration(
-            hintStyle: TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+            hintStyle: const TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
             border: InputBorder.none,
             hintText: hintText,
             errorText: errorText,
@@ -585,11 +585,11 @@ class _FinancialTableState extends State<FinancialTable> {
                     // Sorting logic here
                   });
                 },
-                child: Row(
+                child: const Row(
                   children: [
-                    const Text("Balance      ",
+                    Text("Balance      ",
                         style: TextStyle(color: Colors.white)),
-                    const SizedBox(width: 5),
+                    SizedBox(width: 5),
                     /*ascending2
                         ? const Padding(
                             padding: EdgeInsets.only(top: 7, left: 2),
@@ -634,11 +634,11 @@ class _FinancialTableState extends State<FinancialTable> {
                     // Sorting logic here
                   });
                 },
-                child: Row(
+                child: const Row(
                   children: [
-                    const Text("      Date",
+                    Text("      Date",
                         style: TextStyle(color: Colors.white)),
-                    const SizedBox(width: 5),
+                    SizedBox(width: 5),
                     /* ascending3
                         ? const Padding(
                             padding: EdgeInsets.only(top: 7, left: 2),
@@ -720,14 +720,14 @@ class _FinancialTableState extends State<FinancialTable> {
       ),
       content: Column(
         children: <Widget>[
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           SizedBox(
             height: 45,
             child: TextField(
               controller: reason,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Enter reason for deletion',
                   contentPadding: EdgeInsets.only(top: 8, left: 15)),
@@ -777,14 +777,14 @@ class _FinancialTableState extends State<FinancialTable> {
       ),
       content: Column(
         children: <Widget>[
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           SizedBox(
             height: 45,
             child: TextField(
               controller: reason,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Enter reason for deletion',
                   contentPadding: EdgeInsets.only(top: 8, left: 15)),
@@ -1043,7 +1043,7 @@ class _FinancialTableState extends State<FinancialTable> {
         padding: const EdgeInsets.all(8.0),
         child: Text(
           title,
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         ),
       ),
     );
@@ -1060,7 +1060,7 @@ class _FinancialTableState extends State<FinancialTable> {
               child: Center(
                   child: Text(
                 content,
-                style: TextStyle(fontSize: 18, color: Colors.black),
+                style: const TextStyle(fontSize: 18, color: Colors.black),
               ))),
         ),
       ),
@@ -1182,7 +1182,7 @@ class _FinancialTableState extends State<FinancialTable> {
             margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
             child: pw.Text(
               'Page ${context.pageNumber} of ${context.pagesCount}',
-              style: pw.TextStyle(color: PdfColors.grey),
+              style: const pw.TextStyle(color: PdfColors.grey),
             ),
           );
         },
@@ -1247,18 +1247,18 @@ class _FinancialTableState extends State<FinancialTable> {
                 fontSize: 12,
                 color: PdfColors.white),
             headerAlignment: pw.Alignment.centerLeft,
-            cellStyle: pw.TextStyle(
+            cellStyle: const pw.TextStyle(
               fontSize: 10,
             ),
             cellHeight: 30,
             columnWidths: {
-              0: pw.FlexColumnWidth(1.2), // Date
-              1: pw.FlexColumnWidth(1.4), // tenants
-              2: pw.FlexColumnWidth(1.3), // type
-              3: pw.FlexColumnWidth(2.2), // transaction
-              4: pw.FlexColumnWidth(1.3), // increase
-              5: pw.FlexColumnWidth(1.3), // decrease
-              6: pw.FlexColumnWidth(1.3), // balance
+              0: const pw.FlexColumnWidth(1.2), // Date
+              1: const pw.FlexColumnWidth(1.4), // tenants
+              2: const pw.FlexColumnWidth(1.3), // type
+              3: const pw.FlexColumnWidth(2.2), // transaction
+              4: const pw.FlexColumnWidth(1.3), // increase
+              5: const pw.FlexColumnWidth(1.3), // decrease
+              6: const pw.FlexColumnWidth(1.3), // balance
             },
           ),
           pw.SizedBox(height: 15),
@@ -1438,7 +1438,7 @@ class _FinancialTableState extends State<FinancialTable> {
       csvData.add(rowData);
     }
 
-    final String csvContent = ListToCsvConverter().convert(csvData);
+    final String csvContent = const ListToCsvConverter().convert(csvData);
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Tenant_statement.csv';
@@ -1578,7 +1578,7 @@ class _FinancialTableState extends State<FinancialTable> {
               padding: const EdgeInsets.only(right: 15.0),
               child: Row(
                 children: [
-                  Spacer(), // 👈 Always push everything else to the right
+                  const Spacer(), // 👈 Always push everything else to the right
                   if (!isFreePlan &&
                       (widget.status == 'Active' || widget.status == 'Future'))
                     Container(
@@ -1616,7 +1616,7 @@ class _FinancialTableState extends State<FinancialTable> {
                         ),
                       ),
                     ),
-                  SizedBox(width: 5),
+                  const SizedBox(width: 5),
                   Container(
                     height: MediaQuery.of(context).size.width < 500 ? 45 : 45,
                     decoration: BoxDecoration(
@@ -1659,7 +1659,7 @@ class _FinancialTableState extends State<FinancialTable> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 5),
+                  const SizedBox(width: 5),
                   if (widget.status == 'Active')
                     Container(
                       height: MediaQuery.of(context).size.width < 500 ? 45 : 45,
@@ -1722,7 +1722,7 @@ class _FinancialTableState extends State<FinancialTable> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData) {
-                      return Center(child: Text('No data found'));
+                      return const Center(child: Text('No data found'));
                     } else {
                       final leaseLedger = snapshot.data!;
                       var data = leaseLedger.data!.toList();
@@ -1937,9 +1937,9 @@ class _FinancialTableState extends State<FinancialTable> {
                                         color: Colors.white,
                                       ),
                                       child: PopupMenuButton<String>(
-                                        offset: Offset(5, 50),
+                                        offset: const Offset(5, 50),
                                         // onSelected: handleDownload,
-                                        icon: Row(
+                                        icon: const Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
@@ -2009,7 +2009,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           fontSize: 15,
                                                           fontWeight:
                                                               FontWeight.w600)),
-                                                  SizedBox(height: 5),
+                                                  const SizedBox(height: 5),
                                                   Container(
                                                     child: TextFormField(
                                                       controller:
@@ -2019,7 +2019,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           context,
                                                           _fromDateController),
                                                       decoration:
-                                                          InputDecoration(
+                                                          const InputDecoration(
                                                         hintText: 'yyyy-mm-dd',
                                                         suffixIcon: Icon(Icons
                                                             .calendar_today),
@@ -2031,7 +2031,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                 ],
                                               ),
                                             ),
-                                            SizedBox(width: 40),
+                                            const SizedBox(width: 40),
                                             Expanded(
                                               child: Column(
                                                 crossAxisAlignment:
@@ -2044,7 +2044,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           fontSize: 15,
                                                           fontWeight:
                                                               FontWeight.w600)),
-                                                  SizedBox(height: 5),
+                                                  const SizedBox(height: 5),
                                                   TextFormField(
                                                     controller:
                                                         _toDateController,
@@ -2052,7 +2052,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                     onTap: () => _selectendDate(
                                                         context,
                                                         _toDateController),
-                                                    decoration: InputDecoration(
+                                                    decoration: const InputDecoration(
                                                       hintText: 'dd-mm-yyyy',
                                                       suffixIcon: Icon(
                                                           Icons.calendar_today),
@@ -2093,7 +2093,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                       8.0),
                                                           child: Container(
                                                             height: 50,
-                                                            padding: EdgeInsets
+                                                            padding: const EdgeInsets
                                                                 .symmetric(
                                                                     horizontal:
                                                                         10.0,
@@ -2126,7 +2126,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                 // contentPadding: EdgeInsets.all(8.0),
                                                                 // contentPadding: EdgeInsets.symmetric(),
                                                                 suffixIconConstraints:
-                                                                    BoxConstraints(
+                                                                    const BoxConstraints(
                                                                         maxWidth:
                                                                             20,
                                                                         maxHeight:
@@ -2135,7 +2135,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                             20,
                                                                         minWidth:
                                                                             20),
-                                                                hintStyle: TextStyle(
+                                                                hintStyle: const TextStyle(
                                                                     fontSize:
                                                                         15,
                                                                     color: Color(
@@ -2147,12 +2147,12 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                     'From date',
                                                                 suffixIcon:
                                                                     IconButton(
-                                                                  padding: EdgeInsets
+                                                                  padding: const EdgeInsets
                                                                       .symmetric(
                                                                           vertical:
                                                                               1),
                                                                   iconSize: 20,
-                                                                  icon: Icon(Icons
+                                                                  icon: const Icon(Icons
                                                                       .calendar_today),
                                                                   onPressed:
                                                                       () {},
@@ -2165,7 +2165,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(
+                                                const SizedBox(
                                                   width: 16,
                                                 ),
                                                 Expanded(
@@ -2190,7 +2190,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                       8.0),
                                                           child: Container(
                                                             height: 50,
-                                                            padding: EdgeInsets
+                                                            padding: const EdgeInsets
                                                                 .symmetric(
                                                                     horizontal:
                                                                         10.0,
@@ -2223,7 +2223,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                 // contentPadding: EdgeInsets.all(8.0),
                                                                 // contentPadding: EdgeInsets.symmetric(),
                                                                 suffixIconConstraints:
-                                                                    BoxConstraints(
+                                                                    const BoxConstraints(
                                                                         maxWidth:
                                                                             20,
                                                                         maxHeight:
@@ -2232,7 +2232,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                             20,
                                                                         minWidth:
                                                                             20),
-                                                                hintStyle: TextStyle(
+                                                                hintStyle: const TextStyle(
                                                                     fontSize:
                                                                         15,
                                                                     color: Color(
@@ -2244,12 +2244,12 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                     'To date',
                                                                 suffixIcon:
                                                                     IconButton(
-                                                                  padding: EdgeInsets
+                                                                  padding: const EdgeInsets
                                                                       .symmetric(
                                                                           vertical:
                                                                               1),
                                                                   iconSize: 20,
-                                                                  icon: Icon(Icons
+                                                                  icon: const Icon(Icons
                                                                       .calendar_today),
                                                                   onPressed:
                                                                       () {},
@@ -2264,7 +2264,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                 ),
                                               ],
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               height: 10,
                                             ),
                                           ],
@@ -2272,14 +2272,14 @@ class _FinancialTableState extends State<FinancialTable> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             if (data.isNotEmpty) _buildHeaders(),
                             const SizedBox(height: 20),
                             Container(
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color:
-                                          Color.fromRGBO(152, 162, 179, .5))),
+                                          const Color.fromRGBO(152, 162, 179, .5))),
                               // decoration: BoxDecoration(
                               //   border: Border.all(color: blueColor),
                               // ),
@@ -2312,7 +2312,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                           ? Colors.white
                                           : blueColor.withOpacity(0.09),
                                       border: Border.all(
-                                          color: Color.fromRGBO(
+                                          color: const Color.fromRGBO(
                                               152, 162, 179, .5)),
                                     ),
                                     // decoration: BoxDecoration(
@@ -2491,7 +2491,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                 ],
                                                               ),
                                                             ),
-                                                            SizedBox(
+                                                            const SizedBox(
                                                               height: 5,
                                                             ),
                                                             Text.rich(
@@ -2644,7 +2644,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                         ],
                                                       ),
                                                     ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 10,
                                                   ),
                                                   if (data.type == "Payment" ||
@@ -2698,7 +2698,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                   ],
                                                                 ),
                                                               ),
-                                                              SizedBox(
+                                                              const SizedBox(
                                                                 width: 15,
                                                               ),
                                                               Expanded(
@@ -2859,17 +2859,17 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                     CrossAxisAlignment
                                                                         .center,
                                                                 children: [
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                     width: 5,
                                                                   ),
-                                                                  Icon(Icons
+                                                                  const Icon(Icons
                                                                       .wallet),
                                                                   // FaIcon(
                                                                   //   FontAwesomeIcons.trashCan,
                                                                   //   size: 15,
                                                                   //   color:blueColor,
                                                                   // ),
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                     width: 8,
                                                                   ),
                                                                   Text(
@@ -2952,7 +2952,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                     color:
                                                                         blueColor,
                                                                   ),
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                     width: 10,
                                                                   ),
                                                                   Text(
@@ -2968,7 +2968,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                             ),
                                                           ),
                                                         ),
-                                                        SizedBox(
+                                                        const SizedBox(
                                                           width: 5,
                                                         ),
                                                         Expanded(
@@ -3002,7 +3002,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                     color:
                                                                         blueColor,
                                                                   ),
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                     width: 10,
                                                                   ),
                                                                   Text(
@@ -3089,7 +3089,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                     color:
                                                                         blueColor,
                                                                   ),
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                     width: 10,
                                                                   ),
                                                                   Text(
@@ -3105,7 +3105,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                             ),
                                                           ),
                                                         ),
-                                                        SizedBox(
+                                                        const SizedBox(
                                                           width: 5,
                                                         ),
                                                         Expanded(
@@ -3139,7 +3139,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                     color:
                                                                         blueColor,
                                                                   ),
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                     width: 10,
                                                                   ),
                                                                   Text(
@@ -3182,7 +3182,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                         height: 200,
                                         width: 200,
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 10,
                                       ),
                                       Text(
@@ -3197,7 +3197,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                 ),
                               ),
 
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             if (data.isNotEmpty)
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -3205,12 +3205,12 @@ class _FinancialTableState extends State<FinancialTable> {
                                   Row(
                                     children: [
                                       // Text('Rows per page:'),
-                                      SizedBox(width: 10),
+                                      const SizedBox(width: 10),
                                       Material(
                                         elevation: 3,
                                         child: Container(
                                           height: 40,
-                                          padding: EdgeInsets.symmetric(
+                                          padding: const EdgeInsets.symmetric(
                                               horizontal: 12.0),
                                           decoration: BoxDecoration(
                                             border:
@@ -3754,7 +3754,7 @@ class _FinancialTableState extends State<FinancialTable> {
                   }
                 },
               ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
           ],

@@ -295,7 +295,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
               borderRadius: BorderRadius.circular(5.0),
               child: Container(
                 height: 50.0,
-                padding: EdgeInsets.only(top: 9, left: 10),
+                padding: const EdgeInsets.only(top: 9, left: 10),
                 width: MediaQuery.of(context).size.width * .99,
                 margin: const EdgeInsets.only(bottom: 6.0),
                 //Same as `blurRadius` i guess
@@ -303,14 +303,14 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                   borderRadius: BorderRadius.circular(5.0),
                   color: blueColor,
                   boxShadow: [
-                    BoxShadow(
+                    const BoxShadow(
                       color: Colors.grey,
                       offset: Offset(0.0, 1.0), //(x,y)
                       blurRadius: 6.0,
                     ),
                   ],
                 ),
-                child: Text(
+                child: const Text(
                   "Add Rental Owners ",
                   style: TextStyle(
                       color: Colors.white,
@@ -330,7 +330,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color(0xFFCED4DA)),
+                  border: Border.all(color: const Color(0xFFCED4DA)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -339,13 +339,13 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                     children: [
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Personal Information",
                             style: TextStyle(
-                                color: Color(0xFF101828),
+                                color: const Color(0xFF101828),
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -355,7 +355,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       //first name
@@ -364,7 +364,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                         children: [
                           Row(
                             children: [
-                              SizedBox(width: 2),
+                              const SizedBox(width: 2),
                               Expanded(
                                 child: Container(
                                   child: Column(
@@ -374,7 +374,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                       Text(
                                         "Name *",
                                         style: TextStyle(
-                                            color: Color(0xFF101828),
+                                            color: const Color(0xFF101828),
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                         .size
@@ -395,7 +395,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             border: Border.all(
-                                              color: Color(0xFFCED4DA),
+                                              color: const Color(0xFFCED4DA),
                                             ),
                                           ),
                                           child: Stack(
@@ -420,7 +420,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 19,
-                                                      color: Color(0xFFA1A8B0),
+                                                      color: const Color(0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: nameerror
                                                         ? OutlineInputBorder(
@@ -429,7 +429,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                     .circular(
                                                                         10),
                                                             borderSide:
-                                                                BorderSide(
+                                                                const BorderSide(
                                                               color: Colors.red,
                                                             ),
                                                           )
@@ -454,7 +454,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Expanded(
                                 child: Container(
                                   child: Column(
@@ -465,7 +465,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         "Company Name",
                                         style: TextStyle(
                                             // color: Colors.grey,
-                                            color: Color(0xFF101828),
+                                            color: const Color(0xFF101828),
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                         .size
@@ -486,7 +486,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             border: Border.all(
-                                              color: Color(0xFFCED4DA),
+                                              color: const Color(0xFFCED4DA),
                                             ),
                                           ),
                                           child: Stack(
@@ -511,7 +511,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 19,
-                                                      color: Color(0xFFA1A8B0),
+                                                      color: const Color(0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: comnameerror
                                                         ? OutlineInputBorder(
@@ -520,7 +520,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                     .circular(
                                                                         10),
                                                             borderSide:
-                                                                BorderSide(
+                                                                const BorderSide(
                                                               color: Colors.red,
                                                             ),
                                                           )
@@ -568,9 +568,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           ),
                                         ),
                                       )
-                                    : SizedBox.shrink(),
+                                    : const SizedBox.shrink(),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Expanded(
                                 child: comnameerror
                                     ? Padding(
@@ -590,7 +590,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           ),
                                         ),
                                       )
-                                    : SizedBox.shrink(),
+                                    : const SizedBox.shrink(),
                               ),
                             ],
                           ),
@@ -602,7 +602,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
           //merchent id
@@ -615,7 +615,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color(0xFFCED4DA)),
+                  border: Border.all(color: const Color(0xFFCED4DA)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -624,13 +624,13 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                     children: [
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Merchant ID",
                             style: TextStyle(
-                                color: Color(0xFF152B51),
+                                color: const Color(0xFF152B51),
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -640,18 +640,18 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Processor Id",
                             style: TextStyle(
-                                color: Color(0xFF101828),
+                                color: const Color(0xFF101828),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
                                     MediaQuery.of(context).size.width < 500
@@ -660,7 +660,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Padding(
@@ -686,7 +686,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                   BorderRadius.circular(10),
                                               color: Colors.white,
                                               border: Border.all(
-                                                  color: Color(0xFFCED4DA)),
+                                                  color: const Color(0xFFCED4DA)),
                                             ),
                                             child: Stack(
                                               children: [
@@ -697,7 +697,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                     decoration: InputDecoration(
                                                       border: InputBorder.none,
                                                       contentPadding:
-                                                          EdgeInsets.only(
+                                                          const EdgeInsets.only(
                                                               top: 12.5,
                                                               bottom: 12.5,
                                                               left: 15),
@@ -705,7 +705,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                           "Enter processor",
                                                       hintStyle: TextStyle(
                                                         color:
-                                                            Color(0xFFA1A8B0),
+                                                            const Color(0xFFA1A8B0),
                                                         fontSize: MediaQuery.of(
                                                                         context)
                                                                     .size
@@ -793,7 +793,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
             ),
           ),
 
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
           //management agreement
@@ -806,7 +806,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color(0xFFCED4DA)),
+                  border: Border.all(color: const Color(0xFFCED4DA)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -815,13 +815,13 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                     children: [
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Management Agreement ",
                             style: TextStyle(
-                                color: Color(0xFF152B51),
+                                color: const Color(0xFF152B51),
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -831,7 +831,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       if (MediaQuery.of(context).size.width < 500)
@@ -840,7 +840,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(width: 2),
+                                const SizedBox(width: 2),
                                 Expanded(
                                   child: Container(
                                     child: Column(
@@ -850,7 +850,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         Text(
                                           "Start Date ",
                                           style: TextStyle(
-                                              color: Color(0xFF101828),
+                                              color: const Color(0xFF101828),
                                               fontWeight: FontWeight.bold,
                                               fontSize: MediaQuery.of(context)
                                                           .size
@@ -868,7 +868,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               border: Border.all(
-                                                color: Color(0xFFCED4DA),
+                                                color: const Color(0xFFCED4DA),
                                               ),
                                             ),
                                             child: Stack(
@@ -900,7 +900,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                             ? 15
                                                             : 18,
                                                         color:
-                                                            Color(0xFFA1A8B0),
+                                                            const Color(0xFFA1A8B0),
                                                       ),
                                                       enabledBorder:
                                                           startdatederror
@@ -910,7 +910,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                           .circular(
                                                                               10),
                                                                   borderSide:
-                                                                      BorderSide(
+                                                                      const BorderSide(
                                                                     color: Colors
                                                                         .red,
                                                                   ),
@@ -919,9 +919,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   .none,
                                                       border: InputBorder.none,
                                                       contentPadding:
-                                                          EdgeInsets.all(12),
+                                                          const EdgeInsets.all(12),
                                                       suffixIcon: IconButton(
-                                                        icon: Icon(Icons
+                                                        icon: const Icon(Icons
                                                             .calendar_today),
                                                         onPressed: () {
                                                           _startDate(context);
@@ -949,7 +949,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 8),
+                                const SizedBox(width: 8),
                                 Expanded(
                                   child: Container(
                                     child: Column(
@@ -960,7 +960,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           "End Date",
                                           style: TextStyle(
                                               // color: Colors.grey,
-                                              color: Color(0xFF101828),
+                                              color: const Color(0xFF101828),
                                               fontWeight: FontWeight.bold,
                                               fontSize: MediaQuery.of(context)
                                                           .size
@@ -978,7 +978,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               border: Border.all(
-                                                color: Color(0xFFCED4DA),
+                                                color: const Color(0xFFCED4DA),
                                               ),
                                             ),
                                             child: Stack(
@@ -1010,7 +1010,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                             ? 15
                                                             : 18,
                                                         color:
-                                                            Color(0xFFA1A8B0),
+                                                            const Color(0xFFA1A8B0),
                                                       ),
                                                       enabledBorder: enddatederror
                                                           ? OutlineInputBorder(
@@ -1019,7 +1019,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                       .circular(
                                                                           10),
                                                               borderSide:
-                                                                  BorderSide(
+                                                                  const BorderSide(
                                                                 color:
                                                                     Colors.red,
                                                               ),
@@ -1027,9 +1027,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                           : InputBorder.none,
                                                       border: InputBorder.none,
                                                       contentPadding:
-                                                          EdgeInsets.all(12),
+                                                          const EdgeInsets.all(12),
                                                       suffixIcon: IconButton(
-                                                        icon: Icon(Icons
+                                                        icon: const Icon(Icons
                                                             .calendar_today),
                                                         onPressed: () =>
                                                             _endDate(context),
@@ -1076,9 +1076,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                             ),
                                           ),
                                         )
-                                      : SizedBox.shrink(),
+                                      : const SizedBox.shrink(),
                                 ),
-                                SizedBox(width: 8),
+                                const SizedBox(width: 8),
                                 Expanded(
                                   child: enddatederror
                                       ? Padding(
@@ -1099,7 +1099,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                             ),
                                           ),
                                         )
-                                      : SizedBox.shrink(),
+                                      : const SizedBox.shrink(),
                                 ),
                               ],
                             ),
@@ -1119,7 +1119,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                     Text(
                                       "Start Date",
                                       style: TextStyle(
-                                          color: Color(0xFF8A95A8),
+                                          color: const Color(0xFF8A95A8),
                                           fontWeight: FontWeight.bold,
                                           fontSize: MediaQuery.of(context)
                                                       .size
@@ -1128,7 +1128,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                               ? 15
                                               : 20),
                                     ),
-                                    SizedBox(height: 5),
+                                    const SizedBox(height: 5),
                                     Material(
                                       elevation: 4,
                                       child: Container(
@@ -1140,7 +1140,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           borderRadius:
                                               BorderRadius.circular(2),
                                           border: Border.all(
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                           ),
                                         ),
                                         child: Stack(
@@ -1170,7 +1170,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                 500
                                                             ? 15
                                                             : 18,
-                                                    color: Color(0xFF8A95A8),
+                                                    color: const Color(0xFF8A95A8),
                                                   ),
                                                   enabledBorder: startdatederror
                                                       ? OutlineInputBorder(
@@ -1178,16 +1178,16 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                               BorderRadius
                                                                   .circular(3),
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                             color: Colors.red,
                                                           ),
                                                         )
                                                       : InputBorder.none,
                                                   border: InputBorder.none,
                                                   contentPadding:
-                                                      EdgeInsets.all(12),
+                                                      const EdgeInsets.all(12),
                                                   suffixIcon: IconButton(
-                                                    icon: Icon(
+                                                    icon: const Icon(
                                                         Icons.calendar_today),
                                                     onPressed: () {
                                                       _startDate(context);
@@ -1210,11 +1210,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 5),
+                                    const SizedBox(height: 5),
                                     startdatederror
                                         ? Row(
                                             children: [
-                                              Spacer(),
+                                              const Spacer(),
                                               Text(
                                                 startdatemessage,
                                                 style: TextStyle(
@@ -1227,7 +1227,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                             ? 15
                                                             : 19),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 2,
                                               ),
                                             ],
@@ -1236,7 +1236,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   ],
                                 ),
                               ),
-                              SizedBox(width: 16),
+                              const SizedBox(width: 16),
                               // Second Column
                               Expanded(
                                 child: Column(
@@ -1246,7 +1246,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                       "End Date",
                                       style: TextStyle(
                                           // color: Colors.grey,
-                                          color: Color(0xFF8A95A8),
+                                          color: const Color(0xFF8A95A8),
                                           fontWeight: FontWeight.bold,
                                           fontSize: MediaQuery.of(context)
                                                       .size
@@ -1255,7 +1255,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                               ? 15
                                               : 20),
                                     ),
-                                    SizedBox(height: 5),
+                                    const SizedBox(height: 5),
                                     Material(
                                       elevation: 4,
                                       child: Container(
@@ -1267,7 +1267,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           borderRadius:
                                               BorderRadius.circular(2),
                                           border: Border.all(
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                           ),
                                         ),
                                         child: Stack(
@@ -1297,7 +1297,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                 500
                                                             ? 15
                                                             : 18,
-                                                    color: Color(0xFF8A95A8),
+                                                    color: const Color(0xFF8A95A8),
                                                   ),
                                                   enabledBorder: enddatederror
                                                       ? OutlineInputBorder(
@@ -1305,16 +1305,16 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                               BorderRadius
                                                                   .circular(3),
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                             color: Colors.red,
                                                           ),
                                                         )
                                                       : InputBorder.none,
                                                   border: InputBorder.none,
                                                   contentPadding:
-                                                      EdgeInsets.all(12),
+                                                      const EdgeInsets.all(12),
                                                   suffixIcon: IconButton(
-                                                    icon: Icon(
+                                                    icon: const Icon(
                                                         Icons.calendar_today),
                                                     onPressed: () =>
                                                         _endDate(context),
@@ -1333,11 +1333,11 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 5),
+                                    const SizedBox(height: 5),
                                     enddatederror
                                         ? Row(
                                             children: [
-                                              Spacer(),
+                                              const Spacer(),
                                               Text(
                                                 enddatemessage,
                                                 style: TextStyle(
@@ -1350,7 +1350,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                             ? 15
                                                             : 19),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 2,
                                               ),
                                             ],
@@ -1368,7 +1368,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
           //contact information
@@ -1381,7 +1381,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color(0xFFCED4DA)),
+                  border: Border.all(color: const Color(0xFFCED4DA)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -1390,13 +1390,13 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                     children: [
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Contact Information",
                             style: TextStyle(
-                                color: Color(0xFF152B51),
+                                color: const Color(0xFF152B51),
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -1406,14 +1406,14 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Column(
                         children: [
                           Row(
                             children: [
-                              SizedBox(width: 2),
+                              const SizedBox(width: 2),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1421,7 +1421,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                     Text(
                                       "Primary E-mail *",
                                       style: TextStyle(
-                                          color: Color(0xFF101828),
+                                          color: const Color(0xFF101828),
                                           fontWeight: FontWeight.bold,
                                           fontSize: MediaQuery.of(context)
                                                       .size
@@ -1441,7 +1441,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           borderRadius:
                                               BorderRadius.circular(10),
                                           border: Border.all(
-                                            color: Color(0xFFCED4DA),
+                                            color: const Color(0xFFCED4DA),
                                           ),
                                         ),
                                         child: Stack(
@@ -1468,7 +1468,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                 500
                                                             ? 15
                                                             : 18,
-                                                    color: Color(0xFFA1A8B0),
+                                                    color: const Color(0xFFA1A8B0),
                                                   ),
                                                   enabledBorder:
                                                       primaryemailerror
@@ -1478,7 +1478,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                       .circular(
                                                                           10),
                                                               borderSide:
-                                                                  BorderSide(
+                                                                  const BorderSide(
                                                                 color:
                                                                     Colors.red,
                                                               ),
@@ -1486,7 +1486,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                           : InputBorder.none,
                                                   border: InputBorder.none,
                                                   contentPadding:
-                                                      EdgeInsets.all(12),
+                                                      const EdgeInsets.all(12),
                                                 ),
                                               ),
                                             ),
@@ -1497,7 +1497,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   ],
                                 ),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Expanded(
                                 child: Container(
                                   child: Column(
@@ -1508,7 +1508,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         "Alternative E-mail",
                                         style: TextStyle(
                                             // color: Colors.grey,
-                                            color: Color(0xFF101828),
+                                            color: const Color(0xFF101828),
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                         .size
@@ -1529,7 +1529,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             border: Border.all(
-                                              color: Color(0xFFCED4DA),
+                                              color: const Color(0xFFCED4DA),
                                             ),
                                           ),
                                           child: Stack(
@@ -1556,7 +1556,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: Color(0xFFA1A8B0),
+                                                      color: const Color(0xFFA1A8B0),
                                                     ),
                                                     enabledBorder:
                                                         alternativeerror
@@ -1566,7 +1566,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                         .circular(
                                                                             10),
                                                                 borderSide:
-                                                                    BorderSide(
+                                                                    const BorderSide(
                                                                   color: Colors
                                                                       .red,
                                                                 ),
@@ -1574,7 +1574,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                             : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        EdgeInsets.all(12),
+                                                        const EdgeInsets.all(12),
                                                   ),
                                                 ),
                                               ),
@@ -1609,9 +1609,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           ),
                                         ),
                                       )
-                                    : SizedBox.shrink(),
+                                    : const SizedBox.shrink(),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Expanded(
                                 child: alternativeerror
                                     ? Padding(
@@ -1631,13 +1631,13 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           ),
                                         ),
                                       )
-                                    : SizedBox.shrink(),
+                                    : const SizedBox.shrink(),
                               ),
                             ],
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       //phonenumber and homenumber
@@ -1646,7 +1646,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(width: 2),
+                              const SizedBox(width: 2),
                               Expanded(
                                 child: Container(
                                   child: Column(
@@ -1657,7 +1657,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         "Phone Number *",
                                         style: TextStyle(
                                             // color: Colors.grey,
-                                            color: Color(0xFF101828),
+                                            color: const Color(0xFF101828),
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                         .size
@@ -1678,7 +1678,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             border: Border.all(
-                                              color: Color(0xFFCED4DA),
+                                              color: const Color(0xFFCED4DA),
                                             ),
                                           ),
                                           child: Stack(
@@ -1716,7 +1716,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: Color(0xFFA1A8B0),
+                                                      color: const Color(0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: phonenumerror
                                                         ? OutlineInputBorder(
@@ -1725,14 +1725,14 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                     .circular(
                                                                         10),
                                                             borderSide:
-                                                                BorderSide(
+                                                                const BorderSide(
                                                               color: Colors.red,
                                                             ),
                                                           )
                                                         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        EdgeInsets.all(12),
+                                                        const EdgeInsets.all(12),
                                                   ),
                                                 ),
                                               ),
@@ -1744,7 +1744,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Expanded(
                                 child: Container(
                                   child: Column(
@@ -1755,7 +1755,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         "Home Number",
                                         style: TextStyle(
                                             // color: Colors.grey,
-                                            color: Color(0xFF101828),
+                                            color: const Color(0xFF101828),
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                         .size
@@ -1776,7 +1776,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             border: Border.all(
-                                              color: Color(0xFFCED4DA),
+                                              color: const Color(0xFFCED4DA),
                                             ),
                                           ),
                                           child: Stack(
@@ -1814,7 +1814,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: Color(0xFFA1A8B0),
+                                                      color: const Color(0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: homenumerror
                                                         ? OutlineInputBorder(
@@ -1823,14 +1823,14 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                     .circular(
                                                                         10),
                                                             borderSide:
-                                                                BorderSide(
+                                                                const BorderSide(
                                                               color: Colors.red,
                                                             ),
                                                           )
                                                         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        EdgeInsets.all(12),
+                                                        const EdgeInsets.all(12),
                                                   ),
                                                 ),
                                               ),
@@ -1842,7 +1842,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 2),
+                              const SizedBox(width: 2),
                             ],
                           ),
                           Row(
@@ -1866,9 +1866,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           ),
                                         ),
                                       )
-                                    : SizedBox.shrink(),
+                                    : const SizedBox.shrink(),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Expanded(
                                 child: homenumerror
                                     ? Padding(
@@ -1888,13 +1888,13 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           ),
                                         ),
                                       )
-                                    : SizedBox.shrink(),
+                                    : const SizedBox.shrink(),
                               ),
                             ],
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       //office number and city
@@ -1903,7 +1903,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(width: 2),
+                              const SizedBox(width: 2),
                               Expanded(
                                 child: Container(
                                   child: Column(
@@ -1914,7 +1914,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         "Office Number",
                                         style: TextStyle(
                                             // color: Colors.grey,
-                                            color: Color(0xFF101828),
+                                            color: const Color(0xFF101828),
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                         .size
@@ -1932,7 +1932,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             border: Border.all(
-                                              color: Color(0xFFCED4DA),
+                                              color: const Color(0xFFCED4DA),
                                             ),
                                           ),
                                           child: Stack(
@@ -1969,7 +1969,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: Color(0xFFA1A8B0),
+                                                      color: const Color(0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: officenumerror
                                                         ? OutlineInputBorder(
@@ -1978,14 +1978,14 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                     .circular(
                                                                         10),
                                                             borderSide:
-                                                                BorderSide(
+                                                                const BorderSide(
                                                               color: Colors.red,
                                                             ),
                                                           )
                                                         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        EdgeInsets.all(12),
+                                                        const EdgeInsets.all(12),
                                                   ),
                                                 ),
                                               ),
@@ -1997,7 +1997,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Expanded(
                                 child: Container(
                                   child: Column(
@@ -2008,7 +2008,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         "City",
                                         style: TextStyle(
                                             // color: Colors.grey,
-                                            color: Color(0xFF101828),
+                                            color: const Color(0xFF101828),
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                         .size
@@ -2026,7 +2026,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             border: Border.all(
-                                              color: Color(0xFFCED4DA),
+                                              color: const Color(0xFFCED4DA),
                                             ),
                                           ),
                                           child: Stack(
@@ -2052,7 +2052,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: Color(0xFFA1A8B0),
+                                                      color: const Color(0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: city2error
                                                         ? OutlineInputBorder(
@@ -2061,14 +2061,14 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                     .circular(
                                                                         10),
                                                             borderSide:
-                                                                BorderSide(
+                                                                const BorderSide(
                                                               color: Colors.red,
                                                             ),
                                                           )
                                                         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        EdgeInsets.all(12),
+                                                        const EdgeInsets.all(12),
                                                   ),
                                                 ),
                                               ),
@@ -2080,7 +2080,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 2),
+                              const SizedBox(width: 2),
                             ],
                           ),
                           Row(
@@ -2104,9 +2104,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           ),
                                         ),
                                       )
-                                    : SizedBox.shrink(),
+                                    : const SizedBox.shrink(),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Expanded(
                                 child: city2error
                                     ? Padding(
@@ -2126,13 +2126,13 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           ),
                                         ),
                                       )
-                                    : SizedBox.shrink(),
+                                    : const SizedBox.shrink(),
                               ),
                             ],
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       //state and country
@@ -2141,7 +2141,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(width: 2),
+                              const SizedBox(width: 2),
                               Expanded(
                                 child: Container(
                                   child: Column(
@@ -2152,7 +2152,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         "State",
                                         style: TextStyle(
                                             // color: Colors.grey,
-                                            color: Color(0xFF101828),
+                                            color: const Color(0xFF101828),
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                         .size
@@ -2173,7 +2173,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             border: Border.all(
-                                              color: Color(0xFFCED4DA),
+                                              color: const Color(0xFFCED4DA),
                                             ),
                                           ),
                                           child: Stack(
@@ -2199,7 +2199,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: Color(0xFFA1A8B0),
+                                                      color: const Color(0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: state2error
                                                         ? OutlineInputBorder(
@@ -2208,14 +2208,14 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                     .circular(
                                                                         10),
                                                             borderSide:
-                                                                BorderSide(
+                                                                const BorderSide(
                                                               color: Colors.red,
                                                             ),
                                                           )
                                                         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        EdgeInsets.all(12),
+                                                        const EdgeInsets.all(12),
                                                   ),
                                                 ),
                                               ),
@@ -2227,7 +2227,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Expanded(
                                 child: Container(
                                   child: Column(
@@ -2238,7 +2238,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         "Country",
                                         style: TextStyle(
                                             // color: Colors.grey,
-                                            color: Color(0xFF101828),
+                                            color: const Color(0xFF101828),
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                         .size
@@ -2259,7 +2259,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             border: Border.all(
-                                              color: Color(0xFFCED4DA),
+                                              color: const Color(0xFFCED4DA),
                                             ),
                                           ),
                                           child: Stack(
@@ -2285,7 +2285,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: Color(0xFFA1A8B0),
+                                                      color: const Color(0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: county2error
                                                         ? OutlineInputBorder(
@@ -2294,14 +2294,14 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                     .circular(
                                                                         10),
                                                             borderSide:
-                                                                BorderSide(
+                                                                const BorderSide(
                                                               color: Colors.red,
                                                             ),
                                                           )
                                                         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        EdgeInsets.all(12),
+                                                        const EdgeInsets.all(12),
                                                   ),
                                                 ),
                                               ),
@@ -2336,9 +2336,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           ),
                                         ),
                                       )
-                                    : SizedBox.shrink(),
+                                    : const SizedBox.shrink(),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Expanded(
                                 child: county2error
                                     ? Padding(
@@ -2358,13 +2358,13 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           ),
                                         ),
                                       )
-                                    : SizedBox.shrink(),
+                                    : const SizedBox.shrink(),
                               ),
                             ],
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       //postal code and street
@@ -2372,7 +2372,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                         children: [
                           Row(
                             children: [
-                              SizedBox(width: 2),
+                              const SizedBox(width: 2),
                               Expanded(
                                 child: Container(
                                   child: Column(
@@ -2383,7 +2383,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         "Zip Code",
                                         style: TextStyle(
                                             // color: Colors.grey,
-                                            color: Color(0xFF101828),
+                                            color: const Color(0xFF101828),
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                         .size
@@ -2404,7 +2404,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             border: Border.all(
-                                              color: Color(0xFFCED4DA),
+                                              color: const Color(0xFFCED4DA),
                                             ),
                                           ),
                                           child: Stack(
@@ -2435,7 +2435,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: Color(0xFFA1A8B0),
+                                                      color: const Color(0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: code2error
                                                         ? OutlineInputBorder(
@@ -2444,14 +2444,14 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                     .circular(
                                                                         10),
                                                             borderSide:
-                                                                BorderSide(
+                                                                const BorderSide(
                                                               color: Colors.red,
                                                             ),
                                                           )
                                                         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        EdgeInsets.all(12),
+                                                        const EdgeInsets.all(12),
                                                   ),
                                                 ),
                                               ),
@@ -2463,7 +2463,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Expanded(
                                 child: Container(
                                   child: Column(
@@ -2474,7 +2474,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         "Street Address",
                                         style: TextStyle(
                                             // color: Colors.grey,
-                                            color: Color(0xFF101828),
+                                            color: const Color(0xFF101828),
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                         .size
@@ -2495,7 +2495,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             border: Border.all(
-                                              color: Color(0xFFCED4DA),
+                                              color: const Color(0xFFCED4DA),
                                             ),
                                           ),
                                           child: Stack(
@@ -2520,7 +2520,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: Color(0xFFA1A8B0),
+                                                      color: const Color(0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: street2error
                                                         ? OutlineInputBorder(
@@ -2529,14 +2529,14 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                     .circular(
                                                                         10),
                                                             borderSide:
-                                                                BorderSide(
+                                                                const BorderSide(
                                                               color: Colors.red,
                                                             ),
                                                           )
                                                         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        EdgeInsets.all(12),
+                                                        const EdgeInsets.all(12),
                                                   ),
                                                 ),
                                               ),
@@ -2571,9 +2571,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           ),
                                         ),
                                       )
-                                    : SizedBox.shrink(),
+                                    : const SizedBox.shrink(),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Expanded(
                                 child: street2error
                                     ? Padding(
@@ -2593,7 +2593,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           ),
                                         ),
                                       )
-                                    : SizedBox.shrink(),
+                                    : const SizedBox.shrink(),
                               ),
                             ],
                           ),
@@ -2605,7 +2605,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
           //tax payer information
@@ -2618,7 +2618,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color(0xFFCED4DA)),
+                  border: Border.all(color: const Color(0xFFCED4DA)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -2627,13 +2627,13 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                     children: [
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Taxpayer Information ",
                             style: TextStyle(
-                                color: Color(0xFF152B51),
+                                color: const Color(0xFF152B51),
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -2643,7 +2643,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Column(
@@ -2651,7 +2651,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(width: 2),
+                              const SizedBox(width: 2),
                               Expanded(
                                 child: Container(
                                   child: Column(
@@ -2661,7 +2661,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                       Text(
                                         "Tax ID Type",
                                         style: TextStyle(
-                                            color: Color(0xFF101828),
+                                            color: const Color(0xFF101828),
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                         .size
@@ -2682,7 +2682,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             border: Border.all(
-                                              color: Color(0xFFCED4DA),
+                                              color: const Color(0xFFCED4DA),
                                             ),
                                           ),
                                           child: Stack(
@@ -2707,7 +2707,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: Color(0xFFA1A8B0),
+                                                      color: const Color(0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: taxtypeerror
                                                         ? OutlineInputBorder(
@@ -2716,14 +2716,14 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                     .circular(
                                                                         10),
                                                             borderSide:
-                                                                BorderSide(
+                                                                const BorderSide(
                                                               color: Colors.red,
                                                             ),
                                                           )
                                                         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        EdgeInsets.all(12),
+                                                        const EdgeInsets.all(12),
                                                   ),
                                                 ),
                                               ),
@@ -2735,7 +2735,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Expanded(
                                 child: Container(
                                   child: Column(
@@ -2746,7 +2746,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         "Taxpayer ID",
                                         style: TextStyle(
                                             // color: Colors.grey,
-                                            color: Color(0xFF101828),
+                                            color: const Color(0xFF101828),
                                             fontWeight: FontWeight.bold,
                                             fontSize: MediaQuery.of(context)
                                                         .size
@@ -2767,7 +2767,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             border: Border.all(
-                                              color: Color(0xFFCED4DA),
+                                              color: const Color(0xFFCED4DA),
                                             ),
                                           ),
                                           child: Stack(
@@ -2792,7 +2792,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: Color(0xFFA1A8B0),
+                                                      color: const Color(0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: taxiderror
                                                         ? OutlineInputBorder(
@@ -2801,14 +2801,14 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                     .circular(
                                                                         10),
                                                             borderSide:
-                                                                BorderSide(
+                                                                const BorderSide(
                                                               color: Colors.red,
                                                             ),
                                                           )
                                                         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        EdgeInsets.all(12),
+                                                        const EdgeInsets.all(12),
                                                   ),
                                                 ),
                                               ),
@@ -2820,7 +2820,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 2),
+                              const SizedBox(width: 2),
                             ],
                           ),
                           Row(
@@ -2844,9 +2844,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           ),
                                         ),
                                       )
-                                    : SizedBox.shrink(),
+                                    : const SizedBox.shrink(),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Expanded(
                                 child: enddatederror
                                     ? Padding(
@@ -2866,7 +2866,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                           ),
                                         ),
                                       )
-                                    : SizedBox.shrink(),
+                                    : const SizedBox.shrink(),
                               ),
                             ],
                           ),
@@ -2878,7 +2878,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
           Padding(
@@ -2890,7 +2890,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color(0xFFCED4DA)),
+                  border: Border.all(color: const Color(0xFFCED4DA)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -2899,13 +2899,13 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                     children: [
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Card Transaction Type \nManagement ",
                             style: TextStyle(
-                                color: Color(0xFF152B51),
+                                color: const Color(0xFF152B51),
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:
@@ -2915,18 +2915,18 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           Text(
                             "Select the type of card you wish to \naccept",
                             style: TextStyle(
-                                color: Color(0xFF636363),
+                                color: const Color(0xFF636363),
                                 fontWeight: FontWeight.bold,
                                 fontSize:
                                     MediaQuery.of(context).size.width < 500
@@ -2935,7 +2935,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
@@ -2958,8 +2958,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                       activeColor: blueColor,
                                     ),
                                   ),
-                                  SizedBox(width: 10),
-                                  Text(
+                                  const SizedBox(width: 10),
+                                  const Text(
                                     "Credit Card",
                                     style: TextStyle(
                                         fontSize: 16, color: Color(0xFF101828)),
@@ -2984,8 +2984,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         },
                                         activeColor: blueColor),
                                   ),
-                                  SizedBox(width: 10),
-                                  Text(
+                                  const SizedBox(width: 10),
+                                  const Text(
                                     "Debit Card",
                                     style: TextStyle(
                                         fontSize: 16, color: Color(0xFF101828)),
@@ -2996,7 +2996,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
@@ -3018,8 +3018,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                         },
                                         activeColor: blueColor),
                                   ),
-                                  SizedBox(width: 10),
-                                  Text(
+                                  const SizedBox(width: 10),
+                                  const Text(
                                     "ACH",
                                     style: TextStyle(
                                         fontSize: 16, color: Color(0xFF101828)),
@@ -3036,7 +3036,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           // Padding(
@@ -3320,7 +3320,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
               if (MediaQuery.of(context).size.width < 500)
                 SizedBox(width: MediaQuery.of(context).size.width * 0.04),
               if (MediaQuery.of(context).size.width > 500)
-                SizedBox(
+                const SizedBox(
                   width: 25,
                 ),
               Expanded(
@@ -3333,7 +3333,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           color: Colors.white,
-                          border: Border.all(color: Color(0x80152B51))
+                          border: Border.all(color: const Color(0x80152B51))
                           // boxShadow: [
                           //   BoxShadow(
                           //     color: Colors.grey,
@@ -3354,7 +3354,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       ),
                     )),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 15,
               ),
               Expanded(
@@ -3362,7 +3362,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                   height: 40,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: Color(0xFF101828)),
+                      color: const Color(0xFF101828)),
                   child: GestureDetector(
                     onTap: () async {
                       print("callllll");
@@ -3759,7 +3759,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           borderRadius: BorderRadius.circular(5.0),
                           color: blueColor,
                           boxShadow: [
-                            BoxShadow(
+                            const BoxShadow(
                               color: Colors.grey,
                               offset: Offset(0.0, 1.0), //(x,y)
                               blurRadius: 6.0,
@@ -3768,7 +3768,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                         ),
                         child: Center(
                           child: loading
-                              ? SpinKitFadingCircle(
+                              ? const SpinKitFadingCircle(
                                   color: Colors.white,
                                   size: 20.0,
                                 )
@@ -3789,12 +3789,12 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 15,
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
         ],

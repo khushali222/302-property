@@ -224,7 +224,7 @@ class _Rent_collectionState extends State<Rent_collection> {
               margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
               child: pw.Text(
                 'Page ${context.pageNumber} of ${context.pagesCount}',
-                style: pw.TextStyle(color: PdfColors.grey),
+                style: const pw.TextStyle(color: PdfColors.grey),
               ),
             );
           },
@@ -347,7 +347,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                     fontWeight: pw.FontWeight.bold, color: PdfColors.white),
                 headerDecoration:
                     pw.BoxDecoration(color: PdfColor.fromHex("#5A86D5")),
-                cellStyle: pw.TextStyle(fontSize: 13),
+                cellStyle: const pw.TextStyle(fontSize: 13),
                 cellAlignment: pw.Alignment.centerLeft,
                 border: null,
               ),
@@ -368,7 +368,7 @@ class _Rent_collectionState extends State<Rent_collection> {
               margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
               child: pw.Text(
                 'Page ${context.pageNumber} of ${context.pagesCount}',
-                style: pw.TextStyle(color: PdfColors.grey),
+                style: const pw.TextStyle(color: PdfColors.grey),
               ),
             );
           },
@@ -405,19 +405,19 @@ class _Rent_collectionState extends State<Rent_collection> {
                     fontWeight: pw.FontWeight.bold, color: PdfColors.white),
                 headerDecoration:
                     pw.BoxDecoration(color: PdfColor.fromHex("#5A86D5")),
-                cellStyle: pw.TextStyle(fontSize: 13),
+                cellStyle: const pw.TextStyle(fontSize: 13),
                 cellAlignment: pw.Alignment.centerLeft,
                 headerAlignment: pw.Alignment.centerLeft,
                 border: null,
                 columnWidths: {
-                  0: pw.FlexColumnWidth(2.0), // Street (Wider)
-                  1: pw.FlexColumnWidth(2.0), // City, State, Zip (Wider)
-                  2: pw.FlexColumnWidth(1.5), // Entity (Normal)
-                  3: pw.FlexColumnWidth(1.5), // Move-in Date (Normal)
-                  4: pw.FlexColumnWidth(1.0), // Monthly Rent (Normal)
-                  5: pw.FlexColumnWidth(1.0), // Balance (Normal)
-                  6: pw.FlexColumnWidth(1.5), // Auto-Pay (Normal)
-                  7: pw.FlexColumnWidth(1.5), // Notes (Normal)
+                  0: const pw.FlexColumnWidth(2.0), // Street (Wider)
+                  1: const pw.FlexColumnWidth(2.0), // City, State, Zip (Wider)
+                  2: const pw.FlexColumnWidth(1.5), // Entity (Normal)
+                  3: const pw.FlexColumnWidth(1.5), // Move-in Date (Normal)
+                  4: const pw.FlexColumnWidth(1.0), // Monthly Rent (Normal)
+                  5: const pw.FlexColumnWidth(1.0), // Balance (Normal)
+                  6: const pw.FlexColumnWidth(1.5), // Auto-Pay (Normal)
+                  7: const pw.FlexColumnWidth(1.5), // Notes (Normal)
                 },
               ),
             ];
@@ -438,7 +438,7 @@ class _Rent_collectionState extends State<Rent_collection> {
               margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
               child: pw.Text(
                 'Page ${context.pageNumber} of ${context.pagesCount}',
-                style: pw.TextStyle(color: PdfColors.grey),
+                style: const pw.TextStyle(color: PdfColors.grey),
               ),
             );
           },
@@ -477,18 +477,18 @@ class _Rent_collectionState extends State<Rent_collection> {
                     fontWeight: pw.FontWeight.bold, color: PdfColors.white),
                 headerDecoration:
                     pw.BoxDecoration(color: PdfColor.fromHex("#5A86D5")),
-                cellStyle: pw.TextStyle(fontSize: 13),
+                cellStyle: const pw.TextStyle(fontSize: 13),
                 cellAlignment: pw.Alignment.centerLeft,
                 border: null,
                 columnWidths: {
-                  0: pw.FlexColumnWidth(2.0), // Street (Wider)
-                  1: pw.FlexColumnWidth(2.0), // City, State, Zip (Wider)
-                  2: pw.FlexColumnWidth(1.5), // Entity (Normal)
-                  3: pw.FlexColumnWidth(1.5), // Move-in Date (Normal)
-                  4: pw.FlexColumnWidth(1.0), // Monthly Rent (Normal)
-                  5: pw.FlexColumnWidth(1.0), // Balance (Normal)
-                  6: pw.FlexColumnWidth(1.5), // Auto-Pay (Normal)
-                  7: pw.FlexColumnWidth(1.5), // Notes (Normal)
+                  0: const pw.FlexColumnWidth(2.0), // Street (Wider)
+                  1: const pw.FlexColumnWidth(2.0), // City, State, Zip (Wider)
+                  2: const pw.FlexColumnWidth(1.5), // Entity (Normal)
+                  3: const pw.FlexColumnWidth(1.5), // Move-in Date (Normal)
+                  4: const pw.FlexColumnWidth(1.0), // Monthly Rent (Normal)
+                  5: const pw.FlexColumnWidth(1.0), // Balance (Normal)
+                  6: const pw.FlexColumnWidth(1.5), // Auto-Pay (Normal)
+                  7: const pw.FlexColumnWidth(1.5), // Notes (Normal)
                 },
               ),
             ];
@@ -1475,7 +1475,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                     // Sorting logic here
                   });
                 },
-                child: Row(
+                child: const Row(
                   children: [
                     Text("Total Outstanding",
                         style: TextStyle(color: Colors.white)),
@@ -1623,7 +1623,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                     // Sorting logic here
                   });
                 },
-                child: Row(
+                child: const Row(
                   children: [
                     Text("        Entity",
                         style: TextStyle(color: Colors.white)),
@@ -1656,7 +1656,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                 },
                 child: Row(
                   children: [
-                    Text(" Balance", style: TextStyle(color: Colors.white)),
+                    const Text(" Balance", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
                     ascending3
                         ? const Padding(
@@ -1777,7 +1777,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                   if (MediaQuery.of(context).size.width < 500)
                     Column(
                       children: [
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         // Always show filters
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -1950,12 +1950,12 @@ class _Rent_collectionState extends State<Rent_collection> {
                                   decoration: BoxDecoration(
                                     border: Border.all(
                                         color:
-                                            Color.fromRGBO(206, 212, 218, 1)),
+                                            const Color.fromRGBO(206, 212, 218, 1)),
                                     borderRadius: BorderRadius.circular(0),
                                     color: Colors.white,
                                   ),
                                   child: IconButton(
-                                    icon: FaIcon(FontAwesomeIcons.circlePlay,
+                                    icon: const FaIcon(FontAwesomeIcons.circlePlay,
                                         size: 18),
                                     onPressed: () {
                                       setState(() {
@@ -1981,7 +1981,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                   decoration: BoxDecoration(
                                     border: Border.all(
                                         color:
-                                            Color.fromRGBO(206, 212, 218, 1)),
+                                            const Color.fromRGBO(206, 212, 218, 1)),
                                     borderRadius: BorderRadius.circular(0),
                                     color: Colors.white,
                                   ),
@@ -1989,9 +1989,9 @@ class _Rent_collectionState extends State<Rent_collection> {
                                     future: _futureRentcollection,
                                     builder: (context, snapshot) {
                                       return PopupMenuButton<String>(
-                                        offset: Offset(0, 45),
+                                        offset: const Offset(0, 45),
                                         onSelected: handleDownload,
-                                        icon: Row(
+                                        icon: const Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
@@ -2036,7 +2036,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                             ),
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         // Content based on state
                         FutureBuilder<Rentcollection_model>(
                           future: _futureRentcollection,
@@ -2060,7 +2060,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         height: 200,
                                         width: 200,
                                       ),
-                                      SizedBox(height: 10),
+                                      const SizedBox(height: 10),
                                       Text(
                                         "No Data Available",
                                         style: TextStyle(
@@ -2068,8 +2068,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                             color: blueColor,
                                             fontSize: 16),
                                       ),
-                                      SizedBox(height: 10),
-                                      Text(
+                                      const SizedBox(height: 10),
+                                      const Text(
                                         "Try selecting a different month or year",
                                         style: TextStyle(
                                             color: Colors.grey, fontSize: 14),
@@ -2111,19 +2111,19 @@ class _Rent_collectionState extends State<Rent_collection> {
                                               decoration: InputDecoration(
                                                 hintText:
                                                     'Search by address or company...',
-                                                prefixIcon: Icon(Icons.search),
+                                                prefixIcon: const Icon(Icons.search),
                                                 border: OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(8),
                                                 ),
                                                 contentPadding:
-                                                    EdgeInsets.symmetric(
+                                                    const EdgeInsets.symmetric(
                                                         horizontal: 16,
                                                         vertical: 12),
                                               ),
                                             ),
                                           ),
-                                          SizedBox(height: 8),
+                                          const SizedBox(height: 8),
                                           // Filter Row - Responsive Layout
                                           LayoutBuilder(
                                             builder: (context, constraints) {
@@ -2146,7 +2146,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                                   .circular(8),
                                                         ),
                                                         contentPadding:
-                                                            EdgeInsets
+                                                            const EdgeInsets
                                                                 .symmetric(
                                                                     horizontal:
                                                                         12,
@@ -2172,7 +2172,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                         });
                                                       },
                                                     ),
-                                                    SizedBox(height: 10),
+                                                    const SizedBox(height: 10),
                                                     DropdownButtonFormField<
                                                         String>(
                                                       value:
@@ -2188,7 +2188,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                                   .circular(8),
                                                         ),
                                                         contentPadding:
-                                                            EdgeInsets
+                                                            const EdgeInsets
                                                                 .symmetric(
                                                                     horizontal:
                                                                         12,
@@ -2238,7 +2238,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                                         8),
                                                           ),
                                                           contentPadding:
-                                                              EdgeInsets
+                                                              const EdgeInsets
                                                                   .symmetric(
                                                                       horizontal:
                                                                           12,
@@ -2265,7 +2265,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                         },
                                                       ),
                                                     ),
-                                                    SizedBox(width: 10),
+                                                    const SizedBox(width: 10),
                                                     Expanded(
                                                       child:
                                                           DropdownButtonFormField<
@@ -2284,7 +2284,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                                         8),
                                                           ),
                                                           contentPadding:
-                                                              EdgeInsets
+                                                              const EdgeInsets
                                                                   .symmetric(
                                                                       horizontal:
                                                                           12,
@@ -2316,11 +2316,11 @@ class _Rent_collectionState extends State<Rent_collection> {
                                               }
                                             },
                                           ),
-                                          SizedBox(height: 8),
+                                          const SizedBox(height: 8),
                                           // Clear Filters Button
                                           Row(
                                             children: [
-                                              Spacer(),
+                                              const Spacer(),
                                               TextButton.icon(
                                                 onPressed: () {
                                                   setState(() {
@@ -2332,8 +2332,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                   });
                                                 },
                                                 icon:
-                                                    Icon(Icons.clear, size: 16),
-                                                label: Text('Clear Filters'),
+                                                    const Icon(Icons.clear, size: 16),
+                                                label: const Text('Clear Filters'),
                                                 style: TextButton.styleFrom(
                                                   foregroundColor:
                                                       Colors.grey[600],
@@ -2393,11 +2393,11 @@ class _Rent_collectionState extends State<Rent_collection> {
                     height: 200,
                     fit: BoxFit.fill,
                   ),
-                  Text(
+                  const Text(
                     'No Internet',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     'Check your internet connection',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
@@ -2448,7 +2448,7 @@ class _Rent_collectionState extends State<Rent_collection> {
       children: [
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2457,7 +2457,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 4.0), // Space between label and value
+                const SizedBox(height: 4.0), // Space between label and value
                 Text(
                   leftValue,
                   style: TextStyle(color: grey),
@@ -2468,7 +2468,7 @@ class _Rent_collectionState extends State<Rent_collection> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2477,7 +2477,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 4.0), // Space between label and value
+                const SizedBox(height: 4.0), // Space between label and value
                 Text(
                   centerValue,
                   style: TextStyle(color: grey),
@@ -2488,7 +2488,7 @@ class _Rent_collectionState extends State<Rent_collection> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2497,7 +2497,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 4.0), // Space between label and value
+                const SizedBox(height: 4.0), // Space between label and value
                 Text(
                   rightValue,
                   style: TextStyle(color: grey),
@@ -2537,7 +2537,7 @@ class _Rent_collectionState extends State<Rent_collection> {
             const SizedBox(height: 20),
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                border: Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
               ),
               child: Column(
                 children: [
@@ -2551,7 +2551,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                             ? Colors.white
                             : blueColor.withOpacity(0.09),
                         border: Border.all(
-                            color: Color.fromRGBO(152, 162, 179, .5)),
+                            color: const Color.fromRGBO(152, 162, 179, .5)),
                       ),
                       child: Column(
                         children: <Widget>[
@@ -2589,7 +2589,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: 8),
+                                  const SizedBox(width: 8),
                                   Expanded(
                                     child: Text(
                                       '${item.rentalOwnerName ?? '-'} (${item.rentalOwnerCompany ?? '-'})',
@@ -2602,7 +2602,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                       maxLines: 1,
                                     ),
                                   ),
-                                  SizedBox(width: 8),
+                                  const SizedBox(width: 8),
                                   Expanded(
                                     child: Align(
                                       alignment: Alignment.centerRight,
@@ -2616,7 +2616,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: 25),
+                                  const SizedBox(width: 25),
                                 ],
                               ),
                             ),
@@ -2628,7 +2628,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                   children: [
                                     Row(
                                       children: [
-                                        SizedBox(width: 25),
+                                        const SizedBox(width: 25),
                                         Expanded(
                                           child: Column(
                                             mainAxisAlignment:
@@ -2644,7 +2644,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                   fontSize: 14,
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 4,
                                               ),
                                               Text(
@@ -2658,7 +2658,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                             ],
                                           ),
                                         ),
-                                        SizedBox(width: 8),
+                                        const SizedBox(width: 8),
                                         Expanded(
                                           child: Column(
                                             mainAxisAlignment:
@@ -2674,7 +2674,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                   fontSize: 14,
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 4,
                                               ),
                                               Text(
@@ -2688,10 +2688,10 @@ class _Rent_collectionState extends State<Rent_collection> {
                                             ],
                                           ),
                                         ),
-                                        SizedBox(width: 8),
+                                        const SizedBox(width: 8),
                                       ],
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 15,
                                     ),
                                   ],
@@ -2706,7 +2706,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                           ? blueColor.withOpacity(0.09)
                           : Colors.white,
                       border:
-                          Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                          Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
                     ),
                     child: Column(
                       children: <Widget>[
@@ -2745,7 +2745,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 8),
+                                const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
                                     'Overall',
@@ -2756,7 +2756,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 8),
+                                const SizedBox(width: 8),
                                 Expanded(
                                   child: Align(
                                     alignment: Alignment.centerRight,
@@ -2770,7 +2770,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 25),
+                                const SizedBox(width: 25),
                               ],
                             ),
                           ),
@@ -2782,7 +2782,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                 children: [
                                   Row(
                                     children: [
-                                      SizedBox(width: 25),
+                                      const SizedBox(width: 25),
                                       Expanded(
                                         child: Column(
                                           mainAxisAlignment:
@@ -2798,7 +2798,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                 fontSize: 14,
                                               ),
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               height: 4,
                                             ),
                                             Text(
@@ -2812,7 +2812,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                           ],
                                         ),
                                       ),
-                                      SizedBox(width: 8),
+                                      const SizedBox(width: 8),
                                       Expanded(
                                         child: Column(
                                           mainAxisAlignment:
@@ -2828,7 +2828,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                 fontSize: 14,
                                               ),
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               height: 4,
                                             ),
                                             Text(
@@ -2842,10 +2842,10 @@ class _Rent_collectionState extends State<Rent_collection> {
                                           ],
                                         ),
                                       ),
-                                      SizedBox(width: 8),
+                                      const SizedBox(width: 8),
                                     ],
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 15,
                                   ),
                                 ],
@@ -2928,7 +2928,7 @@ class _Rent_collectionState extends State<Rent_collection> {
             const SizedBox(height: 20),
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                border: Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
               ),
               child: Column(
                 children: [
@@ -2949,7 +2949,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                   style: TextStyle(
                                       color: Colors.grey[600], fontSize: 12),
                                 ),
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
                                 Row(
                                   children: [
                                     Text('Items per page: ',
@@ -3033,7 +3033,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                           children: [
                             Icon(Icons.filter_alt_off,
                                 size: 60, color: Colors.grey[400]),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Text(
                               "No Results Found",
                               style: TextStyle(
@@ -3041,8 +3041,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                   color: blueColor,
                                   fontSize: 16),
                             ),
-                            SizedBox(height: 5),
-                            Text(
+                            const SizedBox(height: 5),
+                            const Text(
                               "Try adjusting your filters",
                               style:
                                   TextStyle(color: Colors.grey, fontSize: 14),
@@ -3061,7 +3061,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                             ? Colors.white
                             : blueColor.withOpacity(0.09),
                         border: Border.all(
-                            color: Color.fromRGBO(152, 162, 179, .5)),
+                            color: const Color.fromRGBO(152, 162, 179, .5)),
                       ),
                       child: Column(
                         children: <Widget>[
@@ -3199,7 +3199,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                       fontSize: 14,
                                                     ),
                                                   ),
-                                                  SizedBox(height: 4),
+                                                  const SizedBox(height: 4),
                                                   Text(
                                                     '${item.leaseData?.startDate ?? 'N/A'}',
                                                     style: TextStyle(
@@ -3209,7 +3209,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                   ),
                                                 ],
                                               ),
-                                              SizedBox(height: 12),
+                                              const SizedBox(height: 12),
                                               Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
@@ -3223,7 +3223,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                       fontSize: 14,
                                                     ),
                                                   ),
-                                                  SizedBox(height: 4),
+                                                  const SizedBox(height: 4),
                                                   Text(
                                                     '\$${item.leaseData?.leaseAmount ?? 'N/A'}',
                                                     style: TextStyle(
@@ -3240,7 +3240,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         // Keep horizontal layout for larger screens
                                         return Row(
                                           children: [
-                                            SizedBox(width: 25),
+                                            const SizedBox(width: 25),
                                             Expanded(
                                               child: Column(
                                                 crossAxisAlignment:
@@ -3255,7 +3255,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                       fontSize: 14,
                                                     ),
                                                   ),
-                                                  SizedBox(height: 4),
+                                                  const SizedBox(height: 4),
                                                   Text(
                                                     '${item.leaseData?.startDate ?? 'N/A'}',
                                                     style: TextStyle(
@@ -3266,7 +3266,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                 ],
                                               ),
                                             ),
-                                            SizedBox(width: 20),
+                                            const SizedBox(width: 20),
                                             Expanded(
                                               child: Column(
                                                 crossAxisAlignment:
@@ -3281,7 +3281,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                       fontSize: 14,
                                                     ),
                                                   ),
-                                                  SizedBox(height: 4),
+                                                  const SizedBox(height: 4),
                                                   Text(
                                                     '\$${item.leaseData?.leaseAmount ?? 'N/A'}',
                                                     style: TextStyle(
@@ -3292,7 +3292,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                 ],
                                               ),
                                             ),
-                                            SizedBox(width: 20),
+                                            const SizedBox(width: 20),
                                           ],
                                         );
                                       }
@@ -3302,12 +3302,12 @@ class _Rent_collectionState extends State<Rent_collection> {
                                       color: Colors.grey.withOpacity(0.3),
                                       thickness:
                                           1), // Add divider between sections
-                                  SizedBox(height: 8),
+                                  const SizedBox(height: 8),
 
                                   // Balance Row
                                   Row(
                                     children: [
-                                      SizedBox(width: 25),
+                                      const SizedBox(width: 25),
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
@@ -3321,7 +3321,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                 fontSize: 14,
                                               ),
                                             ),
-                                            SizedBox(height: 4),
+                                            const SizedBox(height: 4),
                                             Text(
                                               (item.notes?.isNotEmpty == true &&
                                                       item.notes?.first.date !=
@@ -3339,13 +3339,13 @@ class _Rent_collectionState extends State<Rent_collection> {
                                           ],
                                         ),
                                       ),
-                                      SizedBox(width: 20),
+                                      const SizedBox(width: 20),
                                     ],
                                   ),
                                   Divider(
                                       color: Colors.grey.withOpacity(0.3),
                                       thickness: 1),
-                                  SizedBox(height: 8),
+                                  const SizedBox(height: 8),
 
                                   // Auto-Pay Section - Responsive
                                   Padding(
@@ -3363,7 +3363,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                             fontSize: 14,
                                           ),
                                         ),
-                                        SizedBox(height: 8),
+                                        const SizedBox(height: 8),
                                         // Display recurring cards if available
                                         if (item.recurringCards != null &&
                                             item.recurringCards!.isNotEmpty)
@@ -3393,7 +3393,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                             fontSize: 14,
                                                           ),
                                                         ),
-                                                        SizedBox(height: 2),
+                                                        const SizedBox(height: 2),
                                                         Text(
                                                           '${card.tenantName ?? '-'}',
                                                           style: TextStyle(
@@ -3416,7 +3416,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                             fontSize: 14,
                                                           ),
                                                         ),
-                                                        SizedBox(width: 15),
+                                                        const SizedBox(width: 15),
                                                         Expanded(
                                                           child: Text(
                                                             '${card.tenantName ?? '-'}',
@@ -3449,7 +3449,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                       ],
                                     ),
                                   ),
-                                  SizedBox(height: 15),
+                                  const SizedBox(height: 15),
                                 ],
                               ),
                             ),
@@ -3478,7 +3478,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                             });
                                           }
                                         : null,
-                                    icon: Icon(Icons.chevron_left),
+                                    icon: const Icon(Icons.chevron_left),
                                   ),
                                   // Page info
                                   Container(
@@ -3511,7 +3511,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                 });
                                               }
                                             : null,
-                                    icon: Icon(Icons.chevron_right),
+                                    icon: const Icon(Icons.chevron_right),
                                   ),
                                 ],
                               ),
@@ -3523,7 +3523,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                 ],
               ),
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
           ],
         ),
       ),
@@ -3541,7 +3541,7 @@ class _Rent_collectionState extends State<Rent_collection> {
             if (currentPageData.isNotEmpty)
               Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                  border: Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
                 ),
                 child: Column(
                   children: [
@@ -3555,7 +3555,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                               ? Colors.white
                               : blueColor.withOpacity(0.09),
                           border: Border.all(
-                              color: Color.fromRGBO(152, 162, 179, .5)),
+                              color: const Color.fromRGBO(152, 162, 179, .5)),
                         ),
                         child: Column(
                           children: <Widget>[
@@ -3593,7 +3593,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 3,
                                     ),
                                     Expanded(
@@ -3650,7 +3650,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 5,
                                     ),
                                     // SizedBox(width: 8),
@@ -3665,7 +3665,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                     // Move-in Date and Monthly Rent Row
                                     Row(
                                       children: [
-                                        SizedBox(width: 25),
+                                        const SizedBox(width: 25),
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
@@ -3679,7 +3679,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                   fontSize: 14,
                                                 ),
                                               ),
-                                              SizedBox(height: 4),
+                                              const SizedBox(height: 4),
                                               Text(
                                                 '${item.leaseData?.startDate ?? '-'}',
                                                 style: TextStyle(
@@ -3690,7 +3690,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                             ],
                                           ),
                                         ),
-                                        SizedBox(width: 20),
+                                        const SizedBox(width: 20),
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
@@ -3704,7 +3704,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                   fontSize: 14,
                                                 ),
                                               ),
-                                              SizedBox(height: 4),
+                                              const SizedBox(height: 4),
                                               Text(
                                                 '\$${item.leaseData?.leaseAmount ?? '-'}',
                                                 style: TextStyle(
@@ -3715,19 +3715,19 @@ class _Rent_collectionState extends State<Rent_collection> {
                                             ],
                                           ),
                                         ),
-                                        SizedBox(width: 20),
+                                        const SizedBox(width: 20),
                                       ],
                                     ),
                                     Divider(
                                         color: Colors.grey.withOpacity(0.3),
                                         thickness:
                                             1), // Add divider between sections
-                                    SizedBox(height: 8),
+                                    const SizedBox(height: 8),
 
                                     // Balance Row
                                     Row(
                                       children: [
-                                        SizedBox(width: 25),
+                                        const SizedBox(width: 25),
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
@@ -3741,7 +3741,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                   fontSize: 14,
                                                 ),
                                               ),
-                                              SizedBox(height: 4),
+                                              const SizedBox(height: 4),
                                               Text(
                                                 '\$${item.leaseData?.balance ?? '-'}',
                                                 style: TextStyle(
@@ -3752,11 +3752,11 @@ class _Rent_collectionState extends State<Rent_collection> {
                                             ],
                                           ),
                                         ),
-                                        SizedBox(width: 20),
+                                        const SizedBox(width: 20),
                                       ],
                                     ),
 
-                                    SizedBox(height: 15),
+                                    const SizedBox(height: 15),
                                   ],
                                 ),
                               ),
@@ -3772,7 +3772,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                               ? blueColor.withOpacity(0.09)
                               : Colors.white,
                           border: Border.all(
-                              color: Color.fromRGBO(152, 162, 179, .5)),
+                              color: const Color.fromRGBO(152, 162, 179, .5)),
                         ),
                         child: Column(
                           children: <Widget>[
@@ -3813,7 +3813,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(width: 8),
+                                    const SizedBox(width: 8),
                                     Expanded(
                                       child: Text(
                                         'Overall',
@@ -3824,8 +3824,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         ),
                                       ),
                                     ),
-                                    Spacer(),
-                                    SizedBox(width: 30),
+                                    const Spacer(),
+                                    const SizedBox(width: 30),
                                     Expanded(
                                       child: Text(
                                         '\$${data.deadBeatsSummary?.totalBalance ?? '-'}',
@@ -3859,7 +3859,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                         height: 200,
                         width: 200,
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Text(
                         "No Data Available",
                         style: TextStyle(

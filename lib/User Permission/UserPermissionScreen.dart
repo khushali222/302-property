@@ -365,7 +365,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   width: double.infinity,
                   decoration: BoxDecoration(
                     border: Border.all(
@@ -384,7 +384,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       _buildPermissionTableselectall(
                         '',
                         [
@@ -405,7 +405,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   width: double.infinity,
                   decoration: BoxDecoration(
                     border: Border.all(
@@ -424,7 +424,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       _buildPermissionTable(
                         'Property',
                         [
@@ -574,7 +574,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   width: double.infinity,
                   decoration: BoxDecoration(
                     border: Border.all(
@@ -593,7 +593,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       _buildPermissionTable(
                         'Property',
                         [
@@ -1069,7 +1069,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
-                  padding: EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16.0),
                   width: double.infinity,
                   decoration: BoxDecoration(
                     border: Border.all(
@@ -1088,7 +1088,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 8,
                       ),
                       _buildPermissionTable(
@@ -1212,19 +1212,19 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                                   }
                                 },
                                 child: _isLoading
-                                    ? Center(
+                                    ? const Center(
                                   child: SpinKitFadingCircle(
                                     color: Colors.white,
                                     size: 20.0,
                                   ),
                                 )
-                                    : Text('Save', style: TextStyle(fontSize: 20)),
+                                    : const Text('Save', style: TextStyle(fontSize: 20)),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: blueColor,
                                 ),
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             SizedBox(
@@ -1234,7 +1234,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: Text('Cancel', style: TextStyle(fontSize: 20)),
+                                child: const Text('Cancel', style: TextStyle(fontSize: 20)),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: blueColor,
                                 ),
@@ -1343,25 +1343,25 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
                               }
                             },
                             child: _isLoading
-                                ? Center(
+                                ? const Center(
                               child: SpinKitFadingCircle(
                                 color: Colors.white,
                                 size: 20.0,
                               ),
                             )
-                                : Text('Save'),
+                                : const Text('Save'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: blueColor,
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
                           ElevatedButton(
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            child: Text('Cancel'),
+                            child: const Text('Cancel'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: blueColor,
                             ),
@@ -1387,12 +1387,12 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
               height: 200,
               fit: BoxFit.fill,
             ),
-            Text(
+            const Text(
               'No Internet',
               style: TextStyle(
                   fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            Text(
+            const Text(
               'Check your internet connection',
               style: TextStyle(
                   fontSize: 16, fontWeight: FontWeight.w500),
@@ -1434,7 +1434,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
         return Center(
           child: Table(
             columnWidths: {
-              for (int i = 0; i < columns; i++) i: FlexColumnWidth(1.0),
+              for (int i = 0; i < columns; i++) i: const FlexColumnWidth(1.0),
             },
             children: [
               TableRow(
@@ -1493,7 +1493,7 @@ class _UserPermissionScreenState extends State<UserPermissionScreen> {
         return Center(
           child: Table(
             columnWidths: {
-              for (int i = 0; i < columns; i++) i: FlexColumnWidth(1.0),
+              for (int i = 0; i < columns; i++) i: const FlexColumnWidth(1.0),
             },
             children: [
 

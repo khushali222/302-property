@@ -45,7 +45,7 @@ class _unitScreenState extends State<unitScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Padding(
@@ -65,12 +65,12 @@ class _unitScreenState extends State<unitScreen> {
                   // mainAxisAlignment: MainAxisAlignment.start,
                   // crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Row(
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           width: 5,
                         ),
                         Padding(
@@ -119,7 +119,7 @@ class _unitScreenState extends State<unitScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     SizedBox(
@@ -193,7 +193,7 @@ class _unitScreenState extends State<unitScreen> {
                         child: Column(
                           children: [
                              Padding(
-                              padding: EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(8.0),
                               child: SizedBox(
                                 width: double.infinity,
                                 child: Text(
@@ -232,7 +232,7 @@ class _unitScreenState extends State<unitScreen> {
                               ),
                             ),
                              Padding(
-                              padding: EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(8.0),
                               child: SizedBox(
                                 width: double.infinity,
                                 child: Text(
@@ -255,7 +255,7 @@ class _unitScreenState extends State<unitScreen> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                AddApplicant()));
+                                                const AddApplicant()));
                                   },
                                   child: const Text(
                                     'Create Applicant',
@@ -434,7 +434,7 @@ class _LeasesTableState extends State<LeasesTable> {
           color: Colors.white,
           child: Container(
             height: 55,
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(4.0),
@@ -453,17 +453,17 @@ class _LeasesTableState extends State<LeasesTable> {
                     _changeRowsPerPage(newValue);
                   }
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_drop_down,
                   size: 40,
                 ),
-                style: TextStyle(color: Colors.black, fontSize: 17),
+                style: const TextStyle(color: Colors.black, fontSize: 17),
                 dropdownColor: Colors.white,
               ),
             ),
           ),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         IconButton(
           icon: FaIcon(
             size: 30,
@@ -481,7 +481,7 @@ class _LeasesTableState extends State<LeasesTable> {
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         IconButton(
           icon: FaIcon(
@@ -582,7 +582,7 @@ class _LeasesTableState extends State<LeasesTable> {
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this RentalOwner!",
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       buttons: [
@@ -600,7 +600,7 @@ class _LeasesTableState extends State<LeasesTable> {
           ),
         ),
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -654,7 +654,7 @@ class _LeasesTableState extends State<LeasesTable> {
     return Container(
       decoration: BoxDecoration(
         color: blueColor,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(13),
           topRight: Radius.circular(13),
         ),
@@ -665,7 +665,7 @@ class _LeasesTableState extends State<LeasesTable> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -695,21 +695,21 @@ class _LeasesTableState extends State<LeasesTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Status", style: TextStyle(color: Colors.white))
-                        : Text("Status", style: TextStyle(color: Colors.white)),
+                        ? const Text("Status", style: TextStyle(color: Colors.white))
+                        : const Text("Status", style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
+                    const SizedBox(width: 3),
                     ascending1
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 5),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 5),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -744,19 +744,19 @@ class _LeasesTableState extends State<LeasesTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Tenants", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                    const Text("Tenants", style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 5),
                     ascending2
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -792,19 +792,19 @@ class _LeasesTableState extends State<LeasesTable> {
                 },
                 child: Row(
                   children: [
-                    Text("   Type", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                    const Text("   Type", style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 5),
                     ascending3
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -832,7 +832,7 @@ class _LeasesTableState extends State<LeasesTable> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
            Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: SizedBox(
               width: double.infinity,
               child: Text(
@@ -851,7 +851,7 @@ class _LeasesTableState extends State<LeasesTable> {
                 future: futureLease,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
+                    return const Center(
                         child: SpinKitFadingCircle(
                       color: Colors.black,
                       size: 40.0,
@@ -859,7 +859,7 @@ class _LeasesTableState extends State<LeasesTable> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(
+                    return const Center(
                         child: Text(
                             'You don\'t have any lease for this unit right now ..'));
                   } else {
@@ -873,9 +873,9 @@ class _LeasesTableState extends State<LeasesTable> {
                     return SingleChildScrollView(
                       child: Column(
                         children: [
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           _buildHeaders(),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           Container(
                             decoration: BoxDecoration(
                                 border: Border.all(color: blueColor)),
@@ -928,11 +928,11 @@ class _LeasesTableState extends State<LeasesTable> {
                                                 },
                                                 child: Container(
                                                   margin:
-                                                      EdgeInsets.only(left: 5),
+                                                      const EdgeInsets.only(left: 5),
                                                   padding: !isExpanded
-                                                      ? EdgeInsets.only(
+                                                      ? const EdgeInsets.only(
                                                           bottom: 10)
-                                                      : EdgeInsets.only(
+                                                      : const EdgeInsets.only(
                                                           top: 10),
                                                   child: FaIcon(
                                                     isExpanded
@@ -948,7 +948,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 4,
                                               ),
                                               Expanded(
@@ -1015,9 +1015,9 @@ class _LeasesTableState extends State<LeasesTable> {
                                       ),
                                       if (isExpanded)
                                         Container(
-                                          padding: EdgeInsets.symmetric(
+                                          padding: const EdgeInsets.symmetric(
                                               horizontal: 8.0),
-                                          margin: EdgeInsets.only(bottom: 20),
+                                          margin: const EdgeInsets.only(bottom: 20),
                                           child: SingleChildScrollView(
                                             child: Column(
                                               children: [
@@ -1056,7 +1056,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                                                 TextSpan(
                                                                   text:
                                                                       '${rentals.startDate} - ${rentals.endDate}',
-                                                                  style: TextStyle(
+                                                                  style: const TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .w700,
@@ -1089,7 +1089,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                                                 TextSpan(
                                                                   text:
                                                                       '${rentals.amount}',
-                                                                  style: TextStyle(
+                                                                  style: const TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .w700,
@@ -1115,19 +1115,19 @@ class _LeasesTableState extends State<LeasesTable> {
                               }).toList(),
                             ),
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Row(
                                 children: [
                                   // Text('Rows per page:'),
-                                  SizedBox(width: 10),
+                                  const SizedBox(width: 10),
                                   Material(
                                     elevation: 3,
                                     child: Container(
                                       height: 40,
-                                      padding: EdgeInsets.symmetric(
+                                      padding: const EdgeInsets.symmetric(
                                           horizontal: 12.0),
                                       decoration: BoxDecoration(
                                         border: Border.all(color: Colors.grey),
@@ -1225,7 +1225,7 @@ class _LeasesTableState extends State<LeasesTable> {
               future: futureLease,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
+                  return const Center(
                       child: SpinKitFadingCircle(
                     color: Colors.black,
                     size: 40.0,
@@ -1233,7 +1233,7 @@ class _LeasesTableState extends State<LeasesTable> {
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(
+                  return const Center(
                       child: Text(
                           'You don\'t have any lease for this unit right now ..'));
                 } else {
@@ -1268,7 +1268,7 @@ class _LeasesTableState extends State<LeasesTable> {
                           child: Container(
                             width: MediaQuery.of(context).size.width * .91,
                             child: Table(
-                              defaultColumnWidth: IntrinsicColumnWidth(),
+                              defaultColumnWidth: const IntrinsicColumnWidth(),
                               children: [
                                 TableRow(
                                   decoration:
@@ -1288,7 +1288,7 @@ class _LeasesTableState extends State<LeasesTable> {
                                   ],
                                 ),
                                 TableRow(
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     border: Border.symmetric(
                                         horizontal: BorderSide.none),
                                   ),
@@ -1338,8 +1338,8 @@ class _LeasesTableState extends State<LeasesTable> {
                             ),
                           ),
                         ),
-                        if (_tableData.isEmpty) Text("No Search Records Found"),
-                        SizedBox(height: 25),
+                        if (_tableData.isEmpty) const Text("No Search Records Found"),
+                        const SizedBox(height: 25),
                         _buildPaginationControls(),
                       ],
                     ),
@@ -1535,7 +1535,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
           color: Colors.white,
           child: Container(
             height: 55,
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(4.0),
@@ -1554,17 +1554,17 @@ class _AppliancesPartState extends State<AppliancesPart> {
                     _changeRowsPerPage(newValue);
                   }
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_drop_down,
                   size: 40,
                 ),
-                style: TextStyle(color: Colors.black, fontSize: 17),
+                style: const TextStyle(color: Colors.black, fontSize: 17),
                 dropdownColor: Colors.white,
               ),
             ),
           ),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         IconButton(
           icon: FaIcon(
             size: 30,
@@ -1582,7 +1582,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         IconButton(
           icon: FaIcon(
@@ -1683,7 +1683,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this RentalOwner!",
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       buttons: [
@@ -1701,7 +1701,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
           ),
         ),
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -1767,7 +1767,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
     return Container(
       decoration: BoxDecoration(
         color: blueColor,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(13),
           topRight: Radius.circular(13),
         ),
@@ -1778,7 +1778,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -1808,21 +1808,21 @@ class _AppliancesPartState extends State<AppliancesPart> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Name", style: TextStyle(color: Colors.white))
-                        : Text("Name", style: TextStyle(color: Colors.white)),
+                        ? const Text("Name", style: TextStyle(color: Colors.white))
+                        : const Text("Name", style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
+                    const SizedBox(width: 3),
                     ascending1
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -1857,19 +1857,19 @@ class _AppliancesPartState extends State<AppliancesPart> {
                 },
                 child: Row(
                   children: [
-                    Text("Description", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                    const Text("Description", style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 5),
                     ascending2
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -1905,19 +1905,19 @@ class _AppliancesPartState extends State<AppliancesPart> {
                 },
                 child: Row(
                   children: [
-                    Text("   Action", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                    const Text("   Action", style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 5),
                     ascending3
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -2020,7 +2020,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                       onSurface: Colors.black,
                                                     ),
                                                     buttonTheme:
-                                                        ButtonThemeData(
+                                                        const ButtonThemeData(
                                                       textTheme: ButtonTextTheme
                                                           .primary,
                                                     ),
@@ -2220,7 +2220,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                           ],
                                         ),
                                         if (iserror)
-                                          Text(
+                                          const Text(
                                             "Please fill in all fields correctly.",
                                             style: TextStyle(
                                                 color: Colors.redAccent),
@@ -2259,7 +2259,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                     future: futureAppliences,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
+                        return const Center(
                             child: SpinKitFadingCircle(
                           color: Colors.black,
                           size: 40.0,
@@ -2267,7 +2267,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Center(
+                        return const Center(
                             child: Text(
                                 'You don\'t have any applience for this unit right now ..'));
                       } else {
@@ -2297,9 +2297,9 @@ class _AppliancesPartState extends State<AppliancesPart> {
                         return SingleChildScrollView(
                           child: Column(
                             children: [
-                              SizedBox(height: 5),
+                              const SizedBox(height: 5),
                               _buildHeaders(),
-                              SizedBox(height: 20),
+                              const SizedBox(height: 20),
                               Container(
                                 decoration: BoxDecoration(
                                     border: Border.all(color: blueColor)),
@@ -2354,12 +2354,12 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                       });
                                                     },
                                                     child: Container(
-                                                      margin: EdgeInsets.only(
+                                                      margin: const EdgeInsets.only(
                                                           left: 5),
                                                       padding: !isExpanded
-                                                          ? EdgeInsets.only(
+                                                          ? const EdgeInsets.only(
                                                               bottom: 10)
-                                                          : EdgeInsets.only(
+                                                          : const EdgeInsets.only(
                                                               top: 10),
                                                       child: FaIcon(
                                                         isExpanded
@@ -2423,7 +2423,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                     child: Container(
                                                       child: Row(
                                                         children: [
-                                                          SizedBox(
+                                                          const SizedBox(
                                                             width: 10,
                                                           ),
                                                           InkWell(
@@ -2452,7 +2452,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                               ),
                                                             ),
                                                           ),
-                                                          SizedBox(
+                                                          const SizedBox(
                                                             width: 10,
                                                           ),
                                                           InkWell(
@@ -2490,10 +2490,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                           ),
                                           if (isExpanded)
                                             Container(
-                                              padding: EdgeInsets.symmetric(
+                                              padding: const EdgeInsets.symmetric(
                                                   horizontal: 8.0),
                                               margin:
-                                                  EdgeInsets.only(bottom: 20),
+                                                  const EdgeInsets.only(bottom: 20),
                                               child: SingleChildScrollView(
                                                 child: Column(
                                                   children: [
@@ -2533,7 +2533,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                     TextSpan(
                                                                       text: formatDate(
                                                                           '${rentals.installedDate}'),
-                                                                      style: TextStyle(
+                                                                      style: const TextStyle(
                                                                           fontWeight: FontWeight
                                                                               .w700,
                                                                           color:
@@ -2565,19 +2565,19 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                   }).toList(),
                                 ),
                               ),
-                              SizedBox(height: 20),
+                              const SizedBox(height: 20),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Row(
                                     children: [
                                       // Text('Rows per page:'),
-                                      SizedBox(width: 10),
+                                      const SizedBox(width: 10),
                                       Material(
                                         elevation: 3,
                                         child: Container(
                                           height: 40,
-                                          padding: EdgeInsets.symmetric(
+                                          padding: const EdgeInsets.symmetric(
                                               horizontal: 12.0),
                                           decoration: BoxDecoration(
                                             border:
@@ -2676,7 +2676,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                   future: futureAppliences,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
+                      return const Center(
                           child: SpinKitFadingCircle(
                         color: Colors.black,
                         size: 40.0,
@@ -2684,7 +2684,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(
+                      return const Center(
                           child: Text(
                               'You don\'t have any applience for this unit right now ..'));
                     } else {
@@ -2717,7 +2717,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                               child: Container(
                                 width: MediaQuery.of(context).size.width * .91,
                                 child: Table(
-                                  defaultColumnWidth: IntrinsicColumnWidth(),
+                                  defaultColumnWidth: const IntrinsicColumnWidth(),
                                   children: [
                                     TableRow(
                                       decoration:
@@ -2737,7 +2737,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                       ],
                                     ),
                                     TableRow(
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         border: Border.symmetric(
                                             horizontal: BorderSide.none),
                                       ),
@@ -2790,8 +2790,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
                               ),
                             ),
                             if (_tableData.isEmpty)
-                              Text("No Search Records Found"),
-                            SizedBox(height: 25),
+                              const Text("No Search Records Found"),
+                            const SizedBox(height: 25),
                             _buildPaginationControls(),
                           ],
                         ),

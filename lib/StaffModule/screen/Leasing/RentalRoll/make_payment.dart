@@ -1081,7 +1081,7 @@ class _MakePaymentState extends State<MakePayment> {
           "4. If no Processor ID exists, add one and check the checkbox, then save your changes.",
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "OK",
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
@@ -1112,7 +1112,7 @@ class _MakePaymentState extends State<MakePayment> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Padding(
@@ -1146,7 +1146,7 @@ class _MakePaymentState extends State<MakePayment> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Form(
@@ -1214,7 +1214,7 @@ class _MakePaymentState extends State<MakePayment> {
                                               );
                                             }).toList(),
                                             // Add a special menu item for "Add New Tenant"
-                                            DropdownMenuItem<String>(
+                                            const DropdownMenuItem<String>(
                                               value: 'external_source',
                                               child: Text(
                                                 'External Source',
@@ -1308,7 +1308,7 @@ class _MakePaymentState extends State<MakePayment> {
                                               const EdgeInsets.only(top: 5),
                                           child: Text(
                                             state.errorText ?? '',
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                                 color: Colors.red,
                                                 fontSize: 12),
                                           ),
@@ -1412,12 +1412,12 @@ class _MakePaymentState extends State<MakePayment> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text('Received From *',
+                                          const Text('Received From *',
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.grey)),
-                                          SizedBox(height: 5),
+                                          const SizedBox(height: 5),
                                           tenants.isEmpty
                                               ? const Center(
                                                   child: SpinKitFadingCircle(
@@ -1528,19 +1528,19 @@ class _MakePaymentState extends State<MakePayment> {
                                         ],
                                       ),
                                     ),
-                                    SizedBox(width: 16),
+                                    const SizedBox(width: 16),
                                     // Second Column
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text('Date',
+                                          const Text('Date',
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.grey)),
-                                          SizedBox(height: 5),
+                                          const SizedBox(height: 5),
                                           CustomTextField(
                                             onTap: () async {
                                               DateTime? pickedDate =
@@ -1616,7 +1616,7 @@ class _MakePaymentState extends State<MakePayment> {
                                             hintText: 'dd-mm-yyyy',
                                             controller: _startDate,
                                           ),
-                                          SizedBox(height: 5),
+                                          const SizedBox(height: 5),
                                         ],
                                       ),
                                     ),
@@ -1865,12 +1865,12 @@ class _MakePaymentState extends State<MakePayment> {
                             const SizedBox(
                               height: 12,
                             ),
-                            SizedBox(height: 10),
-                            Padding(
-                              padding: const EdgeInsets.all(4.0),
+                            const SizedBox(height: 10),
+                            const Padding(
+                              padding: EdgeInsets.all(4.0),
                               child: Text("Reference"),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 5,
                             ),
                             Padding(
@@ -1888,7 +1888,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 controller: reference,
                               ),
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             if (showCardNumberField) ...[
                               const SizedBox(height: 15),
                               Container(
@@ -1925,7 +1925,7 @@ class _MakePaymentState extends State<MakePayment> {
                                       ),
                                       cardDetails.isEmpty
                                           ? Container(
-                                              child: Center(
+                                              child: const Center(
                                                   child: Text(
                                                       'No Cards Avaiable')),
                                             )
@@ -2165,8 +2165,8 @@ class _MakePaymentState extends State<MakePayment> {
                                                       BorderRadius.circular(
                                                           5.0),
                                                   color: blueColor,
-                                                  boxShadow: [
-                                                    const BoxShadow(
+                                                  boxShadow: const [
+                                                    BoxShadow(
                                                       color: Colors.grey,
                                                       offset: Offset(
                                                           0.0, 1.0), //(x,y)
@@ -2212,12 +2212,12 @@ class _MakePaymentState extends State<MakePayment> {
                               const SizedBox(height: 15),
                             ],
                             if (showCheckNumberField) ...[
-                              SizedBox(height: 10),
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
+                              const SizedBox(height: 10),
+                              const Padding(
+                                padding: EdgeInsets.all(4.0),
                                 child: Text("Check Number"),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                               Padding(
@@ -2234,15 +2234,15 @@ class _MakePaymentState extends State<MakePayment> {
                                   controller: checknumber,
                                 ),
                               ),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                             ],
                             if (showACHFields) ...[
-                              SizedBox(height: 10),
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
+                              const SizedBox(height: 10),
+                              const Padding(
+                                padding: EdgeInsets.all(4.0),
                                 child: Text("Bank Routing Number"),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                               Padding(
@@ -2259,12 +2259,12 @@ class _MakePaymentState extends State<MakePayment> {
                                   controller: bankrountingnum,
                                 ),
                               ),
-                              SizedBox(height: 10),
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
+                              const SizedBox(height: 10),
+                              const Padding(
+                                padding: EdgeInsets.all(4.0),
                                 child: Text("Bank Account Number"),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                               Padding(
@@ -2281,7 +2281,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   controller: accountnum,
                                 ),
                               ),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                               if (MediaQuery.of(context).size.width < 500)
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
@@ -2398,7 +2398,7 @@ class _MakePaymentState extends State<MakePayment> {
                                             child: DropdownButtonHideUnderline(
                                               child: DropdownButton2<String>(
                                                 isExpanded: true,
-                                                hint: Text('Select Account'),
+                                                hint: const Text('Select Account'),
                                                 value: selectedAccount,
                                                 items:
                                                     _selecttype.map((method) {
@@ -2484,7 +2484,7 @@ class _MakePaymentState extends State<MakePayment> {
                                         ],
                                       ),
                                     ),
-                                    Spacer(),
+                                    const Spacer(),
                                     // Second Column
                                     Expanded(
                                       child: Column(
@@ -2493,7 +2493,7 @@ class _MakePaymentState extends State<MakePayment> {
                                           DropdownButtonHideUnderline(
                                             child: DropdownButton2<String>(
                                               isExpanded: true,
-                                              hint: Text(
+                                              hint: const Text(
                                                   'Select Account Holder Type'),
                                               value: _selectedHoldertype,
                                               items:
@@ -2572,15 +2572,15 @@ class _MakePaymentState extends State<MakePayment> {
                                         ],
                                       ),
                                     ),
-                                    SizedBox(width: 5),
+                                    const SizedBox(width: 5),
                                   ],
                                 ),
-                              SizedBox(height: 10),
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
+                              const SizedBox(height: 10),
+                              const Padding(
+                                padding: EdgeInsets.all(4.0),
                                 child: Text("Name of the ACH account"),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                               Padding(
@@ -2597,7 +2597,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   controller: achname,
                                 ),
                               ),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                               if (MediaQuery.of(context).size.width < 500)
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
@@ -2801,15 +2801,15 @@ class _MakePaymentState extends State<MakePayment> {
                               //     },
                               //   ),
                               // ),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                             ],
                             if (showCashiersFields) ...[
-                              SizedBox(height: 10),
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
+                              const SizedBox(height: 10),
+                              const Padding(
+                                padding: EdgeInsets.all(4.0),
                                 child: Text("Check Number"),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                               Padding(
@@ -2827,15 +2827,15 @@ class _MakePaymentState extends State<MakePayment> {
                                   controller: checknumber,
                                 ),
                               ),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                             ],
                             if (showMoneyorderFields) ...[
-                              SizedBox(height: 10),
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
+                              const SizedBox(height: 10),
+                              const Padding(
+                                padding: EdgeInsets.all(4.0),
                                 child: Text("Check Number"),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                               Padding(
@@ -2853,16 +2853,16 @@ class _MakePaymentState extends State<MakePayment> {
                                   controller: checknumber,
                                 ),
                               ),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                             ],
                             if (showMenualFields) ...[
                               //checkfield is not required
-                              SizedBox(height: 10),
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
+                              const SizedBox(height: 10),
+                              const Padding(
+                                padding: EdgeInsets.all(4.0),
                                 child: Text("Check Number"),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                               Padding(
@@ -2880,7 +2880,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   controller: checknumber,
                                 ),
                               ),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                             ],
                             const SizedBox(
                               height: 8,
@@ -2911,9 +2911,9 @@ class _MakePaymentState extends State<MakePayment> {
                       const SizedBox(
                         height: 10,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10, right: 10),
-                        child: const Text('Apply Payment to Balances',
+                      const Padding(
+                        padding: EdgeInsets.only(left: 10, right: 10),
+                        child: Text('Apply Payment to Balances',
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
@@ -2923,10 +2923,10 @@ class _MakePaymentState extends State<MakePayment> {
                         height: 10,
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 10, right: 10),
+                        padding: const EdgeInsets.only(left: 10, right: 10),
                         child: Text(
                             'Current Balances : ${balance.toStringAsFixed(2)}',
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.grey)),
@@ -2959,13 +2959,13 @@ class _MakePaymentState extends State<MakePayment> {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text('Charge ${index + 1}',
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                   fontSize: 18.0,
                                                   fontWeight: FontWeight.bold)),
                                           Align(
                                             alignment: Alignment.centerRight,
                                             child: IconButton(
-                                              icon: Icon(Icons.close),
+                                              icon: const Icon(Icons.close),
                                               onPressed: () {
                                                 deleteRow(index);
                                               },
@@ -2973,9 +2973,9 @@ class _MakePaymentState extends State<MakePayment> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 12.0),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
+                                      const SizedBox(height: 12.0),
+                                      const Padding(
+                                        padding: EdgeInsets.only(
                                           left: 8,
                                           right: 8,
                                         ),
@@ -2983,7 +2983,7 @@ class _MakePaymentState extends State<MakePayment> {
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold)),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 8,
                                       ),
                                       Padding(
@@ -3203,11 +3203,11 @@ class _MakePaymentState extends State<MakePayment> {
                                                                 .all(true),
                                                       ),
                                                     ),
-                                                    hint: Padding(
+                                                    hint: const Padding(
                                                       padding:
-                                                          const EdgeInsets.only(
+                                                          EdgeInsets.only(
                                                               left: 10),
-                                                      child: const Text(
+                                                      child: Text(
                                                           'Select an account'),
                                                     ),
                                                   ),
@@ -3232,9 +3232,9 @@ class _MakePaymentState extends State<MakePayment> {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(height: 12.0),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
+                                      const SizedBox(height: 12.0),
+                                      const Padding(
+                                        padding: EdgeInsets.only(
                                           left: 8,
                                           right: 8,
                                         ),
@@ -3242,7 +3242,7 @@ class _MakePaymentState extends State<MakePayment> {
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold)),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 8,
                                       ),
                                       Padding(
@@ -3273,8 +3273,8 @@ class _MakePaymentState extends State<MakePayment> {
                                               updateAmount(index, value),
                                         ),
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
+                                      const Padding(
+                                        padding: EdgeInsets.only(
                                           left: 8,
                                           right: 8,
                                         ),
@@ -3282,7 +3282,7 @@ class _MakePaymentState extends State<MakePayment> {
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold)),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 8,
                                       ),
                                       Padding(
@@ -3297,24 +3297,24 @@ class _MakePaymentState extends State<MakePayment> {
                                           child: Container(
                                             height: 50,
                                             decoration: BoxDecoration(
-                                              color: Color(0xFFb0b6c3),
+                                              color: const Color(0xFFb0b6c3),
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                             ),
                                             child: Row(
                                               children: [
-                                                SizedBox(
+                                                const SizedBox(
                                                   width: 10,
                                                 ),
-                                                Text("Balance :",
+                                                const Text("Balance :",
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold)),
-                                                SizedBox(width: 12.0),
+                                                const SizedBox(width: 12.0),
                                                 Text(
                                                     charges_balances[index]
                                                         .toStringAsFixed(2),
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold)),
                                               ],
@@ -3322,7 +3322,7 @@ class _MakePaymentState extends State<MakePayment> {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(height: 12.0),
+                                      const SizedBox(height: 12.0),
                                     ],
                                   ),
                                 ),
@@ -3344,28 +3344,28 @@ class _MakePaymentState extends State<MakePayment> {
                             children: [
                               TableRow(children: [
                                 Padding(
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   child: Text('Account',
                                       style: TextStyle(
                                           color: blueColor,
                                           fontWeight: FontWeight.bold)),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   child: Text('Amount',
                                       style: TextStyle(
                                           color: blueColor,
                                           fontWeight: FontWeight.bold)),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   child: Text('Balance',
                                       style: TextStyle(
                                           color: blueColor,
                                           fontWeight: FontWeight.bold)),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   child: Text('',
                                       style: TextStyle(
                                           color: blueColor,
@@ -3531,20 +3531,20 @@ class _MakePaymentState extends State<MakePayment> {
                                       child: Container(
                                         height: 50,
                                         decoration: BoxDecoration(
-                                          color: Color(0xFFb0b6c3),
+                                          color: const Color(0xFFb0b6c3),
                                           borderRadius:
                                               BorderRadius.circular(10),
                                         ),
                                         child: Row(
                                           children: [
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 10,
                                             ),
-                                            SizedBox(width: 12.0),
+                                            const SizedBox(width: 12.0),
                                             Text(
                                                 charges_balances[index]
                                                     .toString(),
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                     fontWeight:
                                                         FontWeight.bold)),
                                           ],
@@ -3553,9 +3553,9 @@ class _MakePaymentState extends State<MakePayment> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.all(8.0),
+                                    padding: const EdgeInsets.all(8.0),
                                     child: IconButton(
-                                      icon: Icon(Icons.close,
+                                      icon: const Icon(Icons.close,
                                           color: Colors.black),
                                       onPressed: () {
                                         deleteRow(index);
@@ -3585,11 +3585,11 @@ class _MakePaymentState extends State<MakePayment> {
                                                       fontWeight: FontWeight.bold)),
                                             ),*/
                                 Padding(
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   child: Text(
                                       '\$${totalAmount.toStringAsFixed(2)}'),
                                 ),
-                                Padding(
+                                const Padding(
                                   padding: EdgeInsets.all(8.0),
                                   child: Text(''),
                                 ),
@@ -3606,8 +3606,8 @@ class _MakePaymentState extends State<MakePayment> {
                       if (MediaQuery.of(context).size.width < 500)
                         Row(
                           children: [
-                            SizedBox(width: 10),
-                            Padding(
+                            const SizedBox(width: 10),
+                            const Padding(
                               padding: EdgeInsets.all(8.0),
                               child: Text('Total',
                                   style:
@@ -3624,7 +3624,7 @@ class _MakePaymentState extends State<MakePayment> {
                       const SizedBox(height: 5),
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
                           GestureDetector(
@@ -3644,7 +3644,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
                                   color: blueColor,
-                                  boxShadow: [
+                                  boxShadow: const [
                                     BoxShadow(
                                       color: Colors.grey,
                                       offset: Offset(0.0, 1.0), //(x,y)
@@ -3654,7 +3654,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 ),
                                 child: Center(
                                   child: isLoading
-                                      ? SpinKitFadingCircle(
+                                      ? const SpinKitFadingCircle(
                                           color: Colors.white,
                                           size: 25.0,
                                         )
@@ -3681,7 +3681,7 @@ class _MakePaymentState extends State<MakePayment> {
                           padding: const EdgeInsets.only(top: 16.0),
                           child: Text(
                             validationMessage!,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Colors.red, fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -3721,10 +3721,10 @@ class _MakePaymentState extends State<MakePayment> {
                                     ),
                                   ),
                                   onPressed: _pickPdfFiles,
-                                  child: Text('Upload'),
+                                  child: const Text('Upload'),
                                 ),
                               ),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                               // Flexible(
                               //   //fit: FlexFit.loose,
                               //   child: ListView.builder(
@@ -3802,7 +3802,7 @@ class _MakePaymentState extends State<MakePayment> {
                                               ? double.parse(
                                                   amountController.text)
                                               : 0.0),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 5,
                                     ),
                                     if (_selectedPaymentMethod == "Card")
@@ -3817,7 +3817,7 @@ class _MakePaymentState extends State<MakePayment> {
                                     if (_selectedPaymentMethod == "ACH")
                                       buildAmountContainer('Surcharge included',
                                           surchargecount!),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 5,
                                     ),
                                     buildAmountContainer(
@@ -3844,7 +3844,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   ],
                                 ),
                               ),
-                              SizedBox(height: 5),
+                              const SizedBox(height: 5),
                             ],
                           ),
                         ),
@@ -3974,13 +3974,13 @@ class _MakePaymentState extends State<MakePayment> {
                                       title: "Payment Failed!",
                                       desc:
                                           "${e.toString().split('Exception:')[1].toString().trimLeft()}",
-                                      style: AlertStyle(
+                                      style: const AlertStyle(
                                         backgroundColor: Colors.white,
                                         //  overlayColor: Colors.black.withOpacity(.8)
                                       ),
                                       buttons: [
                                         DialogButton(
-                                          child: Text(
+                                          child: const Text(
                                             "Ok",
                                             style: TextStyle(
                                                 color: Colors.white,
@@ -4053,13 +4053,13 @@ class _MakePaymentState extends State<MakePayment> {
                                     title: "Payment Failed!",
                                     desc:
                                         "${e.toString().split('Exception:')[1].toString().trimLeft()}",
-                                    style: AlertStyle(
+                                    style: const AlertStyle(
                                       backgroundColor: Colors.white,
                                       //  overlayColor: Colors.black.withOpacity(.8)
                                     ),
                                     buttons: [
                                       DialogButton(
-                                        child: Text(
+                                        child: const Text(
                                           "Ok",
                                           style: TextStyle(
                                               color: Colors.white,
@@ -4203,7 +4203,7 @@ class _MakePaymentState extends State<MakePayment> {
                               print(cardDetails[selectedcardindex!].email);*/
                           },
                           child: _isLoading
-                              ? Center(
+                              ? const Center(
                                   child: SpinKitFadingCircle(
                                     color: Colors.white,
                                     size: 50.0,
@@ -4255,7 +4255,7 @@ class _MakePaymentState extends State<MakePayment> {
     return Container(
       height: 50,
       width: double.infinity,
-      margin: EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: Colors.grey[200],
         border: Border.all(
@@ -4278,10 +4278,10 @@ class _MakePaymentState extends State<MakePayment> {
             ),
             Text(
               '\$$amount',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: const Color.fromRGBO(21, 43, 83, 0.8),
+                color: Color.fromRGBO(21, 43, 83, 0.8),
               ),
             ),
           ],
@@ -4326,13 +4326,13 @@ class _MakePaymentState extends State<MakePayment> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
-        SizedBox(height: 8.0),
+        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8.0),
         Material(
           elevation: 3,
           borderRadius: BorderRadius.circular(5),
           child: Container(
-            padding: EdgeInsets.only(left: 10),
+            padding: const EdgeInsets.only(left: 10),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(5),

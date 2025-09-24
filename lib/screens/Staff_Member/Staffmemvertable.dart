@@ -110,16 +110,16 @@ class _StaffTableState extends State<StaffTable> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-          color: Color(0xFFF4F8FF),
+          color: const Color(0xFFF4F8FF),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Color(0xFFDBE0E5))),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -153,18 +153,18 @@ class _StaffTableState extends State<StaffTable> {
                         : Text("    Name",
                             style: TextStyle(
                                 color: blueColor, fontWeight: FontWeight.bold)),
-                    SizedBox(width: 3),
+                    const SizedBox(width: 3),
                     ascending1
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -175,7 +175,7 @@ class _StaffTableState extends State<StaffTable> {
                 ),
               ),
             ),
-            Spacer(),
+            const Spacer(),
             Expanded(
               child: InkWell(
                 onTap: () {
@@ -206,7 +206,7 @@ class _StaffTableState extends State<StaffTable> {
                             color: blueColor,
                             fontSize: 15,
                             fontWeight: FontWeight.bold)),
-                    SizedBox(
+                    const SizedBox(
                       width: 12,
                     ),
                     // SizedBox(width: 5),
@@ -379,73 +379,73 @@ class _StaffTableState extends State<StaffTable> {
                   Text("Name",
                       style: TextStyle(
                           fontWeight: FontWeight.bold, color: blueColor)),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   Container(
                     height: 45,
                     decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xFFCED4DA)),
+                      border: Border.all(color: const Color(0xFFCED4DA)),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: TextField(
                       controller: nameController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         contentPadding: EdgeInsets.symmetric(horizontal: 12),
                         border: InputBorder.none,
                       ),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Text("Designation",
                       style: TextStyle(
                           fontWeight: FontWeight.bold, color: blueColor)),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   Container(
                     height: 45,
                     decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xFFCED4DA)),
+                      border: Border.all(color: const Color(0xFFCED4DA)),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: TextField(
                       controller: designationController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         contentPadding: EdgeInsets.symmetric(horizontal: 12),
                         border: InputBorder.none,
                       ),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Text("Phone Number",
                       style: TextStyle(
                           fontWeight: FontWeight.bold, color: blueColor)),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   Container(
                     height: 45,
                     decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xFFCED4DA)),
+                      border: Border.all(color: const Color(0xFFCED4DA)),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: TextField(
                       controller: phoneController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         contentPadding: EdgeInsets.symmetric(horizontal: 12),
                         border: InputBorder.none,
                       ),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Text("Email",
                       style: TextStyle(
                           fontWeight: FontWeight.bold, color: blueColor)),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   Container(
                     height: 45,
                     decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xFFCED4DA)),
+                      border: Border.all(color: const Color(0xFFCED4DA)),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: TextField(
                       controller: emailController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         contentPadding: EdgeInsets.symmetric(horizontal: 12),
                         border: InputBorder.none,
                       ),
@@ -466,7 +466,7 @@ class _StaffTableState extends State<StaffTable> {
                           border: Border.all(color: Colors.grey.shade300),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Center(
+                        child: const Center(
                           child: Text(
                             "Cancel",
                             style: TextStyle(
@@ -478,7 +478,7 @@ class _StaffTableState extends State<StaffTable> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 15),
+                  const SizedBox(width: 15),
                   Expanded(
                     child: InkWell(
                       onTap: () async {
@@ -529,7 +529,7 @@ class _StaffTableState extends State<StaffTable> {
                         ),
                         child: Center(
                           child: isLoading
-                              ? SizedBox(
+                              ? const SizedBox(
                                   width: 20,
                                   height: 20,
                                   child: CircularProgressIndicator(
@@ -537,7 +537,7 @@ class _StaffTableState extends State<StaffTable> {
                                     strokeWidth: 2,
                                   ),
                                 )
-                              : Text(
+                              : const Text(
                                   "Save",
                                   style: TextStyle(
                                     color: Colors.white,
@@ -567,14 +567,14 @@ class _StaffTableState extends State<StaffTable> {
       desc: "Once deleted, you will not be able to recover this staff member!",
       content: Column(
         children: <Widget>[
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           SizedBox(
             height: 45,
             child: TextField(
               controller: reason,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Enter reason for deletion',
                   contentPadding: EdgeInsets.only(top: 8, left: 15)),
@@ -582,12 +582,12 @@ class _StaffTableState extends State<StaffTable> {
           ),
         ],
       ),
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -680,14 +680,14 @@ class _StaffTableState extends State<StaffTable> {
       title: "Plan Limitation",
       desc:
           "The limit for adding staffmember according to the plan has been reached.",
-      style: AlertStyle(
+      style: const AlertStyle(
           backgroundColor: Color.fromRGBO(255, 255, 255, 1),
           descStyle: TextStyle(fontSize: 14)
           //  overlayColor: Colors.black.withOpacity(.8)
           ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "OK",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -728,7 +728,7 @@ class _StaffTableState extends State<StaffTable> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Padding(
                     padding: const EdgeInsets.all(0),
                     child: Row(
@@ -745,7 +745,7 @@ class _StaffTableState extends State<StaffTable> {
                           onTap: () async {
                             final result = await Navigator.of(context).push(
                                 MaterialPageRoute(
-                                    builder: (context) => Add_staffmember()));
+                                    builder: (context) => const Add_staffmember()));
                             if (result == true) {
                               setState(() {
                                 futureStaffMembers =
@@ -779,7 +779,7 @@ class _StaffTableState extends State<StaffTable> {
                               color: blueColor,
                               borderRadius: BorderRadius.circular(5),
                               boxShadow: [
-                                BoxShadow(
+                                const BoxShadow(
                                   color: Colors.grey,
                                   offset: Offset(0.0, 1.0),
                                   blurRadius: 6.0,
@@ -801,30 +801,30 @@ class _StaffTableState extends State<StaffTable> {
                             ),
                           ),
                         ),
-                        SizedBox(width: 5),
+                        const SizedBox(width: 5),
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 6),
+                          const SizedBox(width: 6),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 22),
+                          const SizedBox(width: 22),
                       ],
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   //search
                   Padding(
-                    padding: EdgeInsets.only(left: 11, right: 11),
+                    padding: const EdgeInsets.only(left: 11, right: 11),
                     child: Row(
                       children: [
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 19),
+                          const SizedBox(width: 19),
                         Expanded(
                           child: Material(
                             elevation: 3,
                             borderRadius: BorderRadius.circular(8),
                             child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
                               // height: 40,
                               height: MediaQuery.of(context).size.width < 500
                                   ? 49
@@ -835,7 +835,7 @@ class _StaffTableState extends State<StaffTable> {
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Color(0xFF8A95A8)),
+                                border: Border.all(color: const Color(0xFF8A95A8)),
                               ),
                               child: TextField(
                                 style: TextStyle(
@@ -854,13 +854,13 @@ class _StaffTableState extends State<StaffTable> {
                                   border: InputBorder.none,
                                   hintText: "Search here...",
                                   hintStyle: TextStyle(
-                                      color: Color(0xFF8A95A8),
+                                      color: const Color(0xFF8A95A8),
                                       fontSize:
                                           MediaQuery.of(context).size.width <
                                                   500
                                               ? 14
                                               : 18),
-                                  contentPadding: (EdgeInsets.only(
+                                  contentPadding: (const EdgeInsets.only(
                                       left: 5, bottom: 10, top: 5)),
                                 ),
                               ),
@@ -868,14 +868,14 @@ class _StaffTableState extends State<StaffTable> {
                           ),
                         ),
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 6),
+                          const SizedBox(width: 6),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 25),
+                          const SizedBox(width: 25),
                       ],
                     ),
                   ),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                   if (MediaQuery.of(context).size.width < 500)
                     Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -902,7 +902,7 @@ class _StaffTableState extends State<StaffTable> {
                                       height: 200,
                                       width: 200,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     Text(
@@ -961,7 +961,7 @@ class _StaffTableState extends State<StaffTable> {
                                       height: 200,
                                       width: 200,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     Text(
@@ -985,9 +985,9 @@ class _StaffTableState extends State<StaffTable> {
                             return SingleChildScrollView(
                               child: Column(
                                 children: [
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   _buildHeaders(),
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   Container(
                                     child: Column(
                                       children: currentPageData
@@ -1000,13 +1000,13 @@ class _StaffTableState extends State<StaffTable> {
                                         Staffmembers staffmembers = entry.value;
                                         return Container(
                                           margin:
-                                              EdgeInsets.symmetric(vertical: 6),
+                                              const EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
-                                                ? Color(0xFFF4F8FF)
+                                                ? const Color(0xFFF4F8FF)
                                                 : Colors.white,
                                             border: Border.all(
-                                                color: Color(0xFFDBE0E5)),
+                                                color: const Color(0xFFDBE0E5)),
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                           ),
@@ -1042,12 +1042,12 @@ class _StaffTableState extends State<StaffTable> {
                                                                   .grey[600],
                                                               size: 20,
                                                             ),
-                                                            SizedBox(width: 8),
+                                                            const SizedBox(width: 8),
                                                             Flexible(
                                                               child: Text(
                                                                 '${staffmembers.staffmemberName}',
                                                                 style:
-                                                                    TextStyle(
+                                                                    const TextStyle(
                                                                   color: Colors
                                                                       .black,
                                                                   fontWeight:
@@ -1068,7 +1068,7 @@ class _StaffTableState extends State<StaffTable> {
                                                         flex: 2,
                                                         child: Text(
                                                           '${staffmembers.staffmemberDesignation}',
-                                                          style: TextStyle(
+                                                          style: const TextStyle(
                                                             color: Colors.black,
                                                             fontWeight:
                                                                 FontWeight.w500,
@@ -1087,8 +1087,8 @@ class _StaffTableState extends State<StaffTable> {
                                               ),
                                               if (isExpanded)
                                                 Container(
-                                                  padding: EdgeInsets.all(16),
-                                                  decoration: BoxDecoration(
+                                                  padding: const EdgeInsets.all(16),
+                                                  decoration: const BoxDecoration(
                                                     border: Border(
                                                       top: BorderSide(
                                                           color:
@@ -1141,7 +1141,7 @@ class _StaffTableState extends State<StaffTable> {
                                                               ],
                                                             ),
                                                           ),
-                                                          SizedBox(width: 16),
+                                                          const SizedBox(width: 16),
                                                           Expanded(
                                                             child: Column(
                                                               mainAxisAlignment:
@@ -1152,7 +1152,7 @@ class _StaffTableState extends State<StaffTable> {
                                                                       .end,
                                                               children: [
                                                                 Text(
-                                                                  'Phone number :',
+                                                                  'Phone Number :',
                                                                   style:
                                                                       TextStyle(
                                                                     fontWeight:
@@ -1181,7 +1181,7 @@ class _StaffTableState extends State<StaffTable> {
                                                           ),
                                                         ],
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         height: 15,
                                                       ),
                                                       Row(
@@ -1232,7 +1232,7 @@ class _StaffTableState extends State<StaffTable> {
                                                               ],
                                                             ),
                                                           ),
-                                                          SizedBox(width: 16),
+                                                          const SizedBox(width: 16),
                                                           Expanded(
                                                             child: Column(
                                                               mainAxisAlignment:
@@ -1475,7 +1475,7 @@ class _StaffTableState extends State<StaffTable> {
                                                       //
                                                       //   ],
                                                       // ),
-                                                      SizedBox(height: 20),
+                                                      const SizedBox(height: 20),
                                                       Row(
                                                         children: [
                                                           Expanded(
@@ -1517,7 +1517,7 @@ class _StaffTableState extends State<StaffTable> {
                                                                           .circular(
                                                                               8),
                                                                 ),
-                                                                child: Center(
+                                                                child: const Center(
                                                                   child: Text(
                                                                     "Edit",
                                                                     style:
@@ -1535,7 +1535,7 @@ class _StaffTableState extends State<StaffTable> {
                                                               ),
                                                             ),
                                                           ),
-                                                          SizedBox(width: 15),
+                                                          const SizedBox(width: 15),
                                                           Expanded(
                                                             child: InkWell(
                                                               onTap: () {
@@ -1558,7 +1558,7 @@ class _StaffTableState extends State<StaffTable> {
                                                                           .circular(
                                                                               8),
                                                                 ),
-                                                                child: Center(
+                                                                child: const Center(
                                                                   child: Text(
                                                                     "Delete",
                                                                     style:
@@ -1587,7 +1587,7 @@ class _StaffTableState extends State<StaffTable> {
                                       }).toList(),
                                     ),
                                   ),
-                                  SizedBox(height: 20),
+                                  const SizedBox(height: 20),
                                   if (data.length > itemsPerPage)
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
@@ -1595,12 +1595,12 @@ class _StaffTableState extends State<StaffTable> {
                                         Row(
                                           children: [
                                             // Text('Rows per page:'),
-                                            SizedBox(width: 10),
+                                            const SizedBox(width: 10),
                                             Material(
                                               elevation: 3,
                                               child: Container(
                                                 height: 40,
-                                                padding: EdgeInsets.symmetric(
+                                                padding: const EdgeInsets.symmetric(
                                                     horizontal: 12.0),
                                                 decoration: BoxDecoration(
                                                   border: Border.all(
@@ -1730,7 +1730,7 @@ class _StaffTableState extends State<StaffTable> {
                                     height: 200,
                                     width: 200,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 10,
                                   ),
                                   Text(
@@ -1783,7 +1783,7 @@ class _StaffTableState extends State<StaffTable> {
                                         MediaQuery.of(context).size.width * .91,
                                     child: Table(
                                       defaultColumnWidth:
-                                          IntrinsicColumnWidth(),
+                                          const IntrinsicColumnWidth(),
                                       children: [
                                         TableRow(
                                           decoration: BoxDecoration(
@@ -1805,7 +1805,7 @@ class _StaffTableState extends State<StaffTable> {
                                           ],
                                         ),
                                         TableRow(
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             border: Border.symmetric(
                                                 horizontal: BorderSide.none),
                                           ),
@@ -1821,13 +1821,13 @@ class _StaffTableState extends State<StaffTable> {
                                           TableRow(
                                             decoration: BoxDecoration(
                                               border: Border(
-                                                left: BorderSide(
+                                                left: const BorderSide(
                                                     color: Color.fromRGBO(
                                                         21, 43, 81, 1)),
-                                                right: BorderSide(
+                                                right: const BorderSide(
                                                     color: Color.fromRGBO(
                                                         21, 43, 81, 1)),
-                                                top: BorderSide(
+                                                top: const BorderSide(
                                                     color: Color.fromRGBO(
                                                         21, 43, 81, 1)),
                                                 bottom:
@@ -1853,7 +1853,7 @@ class _StaffTableState extends State<StaffTable> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 25),
+                                const SizedBox(height: 25),
                                 _buildPaginationControls(),
                               ],
                             ),
@@ -1876,11 +1876,11 @@ class _StaffTableState extends State<StaffTable> {
                     height: 200,
                     fit: BoxFit.fill,
                   ),
-                  Text(
+                  const Text(
                     'No Internet',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     'Check your internet connection',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
@@ -1982,7 +1982,7 @@ class _StaffTableState extends State<StaffTable> {
           color: Colors.white,
           child: Container(
             height: 55,
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(4.0),
@@ -2001,17 +2001,17 @@ class _StaffTableState extends State<StaffTable> {
                     _changeRowsPerPage(newValue);
                   }
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_drop_down,
                   size: 40,
                 ),
-                style: TextStyle(color: Colors.black, fontSize: 17),
+                style: const TextStyle(color: Colors.black, fontSize: 17),
                 dropdownColor: Colors.white,
               ),
             ),
           ),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         IconButton(
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
@@ -2028,7 +2028,7 @@ class _StaffTableState extends State<StaffTable> {
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         IconButton(
           icon: FaIcon(

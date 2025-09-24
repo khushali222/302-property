@@ -336,21 +336,21 @@ class _Profile_screenState extends State<Profile_screen> {
                               ),
                               child: Column(
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 20,
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 22),
                                     child: Row(
                                       children: [
-                                        Text(
+                                        const Text(
                                           "Account Level :",
                                           style: TextStyle(
                                               color: Color(0xFF8A95A8),
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 10,
                                         ),
                                         Text(
@@ -363,7 +363,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                       ],
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 20,
                                   ),
                                   if (isFreePlan)
@@ -400,7 +400,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                               ),
                                               child: Center(
                                                 child: loading
-                                                    ? SpinKitFadingCircle(
+                                                    ? const SpinKitFadingCircle(
                                                         color: Colors.white,
                                                         size: 40.0,
                                                       )
@@ -435,7 +435,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                       ),
                                     ),
                                   if (isFreePlan)
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 20,
                                     ),
                                 ],
@@ -829,7 +829,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                         MainAxisAlignment
                                                             .center,
                                                     children: [
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 8,
                                                       ),
                                                       Text(
@@ -846,7 +846,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                 ? 15
                                                                 : 20),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 8,
                                                       ),
                                                     ],
@@ -854,7 +854,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 10,
                                             ),
                                             GestureDetector(
@@ -875,7 +875,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                         MainAxisAlignment
                                                             .center,
                                                     children: [
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 8,
                                                       ),
                                                       Text(
@@ -892,7 +892,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                 ? 15
                                                                 : 20),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 8,
                                                       ),
                                                     ],
@@ -946,7 +946,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                             MediaQuery.of(context).size.height *
                                                 0.03,
                                       ),
-                                      Row(
+                                      const Row(
                                         children: [
                                           Text(
                                             'Password',
@@ -1014,7 +1014,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                   InputBorder
                                                                       .none,
                                                               contentPadding:
-                                                                  EdgeInsets
+                                                                  const EdgeInsets
                                                                       .all(14),
                                                               enabledBorder:
                                                                   passworderror
@@ -1022,7 +1022,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                           borderRadius:
                                                                               BorderRadius.circular(MediaQuery.of(context).size.width * 0.013),
                                                                           borderSide:
-                                                                              BorderSide(color: Colors.red), // Set border color here
+                                                                              const BorderSide(color: Colors.red), // Set border color here
                                                                         )
                                                                       : InputBorder
                                                                           .none,
@@ -1071,7 +1071,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                           ? Text(
                                           passwordmessage,
                                           style:
-                                              TextStyle(color: Colors.red),
+                                              const TextStyle(color: Colors.red),
                                                                                       )
                                           : Container(),
                                       SizedBox(
@@ -1079,7 +1079,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                             MediaQuery.of(context).size.height *
                                                 0.02,
                                       ),
-                                      Row(
+                                      const Row(
                                         children: [
                                           Text(
                                             'Confirm Password',
@@ -1148,7 +1148,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                   InputBorder
                                                                       .none,
                                                               contentPadding:
-                                                                  EdgeInsets
+                                                                  const EdgeInsets
                                                                       .all(14),
                                                               enabledBorder:
                                                                   confirmpassworderror
@@ -1156,7 +1156,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                           borderRadius:
                                                                               BorderRadius.circular(MediaQuery.of(context).size.width * 0.013),
                                                                           borderSide:
-                                                                              BorderSide(color: Colors.red), // Set border color here
+                                                                              const BorderSide(color: Colors.red), // Set border color here
                                                                         )
                                                                       : InputBorder
                                                                           .none,
@@ -1208,7 +1208,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                           ? Text(
                                           confirmpasswordmessage,
                                           style:
-                                              TextStyle(color: Colors.red),
+                                              const TextStyle(color: Colors.red),
                                                                                       )
                                           : Container(),
 
@@ -1411,7 +1411,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                               ),
                                               child: Center(
                                                 child: loading
-                                                    ? SpinKitFadingCircle(
+                                                    ? const SpinKitFadingCircle(
                                                         color: Colors.white,
                                                         size: 40.0,
                                                       )
@@ -1471,11 +1471,11 @@ class _Profile_screenState extends State<Profile_screen> {
                     height: 200,
                     fit: BoxFit.fill,
                   ),
-                  Text(
+                  const Text(
                     'No Internet',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     'Check your internet connection',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
@@ -1567,7 +1567,7 @@ class _ProfileShimmerState extends State<ProfileShimmer> {
                   ),
                   borderRadius: BorderRadius.circular(10.0)),
               child: Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1582,7 +1582,7 @@ class _ProfileShimmerState extends State<ProfileShimmer> {
                         width: double.infinity,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     Shimmer.fromColors(
@@ -1596,7 +1596,7 @@ class _ProfileShimmerState extends State<ProfileShimmer> {
                         width: 180,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     Shimmer.fromColors(
@@ -1610,7 +1610,7 @@ class _ProfileShimmerState extends State<ProfileShimmer> {
                         width: 120,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Shimmer.fromColors(
@@ -1624,7 +1624,7 @@ class _ProfileShimmerState extends State<ProfileShimmer> {
                         width: double.infinity,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     Shimmer.fromColors(
@@ -1638,7 +1638,7 @@ class _ProfileShimmerState extends State<ProfileShimmer> {
                         width: 120,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Shimmer.fromColors(
@@ -1652,7 +1652,7 @@ class _ProfileShimmerState extends State<ProfileShimmer> {
                         width: double.infinity,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     Shimmer.fromColors(
@@ -1666,7 +1666,7 @@ class _ProfileShimmerState extends State<ProfileShimmer> {
                         width: 120,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Shimmer.fromColors(
@@ -1680,7 +1680,7 @@ class _ProfileShimmerState extends State<ProfileShimmer> {
                         width: double.infinity,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     Shimmer.fromColors(
@@ -1694,7 +1694,7 @@ class _ProfileShimmerState extends State<ProfileShimmer> {
                         width: 120,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Shimmer.fromColors(
@@ -1708,7 +1708,7 @@ class _ProfileShimmerState extends State<ProfileShimmer> {
                         width: double.infinity,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 16,
                     ),
                     Shimmer.fromColors(

@@ -389,7 +389,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
       ),
       body: ListView(
         children: [
-          SizedBox(height: 25),
+          const SizedBox(height: 25),
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: ClipRRect(
@@ -403,14 +403,14 @@ class _Evict_tenantState extends State<Evict_tenant> {
                   borderRadius: BorderRadius.circular(5.0),
                   color: blueColor,
                   boxShadow: [
-                    BoxShadow(
+                    const BoxShadow(
                       color: Colors.grey,
                       offset: Offset(0.0, 1.0),
                       blurRadius: 6.0,
                     ),
                   ],
                 ),
-                child: Text(
+                child: const Text(
                   'Evict Tenant',
                   style: TextStyle(
                     color: Colors.white,
@@ -421,7 +421,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
               ),
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Container(
             child: FutureBuilder<LeaseSummary>(
               future: futureLeaseSummary,
@@ -441,7 +441,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData) {
-                  return Center(child: Text('No data found'));
+                  return const Center(child: Text('No data found'));
                 } else {
                   final leasesummery = snapshot.data!;
                   return Padding(
@@ -473,7 +473,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                   children: [
                                     Row(
                                       children: [
-                                        SizedBox(width: 6),
+                                        const SizedBox(width: 6),
                                         Text(
                                           'Balance Amount :-',
                                           style: TextStyle(
@@ -482,7 +482,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                             fontSize: 17,
                                           ),
                                         ),
-                                        SizedBox(width: 6),
+                                        const SizedBox(width: 6),
                                         Text(
                                           '\$${leasesummery.data?.amount}',
                                           style: TextStyle(
@@ -493,10 +493,10 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(height: 10),
+                                    const SizedBox(height: 10),
                                     Row(
                                       children: [
-                                        SizedBox(width: 6),
+                                        const SizedBox(width: 6),
                                         Text(
                                           'Damage Amount',
                                           style: TextStyle(
@@ -506,14 +506,14 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(height: 8),
+                                    const SizedBox(height: 8),
                                     Container(
                                       padding:
-                                          EdgeInsets.symmetric(horizontal: 5),
+                                          const EdgeInsets.symmetric(horizontal: 5),
                                       child: TextField(
                                         controller: damageAmountController,
                                         keyboardType:
-                                            TextInputType.numberWithOptions(
+                                            const TextInputType.numberWithOptions(
                                                 decimal: true),
                                         decoration: InputDecoration(
                                           hintText: 'Enter damage amount',
@@ -521,9 +521,9 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                             borderRadius:
                                                 BorderRadius.circular(8),
                                             borderSide:
-                                                BorderSide(color: Colors.grey),
+                                                const BorderSide(color: Colors.grey),
                                           ),
-                                          contentPadding: EdgeInsets.symmetric(
+                                          contentPadding: const EdgeInsets.symmetric(
                                             horizontal: 10,
                                             vertical: 12,
                                           ),
@@ -546,10 +546,10 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                         },
                                       ),
                                     ),
-                                    SizedBox(height: 10),
+                                    const SizedBox(height: 10),
                                     Row(
                                       children: [
-                                        SizedBox(width: 7),
+                                        const SizedBox(width: 7),
                                         SizedBox(
                                           width: MediaQuery.of(context)
                                                       .size
@@ -575,7 +575,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                                 : Colors.black,
                                           ),
                                         ),
-                                        SizedBox(width: 5),
+                                        const SizedBox(width: 5),
                                         Text(
                                           "Charge off lease balance",
                                           style: TextStyle(
@@ -591,7 +591,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 15),
+                          const SizedBox(height: 15),
                           Material(
                             borderRadius: BorderRadius.circular(10),
                             child: Container(
@@ -609,7 +609,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                 ),
                                 child: Column(
                                   children: [
-                                    SizedBox(height: 10),
+                                    const SizedBox(height: 10),
                                     Container(
                                       decoration: BoxDecoration(
                                         border: Border.all(
@@ -636,7 +636,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                                       color: blueColor),
                                                   border: InputBorder.none,
                                                   contentPadding:
-                                                      EdgeInsets.symmetric(
+                                                      const EdgeInsets.symmetric(
                                                     horizontal: 15,
                                                     vertical: 12,
                                                   ),
@@ -672,11 +672,11 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(width: 50),
+                                                const SizedBox(width: 50),
                                               ],
                                             ),
                                           ),
-                                          Divider(height: 1),
+                                          const Divider(height: 1),
                                           if (tenants.isNotEmpty)
                                             ...filteredTenants.map((tenant) {
                                               return Column(
@@ -691,7 +691,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                                           flex: 3,
                                                           child: Text(
                                                             '${tenant['tenant_firstName'] ?? ''} ${tenant['tenant_lastName'] ?? ''}',
-                                                            style: TextStyle(
+                                                            style: const TextStyle(
                                                               fontSize: 14,
                                                             ),
                                                           ),
@@ -701,7 +701,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                                           child: Text(
                                                             tenant['tenant_phoneNumber'] ??
                                                                 '-',
-                                                            style: TextStyle(
+                                                            style: const TextStyle(
                                                                 fontSize: 14),
                                                           ),
                                                         ),
@@ -736,7 +736,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                                       ],
                                                     ),
                                                   ),
-                                                  Divider(height: 1),
+                                                  const Divider(height: 1),
                                                 ],
                                               );
                                             }).toList(),
@@ -748,7 +748,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 15),
+                          const SizedBox(height: 15),
                           Row(
                             children: [
                               GestureDetector(
@@ -773,7 +773,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: isEvicting
-                                          ? SpinKitFadingCircle(
+                                          ? const SpinKitFadingCircle(
                                               color: Colors.white,
                                               size: 25.0,
                                             )

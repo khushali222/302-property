@@ -204,7 +204,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
           //_htmlEditorController.setText(htmlBody);
         });
 
-        Future.delayed(Duration(milliseconds: 500), () {
+        Future.delayed(const Duration(milliseconds: 500), () {
           if (mounted) {
             _htmlEditorController.setFocus();
             _htmlEditorController
@@ -438,7 +438,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                             borderRadius: BorderRadius.circular(5.0),
                             color: blueColor,
                             boxShadow: [
-                              BoxShadow(
+                              const BoxShadow(
                                 color: Colors.grey,
                                 offset: Offset(0.0, 1.0),
                                 blurRadius: 6.0,
@@ -449,7 +449,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                             widget.templetid != null
                                 ? "Edit Template"
                                 : 'Add Template',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -483,7 +483,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                   borderRadius: BorderRadius.circular(8.0),
                                   child: Container(
                                     height: 47,
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: 16.0, vertical: 0),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
@@ -492,7 +492,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                       boxShadow: [
                                         BoxShadow(
                                           color: Colors.black.withOpacity(0.2),
-                                          offset: Offset(4, 4),
+                                          offset: const Offset(4, 4),
                                           blurRadius: 3,
                                         ),
                                       ],
@@ -515,7 +515,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                                   .requestFocus(_bodyFocusNode);
                                               _htmlEditorController.setFocus();
                                             },
-                                            decoration: InputDecoration(
+                                            decoration: const InputDecoration(
                                               hintStyle: TextStyle(
                                                   fontSize: 13,
                                                   color: Color(0xFFb0b6c3)),
@@ -529,11 +529,11 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 3),
+                              const SizedBox(height: 3),
                               nameError
                                   ? Row(
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 2,
                                         ),
                                         Text(
@@ -545,7 +545,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                                       .width *
                                                   .035),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 2,
                                         ),
                                       ],
@@ -553,7 +553,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                   : eventError
                                       ? Row(
                                           children: [
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 3,
                                             ),
                                             Text(
@@ -566,7 +566,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                                               .width *
                                                           .035),
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 2,
                                             ),
                                           ],
@@ -576,7 +576,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 1,
                       ),
                       Expanded(
@@ -597,7 +597,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                               ),
                               DropdownButtonHideUnderline(
                                 child: DropdownButton2<String>(
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 15, color: Colors.black),
                                   isExpanded: true,
                                   hint: const Text(
@@ -623,7 +623,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                   buttonStyleData: ButtonStyleData(
                                     height: 46,
                                     padding:
-                                        EdgeInsets.symmetric(horizontal: 3),
+                                        const EdgeInsets.symmetric(horizontal: 3),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(6),
                                       color: Colors.white,
@@ -658,11 +658,11 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 3),
+                              const SizedBox(height: 3),
                               eventError
                                   ? Row(
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 3,
                                         ),
                                         Text(
@@ -674,7 +674,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                                       .width *
                                                   .035),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 2,
                                         ),
                                       ],
@@ -682,7 +682,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                   : nameError
                                       ? Row(
                                           children: [
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 3,
                                             ),
                                             Text(
@@ -695,7 +695,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                                               .width *
                                                           .035),
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 2,
                                             ),
                                           ],
@@ -707,10 +707,10 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Row(
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         width: 2,
                       ),
                       Text('Subject *',
@@ -720,17 +720,17 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                               color: blueColor)),
                     ],
                   ),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   Row(
                     children: [
-                      SizedBox(width: 2),
+                      const SizedBox(width: 2),
                       Expanded(
                         child: Material(
                           elevation: 2,
                           borderRadius: BorderRadius.circular(8.0),
                           child: Container(
                             height: 47,
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 16.0, vertical: 0),
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -739,7 +739,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.2),
-                                  offset: Offset(4, 4),
+                                  offset: const Offset(4, 4),
                                   blurRadius: 3,
                                 ),
                               ],
@@ -763,7 +763,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                       _htmlEditorController
                                           .setFocus(); // Move focus to the editor
                                     },
-                                    decoration: InputDecoration(
+                                    decoration: const InputDecoration(
                                       hintStyle: TextStyle(
                                           fontSize: 13,
                                           color: Color(0xFFb0b6c3)),
@@ -777,14 +777,14 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 2),
+                      const SizedBox(width: 2),
                     ],
                   ),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   subjectError
                       ? Row(
                           children: [
-                            SizedBox(
+                            const SizedBox(
                               width: 2,
                             ),
                             Text(
@@ -794,16 +794,16 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                   fontSize:
                                       MediaQuery.of(context).size.width * .035),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 2,
                             ),
                           ],
                         )
                       : Container(),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Row(
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         width: 2,
                       ),
                       Text(
@@ -811,15 +811,15 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       SuperTooltip(
                         controller: _controller,
                         popupDirection: TooltipDirection.down,
-                        backgroundColor: Color(0xff2f2d2f),
+                        backgroundColor: const Color(0xff2f2d2f),
                         arrowTipDistance: 20.0,
                         touchThroughAreaShape: ClipAreaShape.rectangle,
                         touchThroughAreaCornerRadius: 30,
-                        barrierColor: Color.fromARGB(26, 47, 45, 47),
+                        barrierColor: const Color.fromARGB(26, 47, 45, 47),
                         content: Padding(
                           padding: const EdgeInsets.all(4.0),
                           child: Text(
@@ -833,7 +833,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                         .join("\n")
                                 : 'You can personalize transaction templates using the following dynamic variables :',
                             softWrap: true,
-                            style: TextStyle(color: Colors.white, fontSize: 15),
+                            style: const TextStyle(color: Colors.white, fontSize: 15),
                           ),
                         ),
                         child: Icon(
@@ -843,7 +843,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 4,
                   ),
                   SingleChildScrollView(
@@ -855,7 +855,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                             focusNode: _bodyFocusNode,
                             child: HtmlEditor(
                               controller: _htmlEditorController,
-                              htmlEditorOptions: HtmlEditorOptions(
+                              htmlEditorOptions: const HtmlEditorOptions(
                                 adjustHeightForKeyboard: false,
 
                                 //  shouldEnsureVisible: true,
@@ -863,7 +863,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                               otherOptions: OtherOptions(
                                 decoration: BoxDecoration(
                                   border: Border.all(color: Colors.black),
-                                  borderRadius: BorderRadius.only(
+                                  borderRadius: const BorderRadius.only(
                                       topLeft: Radius.circular(4),
                                       topRight: Radius.circular(4)),
                                 ),
@@ -874,8 +874,8 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                   Row(
                                     children: [
                                       PopupMenuButton<String>(
-                                        padding: EdgeInsets.all(0),
-                                        icon: Row(
+                                        padding: const EdgeInsets.all(0),
+                                        icon: const Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Icon(Icons.format_list_bulleted,
@@ -887,7 +887,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                           ],
                                         ),
                                         tooltip: "Unordered List",
-                                        offset: Offset(
+                                        offset: const Offset(
                                             0, 40), // Adjusts dropdown position
                                         shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
@@ -899,7 +899,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                                   '<ul style="list-style-type: $style;"><li>List Item</li></ul>');
                                         },
                                         itemBuilder: (context) => [
-                                          PopupMenuItem(
+                                          const PopupMenuItem(
                                             value: "disc",
                                             child: Row(
                                               children: [
@@ -911,7 +911,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                               ],
                                             ),
                                           ),
-                                          PopupMenuItem(
+                                          const PopupMenuItem(
                                             value: "circle",
                                             child: Row(
                                               children: [
@@ -923,7 +923,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                               ],
                                             ),
                                           ),
-                                          PopupMenuItem(
+                                          const PopupMenuItem(
                                             value: "square",
                                             child: Row(
                                               children: [
@@ -937,17 +937,17 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 5,
                                       ),
                                       PopupMenuButton<String>(
-                                        constraints: BoxConstraints(
+                                        constraints: const BoxConstraints(
                                           minWidth:
                                               100, // Minimum width of the popup
                                           maxWidth: 200, // Maximum width
                                         ),
-                                        padding: EdgeInsets.all(0),
-                                        icon: Row(
+                                        padding: const EdgeInsets.all(0),
+                                        icon: const Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Icon(Icons.format_list_numbered,
@@ -959,7 +959,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                           ],
                                         ), // Ordered List Button
                                         tooltip: "Ordered List",
-                                        offset: Offset(0, 40),
+                                        offset: const Offset(0, 40),
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10)),
@@ -1010,7 +1010,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                   // OL (Ordered List) Style Dropdown
 
                                   PopupMenuButton<String>(
-                                    child: Padding(
+                                    child: const Padding(
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 8, vertical: 4),
                                       child: Row(
@@ -1032,28 +1032,28 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                           argument: format);
                                     },
                                     itemBuilder: (context) => [
-                                      PopupMenuItem(
+                                      const PopupMenuItem(
                                         value: "h1",
                                         child: Text("Heading 1",
                                             style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.bold)),
                                       ),
-                                      PopupMenuItem(
+                                      const PopupMenuItem(
                                         value: "h2",
                                         child: Text("Heading 2",
                                             style: TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold)),
                                       ),
-                                      PopupMenuItem(
+                                      const PopupMenuItem(
                                         value: "h3",
                                         child: Text("Heading 3",
                                             style: TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold)),
                                       ),
-                                      PopupMenuItem(
+                                      const PopupMenuItem(
                                         value: "p",
                                         child: Text("Paragraph",
                                             style: TextStyle(fontSize: 14)),
@@ -1061,7 +1061,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                     ],
                                   ),
                                   IconButton(
-                                    icon: Icon(Icons.format_quote),
+                                    icon: const Icon(Icons.format_quote),
                                     tooltip: "Insert Quote",
                                     onPressed: () {
                                       _htmlEditorController.execCommand(
@@ -1070,7 +1070,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                     },
                                   ),
                                   PopupMenuButton<String>(
-                                    icon: Icon(Icons.text_fields),
+                                    icon: const Icon(Icons.text_fields),
                                     tooltip: "Font Size",
                                     onSelected: (String text) {
                                       _htmlEditorController.execCommand(
@@ -1078,21 +1078,21 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                           argument: text);
                                     },
                                     itemBuilder: (context) => [
-                                      PopupMenuItem(
+                                      const PopupMenuItem(
                                           value: "1", child: Text("tiny")),
-                                      PopupMenuItem(
+                                      const PopupMenuItem(
                                           value: "2", child: Text("small")),
-                                      PopupMenuItem(
+                                      const PopupMenuItem(
                                           value: "3", child: Text("default")),
-                                      PopupMenuItem(
+                                      const PopupMenuItem(
                                           value: "5", child: Text("big")),
-                                      PopupMenuItem(
+                                      const PopupMenuItem(
                                           value: "7", child: Text("huge")),
                                     ],
                                   ),
                                 ],
                                 defaultToolbarButtons: [
-                                  OtherButtons(
+                                  const OtherButtons(
                                       fullscreen: false,
                                       help: false,
                                       codeview: false,
@@ -1100,7 +1100,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                       redo: true,
                                       copy: false,
                                       paste: false),
-                                  FontButtons(
+                                  const FontButtons(
                                     bold: true,
                                     italic: true,
                                     underline: false,
@@ -1109,26 +1109,26 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                     superscript: false,
                                     clearAll: false,
                                   ),
-                                  InsertButtons(
+                                  const InsertButtons(
                                     picture: false,
                                     video: false,
                                     audio: false,
                                     table: true,
                                     hr: false,
                                   ),
-                                  ListButtons(
+                                  const ListButtons(
                                     ul: false,
                                     ol: false,
                                     listStyles: false,
                                   ),
-                                  ParagraphButtons(
+                                  const ParagraphButtons(
                                     textDirection: false,
                                     lineHeight: false,
                                     caseConverter: false,
                                     decreaseIndent: false,
                                     increaseIndent: false,
                                   ),
-                                  ColorButtons(),
+                                  const ColorButtons(),
                                 ],
                               ),
                             ),
@@ -1137,11 +1137,11 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   bodyError
                       ? Row(
                           children: [
-                            SizedBox(
+                            const SizedBox(
                               width: 2,
                             ),
                             Text(
@@ -1151,13 +1151,13 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                   fontSize:
                                       MediaQuery.of(context).size.width * .035),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 2,
                             ),
                           ],
                         )
                       : Container(),
-                  SizedBox(
+                  const SizedBox(
                     height: 8,
                   ),
                   Row(
@@ -1264,7 +1264,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               horizontal: 32, vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -1272,17 +1272,17 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                           backgroundColor: blueColor,
                         ),
                         child: isLoading
-                            ? SpinKitFadingCircle(
+                            ? const SpinKitFadingCircle(
                                 color: Colors.white,
                                 size: 25.0,
                               )
-                            : Text(
+                            : const Text(
                                 "Save",
                                 style: TextStyle(
                                     fontSize: 16, color: Colors.white),
                               ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       ElevatedButton(
@@ -1290,7 +1290,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               horizontal: 32, vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),

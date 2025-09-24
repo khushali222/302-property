@@ -247,7 +247,7 @@ class _Change_passwordState extends State<Change_password> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 25,
                       ),
                       titleBar(
@@ -266,7 +266,7 @@ class _Change_passwordState extends State<Change_password> {
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10.0),
                               border: Border.all(
-                                color: Color.fromRGBO(21, 43, 103, 1),
+                                color: const Color.fromRGBO(21, 43, 103, 1),
                               )),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
@@ -274,12 +274,12 @@ class _Change_passwordState extends State<Change_password> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Enter your new password *',
+                                const Text('Enter your new password *',
                                     style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.grey)),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 Row(
@@ -298,11 +298,11 @@ class _Change_passwordState extends State<Change_password> {
                                           return null;
                                         },
                                         suffixIcon: ispassword1
-                                            ? Icon(
+                                            ? const Icon(
                                                 Icons.visibility,
                                                 color: Colors.grey,
                                               )
-                                            : Icon(Icons.visibility_off,
+                                            : const Icon(Icons.visibility_off,
                                                 color: Colors.grey),
                                         onSuffixIconPressed: () {
                                           setState(() {
@@ -328,11 +328,11 @@ class _Change_passwordState extends State<Change_password> {
                                             return null;
                                           },
                                           suffixIcon: ispassword1
-                                              ? Icon(
+                                              ? const Icon(
                                                   Icons.visibility,
                                                   color: Colors.grey,
                                                 )
-                                              : Icon(Icons.visibility_off,
+                                              : const Icon(Icons.visibility_off,
                                                   color: Colors.grey),
                                           onSuffixIconPressed: () {
                                             setState(() {
@@ -344,15 +344,15 @@ class _Change_passwordState extends State<Change_password> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
-                                Text('Confirm new password *',
+                                const Text('Confirm new password *',
                                     style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.grey)),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 Row(
@@ -371,11 +371,11 @@ class _Change_passwordState extends State<Change_password> {
                                           return null;
                                         },
                                         suffixIcon: ispassword2
-                                            ? Icon(
+                                            ? const Icon(
                                                 Icons.visibility,
                                                 color: Colors.grey,
                                               )
-                                            : Icon(Icons.visibility_off,
+                                            : const Icon(Icons.visibility_off,
                                                 color: Colors.grey),
                                         onSuffixIconPressed: () {
                                           setState(() {
@@ -403,11 +403,11 @@ class _Change_passwordState extends State<Change_password> {
                                             return null;
                                           },
                                           suffixIcon: ispassword2
-                                              ? Icon(
+                                              ? const Icon(
                                                   Icons.visibility,
                                                   color: Colors.grey,
                                                 )
-                                              : Icon(Icons.visibility_off,
+                                              : const Icon(Icons.visibility_off,
                                                   color: Colors.grey),
                                           onSuffixIconPressed: () {
                                             setState(() {
@@ -451,20 +451,20 @@ class _Change_passwordState extends State<Change_password> {
                                   }
                                 },
                                 child: isLoading
-                                    ? Center(
+                                    ? const Center(
                                         child: SpinKitFadingCircle(
                                           color: Colors.white,
                                           size: 55.0,
                                         ),
                                       )
-                                    : Text(
+                                    : const Text(
                                         'Change Password',
                                         style:
                                             TextStyle(color: Color(0xFFf7f8f9)),
                                       ),
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 8,
                             ),
                             Container(
@@ -474,14 +474,14 @@ class _Change_passwordState extends State<Change_password> {
                                     borderRadius: BorderRadius.circular(8.0)),
                                 child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                        backgroundColor: Color(0xFFffffff),
+                                        backgroundColor: const Color(0xFFffffff),
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(8.0))),
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
-                                    child: Text(
+                                    child: const Text(
                                       'Cancel',
                                       style:
                                           TextStyle(color: Color(0xFF748097)),
@@ -497,7 +497,7 @@ class _Change_passwordState extends State<Change_password> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 25,
                       ),
                       titleBar(
@@ -541,7 +541,7 @@ class _Change_passwordState extends State<Change_password> {
                                     height: MediaQuery.of(context).size.height *
                                         0.03,
                                   ),
-                                  Row(
+                                  const Row(
                                     children: [
                                       Text(
                                         'Current Password',
@@ -604,7 +604,7 @@ class _Change_passwordState extends State<Change_password> {
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
-                                                              EdgeInsets.all(
+                                                              const EdgeInsets.all(
                                                                   14),
                                                           enabledBorder:
                                                               currentpassworderror
@@ -614,7 +614,7 @@ class _Change_passwordState extends State<Change_password> {
                                                                               .width *
                                                                           0.013),
                                                                       borderSide:
-                                                                          BorderSide(
+                                                                          const BorderSide(
                                                                               color: Colors.red), // Set border color here
                                                                     )
                                                                   : InputBorder
@@ -663,7 +663,7 @@ class _Change_passwordState extends State<Change_password> {
                                             Expanded(
                                               child: Text(
                                                 currentpasswordmessage,
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                     color: Colors.red),
                                               ),
                                             ),
@@ -674,7 +674,7 @@ class _Change_passwordState extends State<Change_password> {
                                     height: MediaQuery.of(context).size.height *
                                         0.02,
                                   ),
-                                  Row(
+                                  const Row(
                                     children: [
                                       Text(
                                         'Enter your current password',
@@ -736,7 +736,7 @@ class _Change_passwordState extends State<Change_password> {
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
-                                                              EdgeInsets.all(
+                                                              const EdgeInsets.all(
                                                                   14),
                                                           enabledBorder:
                                                               passworderror
@@ -746,7 +746,7 @@ class _Change_passwordState extends State<Change_password> {
                                                                               .width *
                                                                           0.013),
                                                                       borderSide:
-                                                                          BorderSide(
+                                                                          const BorderSide(
                                                                               color: Colors.red), // Set border color here
                                                                     )
                                                                   : InputBorder
@@ -795,7 +795,7 @@ class _Change_passwordState extends State<Change_password> {
                                             Expanded(
                                               child: Text(
                                                 passwordmessage,
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                     color: Colors.red),
                                               ),
                                             ),
@@ -806,7 +806,7 @@ class _Change_passwordState extends State<Change_password> {
                                     height: MediaQuery.of(context).size.height *
                                         0.02,
                                   ),
-                                  Row(
+                                  const Row(
                                     children: [
                                       Text(
                                         'Confirm Password',
@@ -872,7 +872,7 @@ class _Change_passwordState extends State<Change_password> {
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
-                                                              EdgeInsets.all(
+                                                              const EdgeInsets.all(
                                                                   14),
                                                           enabledBorder:
                                                               confirmpassworderror
@@ -882,7 +882,7 @@ class _Change_passwordState extends State<Change_password> {
                                                                               .width *
                                                                           0.013),
                                                                       borderSide:
-                                                                          BorderSide(
+                                                                          const BorderSide(
                                                                               color: Colors.red), // Set border color here
                                                                     )
                                                                   : InputBorder
@@ -934,7 +934,7 @@ class _Change_passwordState extends State<Change_password> {
                                             Expanded(
                                               child: Text(
                                                 confirmpasswordmessage,
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                     color: Colors.red),
                                               ),
                                             ),
@@ -1056,7 +1056,7 @@ class _Change_passwordState extends State<Change_password> {
                                           ),
                                           child: Center(
                                             child: loading
-                                                ? SpinKitFadingCircle(
+                                                ? const SpinKitFadingCircle(
                                                     color: Colors.white,
                                                     size: 40.0,
                                                   )
@@ -1529,7 +1529,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                   child: Container(
                     height: 50,
                     padding:
-                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                        const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.0),
@@ -1537,7 +1537,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.2),
-                          offset: Offset(4, 4),
+                          offset: const Offset(4, 4),
                           blurRadius: 3,
                         ),
                       ],
@@ -1588,7 +1588,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                             onTap: widget.onSuffixIconPressed,
                             child: widget.suffixIcon),
                         hintStyle:
-                            TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                            const TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                         border: InputBorder.none,
                         hintText: widget.hintText,
                       ),
@@ -1596,7 +1596,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                   ),
                 ),
                 if (state.hasError || widget.amount_check != null)
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                 // Reserve space for error message
               ],
             );
@@ -1608,7 +1608,7 @@ class CustomTextFieldState extends State<CustomTextField> {
             left: 8,
             child: Text(
               _errorMessage!,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.red,
                 fontSize: 12.0,
               ),

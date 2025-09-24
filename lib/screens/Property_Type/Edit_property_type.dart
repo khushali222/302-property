@@ -65,14 +65,14 @@ class _Edit_property_typeState extends State<Edit_property_type> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 25,
             ),
             titleBar(
               width: MediaQuery.of(context).size.width * .88,
               title: 'Edit Property Type',
             ),
-            SizedBox(
+            const SizedBox(
               height: 25,
             ),
             Padding(
@@ -93,12 +93,12 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                       )),
                   child: Column(
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 15,
                           ),
                           Text(
@@ -113,12 +113,12 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 15,
                           ),
                           Text(
@@ -133,12 +133,12 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 15,
                           ),
                           DropdownButtonHideUnderline(
@@ -220,12 +220,12 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 15,
                           ),
                           Text(
@@ -240,12 +240,12 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 15,
                           ),
                           Material(
@@ -255,7 +255,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                               width: MediaQuery.of(context).size.width < 500
                                   ? 160
                                   : 160,
-                              padding: EdgeInsets.only(left: 10),
+                              padding: const EdgeInsets.only(left: 10),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
@@ -276,7 +276,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       Row(
@@ -324,7 +324,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                               width: MediaQuery.of(context).size.width * 0.05),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       Row(
@@ -408,16 +408,16 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                   borderRadius: BorderRadius.circular(5.0),
                                   color: blueColor,
                                   boxShadow: [
-                                    BoxShadow(
+                                    const BoxShadow(
                                       color: Colors.grey,
-                                      offset: Offset(0.0, 1.0), //(x,y)
+                                      offset: const Offset(0.0, 1.0), //(x,y)
                                       blurRadius: 6.0,
                                     ),
                                   ],
                                 ),
                                 child: Center(
                                   child: isLoading
-                                      ? SpinKitFadingCircle(
+                                      ? const SpinKitFadingCircle(
                                           color: Colors.white,
                                           size: 25.0,
                                         )
@@ -437,7 +437,7 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 15,
                           ),
                           InkWell(
@@ -455,20 +455,20 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                           ? 40
                                           : 40,
                                   color: Colors.white,
-                                  child: Center(child: Text("Cancel"))),
+                                  child: const Center(child: Text("Cancel"))),
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       if (iserror)
-                        Text(
+                        const Text(
                           "Please fill in all fields correctly.",
                           style: TextStyle(color: Colors.redAccent),
                         ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                     ],

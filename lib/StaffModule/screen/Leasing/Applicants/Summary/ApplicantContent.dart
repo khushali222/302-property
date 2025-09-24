@@ -1375,8 +1375,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                   ],
                                 ),
                                 if (isCheckboxError)
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 8.0),
                                     child: Text(
                                       'You must agree to the terms and conditions.',
                                       style: TextStyle(color: Colors.red, fontSize: 14),
@@ -4626,11 +4626,11 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                         CrossAxisAlignment
                                                                             .start,
                                                                     children: [
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         width:
                                                                             2,
                                                                       ),
-                                                                      Text(
+                                                                      const Text(
                                                                         "Rental Dates",
                                                                         style: TextStyle(
                                                                             color:
@@ -4638,7 +4638,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                             fontWeight: FontWeight.bold,
                                                                             fontSize: 18),
                                                                       ),
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         height:
                                                                             5,
                                                                       ),
@@ -4669,11 +4669,11 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                         CrossAxisAlignment
                                                                             .start,
                                                                     children: [
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         width:
                                                                             2,
                                                                       ),
-                                                                      Text(
+                                                                      const Text(
                                                                         "Monthly Rent",
                                                                         style: TextStyle(
                                                                             color:
@@ -4681,7 +4681,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                             fontWeight: FontWeight.bold,
                                                                             fontSize: 18),
                                                                       ),
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         height:
                                                                             5,
                                                                       ),
@@ -4719,11 +4719,11 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                         CrossAxisAlignment
                                                                             .start,
                                                                     children: [
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         width:
                                                                             2,
                                                                       ),
-                                                                      Text(
+                                                                      const Text(
                                                                         "Reason of Leaving",
                                                                         style: TextStyle(
                                                                             color:
@@ -4731,7 +4731,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                             fontWeight: FontWeight.bold,
                                                                             fontSize: 18),
                                                                       ),
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         height:
                                                                             5,
                                                                       ),
@@ -4762,11 +4762,11 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                         CrossAxisAlignment
                                                                             .start,
                                                                     children: [
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         width:
                                                                             2,
                                                                       ),
-                                                                      Text(
+                                                                      const Text(
                                                                         "Rental Owner Name",
                                                                         style: TextStyle(
                                                                             color:
@@ -4774,7 +4774,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                             fontWeight: FontWeight.bold,
                                                                             fontSize: 18),
                                                                       ),
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         height:
                                                                             5,
                                                                       ),
@@ -4985,7 +4985,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         ),
                                                          Row(
                                                           children: [
-                                                            SizedBox(width: 2),
+                                                            const SizedBox(width: 2),
                                                             Text(
                                                               'N/A',
                                                               style: TextStyle(
@@ -4998,7 +4998,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
 ,
                                                               ),
                                                             ),
-                                                            SizedBox(width: 2),
+                                                            const SizedBox(width: 2),
                                                           ],
                                                         ),
                                                         const SizedBox(
@@ -5015,10 +5015,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                       CrossAxisAlignment
                                                                           .start,
                                                                   children: [
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       width: 2,
                                                                     ),
-                                                                    Text(
+                                                                    const Text(
                                                                       "Rental Dates",
                                                                       style: TextStyle(
                                                                           color: Color(
@@ -5028,7 +5028,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           fontSize:
                                                                               12),
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       height: 5,
                                                                     ),
                                                                     Text(
@@ -5055,10 +5055,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                       CrossAxisAlignment
                                                                           .start,
                                                                   children: [
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       width: 2,
                                                                     ),
-                                                                    Text(
+                                                                    const Text(
                                                                       "Monthly Rent",
                                                                       style: TextStyle(
                                                                           color: Color(
@@ -5068,7 +5068,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           fontSize:
                                                                               12),
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       height: 5,
                                                                     ),
                                                                     Text(
@@ -5102,10 +5102,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                       CrossAxisAlignment
                                                                           .start,
                                                                   children: [
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       width: 2,
                                                                     ),
-                                                                    Text(
+                                                                    const Text(
                                                                       "Reason of Leaving",
                                                                       style: TextStyle(
                                                                           color: Color(
@@ -5115,7 +5115,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           fontSize:
                                                                               12),
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       height: 5,
                                                                     ),
                                                                     Text(
@@ -5142,10 +5142,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                       CrossAxisAlignment
                                                                           .start,
                                                                   children: [
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       width: 2,
                                                                     ),
-                                                                    Text(
+                                                                    const Text(
                                                                       "Rental Owner Name",
                                                                       style: TextStyle(
                                                                           color: Color(
@@ -5155,7 +5155,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           fontSize:
                                                                               12),
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       height: 5,
                                                                     ),
                                                                     Text(
@@ -5594,7 +5594,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                     ),
                                                                      Row(
                                                                       children: [
-                                                                        SizedBox(
+                                                                        const SizedBox(
                                                                             width:
                                                                                 2),
                                                                         Text(
@@ -5611,7 +5611,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
 ,
                                                                           ),
                                                                         ),
-                                                                        SizedBox(
+                                                                        const SizedBox(
                                                                             width:
                                                                                 2),
                                                                       ],
@@ -5645,7 +5645,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                     ),
                                                                      Row(
                                                                       children: [
-                                                                        SizedBox(
+                                                                        const SizedBox(
                                                                             width:
                                                                                 2),
                                                                         Text(
@@ -5662,7 +5662,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
 ,
                                                                           ),
                                                                         ),
-                                                                        SizedBox(
+                                                                        const SizedBox(
                                                                             width:
                                                                                 2),
                                                                       ],
@@ -5684,7 +5684,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               Expanded(
                                                                 child: Column(
                                                                   children: [
-                                                                    Row(
+                                                                    const Row(
                                                                       children: [
                                                                         SizedBox(
                                                                           width:
@@ -5699,12 +5699,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                         ),
                                                                       ],
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       height: 5,
                                                                     ),
                                                                     Row(
                                                                       children: [
-                                                                        SizedBox(
+                                                                        const SizedBox(
                                                                             width:
                                                                                 2),
                                                                         Text(
@@ -5721,7 +5721,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
 ,
                                                                           ),
                                                                         ),
-                                                                        SizedBox(
+                                                                        const SizedBox(
                                                                             width:
                                                                                 2),
                                                                       ],
@@ -5729,14 +5729,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                   ],
                                                                 ),
                                                               ),
-                                                              SizedBox(
+                                                              const SizedBox(
                                                                 width: 18,
                                                               ),
                                                               // Tenant
                                                               Expanded(
                                                                 child: Column(
                                                                   children: [
-                                                                    Row(
+                                                                    const Row(
                                                                       children: [
                                                                         SizedBox(
                                                                           width:
@@ -5751,12 +5751,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                         ),
                                                                       ],
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       height: 5,
                                                                     ),
                                                                     Row(
                                                                       children: [
-                                                                        SizedBox(
+                                                                        const SizedBox(
                                                                             width:
                                                                                 2),
                                                                         Text(
@@ -5773,7 +5773,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
 ,
                                                                           ),
                                                                         ),
-                                                                        SizedBox(
+                                                                        const SizedBox(
                                                                             width:
                                                                                 2),
                                                                       ],
@@ -5877,7 +5877,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         ),
                                                          Row(
                                                           children: [
-                                                            SizedBox(width: 2),
+                                                            const SizedBox(width: 2),
                                                             Text(
                                                               'N/A',
                                                               style: TextStyle(
@@ -5890,7 +5890,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
 ,
                                                               ),
                                                             ),
-                                                            SizedBox(width: 2),
+                                                            const SizedBox(width: 2),
                                                           ],
                                                         ),
                                                         const SizedBox(
@@ -5919,7 +5919,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         ),
                                                          Row(
                                                           children: [
-                                                            SizedBox(width: 2),
+                                                            const SizedBox(width: 2),
                                                             Text(
                                                               'N/A',
                                                               style: TextStyle(
@@ -5932,7 +5932,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
 ,
                                                               ),
                                                             ),
-                                                            SizedBox(width: 2),
+                                                            const SizedBox(width: 2),
                                                           ],
                                                         ),
                                                         const SizedBox(
@@ -5961,7 +5961,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         ),
                                                          Row(
                                                           children: [
-                                                            SizedBox(width: 2),
+                                                            const SizedBox(width: 2),
                                                             Text(
                                                               'N/A',
                                                               style: TextStyle(
@@ -5974,7 +5974,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
 ,
                                                               ),
                                                             ),
-                                                            SizedBox(width: 2),
+                                                            const SizedBox(width: 2),
                                                           ],
                                                         ),
                                                         const SizedBox(
@@ -6003,7 +6003,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         ),
                                                          Row(
                                                           children: [
-                                                            SizedBox(width: 2),
+                                                            const SizedBox(width: 2),
                                                             Text(
                                                               'N/A',
                                                               style: TextStyle(
@@ -6016,7 +6016,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
 ,
                                                               ),
                                                             ),
-                                                            SizedBox(width: 2),
+                                                            const SizedBox(width: 2),
                                                           ],
                                                         ),
                                                         const SizedBox(
@@ -6554,11 +6554,11 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                         CrossAxisAlignment
                                                                             .start,
                                                                     children: [
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         width:
                                                                             2,
                                                                       ),
-                                                                      Text(
+                                                                      const Text(
                                                                         "Employer Name",
                                                                         style: TextStyle(
                                                                             color:
@@ -6566,7 +6566,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                             fontWeight: FontWeight.bold,
                                                                             fontSize: 18),
                                                                       ),
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         height:
                                                                             5,
                                                                       ),
@@ -6597,11 +6597,11 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                         CrossAxisAlignment
                                                                             .start,
                                                                     children: [
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         width:
                                                                             2,
                                                                       ),
-                                                                      Text(
+                                                                      const Text(
                                                                         "Employer Phone Number",
                                                                         style: TextStyle(
                                                                             color:
@@ -6609,7 +6609,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                             fontWeight: FontWeight.bold,
                                                                             fontSize: 18),
                                                                       ),
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         height:
                                                                             5,
                                                                       ),
@@ -6650,11 +6650,11 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                         CrossAxisAlignment
                                                                             .start,
                                                                     children: [
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         width:
                                                                             2,
                                                                       ),
-                                                                      Text(
+                                                                      const Text(
                                                                         "Employer Email",
                                                                         style: TextStyle(
                                                                             color:
@@ -6662,7 +6662,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                             fontWeight: FontWeight.bold,
                                                                             fontSize: 18),
                                                                       ),
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         height:
                                                                             5,
                                                                       ),
@@ -6693,11 +6693,11 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                         CrossAxisAlignment
                                                                             .start,
                                                                     children: [
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         width:
                                                                             2,
                                                                       ),
-                                                                      Text(
+                                                                      const Text(
                                                                         "Position Held",
                                                                         style: TextStyle(
                                                                             color:
@@ -6705,7 +6705,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                             fontWeight: FontWeight.bold,
                                                                             fontSize: 18),
                                                                       ),
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         height:
                                                                             5,
                                                                       ),
@@ -6744,11 +6744,11 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                         CrossAxisAlignment
                                                                             .start,
                                                                     children: [
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         width:
                                                                             2,
                                                                       ),
-                                                                      Text(
+                                                                      const Text(
                                                                         "Supervisor Title",
                                                                         style: TextStyle(
                                                                             color:
@@ -6756,7 +6756,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                             fontWeight: FontWeight.bold,
                                                                             fontSize: 12),
                                                                       ),
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         height:
                                                                             5,
                                                                       ),
@@ -6787,11 +6787,11 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                         CrossAxisAlignment
                                                                             .start,
                                                                     children: [
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         width:
                                                                             2,
                                                                       ),
-                                                                      Text(
+                                                                      const Text(
                                                                         "Supervisor Name",
                                                                         style: TextStyle(
                                                                             color:
@@ -6799,7 +6799,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                             fontWeight: FontWeight.bold,
                                                                             fontSize: 18),
                                                                       ),
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         height:
                                                                             5,
                                                                       ),
@@ -6921,7 +6921,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         ),
                                                          Row(
                                                           children: [
-                                                            SizedBox(width: 2),
+                                                            const SizedBox(width: 2),
                                                             Text(
                                                               'N/A',
                                                               style: TextStyle(
@@ -6934,7 +6934,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
 ,
                                                               ),
                                                             ),
-                                                            SizedBox(width: 2),
+                                                            const SizedBox(width: 2),
                                                           ],
                                                         ),
                                                         const SizedBox(
@@ -6953,10 +6953,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                       CrossAxisAlignment
                                                                           .start,
                                                                   children: [
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       width: 2,
                                                                     ),
-                                                                    Text(
+                                                                    const Text(
                                                                       "Employer Name",
                                                                       style: TextStyle(
                                                                           color: Color(
@@ -6966,7 +6966,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           fontSize:
                                                                               12),
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       height: 5,
                                                                     ),
                                                                     Text(
@@ -6993,10 +6993,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                       CrossAxisAlignment
                                                                           .start,
                                                                   children: [
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       width: 2,
                                                                     ),
-                                                                    Text(
+                                                                    const Text(
                                                                       "Employer Phone Number",
                                                                       style: TextStyle(
                                                                           color: Color(
@@ -7006,7 +7006,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           fontSize:
                                                                               12),
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       height: 5,
                                                                     ),
                                                                     Text(
@@ -7043,10 +7043,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                       CrossAxisAlignment
                                                                           .start,
                                                                   children: [
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       width: 2,
                                                                     ),
-                                                                    Text(
+                                                                    const Text(
                                                                       "Employer Email",
                                                                       style: TextStyle(
                                                                           color: Color(
@@ -7056,7 +7056,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           fontSize:
                                                                               12),
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       height: 5,
                                                                     ),
                                                                     Text(
@@ -7083,10 +7083,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                       CrossAxisAlignment
                                                                           .start,
                                                                   children: [
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       width: 2,
                                                                     ),
-                                                                    Text(
+                                                                    const Text(
                                                                       "Position Held",
                                                                       style: TextStyle(
                                                                           color: Color(
@@ -7096,7 +7096,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           fontSize:
                                                                               12),
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       height: 5,
                                                                     ),
                                                                     Text(
@@ -7131,10 +7131,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                       CrossAxisAlignment
                                                                           .start,
                                                                   children: [
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       width: 2,
                                                                     ),
-                                                                    Text(
+                                                                    const Text(
                                                                       "Supervisor Title",
                                                                       style: TextStyle(
                                                                           color: Color(
@@ -7144,7 +7144,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           fontSize:
                                                                               12),
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       height: 5,
                                                                     ),
                                                                     Text(
@@ -7171,10 +7171,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                       CrossAxisAlignment
                                                                           .start,
                                                                   children: [
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       width: 2,
                                                                     ),
-                                                                    Text(
+                                                                    const Text(
                                                                       "Supervisor Name",
                                                                       style: TextStyle(
                                                                           color: Color(
@@ -7184,7 +7184,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                           fontSize:
                                                                               12),
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       height: 5,
                                                                     ),
                                                                     Text(
@@ -7222,9 +7222,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                         ),
             );
           } else {
-            return Padding(
+            return const Padding(
               padding:  EdgeInsets.only(top: 200),
-              child: const Center(child: Text('No data available')),
+              child: Center(child: Text('No data available')),
             );
           }
         },

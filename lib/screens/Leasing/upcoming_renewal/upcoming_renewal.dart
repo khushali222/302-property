@@ -65,9 +65,9 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-          color: Color(0xFFF4F8FF),
+          color: const Color(0xFFF4F8FF),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Color(0xFFDBE0E5))),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -80,7 +80,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -117,7 +117,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                         : Text("Property",
                             style: TextStyle(
                                 color: blueColor, fontWeight: FontWeight.bold)),
-                    SizedBox(width: 3),
+                    const SizedBox(width: 3),
                     ascending1
                         ? Padding(
                             padding: const EdgeInsets.only(top: 7, left: 2),
@@ -176,7 +176,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     // ascending3
                     //     ? Padding(
                     //         padding: const EdgeInsets.only(top: 7, left: 2),
@@ -235,12 +235,12 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "You will not be able to renew this lease!",
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "Confirm",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -275,19 +275,19 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
       desc: "You want to renew this lease!",
       style: AlertStyle(
         backgroundColor: Colors.white,
-        titleStyle: TextStyle(
+        titleStyle: const TextStyle(
             color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),
-        descStyle: TextStyle(color: Colors.black87, fontSize: 16),
+        descStyle: const TextStyle(color: Colors.black87, fontSize: 16),
         isCloseButton: false,
         isOverlayTapDismiss: false,
         alertBorder: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
-            side: BorderSide(color: Colors.grey, width: 1)),
+            side: const BorderSide(color: Colors.grey, width: 1)),
       ),
       buttons: [
         DialogButton(
           radius: BorderRadius.circular(5),
-          child: Text(
+          child: const Text(
             "Confirm",
             style: TextStyle(
                 color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
@@ -301,7 +301,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
         ),
         DialogButton(
           radius: BorderRadius.circular(5),
-          child: Text(
+          child: const Text(
             "Cancel",
             style: TextStyle(
                 color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
@@ -473,7 +473,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
           color: Colors.white,
           child: Container(
             height: 55,
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(4.0),
@@ -492,17 +492,17 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                     _changeRowsPerPage(newValue);
                   }
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_drop_down,
                   size: 40,
                 ),
-                style: TextStyle(color: Colors.black, fontSize: 17),
+                style: const TextStyle(color: Colors.black, fontSize: 17),
                 dropdownColor: Colors.white,
               ),
             ),
           ),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         IconButton(
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
@@ -519,7 +519,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         IconButton(
           icon: FaIcon(
@@ -555,7 +555,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   //add propertytype
@@ -574,22 +574,22 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   //search
                   Padding(
                     padding: const EdgeInsets.only(left: 11, right: 11),
                     child: Row(
                       children: [
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 1),
+                          const SizedBox(width: 1),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 24),
+                          const SizedBox(width: 24),
                         Expanded(
                           child: Material(
                             elevation: 2,
                             borderRadius: BorderRadius.circular(8),
                             child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
                               // height: 40,
                               height: MediaQuery.of(context).size.width < 500
                                   ? 45
@@ -601,7 +601,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(8),
                                   // border: Border.all(color: Colors.grey),
-                                  border: Border.all(color: Color(0xFF8A95A8))),
+                                  border: Border.all(color: const Color(0xFF8A95A8))),
                               child: Stack(
                                 children: [
                                   Positioned.fill(
@@ -637,9 +637,9 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                 ? 14
                                                 : 18,
                                             // fontWeight: FontWeight.bold,
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                           ),
-                                          contentPadding: EdgeInsets.only(
+                                          contentPadding: const EdgeInsets.only(
                                               left: 5, bottom: 12, top: 5)),
                                     ),
                                   ),
@@ -652,7 +652,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                     ),
                   ),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                   if (MediaQuery.of(context).size.width < 500)
                     Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -679,7 +679,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                       height: 200,
                                       width: 200,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     Text(
@@ -753,9 +753,9 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                             return SingleChildScrollView(
                               child: Column(
                                 children: [
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   _buildHeaders(),
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   Container(
                                     child: Column(
                                       children: currentPageData
@@ -775,13 +775,13 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
                                           margin:
-                                              EdgeInsets.symmetric(vertical: 6),
+                                              const EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
-                                                ? Color(0xFFF4F8FF)
+                                                ? const Color(0xFFF4F8FF)
                                                 : Colors.white,
                                             border: Border.all(
-                                                color: Color(0xFFDBE0E5)),
+                                                color: const Color(0xFFDBE0E5)),
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                           ),
@@ -830,13 +830,13 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                         },
                                                         child: Container(
                                                           margin:
-                                                              EdgeInsets.only(
+                                                              const EdgeInsets.only(
                                                                   left: 5,
                                                                   right: 5),
                                                           padding: !isExpanded
-                                                              ? EdgeInsets.only(
+                                                              ? const EdgeInsets.only(
                                                                   bottom: 10)
-                                                              : EdgeInsets.only(
+                                                              : const EdgeInsets.only(
                                                                   top: 10),
                                                           child: FaIcon(
                                                             isExpanded
@@ -866,7 +866,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                           },
                                                           child: Text(
                                                             ' ${Propertytype.rentalAddress}',
-                                                            style: TextStyle(
+                                                            style: const TextStyle(
                                                               color:
                                                                   Colors.black,
                                                               fontSize: 13,
@@ -891,7 +891,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                             formatDate(
                                                                     '${Propertytype.remainingDays!.toStringAsFixed(0)}') +
                                                                 ' days',
-                                                            style: TextStyle(
+                                                            style: const TextStyle(
                                                               color:
                                                                   Colors.black,
                                                               fontSize: 13,
@@ -916,7 +916,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                   //
                                                   // margin: EdgeInsets.only(
                                                   //     bottom: 2),
-                                                  decoration: BoxDecoration(
+                                                  decoration: const BoxDecoration(
                                                     border: Border(
                                                       top: BorderSide(
                                                           color:
@@ -930,7 +930,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                           CrossAxisAlignment
                                                               .start,
                                                       children: [
-                                                        SizedBox(
+                                                        const SizedBox(
                                                           height: 10,
                                                         ),
                                                         Padding(
@@ -943,7 +943,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                                       8.0),
                                                           child: Row(
                                                             children: [
-                                                              SizedBox(width: 11,),
+                                                              const SizedBox(width: 11,),
                                                               Text(
                                                                 'Tenants : ',
                                                                 style:
@@ -960,7 +960,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                                 child: Text(
                                                                   tenants,
                                                                   style:
-                                                                      TextStyle(
+                                                                      const TextStyle(
                                                                     color: Colors
                                                                         .black87,
                                                                     fontSize:
@@ -971,7 +971,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                             ],
                                                           ),
                                                         ),
-                                                        SizedBox(
+                                                        const SizedBox(
                                                           height: 10,
                                                         ),
                                                         if (Propertytype
@@ -982,7 +982,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                                 MainAxisAlignment
                                                                     .end,
                                                             children: [
-                                                              SizedBox(
+                                                              const SizedBox(
                                                                 width: 12,
                                                               ),
                                                               GestureDetector(
@@ -1050,7 +1050,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                                   ),
                                                                 ),
                                                               ),
-                                                              SizedBox(
+                                                              const SizedBox(
                                                                 width: 15,
                                                               ),
                                                               GestureDetector(
@@ -1112,7 +1112,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                                   ),
                                                                 ),
                                                               ),
-                                                              SizedBox(
+                                                              const SizedBox(
                                                                 width: 12,
                                                               ),
                                                             ],
@@ -1125,7 +1125,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                                 MainAxisAlignment
                                                                     .end,
                                                             children: [
-                                                              SizedBox(
+                                                              const SizedBox(
                                                                 width: 12,
                                                               ),
                                                               GestureDetector(
@@ -1186,12 +1186,12 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                                   ),
                                                                 ),
                                                               ),
-                                                              SizedBox(
+                                                              const SizedBox(
                                                                 width: 12,
                                                               ),
                                                             ],
                                                           ),
-                                                        SizedBox(
+                                                        const SizedBox(
                                                           height: 10,
                                                         ),
                                                       ],
@@ -1205,7 +1205,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                       }).toList(),
                                     ),
                                   ),
-                                  SizedBox(height: 20),
+                                  const SizedBox(height: 20),
                                   if (data.length > itemsPerPage)
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
@@ -1213,12 +1213,12 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                       Row(
                                         children: [
                                           // Text('Rows per page:'),
-                                          SizedBox(width: 10),
+                                          const SizedBox(width: 10),
                                           Material(
                                             elevation: 3,
                                             child: Container(
                                               height: 40,
-                                              padding: EdgeInsets.symmetric(
+                                              padding: const EdgeInsets.symmetric(
                                                   horizontal: 12.0),
                                               decoration: BoxDecoration(
                                                 border: Border.all(
@@ -1528,11 +1528,11 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                     height: 200,
                     fit: BoxFit.fill,
                   ),
-                  Text(
+                  const Text(
                     'No Internet',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     'Check your internet connection',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),

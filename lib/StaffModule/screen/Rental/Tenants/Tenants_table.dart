@@ -88,16 +88,16 @@ class _Tenants_tableState extends State<Tenants_table> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-          color: Color(0xFFF4F8FF),
+          color: const Color(0xFFF4F8FF),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Color(0xFFDBE0E5))),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -137,7 +137,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                             style: TextStyle(
                                 color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
+                    const SizedBox(width: 3),
                     ascending1
                         ? Padding(
                             padding: const EdgeInsets.only(top: 7, left: 2),
@@ -237,7 +237,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold)),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                   ],
                 ),
               ),
@@ -311,19 +311,19 @@ class _Tenants_tableState extends State<Tenants_table> {
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this Tenants!",
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       content: Column(
         children: <Widget>[
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           SizedBox(
             height: 45,
             child: TextField(
               controller: reason,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Enter reason for deletion',
                   contentPadding: EdgeInsets.only(top: 8, left: 15)),
@@ -333,7 +333,7 @@ class _Tenants_tableState extends State<Tenants_table> {
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -513,7 +513,7 @@ class _Tenants_tableState extends State<Tenants_table> {
           color: Colors.white,
           child: Container(
             height: 55,
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(4.0),
@@ -532,17 +532,17 @@ class _Tenants_tableState extends State<Tenants_table> {
                     _changeRowsPerPage(newValue);
                   }
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_drop_down,
                   size: 40,
                 ),
-                style: TextStyle(color: Colors.black, fontSize: 17),
+                style: const TextStyle(color: Colors.black, fontSize: 17),
                 dropdownColor: Colors.white,
               ),
             ),
           ),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         IconButton(
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
@@ -559,7 +559,7 @@ class _Tenants_tableState extends State<Tenants_table> {
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         IconButton(
           icon: FaIcon(
@@ -619,14 +619,14 @@ class _Tenants_tableState extends State<Tenants_table> {
       title: "Plan Limitation",
       desc:
           "The limit for adding tenants according to the plan has been reached.",
-      style: AlertStyle(
+      style: const AlertStyle(
           backgroundColor: Color.fromRGBO(255, 255, 255, 1),
           descStyle: TextStyle(fontSize: 14)
           //  overlayColor: Colors.black.withOpacity(.8)
           ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "OK",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -690,7 +690,7 @@ class _Tenants_tableState extends State<Tenants_table> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   //add propertytype
@@ -768,21 +768,21 @@ class _Tenants_tableState extends State<Tenants_table> {
                           ),
                         ),
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 6),
+                          const SizedBox(width: 6),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 22),
+                          const SizedBox(width: 22),
                       ],
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Padding(
                     padding: const EdgeInsets.only(left: 11, right: 11),
                     child: Row(
                       children: [
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 24),
+                          const SizedBox(width: 24),
                         Expanded(
                           child: Material(
                             elevation: 3,
@@ -799,7 +799,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(8),
                                   // border: Border.all(color: Colors.grey),
-                                  border: Border.all(color: Color(0xFF8A95A8))),
+                                  border: Border.all(color: const Color(0xFF8A95A8))),
                               child: Stack(
                                 children: [
                                   Positioned.fill(
@@ -829,14 +829,14 @@ class _Tenants_tableState extends State<Tenants_table> {
                                         hintText: "Search here...",
                                         hintStyle: TextStyle(
                                             // fontWeight: FontWeight.bold,
-                                            color: Color(0xFF8A95A8),
+                                            color: const Color(0xFF8A95A8),
                                             fontSize: MediaQuery.of(context)
                                                         .size
                                                         .width <
                                                     500
                                                 ? 14
                                                 : 18),
-                                        contentPadding: (EdgeInsets.only(
+                                        contentPadding: (const EdgeInsets.only(
                                             left: 8, bottom: 10, top: 5)),
                                       ),
                                     ),
@@ -892,14 +892,14 @@ class _Tenants_tableState extends State<Tenants_table> {
                         //   ],
                         // ),
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 25),
+                          const SizedBox(width: 25),
                       ],
                     ),
                   ),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                   if (MediaQuery.of(context).size.width < 500)
                     //for phone
                     Padding(
@@ -927,7 +927,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                       height: 200,
                                       width: 200,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     Text(
@@ -987,9 +987,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                             return SingleChildScrollView(
                               child: Column(
                                 children: [
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   _buildHeaders(),
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   Container(
                                     child: Column(
                                       children: currentPageData
@@ -1003,13 +1003,13 @@ class _Tenants_tableState extends State<Tenants_table> {
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
                                           margin:
-                                              EdgeInsets.symmetric(vertical: 6),
+                                              const EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
-                                                ? Color(0xFFF4F8FF)
+                                                ? const Color(0xFFF4F8FF)
                                                 : Colors.white,
                                             border: Border.all(
-                                                color: Color(0xFFDBE0E5)),
+                                                color: const Color(0xFFDBE0E5)),
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                           ),
@@ -1058,12 +1058,12 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                         },
                                                         child: Container(
                                                           margin:
-                                                              EdgeInsets.only(
+                                                              const EdgeInsets.only(
                                                                   left: 5),
                                                           padding: !isExpanded
-                                                              ? EdgeInsets.only(
+                                                              ? const EdgeInsets.only(
                                                                   bottom: 10)
-                                                              : EdgeInsets.only(
+                                                              : const EdgeInsets.only(
                                                                   top: 10),
                                                           child: FaIcon(
                                                             isExpanded
@@ -1141,8 +1141,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                                               ),
                                               if (isExpanded)
                                                 Container(
-                                                  padding: EdgeInsets.all(16),
-                                                  decoration: BoxDecoration(
+                                                  padding: const EdgeInsets.all(16),
+                                                  decoration: const BoxDecoration(
                                                     border: Border(
                                                       top: BorderSide(
                                                           color:
@@ -1194,7 +1194,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                       ],
                                                                     ),
                                                                   ),
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                     height: 5,
                                                                   ),
                                                                   Text.rich(
@@ -1217,7 +1217,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                       ],
                                                                     ),
                                                                   ),
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                     height: 5,
                                                                   ),
                                                                   Text.rich(
@@ -1245,7 +1245,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                             ),
                                                           ],
                                                         ),
-                                                        SizedBox(
+                                                        const SizedBox(
                                                           height: 20,
                                                         ),
                                                         Row(
@@ -1271,7 +1271,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                     color: Colors
                                                                         .red
                                                                         .shade50),
-                                                                child: Row(
+                                                                child: const Row(
                                                                   mainAxisAlignment:
                                                                       MainAxisAlignment
                                                                           .center,
@@ -1290,7 +1290,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                 ),
                                                               ),
                                                             ),
-                                                            SizedBox(
+                                                            const SizedBox(
                                                               width: 5,
                                                             ),
                                                             GestureDetector(
@@ -1322,7 +1322,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                     color: Colors
                                                                         .green
                                                                         .shade50), // color:Colors.grey[100],
-                                                                child: Row(
+                                                                child: const Row(
                                                                   mainAxisAlignment:
                                                                       MainAxisAlignment
                                                                           .center,
@@ -1341,7 +1341,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                 ),
                                                               ),
                                                             ),
-                                                            SizedBox(
+                                                            const SizedBox(
                                                               width: 5,
                                                             ),
                                                             GestureDetector(
@@ -1368,7 +1368,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                           .circular(
                                                                               8),
                                                                 ),
-                                                                child: Row(
+                                                                child: const Row(
                                                                   mainAxisAlignment:
                                                                       MainAxisAlignment
                                                                           .center,
@@ -1403,7 +1403,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                       }).toList(),
                                     ),
                                   ),
-                                  SizedBox(height: 20),
+                                  const SizedBox(height: 20),
                                   if (data.length > itemsPerPage)
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
@@ -1411,12 +1411,12 @@ class _Tenants_tableState extends State<Tenants_table> {
                                         Row(
                                           children: [
                                             // Text('Rows per page:'),
-                                            SizedBox(width: 10),
+                                            const SizedBox(width: 10),
                                             Material(
                                               elevation: 3,
                                               child: Container(
                                                 height: 40,
-                                                padding: EdgeInsets.symmetric(
+                                                padding: const EdgeInsets.symmetric(
                                                     horizontal: 12.0),
                                                 decoration: BoxDecoration(
                                                   border: Border.all(
@@ -1547,7 +1547,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                     height: 200,
                                     width: 200,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 10,
                                   ),
                                   Text(
@@ -1601,7 +1601,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                               //     .91,
                                               child: Table(
                                                 defaultColumnWidth:
-                                                    IntrinsicColumnWidth(),
+                                                    const IntrinsicColumnWidth(),
                                                 children: [
                                                   TableRow(
                                                     decoration: BoxDecoration(
@@ -1646,7 +1646,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                     ],
                                                   ),
                                                   TableRow(
-                                                    decoration: BoxDecoration(
+                                                    decoration: const BoxDecoration(
                                                       border: Border.symmetric(
                                                           horizontal:
                                                               BorderSide.none),
@@ -1673,7 +1673,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                   _pagedData
                                                                           .length -
                                                                       1
-                                                              ? BorderSide(
+                                                              ? const BorderSide(
                                                                   color: Color
                                                                       .fromRGBO(
                                                                           21,
@@ -1718,13 +1718,13 @@ class _Tenants_tableState extends State<Tenants_table> {
                                             ),
                                           ),
                                         ),
-                                        SizedBox(height: 25),
+                                        const SizedBox(height: 25),
                                         _buildPaginationControls(),
                                       ],
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 25),
+                                const SizedBox(height: 25),
                               ],
                             ),
                           );
@@ -1746,11 +1746,11 @@ class _Tenants_tableState extends State<Tenants_table> {
                     height: 200,
                     fit: BoxFit.fill,
                   ),
-                  Text(
+                  const Text(
                     'No Internet',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     'Check your internet connection',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),

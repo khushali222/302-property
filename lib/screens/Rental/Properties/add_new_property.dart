@@ -251,7 +251,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
       }
     }
     // Show a message to select an owner
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Please select an owner.'),
     ));
   }
@@ -407,7 +407,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
       padding: const EdgeInsets.only(top: 8, bottom: 8),
       child: DropdownButtonFormField<String>(
         value: controller.text.isNotEmpty ? controller.text : null,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           border: OutlineInputBorder(),
           contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         ),
@@ -456,14 +456,14 @@ class _Add_new_propertyState extends State<Add_new_property> {
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Color(0xFF8A95A8)),
+                    borderSide: const BorderSide(color: Color(0xFF8A95A8)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Color(0xFF8A95A8), width: 2),
+                    borderSide: const BorderSide(color: Color(0xFF8A95A8), width: 2),
                   ),
                   contentPadding:
-                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                      const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                 ),
               ),
             ),
@@ -491,7 +491,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
           children: [
             Row(
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 5,
                 ),
                 Text(
@@ -503,7 +503,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                 ),
               ],
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             if (propertyGroupImages[index] == null)
             Row(
               children: [
@@ -523,7 +523,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                 ),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             if (propertyGroupImages[index] != null)
               Column(
                 children: [
@@ -533,7 +533,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                   // ),
                   Row(
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         width: 80,
                       ),
                       GestureDetector(
@@ -543,7 +543,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 null; // Clear the selected image
                           });
                         },
-                        child: Icon(
+                        child: const Icon(
                           Icons.close,
                           color: Colors.grey,
                         ),
@@ -589,7 +589,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
         customTextField('Unit Address', unitAddressController),
         customTextField('SQft', sqftController),
 
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         photo(propertyGroups.length), // Pass the index
@@ -610,7 +610,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 customTextField('SQft', sqftController),
                                 customDropdownField('Bath', bathArray, bathController),
                                 customDropdownField('Bed', roomsArray, bedController),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 photo(propertyGroups.length), // Pass the index
@@ -632,7 +632,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 customTextField('SQft', sqftController),
                                 customDropdownField('Bath', bathArray, bathController),
                                 customDropdownField('Bed', roomsArray, bedController),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 photo(propertyGroups.length), // Pass the index
@@ -645,7 +645,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
       fields = [
         customTextField('SQft', sqftController),
 
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         photo(propertyGroups.length), // Pass the index
@@ -745,19 +745,19 @@ class _Add_new_propertyState extends State<Add_new_property> {
                   borderRadius: BorderRadius.circular(5.0),
                   child: Container(
                     height: 50.0,
-                    padding: EdgeInsets.only(top: 10, left: 10),
+                    padding: const EdgeInsets.only(top: 10, left: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
                       color: blueColor,
                       boxShadow: [
-                        BoxShadow(
+                        const BoxShadow(
                           color: Colors.grey,
                           offset: Offset(0.0, 1.0),
                           blurRadius: 6.0,
                         ),
                       ],
                     ),
-                    child: Text(
+                    child: const Text(
                       "Add Property",
                       style: TextStyle(
                         color: Colors.white,
@@ -767,7 +767,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                     ),
                   ),
                 ),
-                SizedBox(height: 25),
+                const SizedBox(height: 25),
                 //dropdown
                 Material(
                   elevation: 6,
@@ -805,13 +805,13 @@ class _Add_new_propertyState extends State<Add_new_property> {
                           // ),
                           Row(
                             children: [
-                              SizedBox(
+                              const SizedBox(
                                 width: 15,
                               ),
                               Text(
                                 "Property Information",
                                 style: TextStyle(
-                                    color: Color(0xFF8A95A8),
+                                    color: const Color(0xFF8A95A8),
                                     fontWeight: FontWeight.bold,
                                     fontSize:
                                         MediaQuery.of(context).size.width < 500
@@ -820,12 +820,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Row(
                             children: [
-                              SizedBox(
+                              const SizedBox(
                                 width: 15,
                               ),
                               Text(
@@ -840,7 +840,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Row(
@@ -850,7 +850,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return Center(
+                                    return const Center(
                                         child: SpinKitFadingCircle(
                                       color: Colors.black,
                                       size: 40.0,
@@ -859,7 +859,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     return Text('Error: ${snapshot.error}');
                                   } else if (!snapshot.hasData ||
                                       snapshot.data!.isEmpty) {
-                                    return Text('No properties found');
+                                    return const Text('No properties found');
                                   } else {
                                     Map<String, List<propertytype>>
                                         groupedProperties =
@@ -879,11 +879,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                     .size
                                                     .width *
                                                 .6,
-                                            padding: EdgeInsets.symmetric(
+                                            padding: const EdgeInsets.symmetric(
                                                 horizontal: 8, vertical: 4),
                                             decoration: BoxDecoration(
                                               border: Border.all(
-                                                color: Color(0xFF8A95A8),
+                                                color: const Color(0xFF8A95A8),
                                               ),
                                               borderRadius:
                                                   BorderRadius.circular(10),
@@ -901,7 +901,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                 500
                                                             ? 15
                                                             : 18,
-                                                    color: Color(0xFF8A95A8),
+                                                    color: const Color(0xFF8A95A8),
                                                   ),
                                                 ),
                                                 onChanged: (String? newValue) {
@@ -953,20 +953,20 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                       child:
                                                                           Column(
                                                                         children: [
-                                                                          SizedBox(
+                                                                          const SizedBox(
                                                                             height:
                                                                                 20,
                                                                           ),
                                                                           Row(
                                                                             children: [
-                                                                              SizedBox(
+                                                                              const SizedBox(
                                                                                 width: 15,
                                                                               ),
                                                                               Text(
                                                                                 "New Property Type",
                                                                                 style: TextStyle(fontWeight: FontWeight.bold, color: blueColor, fontSize: MediaQuery.of(context).size.width < 500 ? 17 : 22),
                                                                               ),
-                                                                              Spacer(),
+                                                                              const Spacer(),
                                                                               InkWell(
                                                                                 onTap: () {
                                                                                   Navigator.pop(context);
@@ -979,19 +979,19 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                     //   border: Border.all(color: blueColor),
                                                                                     //   borderRadius: BorderRadius.circular(20)
                                                                                     // ),
-                                                                                      child: Center(child: Icon(Icons.close))),
+                                                                                      child: const Center(child: Icon(Icons.close))),
                                                                                 ),
                                                                               ),
-                                                                              SizedBox(width: 8,),
+                                                                              const SizedBox(width: 8,),
                                                                             ],
                                                                           ),
-                                                                          SizedBox(
+                                                                          const SizedBox(
                                                                             height:
                                                                                 10,
                                                                           ),
                                                                           Row(
                                                                             children: [
-                                                                              SizedBox(
+                                                                              const SizedBox(
                                                                                 width: 15,
                                                                               ),
                                                                               Text(
@@ -1000,13 +1000,13 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                               ),
                                                                             ],
                                                                           ),
-                                                                          SizedBox(
+                                                                          const SizedBox(
                                                                             height:
                                                                                 10,
                                                                           ),
                                                                           Row(
                                                                             children: [
-                                                                              SizedBox(
+                                                                              const SizedBox(
                                                                                 width: 15,
                                                                               ),
                                                                               DropdownButtonHideUnderline(
@@ -1085,13 +1085,13 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                               ),
                                                                             ],
                                                                           ),
-                                                                          SizedBox(
+                                                                          const SizedBox(
                                                                             height:
                                                                                 20,
                                                                           ),
                                                                           Row(
                                                                             children: [
-                                                                              SizedBox(
+                                                                              const SizedBox(
                                                                                 width: 15,
                                                                               ),
                                                                               Text(
@@ -1100,13 +1100,13 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                               ),
                                                                             ],
                                                                           ),
-                                                                          SizedBox(
+                                                                          const SizedBox(
                                                                             height:
                                                                                 10,
                                                                           ),
                                                                           Row(
                                                                             children: [
-                                                                              SizedBox(
+                                                                              const SizedBox(
                                                                                 width: 15,
                                                                               ),
                                                                               Material(
@@ -1114,20 +1114,20 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 borderRadius: BorderRadius.circular(10),
                                                                                 child: Container(
                                                                                   width: MediaQuery.of(context).size.width < 500 ? 160 : 160,
-                                                                                  padding: EdgeInsets.only(left: 10),
+                                                                                  padding: const EdgeInsets.only(left: 10),
                                                                                   decoration: BoxDecoration(
                                                                                     color: Colors.white,
                                                                                     borderRadius: BorderRadius.circular(10),
                                                                                   ),
                                                                                   child: TextFormField(
                                                                                     controller: subtype,
-                                                                                    decoration: InputDecoration(border: InputBorder.none, hintText: "Townhome"),
+                                                                                    decoration: const InputDecoration(border: InputBorder.none, hintText: "Townhome"),
                                                                                   ),
                                                                                 ),
                                                                               ),
                                                                             ],
                                                                           ),
-                                                                          SizedBox(
+                                                                          const SizedBox(
                                                                             height:
                                                                                 20,
                                                                           ),
@@ -1166,7 +1166,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                               SizedBox(width: MediaQuery.of(context).size.width * 0.05),
                                                                             ],
                                                                           ),
-                                                                          SizedBox(
+                                                                          const SizedBox(
                                                                             height:
                                                                                 20,
                                                                           ),
@@ -1219,7 +1219,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                       borderRadius: BorderRadius.circular(5.0),
                                                                                       color: blueColor,
                                                                                       boxShadow: [
-                                                                                        BoxShadow(
+                                                                                        const BoxShadow(
                                                                                           color: Colors.grey,
                                                                                           offset: Offset(0.0, 1.0), //(x,y)
                                                                                           blurRadius: 6.0,
@@ -1228,7 +1228,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                     ),
                                                                                     child: Center(
                                                                                       child: isLoading
-                                                                                          ? SpinKitFadingCircle(
+                                                                                          ? const SpinKitFadingCircle(
                                                                                               color: Colors.white,
                                                                                               size: 25.0,
                                                                                             )
@@ -1246,16 +1246,16 @@ class _Add_new_propertyState extends State<Add_new_property> {
 
                                                                             ],
                                                                           ),
-                                                                          SizedBox(
+                                                                          const SizedBox(
                                                                             height:
                                                                                 10,
                                                                           ),
                                                                           if (iserror)
-                                                                            Text(
+                                                                            const Text(
                                                                               "Please fill in all fields correctly.",
                                                                               style: TextStyle(color: Colors.redAccent),
                                                                             ),
-                                                                          SizedBox(
+                                                                          const SizedBox(
                                                                             height:
                                                                                 10,
                                                                           ),
@@ -1314,7 +1314,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                         enabled: false,
                                                         child: Text(
                                                           entry.key,
-                                                          style: TextStyle(
+                                                          style: const TextStyle(
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
@@ -1340,7 +1340,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                             child: Text(
                                                               item.propertysubType ??
                                                                   '',
-                                                              style: TextStyle(
+                                                              style: const TextStyle(
                                                                 color: Colors
                                                                     .black,
                                                                 fontWeight:
@@ -1353,7 +1353,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                       }).toList(),
                                                     ];
                                                   }).toList(),
-                                                  DropdownMenuItem<String>(
+                                                  const DropdownMenuItem<String>(
                                                     value: 'Edit_properties',
                                                     child: Row(
                                                       children: [
@@ -1376,11 +1376,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                             ),
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 8,
                                         ),
                                         if (showError)
-                                          Row(
+                                          const Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             crossAxisAlignment:
@@ -1404,7 +1404,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               ? Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 15,
                                     ),
                                     Text(
@@ -1419,12 +1419,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   ],
                                 )
                               : Container(),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Row(
                             children: [
-                              SizedBox(
+                              const SizedBox(
                                 width: 15,
                               ),
                               Text(
@@ -1439,18 +1439,18 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 5,
                           ),
                           Row(
                             children: [
-                              SizedBox(
+                              const SizedBox(
                                 width: 15,
                               ),
                               Text(
                                 "Address",
                                 style: TextStyle(
-                                    color: Color(0xFF8A95A8),
+                                    color: const Color(0xFF8A95A8),
                                     fontWeight: FontWeight.bold,
                                     fontSize:
                                         MediaQuery.of(context).size.width < 500
@@ -1459,12 +1459,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 8,
                           ),
                           Row(
                             children: [
-                              SizedBox(
+                              const SizedBox(
                                 width: 15,
                               ),
                               Expanded(
@@ -1505,13 +1505,13 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             10),
-                                                    borderSide: BorderSide(
+                                                    borderSide: const BorderSide(
                                                         color: Colors
                                                             .red), // Set border color here
                                                   )
                                                 : InputBorder.none,
                                             border: InputBorder.none,
-                                            contentPadding: EdgeInsets.all(14),
+                                            contentPadding: const EdgeInsets.all(14),
                                             hintText: "Enter address",
                                             hintStyle: TextStyle(
                                               color: Colors.grey[600],
@@ -1529,7 +1529,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   ),
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 15,
                               ),
                             ],
@@ -1538,7 +1538,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               ? Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 15,
                                     ),
                                     Text(
@@ -1553,7 +1553,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   ],
                                 )
                               : Container(),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Padding(
@@ -1571,7 +1571,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                       Text(
                                         "City",
                                         style: TextStyle(
-                                          color: Color(0xFF8A95A8),
+                                          color: const Color(0xFF8A95A8),
                                           fontWeight: FontWeight.bold,
                                           fontSize: MediaQuery.of(context)
                                                       .size
@@ -1581,7 +1581,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                               : 18,
                                         ),
                                       ),
-                                      SizedBox(height: 5),
+                                      const SizedBox(height: 5),
                                       Container(
                                         height: 50,
                                         decoration: BoxDecoration(
@@ -1589,7 +1589,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                           borderRadius:
                                               BorderRadius.circular(10),
                                           border: Border.all(
-                                              color: Color(0xFF8A95A8)),
+                                              color: const Color(0xFF8A95A8)),
                                         ),
                                         child: Stack(
                                           children: [
@@ -1622,17 +1622,17 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(10),
-                                                          borderSide: BorderSide(
+                                                          borderSide: const BorderSide(
                                                               color: Colors
                                                                   .red), // Error border color
                                                         )
                                                       : InputBorder.none,
                                                   border: InputBorder.none,
                                                   contentPadding:
-                                                      EdgeInsets.all(14),
+                                                      const EdgeInsets.all(14),
                                                   hintText: "Enter city",
                                                   hintStyle: TextStyle(
-                                                    color: Color(0xFF8A95A8),
+                                                    color: const Color(0xFF8A95A8),
                                                     fontSize:
                                                         MediaQuery.of(context)
                                                                     .size
@@ -1647,7 +1647,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                           ],
                                         ),
                                       ),
-                                      SizedBox(height: 5),
+                                      const SizedBox(height: 5),
                                       cityerror
                                           ? Row(
                                               mainAxisAlignment:
@@ -1675,7 +1675,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     ],
                                   ),
                                 ),
-                                SizedBox(width: 16),
+                                const SizedBox(width: 16),
                                 // Second Column
                                 Expanded(
                                   child: Column(
@@ -1685,7 +1685,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                       Text(
                                         "State",
                                         style: TextStyle(
-                                          color: Color(0xFF8A95A8),
+                                          color: const Color(0xFF8A95A8),
                                           fontWeight: FontWeight.bold,
                                           fontSize: MediaQuery.of(context)
                                                       .size
@@ -1695,7 +1695,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                               : 18,
                                         ),
                                       ),
-                                      SizedBox(height: 5),
+                                      const SizedBox(height: 5),
                                       Container(
                                         height: 50,
                                         decoration: BoxDecoration(
@@ -1703,7 +1703,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                           borderRadius:
                                               BorderRadius.circular(10),
                                           border: Border.all(
-                                              color: Color(0xFF8A95A8)),
+                                              color: const Color(0xFF8A95A8)),
                                         ),
                                         child: Stack(
                                           children: [
@@ -1736,17 +1736,17 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(10),
-                                                          borderSide: BorderSide(
+                                                          borderSide: const BorderSide(
                                                               color: Colors
                                                                   .red), // Error border color
                                                         )
                                                       : InputBorder.none,
                                                   border: InputBorder.none,
                                                   contentPadding:
-                                                      EdgeInsets.all(14),
+                                                      const EdgeInsets.all(14),
                                                   hintText: "Enter state",
                                                   hintStyle: TextStyle(
-                                                    color: Color(0xFF8A95A8),
+                                                    color: const Color(0xFF8A95A8),
                                                     fontSize:
                                                         MediaQuery.of(context)
                                                                     .size
@@ -1761,7 +1761,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                           ],
                                         ),
                                       ),
-                                      SizedBox(height: 5),
+                                      const SizedBox(height: 5),
                                       stateerror
                                           ? Row(
                                               mainAxisAlignment:
@@ -1792,7 +1792,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               ],
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Padding(
@@ -1810,7 +1810,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                       Text(
                                         "Country",
                                         style: TextStyle(
-                                          color: Color(0xFF8A95A8),
+                                          color: const Color(0xFF8A95A8),
                                           fontWeight: FontWeight.bold,
                                           fontSize: MediaQuery.of(context)
                                                       .size
@@ -1820,7 +1820,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                               : 18,
                                         ),
                                       ),
-                                      SizedBox(height: 5),
+                                      const SizedBox(height: 5),
                                       Container(
                                         height: 50,
                                         decoration: BoxDecoration(
@@ -1828,7 +1828,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                           borderRadius:
                                               BorderRadius.circular(10),
                                           border: Border.all(
-                                              color: Color(0xFF8A95A8)),
+                                              color: const Color(0xFF8A95A8)),
                                         ),
                                         child: Stack(
                                           children: [
@@ -1861,17 +1861,17 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(10),
-                                                          borderSide: BorderSide(
+                                                          borderSide: const BorderSide(
                                                               color: Colors
                                                                   .red), // Error border color
                                                         )
                                                       : InputBorder.none,
                                                   border: InputBorder.none,
                                                   contentPadding:
-                                                      EdgeInsets.all(14),
+                                                      const EdgeInsets.all(14),
                                                   hintText: "Enter country",
                                                   hintStyle: TextStyle(
-                                                    color: Color(0xFF8A95A8),
+                                                    color: const Color(0xFF8A95A8),
                                                     fontSize:
                                                         MediaQuery.of(context)
                                                                     .size
@@ -1886,7 +1886,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                           ],
                                         ),
                                       ),
-                                      SizedBox(height: 5),
+                                      const SizedBox(height: 5),
                                       countryerror
                                           ? Row(
                                               mainAxisAlignment:
@@ -1914,7 +1914,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     ],
                                   ),
                                 ),
-                                SizedBox(width: 16),
+                                const SizedBox(width: 16),
                                 // Second Column
                                 Expanded(
                                   child: Column(
@@ -1924,7 +1924,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                       Text(
                                         "Zip Code",
                                         style: TextStyle(
-                                          color: Color(0xFF8A95A8),
+                                          color: const Color(0xFF8A95A8),
                                           fontWeight: FontWeight.bold,
                                           fontSize: MediaQuery.of(context)
                                                       .size
@@ -1934,7 +1934,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                               : 18,
                                         ),
                                       ),
-                                      SizedBox(height: 5),
+                                      const SizedBox(height: 5),
                                       Container(
                                         height: 50,
                                         decoration: BoxDecoration(
@@ -1942,7 +1942,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                           borderRadius:
                                               BorderRadius.circular(10),
                                           border: Border.all(
-                                              color: Color(0xFF8A95A8)),
+                                              color: const Color(0xFF8A95A8)),
                                         ),
                                         child: Stack(
                                           children: [
@@ -1992,17 +1992,17 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(10),
-                                                          borderSide: BorderSide(
+                                                          borderSide: const BorderSide(
                                                               color: Colors
                                                                   .red), // Error border color
                                                         )
                                                       : InputBorder.none,
                                                   border: InputBorder.none,
                                                   contentPadding:
-                                                      EdgeInsets.all(14),
+                                                      const EdgeInsets.all(14),
                                                   hintText: "Enter zip code",
                                                   hintStyle: TextStyle(
-                                                    color: Color(0xFF8A95A8),
+                                                    color: const Color(0xFF8A95A8),
                                                     fontSize:
                                                         MediaQuery.of(context)
                                                                     .size
@@ -2017,7 +2017,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                           ],
                                         ),
                                       ),
-                                      SizedBox(height: 5),
+                                      const SizedBox(height: 5),
                                       postalcodeerror
                                           ? Row(
                                               mainAxisAlignment:
@@ -2048,7 +2048,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               ],
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                         ],
@@ -2056,7 +2056,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                     ),
                   ),
                 ),
-                SizedBox(height: 25),
+                const SizedBox(height: 25),
                 //rental
                 Material(
                   elevation: 6,
@@ -2074,7 +2074,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                           children: [
                             Row(
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   width: 15,
                                 ),
                                 Text(
@@ -2090,19 +2090,19 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 ),
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             Row(
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   width: 15,
                                 ),
                                 Expanded(
                                   child: Text(
                                     "Who is the property owner ? (Required)",
                                     style: TextStyle(
-                                        color: Color(0xFF8A95A8),
+                                        color: const Color(0xFF8A95A8),
                                         //  fontWeight: FontWeight.bold,
                                         fontSize:
                                             MediaQuery.of(context).size.width <
@@ -2113,19 +2113,19 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 ),
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             Row(
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   width: 15,
                                 ),
                                 Expanded(
                                   child: Text(
                                     "This information will be used to help prepare owner drawns and 1099s",
                                     style: TextStyle(
-                                        color: Color(0xFF8A95A8),
+                                        color: const Color(0xFF8A95A8),
                                         //  fontWeight: FontWeight.bold,
                                         fontSize:
                                             MediaQuery.of(context).size.width <
@@ -2136,7 +2136,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 ),
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             GestureDetector(
@@ -2149,10 +2149,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               },
                               child: Row(
                                 children: [
-                                  SizedBox(width: 10),
+                                  const SizedBox(width: 10),
                                   Icon(Icons.add,
                                       size: 25, color: Colors.green[400]),
-                                  SizedBox(width: 9),
+                                  const SizedBox(width: 9),
                                   Text(
                                     "Add Rental Owner",
                                     style: TextStyle(
@@ -2168,14 +2168,14 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 ],
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 5,
                             ),
                             if (hasError &&
                                 Provider.of<OwnerDetailsProvider>(context)
                                         .OwnerDetails ==
                                     null)
-                              Row(
+                              const Row(
                                 children: [
                                   SizedBox(
                                     width: 15,
@@ -2189,7 +2189,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   ),
                                 ],
                               ),
-                            SizedBox(
+                            const SizedBox(
                               height: 5,
                             ),
                             Consumer<OwnerDetailsProvider>(
@@ -2198,10 +2198,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 return Ownersdetails != null
                                     ? Column(
                                         children: [
-                                          SizedBox(height: 10),
+                                          const SizedBox(height: 10),
                                           Row(
                                             children: [
-                                              SizedBox(width: 20),
+                                              const SizedBox(width: 20),
                                               Text(
                                                 "Owners Information",
                                                 style: TextStyle(
@@ -2217,10 +2217,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                               ),
                                             ],
                                           ),
-                                          SizedBox(height: 10),
+                                          const SizedBox(height: 10),
                                           Row(
                                             children: [
-                                              SizedBox(width: 15),
+                                              const SizedBox(width: 15),
                                               Expanded(
                                                 child: Container(
                                                   decoration: BoxDecoration(
@@ -2374,7 +2374,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                     ),
                                                                   ),
                                                                 ),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                     width: 4),
                                                                 InkWell(
                                                                   onTap: () {
@@ -2414,19 +2414,19 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(width: 15),
+                                              const SizedBox(width: 15),
                                             ],
                                           ),
                                         ],
                                       )
-                                    : Text('');
+                                    : const Text('');
                               },
                             ),
                           ],
                         )),
                   ),
                 ),
-                SizedBox(height: 25),
+                const SizedBox(height: 25),
                 Material(
                   elevation: 6,
                   borderRadius: BorderRadius.circular(10),
@@ -2443,14 +2443,14 @@ class _Add_new_propertyState extends State<Add_new_property> {
                           children: [
                             Row(
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   width: 15,
                                 ),
                                 Expanded(
                                   child: Text(
                                     "Who will be primary manager of this Property ?",
                                     style: TextStyle(
-                                        color: Color(0xFF8A95A8),
+                                        color: const Color(0xFF8A95A8),
                                         //  fontWeight: FontWeight.bold,
                                         fontSize:
                                             MediaQuery.of(context).size.width <
@@ -2461,12 +2461,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 ),
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             Row(
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   width: 15,
                                 ),
                                 Expanded(
@@ -2474,7 +2474,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     "If staff member has not yet been added as user in your account ,they can be added to the account"
                                     ",than as the manager later through the property's summary details.",
                                     style: TextStyle(
-                                        color: Color(0xFF8A95A8),
+                                        color: const Color(0xFF8A95A8),
                                         //  fontWeight: FontWeight.bold,
                                         fontSize:
                                             MediaQuery.of(context).size.width <
@@ -2485,12 +2485,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 ),
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             Row(
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   width: 15,
                                 ),
                                 Text(
@@ -2502,7 +2502,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 ),
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             Row(
@@ -2512,7 +2512,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
-                                      return Center(
+                                      return const Center(
                                           child: SpinKitFadingCircle(
                                         color: Colors.black,
                                         size: 40.0,
@@ -2521,7 +2521,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                       return Text('Error: ${snapshot.error}');
                                     } else if (!snapshot.hasData ||
                                         snapshot.data!.isEmpty) {
-                                      return Text('No staff members found');
+                                      return const Text('No staff members found');
                                     } else {
                                       List<Staffmembers> staffMembers =
                                           snapshot.data!;
@@ -2539,7 +2539,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
 
                                           child: Text(
                                             staffMember.staffmemberName ?? '',
-                                            style: TextStyle(fontSize: 14),
+                                            style: const TextStyle(fontSize: 14),
                                           ),
                                         );
                                       }).toList();
@@ -2583,7 +2583,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                               children: [
                                                                 Row(
                                                                 children: [
-                                                                  Spacer(),
+                                                                  const Spacer(),
                                                                   InkWell(
                                                                     onTap: () {
                                                                       Navigator.pop(
@@ -2596,7 +2596,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                       EdgeInsets
                                                                           .zero,
                                                                       child:
-                                                                      FaIcon(
+                                                                      const FaIcon(
                                                                         FontAwesomeIcons
                                                                             .xmark,
                                                                         size:
@@ -2606,14 +2606,14 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                       ),
                                                                     ),
                                                                   ),
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                     width: 5,
                                                                   ),
                                                                 ],
                                                               ),
                                                                 Row(
                                                                   children: [
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       width: 15,
                                                                     ),
                                                                     Text(
@@ -2632,10 +2632,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
 
                                                                   ],
                                                                 ),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                   height: 10,
                                                                 ),
-                                                                Row(
+                                                                const Row(
                                                                   children: [
                                                                     SizedBox(
                                                                       width: 15,
@@ -2653,12 +2653,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                     ),
                                                                   ],
                                                                 ),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                   height: 5,
                                                                 ),
                                                                 Row(
                                                                   children: [
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                         width:
                                                                         15),
                                                                     Material(
@@ -2679,7 +2679,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                           border:
                                                                           Border.all(
                                                                             color:
-                                                                            Color(0xFF8A95A8),
+                                                                            const Color(0xFF8A95A8),
                                                                           ),
                                                                         ),
                                                                         child:
@@ -2698,20 +2698,20 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 cursorColor: blueColor,
                                                                                 decoration: InputDecoration(
                                                                                   hintText: "Enter a staff member name here *",
-                                                                                  hintStyle: TextStyle(
+                                                                                  hintStyle: const TextStyle(
                                                                                     fontSize: 13,
                                                                                     color: Color(0xFF8A95A8),
                                                                                   ),
                                                                                   enabledBorder: nameerror
                                                                                       ? OutlineInputBorder(
                                                                                     borderRadius: BorderRadius.circular(2),
-                                                                                    borderSide: BorderSide(
+                                                                                    borderSide: const BorderSide(
                                                                                       color: Colors.red,
                                                                                     ),
                                                                                   )
                                                                                       : InputBorder.none,
                                                                                   border: InputBorder.none,
-                                                                                  contentPadding: EdgeInsets.all(12),
+                                                                                  contentPadding: const EdgeInsets.all(12),
                                                                                 ),
                                                                               ),
                                                                             ),
@@ -2719,7 +2719,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                         width:
                                                                         20),
                                                                   ],
@@ -2727,22 +2727,22 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                 nameerror
                                                                     ? Row(
                                                                   children: [
-                                                                    SizedBox(width: 12,),
+                                                                    const SizedBox(width: 12,),
                                                                     Expanded(
                                                                       child: Text(
                                                                         namemessage,
                                                                         style:
-                                                                        TextStyle(color: Colors.red,fontSize: 14),
+                                                                        const TextStyle(color: Colors.red,fontSize: 14),
                                                                       ),
                                                                     ),
-                                                                    SizedBox(width: 20,),
+                                                                    const SizedBox(width: 20,),
                                                                   ],
                                                                 )
                                                                     : Container(),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                   height: 10,
                                                                 ),
-                                                                Row(
+                                                                const Row(
                                                                   children: [
                                                                     SizedBox(
                                                                       width: 15,
@@ -2757,12 +2757,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                     ),
                                                                   ],
                                                                 ),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                   height: 5,
                                                                 ),
                                                                 Row(
                                                                   children: [
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                         width:
                                                                         15),
                                                                     Material(
@@ -2783,7 +2783,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                           border:
                                                                           Border.all(
                                                                             color:
-                                                                            Color(0xFF8A95A8),
+                                                                            const Color(0xFF8A95A8),
                                                                           ),
                                                                         ),
                                                                         child:
@@ -2802,20 +2802,20 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 cursorColor: blueColor,
                                                                                 decoration: InputDecoration(
                                                                                   hintText: "Enter Designation here *",
-                                                                                  hintStyle: TextStyle(
+                                                                                  hintStyle: const TextStyle(
                                                                                     fontSize: 13,
                                                                                     color: Color(0xFF8A95A8),
                                                                                   ),
                                                                                   enabledBorder: designationerror
                                                                                       ? OutlineInputBorder(
                                                                                     borderRadius: BorderRadius.circular(2),
-                                                                                    borderSide: BorderSide(
+                                                                                    borderSide: const BorderSide(
                                                                                       color: Colors.red,
                                                                                     ),
                                                                                   )
                                                                                       : InputBorder.none,
                                                                                   border: InputBorder.none,
-                                                                                  contentPadding: EdgeInsets.all(12),
+                                                                                  contentPadding: const EdgeInsets.all(12),
                                                                                 ),
                                                                               ),
                                                                             ),
@@ -2823,7 +2823,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                         width:
                                                                         20),
                                                                   ],
@@ -2831,22 +2831,22 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                 designationerror
                                                                     ? Row(
                                                                   children: [
-                                                                    SizedBox(width: 12,),
+                                                                    const SizedBox(width: 12,),
                                                                     Expanded(
                                                                       child: Text(
                                                                         designationmessage,
                                                                         style:
-                                                                        TextStyle(color: Colors.red,fontSize: 14),
+                                                                        const TextStyle(color: Colors.red,fontSize: 14),
                                                                       ),
                                                                     ),
-                                                                    SizedBox(width: 20,),
+                                                                    const SizedBox(width: 20,),
                                                                   ],
                                                                 )
                                                                     : Container(),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                   height: 10,
                                                                 ),
-                                                                Row(
+                                                                const Row(
                                                                   children: [
                                                                     SizedBox(
                                                                       width: 15,
@@ -2861,12 +2861,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                     ),
                                                                   ],
                                                                 ),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                   height: 5,
                                                                 ),
                                                                 Row(
                                                                   children: [
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                         width:
                                                                         15),
                                                                     Material(
@@ -2887,7 +2887,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                           border:
                                                                           Border.all(
                                                                             color:
-                                                                            Color(0xFF8A95A8),
+                                                                            const Color(0xFF8A95A8),
                                                                           ),
                                                                         ),
                                                                         child:
@@ -2912,20 +2912,20 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 cursorColor: blueColor,
                                                                                 decoration: InputDecoration(
                                                                                   hintText: "Enter Phone Number here *",
-                                                                                  hintStyle: TextStyle(
+                                                                                  hintStyle: const TextStyle(
                                                                                     fontSize: 13,
                                                                                     color: Color(0xFF8A95A8),
                                                                                   ),
                                                                                   enabledBorder: phonenumbererror
                                                                                       ? OutlineInputBorder(
                                                                                     borderRadius: BorderRadius.circular(2),
-                                                                                    borderSide: BorderSide(
+                                                                                    borderSide: const BorderSide(
                                                                                       color: Colors.red,
                                                                                     ),
                                                                                   )
                                                                                       : InputBorder.none,
                                                                                   border: InputBorder.none,
-                                                                                  contentPadding: EdgeInsets.all(12),
+                                                                                  contentPadding: const EdgeInsets.all(12),
                                                                                 ),
                                                                               ),
                                                                             ),
@@ -2933,7 +2933,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                         width:
                                                                         20),
                                                                   ],
@@ -2941,22 +2941,22 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                 phonenumbererror
                                                                     ? Row(
                                                                   children: [
-                                                                    SizedBox(width: 12,),
+                                                                    const SizedBox(width: 12,),
                                                                     Expanded(
                                                                       child: Text(
                                                                         phonenumbermessage,
                                                                         style:
-                                                                        TextStyle(color: Colors.red,fontSize: 14),
+                                                                        const TextStyle(color: Colors.red,fontSize: 14),
                                                                       ),
                                                                     ),
-                                                                    SizedBox(width: 20,),
+                                                                    const SizedBox(width: 20,),
                                                                   ],
                                                                 )
                                                                     : Container(),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                   height: 10,
                                                                 ),
-                                                                Row(
+                                                                const Row(
                                                                   children: [
                                                                     SizedBox(
                                                                       width: 15,
@@ -2971,12 +2971,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                     ),
                                                                   ],
                                                                 ),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                   height: 5,
                                                                 ),
                                                                 Row(
                                                                   children: [
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                         width:
                                                                         15),
                                                                     Material(
@@ -2997,7 +2997,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                           border:
                                                                           Border.all(
                                                                             color:
-                                                                            Color(0xFF8A95A8),
+                                                                            const Color(0xFF8A95A8),
                                                                           ),
                                                                         ),
                                                                         child:
@@ -3016,20 +3016,20 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 cursorColor: blueColor,
                                                                                 decoration: InputDecoration(
                                                                                   hintText: "Enter Email here *",
-                                                                                  hintStyle: TextStyle(
+                                                                                  hintStyle: const TextStyle(
                                                                                     fontSize: 13,
                                                                                     color: Color(0xFF8A95A8),
                                                                                   ),
                                                                                   enabledBorder: emailerror
                                                                                       ? OutlineInputBorder(
                                                                                     borderRadius: BorderRadius.circular(2),
-                                                                                    borderSide: BorderSide(
+                                                                                    borderSide: const BorderSide(
                                                                                       color: Colors.red,
                                                                                     ),
                                                                                   )
                                                                                       : InputBorder.none,
                                                                                   border: InputBorder.none,
-                                                                                  contentPadding: EdgeInsets.all(12),
+                                                                                  contentPadding: const EdgeInsets.all(12),
                                                                                 ),
                                                                               ),
                                                                             ),
@@ -3037,7 +3037,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                         width:
                                                                         20),
                                                                   ],
@@ -3045,22 +3045,22 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                 emailerror
                                                                     ? Row(
                                                                   children: [
-                                                                    SizedBox(width: 12,),
+                                                                    const SizedBox(width: 12,),
                                                                     Expanded(
                                                                       child: Text(
                                                                         emailmessage,
                                                                         style:
-                                                                        TextStyle(color: Colors.red,fontSize: 14),
+                                                                        const TextStyle(color: Colors.red,fontSize: 14),
                                                                       ),
                                                                     ),
-                                                                    SizedBox(width: 20,),
+                                                                    const SizedBox(width: 20,),
                                                                   ],
                                                                 )
                                                                     : Container(),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                   height: 10,
                                                                 ),
-                                                                Row(
+                                                                const Row(
                                                                   children: [
                                                                     SizedBox(
                                                                       width: 15,
@@ -3075,12 +3075,12 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                     ),
                                                                   ],
                                                                 ),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                   height: 5,
                                                                 ),
                                                                 Row(
                                                                   children: [
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                         width:
                                                                         15),
                                                                     Material(
@@ -3101,7 +3101,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                           border:
                                                                           Border.all(
                                                                             color:
-                                                                            Color(0xFF8A95A8),
+                                                                            const Color(0xFF8A95A8),
                                                                           ),
                                                                         ),
                                                                         child:
@@ -3120,20 +3120,20 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                 cursorColor: blueColor,
                                                                                 decoration: InputDecoration(
                                                                                   hintText: "Enter Password here",
-                                                                                  hintStyle: TextStyle(
+                                                                                  hintStyle: const TextStyle(
                                                                                     fontSize: 13,
                                                                                     color: Color(0xFF8A95A8),
                                                                                   ),
                                                                                   enabledBorder: passworderror
                                                                                       ? OutlineInputBorder(
                                                                                     borderRadius: BorderRadius.circular(2),
-                                                                                    borderSide: BorderSide(
+                                                                                    borderSide: const BorderSide(
                                                                                       color: Colors.red,
                                                                                     ),
                                                                                   )
                                                                                       : InputBorder.none,
                                                                                   border: InputBorder.none,
-                                                                                  contentPadding: EdgeInsets.all(12),
+                                                                                  contentPadding: const EdgeInsets.all(12),
                                                                                 ),
                                                                               ),
                                                                             ),
@@ -3141,7 +3141,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                         width:
                                                                         20),
                                                                   ],
@@ -3149,19 +3149,19 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                 passworderror
                                                                     ? Row(
                                                                   children: [
-                                                                    SizedBox(width: 12,),
+                                                                    const SizedBox(width: 12,),
                                                                     Expanded(
                                                                       child: Text(
                                                                         passwordmessage,
                                                                         style:
-                                                                        TextStyle(color: Colors.red,fontSize: 14),
+                                                                        const TextStyle(color: Colors.red,fontSize: 14),
                                                                       ),
                                                                     ),
-                                                                    SizedBox(width: 20,),
+                                                                    const SizedBox(width: 20,),
                                                                   ],
                                                                 )
                                                                     : Container(),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                   height: 20,
                                                                 ),
                                                                 Row(
@@ -3510,7 +3510,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                             borderRadius: BorderRadius.circular(5.0),
                                                                             color: blueColor,
                                                                             boxShadow: [
-                                                                              BoxShadow(
+                                                                              const BoxShadow(
                                                                                 color: Colors.grey,
                                                                                 offset: Offset(0.0, 1.0), //(x,y)
                                                                                 blurRadius: 6.0,
@@ -3519,7 +3519,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                           ),
                                                                           child: Center(
                                                                             child: loading
-                                                                                ? SpinKitFadingCircle(
+                                                                                ? const SpinKitFadingCircle(
                                                                               color: Colors.white,
                                                                               size: 25.0,
                                                                             )
@@ -3535,7 +3535,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       width: 15,
                                                                     ),
                                                                     InkWell(
@@ -3543,7 +3543,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                         Navigator.pop(
                                                                             context);
                                                                       },
-                                                                      child: Text(
+                                                                      child: const Text(
                                                                           "Cancel"),
                                                                     ),
                                                                   ],
@@ -3561,11 +3561,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                             },
                                             child: Row(
                                               children: [
-                                                Icon(
+                                                const Icon(
                                                   Icons.add,
                                                   size: 16,
                                                 ),
-                                                SizedBox(width: 3),
+                                                const SizedBox(width: 3),
                                                 Text(
                                                   'Add New Staffmember',
                                                   style: TextStyle(
@@ -3595,11 +3595,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                   .size
                                                   .width *
                                               .5,
-                                          padding: EdgeInsets.symmetric(
+                                          padding: const EdgeInsets.symmetric(
                                               horizontal: 8, vertical: 4),
                                           decoration: BoxDecoration(
                                             border: Border.all(
-                                              color: Color(0xFF8A95A8),
+                                              color: const Color(0xFF8A95A8),
                                             ),
                                             borderRadius:
                                                 BorderRadius.circular(10),
@@ -3617,7 +3617,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                               500
                                                           ? 15
                                                           : 18,
-                                                  color: Color(0xFF8A95A8),
+                                                  color: const Color(0xFF8A95A8),
                                                 ),
                                               ),
                                               onChanged: (String? newValue) {
@@ -3689,7 +3689,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                         )),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 if (selectedpropertytypedata != null &&
@@ -3711,7 +3711,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                           children: [
                             Row(
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   width: 10,
                                 ),
                                 Text(
@@ -3722,15 +3722,15 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10,
                                 ),
                               ],
                             ),
-                            SizedBox(height: 8.0),
+                            const SizedBox(height: 8.0),
                             Row(
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   width: 10,
                                 ),
                                 Text(
@@ -3777,11 +3777,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                       index == 0),
                                                   child: InkWell(
                                                     onTap: () => removePropertyGroup(index),
-                                                    child: Icon(Icons.close, color: Colors.black),
+                                                    child: const Icon(Icons.close, color: Colors.black),
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(height: 5),
+                                              const SizedBox(height: 5),
                                               ...group,
                                             ],
                                           ),
@@ -3791,7 +3791,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   ),
                                 ],
                               ),
-                            SizedBox(
+                            const SizedBox(
                               height: 15,
                             ),
                             if (selectedpropertytypedata?.isMultiunit == true)
@@ -3862,7 +3862,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                             children: [
                               Row(
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 10,
                                   ),
                                   Text(
@@ -3873,15 +3873,15 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                       fontSize: 16,
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 10,
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 8.0),
+                              const SizedBox(height: 8.0),
                               Row(
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 10,
                                   ),
                                   Text(
@@ -3928,11 +3928,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                         index == 0),
                                                     child: InkWell(
                                                       onTap: () => removePropertyGroup(index),
-                                                      child: Icon(Icons.close, color: Colors.black),
+                                                      child: const Icon(Icons.close, color: Colors.black),
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(height: 5),
+                                                const SizedBox(height: 5),
                                                 ...group,
                                               ],
                                             ),
@@ -3942,7 +3942,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     ),
                                   ],
                                 ),
-                              SizedBox(height: 15),
+                              const SizedBox(height: 15),
                               if (selectedpropertytypedata?.isMultiunit == true)
                               GestureDetector(
                                 onTap: () {
@@ -3991,11 +3991,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                     ),
                   ),
                 if (iserror2)
-                  Text(
+                  const Text(
                     "required",
                     style: TextStyle(color: Colors.redAccent),
                   ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
 
                 Row(
                   children: [
@@ -4278,7 +4278,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                           decoration: BoxDecoration(
                             color: blueColor,
                             boxShadow: [
-                              BoxShadow(
+                              const BoxShadow(
                                 color: Colors.grey,
                                 offset: Offset(0.0, 1.0),
                                 blurRadius: 6.0,
@@ -4287,11 +4287,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
                           ),
                           child: Center(
                             child: loading
-                                ? SpinKitFadingCircle(
+                                ? const SpinKitFadingCircle(
                                     color: Colors.white,
                                     size: 25.0,
                                   )
-                                : Text(
+                                : const Text(
                                     "Create Property",
                                     style: TextStyle(
                                       color: Colors.white,
@@ -4302,7 +4302,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 15),
+                    const SizedBox(width: 15),
                     InkWell(
                         onTap: () {
                           // displayPropertyData();
@@ -4311,7 +4311,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                         child: Text("Cancel",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: blueColor),)),
                   ],
                 ),
-                Column(
+                const Column(
                   children: [
                     //SetshowRentalOwnerTable(),
                   ],
@@ -4354,7 +4354,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
                   color: Colors.white,
-                  border: Border.all(color: Color(0xFF8A95A8)),
+                  border: Border.all(color: const Color(0xFF8A95A8)),
                 ),
                 child: Stack(
                   children: [
@@ -4362,7 +4362,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                       child: TextField(
                         controller: group.controller,
                         cursorColor: blueColor,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.only(
                               top: 12.5, bottom: 12.5, left: 15),
@@ -4399,7 +4399,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
   }
 
   SetshowRentalOwnerTable() {
-    Row(
+    const Row(
       children: [
         Text("Hello"),
       ],
@@ -4427,7 +4427,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (owner.processorList.isNotEmpty) ...[
-            Row(
+            const Row(
               children: [
                 Text(
                   "Merchant Id",
@@ -4438,7 +4438,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                 ),
               ],
             ),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             Column(
               children: [
                 Container(
@@ -4476,7 +4476,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     borderRadius: BorderRadius.circular(5),
                                     color: Colors.white,
                                     border:
-                                        Border.all(color: Color(0xFF8A95A8)),
+                                        Border.all(color: const Color(0xFF8A95A8)),
                                   ),
                                   child: Stack(
                                     children: [
@@ -4485,7 +4485,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                           controller: group.controller,
                                           cursorColor:
                                               blueColor,
-                                          decoration: InputDecoration(
+                                          decoration: const InputDecoration(
                                             border: InputBorder.none,
                                             contentPadding: EdgeInsets.only(
                                                 top: 12.5,
@@ -4525,15 +4525,15 @@ class _Add_new_propertyState extends State<Add_new_property> {
                     },
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: _addNewGroup,
-                  child: Text("Add Processor Group"),
+                  child: const Text("Add Processor Group"),
                 ),
               ],
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-            Row(
+            const Row(
               children: [
                 // Handle error display here if needed
               ],

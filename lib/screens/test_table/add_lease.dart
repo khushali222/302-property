@@ -199,7 +199,7 @@ class _addLease4State extends State<addLease4>
         child: TableCell(
           child: Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Center(child: Text(text, style: TextStyle(fontSize: 18))),
+            child: Center(child: Text(text, style: const TextStyle(fontSize: 18))),
           ),
         ),
       ),
@@ -714,7 +714,7 @@ class _addLease4State extends State<addLease4>
                         //           rentalOwnersid: '1715146591684',
                         //         )));
                       },
-                      child: Text('Summary')),
+                      child: const Text('Summary')),
                   Padding(
                     padding: const EdgeInsets.all(4.0),
                     child: ClipRRect(
@@ -778,7 +778,7 @@ class _addLease4State extends State<addLease4>
                             children: [
                               DropdownButtonHideUnderline(
                                 child: DropdownButtonFormField2<String>(
-                                  decoration: InputDecoration(
+                                  decoration: const InputDecoration(
                                       border: InputBorder.none),
                                   isExpanded: true,
                                   hint: const Row(
@@ -881,7 +881,7 @@ class _addLease4State extends State<addLease4>
                                   ? DropdownButtonHideUnderline(
                                 child: DropdownButtonFormField2<
                                     String>(
-                                  decoration: InputDecoration(
+                                  decoration: const InputDecoration(
                                       border: InputBorder.none),
                                   isExpanded: true,
                                   hint: const Row(
@@ -1497,12 +1497,12 @@ class _addLease4State extends State<addLease4>
                           const SizedBox(
                             height: 10,
                           ),
-                          SizedBox(height: 8.0),
+                          const SizedBox(height: 8.0),
                           if (Provider.of<SelectedTenantsProvider>(context)
                               .selectedTenants
                               .isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.only(left: 13),
+                            const Padding(
+                              padding: EdgeInsets.only(left: 13),
                               child: Text(
                                 'Tenants:',
                                 style: TextStyle(
@@ -1512,7 +1512,7 @@ class _addLease4State extends State<addLease4>
                           if (Provider.of<SelectedTenantsProvider>(context)
                               .selectedTenants
                               .isNotEmpty)
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                           if (Provider.of<SelectedTenantsProvider>(context)
@@ -1535,19 +1535,19 @@ class _addLease4State extends State<addLease4>
                                         headingRowColor: MaterialStateColor
                                             .resolveWith((states) =>
                                             blueColor),
-                                        headingTextStyle: TextStyle(
+                                        headingTextStyle: const TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold),
                                         columns: [
-                                          DataColumn(
+                                          const DataColumn(
                                               label: Text('First Name',
                                                   style:
                                                   TextStyle(fontSize: 13))),
-                                          DataColumn(
+                                          const DataColumn(
                                               label: Text('Rent share',
                                                   style:
                                                   TextStyle(fontSize: 13))),
-                                          DataColumn(
+                                          const DataColumn(
                                               label: Text('Action',
                                                   style:
                                                   TextStyle(fontSize: 13))),
@@ -1562,7 +1562,7 @@ class _addLease4State extends State<addLease4>
                                               DataCell(
                                                 Text(
                                                     '${tenant.tenantFirstName} ${tenant.tenantLastName}',
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontSize: 12)),
                                               ),
                                               DataCell(
@@ -1572,14 +1572,14 @@ class _addLease4State extends State<addLease4>
                                                     child: Container(
                                                       height: 30,
                                                       width: 60,
-                                                      decoration: BoxDecoration(
+                                                      decoration: const BoxDecoration(
                                                         color: Colors.white,
                                                         // border: Border.all(color: blueColor),
                                                       ),
-                                                      child: Center(
+                                                      child: const Center(
                                                         child: Padding(
                                                           padding:
-                                                          const EdgeInsets
+                                                          EdgeInsets
                                                               .all(8.0),
                                                           child: TextField(
                                                             style: TextStyle(
@@ -1609,7 +1609,7 @@ class _addLease4State extends State<addLease4>
                                                         listen: false)
                                                         .removeTenant(tenant);
                                                   },
-                                                  child: Icon(Icons.delete,
+                                                  child: const Icon(Icons.delete,
                                                       size: 15),
                                                 ),
                                               ),
@@ -1630,43 +1630,43 @@ class _addLease4State extends State<addLease4>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text('ID: ${ids[index]}',
-                                        style: TextStyle(fontSize: 12)),
+                                        style: const TextStyle(fontSize: 12)),
                                     Text(
                                         'First Name: ${tenantFirstNames[index]}',
-                                        style: TextStyle(fontSize: 12)),
+                                        style: const TextStyle(fontSize: 12)),
                                     Text('Last Name: ${tenantLastNames[index]}',
-                                        style: TextStyle(fontSize: 12)),
+                                        style: const TextStyle(fontSize: 12)),
                                     Text(
                                         'Phone Number: ${tenantPhoneNumbers[index]}',
-                                        style: TextStyle(fontSize: 12)),
+                                        style: const TextStyle(fontSize: 12)),
                                     Text(
                                         'Alternative Number: ${tenantAlternativeNumbers[index]}',
-                                        style: TextStyle(fontSize: 12)),
+                                        style: const TextStyle(fontSize: 12)),
                                     Text('Email: ${tenantEmails[index]}',
-                                        style: TextStyle(fontSize: 12)),
+                                        style: const TextStyle(fontSize: 12)),
                                     Text(
                                         'Alternative Email: ${tenantAlternativeEmails[index]}',
-                                        style: TextStyle(fontSize: 12)),
+                                        style: const TextStyle(fontSize: 12)),
                                     Text(
                                         'Rental Address: ${rentalAddresses[index]}',
-                                        style: TextStyle(fontSize: 12)),
+                                        style: const TextStyle(fontSize: 12)),
                                     Text('Rental Unit: ${rentalUnits[index]}',
-                                        style: TextStyle(fontSize: 12)),
+                                        style: const TextStyle(fontSize: 12)),
                                   ],
                                 );
                               })),
                           if (Provider.of<SelectedTenantsProvider>(context)
                               .selectedTenants
                               .isNotEmpty)
-                            SizedBox(
+                            const SizedBox(
                               height: 8,
                             ),
-                          SizedBox(height: 8.0),
+                          const SizedBox(height: 8.0),
                           if (Provider.of<SelectedCosignersProvider>(context)
                               .cosigners
                               .isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.only(left: 13),
+                            const Padding(
+                              padding: EdgeInsets.only(left: 13),
                               child: Text(
                                 'Consigner:',
                                 style: TextStyle(
@@ -1676,7 +1676,7 @@ class _addLease4State extends State<addLease4>
                           if (Provider.of<SelectedCosignersProvider>(context)
                               .cosigners
                               .isNotEmpty)
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                           if (Provider.of<SelectedCosignersProvider>(context)
@@ -1699,19 +1699,19 @@ class _addLease4State extends State<addLease4>
                                         headingRowColor: MaterialStateColor
                                             .resolveWith((states) =>
                                             blueColor),
-                                        headingTextStyle: TextStyle(
+                                        headingTextStyle: const TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold),
                                         columns: [
-                                          DataColumn(
+                                          const DataColumn(
                                               label: Text('Name',
                                                   style:
                                                   TextStyle(fontSize: 13))),
-                                          DataColumn(
+                                          const DataColumn(
                                               label: Text('Phone number',
                                                   style:
                                                   TextStyle(fontSize: 13))),
-                                          DataColumn(
+                                          const DataColumn(
                                               label: Text('Action',
                                                   style:
                                                   TextStyle(fontSize: 13))),
@@ -1731,12 +1731,12 @@ class _addLease4State extends State<addLease4>
                                               DataCell(
                                                 Text(
                                                     '${cosigner.firstName} ${cosigner.lastName}',
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontSize: 12)),
                                               ),
                                               DataCell(
                                                 Text('${cosigner.phoneNumber}',
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontSize: 12)),
                                               ),
                                               DataCell(
@@ -1751,10 +1751,10 @@ class _addLease4State extends State<addLease4>
                                                               cosigner, index);
                                                         });
                                                       },
-                                                      child: Icon(Icons.edit,
+                                                      child: const Icon(Icons.edit,
                                                           size: 15),
                                                     ),
-                                                    SizedBox(width: 5),
+                                                    const SizedBox(width: 5),
                                                     InkWell(
                                                       onTap: () {
                                                         Provider.of<SelectedCosignersProvider>(
@@ -1763,7 +1763,7 @@ class _addLease4State extends State<addLease4>
                                                             .removeConsigner(
                                                             cosigner);
                                                       },
-                                                      child: Icon(Icons.delete,
+                                                      child: const Icon(Icons.delete,
                                                           size: 15),
                                                     ),
                                                   ],
@@ -2068,7 +2068,7 @@ class _addLease4State extends State<addLease4>
                                           color: blueColor,
                                         ),
                                         children: [
-                                          Padding(
+                                          const Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Text(
                                               'Account',
@@ -2078,7 +2078,7 @@ class _addLease4State extends State<addLease4>
                                               ),
                                             ),
                                           ),
-                                          Padding(
+                                          const Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Text(
                                               'Amount',
@@ -2088,7 +2088,7 @@ class _addLease4State extends State<addLease4>
                                               ),
                                             ),
                                           ),
-                                          Padding(
+                                          const Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Text(
                                               'Actions',
@@ -2210,7 +2210,7 @@ class _addLease4State extends State<addLease4>
                                           color: blueColor,
                                         ),
                                         children: [
-                                          Padding(
+                                          const Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Text(
                                               'Account',
@@ -2220,7 +2220,7 @@ class _addLease4State extends State<addLease4>
                                               ),
                                             ),
                                           ),
-                                          Padding(
+                                          const Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Text(
                                               'Amount',
@@ -2230,7 +2230,7 @@ class _addLease4State extends State<addLease4>
                                               ),
                                             ),
                                           ),
-                                          Padding(
+                                          const Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Text(
                                               'Actions',
@@ -2560,11 +2560,11 @@ class _addLease4State extends State<addLease4>
                                 ),
                               ),
                               onPressed: _pickPdfFiles,
-                              child: Text('Upload'),
+                              child: const Text('Upload'),
                             ),
                           ),
 
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           const SizedBox(height: 10),
                           Flexible(
                             fit: FlexFit.loose,
@@ -4970,7 +4970,7 @@ class _AddTenantState extends State<AddTenant> {
         child: Column(
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             //checked
@@ -4993,13 +4993,13 @@ class _AddTenantState extends State<AddTenant> {
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             isChecked
                 ? Column(
               children: [
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 // Row(
                 //   children: [
                 //     Expanded(
@@ -5066,7 +5066,7 @@ class _AddTenantState extends State<AddTenant> {
                 //     ),
                 //   ],
                 // ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
@@ -5074,8 +5074,8 @@ class _AddTenantState extends State<AddTenant> {
                   ),
                   child: DataTable(
                     columns: [
-                      DataColumn(label: Text('Tenant Name')),
-                      DataColumn(label: Text('Select')),
+                      const DataColumn(label: Text('Tenant Name')),
+                      const DataColumn(label: Text('Select')),
                     ],
                     rows: filteredTenants.map((tenant) {
                       /* final isSelected = Provider.of<SelectedTenantsProvider>(context)
@@ -5129,7 +5129,7 @@ class _AddTenantState extends State<AddTenant> {
                     }).toList(),
                   ),
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -5144,7 +5144,7 @@ class _AddTenantState extends State<AddTenant> {
                             borderRadius: BorderRadius.circular(5.0),
                             color: blueColor,
                             boxShadow: [
-                              BoxShadow(
+                              const BoxShadow(
                                 color: Colors.grey,
                                 offset: Offset(0.0, 1.0), //(x,y)
                                 blurRadius: 6.0,
@@ -5153,11 +5153,11 @@ class _AddTenantState extends State<AddTenant> {
                           ),
                           child: Center(
                             child: isLoading
-                                ? SpinKitFadingCircle(
+                                ? const SpinKitFadingCircle(
                               color: Colors.white,
                               size: 25.0,
                             )
-                                : Text(
+                                : const Text(
                               "Add",
                               style: TextStyle(
                                   color: Colors.white,
@@ -5183,7 +5183,7 @@ class _AddTenantState extends State<AddTenant> {
                             borderRadius: BorderRadius.circular(5.0),
                             color: Colors.white,
                             boxShadow: [
-                              BoxShadow(
+                              const BoxShadow(
                                 color: Colors.grey,
                                 offset: Offset(0.0, 1.0), //(x,y)
                                 blurRadius: 6.0,
@@ -5192,7 +5192,7 @@ class _AddTenantState extends State<AddTenant> {
                           ),
                           child: Center(
                             child: isLoading
-                                ? SpinKitFadingCircle(
+                                ? const SpinKitFadingCircle(
                               color: Colors.white,
                               size: 25.0,
                             )
@@ -5776,7 +5776,7 @@ class _AddTenantState extends State<AddTenant> {
                         .addTenant(tenant);
                   }
                 },
-                child: Text("Add")),
+                child: const Text("Add")),
           ],
         ),
       ),
@@ -6254,7 +6254,7 @@ class _AddCosignerState extends State<AddCosigner> {
                       }
                     }
                   },
-                  child: Text("add"),
+                  child: const Text("add"),
                 )
               ],
             ),

@@ -211,7 +211,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                     height: MediaQuery.of(context).size.height * 0.1,
                   ),
                   Image(
-                    image: AssetImage('assets/images/logo.png'),
+                    image: const AssetImage('assets/images/logo.png'),
                     height: MediaQuery.of(context).size.height * 0.07,
                     width: MediaQuery.of(context).size.width * 0.9,
                     fit: BoxFit.fill,
@@ -262,7 +262,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                           height: 60,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: Color.fromRGBO(196, 196, 196, .3),
+                            color: const Color.fromRGBO(196, 196, 196, .3),
                           ),
                           child: Stack(
                             children: [
@@ -277,7 +277,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                       password.clear();
                                     });
                                   },
-                                  style: TextStyle(fontSize: 20),
+                                  style: const TextStyle(fontSize: 20),
                                   controller: email,
                                   cursorColor: blueColor,
                                   decoration: InputDecoration(
@@ -285,17 +285,17 @@ class _Login_ScreenState extends State<Login_Screen> {
                                         ? OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10),
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                                 color: Colors
                                                     .red), // Set border color here
                                           )
                                         : InputBorder.none,
                                     border: InputBorder.none,
-                                    contentPadding: EdgeInsets.all(14),
+                                    contentPadding: const EdgeInsets.all(14),
                                     prefixIcon: Container(
                                       height: 25,
                                       width: 25,
-                                      padding: EdgeInsets.all(13),
+                                      padding: const EdgeInsets.all(13),
                                       child: FaIcon(
                                         FontAwesomeIcons.envelope,
                                         size: 25,
@@ -321,7 +321,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                       ? Center(
                           child: Text(
                           emailmessage,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.red,
                           ),
                         ))
@@ -344,7 +344,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                ForgotPassword()));
+                                                const ForgotPassword()));
                                   },
                                   child: Text(
                                     "Forgot password?",
@@ -353,7 +353,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                         fontSize:
                                             MediaQuery.of(context).size.width *
                                                 0.02,
-                                        color: Color(0xFF152B51)),
+                                        color: const Color(0xFF152B51)),
                                   ),
                                 ),
                                 SizedBox(
@@ -401,7 +401,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                               ),
                               child: Center(
                                 child: loading
-                                    ? SpinKitFadingCircle(
+                                    ? const SpinKitFadingCircle(
                                         color: Colors.white,
                                         size: 40.0,
                                       )
@@ -443,7 +443,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 height: 60,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-                                  color: Color.fromRGBO(196, 196, 196, .3),
+                                  color: const Color.fromRGBO(196, 196, 196, .3),
                                 ),
                                 child: Stack(
                                   children: [
@@ -455,7 +455,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                             passworderror = false;
                                           });
                                         },
-                                        style: TextStyle(fontSize: 20),
+                                        style: const TextStyle(fontSize: 20),
                                         controller: password,
                                         obscureText: visiable_password,
                                         cursorColor: blueColor,
@@ -464,18 +464,18 @@ class _Login_ScreenState extends State<Login_Screen> {
                                               ? OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(10),
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                       color: Colors
                                                           .red), // Set border color here
                                                 )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(14),
+                                          contentPadding: const EdgeInsets.all(14),
                                           prefixIcon: Container(
                                             height: 25,
                                             width: 25,
                                             // color: Colors.blue,
-                                            padding: EdgeInsets.all(13),
+                                            padding: const EdgeInsets.all(13),
                                             child: FaIcon(
                                               FontAwesomeIcons.lock,
                                               size: 25,
@@ -518,7 +518,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                             ? Center(
                                 child: Text(
                                 passwordmessage,
-                                style: TextStyle(color: Colors.red),
+                                style: const TextStyle(color: Colors.red),
                               ))
                             : Container(),
                         SizedBox(
@@ -556,7 +556,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            ForgotPassword()));
+                                            const ForgotPassword()));
                               },
                               child: Text(
                                 "Forgot password?",
@@ -648,12 +648,12 @@ class _Login_ScreenState extends State<Login_Screen> {
                                   MediaQuery.of(context).size.height * 0.045,
                               width: MediaQuery.of(context).size.width * 0.8,
                               decoration: BoxDecoration(
-                                color: Color(0xFF152B51),
+                                color: const Color(0xFF152B51),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Center(
                                 child: loading
-                                    ? SpinKitFadingCircle(
+                                    ? const SpinKitFadingCircle(
                                         color: Colors.white,
                                         size: 40.0,
                                       )
@@ -704,7 +704,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                       Text(
                         "Don't have an account ? ",
                         style: TextStyle(
-                            color: Color(0xFF152B51),
+                            color: const Color(0xFF152B51),
                             fontSize: MediaQuery.of(context).size.width * 0.03),
                       ),
                       GestureDetector(
@@ -719,7 +719,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                             "Register now",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF152B51),
+                                color: const Color(0xFF152B51),
                                 fontSize:
                                     MediaQuery.of(context).size.width * 0.03),
                           ),
@@ -767,7 +767,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                     height: MediaQuery.of(context).size.height * 0.1,
                   ),
                   Image(
-                    image: AssetImage('assets/images/logo.png'),
+                    image: const AssetImage('assets/images/logo.png'),
                     height: MediaQuery.of(context).size.height * 0.05,
                     width: MediaQuery.of(context).size.width * 0.9,
                   ),
@@ -817,7 +817,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                           height: 50,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: Color.fromRGBO(196, 196, 196, .3),
+                            color: const Color.fromRGBO(196, 196, 196, .3),
                           ),
                           child: Stack(
                             children: [
@@ -839,17 +839,17 @@ class _Login_ScreenState extends State<Login_Screen> {
                                         ? OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10),
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                                 color: Colors
                                                     .red), // Set border color here
                                           )
                                         : InputBorder.none,
                                     border: InputBorder.none,
-                                    contentPadding: EdgeInsets.all(14),
+                                    contentPadding: const EdgeInsets.all(14),
                                     prefixIcon: Container(
                                       height: 20,
                                       width: 20,
-                                      padding: EdgeInsets.all(13),
+                                      padding: const EdgeInsets.all(13),
                                       child: FaIcon(
                                         FontAwesomeIcons.envelope,
                                         size: 20,
@@ -875,7 +875,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                       ? Center(
                           child: Text(
                           emailmessage,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.red,
                           ),
                         ))
@@ -898,7 +898,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                ForgotPassword()));
+                                                const ForgotPassword()));
                                   },
                                   child: Text(
                                     "Forgot password?",
@@ -907,7 +907,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                         fontSize:
                                             MediaQuery.of(context).size.width *
                                                 0.035,
-                                        color: Color(0xFF152B51)),
+                                        color: const Color(0xFF152B51)),
                                   ),
                                 ),
                                 SizedBox(
@@ -957,7 +957,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                               ),
                               child: Center(
                                 child: loading
-                                    ? SpinKitFadingCircle(
+                                    ? const SpinKitFadingCircle(
                                         color: Colors.white,
                                         size: 40.0,
                                       )
@@ -999,7 +999,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 height: 50,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-                                  color: Color.fromRGBO(196, 196, 196, .3),
+                                  color: const Color.fromRGBO(196, 196, 196, .3),
                                 ),
                                 child: Stack(
                                   children: [
@@ -1019,18 +1019,18 @@ class _Login_ScreenState extends State<Login_Screen> {
                                               ? OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(10),
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                       color: Colors
                                                           .red), // Set border color here
                                                 )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(14),
+                                          contentPadding: const EdgeInsets.all(14),
                                           prefixIcon: Container(
                                             height: 20,
                                             width: 20,
                                             // color: Colors.blue,
-                                            padding: EdgeInsets.all(13),
+                                            padding: const EdgeInsets.all(13),
                                             child: FaIcon(
                                               FontAwesomeIcons.lock,
                                               size: 20,
@@ -1073,7 +1073,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                             ? Center(
                                 child: Text(
                                 passwordmessage,
-                                style: TextStyle(color: Colors.red),
+                                style: const TextStyle(color: Colors.red),
                               ))
                             : Container(),
                         SizedBox(
@@ -1114,14 +1114,14 @@ class _Login_ScreenState extends State<Login_Screen> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            ForgotPassword()));
+                                            const ForgotPassword()));
                               },
                               child: Text(
                                 "Forgot password?",
                                 style: TextStyle(
                                   fontSize:
                                       MediaQuery.of(context).size.width * 0.035,
-                                  color: Color(0xFF152B51),
+                                  color: const Color(0xFF152B51),
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -1207,7 +1207,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                               height: MediaQuery.of(context).size.height * 0.06,
                               width: MediaQuery.of(context).size.width * 0.8,
                               decoration: BoxDecoration(
-                                color: Color(0xFF152B51),
+                                color: const Color(0xFF152B51),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Center(
@@ -1262,7 +1262,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                       Text(
                         "Don't have an account ? ",
                         style: TextStyle(
-                            color: Color(0xFF152B51),
+                            color: const Color(0xFF152B51),
                             fontSize: MediaQuery.of(context).size.width * 0.04),
                       ),
                       GestureDetector(
@@ -1277,7 +1277,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                             "Register now",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF152B51),
+                                color: const Color(0xFF152B51),
                                 fontSize:
                                     MediaQuery.of(context).size.width * 0.037),
                           ),
@@ -1716,7 +1716,7 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                     widget.onSelected(index);
                   },
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                     foregroundColor:
                         _selectedIndex == index ? Colors.white : blueColor,
                     backgroundColor:
@@ -1738,7 +1738,7 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                             ? Colors.white
                             : Colors.grey,
                       ),
-                      SizedBox(width: 5.0),
+                      const SizedBox(width: 5.0),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -1789,7 +1789,7 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                   widget.onSelected(index);
                 },
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                   foregroundColor:
                       _selectedIndex == index ? Colors.white : blueColor,
                   backgroundColor:
@@ -1835,11 +1835,11 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                                 color: Colors.white, // Icon color when selected
                                 size: 25, // Set the icon size
                               )
-                            : SizedBox
+                            : const SizedBox
                                 .shrink(), // This will create a blank space when not selected
                       ),
                     ),
-                    SizedBox(width: 15),
+                    const SizedBox(width: 15),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

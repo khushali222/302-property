@@ -410,7 +410,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                     // Sorting logic here
                   });
                 },
-                child: Row(
+                child: const Row(
                   children: [
                     Text("       Subtotal",
                         style: TextStyle(color: Colors.white)),
@@ -441,7 +441,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                     // Sorting logic here
                   });
                 },
-                child: Row(
+                child: const Row(
                   children: [
                     Text("        Record",
                         style: TextStyle(color: Colors.white)),
@@ -493,7 +493,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
             margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
             child: pw.Text(
               'Page ${context.pageNumber} of ${context.pagesCount}',
-              style: pw.TextStyle(color: PdfColors.grey),
+              style: const pw.TextStyle(color: PdfColors.grey),
             ),
           );
         },
@@ -589,24 +589,24 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   color: PdfColor.fromHex("#5A86D5"),
                   //color:PdfColor.fromRYB(90, 134, 213,)
                 ),
-                cellStyle: pw.TextStyle(fontSize: 10),
+                cellStyle: const pw.TextStyle(fontSize: 10),
                 cellAlignment: pw.Alignment.centerLeft,
                 headerAlignment: pw.Alignment.centerLeft,
                 columnWidths: {
-                  0: pw.FlexColumnWidth(2), // Date
-                  1: pw.FlexColumnWidth(1.5), // Address
-                  2: pw.FlexColumnWidth(1), // Work
-                  3: pw.FlexColumnWidth(.8), // Performed
-                  4: pw.FlexColumnWidth(1.3), // Performed
-                  5: pw.FlexColumnWidth(1.5), // Performed
-                  6: pw.FlexColumnWidth(.8), // Performed
-                  7: pw.FlexColumnWidth(1.5), // Performed
-                  8: pw.FlexColumnWidth(1), // Performed
+                  0: const pw.FlexColumnWidth(2), // Date
+                  1: const pw.FlexColumnWidth(1.5), // Address
+                  2: const pw.FlexColumnWidth(1), // Work
+                  3: const pw.FlexColumnWidth(.8), // Performed
+                  4: const pw.FlexColumnWidth(1.3), // Performed
+                  5: const pw.FlexColumnWidth(1.5), // Performed
+                  6: const pw.FlexColumnWidth(.8), // Performed
+                  7: const pw.FlexColumnWidth(1.5), // Performed
+                  8: const pw.FlexColumnWidth(1), // Performed
                 },
                 border: null),
             pw.Divider(thickness: 3),
             pw.Padding(
-                padding: pw.EdgeInsets.symmetric(horizontal: 5),
+                padding: const pw.EdgeInsets.symmetric(horizontal: 5),
                 child: pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
@@ -656,7 +656,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   fontWeight: pw.FontWeight.bold,
                 ),
               ),
-              padding: pw.EdgeInsets.only(left: 15)), // Property Name
+              padding: const pw.EdgeInsets.only(left: 15)), // Property Name
           pw.Text(
             '${property.tenantData!.tenantFirstName ?? 'N/A'} ${property.tenantData!.tenantLastName ?? 'N/A'}',
             style: pw.TextStyle(
@@ -725,15 +725,15 @@ class _DailyTransactionsState extends State<DailyTransactions> {
             tableData.add([
               pw.Padding(
                   child: pw.Text('${payment.account ?? 'N/A'}',
-                      style: pw.TextStyle(fontSize: 10)),
-                  padding: pw.EdgeInsets.only(left: 15)), // Account Name
+                      style: const pw.TextStyle(fontSize: 10)),
+                  padding: const pw.EdgeInsets.only(left: 15)), // Account Name
               '', // Account Amount
               '', '', '', '', '', '',
               pw.Align(
                   alignment: pw.Alignment.centerRight,
                   child: pw.Text(
                       '\$${(payment.amount ?? 0.0).toStringAsFixed(2)}',
-                      style: pw.TextStyle(
+                      style: const pw.TextStyle(
                         fontSize: 10,
                       ),
                       textAlign: pw.TextAlign.right // Align text to the right
@@ -786,7 +786,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
             child: pw.Text('Subtotal :-',
                 style:
                     pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-            padding: pw.EdgeInsets.only(left: 15)),
+            padding: const pw.EdgeInsets.only(left: 15)),
         pw.Align(
             alignment: pw.Alignment.centerRight,
             child: pw.Text('\$${(owner.subtotal ?? 0.0).toStringAsFixed(2)}',
@@ -1196,7 +1196,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
             colorScheme: ColorScheme.light(
               primary: blueColor,
             ),
-            buttonTheme: ButtonThemeData(
+            buttonTheme: const ButtonThemeData(
               textTheme: ButtonTextTheme.primary,
             ),
           ),
@@ -1234,7 +1234,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
             colorScheme: ColorScheme.light(
               primary: blueColor,
             ),
-            buttonTheme: ButtonThemeData(
+            buttonTheme: const ButtonThemeData(
               textTheme: ButtonTextTheme.primary,
             ),
           ),
@@ -1329,7 +1329,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                             child: Column(
                               children: [
                                 filters(),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 ColabShimmerLoadingWidget(),
@@ -1359,7 +1359,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                           height: 200,
                                           width: 200,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 10,
                                         ),
                                         Text(
@@ -1393,7 +1393,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                 horizontal: 16.0, vertical: 5),
                             child: Column(
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   height: 5,
                                 ),
                                 filters(data: data),
@@ -1407,7 +1407,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                           fontSize: 15,
                                           color: blueColor),
                                     ),
-                                    Spacer(),
+                                    const Spacer(),
                                     Text(
                                       "\$${snapshot.data?.grandTotal.toStringAsFixed(2)} ",
                                       style: TextStyle(
@@ -1424,7 +1424,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                   Container(
                                     decoration: BoxDecoration(
                                         border: Border.all(
-                                            color: Color.fromRGBO(
+                                            color: const Color.fromRGBO(
                                                 152, 162, 179, .5))),
                                     child: Column(
                                       children: currentPageData
@@ -1447,7 +1447,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                 ? Colors.white
                                                 : blueColor.withOpacity(0.09),
                                             border: Border.all(
-                                                color: Color.fromRGBO(
+                                                color: const Color.fromRGBO(
                                                     152, 162, 179, .5)),
                                           ),
                                           child: Column(
@@ -1532,7 +1532,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 2,
                                                       ),
                                                       Expanded(
@@ -1565,7 +1565,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 10,
                                                       ),
                                                     ],
@@ -1689,7 +1689,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                 children: [
                                                                   Row(
                                                                     children: [
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         width:
                                                                             20,
                                                                       ),
@@ -1699,8 +1699,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                           columnWidths: {
                                                                             // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                                                             // 1: FlexColumnWidth(),
-                                                                            0: FlexColumnWidth(), // Distribute columns equally
-                                                                            1: FlexColumnWidth(),
+                                                                            0: const FlexColumnWidth(), // Distribute columns equally
+                                                                            1: const FlexColumnWidth(),
                                                                           },
                                                                           children: [
                                                                             _buildTableRow(
@@ -1873,7 +1873,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                                   ],
                                                                                 ),
                                                                               ),
-                                                                              SizedBox(
+                                                                              const SizedBox(
                                                                                 width: 15,
                                                                               ),
                                                                               Expanded(
@@ -1944,14 +1944,14 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                     ),
                                                                 ],
                                                               ),
-                                                            SizedBox(
+                                                            const SizedBox(
                                                               height: 8,
                                                             ),
                                                             if (item.charges!
                                                                         .length -
                                                                     1 !=
                                                                 tenantIndex)
-                                                              Divider(
+                                                              const Divider(
                                                                 thickness: 2,
                                                               )
                                                           ],
@@ -2725,11 +2725,11 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                     height: 200,
                     fit: BoxFit.fill,
                   ),
-                  Text(
+                  const Text(
                     'No Internet',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     'Check your internet connection',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
@@ -2750,7 +2750,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
       children: [
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2759,7 +2759,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 4.0), // Space between label and value
+                const SizedBox(height: 4.0), // Space between label and value
                 Text(
                   leftValue,
                   style: TextStyle(color: grey),
@@ -2770,7 +2770,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2779,7 +2779,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 4.0), // Space between label and value
+                const SizedBox(height: 4.0), // Space between label and value
                 Text(
                   rightValue,
                   style: TextStyle(color: grey),
@@ -2842,7 +2842,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
   filters({List<DailyTransactionReport>? data}) {
     return Column(
       children: [
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         Padding(
@@ -2906,8 +2906,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       value: daterange,
-                      padding: EdgeInsets.symmetric(horizontal: 5),
-                      hint: Text(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      hint: const Text(
                         "Date Range",
                         style: TextStyle(fontSize: 14, color: Colors.black),
                       ),
@@ -3035,7 +3035,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                           }
                         : null,
                     readOnly: true,
-                    style: TextStyle(fontSize: 14, color: Colors.black),
+                    style: const TextStyle(fontSize: 14, color: Colors.black),
                     textInputAction: TextInputAction.next,
                     textAlignVertical: TextAlignVertical.center,
                     decoration: InputDecoration(
@@ -3054,14 +3054,14 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   ),
                 ),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                 child: Container(
                   // width: 110,
                   child: TextFormField(
                     controller: toDate,
                     // enabled: customdate,
-                    style: TextStyle(fontSize: 14, color: Colors.black),
+                    style: const TextStyle(fontSize: 14, color: Colors.black),
                     onTap: customdate
                         ? () {
                             _endDate(context);
@@ -3105,8 +3105,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       value: chargeType,
-                      padding: EdgeInsets.symmetric(horizontal: 4),
-                      hint: Text(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      hint: const Text(
                         "Charge type",
                         style: TextStyle(fontSize: 14, color: Colors.black),
                       ),
@@ -3194,7 +3194,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                           const PopupMenuItem<String>(
                               value: 'CSV', child: Text('CSV')),
                         ],
-                        child: Row(
+                        child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text('Export'),
@@ -3214,7 +3214,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Spacer(),
+              const Spacer(),
               Expanded(
                 child: SizedBox(
                   //  width: 100,
@@ -3232,7 +3232,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                           _convertToApiFormat(fromDate.text),
                           _convertToApiFormat(toDate.text)); // Call the API
                     },
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text('Run'),

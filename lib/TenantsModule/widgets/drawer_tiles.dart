@@ -17,12 +17,12 @@ Widget buildListTile(
   bool active,
 ) {
   return Container(
-    margin: EdgeInsets.symmetric(horizontal: 20),
+    margin: const EdgeInsets.symmetric(horizontal: 20),
     decoration: BoxDecoration(
       color: active ? blueColor : Colors.transparent,
       borderRadius: BorderRadius.circular(10),
     ),
-    padding: EdgeInsets.symmetric(horizontal: 16),
+    padding: const EdgeInsets.symmetric(horizontal: 16),
     child: ListTile(
       onTap: () {
       //  navigateToOption(context, "Properties");
@@ -31,7 +31,7 @@ Widget buildListTile(
               context, MaterialPageRoute(builder: (context) => Dashboard_tenants()));
         } else if (title == "Profile") {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => Profile_screen()));
+              MaterialPageRoute(builder: (context) => const Profile_screen()));
         } else if (title == "Properties") {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => PropertyTable()));
@@ -88,8 +88,8 @@ Widget buildDropdownListTile(BuildContext context, Widget leadingIcon,
     String title, List<String> subTopics,
     {String? selectedSubtopic, bool? initvalue}) {
   return Container(
-    margin: EdgeInsets.symmetric(horizontal: 20),
-    padding: EdgeInsets.symmetric(horizontal: 16),
+    margin: const EdgeInsets.symmetric(horizontal: 20),
+    padding: const EdgeInsets.symmetric(horizontal: 16),
     // decoration: BoxDecoration(
     //   color: subTopics.contains(selectedOption) ? blueColor : Colors.transparent,
     //   borderRadius: BorderRadius.circular(10),

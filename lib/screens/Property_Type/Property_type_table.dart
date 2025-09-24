@@ -88,9 +88,9 @@ class _PropertyTableState extends State<PropertyTable> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-          color: Color(0xFFF4F8FF),
+          color: const Color(0xFFF4F8FF),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Color(0xFFDBE0E5))),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -103,7 +103,7 @@ class _PropertyTableState extends State<PropertyTable> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -144,7 +144,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
+                    const SizedBox(width: 3),
                     ascending1
                         ? Padding(
                             padding: const EdgeInsets.only(top: 7, left: 2),
@@ -195,7 +195,7 @@ class _PropertyTableState extends State<PropertyTable> {
                             color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15)),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     ascending2
                         ? Padding(
                             padding: const EdgeInsets.only(top: 7, left: 2),
@@ -336,14 +336,14 @@ class _PropertyTableState extends State<PropertyTable> {
       desc: "Once deleted, you will not be able to recover this property!",
       content: Column(
         children: <Widget>[
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           SizedBox(
             height: 45,
             child: TextField(
               controller: reason,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'Enter reason for deletion',
                 contentPadding: EdgeInsets.only(top: 8, left: 15),
@@ -357,12 +357,12 @@ class _PropertyTableState extends State<PropertyTable> {
           //   ),
         ],
       ),
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -593,7 +593,7 @@ class _PropertyTableState extends State<PropertyTable> {
                     color: Colors.green[350], // Light green background
                     borderRadius: BorderRadius.circular(5),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   child: const FaIcon(
                     FontAwesomeIcons.edit,
                     size: 30,
@@ -613,7 +613,7 @@ class _PropertyTableState extends State<PropertyTable> {
                     color: Colors.red[350], // Light red background
                     borderRadius: BorderRadius.circular(5),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   child: const FaIcon(
                     FontAwesomeIcons.trashCan,
                     size: 30,
@@ -642,7 +642,7 @@ class _PropertyTableState extends State<PropertyTable> {
           color: Colors.white,
           child: Container(
             height: 55,
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(4.0),
@@ -661,17 +661,17 @@ class _PropertyTableState extends State<PropertyTable> {
                     _changeRowsPerPage(newValue);
                   }
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_drop_down,
                   size: 40,
                 ),
-                style: TextStyle(color: Colors.black, fontSize: 17),
+                style: const TextStyle(color: Colors.black, fontSize: 17),
                 dropdownColor: Colors.white,
               ),
             ),
           ),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         IconButton(
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
@@ -688,7 +688,7 @@ class _PropertyTableState extends State<PropertyTable> {
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         IconButton(
           icon: FaIcon(
@@ -728,7 +728,7 @@ class _PropertyTableState extends State<PropertyTable> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   //add propertytype
@@ -748,7 +748,7 @@ class _PropertyTableState extends State<PropertyTable> {
                           onTap: () async {
                             final result = await Navigator.of(context).push(
                                 MaterialPageRoute(
-                                    builder: (context) => Add_property()));
+                                    builder: (context) => const Add_property()));
                             if (result == true) {
                               setState(() {
                                 futurePropertyTypes = PropertyTypeRepository()
@@ -769,7 +769,7 @@ class _PropertyTableState extends State<PropertyTable> {
                             decoration: BoxDecoration(
                               color: blueColor,
                               borderRadius: BorderRadius.circular(5),
-                              boxShadow: [
+                              boxShadow: const [
                                 BoxShadow(
                                   color: Colors.grey,
                                   offset: Offset(0.0, 4.0),
@@ -799,9 +799,9 @@ class _PropertyTableState extends State<PropertyTable> {
                           ),
                         ),
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 6),
+                          const SizedBox(width: 6),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 22),
+                          const SizedBox(width: 22),
                       ],
                     ),
                   ),
@@ -818,21 +818,21 @@ class _PropertyTableState extends State<PropertyTable> {
                   //     Text("Label color",style: TextStyle(color:themeProvider.colorScheme.selectedLabelColor,fontSize: 14),),
                   //   ],
                   // ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   //search
                   Padding(
                     padding: const EdgeInsets.only(left: 11, right: 11),
                     child: Row(
                       children: [
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 24),
+                          const SizedBox(width: 24),
                         Material(
                           elevation: 2,
                           borderRadius: BorderRadius.circular(8),
                           child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
                             // height: 40,
                             height: MediaQuery.of(context).size.width < 500
                                 ? 45
@@ -844,7 +844,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(8),
                                 // border: Border.all(color: Colors.grey),
-                                border: Border.all(color: Color(0xFF8A95A8))),
+                                border: Border.all(color: const Color(0xFF8A95A8))),
                             child: Stack(
                               children: [
                                 Positioned.fill(
@@ -879,9 +879,9 @@ class _PropertyTableState extends State<PropertyTable> {
                                               ? 14
                                               : 18,
                                           // fontWeight: FontWeight.bold,
-                                          color: Color(0xFF8A95A8),
+                                          color: const Color(0xFF8A95A8),
                                         ),
-                                        contentPadding: EdgeInsets.only(
+                                        contentPadding: const EdgeInsets.only(
                                             left: 5, bottom: 12, top: 5)),
                                   ),
                                 ),
@@ -889,7 +889,7 @@ class _PropertyTableState extends State<PropertyTable> {
                             ),
                           ),
                         ),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         DropdownButtonHideUnderline(
                           child: Material(
                             elevation: 3,
@@ -949,7 +949,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
                                     // color: Colors.black26,
-                                    color: Color(0xFF8A95A8),
+                                    color: const Color(0xFF8A95A8),
                                   ),
                                   color: Colors.white,
                                 ),
@@ -981,7 +981,7 @@ class _PropertyTableState extends State<PropertyTable> {
                     ),
                   ),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                   if (MediaQuery.of(context).size.width < 500)
                     Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -1008,7 +1008,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                       height: 200,
                                       width: 200,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     Text(
@@ -1069,7 +1069,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                       height: 200,
                                       width: 200,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     Text(
@@ -1095,9 +1095,9 @@ class _PropertyTableState extends State<PropertyTable> {
                             return SingleChildScrollView(
                               child: Column(
                                 children: [
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   _buildHeaders(),
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   Container(
                                     // decoration: BoxDecoration(
                                     //     border: Border.all(
@@ -1117,13 +1117,13 @@ class _PropertyTableState extends State<PropertyTable> {
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
                                           margin:
-                                              EdgeInsets.symmetric(vertical: 6),
+                                              const EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
-                                                ? Color(0xFFF4F8FF)
+                                                ? const Color(0xFFF4F8FF)
                                                 : Colors.white,
                                             border: Border.all(
-                                                color: Color(0xFFDBE0E5)),
+                                                color: const Color(0xFFDBE0E5)),
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                           ),
@@ -1172,13 +1172,13 @@ class _PropertyTableState extends State<PropertyTable> {
                                                         },
                                                         child: Container(
                                                           margin:
-                                                              EdgeInsets.only(
+                                                              const EdgeInsets.only(
                                                                   left: 5,
                                                                   right: 5),
                                                           padding: !isExpanded
-                                                              ? EdgeInsets.only(
+                                                              ? const EdgeInsets.only(
                                                                   bottom: 10)
-                                                              : EdgeInsets.only(
+                                                              : const EdgeInsets.only(
                                                                   top: 10),
                                                           child: FaIcon(
                                                             isExpanded
@@ -1273,9 +1273,9 @@ class _PropertyTableState extends State<PropertyTable> {
                                               ),
                                               if (isExpanded)
                                                 Container(
-                                                  padding: EdgeInsets.symmetric(
+                                                  padding: const EdgeInsets.symmetric(
                                                       horizontal: 2.0),
-                                                  margin: EdgeInsets.only(
+                                                  margin: const EdgeInsets.only(
                                                       bottom: 2),
                                                   child: SingleChildScrollView(
                                                     child: Column(
@@ -1367,7 +1367,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                                         BorderRadius
                                                                             .circular(8),
                                                                   ),
-                                                                  child: Row(
+                                                                  child: const Row(
                                                                     mainAxisAlignment:
                                                                         MainAxisAlignment
                                                                             .center,
@@ -1399,7 +1399,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                                 ),
                                                               ),
                                                             ),
-                                                            SizedBox(
+                                                            const SizedBox(
                                                               width: 5,
                                                             ),
                                                             Expanded(
@@ -1425,7 +1425,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                                         BorderRadius
                                                                             .circular(8),
                                                                   ),
-                                                                  child: Row(
+                                                                  child: const Row(
                                                                     mainAxisAlignment:
                                                                         MainAxisAlignment
                                                                             .center,
@@ -1470,19 +1470,19 @@ class _PropertyTableState extends State<PropertyTable> {
                                       }).toList(),
                                     ),
                                   ),
-                                  SizedBox(height: 20),
+                                  const SizedBox(height: 20),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       Row(
                                         children: [
                                           // Text('Rows per page:'),
-                                          SizedBox(width: 10),
+                                          const SizedBox(width: 10),
                                           Material(
                                             elevation: 3,
                                             child: Container(
                                               height: 40,
-                                              padding: EdgeInsets.symmetric(
+                                              padding: const EdgeInsets.symmetric(
                                                   horizontal: 12.0),
                                               decoration: BoxDecoration(
                                                 border: Border.all(
@@ -1612,7 +1612,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                     height: 200,
                                     width: 200,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 10,
                                   ),
                                   Text(
@@ -1668,7 +1668,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                 .91,
                                             child: Table(
                                               defaultColumnWidth:
-                                                  IntrinsicColumnWidth(),
+                                                  const IntrinsicColumnWidth(),
                                               children: [
                                                 TableRow(
                                                   decoration: BoxDecoration(
@@ -1696,7 +1696,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                   ],
                                                 ),
                                                 TableRow(
-                                                  decoration: BoxDecoration(
+                                                  decoration: const BoxDecoration(
                                                     border: Border.symmetric(
                                                         horizontal:
                                                             BorderSide.none),
@@ -1763,13 +1763,13 @@ class _PropertyTableState extends State<PropertyTable> {
                                             ),
                                           ),
                                         ),
-                                        SizedBox(height: 25),
+                                        const SizedBox(height: 25),
                                         _buildPaginationControls(),
                                       ],
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 25),
+                                const SizedBox(height: 25),
                               ],
                             ),
                           );
@@ -1791,11 +1791,11 @@ class _PropertyTableState extends State<PropertyTable> {
                     height: 200,
                     fit: BoxFit.fill,
                   ),
-                  Text(
+                  const Text(
                     'No Internet',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     'Check your internet connection',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),

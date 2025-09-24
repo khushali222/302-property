@@ -151,16 +151,16 @@ class _Lease_tableState extends State<Lease_table> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-          color: Color(0xFFF4F8FF),
+          color: const Color(0xFFF4F8FF),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Color(0xFFDBE0E5))),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -198,7 +198,7 @@ class _Lease_tableState extends State<Lease_table> {
                             style: TextStyle(
                                 color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
+                    const SizedBox(width: 3),
                     ascending1
                         ? Padding(
                             padding: const EdgeInsets.only(top: 7, left: 2),
@@ -253,7 +253,7 @@ class _Lease_tableState extends State<Lease_table> {
                               ? 12.0
                               : 14.0,
                         )),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     /*  ascending2
                         ? Padding(
                             padding: const EdgeInsets.only(top: 7, left: 2),
@@ -309,7 +309,7 @@ class _Lease_tableState extends State<Lease_table> {
                               ? 12.0
                               : 14.0,
                         )),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     /*  ascending3
                         ? Padding(
                             padding: const EdgeInsets.only(top: 7, left: 2),
@@ -443,14 +443,14 @@ class _Lease_tableState extends State<Lease_table> {
       desc: "Once deleted, you will not be able to recover this lease!",
       content: Column(
         children: <Widget>[
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           SizedBox(
             height: 45,
             child: TextField(
               controller: reason,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Enter reason for deletion',
                   contentPadding: EdgeInsets.only(top: 8, left: 15)),
@@ -458,12 +458,12 @@ class _Lease_tableState extends State<Lease_table> {
           ),
         ],
       ),
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -579,14 +579,14 @@ class _Lease_tableState extends State<Lease_table> {
       title: "Plan Limitation",
       desc:
           "The limit for adding lease according to the plan has been reached.",
-      style: AlertStyle(
+      style: const AlertStyle(
           backgroundColor: Color.fromRGBO(255, 255, 255, 1),
           descStyle: TextStyle(fontSize: 14)
           //  overlayColor: Colors.black.withOpacity(.8)
           ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "OK",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -656,7 +656,7 @@ class _Lease_tableState extends State<Lease_table> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Padding(
                     padding: const EdgeInsets.all(0),
                     child: Row(
@@ -731,13 +731,13 @@ class _Lease_tableState extends State<Lease_table> {
                           ),
                         ),
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 6),
+                          const SizedBox(width: 6),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 22),
+                          const SizedBox(width: 22),
                       ],
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   // Padding(
                   //   padding: const EdgeInsets.only(left: 13,right: 13),
                   //   child: ClipRRect(
@@ -772,13 +772,13 @@ class _Lease_tableState extends State<Lease_table> {
                   // ),
                   //SizedBox(height: 10),
                   Padding(
-                    padding: EdgeInsets.only(left: 11, right: 11),
+                    padding: const EdgeInsets.only(left: 11, right: 11),
                     child: Row(
                       children: [
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 19),
+                          const SizedBox(width: 19),
                         Material(
                           elevation: 0,
                           borderRadius: BorderRadius.circular(8),
@@ -792,7 +792,7 @@ class _Lease_tableState extends State<Lease_table> {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Color(0xFF8A95A8)),
+                              border: Border.all(color: const Color(0xFF8A95A8)),
                             ),
                             child: TextField(
                               onChanged: (value) {
@@ -802,7 +802,7 @@ class _Lease_tableState extends State<Lease_table> {
                                 });
                               },
                               cursorColor: Colors.blue,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Search here...",
                                 hintStyle: TextStyle(color: Color(0xFF8A95A8)),
@@ -811,7 +811,7 @@ class _Lease_tableState extends State<Lease_table> {
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Expanded(
@@ -912,14 +912,14 @@ class _Lease_tableState extends State<Lease_table> {
                         //   ],
                         // ),
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 25),
+                          const SizedBox(width: 25),
                       ],
                     ),
                   ),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                   if (MediaQuery.of(context).size.width < 500)
                     Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -946,7 +946,7 @@ class _Lease_tableState extends State<Lease_table> {
                                       height: 200,
                                       width: 200,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     Text(
@@ -1084,9 +1084,9 @@ class _Lease_tableState extends State<Lease_table> {
                             return SingleChildScrollView(
                               child: Column(
                                 children: [
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   _buildHeaders(),
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   Container(
                                     child: Column(
                                       children: currentPageData
@@ -1105,13 +1105,13 @@ class _Lease_tableState extends State<Lease_table> {
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
                                           margin:
-                                              EdgeInsets.symmetric(vertical: 6),
+                                              const EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
-                                                ? Color(0xFFF4F8FF)
+                                                ? const Color(0xFFF4F8FF)
                                                 : Colors.white,
                                             border: Border.all(
-                                                color: Color(0xFFDBE0E5)),
+                                                color: const Color(0xFFDBE0E5)),
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                           ),
@@ -1144,13 +1144,13 @@ class _Lease_tableState extends State<Lease_table> {
                                                         },
                                                         child: Container(
                                                           margin:
-                                                              EdgeInsets.only(
+                                                              const EdgeInsets.only(
                                                                   left: 5,
                                                                   right: 5),
                                                           padding: !isExpanded
-                                                              ? EdgeInsets.only(
+                                                              ? const EdgeInsets.only(
                                                                   bottom: 10)
-                                                              : EdgeInsets.only(
+                                                              : const EdgeInsets.only(
                                                                   top: 10),
                                                           child: FaIcon(
                                                             isExpanded
@@ -1209,7 +1209,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                                       text:
                                                                           "\n${lease.tenantNames}",
                                                                       style:
-                                                                          TextStyle(
+                                                                          const TextStyle(
                                                                         color: Colors
                                                                             .lightBlue, // Light blue color for tenant names
                                                                         fontWeight:
@@ -1276,9 +1276,9 @@ class _Lease_tableState extends State<Lease_table> {
                                               ),
                                               if (isExpanded)
                                                 Container(
-                                                  padding: EdgeInsets.symmetric(
+                                                  padding: const EdgeInsets.symmetric(
                                                       horizontal: 2.0),
-                                                  margin: EdgeInsets.only(
+                                                  margin: const EdgeInsets.only(
                                                       bottom: 2),
                                                   child: SingleChildScrollView(
                                                     child: Column(
@@ -1298,8 +1298,8 @@ class _Lease_tableState extends State<Lease_table> {
                                                             Expanded(
                                                               child: Table(
                                                                 columnWidths: {
-                                                                  0: FlexColumnWidth(), // Distribute columns equally
-                                                                  1: FlexColumnWidth(),
+                                                                  0: const FlexColumnWidth(), // Distribute columns equally
+                                                                  1: const FlexColumnWidth(),
                                                                   // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                                                   // 1: FlexColumnWidth(),
                                                                 },
@@ -1323,7 +1323,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                                 ],
                                                               ),
                                                             ),
-                                                            SizedBox(
+                                                            const SizedBox(
                                                               width: 5,
                                                             ),
                                                             // Column(
@@ -1547,7 +1547,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                                     color: Colors
                                                                         .red
                                                                         .shade50),
-                                                                child: Row(
+                                                                child: const Row(
                                                                   mainAxisAlignment:
                                                                       MainAxisAlignment
                                                                           .center,
@@ -1566,7 +1566,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                                 ),
                                                               ),
                                                             ),
-                                                            SizedBox(
+                                                            const SizedBox(
                                                               width: 5,
                                                             ),
                                                             GestureDetector(
@@ -1610,7 +1610,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                                     color: Colors
                                                                         .green
                                                                         .shade50), // color:Colors.grey[100],
-                                                                child: Row(
+                                                                child: const Row(
                                                                   mainAxisAlignment:
                                                                       MainAxisAlignment
                                                                           .center,
@@ -1629,7 +1629,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                                 ),
                                                               ),
                                                             ),
-                                                            SizedBox(
+                                                            const SizedBox(
                                                               width: 5,
                                                             ),
                                                             GestureDetector(
@@ -1656,7 +1656,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                                           .circular(
                                                                               8),
                                                                 ),
-                                                                child: Row(
+                                                                child: const Row(
                                                                   mainAxisAlignment:
                                                                       MainAxisAlignment
                                                                           .center,
@@ -1678,12 +1678,12 @@ class _Lease_tableState extends State<Lease_table> {
                                                                 ),
                                                               ),
                                                             ),
-                                                            SizedBox(
+                                                            const SizedBox(
                                                               width: 15,
                                                             ),
                                                           ],
                                                         ),
-                                                        SizedBox(
+                                                        const SizedBox(
                                                           height: 15,
                                                         ),
                                                       ],
@@ -1697,19 +1697,19 @@ class _Lease_tableState extends State<Lease_table> {
                                       }).toList(),
                                     ),
                                   ),
-                                  SizedBox(height: 20),
+                                  const SizedBox(height: 20),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       Row(
                                         children: [
                                           // Text('Rows per page:'),
-                                          SizedBox(width: 10),
+                                          const SizedBox(width: 10),
                                           Material(
                                             elevation: 3,
                                             child: Container(
                                               height: 40,
-                                              padding: EdgeInsets.symmetric(
+                                              padding: const EdgeInsets.symmetric(
                                                   horizontal: 12.0),
                                               decoration: BoxDecoration(
                                                 border: Border.all(
@@ -1839,7 +1839,7 @@ class _Lease_tableState extends State<Lease_table> {
                                     height: 200,
                                     width: 200,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 10,
                                   ),
                                   Text(
@@ -1890,7 +1890,7 @@ class _Lease_tableState extends State<Lease_table> {
                                       // width: MediaQuery.of(context).size.width * .91,
                                       child: Table(
                                         defaultColumnWidth:
-                                            IntrinsicColumnWidth(),
+                                            const IntrinsicColumnWidth(),
                                         children: [
                                           TableRow(
                                             decoration: BoxDecoration(
@@ -1934,7 +1934,7 @@ class _Lease_tableState extends State<Lease_table> {
                                             ],
                                           ),
                                           TableRow(
-                                            decoration: BoxDecoration(
+                                            decoration: const BoxDecoration(
                                               border: Border.symmetric(
                                                   horizontal: BorderSide.none),
                                             ),
@@ -2016,8 +2016,8 @@ class _Lease_tableState extends State<Lease_table> {
                                   ),
                                 ),
                                 if (_tableData.isEmpty)
-                                  Text("No Search Records Found"),
-                                SizedBox(height: 25),
+                                  const Text("No Search Records Found"),
+                                const SizedBox(height: 25),
                                 _buildPaginationControls(),
                               ],
                             ),
@@ -2040,11 +2040,11 @@ class _Lease_tableState extends State<Lease_table> {
                     height: 200,
                     fit: BoxFit.fill,
                   ),
-                  Text(
+                  const Text(
                     'No Internet',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     'Check your internet connection',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
@@ -2060,7 +2060,7 @@ class _Lease_tableState extends State<Lease_table> {
       children: [
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(4.0),
+            padding: const EdgeInsets.all(4.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2069,7 +2069,7 @@ class _Lease_tableState extends State<Lease_table> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 2.0), // Space between label and value
+                const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   leftValue,
                   style: TextStyle(color: grey),
@@ -2080,7 +2080,7 @@ class _Lease_tableState extends State<Lease_table> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(4.0),
+            padding: const EdgeInsets.all(4.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2089,7 +2089,7 @@ class _Lease_tableState extends State<Lease_table> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 2.0), // Space between label and value
+                const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   rightValue,
                   style: TextStyle(color: grey),
@@ -2196,7 +2196,7 @@ class _Lease_tableState extends State<Lease_table> {
           color: Colors.white,
           child: Container(
             height: 55,
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(4.0),
@@ -2215,17 +2215,17 @@ class _Lease_tableState extends State<Lease_table> {
                     _changeRowsPerPage(newValue);
                   }
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_drop_down,
                   size: 40,
                 ),
-                style: TextStyle(color: Colors.black, fontSize: 17),
+                style: const TextStyle(color: Colors.black, fontSize: 17),
                 dropdownColor: Colors.white,
               ),
             ),
           ),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         IconButton(
           icon: FaIcon(
             size: 30,
@@ -2242,7 +2242,7 @@ class _Lease_tableState extends State<Lease_table> {
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         IconButton(
           icon: FaIcon(

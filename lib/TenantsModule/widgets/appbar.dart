@@ -31,7 +31,7 @@ class widget_302 {
     Provider.of<NotificationProvider>(context, listen: false)
         .fetchNotificationsTenant(context);
     return AppBar(
-      iconTheme: IconThemeData(color: Colors.black),
+      iconTheme: const IconThemeData(color: Colors.black),
       elevation: 3,
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
@@ -96,7 +96,7 @@ class widget_302 {
               )),
             ),
           ),*/
-        SizedBox(
+        const SizedBox(
           width: 10,
         ),
         Consumer<NotificationProvider>(
@@ -119,7 +119,7 @@ class widget_302 {
                 child: Center(
                   child: badges.Badge(
                     position: badges.BadgePosition.topEnd(top: -4, end: -3),
-                    badgeStyle: badges.BadgeStyle(
+                    badgeStyle: const badges.BadgeStyle(
                       badgeColor: Colors.red,
                     ),
                     child: FaIcon(
@@ -160,7 +160,7 @@ class widget_302 {
         //     size: 20,
         //     color: blueColor,
         //   ),
-        SizedBox(
+        const SizedBox(
           width: 10,
         ),
         FutureBuilder<String>(
@@ -168,7 +168,7 @@ class widget_302 {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return Container(
-                  margin: EdgeInsets.symmetric(vertical: 12),
+                  margin: const EdgeInsets.symmetric(vertical: 12),
                   width: 30,
                   decoration: BoxDecoration(
                     color: blueColor,
@@ -181,11 +181,11 @@ class widget_302 {
                     child: Center(
                       child: Text(
                         snapshot.data!,
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
                     // offset: Offset(0.0, appBarHeight),
-                    shape: RoundedRectangleBorder(
+                    shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(8.0),
                         bottomRight: Radius.circular(8.0),
@@ -228,7 +228,7 @@ class widget_302 {
                               size: 20,
                               color: blueColor,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             Text(
@@ -239,7 +239,7 @@ class widget_302 {
                         ),
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => Change_password()));
+                              builder: (context) => const Change_password()));
                         },
                       ),
                       PopupMenuItem(
@@ -254,7 +254,7 @@ class widget_302 {
                             //    size: 20,
                             //    color: Colors.black,
                             //  ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             Text(
@@ -270,7 +270,7 @@ class widget_302 {
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => Login_Screen()),
+                                  builder: (context) => const Login_Screen()),
                               (route) => false);
                         },
                       ),
@@ -282,7 +282,7 @@ class widget_302 {
             }
           },
         ),
-        SizedBox(
+        const SizedBox(
           width: 20,
         ),
       ],

@@ -430,24 +430,24 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                 },
                 child: Row(
                   children: [
-                    SizedBox(width: 22),
+                    const SizedBox(width: 22),
                     width < 400
                         ? const Text("Lease\nEndDate",
                         style: TextStyle(color: Colors.white,fontSize: 15))
                         : const Text("Lease\nEndDate",
                         style: TextStyle(color: Colors.white,fontSize: 15)),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     ascending2
-                        ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                      padding: EdgeInsets.only(top: 7, left: 2),
                       child: FaIcon(
                         FontAwesomeIcons.sortUp,
                         size: 20,
                         color: Colors.white,
                       ),
                     )
-                        : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                      padding: EdgeInsets.only(bottom: 7, left: 2),
                       child: FaIcon(
                         FontAwesomeIcons.sortDown,
                         size: 20,
@@ -483,20 +483,20 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                 },
                 child: Row(
                   children: [
-                    SizedBox(width: 25),
-                    Text("Tenant", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 25),
+                    const Text("Tenant", style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 5),
                     ascending3
-                        ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                      padding: EdgeInsets.only(top: 7, left: 2),
                       child: FaIcon(
                         FontAwesomeIcons.sortUp,
                         size: 20,
                         color: Colors.white,
                       ),
                     )
-                        : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                      padding: EdgeInsets.only(bottom: 7, left: 2),
                       child: FaIcon(
                         FontAwesomeIcons.sortDown,
                         size: 20,
@@ -585,7 +585,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
             margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
             child: pw.Text(
               'Page ${context.pageNumber} of ${context.pagesCount}',
-              style: pw.TextStyle(color: PdfColors.grey),
+              style: const pw.TextStyle(color: PdfColors.grey),
             ),
           );
         },
@@ -676,7 +676,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                   color: PdfColor.fromHex("#5A86D5"),
                   //color:PdfColor.fromRYB(90, 134, 213,)
                 ),
-                cellStyle: pw.TextStyle(fontSize: 10),
+                cellStyle: const pw.TextStyle(fontSize: 10),
                 cellAlignment: pw.Alignment.centerLeft,
                 headerAlignment: pw.Alignment.centerLeft,
                 border: null),
@@ -967,10 +967,10 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
         for (int i = 1; i < owner.tenantData!.length; i++) {
           final tenant = owner.tenantData![i];
           tableData.add([
-            pw.Text('', style: pw.TextStyle(fontSize: 10)), // Leave property blank
-            pw.Text('', style: pw.TextStyle(fontSize: 10)), // Leave lease end date blank
-            pw.Text('${tenant.tenantFirstName} ${tenant.tenantLastName}', style: pw.TextStyle(fontSize: 10)),
-            pw.Text('${tenant.overrideFee ?? 'N/A'}%', style: pw.TextStyle(fontSize: 10)),
+            pw.Text('', style: const pw.TextStyle(fontSize: 10)), // Leave property blank
+            pw.Text('', style: const pw.TextStyle(fontSize: 10)), // Leave lease end date blank
+            pw.Text('${tenant.tenantFirstName} ${tenant.tenantLastName}', style: const pw.TextStyle(fontSize: 10)),
+            pw.Text('${tenant.overrideFee ?? 'N/A'}%', style: const pw.TextStyle(fontSize: 10)),
           ]);
         }
       } else {
@@ -978,8 +978,8 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
         tableData.add([
           pw.Text(property, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
           pw.Text(leaseEndDate, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-          pw.Text('N/A', style: pw.TextStyle(fontSize: 10)),
-          pw.Text('N/A', style: pw.TextStyle(fontSize: 10)),
+          pw.Text('N/A', style: const pw.TextStyle(fontSize: 10)),
+          pw.Text('N/A', style: const pw.TextStyle(fontSize: 10)),
         ]);
       }
     }
@@ -1006,7 +1006,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
             colorScheme: ColorScheme.light(
               primary: blueColor,
             ),
-            buttonTheme: ButtonThemeData(
+            buttonTheme: const ButtonThemeData(
               textTheme: ButtonTextTheme.primary,
             ),
           ),
@@ -1046,7 +1046,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
             colorScheme: ColorScheme.light(
               primary: blueColor,
             ),
-            buttonTheme: ButtonThemeData(
+            buttonTheme: const ButtonThemeData(
               textTheme: ButtonTextTheme.primary,
             ),
           ),
@@ -1146,7 +1146,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                       child: Column(
                         children: [
                           filters(),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           ColabShimmerLoadingWidget(),
@@ -1176,7 +1176,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                                     height: 200,
                                     width: 200,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 10,
                                   ),
                                   Text(
@@ -1235,7 +1235,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                           horizontal: 16.0, vertical: 5),
                       child: Column(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             height: 5,
                           ),
                           filters(data: data),
@@ -1246,7 +1246,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                           Container(
                             decoration: BoxDecoration(
                                 border: Border.all(
-                                    color: Color.fromRGBO(
+                                    color: const Color.fromRGBO(
                                         152, 162, 179, .5))),
                             child: Column(
                               children: currentPageData
@@ -1268,7 +1268,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                                         ? Colors.white
                                         : blueColor.withOpacity(0.09),
                                     border: Border.all(
-                                        color: Color.fromRGBO(
+                                        color: const Color.fromRGBO(
                                             152, 162, 179, .5)),
                                   ),
                                   child: Column(
@@ -1346,7 +1346,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 15,
                                               ),
                                               // SizedBox(
@@ -1367,7 +1367,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 10,
                                               ),
                                               Expanded(
@@ -1395,7 +1395,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                                                   ],
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 5,
                                               ),
                                             ],
@@ -1457,7 +1457,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
 
                                               ],
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               height: 10,
                                             ),
                                           ],
@@ -2226,11 +2226,11 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
               height: 200,
               fit: BoxFit.fill,
             ),
-            Text(
+            const Text(
               'No Internet',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            Text(
+            const Text(
               'Check your internet connection',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
@@ -2251,7 +2251,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
       children: [
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2260,7 +2260,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                   style:
                   TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 4.0), // Space between label and value
+                const SizedBox(height: 4.0), // Space between label and value
                 Text(
                   leftValue,
                   style: TextStyle(color: grey),
@@ -2271,7 +2271,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2280,7 +2280,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                   style:
                   TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 4.0), // Space between label and value
+                const SizedBox(height: 4.0), // Space between label and value
                 Text(
                   rightValue,
                   style: TextStyle(color: grey),
@@ -2357,7 +2357,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
   filters({List<Data>? data}) {
     return Column(
       children: [
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         Padding(
@@ -2404,7 +2404,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                   ],
                 ),
               ),
-              SizedBox(width: 5,),
+              const SizedBox(width: 5,),
               Expanded(
                 child: SizedBox(
                   //  width: 100,
@@ -2449,8 +2449,8 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                               size: 21.0,
                             ),
                           )
-                              : Text('Export'),
-                          Icon(Icons.arrow_drop_down),
+                              : const Text('Export'),
+                          const Icon(Icons.arrow_drop_down),
                         ],
                       ),
                     ),

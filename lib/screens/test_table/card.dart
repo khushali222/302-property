@@ -387,7 +387,7 @@ class _CardpaymentState extends State<Cardpayment> {
       body: SingleChildScrollView(
         controller: _scrollController,
         scrollDirection: Axis.vertical,
-        padding: EdgeInsets.only(left: 5, right: 5, top: 10, bottom: 10),
+        padding: const EdgeInsets.only(left: 5, right: 5, top: 10, bottom: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -429,7 +429,7 @@ class _CardpaymentState extends State<Cardpayment> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Container(
@@ -444,7 +444,7 @@ class _CardpaymentState extends State<Cardpayment> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             const SizedBox(
@@ -468,7 +468,7 @@ class _CardpaymentState extends State<Cardpayment> {
                                 : DropdownButtonHideUnderline(
                                     child: DropdownButton2<String>(
                                       isExpanded: true,
-                                      hint: Text('Select Resident'),
+                                      hint: const Text('Select Resident'),
                                       value: selectedTenantId,
                                       items: tenants.map((tenant) {
                                         return DropdownMenuItem<String>(
@@ -525,7 +525,7 @@ class _CardpaymentState extends State<Cardpayment> {
                                       ),
                                     ),
                                   ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             /*  DropdownButtonHideUnderline(
@@ -675,7 +675,7 @@ class _CardpaymentState extends State<Cardpayment> {
                             DropdownButtonHideUnderline(
                               child: DropdownButton2<String>(
                                 isExpanded: true,
-                                hint: Text('Select Method'),
+                                hint: const Text('Select Method'),
                                 value: _selectedPaymentMethod,
                                 items: _paymentMethods.map((method) {
                                   return DropdownMenuItem<String>(
@@ -741,7 +741,7 @@ class _CardpaymentState extends State<Cardpayment> {
                               height: 12,
                             ),
                             if (showCardNumberField) ...[
-                              SizedBox(height: 15),
+                              const SizedBox(height: 15),
                               Container(
                                 decoration: BoxDecoration(
                                   color: Colors.blueGrey[50],
@@ -749,10 +749,10 @@ class _CardpaymentState extends State<Cardpayment> {
                                 ),
                                 child: Column(
                                   children: [
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
-                                    Row(
+                                    const Row(
                                       children: [
                                         SizedBox(
                                           width: 10,
@@ -764,12 +764,12 @@ class _CardpaymentState extends State<Cardpayment> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 20,
                                     ),
                                     Row(
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 10,
                                         ),
                                         GestureDetector(
@@ -795,7 +795,7 @@ class _CardpaymentState extends State<Cardpayment> {
 
 ,
                                                 boxShadow: [
-                                                  BoxShadow(
+                                                  const BoxShadow(
                                                     color: Colors.grey,
                                                     offset: Offset(
                                                         0.0, 1.0), //(x,y)
@@ -805,7 +805,7 @@ class _CardpaymentState extends State<Cardpayment> {
                                               ),
                                               child: Center(
                                                 child: isLoading
-                                                    ? SpinKitFadingCircle(
+                                                    ? const SpinKitFadingCircle(
                                                         color: Colors.white,
                                                         size: 25.0,
                                                       )
@@ -827,32 +827,32 @@ class _CardpaymentState extends State<Cardpayment> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                   ],
                                 ),
                               ),
-                              SizedBox(height: 15),
+                              const SizedBox(height: 15),
                             ],
                             if (showCheckNumberField) ...[
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                               buildTextField('Check Number',
                                   "Enter check number", checknumber),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                             ],
                             if (showACHFields) ...[
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                               buildTextField('Bank Routing Number',
                                   "Enter routing number", bankrountingnum),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                               buildTextField('Bank Account Number',
                                   "Enter account number", accountnum),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                               DropdownButtonHideUnderline(
                                 child: DropdownButton2<String>(
                                   isExpanded: true,
-                                  hint: Text('Select Account'),
+                                  hint: const Text('Select Account'),
                                   value: _selectedAccount,
                                   items: _selecttype.map((method) {
                                     return DropdownMenuItem<String>(
@@ -914,14 +914,14 @@ class _CardpaymentState extends State<Cardpayment> {
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                               buildTextField('Name of the ACH account',
                                   "Enter account name", achname),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                               DropdownButtonHideUnderline(
                                 child: DropdownButton2<String>(
                                   isExpanded: true,
-                                  hint: Text('Select Account Holder Type'),
+                                  hint: const Text('Select Account Holder Type'),
                                   value: _selectedHoldertype,
                                   items: _selectholder.map((method) {
                                     return DropdownMenuItem<String>(
@@ -983,7 +983,7 @@ class _CardpaymentState extends State<Cardpayment> {
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                             ],
                             const Text('Memo',
                                 style: TextStyle(
@@ -1004,7 +1004,7 @@ class _CardpaymentState extends State<Cardpayment> {
                               hintText: 'Enter Memo',
                               controller: Memo,
                             ),
-                            SizedBox(height: 15),
+                            const SizedBox(height: 15),
                             const SizedBox(
                               height: 10,
                             ),
@@ -1036,7 +1036,7 @@ class _CardpaymentState extends State<Cardpayment> {
                                         children: [
                                            TableRow(children: [
                                             Padding(
-                                              padding: EdgeInsets.all(8.0),
+                                              padding: const EdgeInsets.all(8.0),
                                               child: Center(
                                                 child: Text('Account',
                                                     style: TextStyle(
@@ -1049,7 +1049,7 @@ class _CardpaymentState extends State<Cardpayment> {
                                               ),
                                             ),
                                             Padding(
-                                              padding: EdgeInsets.all(8.0),
+                                              padding: const EdgeInsets.all(8.0),
                                               child: Center(
                                                 child: Text('Amount',
                                                     style: TextStyle(
@@ -1062,7 +1062,7 @@ class _CardpaymentState extends State<Cardpayment> {
                                               ),
                                             ),
                                             Padding(
-                                              padding: EdgeInsets.all(8.0),
+                                              padding: const EdgeInsets.all(8.0),
                                               child: Center(
                                                 child: Text('Actions',
                                                     style: TextStyle(
@@ -1089,7 +1089,7 @@ class _CardpaymentState extends State<Cardpayment> {
                                                       DropdownButton2<String>(
                                                     isExpanded: true,
                                                     hint:
-                                                        Text('Select account'),
+                                                        const Text('Select account'),
                                                     value:
                                                         row['selectedChargeId'],
                                                     items: groupedCharges
@@ -1106,7 +1106,7 @@ class _CardpaymentState extends State<Cardpayment> {
                                                         value: entry.key,
                                                         child: Text(
                                                           entry.key,
-                                                          style: TextStyle(
+                                                          style: const TextStyle(
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold),
@@ -1281,19 +1281,19 @@ class _CardpaymentState extends State<Cardpayment> {
                                 padding: const EdgeInsets.only(top: 16.0),
                                 child: Text(
                                   validationMessage!,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: Colors.red,
                                       fontWeight: FontWeight.bold),
                                 ),
                               ),
                             const SizedBox(height: 16),
                             /*this is for card type*/
-                            Text('Apply Payments to Balances',
+                            const Text('Apply Payments to Balances',
                                 style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey)),
-                            SizedBox(height: 5),
+                            const SizedBox(height: 5),
                             ...rows.asMap().entries.map((entry) {
                               int index = entry.key;
                               Map<String, dynamic> row = entry.value;
@@ -1318,7 +1318,7 @@ class _CardpaymentState extends State<Cardpayment> {
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text('Row ${index + 1}',
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                       fontSize: 18.0,
                                                       fontWeight:
                                                           FontWeight.bold)),
@@ -1326,7 +1326,7 @@ class _CardpaymentState extends State<Cardpayment> {
                                                 alignment:
                                                     Alignment.centerRight,
                                                 child: IconButton(
-                                                  icon: Icon(Icons.close),
+                                                  icon: const Icon(Icons.close),
                                                   onPressed: () {
                                                     removeRow(index);
                                                   },
@@ -1334,17 +1334,17 @@ class _CardpaymentState extends State<Cardpayment> {
                                               ),
                                             ],
                                           ),
-                                          SizedBox(height: 12.0),
-                                          Text("Account",
+                                          const SizedBox(height: 12.0),
+                                          const Text("Account",
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold)),
-                                          SizedBox(
+                                          const SizedBox(
                                             height: 12,
                                           ),
                                           DropdownButtonHideUnderline(
                                             child: DropdownButton2<String>(
                                               isExpanded: true,
-                                              hint: Text('Select Charge'),
+                                              hint: const Text('Select Charge'),
                                               value: row['selectedChargeId'],
                                               items: groupedCharges.entries
                                                   .expand((entry) {
@@ -1356,7 +1356,7 @@ class _CardpaymentState extends State<Cardpayment> {
                                                   value: entry.key,
                                                   child: Text(
                                                     entry.key,
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold),
                                                   ),
@@ -1431,17 +1431,17 @@ class _CardpaymentState extends State<Cardpayment> {
                                               ),
                                             ),
                                           ),
-                                          SizedBox(height: 12.0),
+                                          const SizedBox(height: 12.0),
                                           buildTextField(
                                               'Balance',
                                               'Enter Balance',
                                               row['balanceController']),
-                                          SizedBox(height: 12.0),
+                                          const SizedBox(height: 12.0),
                                           buildTextField(
                                               'Amount',
                                               'Enter Amount',
                                               row['amountController']),
-                                          SizedBox(height: 12.0),
+                                          const SizedBox(height: 12.0),
                                         ],
                                       ),
                                     ),
@@ -1449,11 +1449,11 @@ class _CardpaymentState extends State<Cardpayment> {
                                 ),
                               );
                             }).toList(),
-                            SizedBox(height: 15),
+                            const SizedBox(height: 15),
 
                             Row(
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   width: 5,
                                 ),
                                 GestureDetector(
@@ -1474,7 +1474,7 @@ class _CardpaymentState extends State<Cardpayment> {
                                             BorderRadius.circular(5.0),
                                         color: blueColor,
                                         boxShadow: [
-                                          BoxShadow(
+                                          const BoxShadow(
                                             color: Colors.grey,
                                             offset: Offset(0.0, 1.0), //(x,y)
                                             blurRadius: 6.0,
@@ -1483,7 +1483,7 @@ class _CardpaymentState extends State<Cardpayment> {
                                       ),
                                       child: Center(
                                         child: isLoading
-                                            ? SpinKitFadingCircle(
+                                            ? const SpinKitFadingCircle(
                                                 color: Colors.white,
                                                 size: 25.0,
                                               )
@@ -1510,10 +1510,10 @@ class _CardpaymentState extends State<Cardpayment> {
                             //         fontSize: 14,
                             //         fontWeight: FontWeight.bold,
                             //         color: Colors.grey)),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Row(
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   width: 5,
                                 ),
                                 GestureDetector(
@@ -1534,7 +1534,7 @@ class _CardpaymentState extends State<Cardpayment> {
                                             BorderRadius.circular(5.0),
                                         color: blueColor,
                                         boxShadow: [
-                                          BoxShadow(
+                                          const BoxShadow(
                                             color: Colors.grey,
                                             offset: Offset(0.0, 1.0), //(x,y)
                                             blurRadius: 6.0,
@@ -1543,7 +1543,7 @@ class _CardpaymentState extends State<Cardpayment> {
                                       ),
                                       child: Center(
                                         child: isLoading
-                                            ? SpinKitFadingCircle(
+                                            ? const SpinKitFadingCircle(
                                                 color: Colors.white,
                                                 size: 25.0,
                                               )
@@ -1564,7 +1564,7 @@ class _CardpaymentState extends State<Cardpayment> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             SingleChildScrollView(
                               child: Column(
                                 children: _uploadedFileNames.map((fileName) {
@@ -1598,7 +1598,7 @@ class _CardpaymentState extends State<Cardpayment> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Row(
                       children: [
                         Container(
@@ -1659,7 +1659,7 @@ class _CardpaymentState extends State<Cardpayment> {
                                 ))),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                   ],
@@ -1677,13 +1677,13 @@ class _CardpaymentState extends State<Cardpayment> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
-        SizedBox(height: 8.0),
+        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8.0),
         Material(
           elevation: 3,
           borderRadius: BorderRadius.circular(5),
           child: Container(
-            padding: EdgeInsets.only(left: 10),
+            padding: const EdgeInsets.only(left: 10),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(5),

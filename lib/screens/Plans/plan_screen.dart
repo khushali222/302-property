@@ -391,7 +391,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text(
+              title: const Text(
                 "Warning",
                 style: TextStyle(
                   fontSize: 20,
@@ -399,7 +399,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                   color: Colors.black,
                 ),
               ),
-              content: Text(
+              content: const Text(
                 "Do you want to cancel your subscription?",
                 style: TextStyle(
                   fontSize: 16,
@@ -421,7 +421,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                               size: 25.0,
                             ),
                           )
-                        : Text(
+                        : const Text(
                             "Yes",
                             style: TextStyle(
                                 color: Colors.white,
@@ -472,7 +472,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                 Container(
                   width: 70,
                   child: ElevatedButton(
-                    child: Text(
+                    child: const Text(
                       "No",
                       style: TextStyle(
                           color: Colors.white,
@@ -826,7 +826,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     FutureBuilder<getPlanDetailModel?>(
@@ -834,7 +834,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return CardShimmerCurrentPlan();
+                          return const CardShimmerCurrentPlan();
                         } else if (snapshot.hasError) {
                           return Center(
                               child: Text('Error: ${snapshot.error}'));
@@ -1192,7 +1192,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                   ),
                                 ),
                               ),*/
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                               Container(
@@ -1206,7 +1206,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                           color: blueColor,
                                           borderRadius:
                                               BorderRadius.circular(5)),
-                                      child: Center(
+                                      child: const Center(
                                           child: Text(
                                         "Current Subscription Plan Details",
                                         style: TextStyle(
@@ -1214,7 +1214,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                             fontWeight: FontWeight.bold,fontSize: 18),
                                       )),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height:8,
                                     ),
                                     Container(
@@ -1246,7 +1246,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                   alignment: Alignment.center,
                                                   decoration: BoxDecoration(
                                                     borderRadius: BorderRadius.circular(3),
-                                                    color: Color.fromRGBO(
+                                                    color: const Color.fromRGBO(
                                                         38, 194, 44, 1),
                                                     //  borderRadius: BorderRadius.circular(5),
                                                   ),
@@ -1283,7 +1283,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                   alignment: Alignment.center,
                                                   decoration: BoxDecoration(
                                                     borderRadius: BorderRadius.circular(3),
-                                                    color: Color.fromRGBO(
+                                                    color: const Color.fromRGBO(
                                                         255, 0, 0, 1),
                                                     //  borderRadius: BorderRadius.circular(5),
                                                   ),
@@ -1300,7 +1300,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                             ),
                                           ],
                                         )),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 8,
                                     ),
                                     Padding(
@@ -1316,7 +1316,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                             mainAxisAlignment: MainAxisAlignment.start,
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                             SizedBox(height: 10,),
+                                             const SizedBox(height: 10,),
                                               // Expanded(
                                               //   child: Container(
                                               //     //color:Colors.blue,
@@ -1450,7 +1450,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                 mainAxisAlignment: MainAxisAlignment.start,
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                Text("Plan Name : ",style: TextStyle(
+                                                const Text("Plan Name : ",style: TextStyle(
                                                                 fontSize: 12,
                                                                 fontWeight:
                                                                 FontWeight.bold,
@@ -1461,7 +1461,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                                 fontWeight:
                                                                 FontWeight.bold,
                                                                 color: blueColor),)),
-                                                  Text("Purchase Date : ",style: TextStyle(
+                                                  const Text("Purchase Date : ",style: TextStyle(
                                                       fontSize: 12,
                                                       fontWeight:
                                                       FontWeight.bold,
@@ -1475,12 +1475,12 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                       color: blueColor),)),
                                                 ],
                                               ),
-                                              SizedBox(height: 5,),
+                                              const SizedBox(height: 5,),
                                               Row(
                                                 mainAxisAlignment: MainAxisAlignment.start,
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  Text("Plan Price    : ",style: TextStyle(
+                                                  const Text("Plan Price    : ",style: TextStyle(
                                                       fontSize: 12,
                                                       fontWeight:
                                                       FontWeight.bold,
@@ -1491,7 +1491,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                       fontWeight:
                                                       FontWeight.bold,
                                                       color: blueColor),)),
-                                                  Text("Billing Period      : ",style: TextStyle(
+                                                  const Text("Billing Period      : ",style: TextStyle(
                                                       fontSize: 12,
                                                       fontWeight:
                                                       FontWeight.bold,
@@ -1504,13 +1504,13 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                       color: blueColor),)),
                                                 ],
                                               ),
-                                              SizedBox(height: 10,),
+                                              const SizedBox(height: 10,),
                                             ],
                                           ),
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 8,
                                     ),
                                     // Row(
@@ -2178,7 +2178,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                   Container(
                                     decoration: BoxDecoration(
                                         border: Border.all(
-                                            color: Color.fromRGBO(
+                                            color: const Color.fromRGBO(
                                                 152, 162, 179, .5))),
                                     child: Column(
                                       children: currentPageData
@@ -2196,7 +2196,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                 ? Colors.white
                                                 : blueColor.withOpacity(0.09),
                                             border: Border.all(
-                                                color: Color.fromRGBO(
+                                                color: const Color.fromRGBO(
                                                     152, 162, 179, .5)),
                                           ),
                                           child: Column(
@@ -2734,12 +2734,12 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
               height: 200,
               fit: BoxFit.fill,
             ),
-            Text(
+            const Text(
               'No Internet',
               style: TextStyle(
                   fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            Text(
+            const Text(
               'Check your internet connection',
               style: TextStyle(
                   fontSize: 16, fontWeight: FontWeight.w500),
@@ -2754,7 +2754,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
       children: [
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(5.0),
+            padding: const EdgeInsets.all(5.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2762,7 +2762,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                   leftLabel,
                   style: TextStyle(color: grey,fontSize: 12),
                 ),
-                SizedBox(height: 2.0), // Space between label and value
+                const SizedBox(height: 2.0), // Space between label and value
                 Padding(
                   padding: const EdgeInsets.only(left: 5),
                   child: Text(
@@ -2776,7 +2776,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(5.0),
+            padding: const EdgeInsets.all(5.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2784,7 +2784,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                   rightLabel,
                   style: TextStyle(color: grey,fontSize: 12),
                 ),
-                SizedBox(height: 2.0), // Space between label and value
+                const SizedBox(height: 2.0), // Space between label and value
                 Padding(
                   padding: const EdgeInsets.only(left: 1),
                   child: Text(
@@ -2859,7 +2859,7 @@ class CardShimmerCurrentPlan extends StatelessWidget {
                       width: 100,
                     ),
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Shimmer.fromColors(
                     baseColor: Colors.grey[300]!,
                     highlightColor: Colors.grey[100]!,

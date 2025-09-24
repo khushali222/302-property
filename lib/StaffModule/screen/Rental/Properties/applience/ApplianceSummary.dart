@@ -181,11 +181,11 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
               // CircularProgressIndicator(
               //   valueColor: AlwaysStoppedAnimation<Color>(blueColor),
               // ),
-              SpinKitFadingCircle(
+              const SpinKitFadingCircle(
                 color: Colors.black,
                 size: 40.0,
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Text(
                 'Loading appliance details...',
                 style: TextStyle(
@@ -213,7 +213,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
 
             // Appliance Header
             Container(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: Row(
                 children: [
                   Expanded(
@@ -222,13 +222,13 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                       children: [
                         Text(
                           appliance.applianceName ?? 'N/A',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                           ),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
                           widget.appliance.categoryName ?? 'N/A',
                           style: TextStyle(
@@ -257,13 +257,13 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                     }, // Pass true back to refresh parent page
                     child: Container(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(6),
                         border: Border.all(color: Colors.grey.shade300),
                       ),
-                      child: Row(
+                      child: const Row(
                         children: [
                           Icon(Icons.arrow_back, size: 16),
                           SizedBox(width: 8),
@@ -293,11 +293,11 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                           //   valueColor:
                           //       AlwaysStoppedAnimation<Color>(blueColor),
                           // ),
-                          SpinKitFadingCircle(
+                          const SpinKitFadingCircle(
                             color: Colors.black,
                             size: 40.0,
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           Text(
                             'Refreshing data...',
                             style: TextStyle(
@@ -309,7 +309,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                       ),
                     )
                   : SingleChildScrollView(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
                         children: [
                           // Appliance Details Card
@@ -357,7 +357,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                             ],
                             showEdit: true,
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           if (appliance.filters != null &&
                               appliance.filters!.isNotEmpty)
                             // Filters Card
@@ -385,7 +385,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                                           'No filters', 'Filter Size', ''),
                                     ],
                             ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           // if(widget.appliance.maintenanceHistory != null && widget.appliance.maintenanceHistory!.isNotEmpty)
                           // Maintenance History Card
                           _buildDetailCard(
@@ -413,7 +413,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                             showAdd: true,
                             showSearch: true,
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
 
                           // Maintenance Notes Card
                           // _buildDetailCard(
@@ -466,7 +466,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                             showAdd: true,
                             showSearch: true,
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                         ],
                       ),
                     ),
@@ -483,7 +483,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
     final appliance = _liveAppliance ?? widget.appliance;
 
     return Container(
-      padding: EdgeInsets.all(8),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -499,7 +499,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
               children: [
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
@@ -509,9 +509,9 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                   children: [
                     if (showAdd)
                       Container(
-                        margin: EdgeInsets.only(right: 8),
+                        margin: const EdgeInsets.only(right: 8),
                         child: Container(
-                          padding: EdgeInsets.all(3),
+                          padding: const EdgeInsets.all(3),
                           decoration: BoxDecoration(
                             color: Colors.green.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
@@ -522,12 +522,12 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                           ),
                           child: IconButton(
                             icon:
-                                Icon(Icons.add, color: Colors.green, size: 20),
+                                const Icon(Icons.add, color: Colors.green, size: 20),
                             onPressed: () {
                               _showAddDialog(title);
                             },
                             padding: EdgeInsets.zero,
-                            constraints: BoxConstraints(),
+                            constraints: const BoxConstraints(),
                           ),
                         ),
                       ),
@@ -569,7 +569,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
               ],
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           ...children,
         ],
       ),
@@ -578,7 +578,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
 
   Widget _buildDetailRow(String label, String value, {Color? valueColor}) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -586,7 +586,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
             flex: 2,
             child: Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
@@ -613,7 +613,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
       String label1, String value1, String label2, String value2,
       {Color? valueColor1, Color? valueColor2}) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Column(
         children: [
           // Labels row
@@ -622,7 +622,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
               Expanded(
                 child: Text(
                   label1,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
@@ -632,7 +632,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
               Expanded(
                 child: Text(
                   label2,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
@@ -641,7 +641,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
               ),
             ],
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           // Values row
           Row(
             children: [
@@ -684,7 +684,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
 
   Widget _buildNoDataMessage(String message) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Row(
         children: [
           Icon(
@@ -692,7 +692,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
             color: Colors.grey.shade600,
             size: 20,
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
               message,
@@ -713,7 +713,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
     bool isExpanded = _expandedItems[key] ?? false;
     final dateProvider = Provider.of<DateProvider>(context);
     return Container(
-      margin: EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.grey.shade50,
         borderRadius: BorderRadius.circular(6),
@@ -725,7 +725,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
           GestureDetector(
             onTap: () => _toggleExpanded(key),
             child: Container(
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
                   Icon(
@@ -735,7 +735,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                     color: Colors.grey.shade600,
                     size: 18,
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Text(
                     dateProvider.formatCurrentDate('${date}'),
                     style: TextStyle(
@@ -744,9 +744,9 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                       color: Colors.grey.shade800,
                     ),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: eventType == 'Install'
                           ? Colors.green.withOpacity(0.1)
@@ -771,12 +771,12 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
           // Expanded content
           if (isExpanded)
             Container(
-              padding: EdgeInsets.only(left: 38, right: 12, bottom: 12),
+              padding: const EdgeInsets.only(left: 38, right: 12, bottom: 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Labels row
-                  Row(
+                  const Row(
                     children: [
                       Expanded(
                         child: Text(
@@ -800,7 +800,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   // Values row
                   Row(
                     children: [
@@ -840,7 +840,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
     bool isExpanded = _expandedItems[key] ?? false;
     final dateProvider = Provider.of<DateProvider>(context);
     return Container(
-      margin: EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.grey.shade50,
         borderRadius: BorderRadius.circular(6),
@@ -852,7 +852,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
           GestureDetector(
             onTap: () => _toggleExpanded(key),
             child: Container(
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
                   Icon(
@@ -862,7 +862,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                     color: Colors.grey.shade600,
                     size: 18,
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Text(
                     dateProvider.formatCurrentDate('${date}'),
                     style: TextStyle(
@@ -871,10 +871,10 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                       color: Colors.grey.shade800,
                     ),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   Row(
                     children: [
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       // Edit Button
                       Container(
                         decoration: BoxDecoration(
@@ -900,8 +900,8 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                               );
                             },
                             child: Container(
-                              padding: EdgeInsets.all(8),
-                              child: Icon(
+                              padding: const EdgeInsets.all(8),
+                              child: const Icon(
                                 Icons.edit_outlined,
                                 color: Colors.green,
                                 size: 16,
@@ -910,7 +910,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       // Delete Button
                       Container(
                         decoration: BoxDecoration(
@@ -928,7 +928,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                    title: Row(
+                                    title: const Row(
                                       children: [
                                         Icon(
                                           Icons.warning_amber_rounded,
@@ -973,7 +973,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                                         child: TextButton(
                                           onPressed: () =>
                                               Navigator.of(context).pop(true),
-                                          child: Text(
+                                          child: const Text(
                                             'Delete',
                                             style: TextStyle(
                                               color: Colors.white,
@@ -995,8 +995,8 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                               }
                             },
                             child: Container(
-                              padding: EdgeInsets.all(8),
-                              child: Icon(
+                              padding: const EdgeInsets.all(8),
+                              child: const Icon(
                                 Icons.delete_outline,
                                 color: Colors.red,
                                 size: 16,
@@ -1014,12 +1014,12 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
           // Expanded content
           if (isExpanded)
             Container(
-              padding: EdgeInsets.only(left: 38, right: 12, bottom: 12),
+              padding: const EdgeInsets.only(left: 38, right: 12, bottom: 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Labels row
-                  Row(
+                  const Row(
                     children: [
                       Expanded(
                         child: Text(
@@ -1043,7 +1043,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   // Values row
                   Row(
                     children: [

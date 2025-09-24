@@ -547,35 +547,35 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
           Align(
             alignment: Alignment.centerRight,
             child: IconButton(
-              icon: Icon(Icons.close, color: Colors.black),
+              icon: const Icon(Icons.close, color: Colors.black),
               onPressed: () {
                 deleteRow(index);
               },
             ),
           ),
-          Text(
+          const Text(
             "Quantity",
             style: TextStyle(
                 fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           CustomTextField(
             hintText: 'Quantity',
             controller: partsAndLabor[index]['qtyController'],
             keyboardType: TextInputType.number,
             // keyboardType: TextInputType.numberWithOptions(signed: false,decimal: true),
           ),
-          SizedBox(height: 10),
-          Text(
+          const SizedBox(height: 10),
+          const Text(
             "Account",
             style: TextStyle(
                 fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           DropdownButtonHideUnderline(
             child: DropdownButton2<String>(
               isExpanded: true,
-              hint: Text('Select'),
+              hint: const Text('Select'),
               value: partsAndLabor[index]['selectedAccount'],
               items: _account.map((method) {
                 return DropdownMenuItem<String>(
@@ -625,45 +625,45 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
               ),
             ),
           ),
-          SizedBox(height: 10),
-          Text(
+          const SizedBox(height: 10),
+          const Text(
             "Description",
             style: TextStyle(
                 fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           CustomTextField(
             hintText: 'Description',
             controller: partsAndLabor[index]['descriptionController'],
             keyboardType: TextInputType.text,
           ),
-          SizedBox(height: 10),
-          Text(
+          const SizedBox(height: 10),
+          const Text(
             "Price",
             style: TextStyle(
                 fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           CustomTextField(
             hintText: 'Price',
             controller: partsAndLabor[index]['priceController'],
             keyboardType: TextInputType.number,
             // keyboardType: TextInputType.numberWithOptions(signed: false,decimal: true),
           ),
-          SizedBox(height: 10),
-          Text(
+          const SizedBox(height: 10),
+          const Text(
             "Total",
             style: TextStyle(
                 fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           CustomTextField(
             hintText: 'Total',
             controller: partsAndLabor[index]['totalController'],
             keyboardType: TextInputType.number,
             readOnnly: true,
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
         ],
       ),
     );
@@ -832,14 +832,14 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 25,
                 ),
                 titleBar(
                   width: MediaQuery.of(context).size.width * .91,
                   title: 'Add Work Order',
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
                 Padding(
@@ -850,19 +850,19 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
                         border: Border.all(
-                          color: Color.fromRGBO(21, 43, 103, 1),
+                          color: const Color.fromRGBO(21, 43, 103, 1),
                         )),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Subject *',
+                          const Text('Subject *',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey)),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           CustomTextField(
@@ -876,15 +876,15 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               return null;
                             },
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
-                          Text('Photos (Maximum of 10)',
+                          const Text('Photos (Maximum of 10)',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey)),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Container(
@@ -914,20 +914,20 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               //   });
                               // },
                               child: isLoading
-                                  ? Center(
+                                  ? const Center(
                                       child: SpinKitFadingCircle(
                                         color: Colors.white,
                                         size: 55.0,
                                       ),
                                     )
-                                  : Text(
+                                  : const Text(
                                       'Upload here',
                                       style:
                                           TextStyle(color: Color(0xFFf7f8f9)),
                                     ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           _images.isNotEmpty
@@ -955,7 +955,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                                   children: [
                                                     Row(
                                                       children: [
-                                                        SizedBox(
+                                                        const SizedBox(
                                                           width: 60,
                                                         ),
                                                         GestureDetector(
@@ -965,7 +965,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                                                   index);
                                                             });
                                                           },
-                                                          child: Icon(
+                                                          child: const Icon(
                                                             Icons.close,
                                                             color: Colors.grey,
                                                           ),
@@ -1001,7 +1001,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                                                       fit: BoxFit
                                                                           .cover,
                                                                     ),
-                                                                    Icon(
+                                                                    const Icon(
                                                                         Icons
                                                                             .play_circle_fill,
                                                                         color: Colors
@@ -1036,15 +1036,15 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                   ],
                                 )
                               : Container(),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
-                          Text('Property *',
+                          const Text('Property *',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey)),
-                          SizedBox(
+                          const SizedBox(
                             height: 2,
                           ),
                           Column(
@@ -1064,7 +1064,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                     children: [
                                       DropdownButtonHideUnderline(
                                         child: DropdownButtonFormField2<String>(
-                                          decoration: InputDecoration(
+                                          decoration: const InputDecoration(
                                             border: InputBorder.none,
                                           ),
                                           isExpanded: true,
@@ -1207,7 +1207,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                             DropdownButtonHideUnderline(
                                               child: DropdownButtonFormField2<
                                                   String>(
-                                                decoration: InputDecoration(
+                                                decoration: const InputDecoration(
                                                   border: InputBorder.none,
                                                 ),
                                                 isExpanded: true,
@@ -1361,15 +1361,15 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                   : Container(),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 6,
                           ),
-                          Text('Category ',
+                          const Text('Category ',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey)),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           // FormField<String>(
@@ -1530,15 +1530,15 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                       'Enter Other Category', other),
                                 )
                               : Container(),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
-                          Text('Assigned To *',
+                          const Text('Assigned To *',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey)),
-                          SizedBox(
+                          const SizedBox(
                             height: 2,
                           ),
                           Column(
@@ -1666,21 +1666,21 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
-                          Text('Entery allowed ',
+                          const Text('Entery allowed ',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey)),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           DropdownButtonHideUnderline(
                             child: DropdownButton2<String>(
                               isExpanded: true,
-                              hint: Text('Select'),
+                              hint: const Text('Select'),
                               value: _selectedEntry,
                               items: _entry.map((method) {
                                 return DropdownMenuItem<String>(
@@ -1734,15 +1734,15 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
-                          Text('Vendor ',
+                          const Text('Vendor ',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey)),
-                          SizedBox(
+                          const SizedBox(
                             height: 2,
                           ),
                           Column(
@@ -1877,15 +1877,15 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
-                          Text('Work To Be Performed',
+                          const Text('Work To Be Performed',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey)),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           CustomTextField(
@@ -1894,7 +1894,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                             controller: perform,
                             optional: true,
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                         ],
@@ -1910,14 +1910,14 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
                         border: Border.all(
-                          color: Color.fromRGBO(21, 43, 103, 1),
+                          color: const Color.fromRGBO(21, 43, 103, 1),
                         )),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
+                          const Row(
                             children: [
                               Text('Parts and Labor :',
                                   style:
@@ -1928,13 +1928,13 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                             int index = entry.key;
                             return buildRow(index);
                           }).toList(),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Row(
                             children: [
                               // SizedBox(width: 10),
-                              Text('Total :',
+                              const Text('Total :',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                   )),
@@ -1945,24 +1945,24 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           ElevatedButton(
                             onPressed: addRow,
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: blueColor),
-                            child: Text('Add Row'),
+                            child: const Text('Add Row'),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
-                          Text('Vendor Notes ',
+                          const Text('Vendor Notes ',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey)),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           CustomTextField(
@@ -1977,16 +1977,16 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                             },
                             optional: true,
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                           Row(
                             children: [
-                              Text(
+                              const Text(
                                 "Billable To Tenant",
                                 style: TextStyle(color: Colors.grey),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 10,
                               ),
                               SizedBox(
@@ -2005,7 +2005,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           if (isChecked)
@@ -2024,17 +2024,17 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text('Tenant',
+                                              const Text('Tenant',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: Colors.grey)),
-                                              SizedBox(height: 2),
+                                              const SizedBox(height: 2),
                                               DropdownButtonHideUnderline(
                                                 child: DropdownButtonFormField2<
                                                     String>(
-                                                  decoration: InputDecoration(
+                                                  decoration: const InputDecoration(
                                                       border: InputBorder.none),
                                                   isExpanded: true,
                                                   hint: const Row(
@@ -2152,10 +2152,10 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                         : Container(),
                               ],
                             ),
-                          SizedBox(
+                          const SizedBox(
                             height: 15,
                           ),
-                          Row(
+                          const Row(
                             children: [
                               Text(
                                 "Priority",
@@ -2229,13 +2229,13 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                       onChanged: _handleRadioValueChange,
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 5,
                                   ),
-                                  Text(' High')
+                                  const Text(' High')
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 20,
                               ),
                               Row(
@@ -2248,13 +2248,13 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                       onChanged: _handleRadioValueChange,
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 5,
                                   ),
-                                  Text(' Normal')
+                                  const Text(' Normal')
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 20,
                               ),
                               Row(
@@ -2267,10 +2267,10 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                       onChanged: _handleRadioValueChange,
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 5,
                                   ),
-                                  Text(' Low')
+                                  const Text(' Low')
                                 ],
                               )
                               /* ListTile(
@@ -2292,15 +2292,15 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                   ),*/
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
-                          Text('Status *',
+                          const Text('Status *',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey)),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           FormField<String>(
@@ -2393,7 +2393,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               );
                             },
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 15,
                           ),
                           const Text('Due Date',
@@ -2479,19 +2479,19 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                           ),
                           onPressed: _submitForm,
                           child: isloading
-                              ? Center(
+                              ? const Center(
                                   child: SpinKitFadingCircle(
                                     color: Colors.white,
                                     size: 55.0,
                                   ),
                                 )
-                              : Text(
+                              : const Text(
                                   'Add Work Order',
                                   style: TextStyle(color: Color(0xFFf7f8f9)),
                                 ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 8,
                       ),
                       Container(
@@ -2501,14 +2501,14 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               borderRadius: BorderRadius.circular(8.0)),
                           child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFFffffff),
+                                  backgroundColor: const Color(0xFFffffff),
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
                                           BorderRadius.circular(8.0))),
                               onPressed: () {
                                 Navigator.pop(context);
                               },
-                              child: Text(
+                              child: const Text(
                                 'Cancel',
                                 style: TextStyle(color: Color(0xFF748097)),
                               )))
@@ -2529,13 +2529,13 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(label,
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
-        SizedBox(height: 8.0),
+            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+        const SizedBox(height: 8.0),
         Material(
           elevation: 3,
           borderRadius: BorderRadius.circular(5),
           child: Container(
-            padding: EdgeInsets.only(left: 10),
+            padding: const EdgeInsets.only(left: 10),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(5),
@@ -3068,34 +3068,34 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
           Align(
             alignment: Alignment.centerRight,
             child: IconButton(
-              icon: Icon(Icons.close, color: Colors.black),
+              icon: const Icon(Icons.close, color: Colors.black),
               onPressed: () {
                 deleteRow(index);
               },
             ),
           ),
-          Text(
+          const Text(
             "Quantity",
             style: TextStyle(
                 fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           CustomTextField(
             hintText: 'Quantity',
             controller: partsAndLabor[index]['qtyController'],
             keyboardType: TextInputType.number,
           ),
-          SizedBox(height: 10),
-          Text(
+          const SizedBox(height: 10),
+          const Text(
             "Account",
             style: TextStyle(
                 fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           DropdownButtonHideUnderline(
             child: DropdownButton2<String>(
               isExpanded: true,
-              hint: Text('Select'),
+              hint: const Text('Select'),
               value: partsAndLabor[index]['selectedAccount'],
               items: _account.map((method) {
                 return DropdownMenuItem<String>(
@@ -3145,44 +3145,44 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
               ),
             ),
           ),
-          SizedBox(height: 10),
-          Text(
+          const SizedBox(height: 10),
+          const Text(
             "Description",
             style: TextStyle(
                 fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           CustomTextField(
             hintText: 'Description',
             controller: partsAndLabor[index]['descriptionController'],
             keyboardType: TextInputType.text,
           ),
-          SizedBox(height: 10),
-          Text(
+          const SizedBox(height: 10),
+          const Text(
             "Price",
             style: TextStyle(
                 fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           CustomTextField(
             hintText: 'Price',
             controller: partsAndLabor[index]['priceController'],
             keyboardType: TextInputType.number,
           ),
-          SizedBox(height: 10),
-          Text(
+          const SizedBox(height: 10),
+          const Text(
             "Total",
             style: TextStyle(
                 fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           CustomTextField(
             hintText: 'Total',
             controller: partsAndLabor[index]['totalController'],
             keyboardType: TextInputType.number,
             readOnnly: true,
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
         ],
       ),
     );
@@ -3302,14 +3302,14 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 25,
                 ),
                 titleBar(
                   width: MediaQuery.of(context).size.width * .91,
                   title: 'Add Work Order',
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
                 Padding(
@@ -3320,19 +3320,19 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
                         border: Border.all(
-                          color: Color.fromRGBO(21, 43, 103, 1),
+                          color: const Color.fromRGBO(21, 43, 103, 1),
                         )),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Subject *',
+                          const Text('Subject *',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey)),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           CustomTextField(
@@ -3346,15 +3346,15 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                               return null;
                             },
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
-                          Text('Photo ',
+                          const Text('Photo ',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey)),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Container(
@@ -3377,20 +3377,20 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                 });
                               },
                               child: isLoading
-                                  ? Center(
+                                  ? const Center(
                                       child: SpinKitFadingCircle(
                                         color: Colors.white,
                                         size: 55.0,
                                       ),
                                     )
-                                  : Text(
+                                  : const Text(
                                       'Upload here',
                                       style:
                                           TextStyle(color: Color(0xFFf7f8f9)),
                                     ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           _images.isNotEmpty
@@ -3418,7 +3418,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                                   children: [
                                                     Row(
                                                       children: [
-                                                        SizedBox(
+                                                        const SizedBox(
                                                           width: 60,
                                                         ),
                                                         GestureDetector(
@@ -3428,7 +3428,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                                                   index);
                                                             });
                                                           },
-                                                          child: Icon(
+                                                          child: const Icon(
                                                             Icons.close,
                                                             color: Colors.grey,
                                                           ),
@@ -3464,10 +3464,10 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                     ),
                                   ],
                                 )
-                              : Center(
+                              : const Center(
                                   child: Text("No images selected."),
                                 ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Row(
@@ -3477,12 +3477,12 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Property *',
+                                    const Text('Property *',
                                         style: TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.grey)),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 2,
                                     ),
                                     Column(
@@ -3650,7 +3650,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                   ],
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 20,
                               ),
                               Expanded(
@@ -3684,7 +3684,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                                         DropdownButtonFormField2<
                                                             String>(
                                                       decoration:
-                                                          InputDecoration(
+                                                          const InputDecoration(
                                                         border:
                                                             InputBorder.none,
                                                       ),
@@ -3841,7 +3841,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Expanded(
+                              const Expanded(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -3966,7 +3966,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                   ],
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 20,
                               ),
                               Expanded(
@@ -3974,18 +3974,18 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Entery allowed ',
+                                    const Text('Entery allowed ',
                                         style: TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.grey)),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     DropdownButtonHideUnderline(
                                       child: DropdownButton2<String>(
                                         isExpanded: true,
-                                        hint: Text('Select'),
+                                        hint: const Text('Select'),
                                         value: _selectedEntry,
                                         items: _entry.map((method) {
                                           return DropdownMenuItem<String>(
@@ -4053,12 +4053,12 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Assigned To *',
+                                    const Text('Assigned To *',
                                         style: TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.grey)),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 2,
                                     ),
                                     _isLoadingstaff
@@ -4075,7 +4075,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                               DropdownButtonHideUnderline(
                                                 child: DropdownButtonFormField2<
                                                     String>(
-                                                  decoration: InputDecoration(
+                                                  decoration: const InputDecoration(
                                                       border: InputBorder.none),
                                                   isExpanded: true,
                                                   hint: const Row(
@@ -4200,7 +4200,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           _showTextField
@@ -4211,7 +4211,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                       'Enter Other Category', other),
                                 )
                               : Container(),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Row(
@@ -4222,12 +4222,12 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text('Vendors *',
+                                      const Text('Vendors *',
                                           style: TextStyle(
                                               fontSize: 13,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.grey)),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 2,
                                       ),
                                       _isLoadingvendors
@@ -4245,7 +4245,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                                   child:
                                                       DropdownButtonFormField2<
                                                           String>(
-                                                    decoration: InputDecoration(
+                                                    decoration: const InputDecoration(
                                                         border:
                                                             InputBorder.none),
                                                     isExpanded: true,
@@ -4374,19 +4374,19 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 16),
+                              const SizedBox(width: 16),
                               Expanded(
                                 child: Container(
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text('Work To Be Performed',
+                                      const Text('Work To Be Performed',
                                           style: TextStyle(
                                               fontSize: 13,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.grey)),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 10,
                                       ),
                                       CustomTextField(
@@ -4396,7 +4396,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                         controller: perform,
                                         optional: true,
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 10,
                                       ),
                                     ],
@@ -4405,7 +4405,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                         ],
@@ -4421,21 +4421,21 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
                         border: Border.all(
-                          color: Color.fromRGBO(21, 43, 103, 1),
+                          color: const Color.fromRGBO(21, 43, 103, 1),
                         )),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
+                          const Row(
                             children: [
                               Text('Parts And Labour ',
                                   style:
                                       TextStyle(fontWeight: FontWeight.bold)),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Table(
@@ -4450,42 +4450,42 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                             children: [
                               TableRow(children: [
                                 Padding(
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   child: Text('QTY',
                                       style: TextStyle(
                                           color: blueColor,
                                           fontWeight: FontWeight.bold)),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   child: Text('Account',
                                       style: TextStyle(
                                           color: blueColor,
                                           fontWeight: FontWeight.bold)),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   child: Text('Description',
                                       style: TextStyle(
                                           color: blueColor,
                                           fontWeight: FontWeight.bold)),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   child: Text('Price',
                                       style: TextStyle(
                                           color: blueColor,
                                           fontWeight: FontWeight.bold)),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   child: Text('Amount',
                                       style: TextStyle(
                                           color: blueColor,
                                           fontWeight: FontWeight.bold)),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   child: Text('',
                                       style: TextStyle(
                                           color: blueColor,
@@ -4523,7 +4523,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                 int index = entry.key;
                                 return TableRow(children: [
                                   Padding(
-                                    padding: EdgeInsets.all(8.0),
+                                    padding: const EdgeInsets.all(8.0),
                                     child: CustomTextField(
                                       hintText: 'Quantity',
                                       controller: partsAndLabor[index]
@@ -4532,11 +4532,11 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.all(8.0),
+                                    padding: const EdgeInsets.all(8.0),
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton2<String>(
                                         isExpanded: true,
-                                        hint: Text('Select'),
+                                        hint: const Text('Select'),
                                         value: partsAndLabor[index]
                                             ['selectedAccount'],
                                         items: _account.map((method) {
@@ -4596,7 +4596,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.all(8.0),
+                                    padding: const EdgeInsets.all(8.0),
                                     child: CustomTextField(
                                       hintText: 'Description',
                                       controller: partsAndLabor[index]
@@ -4605,7 +4605,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.all(8.0),
+                                    padding: const EdgeInsets.all(8.0),
                                     child: CustomTextField(
                                       hintText: 'Price',
                                       controller: partsAndLabor[index]
@@ -4614,7 +4614,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.all(8.0),
+                                    padding: const EdgeInsets.all(8.0),
                                     child: CustomTextField(
                                       hintText: 'Total',
                                       controller: partsAndLabor[index]
@@ -4624,9 +4624,9 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.all(8.0),
+                                    padding: const EdgeInsets.all(8.0),
                                     child: IconButton(
-                                      icon: Icon(Icons.close,
+                                      icon: const Icon(Icons.close,
                                           color: Colors.black),
                                       onPressed: () {
                                         deleteRow(index);
@@ -4678,11 +4678,11 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                                 fontWeight: FontWeight.bold)),
                                       ),*/
                                 Padding(
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   child: Text(
                                       '\$${totalAmount.toStringAsFixed(2)}'),
                                 ),
-                                Padding(
+                                const Padding(
                                   padding: EdgeInsets.all(8.0),
                                   child: Text(''),
                                 ),
@@ -4729,17 +4729,17 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                           ),
                           ElevatedButton(
                             onPressed: addRow,
-                            child: Text('Add Row'),
+                            child: const Text('Add Row'),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
-                          Text('Vendors Note *',
+                          const Text('Vendors Note *',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey)),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           CustomTextField(
@@ -4754,16 +4754,16 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                             },
                             optional: true,
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                           Row(
                             children: [
-                              Text(
+                              const Text(
                                 "Billable To Tenants",
                                 style: TextStyle(color: Colors.grey),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 10,
                               ),
                               SizedBox(
@@ -4782,7 +4782,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           if (isChecked)
@@ -4801,17 +4801,17 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text('Tenant',
+                                              const Text('Tenant',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: Colors.grey)),
-                                              SizedBox(height: 2),
+                                              const SizedBox(height: 2),
                                               DropdownButtonHideUnderline(
                                                 child: DropdownButtonFormField2<
                                                     String>(
-                                                  decoration: InputDecoration(
+                                                  decoration: const InputDecoration(
                                                       border: InputBorder.none),
                                                   isExpanded: true,
                                                   hint: const Row(
@@ -4929,10 +4929,10 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                         : Container(),
                               ],
                             ),
-                          SizedBox(
+                          const SizedBox(
                             height: 15,
                           ),
-                          Row(
+                          const Row(
                             children: [
                               Text(
                                 "Priority",
@@ -4970,21 +4970,21 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
-                          Text('Status *',
+                          const Text('Status *',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey)),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           DropdownButtonHideUnderline(
                             child: DropdownButton2<String>(
                               isExpanded: true,
-                              hint: Text('New'),
+                              hint: const Text('New'),
                               value: _selectedStatus,
                               items: _status.map((method) {
                                 return DropdownMenuItem<String>(
@@ -5035,7 +5035,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 15,
                           ),
                           const Text('Due Date',
@@ -5121,19 +5121,19 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                           ),
                           onPressed: _submitForm,
                           child: isLoading
-                              ? Center(
+                              ? const Center(
                                   child: SpinKitFadingCircle(
                                     color: Colors.white,
                                     size: 55.0,
                                   ),
                                 )
-                              : Text(
+                              : const Text(
                                   'Add Work Order',
                                   style: TextStyle(color: Color(0xFFf7f8f9)),
                                 ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 8,
                       ),
                       Container(
@@ -5143,21 +5143,21 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                               borderRadius: BorderRadius.circular(8.0)),
                           child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFFffffff),
+                                  backgroundColor: const Color(0xFFffffff),
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
                                           BorderRadius.circular(8.0))),
                               onPressed: () {
                                 Navigator.pop(context);
                               },
-                              child: Text(
+                              child: const Text(
                                 'Cancel',
                                 style: TextStyle(color: Color(0xFF748097)),
                               )))
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
               ],
@@ -5174,13 +5174,13 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(label,
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
-        SizedBox(height: 8.0),
+            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+        const SizedBox(height: 8.0),
         Material(
           elevation: 3,
           borderRadius: BorderRadius.circular(5),
           child: Container(
-            padding: EdgeInsets.only(left: 10),
+            padding: const EdgeInsets.only(left: 10),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(5),
@@ -5331,15 +5331,15 @@ class _VideoPlayerDialogState extends State<VideoPlayerDialog> {
           Clip.none, // Allows the button to be positioned outside the container
       children: [
         Container(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           child: _chewieController != null &&
                   _chewieController!.videoPlayerController.value.isInitialized
               ? AspectRatio(
                   aspectRatio: _videoPlayerController.value.aspectRatio,
                   child: Chewie(controller: _chewieController!),
                 )
-              : Padding(
-                  padding: const EdgeInsets.all(20),
+              : const Padding(
+                  padding: EdgeInsets.all(20),
                   child: CircularProgressIndicator(),
                 ),
         ),
@@ -5347,7 +5347,7 @@ class _VideoPlayerDialogState extends State<VideoPlayerDialog> {
           top: -50, // Moves the close button above the container
           right: 0, // Aligns it to the right
           child: IconButton(
-            icon: Icon(Icons.close,
+            icon: const Icon(Icons.close,
                 color: Colors.white, size: 30), // Customize as needed
             onPressed: () => Navigator.pop(context),
           ),

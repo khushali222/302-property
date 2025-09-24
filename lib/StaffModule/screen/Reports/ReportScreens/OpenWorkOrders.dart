@@ -209,7 +209,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
     return Container(
       decoration: BoxDecoration(
         color: blueColor,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(13),
           topRight: Radius.circular(13),
         ),
@@ -226,7 +226,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -256,21 +256,21 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Date", style: TextStyle(color: Colors.white))
-                        : Text("Date", style: TextStyle(color: Colors.white)),
+                        ? const Text("Date", style: TextStyle(color: Colors.white))
+                        : const Text("Date", style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
+                    const SizedBox(width: 3),
                     ascending1
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -305,19 +305,19 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                 },
                 child: Row(
                   children: [
-                    Text("Address", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                    const Text("Address", style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 5),
                     ascending2
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -353,19 +353,19 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                 },
                 child: Row(
                   children: [
-                    Text("Work", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                    const Text("Work", style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 5),
                     ascending3
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
                               color: Colors.white,
                             ),
                           )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                            padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -538,7 +538,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
             margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
             child: pw.Text(
               'Page ${context.pageNumber} of ${context.pagesCount}',
-              style: pw.TextStyle(color: PdfColors.grey),
+              style: const pw.TextStyle(color: PdfColors.grey),
             ),
           );
         },
@@ -559,26 +559,26 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
               ];
             }).toList(),
             border: pw.TableBorder.all(
-              color: PdfColor.fromInt(0xFFBDBDBD),
+              color: const PdfColor.fromInt(0xFFBDBDBD),
               width: 1,
             ),
             cellAlignment: pw.Alignment.centerLeft,
-            headerDecoration: pw.BoxDecoration(
+            headerDecoration: const pw.BoxDecoration(
               color: PdfColors.grey300,
             ),
             headerStyle: pw.TextStyle(
               fontWeight: pw.FontWeight.bold,
               fontSize: 12,
             ),
-            cellStyle: pw.TextStyle(
+            cellStyle: const pw.TextStyle(
               fontSize: 10,
             ),
             cellHeight: 30,
             columnWidths: {
-              0: pw.FlexColumnWidth(1.2), // Date
-              1: pw.FlexColumnWidth(1.5), // Address
-              2: pw.FlexColumnWidth(1.5), // Work
-              3: pw.FlexColumnWidth(1.5), // Performed
+              0: const pw.FlexColumnWidth(1.2), // Date
+              1: const pw.FlexColumnWidth(1.5), // Address
+              2: const pw.FlexColumnWidth(1.5), // Work
+              3: const pw.FlexColumnWidth(1.5), // Performed
             },
           ),
         ],
@@ -746,7 +746,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
-                              SizedBox(height: 10,),
+                              const SizedBox(height: 10,),
                               Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
                             ],
                           ),
@@ -791,7 +791,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                     return SingleChildScrollView(
                       child: Column(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             height: 8,
                           ),
                           Expanded(
@@ -882,7 +882,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                           child: Text('CSV'),
                                         ),
                                       ],
-                                      child: Row(
+                                      child: const Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Text('Export'),
@@ -895,12 +895,12 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           _buildHeaders(),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Container(
                             decoration: BoxDecoration(
-                                border: Border.all(color: Color.fromRGBO(
+                                border: Border.all(color: const Color.fromRGBO(
                                     152, 162, 179, .5)
 
 
@@ -917,7 +917,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                 return Container(
                                   decoration: BoxDecoration(
                                     color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                    border: Border.all(color: Color.fromRGBO(
+                                    border: Border.all(color: const Color.fromRGBO(
                                         152, 162, 179, .5)
 
 
@@ -951,11 +951,11 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                                 },
                                                 child: Container(
                                                   margin:
-                                                      EdgeInsets.only(left: 5),
+                                                      const EdgeInsets.only(left: 5),
                                                   padding: !isExpanded
-                                                      ? EdgeInsets.only(
+                                                      ? const EdgeInsets.only(
                                                           bottom: 10)
-                                                      : EdgeInsets.only(
+                                                      : const EdgeInsets.only(
                                                           top: 10),
                                                   child: FaIcon(
                                                     isExpanded
@@ -1039,9 +1039,9 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                       ),
                                       if (isExpanded)
                                         Container(
-                                          padding: EdgeInsets.symmetric(
+                                          padding: const EdgeInsets.symmetric(
                                               horizontal: 8.0),
-                                          margin: EdgeInsets.only(bottom: 20),
+                                          margin: const EdgeInsets.only(bottom: 20),
                                           child: SingleChildScrollView(
                                             child: Column(
                                               children: [
@@ -1089,7 +1089,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                                               ],
                                                             ),
                                                           ),
-                                                          SizedBox(
+                                                          const SizedBox(
                                                             height: 5,
                                                           ),
                                                           Text.rich(
@@ -1117,7 +1117,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                                               ],
                                                             ),
                                                           ),
-                                                          SizedBox(
+                                                          const SizedBox(
                                                             height: 5,
                                                           ),
                                                         ],
@@ -1125,7 +1125,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                                     ),
                                                     Container(
                                                       width: 40,
-                                                      child: Column(
+                                                      child: const Column(
                                                         children: [],
                                                       ),
                                                     ),
@@ -1141,18 +1141,18 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                               }).toList(),
                             ),
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Row(
                                 children: [
-                                  SizedBox(width: 10),
+                                  const SizedBox(width: 10),
                                   Material(
                                     elevation: 3,
                                     child: Container(
                                       height: 40,
-                                      padding: EdgeInsets.symmetric(
+                                      padding: const EdgeInsets.symmetric(
                                           horizontal: 12.0),
                                       decoration: BoxDecoration(
                                         border: Border.all(color: Colors.grey),
@@ -1305,7 +1305,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                   child: Text('CSV'),
                                 ),
                               ],
-                              child: Row(
+                              child: const Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text('Export'),
@@ -1337,7 +1337,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
-                              SizedBox(height: 10,),
+                              const SizedBox(height: 10,),
                               Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
                             ],
                           ),
@@ -1384,13 +1384,13 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                         child: Column(
                           children: [
                             Table(
-                              defaultColumnWidth: IntrinsicColumnWidth(),
+                              defaultColumnWidth: const IntrinsicColumnWidth(),
                               columnWidths: {
-                                0: FlexColumnWidth(),
-                                1: FlexColumnWidth(),
-                                2: FlexColumnWidth(),
-                                3: FlexColumnWidth(),
-                                4: FlexColumnWidth(),
+                                0: const FlexColumnWidth(),
+                                1: const FlexColumnWidth(),
+                                2: const FlexColumnWidth(),
+                                3: const FlexColumnWidth(),
+                                4: const FlexColumnWidth(),
                               },
                               children: [
                                 TableRow(
@@ -1417,7 +1417,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                   ],
                                 ),
                                 TableRow(
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     border: Border.symmetric(
                                         horizontal: BorderSide.none),
                                   ),
@@ -1461,9 +1461,9 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                   ),
                               ],
                             ),
-                            SizedBox(height: 25),
+                            const SizedBox(height: 25),
                             _buildPaginationControls(),
-                            SizedBox(height: 25),
+                            const SizedBox(height: 25),
                           ],
                         ),
                       ),
@@ -1485,12 +1485,12 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
               height: 200,
               fit: BoxFit.fill,
             ),
-            Text(
+            const Text(
               'No Internet',
               style: TextStyle(
                   fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            Text(
+            const Text(
               'Check your internet connection',
               style: TextStyle(
                   fontSize: 16, fontWeight: FontWeight.w500),

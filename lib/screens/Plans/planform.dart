@@ -123,7 +123,7 @@ class _PlanformState extends State<Planform> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 16,
             ),
             titleBar(
@@ -167,7 +167,7 @@ class _PlanformState extends State<Planform> {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Row(
@@ -213,7 +213,7 @@ class _PlanformState extends State<Planform> {
                         style: const TextStyle(color: Colors.red),
                       ),
                     ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Row(
@@ -259,7 +259,7 @@ class _PlanformState extends State<Planform> {
                         style: const TextStyle(color: Colors.red),
                       ),
                     ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   //city,state,postalcode
@@ -274,7 +274,7 @@ class _PlanformState extends State<Planform> {
                                 fontWeight: FontWeight.bold,
                                 color: blueColor),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 80,
                           ),
                            Text(
@@ -283,7 +283,7 @@ class _PlanformState extends State<Planform> {
                                 fontWeight: FontWeight.bold,
                                 color: blueColor),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 65,
                           ),
                            Text(
@@ -294,7 +294,7 @@ class _PlanformState extends State<Planform> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Row(
@@ -357,7 +357,7 @@ class _PlanformState extends State<Planform> {
                                   : Container(),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
                           Column(
@@ -418,7 +418,7 @@ class _PlanformState extends State<Planform> {
                                   : Container(),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
                           Column(
@@ -483,7 +483,7 @@ class _PlanformState extends State<Planform> {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                    Row(
@@ -699,12 +699,12 @@ class _PlanformState extends State<Planform> {
                               ),
                               child:  Column(
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 20,
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                       Text(
@@ -717,10 +717,10 @@ class _PlanformState extends State<Planform> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 10,
                                   ),
-                                  Padding(
+                                  const Padding(
                                     padding:
                                         EdgeInsets.only(left: 15, right: 25),
                                     child: Divider(
@@ -730,10 +730,10 @@ class _PlanformState extends State<Planform> {
                                       height: 1,
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 10,
                                   ),
-                                  Row(
+                                  const Row(
                                     children: [
                                       SizedBox(
                                         width: 15,
@@ -760,10 +760,10 @@ class _PlanformState extends State<Planform> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 10,
                                   ),
-                                  Row(
+                                  const Row(
                                     children: [
                                       SizedBox(
                                         width: 15,
@@ -777,12 +777,12 @@ class _PlanformState extends State<Planform> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 20,
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                       Text(
@@ -793,7 +793,7 @@ class _PlanformState extends State<Planform> {
                                                 blueColor,
                                             fontSize: 12),
                                       ),
-                                      Spacer(),
+                                      const Spacer(),
                                       Text(
                                         "\$1880.00",
                                         style: TextStyle(
@@ -802,7 +802,7 @@ class _PlanformState extends State<Planform> {
                                                 blueColor,
                                             fontSize: 12),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 15,
                                       ),
                                     ],
@@ -833,7 +833,7 @@ class _PlanformState extends State<Planform> {
                                   // Subtotal
                                    Row(
                                     children: [
-                                      SizedBox(width: 15),
+                                      const SizedBox(width: 15),
                                       Text(
                                         "Subtotal",
                                         style: TextStyle(

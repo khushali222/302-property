@@ -37,6 +37,7 @@ import '../../../../model/lease.dart';
 import '../../../../provider/lease_provider.dart';
 import '../../../repository/tenants.dart';
 import '../../../widgets/custom_drawer.dart';
+import '../../../../provider/dateProvider.dart';
 
 class Edit_lease extends StatefulWidget {
   Lease1? lease;
@@ -122,16 +123,19 @@ class _Edit_leaseState extends State<Edit_lease>
       renderId = fetchedDetails.rental.rentalId!;
 
       _selectedLeaseType = fetchedDetails.lease.leaseType;
-      startDateController.text = formatDate(fetchedDetails.lease.startDate);
-      endDateController.text = formatDate(fetchedDetails.lease.endDate);
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
+      startDateController.text =
+          dateProvider.formatCurrentDate(fetchedDetails.lease.startDate);
+      endDateController.text =
+          dateProvider.formatCurrentDate(fetchedDetails.lease.endDate);
 
       _selectedRent = fetchedDetails.rentCharges!.first!.rentCycle;
       rentMemo.text = fetchedDetails.rentCharges!.first!.memo;
 
       print(fetchedDetails.rentCharges!.first!.memo);
       rent_entry_id = fetchedDetails.rentCharges!.first.entry_id;
-      rentNextDueDate.text =
-          formatDate(fetchedDetails.rentCharges!.first!.date);
+      rentNextDueDate.text = Provider.of<DateProvider>(context, listen: false)
+          .formatCurrentDate(fetchedDetails.rentCharges!.first!.date);
       rentAmount.text = fetchedDetails.rentCharges!.first!.amount.toString();
 
       // if(fetchedDetails.lease.uploadedFile != "")
@@ -223,6 +227,7 @@ class _Edit_leaseState extends State<Edit_lease>
   final TextEditingController startDateController = TextEditingController();
   DateTime? _startDate;
   final TextEditingController endDateController = TextEditingController();
+  DateTime? _endDate;
 
   // second container variables
   String? _selectedRent;
@@ -447,11 +452,11 @@ class _Edit_leaseState extends State<Edit_lease>
   DateTime calculateNextDueDate(DateTime startDate, String rentCycle) {
     switch (rentCycle) {
       case 'Daily':
-        return startDate.add(Duration(days: 1));
+        return startDate.add(const Duration(days: 1));
       case 'Weekly':
-        return startDate.add(Duration(days: 7));
+        return startDate.add(const Duration(days: 7));
       case 'Every two weeks':
-        return startDate.add(Duration(days: 14));
+        return startDate.add(const Duration(days: 14));
       case 'Monthly':
         return DateTime(startDate.year, startDate.month + 1, startDate.day);
       case 'Every two months':
@@ -469,10 +474,134 @@ class _Edit_leaseState extends State<Edit_lease>
     if (_startDate != null && _selectedRent != null) {
       DateTime nextDueDate = calculateNextDueDate(_startDate!, _selectedRent!);
       String formattedNextDueDate =
-          "${nextDueDate.day.toString().padLeft(2, '0')}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.year}";
+          "${nextDueDate.year}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.day.toString().padLeft(2, '0')}";
 
       setState(() {
-        rentNextDueDate.text = formattedNextDueDate;
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        rentNextDueDate.text =
+            dateProvider.formatCurrentDate(formattedNextDueDate);
+      });
+    }
+  }
+
+  Future<void> _selectStartDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _startDate ?? DateTime.now(),
+      firstDate: DateTime(2015, 8),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: blueColor, // Header background color
+            colorScheme: ColorScheme.light(
+              primary: blueColor, // Selection color
+              onPrimary: Colors.white, // Text color
+              surface: Colors.white, // Calendar background color
+              onSurface: Colors.black, // Calendar text color
+            ),
+            dialogBackgroundColor: Colors.white, // Background color
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != _startDate) {
+      setState(() {
+        _startDate = picked;
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        startDateController.text =
+            dateProvider.formatCurrentDate(apiFormatDate);
+
+        // Auto-set end date to one year later
+        DateTime endDate = DateTime(picked.year + 1, picked.month, picked.day);
+        _endDate = endDate;
+        String endApiFormatDate = DateFormat('yyyy-MM-dd').format(endDate);
+        endDateController.text =
+            dateProvider.formatCurrentDate(endApiFormatDate);
+
+        // Store the date in yyyy-MM-dd format for API (unchanged)
+        String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
+        print('Display: ${startDateController.text}');
+        print('API format: $dateForApi');
+      });
+    }
+  }
+
+  Future<void> _selectEndDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _endDate ?? DateTime.now(),
+      firstDate: _startDate ?? DateTime.now(),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: blueColor, // Header background color
+            colorScheme: ColorScheme.light(
+              primary: blueColor, // Selection color
+              onPrimary: Colors.white, // Text color
+              surface: Colors.white, // Calendar background color
+              onSurface: Colors.black, // Calendar text color
+            ),
+            dialogBackgroundColor: Colors.white, // Background color
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != _endDate) {
+      setState(() {
+        _endDate = picked;
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        endDateController.text = dateProvider.formatCurrentDate(apiFormatDate);
+        // Store the date in yyyy-MM-dd format for API (unchanged)
+        String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
+        print('Display: ${endDateController.text}');
+        print('API format: $dateForApi');
+      });
+    }
+  }
+
+  Future<void> _selectNextDueDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: blueColor, // Header background color
+            colorScheme: ColorScheme.light(
+              primary: blueColor, // Selection color
+              onPrimary: Colors.white, // Text color
+              surface: Colors.white, // Calendar background color
+              onSurface: Colors.black, // Calendar text color
+            ),
+            dialogBackgroundColor: Colors.white, // Background color
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() {
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        rentNextDueDate.text = dateProvider.formatCurrentDate(apiFormatDate);
+        // Store the date in yyyy-MM-dd format for API (unchanged)
+        String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
+        print('Display: ${rentNextDueDate.text}');
+        print('API format: $dateForApi');
       });
     }
   }
@@ -861,7 +990,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                           DropdownButtonHideUnderline(
                                             child: DropdownButtonFormField2<
                                                 String>(
-                                              decoration: InputDecoration(
+                                              decoration: const InputDecoration(
                                                 border: InputBorder.none,
                                               ),
                                               isExpanded: true,
@@ -985,8 +1114,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                           (unit['rental_unit'] ?? '')
                                               .trim()
                                               .isNotEmpty))
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 5.0),
+                                    const Padding(
+                                      padding: EdgeInsets.only(top: 5.0),
                                       child: Text(
                                         'Unit',
                                         style: TextStyle(
@@ -1017,7 +1146,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                             DropdownButtonHideUnderline(
                                               child: DropdownButtonFormField2<
                                                   String>(
-                                                decoration: InputDecoration(
+                                                decoration: const InputDecoration(
                                                   border: InputBorder.none,
                                                 ),
                                                 isExpanded: true,
@@ -1320,121 +1449,13 @@ class _Edit_leaseState extends State<Edit_lease>
                                 ),
                               if (MediaQuery.of(context).size.width < 500)
                                 CustomTextField(
-                                  onTap: () async {
-                                    DateTime? pickedDate = await showDatePicker(
-                                      context: context,
-                                      initialDate: DateTime.now(),
-                                      firstDate: DateTime(2000),
-                                      lastDate: DateTime(2101),
-                                      locale: const Locale('en', 'US'),
-                                      builder: (BuildContext context,
-                                          Widget? child) {
-                                        return Theme(
-                                          data: ThemeData.light().copyWith(
-                                            colorScheme: ColorScheme.light(
-                                              primary:
-                                                  blueColor, // header background color
-                                              onPrimary: Colors
-                                                  .white, // header text color
-                                              onSurface:
-                                                  blueColor, // body text color
-                                            ),
-                                            textButtonTheme:
-                                                TextButtonThemeData(
-                                              style: TextButton.styleFrom(
-                                                foregroundColor: Colors.white,
-                                                backgroundColor:
-                                                    blueColor, // button text color
-                                              ),
-                                            ),
-                                          ),
-                                          child: child!,
-                                        );
-                                      },
-                                    );
-
-                                    if (pickedDate != null) {
-                                      // String formattedStartDate =
-                                      //     "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                                      String formattedStartDate =
-                                          "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                                      DateTime endDate = DateTime(
-                                          pickedDate.year,
-                                          pickedDate.month + 1,
-                                          pickedDate.day);
-                                      String formattedEndDate =
-                                          "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
-
-                                      // String formattedEndDate =
-                                      //     "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
-                                      setState(() {
-                                        startDateController.text =
-                                            formattedStartDate;
-                                        _startDate = pickedDate;
-                                        endDateController.text =
-                                            formattedEndDate;
-                                      });
-                                    }
+                                  onTap: () {
+                                    _selectStartDate(context);
                                   },
                                   readOnnly: true,
                                   suffixIcon: IconButton(
-                                      onPressed: () async {
-                                        DateTime? pickedDate =
-                                            await showDatePicker(
-                                          context: context,
-                                          initialDate: DateTime.now(),
-                                          firstDate: DateTime(2000),
-                                          lastDate: DateTime(2101),
-                                          locale: const Locale('en', 'US'),
-                                          builder: (BuildContext context,
-                                              Widget? child) {
-                                            return Theme(
-                                              data: ThemeData.light().copyWith(
-                                                colorScheme: ColorScheme.light(
-                                                  primary:
-                                                      blueColor, // header background color
-                                                  onPrimary: Colors
-                                                      .white, // header text color
-                                                  onSurface:
-                                                      blueColor, // body text color
-                                                ),
-                                                textButtonTheme:
-                                                    TextButtonThemeData(
-                                                  style: TextButton.styleFrom(
-                                                    foregroundColor:
-                                                        Colors.white,
-                                                    backgroundColor:
-                                                        blueColor, // button text color
-                                                  ),
-                                                ),
-                                              ),
-                                              child: child!,
-                                            );
-                                          },
-                                        );
-
-                                        if (pickedDate != null) {
-                                          // String formattedStartDate =
-                                          //     "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                                          String formattedStartDate =
-                                              "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                                          DateTime endDate = DateTime(
-                                              pickedDate.year,
-                                              pickedDate.month + 1,
-                                              pickedDate.day);
-                                          String formattedEndDate =
-                                              "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
-
-                                          // String formattedEndDate =
-                                          //     "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
-                                          setState(() {
-                                            startDateController.text =
-                                                formattedStartDate;
-                                            _startDate = pickedDate;
-                                            endDateController.text =
-                                                formattedEndDate;
-                                          });
-                                        }
+                                      onPressed: () {
+                                        _selectStartDate(context);
                                       },
                                       icon:
                                           const Icon(Icons.date_range_rounded)),
@@ -1445,7 +1466,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                     return null;
                                   },
                                   keyboardType: TextInputType.text,
-                                  hintText: 'YYYY-MM-DD',
+                                  hintText: Provider.of<DateProvider>(context,
+                                          listen: false)
+                                      .dateFormat
+                                      .toUpperCase(),
                                   controller: startDateController,
                                 ),
                               if (MediaQuery.of(context).size.width < 500)
@@ -1565,7 +1589,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                   },
                                   optional: true,
                                   keyboardType: TextInputType.text,
-                                  hintText: 'YYYY-MM-DD',
+                                  hintText: Provider.of<DateProvider>(context,
+                                          listen: false)
+                                      .dateFormat
+                                      .toUpperCase(),
                                   controller: endDateController,
                                 ),
                               if (MediaQuery.of(context).size.width > 500)
@@ -1582,86 +1609,21 @@ class _Edit_leaseState extends State<Edit_lease>
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text('Start Date *',
+                                            const Text('Start Date *',
                                                 style: TextStyle(
                                                     fontSize: 13,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.grey)),
-                                            SizedBox(height: 5),
+                                            const SizedBox(height: 5),
                                             CustomTextField(
-                                              onTap: () async {
-                                                DateTime? pickedDate =
-                                                    await showDatePicker(
-                                                  context: context,
-                                                  initialDate: DateTime.now(),
-                                                  firstDate: DateTime(2000),
-                                                  lastDate: DateTime(2101),
-                                                  locale:
-                                                      const Locale('en', 'US'),
-                                                  builder:
-                                                      (BuildContext context,
-                                                          Widget? child) {
-                                                    return Theme(
-                                                      data: ThemeData.light()
-                                                          .copyWith(
-                                                        colorScheme:
-                                                            const ColorScheme
-                                                                .light(
-                                                          primary: Color.fromRGBO(
-                                                              21,
-                                                              43,
-                                                              83,
-                                                              1), // header background color
-                                                          onPrimary: Colors
-                                                              .white, // header text color
-                                                          onSurface: Color.fromRGBO(
-                                                              21,
-                                                              43,
-                                                              83,
-                                                              1), // body text color
-                                                        ),
-                                                        textButtonTheme:
-                                                            TextButtonThemeData(
-                                                          style: TextButton
-                                                              .styleFrom(
-                                                            foregroundColor:
-                                                                Colors.white,
-                                                            backgroundColor:
-                                                                blueColor, // button text color
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      child: child!,
-                                                    );
-                                                  },
-                                                );
-
-                                                if (pickedDate != null) {
-                                                  // String formattedStartDate =
-                                                  //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                                  String formattedStartDate =
-                                                      "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                                                  DateTime endDate = DateTime(
-                                                      pickedDate.year,
-                                                      pickedDate.month + 1,
-                                                      pickedDate.day);
-                                                  String formattedEndDate =
-                                                      "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
-
-                                                  // String formattedEndDate =
-                                                  //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
-                                                  setState(() {
-                                                    startDateController.text =
-                                                        formattedStartDate;
-                                                    _startDate = pickedDate;
-                                                    endDateController.text =
-                                                        formattedEndDate;
-                                                  });
-                                                }
+                                              onTap: () {
+                                                _selectStartDate(context);
                                               },
                                               readOnnly: true,
                                               suffixIcon: IconButton(
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  _selectStartDate(context);
+                                                },
                                                 icon: const Icon(
                                                     Icons.date_range_rounded),
                                               ),
@@ -1673,88 +1635,40 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 return null;
                                               },
                                               keyboardType: TextInputType.text,
-                                              hintText: 'yyyy-mm-dd',
+                                              hintText:
+                                                  Provider.of<DateProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .dateFormat
+                                                      .toUpperCase(),
                                               controller: startDateController,
                                             ),
                                           ],
                                         ),
                                       ),
-                                      SizedBox(width: 16),
+                                      const SizedBox(width: 16),
                                       // Second Column
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text('End Date *',
+                                            const Text('End Date *',
                                                 style: TextStyle(
                                                     fontSize: 13,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.grey)),
-                                            SizedBox(height: 5),
+                                            const SizedBox(height: 5),
                                             CustomTextField(
-                                              onTap: () async {
-                                                DateTime? pickedDate =
-                                                    await showDatePicker(
-                                                  context: context,
-                                                  initialDate: DateTime.now(),
-                                                  firstDate: DateTime(2000),
-                                                  lastDate: DateTime(2101),
-                                                  locale:
-                                                      const Locale('en', 'US'),
-                                                  builder:
-                                                      (BuildContext context,
-                                                          Widget? child) {
-                                                    return Theme(
-                                                      data: ThemeData.light()
-                                                          .copyWith(
-                                                        colorScheme:
-                                                            const ColorScheme
-                                                                .light(
-                                                          primary: Color.fromRGBO(
-                                                              21,
-                                                              43,
-                                                              83,
-                                                              1), // header background color
-                                                          onPrimary: Colors
-                                                              .white, // header text color
-                                                          onSurface: Color.fromRGBO(
-                                                              21,
-                                                              43,
-                                                              83,
-                                                              1), // body text color
-                                                        ),
-                                                        textButtonTheme:
-                                                            TextButtonThemeData(
-                                                          style: TextButton
-                                                              .styleFrom(
-                                                            foregroundColor:
-                                                                Colors.white,
-                                                            backgroundColor:
-                                                                blueColor, // button text color
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      child: child!,
-                                                    );
-                                                  },
-                                                );
-
-                                                if (pickedDate != null) {
-                                                  // String formattedDate =
-                                                  //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                                  String formattedDate =
-                                                      "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                                                  setState(() {
-                                                    endDateController.text =
-                                                        formattedDate;
-                                                  });
-                                                }
+                                              onTap: () {
+                                                _selectEndDate(context);
                                               },
                                               readOnnly: true,
                                               optional: true,
                                               suffixIcon: IconButton(
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  _selectEndDate(context);
+                                                },
                                                 icon: const Icon(
                                                     Icons.date_range_rounded),
                                               ),
@@ -1766,10 +1680,15 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 return null;
                                               },
                                               keyboardType: TextInputType.text,
-                                              hintText: 'YYYY-MM-DD',
+                                              hintText:
+                                                  Provider.of<DateProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .dateFormat
+                                                      .toUpperCase(),
                                               controller: endDateController,
                                             ),
-                                            SizedBox(height: 5),
+                                            const SizedBox(height: 5),
                                           ],
                                         ),
                                       ),
@@ -2044,8 +1963,8 @@ class _Edit_leaseState extends State<Edit_lease>
                               if (Provider.of<SelectedTenantsProvider>(context)
                                   .selectedTenants
                                   .isNotEmpty)
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 13),
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 13),
                                   child: Text(
                                     'Tenants :',
                                     style: TextStyle(
@@ -2352,12 +2271,12 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 child: Text(
                                                   selectedTenantsProvider
                                                       .validationMessage!,
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                       color: Colors.red,
                                                       fontSize: 16),
                                                 ),
                                               )
-                                            : SizedBox.shrink();
+                                            : const SizedBox.shrink();
                                       },
                                     ),
                                   ],
@@ -2367,7 +2286,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                   padding: const EdgeInsets.only(top: 3.0),
                                   child: Text(
                                     _errorMessage!,
-                                    style: TextStyle(color: Colors.red),
+                                    style: const TextStyle(color: Colors.red),
                                   ),
                                 ),
                               const SizedBox(height: 8.0),
@@ -2375,8 +2294,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                       context)
                                   .cosigners
                                   .isNotEmpty)
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 13),
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 13),
                                   child: Text(
                                     'Consigner:',
                                     style: TextStyle(
@@ -2648,12 +2567,12 @@ class _Edit_leaseState extends State<Edit_lease>
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text('Rent Cycle *',
+                                            const Text('Rent Cycle *',
                                                 style: TextStyle(
                                                     fontSize: 13,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.grey)),
-                                            SizedBox(height: 5),
+                                            const SizedBox(height: 5),
                                             FormField<String>(
                                               initialValue: _selectedRent,
                                               builder: (FormFieldState<String>
@@ -2811,99 +2730,33 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 return null;
                                               },
                                             ),
-                                            SizedBox(height: 5),
+                                            const SizedBox(height: 5),
                                           ],
                                         ),
                                       ),
-                                      SizedBox(width: 16),
+                                      const SizedBox(width: 16),
                                       // Second Column
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text('Next Due Date',
+                                            const Text('Next Due Date',
                                                 style: TextStyle(
                                                     fontSize: 13,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.grey)),
-                                            SizedBox(height: 5),
+                                            const SizedBox(height: 5),
                                             CustomTextField(
-                                              onTap: () async {
-                                                DateTime? pickedDate =
-                                                    await showDatePicker(
-                                                  context: context,
-                                                  initialDate: DateTime.now(),
-                                                  firstDate: DateTime(2000),
-                                                  lastDate: DateTime(2101),
-                                                  locale:
-                                                      const Locale('en', 'US'),
-                                                  builder:
-                                                      (BuildContext context,
-                                                          Widget? child) {
-                                                    return Theme(
-                                                      data: ThemeData.light()
-                                                          .copyWith(
-                                                        colorScheme:
-                                                            const ColorScheme
-                                                                .light(
-                                                          primary: Color.fromRGBO(
-                                                              21,
-                                                              43,
-                                                              83,
-                                                              1), // header background color
-                                                          onPrimary: Colors
-                                                              .white, // header text color
-                                                          onSurface: Color.fromRGBO(
-                                                              21,
-                                                              43,
-                                                              83,
-                                                              1), // body text color
-                                                        ),
-                                                        textButtonTheme:
-                                                            TextButtonThemeData(
-                                                          style: TextButton
-                                                              .styleFrom(
-                                                            foregroundColor:
-                                                                Colors.white,
-                                                            backgroundColor:
-                                                                blueColor, // button text color
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      child: child!,
-                                                    );
-                                                  },
-                                                );
-                                                if (pickedDate != null) {
-                                                  // String formattedDate =
-                                                  //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                                  String formattedDate =
-                                                      "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-
-                                                  DateTime nextDueDate =
-                                                      calculateNextDueDate(
-                                                          pickedDate,
-                                                          _selectedRent ??
-                                                              'Daily');
-                                                  // String formattedNextDueDate =
-                                                  //     "${nextDueDate.year}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.day.toString().padLeft(2, '0')}";
-                                                  String formattedNextDueDate =
-                                                      "${nextDueDate.day.toString().padLeft(2, '0')}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.year}";
-                                                  setState(() {
-                                                    rentNextDueDate.text =
-                                                        formattedNextDueDate;
-                                                    rentNextDueDate.text =
-                                                        formattedDate;
-                                                  });
-
-                                                  print(rentNextDueDate.text);
-                                                }
+                                              onTap: () {
+                                                _selectNextDueDate(context);
                                               },
                                               optional: true,
                                               readOnnly: true,
                                               suffixIcon: IconButton(
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  _selectNextDueDate(context);
+                                                },
                                                 icon: const Icon(
                                                     Icons.date_range_rounded),
                                               ),
@@ -2915,7 +2768,12 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 return null;
                                               },
                                               keyboardType: TextInputType.text,
-                                              hintText: 'YYYY-MM-DD',
+                                              hintText:
+                                                  Provider.of<DateProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .dateFormat
+                                                      .toUpperCase(),
                                               controller: rentNextDueDate,
                                             ),
                                           ],
@@ -3101,54 +2959,15 @@ class _Edit_leaseState extends State<Edit_lease>
                                 ),
                               if (MediaQuery.of(context).size.width < 500)
                                 CustomTextField(
-                                  onTap: () async {
-                                    DateTime? pickedDate = await showDatePicker(
-                                      context: context,
-                                      initialDate: DateTime.now(),
-                                      firstDate: DateTime(2000),
-                                      lastDate: DateTime(2101),
-                                      locale: const Locale('en', 'US'),
-                                      builder: (BuildContext context,
-                                          Widget? child) {
-                                        return Theme(
-                                          data: ThemeData.light().copyWith(
-                                            colorScheme: ColorScheme.light(
-                                              primary:
-                                                  blueColor, // header background color
-                                              onPrimary: Colors
-                                                  .white, // header text color
-                                              onSurface:
-                                                  blueColor, // body text color
-                                            ),
-                                            textButtonTheme:
-                                                TextButtonThemeData(
-                                              style: TextButton.styleFrom(
-                                                foregroundColor: Colors.white,
-                                                backgroundColor:
-                                                    blueColor, // button text color
-                                              ),
-                                            ),
-                                          ),
-                                          child: child!,
-                                        );
-                                      },
-                                    );
-
-                                    if (pickedDate != null) {
-                                      String formattedDate =
-                                          "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-
-                                      // String formattedDate =
-                                      //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                      setState(() {
-                                        rentNextDueDate.text = formattedDate;
-                                      });
-                                    }
+                                  onTap: () {
+                                    _selectNextDueDate(context);
                                   },
                                   optional: true,
                                   readOnnly: true,
                                   suffixIcon: IconButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        _selectNextDueDate(context);
+                                      },
                                       icon:
                                           const Icon(Icons.date_range_rounded)),
                                   validator: (value) {
@@ -3158,7 +2977,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                     return null;
                                   },
                                   keyboardType: TextInputType.text,
-                                  hintText: 'YYYY-MM-DD',
+                                  hintText: Provider.of<DateProvider>(context,
+                                          listen: false)
+                                      .dateFormat
+                                      .toUpperCase(),
                                   controller: rentNextDueDate,
                                 ),
                               const SizedBox(
@@ -3301,7 +3123,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                               ],
                                             ),
                                           ),
-                                          SizedBox(width: 16),
+                                          const SizedBox(width: 16),
                                           // Second Column
                                           Expanded(
                                             child: Column(
@@ -3370,7 +3192,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 color: blueColor,
                                               ),
                                               children: [
-                                                Padding(
+                                                const Padding(
                                                   padding: EdgeInsets.all(8.0),
                                                   child: Text(
                                                     'Account',
@@ -3381,7 +3203,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                     ),
                                                   ),
                                                 ),
-                                                Padding(
+                                                const Padding(
                                                   padding: EdgeInsets.all(8.0),
                                                   child: Text(
                                                     'Amount',
@@ -3392,7 +3214,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                     ),
                                                   ),
                                                 ),
-                                                Padding(
+                                                const Padding(
                                                   padding: EdgeInsets.all(8.0),
                                                   child: Text(
                                                     'Actions',
@@ -3512,7 +3334,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 color: blueColor,
                                               ),
                                               children: [
-                                                Padding(
+                                                const Padding(
                                                   padding: EdgeInsets.all(8.0),
                                                   child: Text(
                                                     'Account',
@@ -3523,7 +3345,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                     ),
                                                   ),
                                                 ),
-                                                Padding(
+                                                const Padding(
                                                   padding: EdgeInsets.all(8.0),
                                                   child: Text(
                                                     'Amount',
@@ -3534,7 +3356,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                                     ),
                                                   ),
                                                 ),
-                                                Padding(
+                                                const Padding(
                                                   padding: EdgeInsets.all(8.0),
                                                   child: Text(
                                                     'Actions',
@@ -3727,7 +3549,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                     ),
                                   ),
                                   onPressed: _pickPdfFiles,
-                                  child: Text('Upload'),
+                                  child: const Text('Upload'),
                                 ),
                               ),
 
@@ -3869,7 +3691,9 @@ class _Edit_leaseState extends State<Edit_lease>
                                                     'Recurring Charge'
                                                 ? (data['date'] ??
                                                     '') // Ensuring data['date'] is not null
-                                                : rentNextDueDate.text.trim(),
+                                                : reverseFormatDate(
+                                                    rentNextDueDate.text
+                                                        .trim()),
                                             isRepeatable: data['is_repeatable']
                                                     ?.toLowerCase() ==
                                                 'true',
@@ -3886,7 +3710,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                                     rentAmount.text.trim()) ??
                                                 0.0,
                                             chargeType: 'Rent',
-                                            date: rentNextDueDate.text.trim(),
+                                            date: reverseFormatDate(
+                                                rentNextDueDate.text.trim()),
                                             isRepeatable:
                                                 false, // Set to false if it's not repeatable, adjust as needed
                                             memo: 'Last Month\'s Rent',
@@ -3903,7 +3728,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                                       .trim()) ??
                                               0.0,
                                           chargeType: 'Security Deposit',
-                                          date: rentNextDueDate.text.trim(),
+                                          date: reverseFormatDate(
+                                              rentNextDueDate.text.trim()),
                                           isRepeatable:
                                               false, // Set to false if it's not repeatable, adjust as needed
                                           memo: 'Security Deposit',
@@ -4461,11 +4287,11 @@ class _Edit_leaseState extends State<Edit_lease>
 //                                     },
                                   child: Center(
                                       child: isLoading
-                                          ? SpinKitFadingCircle(
+                                          ? const SpinKitFadingCircle(
                                               color: Colors.white,
                                               size: 25.0,
                                             )
-                                          : Text(
+                                          : const Text(
                                               'Edit Lease',
                                               style: TextStyle(
                                                   color: Color(0xFFf7f8f9),
@@ -4535,7 +4361,7 @@ class _Edit_leaseState extends State<Edit_lease>
         parsedDate = DateFormat('dd-MM-yyyy').parseStrict(inputDate);
       } catch (e) {
         // Handle invalid date format or return an error
-        throw FormatException("Invalid date format");
+        throw const FormatException("Invalid date format");
       }
     }
 
@@ -5668,7 +5494,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
                   'Add Recurring content',
                   style: TextStyle(
@@ -5677,7 +5503,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                     color: blueColor,
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
                   'Account *',
                   style: TextStyle(
@@ -5765,7 +5591,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                                                           color: blueColor,
                                                         ),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         height: 20,
                                                       ),
                                                       Text(
@@ -6026,11 +5852,11 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                                     },
                                   );
                                 },
-                                child: Row(
+                                child: const Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Add New Account',
                                       style: TextStyle(
                                           fontSize: 12,
@@ -6140,7 +5966,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                 const SizedBox(height: 8),
                 Container(
                   //width: 200,
-                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
@@ -6148,7 +5974,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
-                      hint: Text('Day'),
+                      hint: const Text('Day'),
                       isExpanded: true,
                       menuMaxHeight: 200,
                       value: selectedDay,
@@ -6595,8 +6421,8 @@ class _AddTenantState extends State<AddTenant> {
             isChecked
                 ? Column(
                     children: [
-                      SizedBox(height: 16.0),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
@@ -6604,8 +6430,8 @@ class _AddTenantState extends State<AddTenant> {
                         ),
                         child: DataTable(
                           columns: [
-                            DataColumn(label: Text('Tenant Name')),
-                            DataColumn(label: Text('Select')),
+                            const DataColumn(label: Text('Tenant Name')),
+                            const DataColumn(label: Text('Select')),
                           ],
                           rows: filteredTenants.map((tenant) {
                             final matchingTenants =
@@ -6651,10 +6477,10 @@ class _AddTenantState extends State<AddTenant> {
                           }).toList(),
                         ),
                       ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 2,
                           ),
                           GestureDetector(
@@ -6684,7 +6510,7 @@ class _AddTenantState extends State<AddTenant> {
                                     ),
                                   ],
                                 ),
-                                child: Center(
+                                child: const Center(
                                   child: Text(
                                     "Add",
                                     style: TextStyle(
@@ -7314,7 +7140,7 @@ class _AddTenantState extends State<AddTenant> {
                       if (isChecked == false)
                         Row(
                           children: [
-                            SizedBox(
+                            const SizedBox(
                               width: 2,
                             ),
                             GestureDetector(
@@ -7364,7 +7190,7 @@ class _AddTenantState extends State<AddTenant> {
                                       ),
                                     ],
                                   ),
-                                  child: Center(
+                                  child: const Center(
                                     child: Text(
                                       "Add",
                                       style: TextStyle(
@@ -7793,7 +7619,7 @@ class _AddCosignerState extends State<AddCosigner> {
                 ),
                 Row(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       width: 2,
                     ),
                     GestureDetector(
@@ -7858,7 +7684,7 @@ class _AddCosignerState extends State<AddCosigner> {
                               ),
                             ],
                           ),
-                          child: Center(
+                          child: const Center(
                             child: Text(
                               "Add",
                               style: TextStyle(

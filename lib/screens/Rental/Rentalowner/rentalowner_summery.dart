@@ -83,12 +83,12 @@ class _ResponsiveRentalSummaryState extends State<ResponsiveRentalSummary> {
               height: 200,
               fit: BoxFit.fill,
             ),
-            Text(
+            const Text(
               'No Internet',
               style: TextStyle(
                   fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            Text(
+            const Text(
               'Check your internet connection',
               style: TextStyle(
                   fontSize: 16, fontWeight: FontWeight.w500),
@@ -213,11 +213,11 @@ class _RentalownersSummeryForMobileState
                     onTap: () {
                       Navigator.pop(context);
                     },
-                    child: Icon(
+                    child: const Icon(
                       Icons.arrow_back_ios_new_sharp,
                       size: 30,
                     )),
-                SizedBox(
+                const SizedBox(
                   width: 15,
                 ),
                 Column(
@@ -340,7 +340,7 @@ class _RentalownersSummeryForMobileState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "Personal Information",
                           style: TextStyle(
                             color: Color(0xFF101828),
@@ -348,7 +348,7 @@ class _RentalownersSummeryForMobileState
                             fontSize: 18,
                           ),
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         
                         // Contact Name Row
                         Row(
@@ -359,7 +359,7 @@ class _RentalownersSummeryForMobileState
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Contact Name',
                                     style: TextStyle(
                                       color: Color(0xFF101828),
@@ -367,10 +367,10 @@ class _RentalownersSummeryForMobileState
                                       fontSize: 14,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(
                                     '${(widget.rentalowners?.rentalOwnername ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnername}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       color: Color(0xFF636363),
                                     ),
@@ -378,13 +378,13 @@ class _RentalownersSummeryForMobileState
                                 ],
                               ),
                             ),
-                            SizedBox(width: 20),
+                            const SizedBox(width: 20),
                             Expanded(
                               flex: 1,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Company Name',
                                     style: TextStyle(
                                       color: Color(0xFF101828),
@@ -392,10 +392,10 @@ class _RentalownersSummeryForMobileState
                                       fontSize: 14,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(
                                     '${(widget.rentalowners?.rentalOwnerCompanyName ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnerCompanyName}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       color: Color(0xFF636363),
                                     ),
@@ -405,7 +405,7 @@ class _RentalownersSummeryForMobileState
                             ),
                           ],
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         
                         // Street Address Row
                         Row(
@@ -416,7 +416,7 @@ class _RentalownersSummeryForMobileState
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Street Address',
                                     style: TextStyle(
                                       color: Color(0xFF101828),
@@ -424,10 +424,10 @@ class _RentalownersSummeryForMobileState
                                       fontSize: 14,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(
                                     '${(widget.rentalowners?.streetAddress ?? '').isEmpty ? 'N/A' : widget.rentalowners?.streetAddress}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       color: Color(0xFF636363),
                                     ),
@@ -435,13 +435,13 @@ class _RentalownersSummeryForMobileState
                                 ],
                               ),
                             ),
-                            SizedBox(width: 20),
+                            const SizedBox(width: 20),
                             Expanded(
                               flex: 1,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'City',
                                     style: TextStyle(
                                       color: Color(0xFF101828),
@@ -449,10 +449,10 @@ class _RentalownersSummeryForMobileState
                                       fontSize: 14,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(
                                     '${(widget.rentalowners?.city ?? '').isEmpty ? 'N/A' : widget.rentalowners?.city}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       color: Color(0xFF636363),
                                     ),
@@ -462,7 +462,7 @@ class _RentalownersSummeryForMobileState
                             ),
                           ],
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         
                         // State Row
                         Row(
@@ -473,7 +473,7 @@ class _RentalownersSummeryForMobileState
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'State',
                                     style: TextStyle(
                                       color: Color(0xFF101828),
@@ -481,10 +481,10 @@ class _RentalownersSummeryForMobileState
                                       fontSize: 14,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(
                                     '${(widget.rentalowners?.state ?? '').isEmpty ? 'N/A' : widget.rentalowners?.state}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       color: Color(0xFF636363),
                                     ),
@@ -492,13 +492,13 @@ class _RentalownersSummeryForMobileState
                                 ],
                               ),
                             ),
-                            SizedBox(width: 20),
+                            const SizedBox(width: 20),
                             Expanded(
                               flex: 1,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Country',
                                     style: TextStyle(
                                       color: Color(0xFF101828),
@@ -506,10 +506,10 @@ class _RentalownersSummeryForMobileState
                                       fontSize: 14,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(
                                     '${(widget.rentalowners?.country ?? '').isEmpty ? 'N/A' : widget.rentalowners?.country}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       color: Color(0xFF636363),
                                     ),
@@ -519,7 +519,7 @@ class _RentalownersSummeryForMobileState
                             ),
                           ],
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         
                         // Zipcode
                         Row(
@@ -530,7 +530,7 @@ class _RentalownersSummeryForMobileState
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Zipcode',
                                     style: TextStyle(
                                       color: Color(0xFF101828),
@@ -538,10 +538,10 @@ class _RentalownersSummeryForMobileState
                                       fontSize: 14,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(
                                     '${(widget.rentalowners?.postalCode ?? '').isEmpty ? 'N/A' : widget.rentalowners?.postalCode}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       color: Color(0xFF636363),
                                     ),
@@ -549,7 +549,7 @@ class _RentalownersSummeryForMobileState
                                 ],
                               ),
                             ),
-                            Expanded(flex: 1, child: SizedBox()), // Empty space for alignment
+                            const Expanded(flex: 1, child: SizedBox()), // Empty space for alignment
                           ],
                         ),
                       ],
@@ -559,7 +559,7 @@ class _RentalownersSummeryForMobileState
               ),
             ),
             
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             
             // Contact Information
             Padding(
@@ -578,7 +578,7 @@ class _RentalownersSummeryForMobileState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "Contact Information",
                           style: TextStyle(
                             color: Color(0xFF101828),
@@ -586,7 +586,7 @@ class _RentalownersSummeryForMobileState
                             fontSize: 18,
                           ),
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         
                         // Phone Number Row
                         Row(
@@ -597,7 +597,7 @@ class _RentalownersSummeryForMobileState
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Phone Number',
                                     style: TextStyle(
                                       color:Color(0xFF101828),
@@ -605,10 +605,10 @@ class _RentalownersSummeryForMobileState
                                       fontSize: 14,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(
                                     formatPhoneNumber('${widget.rentalowners?.rentalOwnerPhoneNumber}'),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       color: Color(0xFF636363),
                                     ),
@@ -616,13 +616,13 @@ class _RentalownersSummeryForMobileState
                                 ],
                               ),
                             ),
-                            SizedBox(width: 20),
+                            const SizedBox(width: 20),
                             Expanded(
                               flex: 1,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Home Number',
                                     style: TextStyle(
                                       color: Color(0xFF101828),
@@ -630,10 +630,10 @@ class _RentalownersSummeryForMobileState
                                       fontSize: 14,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(
                                     formatPhoneNumber('${widget.rentalowners?.rentalOwnerHomeNumber}'),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       color: Color(0xFF636363),
                                     ),
@@ -643,7 +643,7 @@ class _RentalownersSummeryForMobileState
                             ),
                           ],
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         
                         // Business Number Row
                         Row(
@@ -654,7 +654,7 @@ class _RentalownersSummeryForMobileState
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Business Number',
                                     style: TextStyle(
                                       color:Color(0xFF101828),
@@ -662,10 +662,10 @@ class _RentalownersSummeryForMobileState
                                       fontSize: 14,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(
                                     formatPhoneNumber('${widget.rentalowners?.rentalOwnerBusinessNumber}'),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       color: Color(0xFF636363),
                                     ),
@@ -673,13 +673,13 @@ class _RentalownersSummeryForMobileState
                                 ],
                               ),
                             ),
-                            SizedBox(width: 20),
+                            const SizedBox(width: 20),
                             Expanded(
                               flex: 1,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Email',
                                     style: TextStyle(
                                       color: Color(0xFF101828),
@@ -687,10 +687,10 @@ class _RentalownersSummeryForMobileState
                                       fontSize: 14,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(
                                     '${(widget.rentalowners?.rentalOwnerPrimaryEmail ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnerPrimaryEmail}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       color: Color(0xFF636363),
                                     ),
@@ -700,7 +700,7 @@ class _RentalownersSummeryForMobileState
                             ),
                           ],
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         
                         // Alternate Email
                         Row(
@@ -711,7 +711,7 @@ class _RentalownersSummeryForMobileState
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Alternate Email',
                                     style: TextStyle(
                                       color: Color(0xFF101828),
@@ -719,10 +719,10 @@ class _RentalownersSummeryForMobileState
                                       fontSize: 14,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(
                                     '${(widget.rentalowners?.rentalOwnerAlternateEmail ?? '').isEmpty ? 'N/A' : widget.rentalowners?.rentalOwnerAlternateEmail}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       color: Color(0xFF636363),
                                     ),
@@ -730,7 +730,7 @@ class _RentalownersSummeryForMobileState
                                 ],
                               ),
                             ),
-                            Expanded(flex: 1, child: SizedBox()), // Empty space for alignment
+                            const Expanded(flex: 1, child: SizedBox()), // Empty space for alignment
                           ],
                         ),
                       ],
@@ -740,7 +740,7 @@ class _RentalownersSummeryForMobileState
               ),
             ),
             
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             
             // Management Agreement Details
             Padding(
@@ -759,7 +759,7 @@ class _RentalownersSummeryForMobileState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "Management Agreement Details",
                           style: TextStyle(
                             color:Color(0xFF101828),
@@ -767,7 +767,7 @@ class _RentalownersSummeryForMobileState
                             fontSize: 18,
                           ),
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -777,7 +777,7 @@ class _RentalownersSummeryForMobileState
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Start Date',
                                     style: TextStyle(
                                       color: Color(0xFF101828),
@@ -785,10 +785,10 @@ class _RentalownersSummeryForMobileState
                                       fontSize: 14,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(
                                     dateProvider.formatCurrentDate('${widget.rentalowners?.startDate}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${widget.rentalowners?.startDate}'),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       color: Color(0xFF636363),
                                     ),
@@ -796,13 +796,13 @@ class _RentalownersSummeryForMobileState
                                 ],
                               ),
                             ),
-                            SizedBox(width: 20),
+                            const SizedBox(width: 20),
                             Expanded(
                               flex: 1,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'End Date',
                                     style: TextStyle(
                                       color: Color(0xFF101828),
@@ -810,10 +810,10 @@ class _RentalownersSummeryForMobileState
                                       fontSize: 14,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(
                                     dateProvider.formatCurrentDate('${widget.rentalowners?.endDate}').isEmpty ? 'N/A' : dateProvider.formatCurrentDate('${widget.rentalowners?.endDate}'),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       color: Color(0xFF636363),
                                     ),
@@ -830,7 +830,7 @@ class _RentalownersSummeryForMobileState
               ),
             ),
             
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             
             // 1099 - NEC Tax Filing Information
             Padding(
@@ -849,7 +849,7 @@ class _RentalownersSummeryForMobileState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "1099 - NEC Tax Filing Information",
                           style: TextStyle(
                             color: Color(0xFF101828),
@@ -857,7 +857,7 @@ class _RentalownersSummeryForMobileState
                             fontSize: 18,
                           ),
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -867,7 +867,7 @@ class _RentalownersSummeryForMobileState
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Tax ID Type',
                                     style: TextStyle(
                                       color: Color(0xFF101828),
@@ -875,10 +875,10 @@ class _RentalownersSummeryForMobileState
                                       fontSize: 14,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(
                                     '${(widget.rentalowners?.textIdentityType ?? '').isEmpty ? 'N/A' : widget.rentalowners?.textIdentityType}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       color: Color(0xFF636363),
                                     ),
@@ -886,13 +886,13 @@ class _RentalownersSummeryForMobileState
                                 ],
                               ),
                             ),
-                            SizedBox(width: 20),
+                            const SizedBox(width: 20),
                             Expanded(
                               flex: 1,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Taxpayer ID',
                                     style: TextStyle(
                                       color: Color(0xFF101828),
@@ -900,10 +900,10 @@ class _RentalownersSummeryForMobileState
                                       fontSize: 14,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(
                                     '${(widget.rentalowners?.texpayerId ?? '').isEmpty ? 'N/A' : widget.rentalowners?.texpayerId}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       color: Color(0xFF636363),
                                     ),
@@ -920,7 +920,7 @@ class _RentalownersSummeryForMobileState
               ),
             ),
             
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             
             // Card Transaction Type Settings
             Padding(
@@ -939,7 +939,7 @@ class _RentalownersSummeryForMobileState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "Card Transaction Type Settings",
                           style: TextStyle(
                             color: Color(0xFF101828),
@@ -947,15 +947,15 @@ class _RentalownersSummeryForMobileState
                             fontSize: 18,
                           ),
                         ),
-                        SizedBox(height: 8),
-                        Text(
+                        const SizedBox(height: 8),
+                        const Text(
                           "Allowed card types for rental transactions",
                           style: TextStyle(
                             color: Color(0xFF8A95A8),
                             fontSize: 14,
                           ),
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         
                         // Credit Card Row
                         Row(
@@ -965,8 +965,8 @@ class _RentalownersSummeryForMobileState
                               color: creditcard ? Colors.green : Colors.red,
                               size: 20,
                             ),
-                            SizedBox(width: 12),
-                            Text(
+                            const SizedBox(width: 12),
+                            const Text(
                               "Credit Card",
                               style: TextStyle(
                                 color: Color(0xFF101828),
@@ -976,7 +976,7 @@ class _RentalownersSummeryForMobileState
                             ),
                           ],
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         
                         // Debit Card Row
                         Row(
@@ -986,8 +986,8 @@ class _RentalownersSummeryForMobileState
                               color: debitcard ? Colors.green : Colors.red,
                               size: 20,
                             ),
-                            SizedBox(width: 12),
-                            Text(
+                            const SizedBox(width: 12),
+                            const Text(
                               "Debit Card",
                               style: TextStyle(
                                 color: Color(0xFF101828),
@@ -998,7 +998,7 @@ class _RentalownersSummeryForMobileState
                           ],
                         ),
 
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
 
                         // ach  Row
                         Row(
@@ -1008,8 +1008,8 @@ class _RentalownersSummeryForMobileState
                               color: achaccepted ? Colors.green : Colors.red,
                               size: 20,
                             ),
-                            SizedBox(width: 12),
-                            Text(
+                            const SizedBox(width: 12),
+                            const Text(
                               "ACH",
                               style: TextStyle(
                                 color: Color(0xFF101828),
@@ -1026,7 +1026,7 @@ class _RentalownersSummeryForMobileState
               ),
             ),
             
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
           ],
         ),
       )
@@ -1042,12 +1042,12 @@ class _RentalownersSummeryForMobileState
               height: 200,
               fit: BoxFit.fill,
             ),
-            Text(
+            const Text(
               'No Internet',
               style: TextStyle(
                   fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            Text(
+            const Text(
               'Check your internet connection',
               style: TextStyle(
                   fontSize: 16, fontWeight: FontWeight.w500),
@@ -1273,7 +1273,7 @@ class _RentalownersSummeryForTabletState
                                 children: [
                                    Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 2,
                                       ),
                                       Text(
@@ -1502,7 +1502,7 @@ class _RentalownersSummeryForTabletState
                                   children: [
                                      Row(
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 2,
                                         ),
                                         Text(
@@ -1692,7 +1692,7 @@ class _RentalownersSummeryForTabletState
                                 children: [
                                    Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 2,
                                       ),
                                       Text(
@@ -1797,7 +1797,7 @@ class _RentalownersSummeryForTabletState
                                   children: [
                                      Row(
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 2,
                                         ),
                                         Text(

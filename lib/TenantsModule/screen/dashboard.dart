@@ -240,12 +240,12 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
       desc: "Do you want to exit the app?",
       style: AlertStyle(
         backgroundColor: Colors.white,
-        titleStyle: TextStyle(
+        titleStyle: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
           color: Colors.black,
         ),
-        descStyle: TextStyle(
+        descStyle: const TextStyle(
           fontSize: 16,
           color: Colors.black54,
         ),
@@ -254,13 +254,13 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
         overlayColor: Colors.black.withOpacity(0.5),
         alertBorder: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
-          side: BorderSide(color: Colors.blue, width: 2),
+          side: const BorderSide(color: Colors.blue, width: 2),
         ),
-        alertPadding: EdgeInsets.all(16.0),
+        alertPadding: const EdgeInsets.all(16.0),
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "No",
             style: TextStyle(
               color: Colors.white,
@@ -275,7 +275,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
           radius: BorderRadius.circular(8.0),
         ),
         DialogButton(
-          child: Text(
+          child: const Text(
             "Yes",
             style: TextStyle(
               color: Colors.white,
@@ -386,7 +386,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                           //     color: Colors.transparent,
                           //   ),
                           // ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           LayoutBuilder(
@@ -396,7 +396,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                 children: [
                                   SizedBox(width: width * 0.05),
                                   Container(
-                                    color: Color.fromRGBO(2, 121, 210, 1),
+                                    color: const Color.fromRGBO(2, 121, 210, 1),
                                     margin: EdgeInsets.only(
                                       top: MediaQuery.of(context).size.height *
                                           0.012,
@@ -467,7 +467,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                       Row(
                                         children: [
                                           SizedBox(width: width * 0.05),
-                                          Text(
+                                          const Text(
                                             "My Dashboard",
                                             style: TextStyle(
                                               color: Colors.black,
@@ -694,7 +694,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                           CrossAxisAlignment
                                                               .start,
                                                       children: [
-                                                        Divider(
+                                                        const Divider(
                                                           color: Color.fromRGBO(
                                                               219, 237, 244, 1),
                                                           thickness: 2,
@@ -708,7 +708,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                             children: [
                                                               Text(
                                                                 " ${index == 2 ? "${rentCycle} Rent" : dashboardData.titles[index]}",
-                                                                style: TextStyle(
+                                                                style: const TextStyle(
                                                                     fontSize:
                                                                         14,
                                                                     fontWeight:
@@ -717,12 +717,12 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                                     color: Colors
                                                                         .white),
                                                               ),
-                                                              SizedBox(
+                                                              const SizedBox(
                                                                 width: 10,
                                                               ),
                                                               if (index == 0 ||
                                                                   index == 1)
-                                                                Icon(
+                                                                const Icon(
                                                                   Icons
                                                                       .arrow_forward,
                                                                   color: Color
@@ -735,7 +735,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                             ],
                                                           ),
                                                         ),
-                                                        SizedBox(
+                                                        const SizedBox(
                                                           height: 10,
                                                         ),
                                                       ],
@@ -754,7 +754,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                         width: 40,
                                                         decoration: BoxDecoration(
                                                             border: Border.all(
-                                                                color: Color
+                                                                color: const Color
                                                                     .fromRGBO(
                                                                         91,
                                                                         134,
@@ -796,7 +796,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             color:
-                                                                Color.fromRGBO(
+                                                                const Color.fromRGBO(
                                                                     219,
                                                                     237,
                                                                     244,
@@ -1195,7 +1195,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                           .025), // Adjusted for equal spacing
                                                   decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius.all(
+                                                          const BorderRadius.all(
                                                               Radius.circular(
                                                                   7)),
                                                       border: Border.all(
@@ -1311,7 +1311,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                                     },
                                                                     child:
                                                                         Container(
-                                                                      margin: EdgeInsets.symmetric(
+                                                                      margin: const EdgeInsets.symmetric(
                                                                           vertical:
                                                                               12),
                                                                       width:
@@ -1353,11 +1353,11 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                           .025), // Adjusted for equal spacing
                                                   decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius.all(
+                                                          const BorderRadius.all(
                                                               Radius.circular(
                                                                   7)),
                                                       border: Border.all(
-                                                          color: Color.fromRGBO(
+                                                          color: const Color.fromRGBO(
                                                               91,
                                                               134,
                                                               213,
@@ -1473,7 +1473,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                                     },
                                                                     child:
                                                                         Container(
-                                                                      margin: EdgeInsets.symmetric(
+                                                                      margin: const EdgeInsets.symmetric(
                                                                           vertical:
                                                                               12),
                                                                       width:
@@ -1482,7 +1482,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                                           30,
                                                                       decoration:
                                                                           BoxDecoration(
-                                                                        color: Color.fromRGBO(
+                                                                        color: const Color.fromRGBO(
                                                                             91,
                                                                             134,
                                                                             213,
@@ -1754,7 +1754,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text(
+                                                  const Text(
                                                     "New Work Orders",
                                                     style: TextStyle(
                                                         fontSize: 16,
@@ -1762,19 +1762,19 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                             FontWeight.normal,
                                                         color: Colors.white),
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 10,
                                                   ),
                                                   Text(
                                                     "Total : ${newworkorder}",
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontSize: 18,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         color: Color.fromRGBO(
                                                             226, 240, 245, 1)),
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 10,
                                                   ),
                                                   InkWell(
@@ -1814,7 +1814,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                 ],
                                               ),
                                             ),
-                                            Positioned(
+                                            const Positioned(
                                               right: 20,
                                               bottom: 20,
                                               child: FaIcon(
@@ -1835,7 +1835,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                         height: 130,
                                         decoration: BoxDecoration(
                                             color:
-                                                Color.fromRGBO(91, 134, 213, 1),
+                                                const Color.fromRGBO(91, 134, 213, 1),
                                             borderRadius:
                                                 BorderRadius.circular(6)),
                                         child: Stack(
@@ -1851,7 +1851,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text(
+                                                  const Text(
                                                     "Overdue Work Orders",
                                                     style: TextStyle(
                                                         fontSize: 16,
@@ -1859,19 +1859,19 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                             FontWeight.normal,
                                                         color: Colors.white),
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 10,
                                                   ),
                                                   Text(
                                                     "Total : ${overdueworkorder}",
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontSize: 18,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         color: Color.fromRGBO(
                                                             226, 240, 245, 1)),
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 10,
                                                   ),
                                                   InkWell(
@@ -1896,7 +1896,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                               BorderRadius
                                                                   .circular(
                                                                       10)),
-                                                      child: Center(
+                                                      child: const Center(
                                                           child: Text(
                                                               "View All",
                                                               style: TextStyle(
@@ -1915,7 +1915,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                                                 ],
                                               ),
                                             ),
-                                            Positioned(
+                                            const Positioned(
                                               right: 20,
                                               bottom: 20,
                                               child: FaIcon(
@@ -2042,12 +2042,12 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                       height: 200,
                       fit: BoxFit.fill,
                     ),
-                    Text(
+                    const Text(
                       'No Internet',
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    Text(
+                    const Text(
                       'Check your internet connection',
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w500),

@@ -91,7 +91,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   void _scrollLeft() {
     _scrollController.animateTo(
       _scrollController.offset - 250,
-      duration: Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 300),
       curve: Curves.ease,
     );
   }
@@ -99,7 +99,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   void _scrollRight() {
     _scrollController.animateTo(
       _scrollController.offset + 250,
-      duration: Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 300),
       curve: Curves.ease,
     );
   }
@@ -222,7 +222,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data == null) {
-                      return Center(child: Text('No data found.'));
+                      return const Center(child: Text('No data found.'));
                     } else {
                       var lease = snapshot.data!;
                       return Column(
@@ -233,11 +233,11 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           Row(
                             children: [
                               if (MediaQuery.of(context).size.width < 500)
-                                SizedBox(
+                                const SizedBox(
                                   width: 18,
                                 ),
                               if (MediaQuery.of(context).size.width > 500)
-                                SizedBox(
+                                const SizedBox(
                                   width: 25,
                                 ),
                               SizedBox(
@@ -269,7 +269,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                               //       fontSize:   MediaQuery.of(context).size.width < 500 ? 15 :18)),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 5,
                           ),
                           Padding(
@@ -290,7 +290,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                             : 16,
                                   ),
                                 ),
-                                Spacer(),
+                                const Spacer(),
                                 GestureDetector(
                                   onTap: () async {
                                     // Provider.of<SelectedTenantsProvider>(context,
@@ -336,7 +336,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     ),
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10,
                                 ),
                                 GestureDetector(
@@ -396,7 +396,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           ),
                           Container(
                             height: 60,
-                            margin: EdgeInsets.symmetric(
+                            margin: const EdgeInsets.symmetric(
                                 vertical: 5, horizontal: 15),
                             child: Stack(
                               children: [
@@ -418,9 +418,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                             });
                                           },
                                           child: Container(
-                                            margin: EdgeInsets.symmetric(
+                                            margin: const EdgeInsets.symmetric(
                                                 horizontal: 6),
-                                            padding: EdgeInsets.symmetric(
+                                            padding: const EdgeInsets.symmetric(
                                                 horizontal: 20, vertical: 10),
                                             decoration: BoxDecoration(
                                               // gradient: isSelected
@@ -432,7 +432,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               //     : null,
                                               color: isSelected
                                                   ? blueColor
-                                                  : Color(
+                                                  : const Color(
                                                       0xFFE5E7EB), // light gray
                                               borderRadius:
                                                   BorderRadius.circular(30),
@@ -463,16 +463,16 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       child: GestureDetector(
                                         onTap: _scrollLeft,
                                         child: Container(
-                                          padding: EdgeInsets.all(2),
-                                          decoration: BoxDecoration(
+                                          padding: const EdgeInsets.all(2),
+                                          decoration: const BoxDecoration(
                                             shape: BoxShape.circle,
                                             color:
                                                 Color.fromRGBO(16, 24, 40, 0.8),
                                             //border: Border.all(color: blueColor),
                                           ),
                                           child: Container(
-                                              margin: EdgeInsets.only(left: 5),
-                                              child: Icon(Icons.arrow_back_ios,
+                                              margin: const EdgeInsets.only(left: 5),
+                                              child: const Icon(Icons.arrow_back_ios,
                                                   size: 14,
                                                   color: Colors.white)),
                                         ),
@@ -490,18 +490,18 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       onTap: _scrollRight,
                                       child: Container(
                                         alignment: Alignment.center,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                           color: Colors.transparent,
                                         ),
                                         child: Container(
-                                          padding: EdgeInsets.all(4),
-                                          decoration: BoxDecoration(
+                                          padding: const EdgeInsets.all(4),
+                                          decoration: const BoxDecoration(
                                             shape: BoxShape.circle,
                                             color:
                                                 Color.fromRGBO(16, 24, 40, 0.8),
                                             //  border: Border.all(color: blueColor),
                                           ),
-                                          child: Icon(Icons.arrow_forward_ios,
+                                          child: const Icon(Icons.arrow_forward_ios,
                                               size: 14, color: Colors.white),
                                         ),
                                       ),
@@ -549,11 +549,11 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                     height: 200,
                     fit: BoxFit.fill,
                   ),
-                  Text(
+                  const Text(
                     'No Internet',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     'Check your internet connection',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
@@ -710,7 +710,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     } else if (status == 'Expired') {
       return Colors.grey; // Grey color for 'Expired'
     } else {
-      return Color(0xFF8A95A8); // Default color for other statuses
+      return const Color(0xFF8A95A8); // Default color for other statuses
     }
   }
 
@@ -730,7 +730,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data == null) {
-          return Center(child: Text('No data found.'));
+          return const Center(child: Text('No data found.'));
         } else {
           final leasesummery = snapshot.data!;
           return Column(
@@ -766,9 +766,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                               ),
-                              Spacer(),
+                              const Spacer(),
                               Container(
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                   color: Color.fromRGBO(235, 245, 255,
                                       1), // Background color of the circle
                                   shape: BoxShape.circle,
@@ -796,7 +796,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
+                                        const Text(
                                           "Unit",
                                           style: TextStyle(
                                             fontSize: 15,
@@ -840,7 +840,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
+                                          const Text(
                                             "Rental Owner",
                                             style: TextStyle(
                                               fontSize: 15,
@@ -874,7 +874,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
+                                          const Text(
                                             "Tenants",
                                             style: TextStyle(
                                               fontSize: 15,
@@ -914,7 +914,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                 ),
               ),
 
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               if (determineStatus(snapshot.data?.data?.startDate,
@@ -935,7 +935,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (!snapshot.hasData) {
-                        return Center(child: Text('No data found'));
+                        return const Center(child: Text('No data found'));
                       } else {
                         final leaseLedger = snapshot.data!;
 
@@ -976,9 +976,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 overflow: TextOverflow.ellipsis,
                                                 maxLines: 1,
                                               ),
-                                              Spacer(),
+                                              const Spacer(),
                                               Container(
-                                                decoration: BoxDecoration(
+                                                decoration: const BoxDecoration(
                                                   color: Color.fromRGBO(
                                                       235,
                                                       245,
@@ -1004,7 +1004,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 horizontal: 0.0),
                                             child: Column(
                                               children: [
-                                                SizedBox(
+                                                const SizedBox(
                                                   height: 10,
                                                 ),
 
@@ -1022,7 +1022,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                               CrossAxisAlignment
                                                                   .start,
                                                           children: [
-                                                            Text(
+                                                            const Text(
                                                               "Balance",
                                                               style: TextStyle(
                                                                 fontSize: 15,
@@ -1072,7 +1072,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                               CrossAxisAlignment
                                                                   .start,
                                                           children: [
-                                                            Text(
+                                                            const Text(
                                                               "Rent",
                                                               style: TextStyle(
                                                                 fontSize: 15,
@@ -1133,7 +1133,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                               CrossAxisAlignment
                                                                   .start,
                                                           children: [
-                                                            Text(
+                                                            const Text(
                                                               "Due Date",
                                                               style: TextStyle(
                                                                 fontSize: 15,
@@ -1410,7 +1410,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                             },
                                                             child: Container(
                                                               height: 50,
-                                                              margin: EdgeInsets
+                                                              margin: const EdgeInsets
                                                                   .all(5),
                                                               decoration:
                                                                   BoxDecoration(
@@ -1421,7 +1421,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                         .circular(
                                                                             10),
                                                               ),
-                                                              child: Center(
+                                                              child: const Center(
                                                                 child: Text(
                                                                   'Make Payment',
                                                                   style:
@@ -1456,7 +1456,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                             },
                                                             child: Container(
                                                               height: 50,
-                                                              margin: EdgeInsets
+                                                              margin: const EdgeInsets
                                                                   .all(5),
                                                               decoration:
                                                                   BoxDecoration(
@@ -1505,7 +1505,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                             },
                                                             child: Container(
                                                               height: 50,
-                                                              margin: EdgeInsets
+                                                              margin: const EdgeInsets
                                                                   .all(5),
                                                               decoration:
                                                                   BoxDecoration(
@@ -1545,7 +1545,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                             },
                                                             child: Container(
                                                               height: 50,
-                                                              margin: EdgeInsets
+                                                              margin: const EdgeInsets
                                                                   .all(5),
                                                               decoration:
                                                                   BoxDecoration(
@@ -1959,7 +1959,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10,
                                 ),
                                 Expanded(
@@ -2014,7 +2014,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                         )),
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 5,
                                 ),
                                 Expanded(
@@ -2176,7 +2176,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                   decoration: BoxDecoration(
                                       // color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
                                       border: Border.all(
-                                          color: Color.fromRGBO(
+                                          color: const Color.fromRGBO(
                                               152, 162, 179, .5))),
                                   // decoration: BoxDecoration(
                                   //   border: Border.all(color: blueColor),
@@ -2336,7 +2336,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                               ],
                                                             ),
                                                           ),
-                                                          SizedBox(
+                                                          const SizedBox(
                                                             height: 4,
                                                           ),
                                                           Text.rich(
@@ -2382,7 +2382,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           if (MediaQuery.of(context).size.width > 500)
                             Row(
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   width: 16,
                                 ),
                                 Text(
@@ -2392,7 +2392,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20),
                                 ),
-                                Spacer(),
+                                const Spacer(),
                                 GestureDetector(
                                   onTap: () {
                                     Navigator.push(
@@ -2604,7 +2604,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     decoration: BoxDecoration(
                                         // color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
                                         border: Border.all(
-                                            color: Color.fromRGBO(
+                                            color: const Color.fromRGBO(
                                                 152, 162, 179, .5))),
                                     // decoration: BoxDecoration(
                                     //   border: Border.all(color: blueColor),
@@ -2625,7 +2625,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 ? Colors.white
                                                 : blueColor.withOpacity(0.09),
                                             border: Border.all(
-                                                color: Color.fromRGBO(
+                                                color: const Color.fromRGBO(
                                                     152, 162, 179, .5)),
                                           ),
                                           // decoration: BoxDecoration(
@@ -2945,7 +2945,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     decoration: BoxDecoration(
                                         // color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
                                         border: Border.all(
-                                            color: Color.fromRGBO(
+                                            color: const Color.fromRGBO(
                                                 152, 162, 179, .5))),
                                     // decoration: BoxDecoration(
                                     //   border: Border.all(color: blueColor),
@@ -2967,7 +2967,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 ? Colors.white
                                                 : blueColor.withOpacity(0.09),
                                             border: Border.all(
-                                                color: Color.fromRGBO(
+                                                color: const Color.fromRGBO(
                                                     152, 162, 179, .5)),
                                           ),
                                           // decoration: BoxDecoration(
@@ -3156,7 +3156,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                       ],
                                                                     ),
                                                                   ),
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                     height: 4,
                                                                   ),
                                                                   Text.rich(
@@ -3226,7 +3226,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else if (!snapshot.hasData || snapshot.data == null) {
-              return Center(child: Text('No data found.'));
+              return const Center(child: Text('No data found.'));
             } else {
               final leasetenant = snapshot.data!;
               // print(status);
@@ -3389,8 +3389,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                   size: 17,
                                                   color: blueColor,
                                                 ),
-                                                SizedBox(width: 5),
-                                                Text(
+                                                const SizedBox(width: 5),
+                                                const Text(
                                                   "Move out",
                                                   style: TextStyle(
                                                     fontSize: 14,
@@ -3699,7 +3699,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                         size: 17,
                                                         color: blueColor,
                                                       ),
-                                                      SizedBox(width: 5),
+                                                      const SizedBox(width: 5),
                                                       Text(
                                                         "Move out",
                                                         style: TextStyle(
@@ -3765,7 +3765,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                         size: 17,
                                                         color: blueColor,
                                                       ),
-                                                      SizedBox(width: 5),
+                                                      const SizedBox(width: 5),
                                                       Text(
                                                         "Move In",
                                                         style: TextStyle(
@@ -3862,7 +3862,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           if (snapshot
                                                   .data![index].moveoutDate !=
                                               "")
-                                            SizedBox(height: 15),
+                                            const SizedBox(height: 15),
                                           if (snapshot
                                                   .data![index].moveoutDate !=
                                               "")
@@ -3881,7 +3881,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                       fontWeight:
                                                           FontWeight.bold),
                                                 ),
-                                                SizedBox(
+                                                const SizedBox(
                                                   width: 5,
                                                 ),
                                                 Text(
@@ -3897,7 +3897,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           if (snapshot
                                                   .data![index].moveoutDate !=
                                               "")
-                                            SizedBox(height: 15),
+                                            const SizedBox(height: 15),
                                           if (snapshot
                                                   .data![index].moveoutDate !=
                                               "")
@@ -3916,7 +3916,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                       fontWeight:
                                                           FontWeight.bold),
                                                 ),
-                                                SizedBox(
+                                                const SizedBox(
                                                   width: 5,
                                                 ),
                                                 Text(
@@ -3929,7 +3929,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 ),
                                               ],
                                             ),
-                                          SizedBox(height: 8),
+                                          const SizedBox(height: 8),
                                         ],
                                       ),
                                     ),
@@ -3938,7 +3938,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                               );
                             }),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                           // Padding(
@@ -4272,17 +4272,17 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                 color: blueColor,
                 fontSize: MediaQuery.of(context).size.width < 500 ? 18 : 22),
           ),
-          SizedBox(height: 13),
+          const SizedBox(height: 13),
           Text(
             "Select tenants to move out. If everyone is moving, the lease will end on the last move-out date. If some tenants are staying, you’ll need to renew the lease. Note: Renters insurance policies will be permanently deleted upon move-out.",
             textAlign: TextAlign.justify,
             style: TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18,
-              color: Color(0xFF8A95A8),
+              color: const Color(0xFF8A95A8),
             ),
           ),
-          SizedBox(height: 15),
+          const SizedBox(height: 15),
           Column(
             children: [
               Row(
@@ -4297,7 +4297,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Container(
@@ -4314,8 +4314,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                     ),
                   ),
                   columnWidths: {
-                    0: FlexColumnWidth(2),
-                    1: FlexColumnWidth(3),
+                    0: const FlexColumnWidth(2),
+                    1: const FlexColumnWidth(3),
                   },
                   children: [
                     TableRow(
@@ -4363,7 +4363,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Row(
@@ -4378,14 +4378,14 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Table(
                 border: TableBorder.all(color: blueColor),
                 columnWidths: {
-                  0: FlexColumnWidth(2),
-                  1: FlexColumnWidth(3),
+                  0: const FlexColumnWidth(2),
+                  1: const FlexColumnWidth(3),
                 },
                 children: [
                   TableRow(
@@ -4457,7 +4457,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                 //     ),
                                 //   ),
                                 // ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 4,
                                 ),
                                 Expanded(
@@ -4484,7 +4484,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               hintText: moveOutDate,
                                               suffixIcon: IconButton(
                                                 icon:
-                                                    Icon(Icons.calendar_today),
+                                                    const Icon(Icons.calendar_today),
                                                 onPressed: () async {
                                                   // DateTime? pickedDate = await showDatePicker(
                                                   //   context: context,
@@ -4507,7 +4507,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     ),
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 1,
                                 ),
                               ],
@@ -4521,7 +4521,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
               ),
             ],
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -4531,11 +4531,11 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                 },
                 child: Material(
                   elevation: 3,
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  borderRadius: const BorderRadius.all(Radius.circular(5)),
                   child: Container(
                     height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
                     width: 90,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(5)),
                     ),
@@ -4551,7 +4551,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                   ),
                 ),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               InkWell(
                 onTap: () async {
                   String? tenantId =
@@ -4584,13 +4584,13 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                 },
                 child: Material(
                   elevation: 3,
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  borderRadius: const BorderRadius.all(Radius.circular(5)),
                   child: Container(
                     height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
                     width: MediaQuery.of(context).size.width < 500 ? 100 : 130,
                     decoration: BoxDecoration(
                       color: blueColor,
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                      borderRadius: const BorderRadius.all(Radius.circular(5)),
                     ),
                     child: Center(
                         child: Text(
@@ -4607,7 +4607,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
               ),
             ],
           ),
-          SizedBox(height: 15),
+          const SizedBox(height: 15),
         ],
       ),
     );
@@ -4624,7 +4624,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
 
   Widget buildDateField(TextEditingController controller) {
     return Padding(
-      padding: EdgeInsets.only(left: 5, right: 2),
+      padding: const EdgeInsets.only(left: 5, right: 2),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.grey[300],
@@ -4632,14 +4632,14 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
         ),
         child: Center(
           child: Padding(
-            padding: EdgeInsets.only(left: 5),
+            padding: const EdgeInsets.only(left: 5),
             child: TextField(
               controller: controller,
               decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: 'Select Date',
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.calendar_today),
+                  icon: const Icon(Icons.calendar_today),
                   onPressed: () async {
                     DateTime? pickedDate = await showDatePicker(
                       context: context,

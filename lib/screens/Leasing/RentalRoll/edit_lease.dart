@@ -37,6 +37,7 @@ import '../../../model/lease.dart';
 import '../../../provider/lease_provider.dart';
 import '../../../repository/tenants.dart';
 import '../../../widgets/custom_drawer.dart';
+import '../../../provider/dateProvider.dart';
 
 class Edit_lease extends StatefulWidget {
   Lease1? lease;
@@ -97,8 +98,11 @@ class _Edit_leaseState extends State<Edit_lease>
       renderId = fetchedDetails.rental.rentalId ?? "";
 
       _selectedLeaseType = fetchedDetails.lease.leaseType ?? "";
-      startDateController.text = formatDate(fetchedDetails.lease.startDate);
-      endDateController.text = formatDate(fetchedDetails.lease.endDate);
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
+      startDateController.text =
+          dateProvider.formatCurrentDate(fetchedDetails.lease.startDate);
+      endDateController.text =
+          dateProvider.formatCurrentDate(fetchedDetails.lease.endDate);
       rentCycleItemsDynamic(DateTime.parse(fetchedDetails.lease.endDate)
           .difference(DateTime.parse(fetchedDetails.lease.startDate))
           .inDays);
@@ -107,7 +111,8 @@ class _Edit_leaseState extends State<Edit_lease>
 
       print(fetchedDetails.rentCharges!.first.memo);
       rent_entry_id = fetchedDetails.rentCharges!.first.entry_id ?? "";
-      rentNextDueDate.text = formatDate(fetchedDetails.rentCharges!.first.date);
+      rentNextDueDate.text = Provider.of<DateProvider>(context, listen: false)
+          .formatCurrentDate(fetchedDetails.rentCharges!.first.date);
       rentAmount.text = fetchedDetails.rentCharges!.first.amount.toString();
 
       // if(fetchedDetails.lease.uploadedFile != "")
@@ -214,6 +219,7 @@ class _Edit_leaseState extends State<Edit_lease>
   final TextEditingController startDateController = TextEditingController();
   DateTime? _startDate;
   final TextEditingController endDateController = TextEditingController();
+  DateTime? _endDate;
 
   // second container variables
   String? _selectedRent;
@@ -460,10 +466,134 @@ class _Edit_leaseState extends State<Edit_lease>
     if (_startDate != null && _selectedRent != null) {
       DateTime nextDueDate = calculateNextDueDate(_startDate!, _selectedRent!);
       String formattedNextDueDate =
-          "${nextDueDate.day.toString().padLeft(2, '0')}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.year}";
+          "${nextDueDate.year}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.day.toString().padLeft(2, '0')}";
 
       setState(() {
-        rentNextDueDate.text = formattedNextDueDate;
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        rentNextDueDate.text =
+            dateProvider.formatCurrentDate(formattedNextDueDate);
+      });
+    }
+  }
+
+  Future<void> _selectStartDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _startDate ?? DateTime.now(),
+      firstDate: DateTime(2015, 8),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: blueColor, // Header background color
+            colorScheme: ColorScheme.light(
+              primary: blueColor, // Selection color
+              onPrimary: Colors.white, // Text color
+              surface: Colors.white, // Calendar background color
+              onSurface: Colors.black, // Calendar text color
+            ),
+            dialogBackgroundColor: Colors.white, // Background color
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != _startDate) {
+      setState(() {
+        _startDate = picked;
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        startDateController.text =
+            dateProvider.formatCurrentDate(apiFormatDate);
+
+        // Auto-set end date to one year later
+        DateTime endDate = DateTime(picked.year + 1, picked.month, picked.day);
+        _endDate = endDate;
+        String endApiFormatDate = DateFormat('yyyy-MM-dd').format(endDate);
+        endDateController.text =
+            dateProvider.formatCurrentDate(endApiFormatDate);
+
+        // Store the date in yyyy-MM-dd format for API (unchanged)
+        String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
+        print('Display: ${startDateController.text}');
+        print('API format: $dateForApi');
+      });
+    }
+  }
+
+  Future<void> _selectEndDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _endDate ?? DateTime.now(),
+      firstDate: _startDate ?? DateTime.now(),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: blueColor, // Header background color
+            colorScheme: ColorScheme.light(
+              primary: blueColor, // Selection color
+              onPrimary: Colors.white, // Text color
+              surface: Colors.white, // Calendar background color
+              onSurface: Colors.black, // Calendar text color
+            ),
+            dialogBackgroundColor: Colors.white, // Background color
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != _endDate) {
+      setState(() {
+        _endDate = picked;
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        endDateController.text = dateProvider.formatCurrentDate(apiFormatDate);
+        // Store the date in yyyy-MM-dd format for API (unchanged)
+        String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
+        print('Display: ${endDateController.text}');
+        print('API format: $dateForApi');
+      });
+    }
+  }
+
+  Future<void> _selectNextDueDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: blueColor, // Header background color
+            colorScheme: ColorScheme.light(
+              primary: blueColor, // Selection color
+              onPrimary: Colors.white, // Text color
+              surface: Colors.white, // Calendar background color
+              onSurface: Colors.black, // Calendar text color
+            ),
+            dialogBackgroundColor: Colors.white, // Background color
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() {
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        rentNextDueDate.text = dateProvider.formatCurrentDate(apiFormatDate);
+        // Store the date in yyyy-MM-dd format for API (unchanged)
+        String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
+        print('Display: ${rentNextDueDate.text}');
+        print('API format: $dateForApi');
       });
     }
   }
@@ -1362,8 +1492,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                 ),
                               if (MediaQuery.of(context).size.width < 500)
                                 CustomTextField(
-                                  onTap: ()
-                                  async {
+                                  onTap: () async {
                                     DateTime? pickedDate = await showDatePicker(
                                       context: context,
                                       initialDate: DateTime.now(),
@@ -1424,65 +1553,67 @@ class _Edit_leaseState extends State<Edit_lease>
                                   },
                                   readOnnly: true,
                                   suffixIcon: IconButton(
-                                      onPressed: ()  async {
-    DateTime? pickedDate = await showDatePicker(
-    context: context,
-    initialDate: DateTime.now(),
-    firstDate: DateTime(2000),
-    lastDate: DateTime(2101),
-    locale: const Locale('en', 'US'),
-    builder: (BuildContext context,
-    Widget? child) {
-    return Theme(
-    data: ThemeData.light().copyWith(
-    colorScheme: ColorScheme.light(
-    primary:
-    blueColor, // header background color
-    onPrimary: Colors
-        .white, // header text color
-    onSurface:
-    blueColor, // body text color
-    ),
-    textButtonTheme:
-    TextButtonThemeData(
-    style: TextButton.styleFrom(
-    foregroundColor: Colors.white,
-    backgroundColor:
-    blueColor, // button text color
-    ),
-    ),
-    ),
-    child: child!,
-    );
-    },
-    );
+                                      onPressed: () async {
+                                        DateTime? pickedDate =
+                                            await showDatePicker(
+                                          context: context,
+                                          initialDate: DateTime.now(),
+                                          firstDate: DateTime(2000),
+                                          lastDate: DateTime(2101),
+                                          locale: const Locale('en', 'US'),
+                                          builder: (BuildContext context,
+                                              Widget? child) {
+                                            return Theme(
+                                              data: ThemeData.light().copyWith(
+                                                colorScheme: ColorScheme.light(
+                                                  primary:
+                                                      blueColor, // header background color
+                                                  onPrimary: Colors
+                                                      .white, // header text color
+                                                  onSurface:
+                                                      blueColor, // body text color
+                                                ),
+                                                textButtonTheme:
+                                                    TextButtonThemeData(
+                                                  style: TextButton.styleFrom(
+                                                    foregroundColor:
+                                                        Colors.white,
+                                                    backgroundColor:
+                                                        blueColor, // button text color
+                                                  ),
+                                                ),
+                                              ),
+                                              child: child!,
+                                            );
+                                          },
+                                        );
 
-    if (pickedDate != null) {
-    // String formattedStartDate =
-    //     "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-    String formattedStartDate =
-    "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-    DateTime endDate = DateTime(
-    pickedDate.year,
-    pickedDate.month + 1,
-    pickedDate.day);
-    String formattedEndDate =
-    "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+                                        if (pickedDate != null) {
+                                          // String formattedStartDate =
+                                          //     "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                          String formattedStartDate =
+                                              "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                          DateTime endDate = DateTime(
+                                              pickedDate.year,
+                                              pickedDate.month + 1,
+                                              pickedDate.day);
+                                          String formattedEndDate =
+                                              "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
 
-    // String formattedEndDate =
-    //     "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
-    setState(() {
-    startDateController.text =
-    formattedStartDate;
-    _startDate = pickedDate;
-    endDateController.text =
-    formattedEndDate;
-    rentCycleItemsDynamic(endDate
-        .difference(_startDate!)
-        .inDays);
-    });
-    }
-    },
+                                          // String formattedEndDate =
+                                          //     "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
+                                          setState(() {
+                                            startDateController.text =
+                                                formattedStartDate;
+                                            _startDate = pickedDate;
+                                            endDateController.text =
+                                                formattedEndDate;
+                                            rentCycleItemsDynamic(endDate
+                                                .difference(_startDate!)
+                                                .inDays);
+                                          });
+                                        }
+                                      },
                                       icon:
                                           const Icon(Icons.date_range_rounded)),
                                   validator: (value) {
@@ -1492,7 +1623,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                     return null;
                                   },
                                   keyboardType: TextInputType.text,
-                                  hintText: 'yyyy-mm-dd',
+                                  hintText: Provider.of<DateProvider>(context,
+                                          listen: false)
+                                      .dateFormat
+                                      .toUpperCase(),
                                   controller: startDateController,
                                 ),
                               if (MediaQuery.of(context).size.width < 500)
@@ -1511,8 +1645,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                 ),
                               if (MediaQuery.of(context).size.width < 500)
                                 CustomTextField(
-                                  onTap: ()
-                                  async {
+                                  onTap: () async {
                                     DateTime? pickedDate = await showDatePicker(
                                       context: context,
                                       initialDate: DateTime.now(),
@@ -1569,8 +1702,9 @@ class _Edit_leaseState extends State<Edit_lease>
                                   },
                                   readOnnly: true,
                                   suffixIcon: IconButton(
-                                      onPressed: ()  async {
-                                        DateTime? pickedDate = await showDatePicker(
+                                      onPressed: () async {
+                                        DateTime? pickedDate =
+                                            await showDatePicker(
                                           context: context,
                                           initialDate: DateTime.now(),
                                           firstDate: DateTime(2000),
@@ -1582,18 +1716,19 @@ class _Edit_leaseState extends State<Edit_lease>
                                               data: ThemeData.light().copyWith(
                                                 colorScheme: ColorScheme.light(
                                                   primary:
-                                                  blueColor, // header background color
+                                                      blueColor, // header background color
                                                   onPrimary: Colors
                                                       .white, // header text color
                                                   onSurface:
-                                                  blueColor, // body text color
+                                                      blueColor, // body text color
                                                 ),
                                                 textButtonTheme:
-                                                TextButtonThemeData(
+                                                    TextButtonThemeData(
                                                   style: TextButton.styleFrom(
-                                                    foregroundColor: Colors.white,
+                                                    foregroundColor:
+                                                        Colors.white,
                                                     backgroundColor:
-                                                    blueColor, // button text color
+                                                        blueColor, // button text color
                                                   ),
                                                 ),
                                               ),
@@ -1608,7 +1743,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                           String formattedDate =
                                               "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
                                           setState(() {
-                                            endDateController.text = formattedDate;
+                                            endDateController.text =
+                                                formattedDate;
                                             if (_startDate != null) {
                                               rentCycleItemsDynamic(pickedDate
                                                   .difference(_startDate!)
@@ -1616,7 +1752,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                             } else {
                                               _startDate = DateTime.parse(
                                                   reverseFormatDate(
-                                                      startDateController.text));
+                                                      startDateController
+                                                          .text));
                                               rentCycleItemsDynamic(pickedDate
                                                   .difference(_startDate!)
                                                   .inDays);
@@ -1634,7 +1771,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                   },
                                   optional: true,
                                   keyboardType: TextInputType.text,
-                                  hintText: 'yyyy-mm-dd',
+                                  hintText: Provider.of<DateProvider>(context,
+                                          listen: false)
+                                      .dateFormat
+                                      .toUpperCase(),
                                   controller: endDateController,
                                 ),
                               if (MediaQuery.of(context).size.width > 500)
@@ -1658,79 +1798,14 @@ class _Edit_leaseState extends State<Edit_lease>
                                                     color: Colors.grey)),
                                             SizedBox(height: 5),
                                             CustomTextField(
-                                              onTap: () async {
-                                                DateTime? pickedDate =
-                                                    await showDatePicker(
-                                                  context: context,
-                                                  initialDate: DateTime.now(),
-                                                  firstDate: DateTime(2000),
-                                                  lastDate: DateTime(2101),
-                                                  locale:
-                                                      const Locale('en', 'US'),
-                                                  builder:
-                                                      (BuildContext context,
-                                                          Widget? child) {
-                                                    return Theme(
-                                                      data: ThemeData.light()
-                                                          .copyWith(
-                                                        colorScheme:
-                                                            const ColorScheme
-                                                                .light(
-                                                          primary: Color.fromRGBO(
-                                                              21,
-                                                              43,
-                                                              83,
-                                                              1), // header background color
-                                                          onPrimary: Colors
-                                                              .white, // header text color
-                                                          onSurface: Color.fromRGBO(
-                                                              21,
-                                                              43,
-                                                              83,
-                                                              1), // body text color
-                                                        ),
-                                                        textButtonTheme:
-                                                            TextButtonThemeData(
-                                                          style: TextButton
-                                                              .styleFrom(
-                                                            foregroundColor:
-                                                                Colors.white,
-                                                            backgroundColor:
-                                                                blueColor, // button text color
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      child: child!,
-                                                    );
-                                                  },
-                                                );
-
-                                                if (pickedDate != null) {
-                                                  // String formattedStartDate =
-                                                  //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                                  String formattedStartDate =
-                                                      "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                                                  DateTime endDate = DateTime(
-                                                      pickedDate.year,
-                                                      pickedDate.month + 1,
-                                                      pickedDate.day);
-                                                  String formattedEndDate =
-                                                      "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
-
-                                                  // String formattedEndDate =
-                                                  //     "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
-                                                  setState(() {
-                                                    startDateController.text =
-                                                        formattedStartDate;
-                                                    _startDate = pickedDate;
-                                                    endDateController.text =
-                                                        formattedEndDate;
-                                                  });
-                                                }
+                                              onTap: () {
+                                                _selectStartDate(context);
                                               },
                                               readOnnly: true,
                                               suffixIcon: IconButton(
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  _selectStartDate(context);
+                                                },
                                                 icon: const Icon(
                                                     Icons.date_range_rounded),
                                               ),
@@ -1742,7 +1817,12 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 return null;
                                               },
                                               keyboardType: TextInputType.text,
-                                              hintText: 'yyyy-mm-dd',
+                                              hintText:
+                                                  Provider.of<DateProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .dateFormat
+                                                      .toUpperCase(),
                                               controller: startDateController,
                                             ),
                                           ],
@@ -1762,68 +1842,15 @@ class _Edit_leaseState extends State<Edit_lease>
                                                     color: Colors.grey)),
                                             SizedBox(height: 5),
                                             CustomTextField(
-                                              onTap: () async {
-                                                DateTime? pickedDate =
-                                                    await showDatePicker(
-                                                  context: context,
-                                                  initialDate: DateTime.now(),
-                                                  firstDate: DateTime(2000),
-                                                  lastDate: DateTime(2101),
-                                                  locale:
-                                                      const Locale('en', 'US'),
-                                                  builder:
-                                                      (BuildContext context,
-                                                          Widget? child) {
-                                                    return Theme(
-                                                      data: ThemeData.light()
-                                                          .copyWith(
-                                                        colorScheme:
-                                                            const ColorScheme
-                                                                .light(
-                                                          primary: Color.fromRGBO(
-                                                              21,
-                                                              43,
-                                                              83,
-                                                              1), // header background color
-                                                          onPrimary: Colors
-                                                              .white, // header text color
-                                                          onSurface: Color.fromRGBO(
-                                                              21,
-                                                              43,
-                                                              83,
-                                                              1), // body text color
-                                                        ),
-                                                        textButtonTheme:
-                                                            TextButtonThemeData(
-                                                          style: TextButton
-                                                              .styleFrom(
-                                                            foregroundColor:
-                                                                Colors.white,
-                                                            backgroundColor:
-                                                                blueColor, // button text color
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      child: child!,
-                                                    );
-                                                  },
-                                                );
-
-                                                if (pickedDate != null) {
-                                                  // String formattedDate =
-                                                  //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                                  String formattedDate =
-                                                      "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                                                  setState(() {
-                                                    endDateController.text =
-                                                        formattedDate;
-                                                  });
-                                                }
+                                              onTap: () {
+                                                _selectEndDate(context);
                                               },
                                               readOnnly: true,
                                               optional: true,
                                               suffixIcon: IconButton(
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  _selectEndDate(context);
+                                                },
                                                 icon: const Icon(
                                                     Icons.date_range_rounded),
                                               ),
@@ -1835,7 +1862,12 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 return null;
                                               },
                                               keyboardType: TextInputType.text,
-                                              hintText: 'yyyy-mm-dd',
+                                              hintText:
+                                                  Provider.of<DateProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .dateFormat
+                                                      .toUpperCase(),
                                               controller: endDateController,
                                             ),
                                             SizedBox(height: 5),
@@ -2895,81 +2927,15 @@ class _Edit_leaseState extends State<Edit_lease>
                                                     color: Colors.grey)),
                                             SizedBox(height: 5),
                                             CustomTextField(
-                                              onTap: () async {
-                                                DateTime? pickedDate =
-                                                    await showDatePicker(
-                                                  context: context,
-                                                  initialDate: DateTime.now(),
-                                                  firstDate: DateTime(2000),
-                                                  lastDate: DateTime(2101),
-                                                  locale:
-                                                      const Locale('en', 'US'),
-                                                  builder:
-                                                      (BuildContext context,
-                                                          Widget? child) {
-                                                    return Theme(
-                                                      data: ThemeData.light()
-                                                          .copyWith(
-                                                        colorScheme:
-                                                            const ColorScheme
-                                                                .light(
-                                                          primary: Color.fromRGBO(
-                                                              21,
-                                                              43,
-                                                              83,
-                                                              1), // header background color
-                                                          onPrimary: Colors
-                                                              .white, // header text color
-                                                          onSurface: Color.fromRGBO(
-                                                              21,
-                                                              43,
-                                                              83,
-                                                              1), // body text color
-                                                        ),
-                                                        textButtonTheme:
-                                                            TextButtonThemeData(
-                                                          style: TextButton
-                                                              .styleFrom(
-                                                            foregroundColor:
-                                                                Colors.white,
-                                                            backgroundColor:
-                                                                blueColor, // button text color
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      child: child!,
-                                                    );
-                                                  },
-                                                );
-                                                if (pickedDate != null) {
-                                                  // String formattedDate =
-                                                  //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                                  String formattedDate =
-                                                      "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-
-                                                  DateTime nextDueDate =
-                                                      calculateNextDueDate(
-                                                          pickedDate,
-                                                          _selectedRent ??
-                                                              'Daily');
-                                                  // String formattedNextDueDate =
-                                                  //     "${nextDueDate.year}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.day.toString().padLeft(2, '0')}";
-                                                  String formattedNextDueDate =
-                                                      "${nextDueDate.day.toString().padLeft(2, '0')}-${nextDueDate.month.toString().padLeft(2, '0')}-${nextDueDate.year}";
-                                                  setState(() {
-                                                    rentNextDueDate.text =
-                                                        formattedNextDueDate;
-                                                    rentNextDueDate.text =
-                                                        formattedDate;
-                                                  });
-
-                                                  print(rentNextDueDate.text);
-                                                }
+                                              onTap: () {
+                                                _selectNextDueDate(context);
                                               },
                                               optional: true,
                                               readOnnly: true,
                                               suffixIcon: IconButton(
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  _selectNextDueDate(context);
+                                                },
                                                 icon: const Icon(
                                                     Icons.date_range_rounded),
                                               ),
@@ -2981,7 +2947,12 @@ class _Edit_leaseState extends State<Edit_lease>
                                                 return null;
                                               },
                                               keyboardType: TextInputType.text,
-                                              hintText: 'yyyy-mm-dd',
+                                              hintText:
+                                                  Provider.of<DateProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .dateFormat
+                                                      .toUpperCase(),
                                               controller: rentNextDueDate,
                                             ),
                                           ],
@@ -3165,54 +3136,15 @@ class _Edit_leaseState extends State<Edit_lease>
                                 ),
                               if (MediaQuery.of(context).size.width < 500)
                                 CustomTextField(
-                                  onTap: () async {
-                                    DateTime? pickedDate = await showDatePicker(
-                                      context: context,
-                                      initialDate: DateTime.now(),
-                                      firstDate: DateTime(2000),
-                                      lastDate: DateTime(2101),
-                                      locale: const Locale('en', 'US'),
-                                      builder: (BuildContext context,
-                                          Widget? child) {
-                                        return Theme(
-                                          data: ThemeData.light().copyWith(
-                                            colorScheme: ColorScheme.light(
-                                              primary:
-                                                  blueColor, // header background color
-                                              onPrimary: Colors
-                                                  .white, // header text color
-                                              onSurface:
-                                                  blueColor, // body text color
-                                            ),
-                                            textButtonTheme:
-                                                TextButtonThemeData(
-                                              style: TextButton.styleFrom(
-                                                foregroundColor: Colors.white,
-                                                backgroundColor:
-                                                    blueColor, // button text color
-                                              ),
-                                            ),
-                                          ),
-                                          child: child!,
-                                        );
-                                      },
-                                    );
-
-                                    if (pickedDate != null) {
-                                      String formattedDate =
-                                          "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-
-                                      // String formattedDate =
-                                      //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                      setState(() {
-                                        rentNextDueDate.text = formattedDate;
-                                      });
-                                    }
+                                  onTap: () {
+                                    _selectNextDueDate(context);
                                   },
                                   optional: true,
                                   readOnnly: true,
                                   suffixIcon: IconButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        _selectNextDueDate(context);
+                                      },
                                       icon:
                                           const Icon(Icons.date_range_rounded)),
                                   validator: (value) {
@@ -3222,7 +3154,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                     return null;
                                   },
                                   keyboardType: TextInputType.text,
-                                  hintText: 'yyyy-mm-dd',
+                                  hintText: Provider.of<DateProvider>(context,
+                                          listen: false)
+                                      .dateFormat
+                                      .toUpperCase(),
                                   controller: rentNextDueDate,
                                 ),
                               const SizedBox(
@@ -3422,10 +3357,10 @@ class _Edit_leaseState extends State<Edit_lease>
                                         width: 1,
                                         color: blueColor,
                                       ),
-                                      columnWidths: {
-                                        0: const FlexColumnWidth(2),
-                                        1: const FlexColumnWidth(2),
-                                        2: const FlexColumnWidth(1.3),
+                                      columnWidths: const {
+                                        0: FlexColumnWidth(2),
+                                        1: FlexColumnWidth(2),
+                                        2: FlexColumnWidth(1.3),
                                       },
                                       children: [
                                         if (formDataRecurringList.isNotEmpty)
@@ -3433,7 +3368,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                               decoration: BoxDecoration(
                                                 color: blueColor,
                                               ),
-                                              children: [
+                                              children: const [
                                                 Padding(
                                                   padding: EdgeInsets.all(8.0),
                                                   child: Text(
@@ -3575,7 +3510,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                               decoration: BoxDecoration(
                                                 color: blueColor,
                                               ),
-                                              children: [
+                                              children: const [
                                                 Padding(
                                                   padding: EdgeInsets.all(8.0),
                                                   child: Text(
@@ -5409,7 +5344,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                           );
                                         },
                                         child: Row(
-                                          children: [
+                                          children: const [
                                             Text(
                                               '+ Add New Account',
                                               style: TextStyle(
@@ -6128,8 +6063,8 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
+                                  children: const [
+                                    Text(
                                       '+ Add New Account',
                                       style: TextStyle(
                                           fontSize: 14,
@@ -6244,7 +6179,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                     isExpanded: true,
                     // menuMaxHeight: 200,
                     value: selectedDay,
-                    items: [
+                    items: const [
                       DropdownMenuItem<String>(
                         value: 'Weekly',
                         child: Text('Weekly'),
@@ -6801,7 +6736,7 @@ class _AddTenantState extends State<AddTenant> {
                           border: Border.all(color: Colors.grey),
                         ),
                         child: DataTable(
-                          columns: [
+                          columns: const [
                             DataColumn(label: Text('Tenant Name')),
                             DataColumn(label: Text('Select')),
                           ],
@@ -6874,7 +6809,7 @@ class _AddTenantState extends State<AddTenant> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
                                   color: Color.fromRGBO(21, 43, 81, 1),
-                                  boxShadow: [
+                                  boxShadow: const [
                                     BoxShadow(
                                       color: Colors.grey,
                                       offset: Offset(0.0, 1.0), //(x,y)
@@ -6914,7 +6849,7 @@ class _AddTenantState extends State<AddTenant> {
                                   borderRadius: BorderRadius.circular(5.0),
                                   border: Border.all(color: blueColor),
                                   color: Colors.white,
-                                  boxShadow: [
+                                  boxShadow: const [
                                     BoxShadow(
                                       color: Colors.grey,
                                       offset: Offset(0.0, 1.0), //(x,y)
@@ -7252,8 +7187,8 @@ class _AddTenantState extends State<AddTenant> {
                                   ),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
-                                    boxShadow: [
-                                      const BoxShadow(
+                                    boxShadow: const [
+                                      BoxShadow(
                                         color: Colors.black26,
                                         offset: Offset(1.0, 1.0),
                                         blurRadius: 8.0,
@@ -7319,8 +7254,8 @@ class _AddTenantState extends State<AddTenant> {
                                         horizontal: 12.0, vertical: 0),
                                     decoration: BoxDecoration(
                                         color: Colors.white,
-                                        boxShadow: [
-                                          const BoxShadow(
+                                        boxShadow: const [
+                                          BoxShadow(
                                             color: Colors.black26,
                                             offset: Offset(1.0,
                                                 1.0), // Shadow offset to the bottom right
@@ -7396,8 +7331,8 @@ class _AddTenantState extends State<AddTenant> {
                                         horizontal: 12.0, vertical: 0),
                                     decoration: BoxDecoration(
                                         color: Colors.white,
-                                        boxShadow: [
-                                          const BoxShadow(
+                                        boxShadow: const [
+                                          BoxShadow(
                                             color: Colors.black26,
                                             offset: Offset(1.0,
                                                 1.0), // Shadow offset to the bottom right

@@ -71,9 +71,9 @@ class _Send_Email_tableState extends State<Send_Email_table> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-          color: Color(0xFFF4F8FF),
+          color: const Color(0xFFF4F8FF),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Color(0xFFDBE0E5))),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -86,7 +86,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -170,7 +170,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                   children: [
                     Text("              Sent",
                         style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
-                    SizedBox(width: 3),
+                    const SizedBox(width: 3),
                   ],
                 ),
               ),
@@ -232,13 +232,13 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                     decoration: BoxDecoration(
                       color: blueColor,
                       borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(10)),
+                          const BorderRadius.vertical(top: Radius.circular(10)),
                     ),
                     child: Center(
                       child: Row(
                         children: [
-                          SizedBox(width: 15),
-                          Text(
+                          const SizedBox(width: 15),
+                          const Text(
                             "Email Recipients Details",
                             style: TextStyle(
                               fontSize: 18,
@@ -246,26 +246,26 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                               color: Colors.white,
                             ),
                           ),
-                          Spacer(),
+                          const Spacer(),
                           GestureDetector(
                             onTap: () {
                               Navigator.pop(context);
                             },
-                            child: Icon(Icons.close, color: Colors.white),
+                            child: const Icon(Icons.close, color: Colors.white),
                           ),
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                         ],
                       ),
                     ),
                   ),
 
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
 
                   // Search Bar
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 11),
                     child: TextField(
-                      style: TextStyle(fontSize: 15),
+                      style: const TextStyle(fontSize: 15),
                       onChanged: (value) {
                         setState(() {
                           searchValue =
@@ -276,16 +276,16 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Color(0xFF8A95A8)),
+                          borderSide: const BorderSide(color: Color(0xFF8A95A8)),
                         ),
                         hintText: "Search recipients...",
-                        hintStyle: TextStyle(color: Color(0xFF8A95A8)),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                        hintStyle: const TextStyle(color: Color(0xFF8A95A8)),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 10),
                       ),
                     ),
                   ),
 
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
 
                   // Emails List
                   Padding(
@@ -299,12 +299,12 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                 elevation: 2,
                                 borderRadius: BorderRadius.circular(8),
                                 child: Container(
-                                  padding: EdgeInsets.all(10),
+                                  padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(4),
                                     border:
-                                        Border.all(color: Color(0xFF8A95A8)),
+                                        Border.all(color: const Color(0xFF8A95A8)),
                                   ),
                                   child: SingleChildScrollView(
                                     child: Column(
@@ -340,16 +340,16 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                                   color: blueColor,
                                                 ),
                                               ),
-                                              Spacer(), // Push icon to the right
+                                              const Spacer(), // Push icon to the right
 
                                               if (isAccepted && isOpened)
-                                                Icon(Icons.done_all,
+                                                const Icon(Icons.done_all,
                                                     color: Colors.green)
                                               else if (isAccepted)
-                                                Icon(Icons.check,
+                                                const Icon(Icons.check,
                                                     color: Colors.green)
                                               else
-                                                Icon(Icons.close,
+                                                const Icon(Icons.close,
                                                     color: Colors.red)
                                             ],
                                           ),
@@ -363,7 +363,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                           ],
                         ),
 
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
                         // Total Recipients
                         Row(
@@ -376,7 +376,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                 fontSize: 15,
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             Text(
@@ -393,7 +393,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                     ),
                   ),
 
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                 ],
               ),
             );
@@ -413,14 +413,14 @@ class _Send_Email_tableState extends State<Send_Email_table> {
           "Once deleted, you will not be able to recover this e-mail history!",
       content: Column(
         children: <Widget>[
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           SizedBox(
             height: 45,
             child: TextField(
               controller: reason,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'Enter reason for deletion',
                 contentPadding: EdgeInsets.only(top: 8, left: 15),
@@ -434,12 +434,12 @@ class _Send_Email_tableState extends State<Send_Email_table> {
           //   ),
         ],
       ),
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -491,10 +491,10 @@ class _Send_Email_tableState extends State<Send_Email_table> {
             style: TextStyle(
                 fontWeight: FontWeight.bold, fontSize: 14, color: blueColor),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
             decoration: BoxDecoration(
               color: Colors.grey[200], // Light background like input field
               borderRadius: BorderRadius.circular(10),
@@ -515,7 +515,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
     return TableRow(
       children: [
         Padding(
-          padding: EdgeInsets.all(4.0),
+          padding: const EdgeInsets.all(4.0),
           child: Text(
             title,
             style: TextStyle(
@@ -523,7 +523,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.all(4.0),
+          padding: const EdgeInsets.all(4.0),
           child: Text(
             value,
             style: TextStyle(
@@ -619,7 +619,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
           color: Colors.white,
           child: Container(
             height: 55,
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(4.0),
@@ -638,17 +638,17 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                     _changeRowsPerPage(newValue);
                   }
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_drop_down,
                   size: 40,
                 ),
-                style: TextStyle(color: Colors.black, fontSize: 17),
+                style: const TextStyle(color: Colors.black, fontSize: 17),
                 dropdownColor: Colors.white,
               ),
             ),
           ),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         IconButton(
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
@@ -665,7 +665,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         IconButton(
           icon: FaIcon(
@@ -709,7 +709,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   //add propertytype
@@ -754,7 +754,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                               color: blueColor,
                               borderRadius: BorderRadius.circular(5),
                               boxShadow: [
-                                BoxShadow(
+                                const BoxShadow(
                                   color: Colors.grey,
                                   offset: Offset(0.0, 4.0),
                                   blurRadius: 6.0,
@@ -783,9 +783,9 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                           ),
                         ),
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 6),
+                          const SizedBox(width: 6),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 22),
+                          const SizedBox(width: 22),
                       ],
                     ),
                   ),
@@ -817,7 +817,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     // No email icon
-                                    SizedBox(height: 10),
+                                    const SizedBox(height: 10),
                                     Text(
                                       "No Emails Available",
                                       style: TextStyle(
@@ -845,7 +845,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                               child: Column(
                                 children: [
                                   _buildHeaders(),
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   Container(
                                     child: Column(
                                       children: currentPageData
@@ -860,13 +860,13 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
                                           margin:
-                                          EdgeInsets.symmetric(vertical: 6),
+                                          const EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
-                                                ? Color(0xFFF4F8FF)
+                                                ? const Color(0xFFF4F8FF)
                                                 : Colors.white,
                                             border: Border.all(
-                                                color: Color(0xFFDBE0E5)),
+                                                color: const Color(0xFFDBE0E5)),
                                             borderRadius:
                                             BorderRadius.circular(10),
                                           ),
@@ -915,13 +915,13 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                                         },
                                                         child: Container(
                                                           margin:
-                                                              EdgeInsets.only(
+                                                              const EdgeInsets.only(
                                                                   left: 5,
                                                                   right: 5),
                                                           padding: !isExpanded
-                                                              ? EdgeInsets.only(
+                                                              ? const EdgeInsets.only(
                                                                   bottom: 10)
-                                                              : EdgeInsets.only(
+                                                              : const EdgeInsets.only(
                                                                   top: 10),
                                                           child: FaIcon(
                                                             isExpanded
@@ -993,7 +993,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 2,
                                                       ),
                                                     ],
@@ -1002,14 +1002,14 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                               ),
                                               if (isExpanded)
                                                 Container(
-                                                  padding: EdgeInsets.symmetric(
+                                                  padding: const EdgeInsets.symmetric(
                                                       horizontal: 2.0),
-                                                  margin: EdgeInsets.only(
+                                                  margin: const EdgeInsets.only(
                                                       bottom: 2),
                                                   child: SingleChildScrollView(
                                                     child: Column(
                                                       children: [
-                                                        SizedBox(
+                                                        const SizedBox(
                                                           height: 7,
                                                         ),
                                                         Row(
@@ -1091,7 +1091,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                                                         TextOverflow
                                                                             .ellipsis, // Show "..." if the text is too long
                                                                   ),
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                     height: 15,
                                                                   ),
                                                                 ],
@@ -1135,7 +1135,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                                                     BorderRadius
                                                                         .circular(8),
                                                                   ),
-                                                                  child: Row(
+                                                                  child: const Row(
                                                                     mainAxisAlignment:
                                                                     MainAxisAlignment
                                                                         .center,
@@ -1167,7 +1167,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                                                 ),
                                                               ),
                                                             ),
-                                                            SizedBox(
+                                                            const SizedBox(
                                                               width: 5,
                                                             ),
                                                             Expanded(
@@ -1210,7 +1210,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                                                         color:
                                                                         blueColor,
                                                                       ),
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         width:
                                                                         10,
                                                                       ),
@@ -1240,19 +1240,19 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                       }).toList(),
                                     ),
                                   ),
-                                  SizedBox(height: 20),
+                                  const SizedBox(height: 20),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       Row(
                                         children: [
                                           // Text('Rows per page:'),
-                                          SizedBox(width: 10),
+                                          const SizedBox(width: 10),
                                           Material(
                                             elevation: 3,
                                             child: Container(
                                               height: 40,
-                                              padding: EdgeInsets.symmetric(
+                                              padding: const EdgeInsets.symmetric(
                                                   horizontal: 12.0),
                                               decoration: BoxDecoration(
                                                 border: Border.all(
@@ -1392,11 +1392,11 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                     height: 200,
                     fit: BoxFit.fill,
                   ),
-                  Text(
+                  const Text(
                     'No Internet',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     'Check your internet connection',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),

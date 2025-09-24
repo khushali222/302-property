@@ -70,16 +70,16 @@ class _TempletTableState extends State<TempletTable> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-          color: Color(0xFFF4F8FF),
+          color: const Color(0xFFF4F8FF),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Color(0xFFDBE0E5))),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -116,10 +116,10 @@ class _TempletTableState extends State<TempletTable> {
                             style:
                                 TextStyle( color: blueColor, fontWeight: FontWeight.bold, fontSize: 18)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
+                    const SizedBox(width: 3),
                     ascending1
                         ? Padding(
-                            padding:  EdgeInsets.only(top: 7, left: 2),
+                            padding:  const EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
@@ -127,7 +127,7 @@ class _TempletTableState extends State<TempletTable> {
                             ),
                           )
                         : Padding(
-                            padding:  EdgeInsets.only(bottom: 7, left: 2),
+                            padding:  const EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -163,13 +163,13 @@ class _TempletTableState extends State<TempletTable> {
                 },
                 child: Row(
                   children: [
-                    SizedBox(width: 15),
+                    const SizedBox(width: 15),
                     Text("Type",
                         style: TextStyle( color: blueColor, fontWeight: FontWeight.bold, fontSize: 18)),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     ascending2
                         ? Padding(
-                            padding:  EdgeInsets.only(top: 7, left: 2),
+                            padding:  const EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
@@ -292,14 +292,14 @@ class _TempletTableState extends State<TempletTable> {
       desc: "Once deleted, you will not be able to recover this template",
       content: Column(
         children: <Widget>[
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           SizedBox(
             height: 45,
             child: TextField(
               controller: reason,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Enter reason for deletion',
                   contentPadding: EdgeInsets.only(top: 8, left: 15)),
@@ -307,12 +307,12 @@ class _TempletTableState extends State<TempletTable> {
           ),
         ],
       ),
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -392,7 +392,7 @@ class _TempletTableState extends State<TempletTable> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             //add propertytype
@@ -433,7 +433,7 @@ class _TempletTableState extends State<TempletTable> {
                         color: blueColor,
                         borderRadius: BorderRadius.circular(5),
                         boxShadow: [
-                          BoxShadow(
+                          const BoxShadow(
                             color: Colors.grey,
                             offset: Offset(0.0, 4.0),
                             blurRadius: 6.0,
@@ -459,13 +459,13 @@ class _TempletTableState extends State<TempletTable> {
                       ),
                     ),
                   ),
-                  if (MediaQuery.of(context).size.width < 500) SizedBox(width: 6),
+                  if (MediaQuery.of(context).size.width < 500) const SizedBox(width: 6),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 22),
+                    const SizedBox(width: 22),
                 ],
               ),
             ),
-            if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
+            if (MediaQuery.of(context).size.width > 500) const SizedBox(height: 25),
             if (MediaQuery.of(context).size.width < 500)
               Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -489,7 +489,7 @@ class _TempletTableState extends State<TempletTable> {
                                 height: 200,
                                 width: 200,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                               Text(
@@ -533,9 +533,9 @@ class _TempletTableState extends State<TempletTable> {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             _buildHeaders(),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Container(
 
                               child: Column(
@@ -548,13 +548,13 @@ class _TempletTableState extends State<TempletTable> {
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
                                     margin:
-                                    EdgeInsets.symmetric(vertical: 6),
+                                    const EdgeInsets.symmetric(vertical: 6),
                                     decoration: BoxDecoration(
                                       color: index % 2 != 0
-                                          ? Color(0xFFF4F8FF)
+                                          ? const Color(0xFFF4F8FF)
                                           : Colors.white,
                                       border: Border.all(
-                                          color: Color(0xFFDBE0E5)),
+                                          color: const Color(0xFFDBE0E5)),
                                       borderRadius:
                                       BorderRadius.circular(10),
                                     ),
@@ -598,12 +598,12 @@ class _TempletTableState extends State<TempletTable> {
                                                     });
                                                   },
                                                   child: Container(
-                                                    margin: EdgeInsets.only(
+                                                    margin: const EdgeInsets.only(
                                                         left: 5, right: 5),
                                                     padding: !isExpanded
-                                                        ? EdgeInsets.only(
+                                                        ? const EdgeInsets.only(
                                                             bottom: 10)
-                                                        : EdgeInsets.only(
+                                                        : const EdgeInsets.only(
                                                             top: 10),
                                                     child: FaIcon(
                                                       isExpanded
@@ -668,9 +668,9 @@ class _TempletTableState extends State<TempletTable> {
                                         ),
                                         if (isExpanded)
                                           Container(
-                                            padding: EdgeInsets.symmetric(
+                                            padding: const EdgeInsets.symmetric(
                                                 horizontal: 2),
-                                            margin: EdgeInsets.only(bottom: 2),
+                                            margin: const EdgeInsets.only(bottom: 2),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
@@ -778,12 +778,12 @@ class _TempletTableState extends State<TempletTable> {
                                                           ],
                                                         ),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 2,
                                                       ),
                                                     ],
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 10,
                                                   ),
                                                   Row(
@@ -823,7 +823,7 @@ class _TempletTableState extends State<TempletTable> {
                                                               BorderRadius
                                                                   .circular(8),
                                                             ),
-                                                            child: Row(
+                                                            child: const Row(
                                                               mainAxisAlignment:
                                                               MainAxisAlignment
                                                                   .center,
@@ -855,7 +855,7 @@ class _TempletTableState extends State<TempletTable> {
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 5,
                                                       ),
                                                       Expanded(
@@ -880,7 +880,7 @@ class _TempletTableState extends State<TempletTable> {
                                                               BorderRadius
                                                                   .circular(8),
                                                             ),
-                                                            child: Row(
+                                                            child: const Row(
                                                               mainAxisAlignment:
                                                               MainAxisAlignment
                                                                   .center,
@@ -925,19 +925,19 @@ class _TempletTableState extends State<TempletTable> {
                                 }).toList(),
                               ),
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Row(
                                   children: [
                                     // Text('Rows per page:'),
-                                    SizedBox(width: 10),
+                                    const SizedBox(width: 10),
                                     Material(
                                       elevation: 3,
                                       child: Container(
                                         height: 40,
-                                        padding: EdgeInsets.symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                             horizontal: 12.0),
                                         decoration: BoxDecoration(
                                           border: Border.all(color: Colors.grey),

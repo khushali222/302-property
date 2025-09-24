@@ -35,6 +35,7 @@ import '../../../../Model/rentrollreportmodel.dart';
 import '../../../../repository/rentrollreportrepo.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'package:http/http.dart' as http;
+
 class RentersInsurances extends StatefulWidget {
   @override
   State<RentersInsurances> createState() => _RentersInsurancesState();
@@ -73,7 +74,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
   Future<rentrollreportmodel> fetchRentersInsuranceData({String? id}) async {
     RentRollReportService service = RentRollReportService();
     try {
-      rentrollreportmodel data = await service.fetchRentRollreport(rentalOwnerId: id);
+      rentrollreportmodel data =
+          await service.fetchRentRollreport(rentalOwnerId: id);
       setState(() {
         // rentersInsuranceModel = data;
         isLoading = false;
@@ -83,7 +85,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     } catch (e) {
       setState(() {
         isLoading = false;
-        errorMessage = 'Failed to load renters insurance data. Please try again later.';
+        errorMessage =
+            'Failed to load renters insurance data. Please try again later.';
       });
       throw Exception('Failed to load renters insurance');
     }
@@ -190,7 +193,9 @@ class _RentersInsurancesState extends State<RentersInsurances> {
           icon: FaIcon(
             size: 30,
             FontAwesomeIcons.circleChevronRight,
-            color: (_currentPage + 1) * _rowsPerPage >= _tableData.length ? Colors.grey : blueColor, // Change color based on availability
+            color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
+                ? Colors.grey
+                : blueColor, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -204,7 +209,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     );
   }
 
-  Widget _buildHeader<T>(String text, int columnIndex, Comparable<T> Function(rentrollreportmodel d)? getField) {
+  Widget _buildHeader<T>(String text, int columnIndex,
+      Comparable<T> Function(rentrollreportmodel d)? getField) {
     return TableCell(
       child: InkWell(
         onTap: getField != null
@@ -216,8 +222,13 @@ class _RentersInsurancesState extends State<RentersInsurances> {
           padding: const EdgeInsets.all(18.0),
           child: Row(
             children: [
-              Text(text, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              if (_sortColumnIndex == columnIndex) Icon(_sortAscending ? Icons.arrow_drop_down_outlined : Icons.arrow_drop_up_outlined),
+              Text(text,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18)),
+              if (_sortColumnIndex == columnIndex)
+                Icon(_sortAscending
+                    ? Icons.arrow_drop_down_outlined
+                    : Icons.arrow_drop_up_outlined),
             ],
           ),
         ),
@@ -225,7 +236,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     );
   }
 
-  void _sort<T>(Comparable<T> Function(rentrollreportmodel d) getField, int columnIndex, bool ascending) {
+  void _sort<T>(Comparable<T> Function(rentrollreportmodel d) getField,
+      int columnIndex, bool ascending) {
     setState(() {
       _sortColumnIndex = columnIndex;
       _sortAscending = ascending;
@@ -303,7 +315,11 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                   padding: const EdgeInsets.only(left: 0),
                   child: Row(
                     children: [
-                      width < 400 ? const Text("   Unit", style: TextStyle(color: Colors.white)) : const Text("   Unit", style: TextStyle(color: Colors.white)),
+                      width < 400
+                          ? const Text("   Unit",
+                              style: TextStyle(color: Colors.white))
+                          : const Text("   Unit",
+                              style: TextStyle(color: Colors.white)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                       // ascending1
@@ -350,7 +366,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                     // Sorting logic here
                   });
                 },
-                child: Row(
+                child: const Row(
                   children: [
                     Text("Lease Start", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
@@ -398,7 +414,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                     // Sorting logic here
                   });
                 },
-                child: Row(
+                child: const Row(
                   children: [
                     Text("Lease End", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 5),
@@ -428,13 +444,15 @@ class _RentersInsurancesState extends State<RentersInsurances> {
       ),
     );
   }
+
   pw.Widget leftAlignedText(String text, {bool isBold = false}) {
     return pw.Align(
       alignment: pw.Alignment.centerLeft,
       child: pw.Text(
         text,
-
-        style: isBold ? pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10) : pw.TextStyle(fontSize: 10) ,
+        style: isBold
+            ? pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)
+            : const pw.TextStyle(fontSize: 10),
       ),
     );
   }
@@ -444,10 +462,13 @@ class _RentersInsurancesState extends State<RentersInsurances> {
       alignment: pw.Alignment.centerRight,
       child: pw.Text(
         text,
-        style: isBold ? pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 10) : pw.TextStyle(fontSize: 10) ,
+        style: isBold
+            ? pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)
+            : const pw.TextStyle(fontSize: 10),
       ),
     );
   }
+
   Widget _buildHeadersforsummery(String h1, String h2) {
     var width = MediaQuery.of(context).size.width;
     return Container(
@@ -502,7 +523,11 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                   padding: const EdgeInsets.only(left: 0),
                   child: Row(
                     children: [
-                      width < 400 ? Text("   $h1", style: TextStyle(color: Colors.white)) : Text("   $h1", style: TextStyle(color: Colors.white)),
+                      width < 400
+                          ? Text("   $h1",
+                              style: const TextStyle(color: Colors.white))
+                          : Text("   $h1",
+                              style: const TextStyle(color: Colors.white)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                       // ascending1
@@ -552,8 +577,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                 },
                 child: Row(
                   children: [
-                    Text("  $h2", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                    Text("  $h2", style: const TextStyle(color: Colors.white)),
+                    const SizedBox(width: 5),
                     // ascending2
                     //     ? Padding(
                     //         padding: const EdgeInsets.only(top: 7, left: 2),
@@ -580,6 +605,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
       ),
     );
   }
+
   List<Map<String, dynamic>> rentalowners = [];
   Future<void> fetchRentalOwners() async {
     print("calling");
@@ -603,560 +629,674 @@ class _RentersInsurancesState extends State<RentersInsurances> {
           "rentalOwner_name": "All",
         });
       });
-     // log(rentalowners.toString());
+      // log(rentalowners.toString());
     } else {
       throw Exception('Failed to load data');
     }
   }
+
   Future<void> generaterentersInsurancePdf(rentrollreportmodel data) async {
-      final GetAddressAdminPdfService service = GetAddressAdminPdfService();
-      profile? profileData;
+    final GetAddressAdminPdfService service = GetAddressAdminPdfService();
+    profile? profileData;
 
-      try {
-        profileData = await service.fetchAdminAddress();
-      } catch (e) {
-        print("Error fetching profile data: $e");
-        return;
-      }
+    try {
+      profileData = await service.fetchAdminAddress();
+    } catch (e) {
+      print("Error fetching profile data: $e");
+      return;
+    }
 
-      final pdf = pw.Document();
-      final image = pw.MemoryImage(
-        (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
-      );
-      final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
+    final pdf = pw.Document();
+    final image = pw.MemoryImage(
+      (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
+    );
+    final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
 
-      final headers = [
-        {'title': 'Unit', 'flex': 1},
-        {'title': 'Tenants', 'flex': 2},
-        {'title': 'Lease Start', 'flex': 1},
-        {'title': 'Lease End', 'flex': 1},
-        {'title': 'Bed/Bath', 'flex': 1},
-        {'title': 'Rent Cycle', 'flex': 1},
-        {'title': 'Rent Start', 'flex': 1},
-        {'title': 'Rent', 'flex': 1},
-        {'title': 'Charges', 'flex': 1},
-        {'title': 'Credits', 'flex': 1},
-        {'title': 'Total', 'flex': 1},
-        {'title': 'Deposits', 'flex': 1},
-        {'title': 'Prepayments', 'flex': 1},
-        {'title': 'Balance', 'flex': 1},
-      ];
+    final headers = [
+      {'title': 'Unit', 'flex': 1},
+      {'title': 'Tenants', 'flex': 2},
+      {'title': 'Lease Start', 'flex': 1},
+      {'title': 'Lease End', 'flex': 1},
+      {'title': 'Bed/Bath', 'flex': 1},
+      {'title': 'Rent Cycle', 'flex': 1},
+      {'title': 'Rent Start', 'flex': 1},
+      {'title': 'Rent', 'flex': 1},
+      {'title': 'Charges', 'flex': 1},
+      {'title': 'Credits', 'flex': 1},
+      {'title': 'Total', 'flex': 1},
+      {'title': 'Deposits', 'flex': 1},
+      {'title': 'Prepayments', 'flex': 1},
+      {'title': 'Balance', 'flex': 1},
+    ];
 
-      // Table Data
-      final tableData = data.bedBathSummary!.bedBathSummary?.map((item) {
-        return [
-          leftAlignedText(item.bedBath ?? ''),
-          rightAlignedText(item.units?.toStringAsFixed(0) ?? '0'),
-          rightAlignedText(item.vacantUnits?.toStringAsFixed(0) ?? '0'),
-          rightAlignedText(item.occupiedUnits?.toStringAsFixed(0) ?? '0'),
-          rightAlignedText("${item.occupancyRate}%" ?? '0.00%'),
-          rightAlignedText(item.totalSqFt?.toStringAsFixed(0) ?? '0'),
-          rightAlignedText(item.avgSqFt ?? '0.00'),
-          rightAlignedText(item.totalRent ?? '0.00'),
-          rightAlignedText(item.avgRent ?? '0.00'),
-          rightAlignedText(item.avgRentPerSqFt ?? '0.00'),
-        ];
-      }).toList() ?? [];
+    // Table Data
+    final tableData = data.bedBathSummary!.bedBathSummary?.map((item) {
+          return [
+            leftAlignedText(item.bedBath ?? ''),
+            rightAlignedText(item.units?.toStringAsFixed(0) ?? '0'),
+            rightAlignedText(item.vacantUnits?.toStringAsFixed(0) ?? '0'),
+            rightAlignedText(item.occupiedUnits?.toStringAsFixed(0) ?? '0'),
+            rightAlignedText("${item.occupancyRate}%" ?? '0.00%'),
+            rightAlignedText(item.totalSqFt?.toStringAsFixed(0) ?? '0'),
+            rightAlignedText(item.avgSqFt ?? '0.00'),
+            rightAlignedText(item.totalRent ?? '0.00'),
+            rightAlignedText(item.avgRent ?? '0.00'),
+            rightAlignedText(item.avgRentPerSqFt ?? '0.00'),
+          ];
+        }).toList() ??
+        [];
 
+    // Add Totals and Averages
+    final totalRow = [
+      leftAlignedText('Totals and Averages', isBold: true),
+      rightAlignedText(
+          data.bedBathSummary!.totalsAndAveragesBedBath?.totalUnits
+                  ?.toStringAsFixed(0) ??
+              '0',
+          isBold: true),
+      rightAlignedText(
+          data.bedBathSummary!.totalsAndAveragesBedBath?.totalVacantUnits
+                  ?.toStringAsFixed(0) ??
+              '0',
+          isBold: true),
+      rightAlignedText(
+          data.bedBathSummary!.totalsAndAveragesBedBath?.totalOccupiedUnits
+                  ?.toStringAsFixed(0) ??
+              '0',
+          isBold: true),
+      rightAlignedText(
+          "${data.bedBathSummary!.totalsAndAveragesBedBath?.avgOccupancyRate}%" ??
+              '0.00%',
+          isBold: true),
+      rightAlignedText(
+          data.bedBathSummary!.totalsAndAveragesBedBath?.totalSqFt
+                  ?.toStringAsFixed(0) ??
+              '0',
+          isBold: true),
+      rightAlignedText(
+          data.bedBathSummary!.totalsAndAveragesBedBath?.avgSqFt ?? '0.00',
+          isBold: true),
+      rightAlignedText(
+          data.bedBathSummary!.totalsAndAveragesBedBath?.totalMarketRent ??
+              '0.00',
+          isBold: true),
+      rightAlignedText(
+          data.bedBathSummary!.totalsAndAveragesBedBath?.avgMarketRent ??
+              '0.00',
+          isBold: true),
+      rightAlignedText(
+          data.bedBathSummary!.totalsAndAveragesBedBath?.avgMarketRentPerSqFt ??
+              '0.00',
+          isBold: true),
+    ];
 
-      // Add Totals and Averages
-      final totalRow = [
-        leftAlignedText('Totals and Averages', isBold: true),
-        rightAlignedText(data.bedBathSummary!.totalsAndAveragesBedBath?.totalUnits?.toStringAsFixed(0) ?? '0', isBold: true),
-        rightAlignedText(data.bedBathSummary!.totalsAndAveragesBedBath?.totalVacantUnits?.toStringAsFixed(0) ?? '0', isBold: true),
-        rightAlignedText(data.bedBathSummary!.totalsAndAveragesBedBath?.totalOccupiedUnits?.toStringAsFixed(0) ?? '0', isBold: true),
-        rightAlignedText("${data.bedBathSummary!.totalsAndAveragesBedBath?.avgOccupancyRate}%" ?? '0.00%', isBold: true),
-        rightAlignedText(data.bedBathSummary!.totalsAndAveragesBedBath?.totalSqFt?.toStringAsFixed(0) ?? '0', isBold: true),
-        rightAlignedText(data.bedBathSummary!.totalsAndAveragesBedBath?.avgSqFt ?? '0.00', isBold: true),
-        rightAlignedText(data.bedBathSummary!.totalsAndAveragesBedBath?.totalMarketRent ?? '0.00', isBold: true),
-        rightAlignedText(data.bedBathSummary!.totalsAndAveragesBedBath?.avgMarketRent ?? '0.00', isBold: true),
-        rightAlignedText(data.bedBathSummary!.totalsAndAveragesBedBath?.avgMarketRentPerSqFt ?? '0.00', isBold: true),
-      ];
+    final tablePropertyData =
+        data.propertySummary!.propertySummary?.map((item) {
+              return [
+                leftAlignedText(item.property ?? ''),
+                rightAlignedText(item.units?.toStringAsFixed(0) ?? '0'),
+                rightAlignedText(item.vacantUnits?.toStringAsFixed(0) ?? '0'),
+                rightAlignedText(item.occupiedUnits?.toStringAsFixed(0) ?? '0'),
+                rightAlignedText("${item.occupancyRate}%" ?? '0.00%'),
+                rightAlignedText(item.totalSqFt?.toStringAsFixed(0) ?? '0'),
+                rightAlignedText(item.avgSqFt ?? '0.00'),
+                rightAlignedText(item.totalRent ?? '0.00'),
+                rightAlignedText(item.avgRent ?? '0.00'),
+                rightAlignedText(item.avgRentPerSqFt ?? '0.00'),
+              ];
+            }).toList() ??
+            [];
 
+    // Add Totals and Averages
+    final totalPropertyRow = [
+      leftAlignedText('Totals and Averages', isBold: true),
+      rightAlignedText(
+          data.propertySummary!.totalsAndAveragesProperty?.totalUnits
+                  ?.toStringAsFixed(0) ??
+              '0',
+          isBold: true),
+      rightAlignedText(
+          data.propertySummary!.totalsAndAveragesProperty?.totalVacantUnits
+                  ?.toStringAsFixed(0) ??
+              '0',
+          isBold: true),
+      rightAlignedText(
+          data.propertySummary!.totalsAndAveragesProperty?.totalOccupiedUnits
+                  ?.toStringAsFixed(0) ??
+              '0',
+          isBold: true),
+      rightAlignedText(
+          "${data.propertySummary!.totalsAndAveragesProperty?.avgOccupancyRate}%" ??
+              '0.00%',
+          isBold: true),
+      rightAlignedText(
+          data.propertySummary!.totalsAndAveragesProperty?.totalSqFt
+                  ?.toStringAsFixed(0) ??
+              '0',
+          isBold: true),
+      rightAlignedText(
+          data.propertySummary!.totalsAndAveragesProperty?.avgSqFt ?? '0.00',
+          isBold: true),
+      rightAlignedText(
+          data.propertySummary!.totalsAndAveragesProperty?.totalMarketRent ??
+              '0.00',
+          isBold: true),
+      rightAlignedText(
+          data.propertySummary!.totalsAndAveragesProperty?.avgMarketRent ??
+              '0.00',
+          isBold: true),
+      rightAlignedText(
+          data.propertySummary!.totalsAndAveragesProperty
+                  ?.avgMarketRentPerSqFt ??
+              '0.00',
+          isBold: true),
+    ];
 
-      final tablePropertyData = data.propertySummary!.propertySummary?.map((item) {
-        return [
-          leftAlignedText(item.property ?? ''),
-          rightAlignedText(item.units?.toStringAsFixed(0) ?? '0'),
-          rightAlignedText(item.vacantUnits?.toStringAsFixed(0) ?? '0'),
-          rightAlignedText(item.occupiedUnits?.toStringAsFixed(0) ?? '0'),
-          rightAlignedText("${item.occupancyRate}%" ?? '0.00%'),
-          rightAlignedText(item.totalSqFt?.toStringAsFixed(0) ?? '0'),
-          rightAlignedText(item.avgSqFt ?? '0.00'),
-          rightAlignedText(item.totalRent ?? '0.00'),
-          rightAlignedText(item.avgRent ?? '0.00'),
-          rightAlignedText(item.avgRentPerSqFt ?? '0.00'),
-        ];
-      }).toList() ?? [];
-
-
-      // Add Totals and Averages
-      final totalPropertyRow = [
-        leftAlignedText('Totals and Averages', isBold: true),
-        rightAlignedText(data.propertySummary!.totalsAndAveragesProperty?.totalUnits?.toStringAsFixed(0) ?? '0', isBold: true),
-        rightAlignedText(data.propertySummary!.totalsAndAveragesProperty?.totalVacantUnits?.toStringAsFixed(0) ?? '0', isBold: true),
-        rightAlignedText(data.propertySummary!.totalsAndAveragesProperty?.totalOccupiedUnits?.toStringAsFixed(0) ?? '0', isBold: true),
-        rightAlignedText("${data.propertySummary!.totalsAndAveragesProperty?.avgOccupancyRate}%" ?? '0.00%', isBold: true),
-        rightAlignedText(data.propertySummary!.totalsAndAveragesProperty?.totalSqFt?.toStringAsFixed(0) ?? '0', isBold: true),
-        rightAlignedText(data.propertySummary!.totalsAndAveragesProperty?.avgSqFt ?? '0.00', isBold: true),
-        rightAlignedText(data.propertySummary!.totalsAndAveragesProperty?.totalMarketRent ?? '0.00', isBold: true),
-        rightAlignedText(data.propertySummary!.totalsAndAveragesProperty?.avgMarketRent ?? '0.00', isBold: true),
-        rightAlignedText(data.propertySummary!.totalsAndAveragesProperty?.avgMarketRentPerSqFt ?? '0.00', isBold: true),
-      ];
-
-      var rentalOwer;
-      if(selectedOwner == "all" || selectedOwner ==  null){
-        rentalOwer = "All";
-      }
-      else{
-       var Ower = rentalowners.firstWhere((test)=>test["rentalowner_id"] == selectedOwner);
-       rentalOwer = Ower["rentalOwner_name"];
-      }
-      tableData.add(totalRow);
-      tablePropertyData.add(totalPropertyRow);
-      pdf.addPage(
-        pw.MultiPage(
-          pageFormat: PdfPageFormat.a4.landscape,
-          margin: const pw.EdgeInsets.all(20),
-          build: (pw.Context context) {
-            return [
-              // Header
-              pw.Header(
-                level: 0,
-                padding: const pw.EdgeInsets.only(bottom: 10),
-                child: pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Image(image, width: 40, height: 40),
-                    pw.Column(
-                      children: [
-                        pw.Text(
-                          'Rent Roll Report',
-                          style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
-                        ),
-                        pw.SizedBox(height: 5),
-                        pw.Text('As of $currentDate-$rentalOwer Current Leases, All Units', style: pw.TextStyle(fontSize: 9)),
-                      ],
-                    ),
-                    pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.end,
-                      children: [
-                        pw.Text(profileData?.companyName ?? 'N/A', style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold)),
-                        pw.Text(profileData?.companyAddress ?? 'N/A', style: pw.TextStyle(fontSize: 8)),
-                        pw.Text(
-                          '${profileData?.companyCity ?? ''}, ${profileData?.companyState ?? ''}, ${profileData?.companyCountry ?? ''}',
-                          style: pw.TextStyle(fontSize: 8),
-                        ),
-                        pw.Text(profileData?.companyPostalCode ?? '', style: pw.TextStyle(fontSize: 8)),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              pw.SizedBox(height: 8),
-
-              // Table Header
-              pw.Table.fromTextArray(
-                  headerStyle: headerStyle,
-                  cellStyle: cellStyle,
-                  headerDecoration: headerDecoration,
-                  headerAlignments: {
-                    for (int i = 0; i < headers.length; i++) i: headers[i]['title'].toString().toLowerCase().contains('tenant') ? pw.Alignment.centerLeft : pw.Alignment.center,
-                  },
-                  cellAlignment: pw.Alignment.centerLeft,
-                  columnWidths: {
-                    for (int i = 0; i < headers.length; i++) i: pw.FlexColumnWidth(double.parse(headers[i]['flex'].toString())),
-                  },
-                  headers: headers.map((header) => header['title'].toString()).toList(),
-                  data: [],
-                  border: null),
-
-              pw.SizedBox(height: 4),
-
-              // Data
-              ...data.rentals!.expand((rental) {
-                final List<List<pw.Widget>> leaseRows = rental.activeLeases!.map((leasedata) {
-                  return [
-                    pw.Text(leasedata.unit?.rentalUnit ?? '', style: pw.TextStyle(fontSize: 7)),
-                    pw.Align(
-                        alignment: pw.Alignment.centerLeft,
-                        child: pw.Text(
-                          leasedata.tenants!.map((t) => "${t.tenantFirstName ?? ''} ${t.tenantLastName ?? ''}").join(", "),
-                          style: pw.TextStyle(fontSize: 7),
-                        )),
-                    pw.Text(leasedata.leaseStart ?? '', style: pw.TextStyle(fontSize: 7)),
-                    pw.Text(leasedata.leaseEnd ?? '', style: pw.TextStyle(fontSize: 7)),
-                    pw.Text(leasedata.unit?.bedBath ?? '---', style: pw.TextStyle(fontSize: 7)),
-                    pw.Text(leasedata.rentCycle ?? '', style: pw.TextStyle(fontSize: 7)),
-                    pw.Text(leasedata.leaseStart ?? '', style: pw.TextStyle(fontSize: 7)),
-                    pw.Align(
-                      alignment: pw.Alignment.centerRight,
-                      child: pw.Text(
-                        '\$${leasedata.rentAmount?.toStringAsFixed(2) ?? '0.00'}',
-                        style: pw.TextStyle(fontSize: 7),
+    var rentalOwer;
+    if (selectedOwner == "all" || selectedOwner == null) {
+      rentalOwer = "All";
+    } else {
+      var Ower = rentalowners
+          .firstWhere((test) => test["rentalowner_id"] == selectedOwner);
+      rentalOwer = Ower["rentalOwner_name"];
+    }
+    tableData.add(totalRow);
+    tablePropertyData.add(totalPropertyRow);
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4.landscape,
+        margin: const pw.EdgeInsets.all(20),
+        build: (pw.Context context) {
+          return [
+            // Header
+            pw.Header(
+              level: 0,
+              padding: const pw.EdgeInsets.only(bottom: 10),
+              child: pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Image(image, width: 40, height: 40),
+                  pw.Column(
+                    children: [
+                      pw.Text(
+                        'Rent Roll Report',
+                        style: pw.TextStyle(
+                            fontSize: 14, fontWeight: pw.FontWeight.bold),
                       ),
-                    ),
-                    pw.Align(
-                      alignment: pw.Alignment.centerRight,
-                      child: pw.Text(
-                        '\$${leasedata.chargeAmount?.toStringAsFixed(2) ?? '0.00'}',
-                        style: pw.TextStyle(fontSize: 7),
-                      ),
-                    ),
-                    pw.Align(
-                      alignment: pw.Alignment.centerRight,
-                      child: pw.Text(
-                        '\$${leasedata.creditAmount?.toStringAsFixed(2) ?? '0.00'}',
-                        style: pw.TextStyle(fontSize: 7),
-                      ),
-                    ),
-                    pw.Align(
-                      alignment: pw.Alignment.centerRight,
-                      child: pw.Text(
-                        '\$${leasedata.chargeTotal?.toStringAsFixed(2) ?? '0.00'}',
-                        style: pw.TextStyle(fontSize: 7),
-                      ),
-                    ),
-                    pw.Align(
-                      alignment: pw.Alignment.centerRight,
-                      child: pw.Text(
-                        '\$${leasedata.depositHeld?.toStringAsFixed(2) ?? '0.00'}',
-                        style: pw.TextStyle(fontSize: 7),
-                      ),
-                    ),
-                    pw.Align(
-                      alignment: pw.Alignment.centerRight,
-                      child: pw.Text(
-                        '\$${leasedata.prepayments?.toStringAsFixed(2) ?? '0.00'}',
-                        style: pw.TextStyle(fontSize: 7),
-                      ),
-                    ),
-                    pw.Align(
-                      alignment: pw.Alignment.centerRight,
-                      child: pw.Text(
-                        '\$${leasedata.balanceDue?.toStringAsFixed(2) ?? '0.00'}',
-                        style: pw.TextStyle(fontSize: 7),
-                      ),
-                    ),
-                  ];
-                }).toList();
-
-  // Render the final table
-                final pw.Widget leaseTable = pw.Table.fromTextArray(
-                  //  headers: tableHeaders,
-                  data: leaseRows,
-                  // headerStyle: headerStyle,
-                  cellStyle: cellStyle,
-                  // headerDecoration: headerDecoration,
-                  cellAlignment: pw.Alignment.centerLeft,
-                  columnWidths: {
-                    for (int i = 0; i < headers.length; i++) i: pw.FlexColumnWidth(double.parse(headers[i]['flex'].toString())),
-                  },
-                  border: null, // Optional: add border if needed
-                );
-
-                return [
-                  if (rental.activeLeases!.length > 0) pw.SizedBox(height: 6),
-                  if (rental.activeLeases!.length > 0) pw.Text(rental.rentalAddress ?? 'Property', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9)),
-                  if (rental.activeLeases!.length > 0) pw.SizedBox(height: 3),
-                  ...rental.activeLeases!.map((leasedata) {
-                    return pw.Container(padding: const pw.EdgeInsets.symmetric(vertical: 2, horizontal: 0), child: leaseTable);
-                  }),
-                  if (rental.totals != null && rental.activeLeases!.length > 0) pw.SizedBox(height: 4),
-                  if (rental.totals != null && rental.activeLeases!.length > 0)
-                    pw.Table.fromTextArray(
-                      cellAlignment: pw.Alignment.centerLeft,
-                      headerDecoration: pw.BoxDecoration(), // No header style
-                      headerHeight: 0, // Hide header row
-                      border: null,
-                      data: [
-                        [
-                          pw.Align(
-                              alignment: pw.Alignment.centerLeft,
-                              child: pw.Text(
-                                "Total for ${rental.rentalAddress}",
-                                style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold),
-                                textAlign: pw.TextAlign.left,
-                              )),
-                          pw.Align(
-                              alignment: pw.Alignment.centerRight,
-                              child: pw.Text(
-                                '\$${rental.totals!.totalRent!.toStringAsFixed(2)}',
-                                style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold),
-                                textAlign: pw.TextAlign.right,
-                              )),
-                          pw.Align(
-                              alignment: pw.Alignment.centerRight,
-                              child: pw.Text(
-                                '\$${rental.totals!.totalCharges!.toStringAsFixed(2)}',
-                                style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold),
-                                textAlign: pw.TextAlign.right,
-                              )),
-                          pw.Align(
-                              alignment: pw.Alignment.centerRight,
-                              child: pw.Text(
-                                '\$${rental.totals!.totalCredits!.toStringAsFixed(2)}',
-                                style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold),
-                                textAlign: pw.TextAlign.right,
-                              )),
-                          pw.Align(
-                              alignment: pw.Alignment.centerRight,
-                              child: pw.Text(
-                                '\$${rental.totals!.totalAmount!.toStringAsFixed(2)}',
-                                style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold),
-                                textAlign: pw.TextAlign.right,
-                              )),
-                          pw.Align(
-                              alignment: pw.Alignment.centerRight,
-                              child: pw.Text(
-                                '\$${rental.totals!.totalDeposits!.toStringAsFixed(2)}',
-                                style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold),
-                                textAlign: pw.TextAlign.right,
-                              )),
-                          pw.Align(
-                              alignment: pw.Alignment.centerRight,
-                              child: pw.Text(
-                                '\$${rental.totals!.totalPrepayments!.toStringAsFixed(2)}',
-                                style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold),
-                                textAlign: pw.TextAlign.right,
-                              )),
-                          pw.Align(
-                              alignment: pw.Alignment.centerRight,
-                              child: pw.Text(
-                                '\$${rental.totals!.totalBalanceDue!.toStringAsFixed(2)}',
-                                style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold),
-                                textAlign: pw.TextAlign.right,
-                              )),
-                        ],
-                      ],
-                      cellStyle: pw.TextStyle(fontSize: 7, fontWeight: pw.FontWeight.bold),
-                      columnWidths: {
-                        0: pw.FlexColumnWidth(8),
-                        1: pw.FlexColumnWidth(1),
-                        2: pw.FlexColumnWidth(1),
-                        3: pw.FlexColumnWidth(1),
-                        4: pw.FlexColumnWidth(1),
-                        5: pw.FlexColumnWidth(1),
-                        6: pw.FlexColumnWidth(1),
-                        7: pw.FlexColumnWidth(1),
-                      },
-                    ),
-                ];
-              }).toList(),
-
-              ////------------Grand Total..
-              pw.SizedBox(height: 100),
-              pw.Container(child: pw.Text("  Grand Totals")),
-              pw.Container(
-                width: 250,
-                child: pw.Table.fromTextArray(
-                    headerStyle: headerStyle,
-                    cellStyle: pw.TextStyle(fontSize: 10),
-                    headerDecoration: headerDecoration,
-                    headerAlignments: {
-                      for (int i = 0; i < headers.length; i++) i: headers[i]['title'].toString().toLowerCase().contains('tenant') ? pw.Alignment.centerLeft : pw.Alignment.center,
-                    },
-                    cellAlignment: pw.Alignment.centerLeft,
-                    columnWidths: {
-                      0: pw.FlexColumnWidth(2), // Date
-                      1: pw.FlexColumnWidth(1.5), // Address
-                    },
-                    headers: ["", "Amount"],
-                    data: [
-                      [
-                        pw.Text("Market Rent", style: pw.TextStyle(fontSize: 10)),
-                        pw.Align(
-                          alignment: pw.Alignment.centerRight,
-                          child: pw.Text(
-                            '\$${'0.00'}',
-                            style: pw.TextStyle(fontSize: 10),
-                          ),
-                        ),
-                      ],
-                      [
-                        pw.Text("Rent", style: pw.TextStyle(fontSize: 10)),
-                        pw.Align(
-                          alignment: pw.Alignment.centerRight,
-                          child: pw.Text(
-                            '\$${data.grandTotal!.totalRent!.toStringAsFixed(2) ?? '0.00'}',
-                            style: pw.TextStyle(fontSize: 10),
-                          ),
-                        ),
-                      ],
-                      [
-                        pw.Text("Recurring Charges", style: pw.TextStyle(fontSize: 10)),
-                        pw.Align(
-                          alignment: pw.Alignment.centerRight,
-                          child: pw.Text(
-                            '\$${data.grandTotal!.totalCharges!.toStringAsFixed(2) ?? "0.0"}',
-                            style: pw.TextStyle(fontSize: 10),
-                          ),
-                        ),
-                      ],
-                      [
-                        pw.Text("Recurring Credits", style: pw.TextStyle(fontSize: 10)),
-                        pw.Align(
-                          alignment: pw.Alignment.centerRight,
-                          child: pw.Text(
-                            '\$${data.grandTotal!.totalCredits!.toStringAsFixed(2) ?? "0.0"}',
-                            style: pw.TextStyle(fontSize: 10),
-                          ),
-                        ),
-                      ],
-                      [
-                        pw.Text("Deposit Held", style: pw.TextStyle(fontSize: 10)),
-                        pw.Align(
-                          alignment: pw.Alignment.centerRight,
-                          child: pw.Text(
-                            '\$${data.grandTotal!.totalCharges!.toStringAsFixed(2) ?? "0.0"}',
-                            style: pw.TextStyle(fontSize: 10),
-                          ),
-                        ),
-                      ],
-                      [
-                        pw.Text("Balance Due", style: pw.TextStyle(fontSize: 10)),
-                        pw.Align(
-                          alignment: pw.Alignment.centerRight,
-                          child: pw.Text(
-                            '\$${data.grandTotal!.totalBalanceDue!.toStringAsFixed(2) ?? "0.0"}',
-                            style: pw.TextStyle(fontSize: 10),
-                          ),
-                        ),
-                      ],
+                      pw.SizedBox(height: 5),
+                      pw.Text(
+                          'As of $currentDate-$rentalOwer Current Leases, All Units',
+                          style: const pw.TextStyle(fontSize: 9)),
                     ],
-                    border: null),
-              ),
-              pw.SizedBox(height: 20),
-              pw.Table.fromTextArray(
-                headers: [
-                  "Summery by Bed/Bath",
-                  "Occupancy",
-                  "Square Feet",
-                  "Market Rent"
+                  ),
+                  pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.end,
+                    children: [
+                      pw.Text(profileData?.companyName ?? 'N/A',
+                          style: pw.TextStyle(
+                              fontSize: 9, fontWeight: pw.FontWeight.bold)),
+                      pw.Text(profileData?.companyAddress ?? 'N/A',
+                          style: const pw.TextStyle(fontSize: 8)),
+                      pw.Text(
+                        '${profileData?.companyCity ?? ''}, ${profileData?.companyState ?? ''}, ${profileData?.companyCountry ?? ''}',
+                        style: const pw.TextStyle(fontSize: 8),
+                      ),
+                      pw.Text(profileData?.companyPostalCode ?? '',
+                          style: const pw.TextStyle(fontSize: 8)),
+                    ],
+                  ),
                 ],
-                data: [],
-                headerStyle: pw.TextStyle(
-                  fontWeight: pw.FontWeight.bold,
-                  fontSize: 10,
-                  color: PdfColors.black,
-                ),
-               // headerDecoration: headerDecoration,
-                cellAlignment: pw.Alignment.centerLeft,
-                border: null,
-                cellStyle: pw.TextStyle(fontSize: 10),
-                columnWidths: {
-                  0: const pw.FixedColumnWidth(120),
-                  1: const pw.FixedColumnWidth(170),
-                  2: const pw.FixedColumnWidth(220),
-
-                  3: const pw.FixedColumnWidth(210),
-
-                },
               ),
-              pw.Table.fromTextArray(
-                headers: [
-                  'Bed/Bath',
-                  'No. of Units',
-                  'Vacant',
-                  'Occupied',
-                  '% Occupied',
-                  'Total',
-                  'Avg',
-                  'Total',
-                  'Avg',
-                  'Avg/Sq.Ft.',
-                ],
-                data: tableData,
-                headerStyle: pw.TextStyle(
-                  //fontWeight: pw.FontWeight.bold,
-                  fontSize: 10,
-                  color: PdfColors.white,
-                ),
+            ),
+
+            pw.SizedBox(height: 8),
+
+            // Table Header
+            pw.Table.fromTextArray(
+                headerStyle: headerStyle,
+                cellStyle: cellStyle,
                 headerDecoration: headerDecoration,
-                cellAlignment: pw.Alignment.centerLeft,
-                border: null,
-                cellStyle: pw.TextStyle(fontSize: 10),
-                columnWidths: {
-                  0: const pw.FixedColumnWidth(120),
-                  1: const pw.FixedColumnWidth(40),
-                  2: const pw.FixedColumnWidth(30),
-                  3: const pw.FixedColumnWidth(40),
-                  4: const pw.FixedColumnWidth(50),
-                  5: const pw.FixedColumnWidth(30),
-                  6: const pw.FixedColumnWidth(30),
-                  7: const pw.FixedColumnWidth(30),
-                  8: const pw.FixedColumnWidth(30),
-                  9: const pw.FixedColumnWidth(50),
+                headerAlignments: {
+                  for (int i = 0; i < headers.length; i++)
+                    i: headers[i]['title']
+                            .toString()
+                            .toLowerCase()
+                            .contains('tenant')
+                        ? pw.Alignment.centerLeft
+                        : pw.Alignment.center,
                 },
-              ),
-              pw.SizedBox(height: 20),
-              pw.Table.fromTextArray(
-                headers: [
-                  "Summery by Property",
-                  "Occupancy",
-                  "Square Feet",
-                  "Market Rent"
-                ],
+                cellAlignment: pw.Alignment.centerLeft,
+                columnWidths: {
+                  for (int i = 0; i < headers.length; i++)
+                    i: pw.FlexColumnWidth(
+                        double.parse(headers[i]['flex'].toString())),
+                },
+                headers: headers
+                    .map((header) => header['title'].toString())
+                    .toList(),
                 data: [],
-                headerStyle: pw.TextStyle(
-                  fontWeight: pw.FontWeight.bold,
-                  fontSize: 10,
-                  color: PdfColors.black,
-                ),
+                border: null),
+
+            pw.SizedBox(height: 4),
+
+            // Data
+            ...data.rentals!.expand((rental) {
+              final List<List<pw.Widget>> leaseRows =
+                  rental.activeLeases!.map((leasedata) {
+                return [
+                  pw.Text(leasedata.unit?.rentalUnit ?? '',
+                      style: const pw.TextStyle(fontSize: 7)),
+                  pw.Align(
+                      alignment: pw.Alignment.centerLeft,
+                      child: pw.Text(
+                        leasedata.tenants!
+                            .map((t) =>
+                                "${t.tenantFirstName ?? ''} ${t.tenantLastName ?? ''}")
+                            .join(", "),
+                        style: const pw.TextStyle(fontSize: 7),
+                      )),
+                  pw.Text(leasedata.leaseStart ?? '',
+                      style: const pw.TextStyle(fontSize: 7)),
+                  pw.Text(leasedata.leaseEnd ?? '',
+                      style: const pw.TextStyle(fontSize: 7)),
+                  pw.Text(leasedata.unit?.bedBath ?? '---',
+                      style: const pw.TextStyle(fontSize: 7)),
+                  pw.Text(leasedata.rentCycle ?? '',
+                      style: const pw.TextStyle(fontSize: 7)),
+                  pw.Text(leasedata.leaseStart ?? '',
+                      style: const pw.TextStyle(fontSize: 7)),
+                  pw.Align(
+                    alignment: pw.Alignment.centerRight,
+                    child: pw.Text(
+                      '\$${leasedata.rentAmount?.toStringAsFixed(2) ?? '0.00'}',
+                      style: const pw.TextStyle(fontSize: 7),
+                    ),
+                  ),
+                  pw.Align(
+                    alignment: pw.Alignment.centerRight,
+                    child: pw.Text(
+                      '\$${leasedata.chargeAmount?.toStringAsFixed(2) ?? '0.00'}',
+                      style: const pw.TextStyle(fontSize: 7),
+                    ),
+                  ),
+                  pw.Align(
+                    alignment: pw.Alignment.centerRight,
+                    child: pw.Text(
+                      '\$${leasedata.creditAmount?.toStringAsFixed(2) ?? '0.00'}',
+                      style: const pw.TextStyle(fontSize: 7),
+                    ),
+                  ),
+                  pw.Align(
+                    alignment: pw.Alignment.centerRight,
+                    child: pw.Text(
+                      '\$${leasedata.chargeTotal?.toStringAsFixed(2) ?? '0.00'}',
+                      style: const pw.TextStyle(fontSize: 7),
+                    ),
+                  ),
+                  pw.Align(
+                    alignment: pw.Alignment.centerRight,
+                    child: pw.Text(
+                      '\$${leasedata.depositHeld?.toStringAsFixed(2) ?? '0.00'}',
+                      style: const pw.TextStyle(fontSize: 7),
+                    ),
+                  ),
+                  pw.Align(
+                    alignment: pw.Alignment.centerRight,
+                    child: pw.Text(
+                      '\$${leasedata.prepayments?.toStringAsFixed(2) ?? '0.00'}',
+                      style: const pw.TextStyle(fontSize: 7),
+                    ),
+                  ),
+                  pw.Align(
+                    alignment: pw.Alignment.centerRight,
+                    child: pw.Text(
+                      '\$${leasedata.balanceDue?.toStringAsFixed(2) ?? '0.00'}',
+                      style: const pw.TextStyle(fontSize: 7),
+                    ),
+                  ),
+                ];
+              }).toList();
+
+              // Render the final table
+              final pw.Widget leaseTable = pw.Table.fromTextArray(
+                //  headers: tableHeaders,
+                data: leaseRows,
+                // headerStyle: headerStyle,
+                cellStyle: cellStyle,
                 // headerDecoration: headerDecoration,
                 cellAlignment: pw.Alignment.centerLeft,
-                border: null,
-                cellStyle: pw.TextStyle(fontSize: 10),
                 columnWidths: {
-                  0: const pw.FixedColumnWidth(120),
-                  1: const pw.FixedColumnWidth(170),
-                  2: const pw.FixedColumnWidth(220),
-                  3: const pw.FixedColumnWidth(210),
-
+                  for (int i = 0; i < headers.length; i++)
+                    i: pw.FlexColumnWidth(
+                        double.parse(headers[i]['flex'].toString())),
                 },
+                border: null, // Optional: add border if needed
+              );
+
+              return [
+                if (rental.activeLeases!.length > 0) pw.SizedBox(height: 6),
+                if (rental.activeLeases!.length > 0)
+                  pw.Text(rental.rentalAddress ?? 'Property',
+                      style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold, fontSize: 9)),
+                if (rental.activeLeases!.length > 0) pw.SizedBox(height: 3),
+                ...rental.activeLeases!.map((leasedata) {
+                  return pw.Container(
+                      padding: const pw.EdgeInsets.symmetric(
+                          vertical: 2, horizontal: 0),
+                      child: leaseTable);
+                }),
+                if (rental.totals != null && rental.activeLeases!.length > 0)
+                  pw.SizedBox(height: 4),
+                if (rental.totals != null && rental.activeLeases!.length > 0)
+                  pw.Table.fromTextArray(
+                    cellAlignment: pw.Alignment.centerLeft,
+                    headerDecoration:
+                        const pw.BoxDecoration(), // No header style
+                    headerHeight: 0, // Hide header row
+                    border: null,
+                    data: [
+                      [
+                        pw.Align(
+                            alignment: pw.Alignment.centerLeft,
+                            child: pw.Text(
+                              "Total for ${rental.rentalAddress}",
+                              style: pw.TextStyle(
+                                  fontSize: 8, fontWeight: pw.FontWeight.bold),
+                              textAlign: pw.TextAlign.left,
+                            )),
+                        pw.Align(
+                            alignment: pw.Alignment.centerRight,
+                            child: pw.Text(
+                              '\$${rental.totals!.totalRent!.toStringAsFixed(2)}',
+                              style: pw.TextStyle(
+                                  fontSize: 8, fontWeight: pw.FontWeight.bold),
+                              textAlign: pw.TextAlign.right,
+                            )),
+                        pw.Align(
+                            alignment: pw.Alignment.centerRight,
+                            child: pw.Text(
+                              '\$${rental.totals!.totalCharges!.toStringAsFixed(2)}',
+                              style: pw.TextStyle(
+                                  fontSize: 8, fontWeight: pw.FontWeight.bold),
+                              textAlign: pw.TextAlign.right,
+                            )),
+                        pw.Align(
+                            alignment: pw.Alignment.centerRight,
+                            child: pw.Text(
+                              '\$${rental.totals!.totalCredits!.toStringAsFixed(2)}',
+                              style: pw.TextStyle(
+                                  fontSize: 8, fontWeight: pw.FontWeight.bold),
+                              textAlign: pw.TextAlign.right,
+                            )),
+                        pw.Align(
+                            alignment: pw.Alignment.centerRight,
+                            child: pw.Text(
+                              '\$${rental.totals!.totalAmount!.toStringAsFixed(2)}',
+                              style: pw.TextStyle(
+                                  fontSize: 8, fontWeight: pw.FontWeight.bold),
+                              textAlign: pw.TextAlign.right,
+                            )),
+                        pw.Align(
+                            alignment: pw.Alignment.centerRight,
+                            child: pw.Text(
+                              '\$${rental.totals!.totalDeposits!.toStringAsFixed(2)}',
+                              style: pw.TextStyle(
+                                  fontSize: 8, fontWeight: pw.FontWeight.bold),
+                              textAlign: pw.TextAlign.right,
+                            )),
+                        pw.Align(
+                            alignment: pw.Alignment.centerRight,
+                            child: pw.Text(
+                              '\$${rental.totals!.totalPrepayments!.toStringAsFixed(2)}',
+                              style: pw.TextStyle(
+                                  fontSize: 8, fontWeight: pw.FontWeight.bold),
+                              textAlign: pw.TextAlign.right,
+                            )),
+                        pw.Align(
+                            alignment: pw.Alignment.centerRight,
+                            child: pw.Text(
+                              '\$${rental.totals!.totalBalanceDue!.toStringAsFixed(2)}',
+                              style: pw.TextStyle(
+                                  fontSize: 8, fontWeight: pw.FontWeight.bold),
+                              textAlign: pw.TextAlign.right,
+                            )),
+                      ],
+                    ],
+                    cellStyle: pw.TextStyle(
+                        fontSize: 7, fontWeight: pw.FontWeight.bold),
+                    columnWidths: {
+                      0: const pw.FlexColumnWidth(8),
+                      1: const pw.FlexColumnWidth(1),
+                      2: const pw.FlexColumnWidth(1),
+                      3: const pw.FlexColumnWidth(1),
+                      4: const pw.FlexColumnWidth(1),
+                      5: const pw.FlexColumnWidth(1),
+                      6: const pw.FlexColumnWidth(1),
+                      7: const pw.FlexColumnWidth(1),
+                    },
+                  ),
+              ];
+            }).toList(),
+
+            ////------------Grand Total..
+            pw.SizedBox(height: 100),
+            pw.Container(child: pw.Text("  Grand Totals")),
+            pw.Container(
+              width: 250,
+              child: pw.Table.fromTextArray(
+                  headerStyle: headerStyle,
+                  cellStyle: const pw.TextStyle(fontSize: 10),
+                  headerDecoration: headerDecoration,
+                  headerAlignments: {
+                    for (int i = 0; i < headers.length; i++)
+                      i: headers[i]['title']
+                              .toString()
+                              .toLowerCase()
+                              .contains('tenant')
+                          ? pw.Alignment.centerLeft
+                          : pw.Alignment.center,
+                  },
+                  cellAlignment: pw.Alignment.centerLeft,
+                  columnWidths: {
+                    0: const pw.FlexColumnWidth(2), // Date
+                    1: const pw.FlexColumnWidth(1.5), // Address
+                  },
+                  headers: ["", "Amount"],
+                  data: [
+                    [
+                      pw.Text("Market Rent",
+                          style: const pw.TextStyle(fontSize: 10)),
+                      pw.Align(
+                        alignment: pw.Alignment.centerRight,
+                        child: pw.Text(
+                          '\$${'0.00'}',
+                          style: const pw.TextStyle(fontSize: 10),
+                        ),
+                      ),
+                    ],
+                    [
+                      pw.Text("Rent", style: const pw.TextStyle(fontSize: 10)),
+                      pw.Align(
+                        alignment: pw.Alignment.centerRight,
+                        child: pw.Text(
+                          '\$${data.grandTotal!.totalRent!.toStringAsFixed(2) ?? '0.00'}',
+                          style: const pw.TextStyle(fontSize: 10),
+                        ),
+                      ),
+                    ],
+                    [
+                      pw.Text("Recurring Charges",
+                          style: const pw.TextStyle(fontSize: 10)),
+                      pw.Align(
+                        alignment: pw.Alignment.centerRight,
+                        child: pw.Text(
+                          '\$${data.grandTotal!.totalCharges!.toStringAsFixed(2) ?? "0.0"}',
+                          style: const pw.TextStyle(fontSize: 10),
+                        ),
+                      ),
+                    ],
+                    [
+                      pw.Text("Recurring Credits",
+                          style: const pw.TextStyle(fontSize: 10)),
+                      pw.Align(
+                        alignment: pw.Alignment.centerRight,
+                        child: pw.Text(
+                          '\$${data.grandTotal!.totalCredits!.toStringAsFixed(2) ?? "0.0"}',
+                          style: const pw.TextStyle(fontSize: 10),
+                        ),
+                      ),
+                    ],
+                    [
+                      pw.Text("Deposit Held",
+                          style: const pw.TextStyle(fontSize: 10)),
+                      pw.Align(
+                        alignment: pw.Alignment.centerRight,
+                        child: pw.Text(
+                          '\$${data.grandTotal!.totalCharges!.toStringAsFixed(2) ?? "0.0"}',
+                          style: const pw.TextStyle(fontSize: 10),
+                        ),
+                      ),
+                    ],
+                    [
+                      pw.Text("Balance Due",
+                          style: const pw.TextStyle(fontSize: 10)),
+                      pw.Align(
+                        alignment: pw.Alignment.centerRight,
+                        child: pw.Text(
+                          '\$${data.grandTotal!.totalBalanceDue!.toStringAsFixed(2) ?? "0.0"}',
+                          style: const pw.TextStyle(fontSize: 10),
+                        ),
+                      ),
+                    ],
+                  ],
+                  border: null),
+            ),
+            pw.SizedBox(height: 20),
+            pw.Table.fromTextArray(
+              headers: [
+                "Summery by Bed/Bath",
+                "Occupancy",
+                "Square Feet",
+                "Market Rent"
+              ],
+              data: [],
+              headerStyle: pw.TextStyle(
+                fontWeight: pw.FontWeight.bold,
+                fontSize: 10,
+                color: PdfColors.black,
               ),
-              pw.Table.fromTextArray(
-                headers: [
-                  'Property',
-                  'No. of Units',
-                  'Vacant',
-                  'Occupied',
-                  '% Occupied',
-                  'Total',
-                  'Avg',
-                  'Total',
-                  'Avg',
-                  'Avg/Sq.Ft.',
-                ],
-                data: tablePropertyData,
-                headerStyle: headerStyle,
-                headerDecoration: headerDecoration,
-                cellAlignment: pw.Alignment.centerLeft,
-                border: null,
-                cellStyle: pw.TextStyle(fontSize: 10),
-                columnWidths: {
-                  0: const pw.FixedColumnWidth(120),
-                  1: const pw.FixedColumnWidth(60),
-                  2: const pw.FixedColumnWidth(50),
-                  3: const pw.FixedColumnWidth(60),
-                  4: const pw.FixedColumnWidth(80),
-                  5: const pw.FixedColumnWidth(70),
-                  6: const pw.FixedColumnWidth(70),
-                  7: const pw.FixedColumnWidth(70),
-                  8: const pw.FixedColumnWidth(70),
-                  9: const pw.FixedColumnWidth(70),
-                },
-              )
-            ];
-          },
-        ),
-      );
-      await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => pdf.save());
+              // headerDecoration: headerDecoration,
+              cellAlignment: pw.Alignment.centerLeft,
+              border: null,
+              cellStyle: const pw.TextStyle(fontSize: 10),
+              columnWidths: {
+                0: const pw.FixedColumnWidth(120),
+                1: const pw.FixedColumnWidth(170),
+                2: const pw.FixedColumnWidth(220),
+                3: const pw.FixedColumnWidth(210),
+              },
+            ),
+            pw.Table.fromTextArray(
+              headers: [
+                'Bed/Bath',
+                'No. of Units',
+                'Vacant',
+                'Occupied',
+                '% Occupied',
+                'Total',
+                'Avg',
+                'Total',
+                'Avg',
+                'Avg/Sq.Ft.',
+              ],
+              data: tableData,
+              headerStyle: const pw.TextStyle(
+                //fontWeight: pw.FontWeight.bold,
+                fontSize: 10,
+                color: PdfColors.white,
+              ),
+              headerDecoration: headerDecoration,
+              cellAlignment: pw.Alignment.centerLeft,
+              border: null,
+              cellStyle: const pw.TextStyle(fontSize: 10),
+              columnWidths: {
+                0: const pw.FixedColumnWidth(120),
+                1: const pw.FixedColumnWidth(40),
+                2: const pw.FixedColumnWidth(30),
+                3: const pw.FixedColumnWidth(40),
+                4: const pw.FixedColumnWidth(50),
+                5: const pw.FixedColumnWidth(30),
+                6: const pw.FixedColumnWidth(30),
+                7: const pw.FixedColumnWidth(30),
+                8: const pw.FixedColumnWidth(30),
+                9: const pw.FixedColumnWidth(50),
+              },
+            ),
+            pw.SizedBox(height: 20),
+            pw.Table.fromTextArray(
+              headers: [
+                "Summery by Property",
+                "Occupancy",
+                "Square Feet",
+                "Market Rent"
+              ],
+              data: [],
+              headerStyle: pw.TextStyle(
+                fontWeight: pw.FontWeight.bold,
+                fontSize: 10,
+                color: PdfColors.black,
+              ),
+              // headerDecoration: headerDecoration,
+              cellAlignment: pw.Alignment.centerLeft,
+              border: null,
+              cellStyle: const pw.TextStyle(fontSize: 10),
+              columnWidths: {
+                0: const pw.FixedColumnWidth(120),
+                1: const pw.FixedColumnWidth(170),
+                2: const pw.FixedColumnWidth(220),
+                3: const pw.FixedColumnWidth(210),
+              },
+            ),
+            pw.Table.fromTextArray(
+              headers: [
+                'Property',
+                'No. of Units',
+                'Vacant',
+                'Occupied',
+                '% Occupied',
+                'Total',
+                'Avg',
+                'Total',
+                'Avg',
+                'Avg/Sq.Ft.',
+              ],
+              data: tablePropertyData,
+              headerStyle: headerStyle,
+              headerDecoration: headerDecoration,
+              cellAlignment: pw.Alignment.centerLeft,
+              border: null,
+              cellStyle: const pw.TextStyle(fontSize: 10),
+              columnWidths: {
+                0: const pw.FixedColumnWidth(120),
+                1: const pw.FixedColumnWidth(60),
+                2: const pw.FixedColumnWidth(50),
+                3: const pw.FixedColumnWidth(60),
+                4: const pw.FixedColumnWidth(80),
+                5: const pw.FixedColumnWidth(70),
+                6: const pw.FixedColumnWidth(70),
+                7: const pw.FixedColumnWidth(70),
+                8: const pw.FixedColumnWidth(70),
+                9: const pw.FixedColumnWidth(70),
+              },
+            )
+          ];
+        },
+      ),
+    );
+    await Printing.layoutPdf(
+        onLayout: (PdfPageFormat format) async => pdf.save());
   }
-
-
-
 
   Future<void> generateRentersInsuranceExcel(rentrollreportmodel data) async {
     // Create a new Excel workbook
@@ -1169,12 +1309,22 @@ class _RentersInsurancesState extends State<RentersInsurances> {
 
     // Add header information
 
-
     // Add column headers
     final headers = [
-      'Unit', 'Tenants', 'Lease Start', 'Lease End', 'Bed/Bath',
-      'Rent Cycle', 'Rent Start', 'Rent', 'Charges', 'Credits',
-      'Total', 'Deposits', 'Prepayments', 'Balance'
+      'Unit',
+      'Tenants',
+      'Lease Start',
+      'Lease End',
+      'Bed/Bath',
+      'Rent Cycle',
+      'Rent Start',
+      'Rent',
+      'Charges',
+      'Credits',
+      'Total',
+      'Deposits',
+      'Prepayments',
+      'Balance'
     ];
 
     for (int i = 0; i < headers.length; i++) {
@@ -1182,36 +1332,45 @@ class _RentersInsurancesState extends State<RentersInsurances> {
       sheet.getRangeByIndex(1, i + 1).cellStyle.bold = true;
       sheet.getRangeByIndex(1, i + 1).cellStyle.backColor = '#1E88E5';
       sheet.getRangeByIndex(1, i + 1).cellStyle.fontColor = '#FFFFFF';
-      sheet.getRangeByIndex(1, i + 1).cellStyle.hAlign =
-      headers[i] == 'Tenants' ? syncXlsx.HAlignType.left : syncXlsx.HAlignType.center;
+      sheet.getRangeByIndex(1, i + 1).cellStyle.hAlign = headers[i] == 'Tenants'
+          ? syncXlsx.HAlignType.left
+          : syncXlsx.HAlignType.center;
     }
 
     // Add rental data
     int rowIndex = 2; // Starting after headers
     for (var rental in data.rentals!) {
-      if(rental.activeLeases!.length ==0)
-        {
-          continue;
-        }
+      if (rental.activeLeases!.length == 0) {
+        continue;
+      }
       // Add property address as a header
-      sheet.getRangeByIndex(rowIndex, 1).setText(rental.rentalAddress ?? 'Property');
+      sheet
+          .getRangeByIndex(rowIndex, 1)
+          .setText(rental.rentalAddress ?? 'Property');
       sheet.getRangeByIndex(rowIndex, 1, rowIndex, headers.length).merge();
       sheet.getRangeByIndex(rowIndex, 1).cellStyle.bold = true;
       sheet.getRangeByIndex(rowIndex, 1).cellStyle.fontSize = 12;
       rowIndex++;
 
       for (var lease in rental.activeLeases!) {
-        sheet.getRangeByIndex(rowIndex, 1).setText(lease.unit?.rentalUnit ?? '');
-        sheet.getRangeByIndex(rowIndex, 2).setText(
-            lease.tenants!.map((t) => "${t.tenantFirstName ?? ''} ${t.tenantLastName ?? ''}").join(", "));
+        sheet
+            .getRangeByIndex(rowIndex, 1)
+            .setText(lease.unit?.rentalUnit ?? '');
+        sheet.getRangeByIndex(rowIndex, 2).setText(lease.tenants!
+            .map((t) => "${t.tenantFirstName ?? ''} ${t.tenantLastName ?? ''}")
+            .join(", "));
         sheet.getRangeByIndex(rowIndex, 3).setText(lease.leaseStart ?? '');
         sheet.getRangeByIndex(rowIndex, 4).setText(lease.leaseEnd ?? '');
-        sheet.getRangeByIndex(rowIndex, 5).setText(lease.unit?.bedBath ?? '---');
+        sheet
+            .getRangeByIndex(rowIndex, 5)
+            .setText(lease.unit?.bedBath ?? '---');
         sheet.getRangeByIndex(rowIndex, 6).setText(lease.rentCycle ?? '');
         sheet.getRangeByIndex(rowIndex, 7).setText(lease.leaseStart ?? '');
         sheet.getRangeByIndex(rowIndex, 8).setNumber(lease.rentAmount ?? 0.0);
         sheet.getRangeByIndex(rowIndex, 9).setNumber(lease.chargeAmount ?? 0.0);
-        sheet.getRangeByIndex(rowIndex, 10).setNumber(lease.creditAmount ?? 0.0);
+        sheet
+            .getRangeByIndex(rowIndex, 10)
+            .setNumber(lease.creditAmount ?? 0.0);
         sheet.getRangeByIndex(rowIndex, 11).setNumber(lease.chargeTotal ?? 0.0);
         sheet.getRangeByIndex(rowIndex, 12).setNumber(lease.depositHeld ?? 0.0);
         sheet.getRangeByIndex(rowIndex, 13).setNumber(lease.prepayments ?? 0.0);
@@ -1227,14 +1386,30 @@ class _RentersInsurancesState extends State<RentersInsurances> {
 
       // Add property totals
       if (rental.totals != null) {
-        sheet.getRangeByIndex(rowIndex, 1).setText("Total for ${rental.rentalAddress}");
-        sheet.getRangeByIndex(rowIndex, 8).setNumber(rental.totals!.totalRent ?? 0.0);
-        sheet.getRangeByIndex(rowIndex, 9).setNumber(rental.totals!.totalCharges ?? 0.0);
-        sheet.getRangeByIndex(rowIndex, 10).setNumber(rental.totals!.totalCredits ?? 0.0);
-        sheet.getRangeByIndex(rowIndex, 11).setNumber(rental.totals!.totalAmount ?? 0.0);
-        sheet.getRangeByIndex(rowIndex, 12).setNumber(rental.totals!.totalDeposits ?? 0.0);
-        sheet.getRangeByIndex(rowIndex, 13).setNumber(rental.totals!.totalPrepayments ?? 0.0);
-        sheet.getRangeByIndex(rowIndex, 14).setNumber(rental.totals!.totalBalanceDue ?? 0.0);
+        sheet
+            .getRangeByIndex(rowIndex, 1)
+            .setText("Total for ${rental.rentalAddress}");
+        sheet
+            .getRangeByIndex(rowIndex, 8)
+            .setNumber(rental.totals!.totalRent ?? 0.0);
+        sheet
+            .getRangeByIndex(rowIndex, 9)
+            .setNumber(rental.totals!.totalCharges ?? 0.0);
+        sheet
+            .getRangeByIndex(rowIndex, 10)
+            .setNumber(rental.totals!.totalCredits ?? 0.0);
+        sheet
+            .getRangeByIndex(rowIndex, 11)
+            .setNumber(rental.totals!.totalAmount ?? 0.0);
+        sheet
+            .getRangeByIndex(rowIndex, 12)
+            .setNumber(rental.totals!.totalDeposits ?? 0.0);
+        sheet
+            .getRangeByIndex(rowIndex, 13)
+            .setNumber(rental.totals!.totalPrepayments ?? 0.0);
+        sheet
+            .getRangeByIndex(rowIndex, 14)
+            .setNumber(rental.totals!.totalBalanceDue ?? 0.0);
 
         // Style for totals row
         for (int col = 1; col <= 14; col++) {
@@ -1254,19 +1429,21 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     sheet.getRangeByIndex(rowIndex, 1).cellStyle.fontSize = 12;
     rowIndex++;
 
-
-    sheet.getRangeByIndex(rowIndex,  1,rowIndex,3).setText("");
-    sheet.getRangeByIndex(rowIndex, 1,rowIndex,3).cellStyle.bold = true;
-    sheet.getRangeByIndex(rowIndex,  1,rowIndex,3).cellStyle.backColor = '#1E88E5';
-    sheet.getRangeByIndex(rowIndex,  1,rowIndex,3).cellStyle.fontColor = '#FFFFFF';
-    sheet.getRangeByIndex(rowIndex, 1,rowIndex,3).cellStyle.hAlign = syncXlsx.HAlignType.center;
-    sheet.getRangeByIndex(rowIndex,  4).setText("Amount");
+    sheet.getRangeByIndex(rowIndex, 1, rowIndex, 3).setText("");
+    sheet.getRangeByIndex(rowIndex, 1, rowIndex, 3).cellStyle.bold = true;
+    sheet.getRangeByIndex(rowIndex, 1, rowIndex, 3).cellStyle.backColor =
+        '#1E88E5';
+    sheet.getRangeByIndex(rowIndex, 1, rowIndex, 3).cellStyle.fontColor =
+        '#FFFFFF';
+    sheet.getRangeByIndex(rowIndex, 1, rowIndex, 3).cellStyle.hAlign =
+        syncXlsx.HAlignType.center;
+    sheet.getRangeByIndex(rowIndex, 4).setText("Amount");
     sheet.getRangeByIndex(rowIndex, 4).cellStyle.bold = true;
-    sheet.getRangeByIndex(rowIndex,  4).cellStyle.backColor = '#1E88E5';
-    sheet.getRangeByIndex(rowIndex,  4).cellStyle.fontColor = '#FFFFFF';
-    sheet.getRangeByIndex(rowIndex, 4).cellStyle.hAlign = syncXlsx.HAlignType.center;
+    sheet.getRangeByIndex(rowIndex, 4).cellStyle.backColor = '#1E88E5';
+    sheet.getRangeByIndex(rowIndex, 4).cellStyle.fontColor = '#FFFFFF';
+    sheet.getRangeByIndex(rowIndex, 4).cellStyle.hAlign =
+        syncXlsx.HAlignType.center;
     rowIndex++;
-
 
     sheet.getRangeByIndex(rowIndex, 1).setText('Market Rent');
     sheet.getRangeByIndex(rowIndex, 4).setNumber(0.0);
@@ -1274,27 +1451,37 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     rowIndex++;
 
     sheet.getRangeByIndex(rowIndex, 1).setText('Rent');
-    sheet.getRangeByIndex(rowIndex, 4).setNumber(data.grandTotal!.totalRent ?? 0.0);
+    sheet
+        .getRangeByIndex(rowIndex, 4)
+        .setNumber(data.grandTotal!.totalRent ?? 0.0);
     sheet.getRangeByIndex(rowIndex, 4).numberFormat = '\$#,##0.00';
     rowIndex++;
 
     sheet.getRangeByIndex(rowIndex, 1).setText('Recurring Charges');
-    sheet.getRangeByIndex(rowIndex, 4).setNumber(data.grandTotal!.totalCharges ?? 0.0);
+    sheet
+        .getRangeByIndex(rowIndex, 4)
+        .setNumber(data.grandTotal!.totalCharges ?? 0.0);
     sheet.getRangeByIndex(rowIndex, 4).numberFormat = '\$#,##0.00';
     rowIndex++;
 
     sheet.getRangeByIndex(rowIndex, 1).setText('Recurring Credits');
-    sheet.getRangeByIndex(rowIndex, 4).setNumber(data.grandTotal!.totalCredits ?? 0.0);
+    sheet
+        .getRangeByIndex(rowIndex, 4)
+        .setNumber(data.grandTotal!.totalCredits ?? 0.0);
     sheet.getRangeByIndex(rowIndex, 4).numberFormat = '\$#,##0.00';
     rowIndex++;
 
     sheet.getRangeByIndex(rowIndex, 1).setText('Deposit Held');
-    sheet.getRangeByIndex(rowIndex, 4).setNumber(data.grandTotal!.totalDeposits ?? 0.0);
+    sheet
+        .getRangeByIndex(rowIndex, 4)
+        .setNumber(data.grandTotal!.totalDeposits ?? 0.0);
     sheet.getRangeByIndex(rowIndex, 4).numberFormat = '\$#,##0.00';
     rowIndex++;
 
     sheet.getRangeByIndex(rowIndex, 1).setText('Balance Due');
-    sheet.getRangeByIndex(rowIndex, 4).setNumber(data.grandTotal!.totalBalanceDue ?? 0.0);
+    sheet
+        .getRangeByIndex(rowIndex, 4)
+        .setNumber(data.grandTotal!.totalBalanceDue ?? 0.0);
     sheet.getRangeByIndex(rowIndex, 4).numberFormat = '\$#,##0.00';
     rowIndex += 2;
 
@@ -1306,8 +1493,16 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     rowIndex++;
 
     final bedBathHeaders = [
-      'Bed/Bath', 'No. of Units', 'Vacant', 'Occupied', '% Occupied',
-      'Total Sq.Ft.', 'Avg Sq.Ft.', 'Total Rent', 'Avg Rent', 'Avg/Sq.Ft.'
+      'Bed/Bath',
+      'No. of Units',
+      'Vacant',
+      'Occupied',
+      '% Occupied',
+      'Total Sq.Ft.',
+      'Avg Sq.Ft.',
+      'Total Rent',
+      'Avg Rent',
+      'Avg/Sq.Ft.'
     ];
 
     for (int i = 0; i < bedBathHeaders.length; i++) {
@@ -1315,36 +1510,67 @@ class _RentersInsurancesState extends State<RentersInsurances> {
       sheet.getRangeByIndex(rowIndex, i + 1).cellStyle.bold = true;
       sheet.getRangeByIndex(rowIndex, i + 1).cellStyle.backColor = '#1E88E5';
       sheet.getRangeByIndex(rowIndex, i + 1).cellStyle.fontColor = '#FFFFFF';
-      sheet.getRangeByIndex(rowIndex, i + 1).cellStyle.hAlign = syncXlsx.HAlignType.center;
+      sheet.getRangeByIndex(rowIndex, i + 1).cellStyle.hAlign =
+          syncXlsx.HAlignType.center;
     }
     rowIndex++;
 
     // Add bed/bath data
     for (var item in data.bedBathSummary!.bedBathSummary ?? []) {
       sheet.getRangeByIndex(rowIndex, 1).setText(item.bedBath ?? '');
-      sheet.getRangeByIndex(rowIndex, 2).setNumber(item.units?.toDouble() ?? 0.0);
-      sheet.getRangeByIndex(rowIndex, 3).setNumber(item.vacantUnits?.toDouble() ?? 0.0);
-      sheet.getRangeByIndex(rowIndex, 4).setNumber(item.occupiedUnits?.toDouble() ?? 0.0);
-      sheet.getRangeByIndex(rowIndex, 5).setText("${item.occupancyRate}%" ?? '0.00%');
-      sheet.getRangeByIndex(rowIndex, 6).setNumber(item.totalSqFt?.toDouble() ?? 0.0);
+      sheet
+          .getRangeByIndex(rowIndex, 2)
+          .setNumber(item.units?.toDouble() ?? 0.0);
+      sheet
+          .getRangeByIndex(rowIndex, 3)
+          .setNumber(item.vacantUnits?.toDouble() ?? 0.0);
+      sheet
+          .getRangeByIndex(rowIndex, 4)
+          .setNumber(item.occupiedUnits?.toDouble() ?? 0.0);
+      sheet
+          .getRangeByIndex(rowIndex, 5)
+          .setText("${item.occupancyRate}%" ?? '0.00%');
+      sheet
+          .getRangeByIndex(rowIndex, 6)
+          .setNumber(item.totalSqFt?.toDouble() ?? 0.0);
       sheet.getRangeByIndex(rowIndex, 7).setText(item.avgSqFt ?? '0.00');
       sheet.getRangeByIndex(rowIndex, 8).setText(item.totalRent ?? '0.00');
       sheet.getRangeByIndex(rowIndex, 9).setText(item.avgRent ?? '0.00');
-      sheet.getRangeByIndex(rowIndex, 10).setText(item.avgRentPerSqFt ?? '0.00');
+      sheet
+          .getRangeByIndex(rowIndex, 10)
+          .setText(item.avgRentPerSqFt ?? '0.00');
       rowIndex++;
     }
 
     // Add bed/bath totals
     sheet.getRangeByIndex(rowIndex, 1).setText('Totals and Averages');
-    sheet.getRangeByIndex(rowIndex, 2).setNumber(data.bedBathSummary!.totalsAndAveragesBedBath?.totalUnits?.toDouble() ?? 0.0);
-    sheet.getRangeByIndex(rowIndex, 3).setNumber(data.bedBathSummary!.totalsAndAveragesBedBath?.totalVacantUnits?.toDouble() ?? 0.0);
-    sheet.getRangeByIndex(rowIndex, 4).setNumber(data.bedBathSummary!.totalsAndAveragesBedBath?.totalOccupiedUnits?.toDouble() ?? 0.0);
-    sheet.getRangeByIndex(rowIndex, 5).setText("${data.bedBathSummary!.totalsAndAveragesBedBath?.avgOccupancyRate}%" ?? '0.00%');
-    sheet.getRangeByIndex(rowIndex, 6).setNumber(data.bedBathSummary!.totalsAndAveragesBedBath?.totalSqFt?.toDouble() ?? 0.0);
-    sheet.getRangeByIndex(rowIndex, 7).setText(data.bedBathSummary!.totalsAndAveragesBedBath?.avgSqFt ?? '0.00');
-    sheet.getRangeByIndex(rowIndex, 8).setText(data.bedBathSummary!.totalsAndAveragesBedBath?.totalMarketRent ?? '0.00');
-    sheet.getRangeByIndex(rowIndex, 9).setText(data.bedBathSummary!.totalsAndAveragesBedBath?.avgMarketRent ?? '0.00');
-    sheet.getRangeByIndex(rowIndex, 10).setText(data.bedBathSummary!.totalsAndAveragesBedBath?.avgMarketRentPerSqFt ?? '0.00');
+    sheet.getRangeByIndex(rowIndex, 2).setNumber(
+        data.bedBathSummary!.totalsAndAveragesBedBath?.totalUnits?.toDouble() ??
+            0.0);
+    sheet.getRangeByIndex(rowIndex, 3).setNumber(data
+            .bedBathSummary!.totalsAndAveragesBedBath?.totalVacantUnits
+            ?.toDouble() ??
+        0.0);
+    sheet.getRangeByIndex(rowIndex, 4).setNumber(data
+            .bedBathSummary!.totalsAndAveragesBedBath?.totalOccupiedUnits
+            ?.toDouble() ??
+        0.0);
+    sheet.getRangeByIndex(rowIndex, 5).setText(
+        "${data.bedBathSummary!.totalsAndAveragesBedBath?.avgOccupancyRate}%" ??
+            '0.00%');
+    sheet.getRangeByIndex(rowIndex, 6).setNumber(
+        data.bedBathSummary!.totalsAndAveragesBedBath?.totalSqFt?.toDouble() ??
+            0.0);
+    sheet.getRangeByIndex(rowIndex, 7).setText(
+        data.bedBathSummary!.totalsAndAveragesBedBath?.avgSqFt ?? '0.00');
+    sheet.getRangeByIndex(rowIndex, 8).setText(
+        data.bedBathSummary!.totalsAndAveragesBedBath?.totalMarketRent ??
+            '0.00');
+    sheet.getRangeByIndex(rowIndex, 9).setText(
+        data.bedBathSummary!.totalsAndAveragesBedBath?.avgMarketRent ?? '0.00');
+    sheet.getRangeByIndex(rowIndex, 10).setText(
+        data.bedBathSummary!.totalsAndAveragesBedBath?.avgMarketRentPerSqFt ??
+            '0.00');
 
     // Style for totals row
     for (int col = 1; col <= 10; col++) {
@@ -1364,36 +1590,70 @@ class _RentersInsurancesState extends State<RentersInsurances> {
       sheet.getRangeByIndex(rowIndex, i + 1).cellStyle.bold = true;
       sheet.getRangeByIndex(rowIndex, i + 1).cellStyle.backColor = '#1E88E5';
       sheet.getRangeByIndex(rowIndex, i + 1).cellStyle.fontColor = '#FFFFFF';
-      sheet.getRangeByIndex(rowIndex, i + 1).cellStyle.hAlign = syncXlsx.HAlignType.center;
+      sheet.getRangeByIndex(rowIndex, i + 1).cellStyle.hAlign =
+          syncXlsx.HAlignType.center;
     }
     rowIndex++;
 
     // Add property data
     for (var item in data.propertySummary!.propertySummary ?? []) {
       sheet.getRangeByIndex(rowIndex, 1).setText(item.property ?? '');
-      sheet.getRangeByIndex(rowIndex, 2).setNumber(item.units?.toDouble() ?? 0.0);
-      sheet.getRangeByIndex(rowIndex, 3).setNumber(item.vacantUnits?.toDouble() ?? 0.0);
-      sheet.getRangeByIndex(rowIndex, 4).setNumber(item.occupiedUnits?.toDouble() ?? 0.0);
-      sheet.getRangeByIndex(rowIndex, 5).setText("${item.occupancyRate}%" ?? '0.00%');
-      sheet.getRangeByIndex(rowIndex, 6).setNumber(item.totalSqFt?.toDouble() ?? 0.0);
+      sheet
+          .getRangeByIndex(rowIndex, 2)
+          .setNumber(item.units?.toDouble() ?? 0.0);
+      sheet
+          .getRangeByIndex(rowIndex, 3)
+          .setNumber(item.vacantUnits?.toDouble() ?? 0.0);
+      sheet
+          .getRangeByIndex(rowIndex, 4)
+          .setNumber(item.occupiedUnits?.toDouble() ?? 0.0);
+      sheet
+          .getRangeByIndex(rowIndex, 5)
+          .setText("${item.occupancyRate}%" ?? '0.00%');
+      sheet
+          .getRangeByIndex(rowIndex, 6)
+          .setNumber(item.totalSqFt?.toDouble() ?? 0.0);
       sheet.getRangeByIndex(rowIndex, 7).setText(item.avgSqFt ?? '0.00');
       sheet.getRangeByIndex(rowIndex, 8).setText(item.totalRent ?? '0.00');
       sheet.getRangeByIndex(rowIndex, 9).setText(item.avgRent ?? '0.00');
-      sheet.getRangeByIndex(rowIndex, 10).setText(item.avgRentPerSqFt ?? '0.00');
+      sheet
+          .getRangeByIndex(rowIndex, 10)
+          .setText(item.avgRentPerSqFt ?? '0.00');
       rowIndex++;
     }
 
     // Add property totals
     sheet.getRangeByIndex(rowIndex, 1).setText('Totals and Averages');
-    sheet.getRangeByIndex(rowIndex, 2).setNumber(data.propertySummary!.totalsAndAveragesProperty?.totalUnits?.toDouble() ?? 0.0);
-    sheet.getRangeByIndex(rowIndex, 3).setNumber(data.propertySummary!.totalsAndAveragesProperty?.totalVacantUnits?.toDouble() ?? 0.0);
-    sheet.getRangeByIndex(rowIndex, 4).setNumber(data.propertySummary!.totalsAndAveragesProperty?.totalOccupiedUnits?.toDouble() ?? 0.0);
-    sheet.getRangeByIndex(rowIndex, 5).setText("${data.propertySummary!.totalsAndAveragesProperty?.avgOccupancyRate}%" ?? '0.00%');
-    sheet.getRangeByIndex(rowIndex, 6).setNumber(data.propertySummary!.totalsAndAveragesProperty?.totalSqFt?.toDouble() ?? 0.0);
-    sheet.getRangeByIndex(rowIndex, 7).setText(data.propertySummary!.totalsAndAveragesProperty?.avgSqFt ?? '0.00');
-    sheet.getRangeByIndex(rowIndex, 8).setText(data.propertySummary!.totalsAndAveragesProperty?.totalMarketRent ?? '0.00');
-    sheet.getRangeByIndex(rowIndex, 9).setText(data.propertySummary!.totalsAndAveragesProperty?.avgMarketRent ?? '0.00');
-    sheet.getRangeByIndex(rowIndex, 10).setText(data.propertySummary!.totalsAndAveragesProperty?.avgMarketRentPerSqFt ?? '0.00');
+    sheet.getRangeByIndex(rowIndex, 2).setNumber(data
+            .propertySummary!.totalsAndAveragesProperty?.totalUnits
+            ?.toDouble() ??
+        0.0);
+    sheet.getRangeByIndex(rowIndex, 3).setNumber(data
+            .propertySummary!.totalsAndAveragesProperty?.totalVacantUnits
+            ?.toDouble() ??
+        0.0);
+    sheet.getRangeByIndex(rowIndex, 4).setNumber(data
+            .propertySummary!.totalsAndAveragesProperty?.totalOccupiedUnits
+            ?.toDouble() ??
+        0.0);
+    sheet.getRangeByIndex(rowIndex, 5).setText(
+        "${data.propertySummary!.totalsAndAveragesProperty?.avgOccupancyRate}%" ??
+            '0.00%');
+    sheet.getRangeByIndex(rowIndex, 6).setNumber(data
+            .propertySummary!.totalsAndAveragesProperty?.totalSqFt
+            ?.toDouble() ??
+        0.0);
+    sheet.getRangeByIndex(rowIndex, 7).setText(
+        data.propertySummary!.totalsAndAveragesProperty?.avgSqFt ?? '0.00');
+    sheet.getRangeByIndex(rowIndex, 8).setText(
+        data.propertySummary!.totalsAndAveragesProperty?.totalMarketRent ??
+            '0.00');
+    sheet.getRangeByIndex(rowIndex, 9).setText(
+        data.propertySummary!.totalsAndAveragesProperty?.avgMarketRent ??
+            '0.00');
+    sheet.getRangeByIndex(rowIndex, 10).setText(
+        data.propertySummary!.totalsAndAveragesProperty?.avgMarketRentPerSqFt ??
+            '0.00');
 
     // Style for totals row
     for (int col = 1; col <= 10; col++) {
@@ -1428,15 +1688,27 @@ class _RentersInsurancesState extends State<RentersInsurances> {
       msg: 'Excel file saved to $path',
     );
   }
+
   Future<void> generateRentersInsuranceCSV(rentrollreportmodel data) async {
     final StringBuffer csvBuffer = StringBuffer();
     final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
 
     // Add headers
     final headers = [
-      'Unit', 'Tenants', 'Lease Start', 'Lease End', 'Bed/Bath',
-      'Rent Cycle', 'Rent Start', 'Rent', 'Charges', 'Credits',
-      'Total', 'Deposits', 'Prepayments', 'Balance'
+      'Unit',
+      'Tenants',
+      'Lease Start',
+      'Lease End',
+      'Bed/Bath',
+      'Rent Cycle',
+      'Rent Start',
+      'Rent',
+      'Charges',
+      'Credits',
+      'Total',
+      'Deposits',
+      'Prepayments',
+      'Balance'
     ];
     csvBuffer.writeln(headers.map((h) => '"$h"').join(','));
 
@@ -1452,7 +1724,10 @@ class _RentersInsurancesState extends State<RentersInsurances> {
       for (var lease in rental.activeLeases!) {
         final row = [
           lease.unit?.rentalUnit ?? '',
-          lease.tenants!.map((t) => "${t.tenantFirstName ?? ''} ${t.tenantLastName ?? ''}").join(", "),
+          lease.tenants!
+              .map(
+                  (t) => "${t.tenantFirstName ?? ''} ${t.tenantLastName ?? ''}")
+              .join(", "),
           lease.leaseStart ?? '',
           lease.leaseEnd ?? '',
           lease.unit?.bedBath ?? '---',
@@ -1466,14 +1741,21 @@ class _RentersInsurancesState extends State<RentersInsurances> {
           lease.prepayments?.toStringAsFixed(2) ?? '0.00',
           lease.balanceDue?.toStringAsFixed(2) ?? '0.00',
         ];
-        csvBuffer.writeln(row.map((cell) => '"${cell.toString().replaceAll('"', '""')}"').join(','));
+        csvBuffer.writeln(row
+            .map((cell) => '"${cell.toString().replaceAll('"', '""')}"')
+            .join(','));
       }
 
       // Add property totals
       if (rental.totals != null) {
         final totalRow = [
           "Total for ${rental.rentalAddress}",
-          '', '', '', '', '', '',
+          '',
+          '',
+          '',
+          '',
+          '',
+          '',
           rental.totals!.totalRent?.toStringAsFixed(2) ?? '0.00',
           rental.totals!.totalCharges?.toStringAsFixed(2) ?? '0.00',
           rental.totals!.totalCredits?.toStringAsFixed(2) ?? '0.00',
@@ -1482,7 +1764,9 @@ class _RentersInsurancesState extends State<RentersInsurances> {
           rental.totals!.totalPrepayments?.toStringAsFixed(2) ?? '0.00',
           rental.totals!.totalBalanceDue?.toStringAsFixed(2) ?? '0.00',
         ];
-        csvBuffer.writeln(totalRow.map((cell) => '"${cell.toString().replaceAll('"', '""')}"').join(','));
+        csvBuffer.writeln(totalRow
+            .map((cell) => '"${cell.toString().replaceAll('"', '""')}"')
+            .join(','));
       }
       csvBuffer.writeln(); // Add extra line between properties
     }
@@ -1494,10 +1778,22 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     final grandTotals = [
       ['Market Rent', '0.00'],
       ['Rent', data.grandTotal!.totalRent?.toStringAsFixed(2) ?? '0.00'],
-      ['Recurring Charges', data.grandTotal!.totalCharges?.toStringAsFixed(2) ?? '0.00'],
-      ['Recurring Credits', data.grandTotal!.totalCredits?.toStringAsFixed(2) ?? '0.00'],
-      ['Deposit Held', data.grandTotal!.totalDeposits?.toStringAsFixed(2) ?? '0.00'],
-      ['Balance Due', data.grandTotal!.totalBalanceDue?.toStringAsFixed(2) ?? '0.00'],
+      [
+        'Recurring Charges',
+        data.grandTotal!.totalCharges?.toStringAsFixed(2) ?? '0.00'
+      ],
+      [
+        'Recurring Credits',
+        data.grandTotal!.totalCredits?.toStringAsFixed(2) ?? '0.00'
+      ],
+      [
+        'Deposit Held',
+        data.grandTotal!.totalDeposits?.toStringAsFixed(2) ?? '0.00'
+      ],
+      [
+        'Balance Due',
+        data.grandTotal!.totalBalanceDue?.toStringAsFixed(2) ?? '0.00'
+      ],
     ];
 
     for (var total in grandTotals) {
@@ -1508,8 +1804,16 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     // Add Bed/Bath Summary
     csvBuffer.writeln('"Summary by Bed/Bath",,,,,,,,,,');
     final bedBathHeaders = [
-      'Bed/Bath', 'No. of Units', 'Vacant', 'Occupied', '% Occupied',
-      'Total Sq.Ft.', 'Avg Sq.Ft.', 'Total Rent', 'Avg Rent', 'Avg/Sq.Ft.'
+      'Bed/Bath',
+      'No. of Units',
+      'Vacant',
+      'Occupied',
+      '% Occupied',
+      'Total Sq.Ft.',
+      'Avg Sq.Ft.',
+      'Total Rent',
+      'Avg Rent',
+      'Avg/Sq.Ft.'
     ];
     csvBuffer.writeln(bedBathHeaders.map((h) => '"$h"').join(','));
 
@@ -1527,23 +1831,37 @@ class _RentersInsurancesState extends State<RentersInsurances> {
         item.avgRent ?? '0.00',
         item.avgRentPerSqFt ?? '0.00',
       ];
-      csvBuffer.writeln(row.map((cell) => '"${cell.toString().replaceAll('"', '""')}"').join(','));
+      csvBuffer.writeln(row
+          .map((cell) => '"${cell.toString().replaceAll('"', '""')}"')
+          .join(','));
     }
 
     // Add bed/bath totals
     final bedBathTotals = [
       'Totals and Averages',
-      data.bedBathSummary!.totalsAndAveragesBedBath?.totalUnits?.toStringAsFixed(0) ?? '0',
-      data.bedBathSummary!.totalsAndAveragesBedBath?.totalVacantUnits?.toStringAsFixed(0) ?? '0',
-      data.bedBathSummary!.totalsAndAveragesBedBath?.totalOccupiedUnits?.toStringAsFixed(0) ?? '0',
-      "${data.bedBathSummary!.totalsAndAveragesBedBath?.avgOccupancyRate}%" ?? '0.00%',
-      data.bedBathSummary!.totalsAndAveragesBedBath?.totalSqFt?.toStringAsFixed(0) ?? '0',
+      data.bedBathSummary!.totalsAndAveragesBedBath?.totalUnits
+              ?.toStringAsFixed(0) ??
+          '0',
+      data.bedBathSummary!.totalsAndAveragesBedBath?.totalVacantUnits
+              ?.toStringAsFixed(0) ??
+          '0',
+      data.bedBathSummary!.totalsAndAveragesBedBath?.totalOccupiedUnits
+              ?.toStringAsFixed(0) ??
+          '0',
+      "${data.bedBathSummary!.totalsAndAveragesBedBath?.avgOccupancyRate}%" ??
+          '0.00%',
+      data.bedBathSummary!.totalsAndAveragesBedBath?.totalSqFt
+              ?.toStringAsFixed(0) ??
+          '0',
       data.bedBathSummary!.totalsAndAveragesBedBath?.avgSqFt ?? '0.00',
       data.bedBathSummary!.totalsAndAveragesBedBath?.totalMarketRent ?? '0.00',
       data.bedBathSummary!.totalsAndAveragesBedBath?.avgMarketRent ?? '0.00',
-      data.bedBathSummary!.totalsAndAveragesBedBath?.avgMarketRentPerSqFt ?? '0.00',
+      data.bedBathSummary!.totalsAndAveragesBedBath?.avgMarketRentPerSqFt ??
+          '0.00',
     ];
-    csvBuffer.writeln(bedBathTotals.map((cell) => '"${cell.toString().replaceAll('"', '""')}"').join(','));
+    csvBuffer.writeln(bedBathTotals
+        .map((cell) => '"${cell.toString().replaceAll('"', '""')}"')
+        .join(','));
     csvBuffer.writeln(); // Add extra line
 
     // Add Property Summary
@@ -1564,23 +1882,38 @@ class _RentersInsurancesState extends State<RentersInsurances> {
         item.avgRent ?? '0.00',
         item.avgRentPerSqFt ?? '0.00',
       ];
-      csvBuffer.writeln(row.map((cell) => '"${cell.toString().replaceAll('"', '""')}"').join(','));
+      csvBuffer.writeln(row
+          .map((cell) => '"${cell.toString().replaceAll('"', '""')}"')
+          .join(','));
     }
 
     // Add property totals
     final propertyTotals = [
       'Totals and Averages',
-      data.propertySummary!.totalsAndAveragesProperty?.totalUnits?.toStringAsFixed(0) ?? '0',
-      data.propertySummary!.totalsAndAveragesProperty?.totalVacantUnits?.toStringAsFixed(0) ?? '0',
-      data.propertySummary!.totalsAndAveragesProperty?.totalOccupiedUnits?.toStringAsFixed(0) ?? '0',
-      "${data.propertySummary!.totalsAndAveragesProperty?.avgOccupancyRate}%" ?? '0.00%',
-      data.propertySummary!.totalsAndAveragesProperty?.totalSqFt?.toStringAsFixed(0) ?? '0',
+      data.propertySummary!.totalsAndAveragesProperty?.totalUnits
+              ?.toStringAsFixed(0) ??
+          '0',
+      data.propertySummary!.totalsAndAveragesProperty?.totalVacantUnits
+              ?.toStringAsFixed(0) ??
+          '0',
+      data.propertySummary!.totalsAndAveragesProperty?.totalOccupiedUnits
+              ?.toStringAsFixed(0) ??
+          '0',
+      "${data.propertySummary!.totalsAndAveragesProperty?.avgOccupancyRate}%" ??
+          '0.00%',
+      data.propertySummary!.totalsAndAveragesProperty?.totalSqFt
+              ?.toStringAsFixed(0) ??
+          '0',
       data.propertySummary!.totalsAndAveragesProperty?.avgSqFt ?? '0.00',
-      data.propertySummary!.totalsAndAveragesProperty?.totalMarketRent ?? '0.00',
+      data.propertySummary!.totalsAndAveragesProperty?.totalMarketRent ??
+          '0.00',
       data.propertySummary!.totalsAndAveragesProperty?.avgMarketRent ?? '0.00',
-      data.propertySummary!.totalsAndAveragesProperty?.avgMarketRentPerSqFt ?? '0.00',
+      data.propertySummary!.totalsAndAveragesProperty?.avgMarketRentPerSqFt ??
+          '0.00',
     ];
-    csvBuffer.writeln(propertyTotals.map((cell) => '"${cell.toString().replaceAll('"', '""')}"').join(','));
+    csvBuffer.writeln(propertyTotals
+        .map((cell) => '"${cell.toString().replaceAll('"', '""')}"')
+        .join(','));
 
     // Save the file
     final DateTime now = DateTime.now();
@@ -1605,7 +1938,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
       msg: 'CSV file saved to $path',
     );
   }
-  final cellStyle = pw.TextStyle(fontSize: 7);
+
+  final cellStyle = const pw.TextStyle(fontSize: 7);
 
   final headerStyle = pw.TextStyle(
     fontWeight: pw.FontWeight.bold,
@@ -1617,7 +1951,6 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     color: PdfColor.fromHex("#5A86D5"), // a nice blue shade
     borderRadius: const pw.BorderRadius.all(pw.Radius.circular(2)),
   );
-
 
   String? selectedOwner;
   final List<String> rentalOwners = [
@@ -1653,7 +1986,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                     title: 'Rent Roll Report',
                     width: MediaQuery.of(context).size.width * .91,
                   ),
-                  if (MediaQuery.of(context).size.width > 500) const SizedBox(height: 16),
+                  if (MediaQuery.of(context).size.width > 500)
+                    const SizedBox(height: 16),
                   if (MediaQuery.of(context).size.width < 500)
                     FutureBuilder<rentrollreportmodel>(
                       future: _futureRentersInsurance,
@@ -1663,32 +1997,41 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                             padding: const EdgeInsets.all(16.0),
                             child: ColabShimmerLoadingWidget(),
                           );
-                        }  else if (!snapshot.hasData || snapshot.data!.rentals!.isEmpty) {
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.rentals!.isEmpty) {
                           return Column(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
                                 child: Row(
                                   children: [
                                     // Dropdown for Rental Owners
                                     Expanded(
                                       child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12),
                                         decoration: BoxDecoration(
                                           color: Colors.white,
-                                          border: Border.all(color: Colors.grey.shade300),
-                                          borderRadius: BorderRadius.circular(8),
+                                          border: Border.all(
+                                              color: Colors.grey.shade300),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
                                         child: DropdownButtonHideUnderline(
                                           child: DropdownButton<String>(
                                             isExpanded: true,
-                                            hint: const Text("Select Rental Owners"),
+                                            hint: const Text(
+                                                "Select Rental Owners"),
                                             value: selectedOwner,
                                             items: rentalowners
-                                                .map((owner) => DropdownMenuItem<String>(
-                                              value: owner['rentalowner_id'],
-                                              child: Text(owner['rentalOwner_name']!),
-                                            ))
+                                                .map((owner) =>
+                                                    DropdownMenuItem<String>(
+                                                      value: owner[
+                                                          'rentalowner_id'],
+                                                      child: Text(owner[
+                                                          'rentalOwner_name']!),
+                                                    ))
                                                 .toList(),
                                             onChanged: (value) {
                                               setState(() {
@@ -1706,15 +2049,19 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                       height: 45,
                                       width: 45,
                                       decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey.shade300),
+                                        border: Border.all(
+                                            color: Colors.grey.shade300),
                                         borderRadius: BorderRadius.circular(0),
                                         color: Colors.white,
                                       ),
                                       child: IconButton(
-                                        icon: FaIcon(FontAwesomeIcons.circlePlay),
+                                        icon: const FaIcon(
+                                            FontAwesomeIcons.circlePlay),
                                         onPressed: () {
                                           setState(() {
-                                            _futureRentersInsurance = fetchRentersInsuranceData(id: selectedOwner);
+                                            _futureRentersInsurance =
+                                                fetchRentersInsuranceData(
+                                                    id: selectedOwner);
                                           });
                                           print("Run Report");
                                         },
@@ -1728,31 +2075,40 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                       height: 45,
                                       width: 75,
                                       decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey.shade300),
+                                        border: Border.all(
+                                            color: Colors.grey.shade300),
                                         borderRadius: BorderRadius.circular(0),
                                         color: Colors.white,
                                       ),
                                       child: PopupMenuButton<String>(
-                                        offset: Offset(5, 50),
+                                        offset: const Offset(5, 50),
                                         onSelected: handleDownload,
-                                        icon: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                        icon: const Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
-                                            FaIcon(FontAwesomeIcons.download), // Your download icon
-                                            SizedBox(width: 5), // Adds spacing between the icons
-                                            Icon(Icons.arrow_drop_down), // The dropdown arrow icon
+                                            FaIcon(FontAwesomeIcons
+                                                .download), // Your download icon
+                                            SizedBox(
+                                                width:
+                                                    5), // Adds spacing between the icons
+                                            Icon(Icons
+                                                .arrow_drop_down), // The dropdown arrow icon
                                           ],
                                         ),
                                         tooltip: "Download",
                                         itemBuilder: (BuildContext context) {
-                                          return downloadOptions.map((String option) {
+                                          return downloadOptions
+                                              .map((String option) {
                                             return PopupMenuItem<String>(
                                               value: option,
                                               onTap: () async {
-                                                if(snapshot.hasData)
-                                                generateRentersInsuranceExcel(snapshot.data!);
+                                                if (snapshot.hasData)
+                                                  generateRentersInsuranceExcel(
+                                                      snapshot.data!);
                                               },
-                                              child: Text("Download as $option"),
+                                              child:
+                                                  Text("Download as $option"),
                                             );
                                           }).toList();
                                         },
@@ -1772,10 +2128,13 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                         height: 200,
                                         width: 200,
                                       ),
-                                      SizedBox(height: 10),
+                                      const SizedBox(height: 10),
                                       Text(
                                         "No Data Available",
-                                        style: TextStyle(fontWeight: FontWeight.bold, color: blueColor, fontSize: 16),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor,
+                                            fontSize: 16),
                                       )
                                     ],
                                   ),
@@ -1793,27 +2152,35 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                             children: [
                               // Search & Export Section
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
                                 child: Row(
                                   children: [
                                     // Dropdown for Rental Owners
                                     Expanded(
                                       child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12),
                                         decoration: BoxDecoration(
                                           color: Colors.white,
-                                          border: Border.all(color: Colors.grey.shade300),
-                                          borderRadius: BorderRadius.circular(8),
+                                          border: Border.all(
+                                              color: Colors.grey.shade300),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
                                         child: DropdownButtonHideUnderline(
                                           child: DropdownButton<String>(
                                             isExpanded: true,
-                                            hint: const Text("Select Rental Owners"),
+                                            hint: const Text(
+                                                "Select Rental Owners"),
                                             value: selectedOwner,
                                             items: rentalowners
-                                                .map((owner) => DropdownMenuItem<String>(
-                                                      value: owner['rentalowner_id'],
-                                                      child: Text(owner['rentalOwner_name']!),
+                                                .map((owner) =>
+                                                    DropdownMenuItem<String>(
+                                                      value: owner[
+                                                          'rentalowner_id'],
+                                                      child: Text(owner[
+                                                          'rentalOwner_name']!),
                                                     ))
                                                 .toList(),
                                             onChanged: (value) {
@@ -1832,15 +2199,19 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                       height: 45,
                                       width: 45,
                                       decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey.shade300),
+                                        border: Border.all(
+                                            color: Colors.grey.shade300),
                                         borderRadius: BorderRadius.circular(0),
                                         color: Colors.white,
                                       ),
                                       child: IconButton(
-                                        icon: FaIcon(FontAwesomeIcons.circlePlay),
+                                        icon: const FaIcon(
+                                            FontAwesomeIcons.circlePlay),
                                         onPressed: () {
                                           setState(() {
-                                            _futureRentersInsurance = fetchRentersInsuranceData(id: selectedOwner);
+                                            _futureRentersInsurance =
+                                                fetchRentersInsuranceData(
+                                                    id: selectedOwner);
                                           });
                                           print("Run Report");
                                         },
@@ -1854,35 +2225,46 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                       height: 45,
                                       width: 75,
                                       decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey.shade300),
+                                        border: Border.all(
+                                            color: Colors.grey.shade300),
                                         borderRadius: BorderRadius.circular(0),
                                         color: Colors.white,
                                       ),
                                       child: PopupMenuButton<String>(
-                                        offset: Offset(5, 50),
+                                        offset: const Offset(5, 50),
                                         onSelected: handleDownload,
-                                        icon: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                        icon: const Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
-                                            FaIcon(FontAwesomeIcons.download), // Your download icon
-                                            SizedBox(width: 5), // Adds spacing between the icons
-                                            Icon(Icons.arrow_drop_down), // The dropdown arrow icon
+                                            FaIcon(FontAwesomeIcons
+                                                .download), // Your download icon
+                                            SizedBox(
+                                                width:
+                                                    5), // Adds spacing between the icons
+                                            Icon(Icons
+                                                .arrow_drop_down), // The dropdown arrow icon
                                           ],
                                         ),
                                         tooltip: "Download",
                                         itemBuilder: (BuildContext context) {
-                                          return downloadOptions.map((String option) {
+                                          return downloadOptions
+                                              .map((String option) {
                                             return PopupMenuItem<String>(
                                               value: option,
                                               onTap: () async {
-                                                if(option == "PDF")
-                                                generaterentersInsurancePdf(snapshot.data!);
-                                                if(option == "Excel")
-                                                  generateRentersInsuranceExcel(snapshot.data!);
-                                                if(option == "CSV")
-                                                  generateRentersInsuranceCSV(snapshot.data!);
+                                                if (option == "PDF")
+                                                  generaterentersInsurancePdf(
+                                                      snapshot.data!);
+                                                if (option == "Excel")
+                                                  generateRentersInsuranceExcel(
+                                                      snapshot.data!);
+                                                if (option == "CSV")
+                                                  generateRentersInsuranceCSV(
+                                                      snapshot.data!);
                                               },
-                                              child: Text("Download as $option"),
+                                              child:
+                                                  Text("Download as $option"),
                                             );
                                           }).toList();
                                         },
@@ -1892,7 +2274,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                 ),
                               ),
                               Container(
-                                margin: const EdgeInsets.symmetric(horizontal: 15),
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 15),
                                 padding: const EdgeInsets.all(2),
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFE0E0E0),
@@ -1905,8 +2288,10 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                   ],
                                 ),
                               ),
-                              if (_selectedIndex == 0) DetailScreen(currentPageData),
-                              if (_selectedIndex == 1) SummeryScreen(snapshot.data!)
+                              if (_selectedIndex == 0)
+                                DetailScreen(currentPageData),
+                              if (_selectedIndex == 1)
+                                SummeryScreen(snapshot.data!)
                               // Custom Tab Bar
                             ],
                           ),
@@ -2021,11 +2406,11 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                     height: 200,
                     fit: BoxFit.fill,
                   ),
-                  Text(
+                  const Text(
                     'No Internet',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     'Check your internet connection',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
@@ -2046,7 +2431,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
             const SizedBox(height: 20),
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                border:
+                    Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
               ),
               child: Column(
                 children: currentPageData.asMap().entries.map((entry) {
@@ -2056,12 +2442,14 @@ class _RentersInsurancesState extends State<RentersInsurances> {
 
                   return Container(
                     decoration: BoxDecoration(
-                      color: rowIndex % 2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                      border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                      color: rowIndex % 2 != 0
+                          ? Colors.white
+                          : blueColor.withOpacity(0.09),
+                      border: Border.all(
+                          color: const Color.fromRGBO(152, 162, 179, .5)),
                     ),
                     child: Column(
                       children: <Widget>[
-
                         // Row header
                         ListTile(
                           contentPadding: EdgeInsets.zero,
@@ -2078,21 +2466,26 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                         expandedRowIndex = null;
                                       } else {
                                         expandedRowIndex = rowIndex;
-                                        nestedExpandedIndex = null; // reset inner when switching rows
+                                        nestedExpandedIndex =
+                                            null; // reset inner when switching rows
                                       }
                                     });
                                   },
                                   child: Container(
                                     margin: const EdgeInsets.only(left: 5),
-                                    padding: !isRowExpanded ? const EdgeInsets.only(bottom: 10) : const EdgeInsets.only(top: 10),
+                                    padding: !isRowExpanded
+                                        ? const EdgeInsets.only(bottom: 10)
+                                        : const EdgeInsets.only(top: 10),
                                     child: FaIcon(
-                                      isRowExpanded ? FontAwesomeIcons.sortUp : FontAwesomeIcons.sortDown,
+                                      isRowExpanded
+                                          ? FontAwesomeIcons.sortUp
+                                          : FontAwesomeIcons.sortDown,
                                       size: 20,
                                       color: blueColor,
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 8),
+                                const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
                                     '${item.rentalAddress ?? '-'}',
@@ -2103,7 +2496,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 8),
+                                const SizedBox(width: 8),
                               ],
                             ),
                           ),
@@ -2112,56 +2505,81 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                         // Outer expanded section
                         if (isRowExpanded)
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 0),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 0),
                             decoration: BoxDecoration(
-                              border: Border(top: BorderSide(color: Colors.grey.shade400)),
+                              border: Border(
+                                  top: BorderSide(color: Colors.grey.shade400)),
                             ),
                             child: Column(
-                              children: item.activeLeases?.asMap().entries.map((leaseEntry) {
+                              children: item.activeLeases
+                                      ?.asMap()
+                                      .entries
+                                      .map((leaseEntry) {
                                     int leaseIndex = leaseEntry.key;
                                     ActiveLeases lease = leaseEntry.value;
-                                    bool isLeaseExpanded = expandedLeaseIndex == leaseIndex;
-                                    bool isLeaseIndexExpanded = expandedLeaseTotalIndex == leaseIndex;
+                                    bool isLeaseExpanded =
+                                        expandedLeaseIndex == leaseIndex;
+                                    bool isLeaseIndexExpanded =
+                                        expandedLeaseTotalIndex == leaseIndex;
 
                                     return Column(
                                       children: [
                                         Container(
-                                          margin: const EdgeInsets.symmetric(vertical: 0),
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 0),
                                           child: ListTile(
                                             contentPadding: EdgeInsets.zero,
                                             onTap: () {
                                               setState(() {
-                                                if (expandedLeaseIndex == leaseIndex) {
+                                                if (expandedLeaseIndex ==
+                                                    leaseIndex) {
                                                   expandedLeaseIndex = null;
                                                 } else {
-                                                  expandedLeaseIndex = leaseIndex;
+                                                  expandedLeaseIndex =
+                                                      leaseIndex;
                                                 }
                                               });
                                             },
                                             title: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 InkWell(
                                                   onTap: () {
                                                     setState(() {
-                                                      if (expandedLeaseIndex == leaseIndex) {
-                                                        expandedLeaseIndex = null;
+                                                      if (expandedLeaseIndex ==
+                                                          leaseIndex) {
+                                                        expandedLeaseIndex =
+                                                            null;
                                                       } else {
-                                                        expandedLeaseIndex = leaseIndex;
+                                                        expandedLeaseIndex =
+                                                            leaseIndex;
                                                       }
                                                     });
                                                   },
                                                   child: Container(
-                                                    margin: const EdgeInsets.only(left: 5),
-                                                    padding: !isLeaseExpanded ? const EdgeInsets.only(bottom: 10) : const EdgeInsets.only(top: 10),
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            left: 5),
+                                                    padding: !isLeaseExpanded
+                                                        ? const EdgeInsets.only(
+                                                            bottom: 10)
+                                                        : const EdgeInsets.only(
+                                                            top: 10),
                                                     child: FaIcon(
-                                                      isLeaseExpanded ? FontAwesomeIcons.sortUp : FontAwesomeIcons.sortDown,
+                                                      isLeaseExpanded
+                                                          ? FontAwesomeIcons
+                                                              .sortUp
+                                                          : FontAwesomeIcons
+                                                              .sortDown,
                                                       size: 20,
                                                       color: blueColor,
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(width: 8),
+                                                const SizedBox(width: 8),
                                                 Expanded(
                                                     child: Text(
                                                   "${lease.unit?.rentalUnit ?? '-'}",
@@ -2201,40 +2619,55 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                                   columnWidths: {
                                                     // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                                     // 1: FlexColumnWidth(),
-                                                    0: FlexColumnWidth(), // Distribute columns equally
-                                                    1: FlexColumnWidth(),
-                                                    2: FlexColumnWidth(),
+                                                    0: const FlexColumnWidth(), // Distribute columns equally
+                                                    1: const FlexColumnWidth(),
+                                                    2: const FlexColumnWidth(),
                                                   },
                                                   children: [
                                                     buildTableRows(
                                                       'Rent start',
-                                                      getDisplayValue("${lease.leaseStart}"),
+                                                      getDisplayValue(
+                                                          "${lease.leaseStart}"),
                                                       'Rent Cycle',
-                                                      getDisplayValue(lease.rentCycle),
+                                                      getDisplayValue(
+                                                          lease.rentCycle),
                                                       'Credits',
-                                                      getDisplayValue("\$${lease.creditAmount!.toStringAsFixed(2)}"),
+                                                      getDisplayValue(
+                                                          "\$${lease.creditAmount!.toStringAsFixed(2)}"),
                                                     ),
                                                     buildTableRows(
                                                       'Bed/Bath',
-                                                      getDisplayValue("${lease.unit!.bedBath}"),
+                                                      getDisplayValue(
+                                                          "${lease.unit!.bedBath}"),
                                                       'Prepayments',
-                                                      getDisplayValue("\$${lease.prepayments!.toStringAsFixed(2)}"),
+                                                      getDisplayValue(
+                                                          "\$${lease.prepayments!.toStringAsFixed(2)}"),
                                                       'Charges',
-                                                      getDisplayValue("\$${lease.chargeAmount!.toStringAsFixed(2)}"),
+                                                      getDisplayValue(
+                                                          "\$${lease.chargeAmount!.toStringAsFixed(2)}"),
                                                     ),
                                                     buildTableRows(
                                                       'Total',
-                                                      getDisplayValue("\$${lease.chargeTotal!.toStringAsFixed(2)}"),
+                                                      getDisplayValue(
+                                                          "\$${lease.chargeTotal!.toStringAsFixed(2)}"),
                                                       'Balance Due',
-                                                      getDisplayValue("\$${lease.balanceDue!.toStringAsFixed(2)}"),
+                                                      getDisplayValue(
+                                                          "\$${lease.balanceDue!.toStringAsFixed(2)}"),
                                                       'Rent',
-                                                      getDisplayValue("\$${lease.rentAmount!.toStringAsFixed(2)}"),
+                                                      getDisplayValue(
+                                                          "\$${lease.rentAmount!.toStringAsFixed(2)}"),
                                                     ),
                                                     buildTableRows(
                                                       'Deposit Held',
-                                                      getDisplayValue("\$${lease.depositHeld ?? "0.0"}"),
+                                                      getDisplayValue(
+                                                          "\$${lease.depositHeld ?? "0.0"}"),
                                                       'Tenants',
-                                                      getDisplayValue(lease.tenants!.map((tenant) => "${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}".trim()).join(", ")),
+                                                      getDisplayValue(lease
+                                                          .tenants!
+                                                          .map((tenant) =>
+                                                              "${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}"
+                                                                  .trim())
+                                                          .join(", ")),
                                                       '',
                                                       "",
                                                     )
@@ -2244,47 +2677,71 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                             ],
                                           ),
                                         Container(
-                                          decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey.shade500))),
+                                          decoration: BoxDecoration(
+                                              border: Border(
+                                                  top: BorderSide(
+                                                      color: Colors
+                                                          .grey.shade500))),
                                           child: ListTile(
                                             contentPadding: EdgeInsets.zero,
                                             title: Padding(
-                                              padding: const EdgeInsets.all(2.0),
+                                              padding:
+                                                  const EdgeInsets.all(2.0),
                                               child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
                                                 children: <Widget>[
                                                   InkWell(
                                                     onTap: () {
                                                       setState(() {
-                                                        if (expandedLeaseTotalIndex == leaseIndex) {
-                                                          expandedLeaseTotalIndex = null;
+                                                        if (expandedLeaseTotalIndex ==
+                                                            leaseIndex) {
+                                                          expandedLeaseTotalIndex =
+                                                              null;
                                                         } else {
-                                                          expandedLeaseTotalIndex = leaseIndex;
+                                                          expandedLeaseTotalIndex =
+                                                              leaseIndex;
                                                         }
                                                       });
                                                     },
                                                     child: Container(
-                                                      margin: const EdgeInsets.only(left: 5),
-                                                      padding: !isLeaseIndexExpanded ? const EdgeInsets.only(bottom: 10) : const EdgeInsets.only(top: 10),
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              left: 5),
+                                                      padding:
+                                                          !isLeaseIndexExpanded
+                                                              ? const EdgeInsets
+                                                                  .only(
+                                                                  bottom: 10)
+                                                              : const EdgeInsets
+                                                                  .only(
+                                                                  top: 10),
                                                       child: FaIcon(
-                                                        isLeaseIndexExpanded ? FontAwesomeIcons.sortUp : FontAwesomeIcons.sortDown,
+                                                        isLeaseIndexExpanded
+                                                            ? FontAwesomeIcons
+                                                                .sortUp
+                                                            : FontAwesomeIcons
+                                                                .sortDown,
                                                         size: 20,
                                                         color: blueColor,
                                                       ),
                                                     ),
                                                   ),
-                                                  SizedBox(width: 8),
+                                                  const SizedBox(width: 8),
                                                   Expanded(
                                                     child: Text(
                                                       'Total For ${item.rentalAddress ?? '-'}',
                                                       style: TextStyle(
                                                         color: blueColor,
-                                                        fontWeight: FontWeight.bold,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                         fontSize: 14,
                                                       ),
                                                     ),
                                                   ),
-                                                  SizedBox(width: 8),
+                                                  const SizedBox(width: 8),
                                                 ],
                                               ),
                                             ),
@@ -2298,30 +2755,37 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                                   columnWidths: {
                                                     // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                                     // 1: FlexColumnWidth(),
-                                                    0: FlexColumnWidth(), // Distribute columns equally
-                                                    1: FlexColumnWidth(),
-                                                    2: FlexColumnWidth(),
+                                                    0: const FlexColumnWidth(), // Distribute columns equally
+                                                    1: const FlexColumnWidth(),
+                                                    2: const FlexColumnWidth(),
                                                   },
                                                   children: [
                                                     buildTableRows(
                                                       'Credits',
-                                                      getDisplayValue("\$${item.totals!.totalCredits!.toStringAsFixed(2)}"),
+                                                      getDisplayValue(
+                                                          "\$${item.totals!.totalCredits!.toStringAsFixed(2)}"),
                                                       'Prepayments',
-                                                      getDisplayValue("\$${item.totals!.totalPrepayments!.toStringAsFixed(2)}"),
+                                                      getDisplayValue(
+                                                          "\$${item.totals!.totalPrepayments!.toStringAsFixed(2)}"),
                                                       'Charges',
-                                                      getDisplayValue("\$${item.totals!.totalCharges!.toStringAsFixed(2)}"),
+                                                      getDisplayValue(
+                                                          "\$${item.totals!.totalCharges!.toStringAsFixed(2)}"),
                                                     ),
                                                     buildTableRows(
                                                       'Total',
-                                                      getDisplayValue("\$${item.totals!.totalAmount!.toStringAsFixed(2)}"),
+                                                      getDisplayValue(
+                                                          "\$${item.totals!.totalAmount!.toStringAsFixed(2)}"),
                                                       'Balance Due',
-                                                      getDisplayValue("\$${item.totals!.totalBalanceDue!.toStringAsFixed(2)}"),
+                                                      getDisplayValue(
+                                                          "\$${item.totals!.totalBalanceDue!.toStringAsFixed(2)}"),
                                                       'Rent',
-                                                      getDisplayValue("\$${item.totals!.totalRent!.toStringAsFixed(2)}"),
+                                                      getDisplayValue(
+                                                          "\$${item.totals!.totalRent!.toStringAsFixed(2)}"),
                                                     ),
                                                     buildTableRows(
                                                       'Deposit Held',
-                                                      getDisplayValue("\$${item.totals!.totalDeposits!.toStringAsFixed(2)}"),
+                                                      getDisplayValue(
+                                                          "\$${item.totals!.totalDeposits!.toStringAsFixed(2)}"),
                                                       '',
                                                       "",
                                                       '',
@@ -2356,7 +2820,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         Container(
@@ -2379,7 +2843,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
                 child: Text(
                   "Grand totals",
                   textAlign: TextAlign.center,
@@ -2391,11 +2856,16 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                 ),
               ),
               _buildSummaryRow("Market Rent", "\$0.00"),
-              _buildSummaryRow("Rent", "\$${totals!.totalRent!.toStringAsFixed(2)}"),
-              _buildSummaryRow("Recurring Charges", "\$${totals!.totalCharges!.toStringAsFixed(2)}"),
-              _buildSummaryRow("Recurring Credits", "\$${totals!.totalCredits!.toStringAsFixed(2)}"),
-              _buildSummaryRow("Deposits Held", "\$${totals!.totalDeposits!.toStringAsFixed(2)}"),
-              _buildSummaryRow("Balance Due", "\$${totals!.totalBalanceDue!.toStringAsFixed(2)}"),
+              _buildSummaryRow(
+                  "Rent", "\$${totals!.totalRent!.toStringAsFixed(2)}"),
+              _buildSummaryRow("Recurring Charges",
+                  "\$${totals!.totalCharges!.toStringAsFixed(2)}"),
+              _buildSummaryRow("Recurring Credits",
+                  "\$${totals!.totalCredits!.toStringAsFixed(2)}"),
+              _buildSummaryRow("Deposits Held",
+                  "\$${totals!.totalDeposits!.toStringAsFixed(2)}"),
+              _buildSummaryRow("Balance Due",
+                  "\$${totals!.totalBalanceDue!.toStringAsFixed(2)}"),
             ],
           ),
         ),
@@ -2416,7 +2886,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -2436,8 +2906,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                           isdisplaysummeryBedbath = !isdisplaysummeryBedbath;
                         });
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 15.0),
                         child: FaIcon(FontAwesomeIcons.squareCaretDown),
                       ),
                     )
@@ -2447,8 +2917,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                           isdisplaysummeryBedbath = !isdisplaysummeryBedbath;
                         });
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 15.0),
                         child: FaIcon(FontAwesomeIcons.squareCaretUp),
                       ),
                     )
@@ -2457,18 +2927,19 @@ class _RentersInsurancesState extends State<RentersInsurances> {
         ),
         if (isdisplaysummeryBedbath)
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: _buildHeadersforsummery("Bed/Bath", "No.Of Units"),
           ),
         if (isdisplaysummeryBedbath)
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
         if (isdisplaysummeryBedbath)
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 16.0),
+            margin: const EdgeInsets.symmetric(horizontal: 16.0),
             decoration: BoxDecoration(
-              border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+              border:
+                  Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
             ),
             child: Column(
               children: [
@@ -2480,8 +2951,11 @@ class _RentersInsurancesState extends State<RentersInsurances> {
 
                     return Container(
                       decoration: BoxDecoration(
-                        color: rowIndex % 2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                        border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                        color: rowIndex % 2 != 0
+                            ? Colors.white
+                            : blueColor.withOpacity(0.09),
+                        border: Border.all(
+                            color: const Color.fromRGBO(152, 162, 179, .5)),
                       ),
                       child: Column(
                         children: <Widget>[
@@ -2497,25 +2971,31 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                   InkWell(
                                     onTap: () {
                                       setState(() {
-                                        if (expandedRowbedbathIndex == rowIndex) {
+                                        if (expandedRowbedbathIndex ==
+                                            rowIndex) {
                                           expandedRowbedbathIndex = null;
                                         } else {
                                           expandedRowbedbathIndex = rowIndex;
-                                          nestedExpandedIndex = null; // reset inner when switching rows
+                                          nestedExpandedIndex =
+                                              null; // reset inner when switching rows
                                         }
                                       });
                                     },
                                     child: Container(
                                       margin: const EdgeInsets.only(left: 5),
-                                      padding: !isRowExpanded ? const EdgeInsets.only(bottom: 10) : const EdgeInsets.only(top: 10),
+                                      padding: !isRowExpanded
+                                          ? const EdgeInsets.only(bottom: 10)
+                                          : const EdgeInsets.only(top: 10),
                                       child: FaIcon(
-                                        isRowExpanded ? FontAwesomeIcons.sortUp : FontAwesomeIcons.sortDown,
+                                        isRowExpanded
+                                            ? FontAwesomeIcons.sortUp
+                                            : FontAwesomeIcons.sortDown,
                                         size: 20,
                                         color: blueColor,
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: 8),
+                                  const SizedBox(width: 8),
                                   Expanded(
                                     flex: 4,
                                     child: Text(
@@ -2527,7 +3007,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: 8),
+                                  const SizedBox(width: 8),
                                   Expanded(
                                     flex: 2,
                                     child: Text(
@@ -2549,7 +3029,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0, vertical: 0),
                                   child: Text(
                                     "Occupancy",
                                     textAlign: TextAlign.center,
@@ -2560,14 +3041,16 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                     ),
                                   ),
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8.0, vertical: 0),
                                   child: Divider(
                                     thickness: 2,
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 0),
                                   child: Row(
                                     children: [
                                       Expanded(
@@ -2575,18 +3058,21 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                           columnWidths: {
                                             // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                             // 1: FlexColumnWidth(),
-                                            0: FlexColumnWidth(), // Distribute columns equally
-                                            1: FlexColumnWidth(),
-                                            2: FlexColumnWidth(),
+                                            0: const FlexColumnWidth(), // Distribute columns equally
+                                            1: const FlexColumnWidth(),
+                                            2: const FlexColumnWidth(),
                                           },
                                           children: [
                                             buildTableRows(
                                               'Vacant',
-                                              getDisplayValue("${item.vacantUnits}"),
+                                              getDisplayValue(
+                                                  "${item.vacantUnits}"),
                                               'Occupied',
-                                              getDisplayValue("${item.occupiedUnits}"),
+                                              getDisplayValue(
+                                                  "${item.occupiedUnits}"),
                                               '%Occupied',
-                                              getDisplayValue("${item.occupancyRate}"),
+                                              getDisplayValue(
+                                                  "${item.occupancyRate}"),
                                             ),
                                           ],
                                         ),
@@ -2595,7 +3081,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0, vertical: 0),
                                   child: Text(
                                     "Market Rent",
                                     textAlign: TextAlign.center,
@@ -2606,14 +3093,16 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                     ),
                                   ),
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8.0, vertical: 0),
                                   child: Divider(
                                     thickness: 2,
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 0),
                                   child: Row(
                                     children: [
                                       Expanded(
@@ -2621,18 +3110,21 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                           columnWidths: {
                                             // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                             // 1: FlexColumnWidth(),
-                                            0: FlexColumnWidth(), // Distribute columns equally
-                                            1: FlexColumnWidth(),
-                                            2: FlexColumnWidth(),
+                                            0: const FlexColumnWidth(), // Distribute columns equally
+                                            1: const FlexColumnWidth(),
+                                            2: const FlexColumnWidth(),
                                           },
                                           children: [
                                             buildTableRows(
                                               'Total',
-                                              getDisplayValue("${item.totalRent}"),
+                                              getDisplayValue(
+                                                  "${item.totalRent}"),
                                               'Average',
-                                              getDisplayValue("${item.avgRent}"),
+                                              getDisplayValue(
+                                                  "${item.avgRent}"),
                                               'Avg./Sq.Ft.',
-                                              getDisplayValue("${item.avgRentPerSqFt}"),
+                                              getDisplayValue(
+                                                  "${item.avgRentPerSqFt}"),
                                             ),
                                           ],
                                         ),
@@ -2641,7 +3133,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0, vertical: 0),
                                   child: Text(
                                     "Square Feet",
                                     textAlign: TextAlign.center,
@@ -2652,14 +3145,16 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                     ),
                                   ),
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8.0, vertical: 0),
                                   child: Divider(
                                     thickness: 2,
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 0),
                                   child: Row(
                                     children: [
                                       Expanded(
@@ -2667,16 +3162,18 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                           columnWidths: {
                                             // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                             // 1: FlexColumnWidth(),
-                                            0: FlexColumnWidth(), // Distribute columns equally
-                                            1: FlexColumnWidth(),
-                                            2: FlexColumnWidth(),
+                                            0: const FlexColumnWidth(), // Distribute columns equally
+                                            1: const FlexColumnWidth(),
+                                            2: const FlexColumnWidth(),
                                           },
                                           children: [
                                             buildTableRows(
                                               'Total',
-                                              getDisplayValue("${item.totalSqFt}"),
+                                              getDisplayValue(
+                                                  "${item.totalSqFt}"),
                                               'Average',
-                                              getDisplayValue("${item.avgSqFt}"),
+                                              getDisplayValue(
+                                                  "${item.avgSqFt}"),
                                               '',
                                               '',
                                             ),
@@ -2696,8 +3193,11 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: currentPageData.length % 2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                    border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                    color: currentPageData.length % 2 != 0
+                        ? Colors.white
+                        : blueColor.withOpacity(0.09),
+                    border: Border.all(
+                        color: const Color.fromRGBO(152, 162, 179, .5)),
                   ),
                   child: Column(
                     children: <Widget>[
@@ -2713,27 +3213,34 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                               InkWell(
                                 onTap: () {
                                   setState(() {
-                                    if (expandedRowbedbathIndex == currentPageData.length + 1) {
+                                    if (expandedRowbedbathIndex ==
+                                        currentPageData.length + 1) {
                                       expandedRowbedbathIndex = null;
                                       isRowExpanded = true;
                                     } else {
-                                      expandedRowbedbathIndex = currentPageData.length + 1;
+                                      expandedRowbedbathIndex =
+                                          currentPageData.length + 1;
                                       isRowExpanded = false;
-                                      nestedExpandedIndex = null; // reset inner when switching rows
+                                      nestedExpandedIndex =
+                                          null; // reset inner when switching rows
                                     }
                                   });
                                 },
                                 child: Container(
                                   margin: const EdgeInsets.only(left: 5),
-                                  padding: !isRowExpanded ? const EdgeInsets.only(bottom: 10) : const EdgeInsets.only(top: 10),
+                                  padding: !isRowExpanded
+                                      ? const EdgeInsets.only(bottom: 10)
+                                      : const EdgeInsets.only(top: 10),
                                   child: FaIcon(
-                                    isRowExpanded ? FontAwesomeIcons.sortUp : FontAwesomeIcons.sortDown,
+                                    isRowExpanded
+                                        ? FontAwesomeIcons.sortUp
+                                        : FontAwesomeIcons.sortDown,
                                     size: 20,
                                     color: blueColor,
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Expanded(
                                 flex: 4,
                                 child: Text(
@@ -2745,7 +3252,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Expanded(
                                 flex: 2,
                                 child: Text(
@@ -2767,7 +3274,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0, vertical: 0),
                               child: Text(
                                 "Occupancy",
                                 textAlign: TextAlign.center,
@@ -2778,14 +3286,16 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 0),
                               child: Divider(
                                 thickness: 2,
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 0),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -2793,18 +3303,21 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                       columnWidths: {
                                         // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                         // 1: FlexColumnWidth(),
-                                        0: FlexColumnWidth(), // Distribute columns equally
-                                        1: FlexColumnWidth(),
-                                        2: FlexColumnWidth(),
+                                        0: const FlexColumnWidth(), // Distribute columns equally
+                                        1: const FlexColumnWidth(),
+                                        2: const FlexColumnWidth(),
                                       },
                                       children: [
                                         buildTableRows(
                                           'Vacant',
-                                          getDisplayValue("${data.totalsAndAveragesBedBath!.totalVacantUnits}"),
+                                          getDisplayValue(
+                                              "${data.totalsAndAveragesBedBath!.totalVacantUnits}"),
                                           'Occupied',
-                                          getDisplayValue("${data.totalsAndAveragesBedBath!.totalOccupiedUnits}"),
+                                          getDisplayValue(
+                                              "${data.totalsAndAveragesBedBath!.totalOccupiedUnits}"),
                                           '%Occupied',
-                                          getDisplayValue("${data.totalsAndAveragesBedBath!.avgOccupancyRate}"),
+                                          getDisplayValue(
+                                              "${data.totalsAndAveragesBedBath!.avgOccupancyRate}"),
                                         ),
                                       ],
                                     ),
@@ -2813,7 +3326,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0, vertical: 0),
                               child: Text(
                                 "Market Rent",
                                 textAlign: TextAlign.center,
@@ -2824,14 +3338,16 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 0),
                               child: Divider(
                                 thickness: 2,
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 0),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -2839,18 +3355,21 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                       columnWidths: {
                                         // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                         // 1: FlexColumnWidth(),
-                                        0: FlexColumnWidth(), // Distribute columns equally
-                                        1: FlexColumnWidth(),
-                                        2: FlexColumnWidth(),
+                                        0: const FlexColumnWidth(), // Distribute columns equally
+                                        1: const FlexColumnWidth(),
+                                        2: const FlexColumnWidth(),
                                       },
                                       children: [
                                         buildTableRows(
                                           'Total',
-                                          getDisplayValue("${data.totalsAndAveragesBedBath!.totalMarketRent}"),
+                                          getDisplayValue(
+                                              "${data.totalsAndAveragesBedBath!.totalMarketRent}"),
                                           'Average',
-                                          getDisplayValue("${data.totalsAndAveragesBedBath!.avgMarketRent}"),
+                                          getDisplayValue(
+                                              "${data.totalsAndAveragesBedBath!.avgMarketRent}"),
                                           'Avg./Sq.Ft.',
-                                          getDisplayValue("${data.totalsAndAveragesBedBath!.avgMarketRentPerSqFt}"),
+                                          getDisplayValue(
+                                              "${data.totalsAndAveragesBedBath!.avgMarketRentPerSqFt}"),
                                         ),
                                       ],
                                     ),
@@ -2859,7 +3378,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0, vertical: 0),
                               child: Text(
                                 "Square Feet",
                                 textAlign: TextAlign.center,
@@ -2870,14 +3390,16 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 0),
                               child: Divider(
                                 thickness: 2,
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 0),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -2885,16 +3407,18 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                       columnWidths: {
                                         // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                         // 1: FlexColumnWidth(),
-                                        0: FlexColumnWidth(), // Distribute columns equally
-                                        1: FlexColumnWidth(),
-                                        2: FlexColumnWidth(),
+                                        0: const FlexColumnWidth(), // Distribute columns equally
+                                        1: const FlexColumnWidth(),
+                                        2: const FlexColumnWidth(),
                                       },
                                       children: [
                                         buildTableRows(
                                           'Total',
-                                          getDisplayValue("${data.totalsAndAveragesBedBath!.totalSqFt}"),
+                                          getDisplayValue(
+                                              "${data.totalsAndAveragesBedBath!.totalSqFt}"),
                                           'Average',
-                                          getDisplayValue("${data.totalsAndAveragesBedBath!.avgSqFt}"),
+                                          getDisplayValue(
+                                              "${data.totalsAndAveragesBedBath!.avgSqFt}"),
                                           '',
                                           '',
                                         ),
@@ -2924,7 +3448,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -2944,8 +3468,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                           isdisplaysummeryProperty = !isdisplaysummeryProperty;
                         });
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 15.0),
                         child: FaIcon(
                           FontAwesomeIcons.squareCaretDown,
                         ),
@@ -2957,8 +3481,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                           isdisplaysummeryProperty = !isdisplaysummeryProperty;
                         });
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 15.0),
                         child: FaIcon(FontAwesomeIcons.squareCaretUp),
                       ),
                     )
@@ -2967,18 +3491,19 @@ class _RentersInsurancesState extends State<RentersInsurances> {
         ),
         if (isdisplaysummeryProperty)
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: _buildHeadersforsummery("Property", "No.Of Units"),
           ),
         if (isdisplaysummeryProperty)
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
         if (isdisplaysummeryProperty)
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 16.0),
+            margin: const EdgeInsets.symmetric(horizontal: 16.0),
             decoration: BoxDecoration(
-              border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+              border:
+                  Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
             ),
             child: Column(
               children: [
@@ -2990,8 +3515,11 @@ class _RentersInsurancesState extends State<RentersInsurances> {
 
                     return Container(
                       decoration: BoxDecoration(
-                        color: rowIndex % 2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                        border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                        color: rowIndex % 2 != 0
+                            ? Colors.white
+                            : blueColor.withOpacity(0.09),
+                        border: Border.all(
+                            color: const Color.fromRGBO(152, 162, 179, .5)),
                       ),
                       child: Column(
                         children: <Widget>[
@@ -3007,25 +3535,31 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                   InkWell(
                                     onTap: () {
                                       setState(() {
-                                        if (expandedRowPropertyIndex == rowIndex) {
+                                        if (expandedRowPropertyIndex ==
+                                            rowIndex) {
                                           expandedRowPropertyIndex = null;
                                         } else {
                                           expandedRowPropertyIndex = rowIndex;
-                                          nestedExpandedIndex = null; // reset inner when switching rows
+                                          nestedExpandedIndex =
+                                              null; // reset inner when switching rows
                                         }
                                       });
                                     },
                                     child: Container(
                                       margin: const EdgeInsets.only(left: 5),
-                                      padding: !isRowExpanded ? const EdgeInsets.only(bottom: 10) : const EdgeInsets.only(top: 10),
+                                      padding: !isRowExpanded
+                                          ? const EdgeInsets.only(bottom: 10)
+                                          : const EdgeInsets.only(top: 10),
                                       child: FaIcon(
-                                        isRowExpanded ? FontAwesomeIcons.sortUp : FontAwesomeIcons.sortDown,
+                                        isRowExpanded
+                                            ? FontAwesomeIcons.sortUp
+                                            : FontAwesomeIcons.sortDown,
                                         size: 20,
                                         color: blueColor,
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: 8),
+                                  const SizedBox(width: 8),
                                   Expanded(
                                     flex: 4,
                                     child: Text(
@@ -3037,7 +3571,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: 8),
+                                  const SizedBox(width: 8),
                                   Expanded(
                                     flex: 2,
                                     child: Text(
@@ -3059,7 +3593,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0, vertical: 0),
                                   child: Text(
                                     "Occupancy",
                                     textAlign: TextAlign.center,
@@ -3070,14 +3605,16 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                     ),
                                   ),
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8.0, vertical: 0),
                                   child: Divider(
                                     thickness: 2,
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 0),
                                   child: Row(
                                     children: [
                                       Expanded(
@@ -3085,18 +3622,21 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                           columnWidths: {
                                             // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                             // 1: FlexColumnWidth(),
-                                            0: FlexColumnWidth(), // Distribute columns equally
-                                            1: FlexColumnWidth(),
-                                            2: FlexColumnWidth(),
+                                            0: const FlexColumnWidth(), // Distribute columns equally
+                                            1: const FlexColumnWidth(),
+                                            2: const FlexColumnWidth(),
                                           },
                                           children: [
                                             buildTableRows(
                                               'Vacant',
-                                              getDisplayValue("${item.vacantUnits}"),
+                                              getDisplayValue(
+                                                  "${item.vacantUnits}"),
                                               'Occupied',
-                                              getDisplayValue("${item.occupiedUnits}"),
+                                              getDisplayValue(
+                                                  "${item.occupiedUnits}"),
                                               '%Occupied',
-                                              getDisplayValue("${item.occupancyRate}"),
+                                              getDisplayValue(
+                                                  "${item.occupancyRate}"),
                                             ),
                                           ],
                                         ),
@@ -3105,7 +3645,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0, vertical: 0),
                                   child: Text(
                                     "Market Rent",
                                     textAlign: TextAlign.center,
@@ -3116,14 +3657,16 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                     ),
                                   ),
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8.0, vertical: 0),
                                   child: Divider(
                                     thickness: 2,
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 0),
                                   child: Row(
                                     children: [
                                       Expanded(
@@ -3131,18 +3674,21 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                           columnWidths: {
                                             // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                             // 1: FlexColumnWidth(),
-                                            0: FlexColumnWidth(), // Distribute columns equally
-                                            1: FlexColumnWidth(),
-                                            2: FlexColumnWidth(),
+                                            0: const FlexColumnWidth(), // Distribute columns equally
+                                            1: const FlexColumnWidth(),
+                                            2: const FlexColumnWidth(),
                                           },
                                           children: [
                                             buildTableRows(
                                               'Total',
-                                              getDisplayValue("${item.totalRent}"),
+                                              getDisplayValue(
+                                                  "${item.totalRent}"),
                                               'Average',
-                                              getDisplayValue("${item.avgRent}"),
+                                              getDisplayValue(
+                                                  "${item.avgRent}"),
                                               'Avg./Sq.Ft.',
-                                              getDisplayValue("${item.avgRentPerSqFt}"),
+                                              getDisplayValue(
+                                                  "${item.avgRentPerSqFt}"),
                                             ),
                                           ],
                                         ),
@@ -3151,7 +3697,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0, vertical: 0),
                                   child: Text(
                                     "Square Feet",
                                     textAlign: TextAlign.center,
@@ -3162,14 +3709,16 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                     ),
                                   ),
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8.0, vertical: 0),
                                   child: Divider(
                                     thickness: 2,
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 0),
                                   child: Row(
                                     children: [
                                       Expanded(
@@ -3177,16 +3726,18 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                           columnWidths: {
                                             // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                             // 1: FlexColumnWidth(),
-                                            0: FlexColumnWidth(), // Distribute columns equally
-                                            1: FlexColumnWidth(),
-                                            2: FlexColumnWidth(),
+                                            0: const FlexColumnWidth(), // Distribute columns equally
+                                            1: const FlexColumnWidth(),
+                                            2: const FlexColumnWidth(),
                                           },
                                           children: [
                                             buildTableRows(
                                               'Total',
-                                              getDisplayValue("${item.totalSqFt}"),
+                                              getDisplayValue(
+                                                  "${item.totalSqFt}"),
                                               'Average',
-                                              getDisplayValue("${item.avgSqFt}"),
+                                              getDisplayValue(
+                                                  "${item.avgSqFt}"),
                                               '',
                                               '',
                                             ),
@@ -3206,8 +3757,11 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: currentPageData.length % 2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                    border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                    color: currentPageData.length % 2 != 0
+                        ? Colors.white
+                        : blueColor.withOpacity(0.09),
+                    border: Border.all(
+                        color: const Color.fromRGBO(152, 162, 179, .5)),
                   ),
                   child: Column(
                     children: <Widget>[
@@ -3223,29 +3777,37 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                               InkWell(
                                 onTap: () {
                                   setState(() {
-                                    if (expandedRowPropertyIndex == currentPageData.length) {
+                                    if (expandedRowPropertyIndex ==
+                                        currentPageData.length) {
                                       expandedRowPropertyIndex = null;
                                       isRowPropertyExpanded = true;
                                     } else {
-                                      expandedRowPropertyIndex = currentPageData.length;
+                                      expandedRowPropertyIndex =
+                                          currentPageData.length;
                                       isRowPropertyExpanded = false;
-                                      nestedExpandedIndex = null; // reset inner when switching rows
+                                      nestedExpandedIndex =
+                                          null; // reset inner when switching rows
                                     }
                                   });
 
-                                  print("isRowPropertyExpanded $isRowPropertyExpanded");
+                                  print(
+                                      "isRowPropertyExpanded $isRowPropertyExpanded");
                                 },
                                 child: Container(
                                   margin: const EdgeInsets.only(left: 5),
-                                  padding: !isRowPropertyExpanded ? const EdgeInsets.only(bottom: 10) : const EdgeInsets.only(top: 10),
+                                  padding: !isRowPropertyExpanded
+                                      ? const EdgeInsets.only(bottom: 10)
+                                      : const EdgeInsets.only(top: 10),
                                   child: FaIcon(
-                                    isRowPropertyExpanded ? FontAwesomeIcons.sortUp : FontAwesomeIcons.sortDown,
+                                    isRowPropertyExpanded
+                                        ? FontAwesomeIcons.sortUp
+                                        : FontAwesomeIcons.sortDown,
                                     size: 20,
                                     color: blueColor,
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Expanded(
                                 flex: 4,
                                 child: Text(
@@ -3257,7 +3819,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Expanded(
                                 flex: 2,
                                 child: Text(
@@ -3279,7 +3841,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0, vertical: 0),
                               child: Text(
                                 "Occupancy",
                                 textAlign: TextAlign.center,
@@ -3290,14 +3853,16 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 0),
                               child: Divider(
                                 thickness: 2,
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 0),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -3305,18 +3870,21 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                       columnWidths: {
                                         // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                         // 1: FlexColumnWidth(),
-                                        0: FlexColumnWidth(), // Distribute columns equally
-                                        1: FlexColumnWidth(),
-                                        2: FlexColumnWidth(),
+                                        0: const FlexColumnWidth(), // Distribute columns equally
+                                        1: const FlexColumnWidth(),
+                                        2: const FlexColumnWidth(),
                                       },
                                       children: [
                                         buildTableRows(
                                           'Vacant',
-                                          getDisplayValue("${data.totalsAndAveragesProperty!.totalVacantUnits}"),
+                                          getDisplayValue(
+                                              "${data.totalsAndAveragesProperty!.totalVacantUnits}"),
                                           'Occupied',
-                                          getDisplayValue("${data.totalsAndAveragesProperty!.totalOccupiedUnits}"),
+                                          getDisplayValue(
+                                              "${data.totalsAndAveragesProperty!.totalOccupiedUnits}"),
                                           '%Occupied',
-                                          getDisplayValue("${data.totalsAndAveragesProperty!.avgOccupancyRate}"),
+                                          getDisplayValue(
+                                              "${data.totalsAndAveragesProperty!.avgOccupancyRate}"),
                                         ),
                                       ],
                                     ),
@@ -3325,7 +3893,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0, vertical: 0),
                               child: Text(
                                 "Market Rent",
                                 textAlign: TextAlign.center,
@@ -3336,14 +3905,16 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 0),
                               child: Divider(
                                 thickness: 2,
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 0),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -3351,18 +3922,21 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                       columnWidths: {
                                         // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                         // 1: FlexColumnWidth(),
-                                        0: FlexColumnWidth(), // Distribute columns equally
-                                        1: FlexColumnWidth(),
-                                        2: FlexColumnWidth(),
+                                        0: const FlexColumnWidth(), // Distribute columns equally
+                                        1: const FlexColumnWidth(),
+                                        2: const FlexColumnWidth(),
                                       },
                                       children: [
                                         buildTableRows(
                                           'Total',
-                                          getDisplayValue("${data.totalsAndAveragesProperty!.totalMarketRent}"),
+                                          getDisplayValue(
+                                              "${data.totalsAndAveragesProperty!.totalMarketRent}"),
                                           'Average',
-                                          getDisplayValue("${data.totalsAndAveragesProperty!.avgMarketRent}"),
+                                          getDisplayValue(
+                                              "${data.totalsAndAveragesProperty!.avgMarketRent}"),
                                           'Avg./Sq.Ft.',
-                                          getDisplayValue("${data.totalsAndAveragesProperty!.avgMarketRentPerSqFt}"),
+                                          getDisplayValue(
+                                              "${data.totalsAndAveragesProperty!.avgMarketRentPerSqFt}"),
                                         ),
                                       ],
                                     ),
@@ -3371,7 +3945,8 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0, vertical: 0),
                               child: Text(
                                 "Square Feet",
                                 textAlign: TextAlign.center,
@@ -3382,14 +3957,16 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 0),
                               child: Divider(
                                 thickness: 2,
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 0),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -3397,16 +3974,18 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                       columnWidths: {
                                         // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                         // 1: FlexColumnWidth(),
-                                        0: FlexColumnWidth(), // Distribute columns equally
-                                        1: FlexColumnWidth(),
-                                        2: FlexColumnWidth(),
+                                        0: const FlexColumnWidth(), // Distribute columns equally
+                                        1: const FlexColumnWidth(),
+                                        2: const FlexColumnWidth(),
                                       },
                                       children: [
                                         buildTableRows(
                                           'Total',
-                                          getDisplayValue("${data.totalsAndAveragesProperty!.totalSqFt}"),
+                                          getDisplayValue(
+                                              "${data.totalsAndAveragesProperty!.totalSqFt}"),
                                           'Average',
-                                          getDisplayValue("${data.totalsAndAveragesProperty!.avgSqFt}"),
+                                          getDisplayValue(
+                                              "${data.totalsAndAveragesProperty!.avgSqFt}"),
                                           '',
                                           '',
                                         ),
@@ -3425,7 +4004,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
               ],
             ),
           ),
-        SizedBox(
+        const SizedBox(
           height: 30,
         )
       ],
@@ -3482,20 +4061,27 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     );
   }
 
-  TableRow buildTableRows(String leftLabel, String leftValue, String centerLabel, String centerValue, String rightLabel, String rightValue) {
+  TableRow buildTableRows(
+      String leftLabel,
+      String leftValue,
+      String centerLabel,
+      String centerValue,
+      String rightLabel,
+      String rightValue) {
     return TableRow(
       children: [
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   leftLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 4.0), // Space between label and value
+                const SizedBox(height: 4.0), // Space between label and value
                 Text(
                   leftValue,
                   style: TextStyle(color: grey),
@@ -3506,15 +4092,16 @@ class _RentersInsurancesState extends State<RentersInsurances> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   centerLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 4.0), // Space between label and value
+                const SizedBox(height: 4.0), // Space between label and value
                 Text(
                   centerValue,
                   style: TextStyle(color: grey),
@@ -3525,15 +4112,16 @@ class _RentersInsurancesState extends State<RentersInsurances> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   rightLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 4.0), // Space between label and value
+                const SizedBox(height: 4.0), // Space between label and value
                 Text(
                   rightValue,
                   style: TextStyle(color: grey),
