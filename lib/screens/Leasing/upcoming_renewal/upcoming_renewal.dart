@@ -548,7 +548,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "Upcoming renewal",
+        currentpage: "Upcoming Renewal",
         dropdown: true,
       ),
       body: _connectivityResult != ConnectivityResult.none

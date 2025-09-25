@@ -176,7 +176,8 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                 },
                 child: Row(
                   children: [
-                    Text("       Rental \n     Address",
+                    Text("Rental\nAddress",
+                        textAlign: TextAlign.left,
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold)),
                     // SizedBox(width: 5),
@@ -226,7 +227,8 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                 },
                 child: Row(
                   children: [
-                    Text("          Sent",
+                    Text("   Sent",
+                        textAlign: TextAlign.left,
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 3),
@@ -1115,7 +1117,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                                       ?.isNotEmpty ==
                                                                   true
                                                               ? '${Propertytype.rentalAddress}'
-                                                              : '         N/A',
+                                                              : 'N/A',
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:

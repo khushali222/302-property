@@ -138,7 +138,7 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                     ),
                   // if (permissions!.propertytypeView == true)
                   FaIcon(
-                    FontAwesomeIcons.house,
+                    FontAwesomeIcons.handHoldingDollar,
                     size: 20,
                     color: widget.currentpage == "Mortgage"
                         ? Colors.white
@@ -158,7 +158,7 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                 [
                   "Leases",
                   "Applicants",
-                  "Upcoming renewal",
+                  "Upcoming Renewal",
                   "Scheduled Payment",
                   "Scheduled Charges",
                 ],
@@ -178,7 +178,7 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                         : blueColor,
                   ),
 
-                  widget.currentpage == "Upcoming renewal"
+                  widget.currentpage == "Upcoming Renewal"
                       ? SvgPicture.asset(
                           "assets/images/upcoming white.svg",
                           fit: BoxFit.cover,

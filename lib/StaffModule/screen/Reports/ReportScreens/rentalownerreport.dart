@@ -1295,6 +1295,13 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
         rentalowners = (jsonDecode(response.body) as List)
             .map((e) => e as Map<String, dynamic>)!
             .toList();
+
+        // Sort rental owners alphabetically by name
+        rentalowners.sort((a, b) {
+          String nameA = a['rentalOwner_name']?.toString() ?? '';
+          String nameB = b['rentalOwner_name']?.toString() ?? '';
+          return nameA.toLowerCase().compareTo(nameB.toLowerCase());
+        });
       });
       log(rentalowners.toString());
     } else {

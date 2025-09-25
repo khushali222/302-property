@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:csv/csv.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -624,6 +625,15 @@ class _RentersInsurancesState extends State<RentersInsurances> {
         rentalowners = (jsonDecode(response.body) as List)
             .map((e) => e as Map<String, dynamic>)!
             .toList();
+
+        // Sort rental owners alphabetically by name (excluding "All" option)
+        rentalowners.sort((a, b) {
+          String nameA = a['rentalOwner_name']?.toString() ?? '';
+          String nameB = b['rentalOwner_name']?.toString() ?? '';
+          return nameA.toLowerCase().compareTo(nameB.toLowerCase());
+        });
+
+        // Insert "All" option at the beginning after sorting
         rentalowners.insert(0, {
           "rentalowner_id": "all",
           "rentalOwner_name": "All",
@@ -2008,36 +2018,100 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                   children: [
                                     // Dropdown for Rental Owners
                                     Expanded(
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 12),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          border: Border.all(
-                                              color: Colors.grey.shade300),
+                                      child: DropdownButtonHideUnderline(
+                                        child: Material(
+                                          elevation: 3,
                                           borderRadius:
                                               BorderRadius.circular(8),
-                                        ),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<String>(
+                                          child: DropdownButton2<String>(
                                             isExpanded: true,
-                                            hint: const Text(
-                                                "Select Rental Owners"),
-                                            value: selectedOwner,
+                                            hint: const Row(
+                                              children: [
+                                                SizedBox(width: 4),
+                                                Expanded(
+                                                  child: Text(
+                                                    'Select Rental Owners',
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color:  Colors.black,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                             items: rentalowners
                                                 .map((owner) =>
                                                     DropdownMenuItem<String>(
                                                       value: owner[
                                                           'rentalowner_id'],
-                                                      child: Text(owner[
-                                                          'rentalOwner_name']!),
+                                                      child: Text(
+                                                        owner[
+                                                            'rentalOwner_name']!,
+                                                        style: const TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.black,
+                                                        ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
                                                     ))
                                                 .toList(),
+                                            value: selectedOwner,
                                             onChanged: (value) {
                                               setState(() {
                                                 selectedOwner = value;
                                               });
                                             },
+                                            buttonStyleData: ButtonStyleData(
+                                              height: 45,
+                                              width: double.infinity,
+                                              padding: const EdgeInsets.only(
+                                                  left: 14, right: 14),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                border: Border.all(
+                                                  color:
+                                                      const Color(0xFF8A95A8),
+                                                ),
+                                                color: Colors.white,
+                                              ),
+                                              elevation: 0,
+                                            ),
+                                            dropdownStyleData:
+                                                DropdownStyleData(
+                                              maxHeight: 250,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.8,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(14),
+                                              ),
+                                              offset: const Offset(-20, 0),
+                                              scrollbarTheme:
+                                                  ScrollbarThemeData(
+                                                radius:
+                                                    const Radius.circular(40),
+                                                thickness:
+                                                    MaterialStateProperty.all(
+                                                        6),
+                                                thumbVisibility:
+                                                    MaterialStateProperty.all(
+                                                        true),
+                                              ),
+                                            ),
+                                            menuItemStyleData:
+                                                const MenuItemStyleData(
+                                              height: 50,
+                                              padding: EdgeInsets.only(
+                                                  left: 14, right: 14),
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -2145,7 +2219,13 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                         }
 
                         var data = snapshot.data!.rentals!;
-                        final currentPageData = data;
+
+                        // Pagination logic
+                        final totalPages = (data.length / itemsPerPage).ceil();
+                        final currentPageData = data
+                            .skip(currentPage * itemsPerPage)
+                            .take(itemsPerPage)
+                            .toList();
 
                         return SingleChildScrollView(
                           child: Column(
@@ -2158,36 +2238,100 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                   children: [
                                     // Dropdown for Rental Owners
                                     Expanded(
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 12),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          border: Border.all(
-                                              color: Colors.grey.shade300),
+                                      child: DropdownButtonHideUnderline(
+                                        child: Material(
+                                          elevation: 3,
                                           borderRadius:
                                               BorderRadius.circular(8),
-                                        ),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<String>(
+                                          child: DropdownButton2<String>(
                                             isExpanded: true,
-                                            hint: const Text(
-                                                "Select Rental Owners"),
-                                            value: selectedOwner,
+                                            hint: const Row(
+                                              children: [
+                                                SizedBox(width: 4),
+                                                Expanded(
+                                                  child: Text(
+                                                    'Select Rental Owners',
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color:  Colors.black,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                             items: rentalowners
                                                 .map((owner) =>
                                                     DropdownMenuItem<String>(
                                                       value: owner[
                                                           'rentalowner_id'],
-                                                      child: Text(owner[
-                                                          'rentalOwner_name']!),
+                                                      child: Text(
+                                                        owner[
+                                                            'rentalOwner_name']!,
+                                                        style: const TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.black,
+                                                        ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
                                                     ))
                                                 .toList(),
+                                            value: selectedOwner,
                                             onChanged: (value) {
                                               setState(() {
                                                 selectedOwner = value;
                                               });
                                             },
+                                            buttonStyleData: ButtonStyleData(
+                                              height: 45,
+                                              width: double.infinity,
+                                              padding: const EdgeInsets.only(
+                                                  left: 14, right: 14),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                border: Border.all(
+                                                  color:
+                                                      const Color(0xFF8A95A8),
+                                                ),
+                                                color: Colors.white,
+                                              ),
+                                              elevation: 0,
+                                            ),
+                                            dropdownStyleData:
+                                                DropdownStyleData(
+                                              maxHeight: 250,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.8,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(14),
+                                              ),
+                                              offset: const Offset(-20, 0),
+                                              scrollbarTheme:
+                                                  ScrollbarThemeData(
+                                                radius:
+                                                    const Radius.circular(40),
+                                                thickness:
+                                                    MaterialStateProperty.all(
+                                                        6),
+                                                thumbVisibility:
+                                                    MaterialStateProperty.all(
+                                                        true),
+                                              ),
+                                            ),
+                                            menuItemStyleData:
+                                                const MenuItemStyleData(
+                                              height: 50,
+                                              padding: EdgeInsets.only(
+                                                  left: 14, right: 14),
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -2291,7 +2435,99 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                               if (_selectedIndex == 0)
                                 DetailScreen(currentPageData),
                               if (_selectedIndex == 1)
-                                SummeryScreen(snapshot.data!)
+                                SummeryScreen(snapshot.data!),
+
+                              // Pagination controls for Details tab
+                              if (_selectedIndex == 0 &&
+                                  data.length > itemsPerPage)
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const SizedBox(width: 10),
+                                          Material(
+                                            elevation: 3,
+                                            child: Container(
+                                              height: 40,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12.0),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.grey),
+                                              ),
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton<int>(
+                                                  value: itemsPerPage,
+                                                  items: itemsPerPageOptions
+                                                      .map((int value) {
+                                                    return DropdownMenuItem<
+                                                        int>(
+                                                      value: value,
+                                                      child: Text(
+                                                          value.toString()),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged: (newValue) {
+                                                    setState(() {
+                                                      itemsPerPage = newValue!;
+                                                      currentPage =
+                                                          0; // Reset to first page when items per page change
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: FaIcon(
+                                              FontAwesomeIcons
+                                                  .circleChevronLeft,
+                                              color: currentPage == 0
+                                                  ? Colors.grey
+                                                  : blueColor,
+                                            ),
+                                            onPressed: currentPage == 0
+                                                ? null
+                                                : () {
+                                                    setState(() {
+                                                      currentPage--;
+                                                    });
+                                                  },
+                                          ),
+                                          Text(
+                                              'Page ${currentPage + 1} of $totalPages'),
+                                          IconButton(
+                                            icon: FaIcon(
+                                              FontAwesomeIcons
+                                                  .circleChevronRight,
+                                              color:
+                                                  currentPage < totalPages - 1
+                                                      ? blueColor
+                                                      : Colors.grey,
+                                            ),
+                                            onPressed:
+                                                currentPage < totalPages - 1
+                                                    ? () {
+                                                        setState(() {
+                                                          currentPage++;
+                                                        });
+                                                      }
+                                                    : null,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                )
                               // Custom Tab Bar
                             ],
                           ),

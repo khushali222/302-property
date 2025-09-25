@@ -155,20 +155,20 @@ class _StaffTableState extends State<StaffTable> {
                                 color: blueColor, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 3),
                     ascending1
-                        ? const Padding(
+                        ?  Padding(
                             padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
-                              color: Colors.white,
+                              color: blueColor,
                             ),
                           )
-                        : const Padding(
+                        :  Padding(
                             padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
-                              color: Colors.white,
+                              color:blueColor,
                             ),
                           ),
                   ],
@@ -201,7 +201,7 @@ class _StaffTableState extends State<StaffTable> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text("Designation",
+                    Text("Title",
                         style: TextStyle(
                             color: blueColor,
                             fontSize: 15,
@@ -1199,7 +1199,7 @@ class _StaffTableState extends State<StaffTable> {
                                                                       .start,
                                                               children: [
                                                                 Text(
-                                                                  'Created At :',
+                                                                  'Created On :',
                                                                   style:
                                                                       TextStyle(
                                                                     fontWeight:
@@ -1243,7 +1243,7 @@ class _StaffTableState extends State<StaffTable> {
                                                                       .end,
                                                               children: [
                                                                 Text(
-                                                                  'Updated At :',
+                                                                  'Updated On :',
                                                                   style:
                                                                       TextStyle(
                                                                     fontWeight:

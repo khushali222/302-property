@@ -71,7 +71,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 padding: const EdgeInsets.all(25.0),
                 child: _brandLogoBase64 != null
                     ? Container(
-                 // color: Colors.blue,
+                        // color: Colors.blue,
                         child: Image.memory(
                           base64Decode(_brandLogoBase64!),
                           //  height: 100,
@@ -112,7 +112,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   color: blueColor,
                 ),
                 "Rentals",
-                ["Properties", "Rental Owner", "Tenants","Property Type","Mortgage"],
+                [
+                  "Properties",
+                  "Rental Owner",
+                  "Tenants",
+                  "Property Type",
+                  "Mortgage"
+                ],
                 [
                   FaIcon(
                     FontAwesomeIcons.buildingUser,
@@ -143,7 +149,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         : blueColor,
                   ),
                   FaIcon(
-                    FontAwesomeIcons.house,
+                    FontAwesomeIcons.handHoldingDollar,
                     size: 20,
                     color: widget.currentpage == "Mortgage"
                         ? Colors.white
@@ -164,7 +170,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 [
                   "Leases",
                   "Applicants",
-                  "Upcoming renewal",
+                  "Upcoming Renewal",
                   "Scheduled Payment",
                   "Scheduled Charges",
                 ],
@@ -184,7 +190,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         : blueColor,
                   ),
 
-                  widget.currentpage == "Upcoming renewal"
+                  widget.currentpage == "Upcoming Renewal"
                       ? SvgPicture.asset(
                           "assets/images/upcoming white.svg",
                           fit: BoxFit.cover,
@@ -307,9 +313,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 FaIcon(
                   FontAwesomeIcons.userClock,
                   size: 20,
-                  color: widget.currentpage == "Staff"
-                      ? Colors.white
-                      : blueColor,
+                  color:
+                      widget.currentpage == "Staff" ? Colors.white : blueColor,
                 ),
                 "Staff",
                 widget.currentpage == "Staff",

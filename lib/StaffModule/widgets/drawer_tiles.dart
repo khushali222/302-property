@@ -76,7 +76,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Leases": (context) => Lease_table(),
     "Applicants": (context) => Applicants_table(),
     //"Vendor": (context) => Vendor_table(),
-    "Upcoming renewal": (context) => Upcomingrenewal(),
+    "Upcoming Renewal": (context) => Upcomingrenewal(),
     // "Work Order": (context) => Cardpayment(leaseId: '',),
     "Templates": (context) => TempletTable(),
     "E-mail Logs": (context) => Email_log_tablee(),

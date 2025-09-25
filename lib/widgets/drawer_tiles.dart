@@ -88,7 +88,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Send E-mail": (context) => Send_Email_table(),
     "Applicants": (context) => Applicants_table(),
     "Vendor": (context) => Vendor_table(),
-    "Upcoming renewal": (context) => Upcomingrenewal(),
+    "Upcoming Renewal": (context) => Upcomingrenewal(),
     "Scheduled Payment": (context) => Scheduled_Payments_table(),
     "Scheduled Charges": (context) => ScheduledChargeTable(),
     "Mortgage":(context)=> MortgageTable()
