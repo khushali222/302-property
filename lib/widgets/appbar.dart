@@ -92,12 +92,12 @@ class widget_302 {
         ),
         actions: [
           InkWell(
-            onTap: () {
-              if (isPlanPageActive != true) {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => getPlanDetailScreen()));
-              }
-            },
+            // onTap: () {
+            //   if (isPlanPageActive != true) {
+            //     Navigator.of(context).push(MaterialPageRoute(
+            //         builder: (context) => getPlanDetailScreen()));
+            //   }
+            // },
             child: Container(
               width: 150,
               margin: const EdgeInsets.symmetric(vertical: 12),

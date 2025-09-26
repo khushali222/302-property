@@ -27,6 +27,8 @@ import '../../Rental/Tenants/add_tenants.dart';
 import '../../../widgets/custom_drawer.dart';
 import '../../../../Model/All_categories_model.dart';
 import '../../../../repository/fetch_allcategories.dart';
+import 'package:provider/provider.dart';
+import '../../../../provider/dateProvider.dart';
 
 class ResponsiveEditWorkOrder extends StatefulWidget {
   EditData? property;
@@ -196,7 +198,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       initialSubject = fetchedDetails.workSubject;
       initialPerform = fetchedDetails.workPerformed;
       initialVendorNote = fetchedDetails.vendorNotes;
-      initialDate = fetchedDetails.date;
+      initialDate = Provider.of<DateProvider>(context, listen: false)
+          .formatCurrentDate(fetchedDetails.date ?? "");
       initialSelectedPropertyId = fetchedDetails.rentalId;
       initialSelectedUnitId = fetchedDetails.unitId;
       initialSelectedCategory = fetchedDetails.workCategory;
@@ -242,7 +245,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       perform.text = fetchedDetails.workPerformed!;
       _selectedStatus = fetchedDetails.status! ?? "";
       vendornote.text = fetchedDetails.vendorNotes ?? "";
-      _dateController.text = fetchedDetails.date ?? "";
+      _dateController.text = Provider.of<DateProvider>(context, listen: false)
+          .formatCurrentDate(fetchedDetails.date ?? "");
       _selectedOption = fetchedDetails.priority ?? "";
       _selectedPropertyId = fetchedDetails.rentalId;
       renderId = fetchedDetails.rentalId!;
@@ -823,7 +827,9 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
 
     if (selectedDate != null) {
       setState(() {
-        _dateController.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+        _dateController.text = DateFormat(
+                Provider.of<DateProvider>(context, listen: false).dateFormat)
+            .format(selectedDate);
       });
     }
   }
@@ -1045,7 +1051,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                   children: [
                                                     Row(
                                                       children: [
-                                                        const SizedBox(width: 60),
+                                                        const SizedBox(
+                                                            width: 60),
                                                         GestureDetector(
                                                           onTap: () {
                                                             setState(() {
@@ -1129,7 +1136,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                     ),
                                   ],
                                 )
-                              : const Center(child: Text("No images selected.")),
+                              : const Center(
+                                  child: Text("No images selected.")),
                           // _imageUrls.isNotEmpty
                           //     ? Row(
                           //         children: [
@@ -2206,8 +2214,10 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                               DropdownButtonHideUnderline(
                                                 child: DropdownButtonFormField2<
                                                     String>(
-                                                  decoration: const InputDecoration(
-                                                      border: InputBorder.none),
+                                                  decoration:
+                                                      const InputDecoration(
+                                                          border:
+                                                              InputBorder.none),
                                                   isExpanded: true,
                                                   hint: const Row(
                                                     children: [
@@ -2478,7 +2488,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                     color: Color(0xFFb0b6c3)),
                                 border: InputBorder.none,
                                 // labelText: 'Select Date',
-                                hintText: 'yyyy-mm-dd',
+                                hintText: Provider.of<DateProvider>(context)
+                                    .dateFormat,
                                 suffixIcon: IconButton(
                                   icon: const Icon(Icons.calendar_today),
                                   onPressed: () {
@@ -2569,7 +2580,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(label,
-            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.grey)),
         const SizedBox(height: 8.0),
         Material(
           elevation: 3,
@@ -2680,7 +2692,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           priority: _selectedOption,
           isBillable: isChecked,
           workChargeTo: isChecked == 'Tenants',
-          date: _dateController.text.trim(),
+          date: reverseFormatDate(_dateController.text.trim()),
           entry: _selectedEntry == 'Yes',
           parts: parts,
           notificationTime:
@@ -2817,7 +2829,8 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       perform.text = fetchedDetails.workPerformed!;
       _selectedStatus = fetchedDetails.status!;
       vendornote.text = fetchedDetails.vendorNotes ?? "";
-      _dateController.text = fetchedDetails.date!;
+      _dateController.text = Provider.of<DateProvider>(context, listen: false)
+          .formatCurrentDate(fetchedDetails.date!);
       _selectedOption = fetchedDetails.priority ?? "";
       _selectedPropertyId = fetchedDetails.rentalId?.isEmpty ?? true
           ? null
@@ -3368,7 +3381,9 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
 
     if (selectedDate != null) {
       setState(() {
-        _dateController.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+        _dateController.text = DateFormat(
+                Provider.of<DateProvider>(context, listen: false).dateFormat)
+            .format(selectedDate);
       });
     }
   }
@@ -3651,7 +3666,8 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                                               index);
                                                                     });
                                                                   },
-                                                                  child: const Icon(
+                                                                  child:
+                                                                      const Icon(
                                                                     Icons.close,
                                                                     color: Colors
                                                                         .grey,
@@ -3719,8 +3735,10 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                             DropdownButtonHideUnderline(
                                               child: DropdownButtonFormField2<
                                                   String>(
-                                                decoration: const InputDecoration(
-                                                    border: InputBorder.none),
+                                                decoration:
+                                                    const InputDecoration(
+                                                        border:
+                                                            InputBorder.none),
                                                 isExpanded: true,
                                                 hint: const Row(
                                                   children: [
@@ -4034,7 +4052,8 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                             DropdownButtonHideUnderline(
                                               child: DropdownButton2<String>(
                                                 isExpanded: true,
-                                                hint: const Text('Select Category'),
+                                                hint: const Text(
+                                                    'Select Category'),
                                                 value: _selectedCategory,
                                                 items: _category.map((method) {
                                                   return DropdownMenuItem<
@@ -5043,7 +5062,8 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                               const SizedBox(
                                                                 height: 3,
                                                               ),
-                                                              const Text('Tenant',
+                                                              const Text(
+                                                                  'Tenant',
                                                                   style: TextStyle(
                                                                       fontSize:
                                                                           13,
@@ -5601,7 +5621,10 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                       color: Color(0xFFb0b6c3)),
                                                   border: InputBorder.none,
                                                   // labelText: 'Select Date',
-                                                  hintText: 'yyyy-mm-dd',
+                                                  hintText:
+                                                      Provider.of<DateProvider>(
+                                                              context)
+                                                          .dateFormat,
                                                   suffixIcon: IconButton(
                                                     icon: const Icon(
                                                         Icons.calendar_today),
@@ -5677,7 +5700,8 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                       borderRadius: BorderRadius.circular(8.0)),
                                   child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color(0xFFffffff),
+                                          backgroundColor:
+                                              const Color(0xFFffffff),
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(8.0))),
@@ -5708,7 +5732,8 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(label,
-            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.grey)),
         const SizedBox(height: 8.0),
         Material(
           elevation: 3,
@@ -5783,7 +5808,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         priority: _selectedOption,
         isBillable: isChecked,
         workChargeTo: isChecked == 'Tenants',
-        date: _dateController.text.trim(),
+        date: reverseFormatDate(_dateController.text.trim()),
         entry: _selectedEntry == 'Yes',
         parts: parts,
         notificationTime:

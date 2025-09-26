@@ -584,7 +584,8 @@ class _addLease3State extends State<addLease3>
         child: TableCell(
           child: Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Center(child: Text(text, style: const TextStyle(fontSize: 18))),
+            child:
+                Center(child: Text(text, style: const TextStyle(fontSize: 18))),
           ),
         ),
       ),
@@ -746,21 +747,14 @@ class _addLease3State extends State<addLease3>
         // Get dateProvider to format the date according to user's preference
         final dateProvider = Provider.of<DateProvider>(context, listen: false);
         // Display format: Use provider's format for user display
-        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
         startDateController.text =
-            dateProvider.formatCurrentDate(apiFormatDate);
+            DateFormat(dateProvider.dateFormat).format(picked);
 
         // Auto-set end date to one year later
         DateTime endDate = DateTime(picked.year + 1, picked.month, picked.day);
         _endDate = endDate;
-        String endApiFormatDate = DateFormat('yyyy-MM-dd').format(endDate);
         endDateController.text =
-            dateProvider.formatCurrentDate(endApiFormatDate);
-
-        // Store the date in yyyy-MM-dd format for API (unchanged)
-        String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
-        print('Display: ${startDateController.text}');
-        print('API format: $dateForApi');
+            DateFormat(dateProvider.dateFormat).format(endDate);
       });
     }
   }
@@ -793,12 +787,8 @@ class _addLease3State extends State<addLease3>
         // Get dateProvider to format the date according to user's preference
         final dateProvider = Provider.of<DateProvider>(context, listen: false);
         // Display format: Use provider's format for user display
-        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
-        endDateController.text = dateProvider.formatCurrentDate(apiFormatDate);
-        // Store the date in yyyy-MM-dd format for API (unchanged)
-        String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
-        print('Display: ${endDateController.text}');
-        print('API format: $dateForApi');
+        endDateController.text =
+            DateFormat(dateProvider.dateFormat).format(picked);
       });
     }
   }
@@ -830,12 +820,8 @@ class _addLease3State extends State<addLease3>
         // Get dateProvider to format the date according to user's preference
         final dateProvider = Provider.of<DateProvider>(context, listen: false);
         // Display format: Use provider's format for user display
-        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
-        rentNextDueDate.text = dateProvider.formatCurrentDate(apiFormatDate);
-        // Store the date in yyyy-MM-dd format for API (unchanged)
-        String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
-        print('Display: ${rentNextDueDate.text}');
-        print('API format: $dateForApi');
+        rentNextDueDate.text =
+            DateFormat(dateProvider.dateFormat).format(picked);
       });
     }
   }
@@ -1378,7 +1364,8 @@ class _addLease3State extends State<addLease3>
                                             DropdownButtonHideUnderline(
                                               child: DropdownButtonFormField2<
                                                   String>(
-                                                decoration: const InputDecoration(
+                                                decoration:
+                                                    const InputDecoration(
                                                   border: InputBorder.none,
                                                 ),
                                                 isExpanded: true,
@@ -3719,9 +3706,11 @@ class _addLease3State extends State<addLease3>
                                           ...formDataRecurringList,
                                         ];
                                         String leaseStartDate =
-                                            startDateController.text.trim();
-                                        String leaseEndDate =
-                                            endDateController.text;
+                                            reverseFormatDate(
+                                                startDateController.text
+                                                    .trim());
+                                        String leaseEndDate = reverseFormatDate(
+                                            endDateController.text);
                                         print(
                                             'ends date : ${endDateController.text}');
 
@@ -3994,10 +3983,10 @@ class _addLease3State extends State<addLease3>
                                       }
                                     } else {
                                       print("faild");
-                                      String leaseStartDate =
-                                          startDateController.text;
-                                      String leaseEndDate =
-                                          endDateController.text;
+                                      String leaseStartDate = reverseFormatDate(
+                                          startDateController.text);
+                                      String leaseEndDate = reverseFormatDate(
+                                          endDateController.text);
 
                                       SharedPreferences prefs =
                                           await SharedPreferences.getInstance();
@@ -7724,5 +7713,25 @@ class _CustomDropdownState extends State<CustomDropdown> {
         );
       },
     );
+  }
+
+  String reverseFormatDate(String inputDate) {
+    DateTime parsedDate;
+
+    try {
+      // Try parsing the date as yyyy-MM-dd
+      parsedDate = DateFormat('yyyy-MM-dd').parseStrict(inputDate);
+    } catch (e) {
+      try {
+        // If the above fails, try parsing the date as dd-MM-yyyy
+        parsedDate = DateFormat('dd-MM-yyyy').parseStrict(inputDate);
+      } catch (e) {
+        // Handle invalid date format or return an error
+        throw FormatException("Invalid date format");
+      }
+    }
+
+    // Return the date in the yyyy-MM-dd format
+    return DateFormat('yyyy-MM-dd').format(parsedDate);
   }
 }

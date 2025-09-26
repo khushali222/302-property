@@ -154,13 +154,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
         // Get dateProvider to format the date according to user's preference
         final dateProvider = Provider.of<DateProvider>(context, listen: false);
         // Display format: Use provider's format for user display
-        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
         birthdateController.text =
-            dateProvider.formatCurrentDate(apiFormatDate);
-        // Store the date in yyyy-MM-dd format for API (unchanged)
-        String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
-        print('Display: ${birthdateController.text}');
-        print('API format: $dateForApi');
+            DateFormat(dateProvider.dateFormat).format(picked);
       });
     }
   }
@@ -194,13 +189,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
         // Get dateProvider to format the date according to user's preference
         final dateProvider = Provider.of<DateProvider>(context, listen: false);
         // Display format: Use provider's format for user display
-        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
         startdateController.text =
-            dateProvider.formatCurrentDate(apiFormatDate);
-        // Store the date in yyyy-MM-dd format for API (unchanged)
-        String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
-        print('Display: ${startdateController.text}');
-        print('API format: $dateForApi');
+            DateFormat(dateProvider.dateFormat).format(picked);
       });
     }
   }
@@ -235,12 +225,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
         // Get dateProvider to format the date according to user's preference
         final dateProvider = Provider.of<DateProvider>(context, listen: false);
         // Display format: Use provider's format for user display
-        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
-        enddateController.text = dateProvider.formatCurrentDate(apiFormatDate);
-        // Store the date in yyyy-MM-dd format for API (unchanged)
-        String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
-        print('Display: ${enddateController.text}');
-        print('API format: $dateForApi');
+        enddateController.text =
+            DateFormat(dateProvider.dateFormat).format(picked);
       });
     }
   }
@@ -420,7 +406,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 19,
-                                                      color: const Color(0xFFA1A8B0),
+                                                      color: const Color(
+                                                          0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: nameerror
                                                         ? OutlineInputBorder(
@@ -511,7 +498,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 19,
-                                                      color: const Color(0xFFA1A8B0),
+                                                      color: const Color(
+                                                          0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: comnameerror
                                                         ? OutlineInputBorder(
@@ -686,7 +674,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                   BorderRadius.circular(10),
                                               color: Colors.white,
                                               border: Border.all(
-                                                  color: const Color(0xFFCED4DA)),
+                                                  color:
+                                                      const Color(0xFFCED4DA)),
                                             ),
                                             child: Stack(
                                               children: [
@@ -704,8 +693,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                       hintText:
                                                           "Enter processor",
                                                       hintStyle: TextStyle(
-                                                        color:
-                                                            const Color(0xFFA1A8B0),
+                                                        color: const Color(
+                                                            0xFFA1A8B0),
                                                         fontSize: MediaQuery.of(
                                                                         context)
                                                                     .size
@@ -899,8 +888,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                 500
                                                             ? 15
                                                             : 18,
-                                                        color:
-                                                            const Color(0xFFA1A8B0),
+                                                        color: const Color(
+                                                            0xFFA1A8B0),
                                                       ),
                                                       enabledBorder:
                                                           startdatederror
@@ -919,7 +908,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   .none,
                                                       border: InputBorder.none,
                                                       contentPadding:
-                                                          const EdgeInsets.all(12),
+                                                          const EdgeInsets.all(
+                                                              12),
                                                       suffixIcon: IconButton(
                                                         icon: const Icon(Icons
                                                             .calendar_today),
@@ -1009,8 +999,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                 500
                                                             ? 15
                                                             : 18,
-                                                        color:
-                                                            const Color(0xFFA1A8B0),
+                                                        color: const Color(
+                                                            0xFFA1A8B0),
                                                       ),
                                                       enabledBorder: enddatederror
                                                           ? OutlineInputBorder(
@@ -1027,7 +1017,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                           : InputBorder.none,
                                                       border: InputBorder.none,
                                                       contentPadding:
-                                                          const EdgeInsets.all(12),
+                                                          const EdgeInsets.all(
+                                                              12),
                                                       suffixIcon: IconButton(
                                                         icon: const Icon(Icons
                                                             .calendar_today),
@@ -1170,7 +1161,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                 500
                                                             ? 15
                                                             : 18,
-                                                    color: const Color(0xFF8A95A8),
+                                                    color:
+                                                        const Color(0xFF8A95A8),
                                                   ),
                                                   enabledBorder: startdatederror
                                                       ? OutlineInputBorder(
@@ -1297,7 +1289,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                 500
                                                             ? 15
                                                             : 18,
-                                                    color: const Color(0xFF8A95A8),
+                                                    color:
+                                                        const Color(0xFF8A95A8),
                                                   ),
                                                   enabledBorder: enddatederror
                                                       ? OutlineInputBorder(
@@ -1468,7 +1461,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                 500
                                                             ? 15
                                                             : 18,
-                                                    color: const Color(0xFFA1A8B0),
+                                                    color:
+                                                        const Color(0xFFA1A8B0),
                                                   ),
                                                   enabledBorder:
                                                       primaryemailerror
@@ -1556,7 +1550,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: const Color(0xFFA1A8B0),
+                                                      color: const Color(
+                                                          0xFFA1A8B0),
                                                     ),
                                                     enabledBorder:
                                                         alternativeerror
@@ -1574,7 +1569,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                             : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        const EdgeInsets.all(12),
+                                                        const EdgeInsets.all(
+                                                            12),
                                                   ),
                                                 ),
                                               ),
@@ -1716,7 +1712,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: const Color(0xFFA1A8B0),
+                                                      color: const Color(
+                                                          0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: phonenumerror
                                                         ? OutlineInputBorder(
@@ -1732,7 +1729,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        const EdgeInsets.all(12),
+                                                        const EdgeInsets.all(
+                                                            12),
                                                   ),
                                                 ),
                                               ),
@@ -1814,7 +1812,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: const Color(0xFFA1A8B0),
+                                                      color: const Color(
+                                                          0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: homenumerror
                                                         ? OutlineInputBorder(
@@ -1830,7 +1829,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        const EdgeInsets.all(12),
+                                                        const EdgeInsets.all(
+                                                            12),
                                                   ),
                                                 ),
                                               ),
@@ -1969,7 +1969,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: const Color(0xFFA1A8B0),
+                                                      color: const Color(
+                                                          0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: officenumerror
                                                         ? OutlineInputBorder(
@@ -1985,7 +1986,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        const EdgeInsets.all(12),
+                                                        const EdgeInsets.all(
+                                                            12),
                                                   ),
                                                 ),
                                               ),
@@ -2052,7 +2054,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: const Color(0xFFA1A8B0),
+                                                      color: const Color(
+                                                          0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: city2error
                                                         ? OutlineInputBorder(
@@ -2068,7 +2071,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        const EdgeInsets.all(12),
+                                                        const EdgeInsets.all(
+                                                            12),
                                                   ),
                                                 ),
                                               ),
@@ -2199,7 +2203,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: const Color(0xFFA1A8B0),
+                                                      color: const Color(
+                                                          0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: state2error
                                                         ? OutlineInputBorder(
@@ -2215,7 +2220,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        const EdgeInsets.all(12),
+                                                        const EdgeInsets.all(
+                                                            12),
                                                   ),
                                                 ),
                                               ),
@@ -2285,7 +2291,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: const Color(0xFFA1A8B0),
+                                                      color: const Color(
+                                                          0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: county2error
                                                         ? OutlineInputBorder(
@@ -2301,7 +2308,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        const EdgeInsets.all(12),
+                                                        const EdgeInsets.all(
+                                                            12),
                                                   ),
                                                 ),
                                               ),
@@ -2435,7 +2443,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: const Color(0xFFA1A8B0),
+                                                      color: const Color(
+                                                          0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: code2error
                                                         ? OutlineInputBorder(
@@ -2451,7 +2460,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        const EdgeInsets.all(12),
+                                                        const EdgeInsets.all(
+                                                            12),
                                                   ),
                                                 ),
                                               ),
@@ -2520,7 +2530,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: const Color(0xFFA1A8B0),
+                                                      color: const Color(
+                                                          0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: street2error
                                                         ? OutlineInputBorder(
@@ -2536,7 +2547,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        const EdgeInsets.all(12),
+                                                        const EdgeInsets.all(
+                                                            12),
                                                   ),
                                                 ),
                                               ),
@@ -2707,7 +2719,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: const Color(0xFFA1A8B0),
+                                                      color: const Color(
+                                                          0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: taxtypeerror
                                                         ? OutlineInputBorder(
@@ -2723,7 +2736,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        const EdgeInsets.all(12),
+                                                        const EdgeInsets.all(
+                                                            12),
                                                   ),
                                                 ),
                                               ),
@@ -2792,7 +2806,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                                   500
                                                               ? 15
                                                               : 18,
-                                                      color: const Color(0xFFA1A8B0),
+                                                      color: const Color(
+                                                          0xFFA1A8B0),
                                                     ),
                                                     enabledBorder: taxiderror
                                                         ? OutlineInputBorder(
@@ -2808,7 +2823,8 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                         : InputBorder.none,
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        const EdgeInsets.all(12),
+                                                        const EdgeInsets.all(
+                                                            12),
                                                   ),
                                                 ),
                                               ),
@@ -3677,16 +3693,10 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           }
                         });
                         print(processorList.length);
-                        // Convert display format (MM-dd-yyyy) to API format (yyyy-MM-dd)
+                        // Convert display format to API format (yyyy-MM-dd)
                         String convertToApiFormat(String displayDate) {
                           if (displayDate.isEmpty) return "";
-                          try {
-                            DateTime date =
-                                DateFormat('MM-dd-yyyy').parse(displayDate);
-                            return DateFormat('yyyy-MM-dd').format(date);
-                          } catch (e) {
-                            return displayDate; // Return as is if parsing fails
-                          }
+                          return reverseFormatDate(displayDate);
                         }
 
                         SharedPreferences prefs =

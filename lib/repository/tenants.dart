@@ -85,7 +85,7 @@ class TenantsRepository {
       );
 
       var responseData = jsonDecode(response.body);
-      print(responseData);
+      print(" add tenant $responseData");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (responseData['statusCode'] == 200) {

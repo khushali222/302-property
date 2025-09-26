@@ -681,7 +681,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
               )
               .timeout(const Duration(seconds: 30));
         }
-
+        print("responce mortgage ${response.body}");
         if (response.statusCode == 200 || response.statusCode == 201) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(

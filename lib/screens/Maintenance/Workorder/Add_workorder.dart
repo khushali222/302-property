@@ -29,6 +29,8 @@ import '../../../widgets/custom_drawer.dart';
 import '../../Rental/Tenants/add_tenants.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
+import '../../../provider/dateProvider.dart';
 
 final RouteObserver<ModalRoute<void>> routeObserver =
     RouteObserver<ModalRoute<void>>();
@@ -704,8 +706,10 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
     );
 
     if (selectedDate != null) {
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
       setState(() {
-        _dateController.text = DateFormat('yyyy-MM-dd').format(selectedDate);
+        _dateController.text =
+            DateFormat(dateProvider.dateFormat).format(selectedDate);
       });
     }
   }
@@ -1207,7 +1211,8 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                             DropdownButtonHideUnderline(
                                               child: DropdownButtonFormField2<
                                                   String>(
-                                                decoration: const InputDecoration(
+                                                decoration:
+                                                    const InputDecoration(
                                                   border: InputBorder.none,
                                                 ),
                                                 isExpanded: true,
@@ -2034,8 +2039,10 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                               DropdownButtonHideUnderline(
                                                 child: DropdownButtonFormField2<
                                                     String>(
-                                                  decoration: const InputDecoration(
-                                                      border: InputBorder.none),
+                                                  decoration:
+                                                      const InputDecoration(
+                                                          border:
+                                                              InputBorder.none),
                                                   isExpanded: true,
                                                   hint: const Row(
                                                     children: [
@@ -2438,7 +2445,8 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                     color: Color(0xFFb0b6c3)),
                                 border: InputBorder.none,
                                 // labelText: 'Select Date',
-                                hintText: 'yyyy-mm-dd',
+                                hintText: Provider.of<DateProvider>(context)
+                                    .dateFormat,
                                 suffixIcon: IconButton(
                                   icon: const Icon(Icons.calendar_today),
                                   onPressed: () {
@@ -2529,7 +2537,8 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(label,
-            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.grey)),
         const SizedBox(height: 8.0),
         Material(
           elevation: 3,
@@ -2609,7 +2618,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
           priority: _selectedOption,
           isBillable: isChecked,
           workChargeTo: isChecked == 'Tenants',
-          date: _dateController.text,
+          date: reverseFormatDate(_dateController.text),
           entry: _selectedEntry == 'yes',
           parts: parts,
           notificationTime:
@@ -3223,8 +3232,10 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
     );
 
     if (selectedDate != null) {
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
       setState(() {
-        _dateController.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+        _dateController.text =
+            DateFormat(dateProvider.dateFormat).format(selectedDate);
       });
     }
   }
@@ -4075,8 +4086,10 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                               DropdownButtonHideUnderline(
                                                 child: DropdownButtonFormField2<
                                                     String>(
-                                                  decoration: const InputDecoration(
-                                                      border: InputBorder.none),
+                                                  decoration:
+                                                      const InputDecoration(
+                                                          border:
+                                                              InputBorder.none),
                                                   isExpanded: true,
                                                   hint: const Row(
                                                     children: [
@@ -4245,9 +4258,10 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                                   child:
                                                       DropdownButtonFormField2<
                                                           String>(
-                                                    decoration: const InputDecoration(
-                                                        border:
-                                                            InputBorder.none),
+                                                    decoration:
+                                                        const InputDecoration(
+                                                            border: InputBorder
+                                                                .none),
                                                     isExpanded: true,
                                                     hint: const Row(
                                                       children: [
@@ -4811,8 +4825,10 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                               DropdownButtonHideUnderline(
                                                 child: DropdownButtonFormField2<
                                                     String>(
-                                                  decoration: const InputDecoration(
-                                                      border: InputBorder.none),
+                                                  decoration:
+                                                      const InputDecoration(
+                                                          border:
+                                                              InputBorder.none),
                                                   isExpanded: true,
                                                   hint: const Row(
                                                     children: [
@@ -5080,7 +5096,8 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                     color: Color(0xFFb0b6c3)),
                                 border: InputBorder.none,
                                 // labelText: 'Select Date',
-                                hintText: 'yyyy-mm-dd',
+                                hintText: Provider.of<DateProvider>(context)
+                                    .dateFormat,
                                 suffixIcon: IconButton(
                                   icon: const Icon(Icons.calendar_today),
                                   onPressed: () {
@@ -5174,7 +5191,8 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(label,
-            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.grey)),
         const SizedBox(height: 8.0),
         Material(
           elevation: 3,
@@ -5244,7 +5262,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
           isBillable: isChecked,
           workChargeTo: isChecked == 'Tenants',
           //  workChargeTo: "isbillable true hoy to static tenant mokli devanu",
-          date: _dateController.text,
+          date: reverseFormatDate(_dateController.text),
           entry: _selectedEntry == 'yes',
           parts: parts,
         );

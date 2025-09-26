@@ -512,21 +512,14 @@ class _Edit_leaseState extends State<Edit_lease>
         // Get dateProvider to format the date according to user's preference
         final dateProvider = Provider.of<DateProvider>(context, listen: false);
         // Display format: Use provider's format for user display
-        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
         startDateController.text =
-            dateProvider.formatCurrentDate(apiFormatDate);
+            DateFormat(dateProvider.dateFormat).format(picked);
 
         // Auto-set end date to one year later
         DateTime endDate = DateTime(picked.year + 1, picked.month, picked.day);
         _endDate = endDate;
-        String endApiFormatDate = DateFormat('yyyy-MM-dd').format(endDate);
         endDateController.text =
-            dateProvider.formatCurrentDate(endApiFormatDate);
-
-        // Store the date in yyyy-MM-dd format for API (unchanged)
-        String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
-        print('Display: ${startDateController.text}');
-        print('API format: $dateForApi');
+            DateFormat(dateProvider.dateFormat).format(endDate);
       });
     }
   }
@@ -559,12 +552,8 @@ class _Edit_leaseState extends State<Edit_lease>
         // Get dateProvider to format the date according to user's preference
         final dateProvider = Provider.of<DateProvider>(context, listen: false);
         // Display format: Use provider's format for user display
-        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
-        endDateController.text = dateProvider.formatCurrentDate(apiFormatDate);
-        // Store the date in yyyy-MM-dd format for API (unchanged)
-        String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
-        print('Display: ${endDateController.text}');
-        print('API format: $dateForApi');
+        endDateController.text =
+            DateFormat(dateProvider.dateFormat).format(picked);
       });
     }
   }
@@ -596,12 +585,8 @@ class _Edit_leaseState extends State<Edit_lease>
         // Get dateProvider to format the date according to user's preference
         final dateProvider = Provider.of<DateProvider>(context, listen: false);
         // Display format: Use provider's format for user display
-        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
-        rentNextDueDate.text = dateProvider.formatCurrentDate(apiFormatDate);
-        // Store the date in yyyy-MM-dd format for API (unchanged)
-        String dateForApi = DateFormat('yyyy-MM-dd').format(picked);
-        print('Display: ${rentNextDueDate.text}');
-        print('API format: $dateForApi');
+        rentNextDueDate.text =
+            DateFormat(dateProvider.dateFormat).format(picked);
       });
     }
   }
@@ -1146,7 +1131,8 @@ class _Edit_leaseState extends State<Edit_lease>
                                             DropdownButtonHideUnderline(
                                               child: DropdownButtonFormField2<
                                                   String>(
-                                                decoration: const InputDecoration(
+                                                decoration:
+                                                    const InputDecoration(
                                                   border: InputBorder.none,
                                                 ),
                                                 isExpanded: true,
