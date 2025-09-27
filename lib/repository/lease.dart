@@ -164,6 +164,7 @@ class LeaseRepository {
     }
 
   Future<bool> updateLease(Lease lease) async {
+    print("calling navigate main");
     print(lease);
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();

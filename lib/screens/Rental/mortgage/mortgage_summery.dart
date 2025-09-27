@@ -147,7 +147,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
         body:  Center(
           child: SpinKitFadingCircle(
             color: Colors.black,
-            size: 45,
+            size: 44,
           ),
         )
       );
