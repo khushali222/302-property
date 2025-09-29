@@ -11,6 +11,8 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class MortgageTable extends StatefulWidget {
   const MortgageTable({Key? key}) : super(key: key);
@@ -250,38 +252,47 @@ class _MortgageTableState extends State<MortgageTable> {
   }
 
   void _deleteMortgage(String id) {
-    showDialog(
+    Alert(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Delete Mortgage'),
-          content: const Text('Are you sure you want to delete this mortgage?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  _mortgages.removeWhere((mortgage) => mortgage['_id'] == id);
-                  _filteredMortgages
-                      .removeWhere((mortgage) => mortgage['_id'] == id);
-                });
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Mortgage deleted successfully'),
-                    backgroundColor: Colors.green,
-                  ),
-                );
-              },
-              child: const Text('Delete', style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        );
-      },
-    );
+      type: AlertType.warning,
+      title: "Are you sure?",
+      desc: "Once deleted, you will not be able to recover this Mortgage!",
+      style: const AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: const Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            setState(() {
+              _mortgages.removeWhere((mortgage) => mortgage['_id'] == id);
+              _filteredMortgages
+                  .removeWhere((mortgage) => mortgage['_id'] == id);
+            });
+            Navigator.pop(context);
+            Fluttertoast.showToast(msg: "Mortgage deleted successfully");
+          },
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
+        ),
+      ],
+    ).show();
   }
 
   void _editMortgage(Map<String, dynamic> mortgage) {

@@ -923,6 +923,8 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       controller: _mortgageNumberController,
                       label: 'Mortgage Number *',
                       hint: 'Enter mortgage number',
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       validator: (value) {
                         String? requiredError =
                             _validateRequired(value, 'Mortgage number');
