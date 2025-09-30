@@ -72,6 +72,13 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   ConnectivityResult? _connectivityResult;
   //String moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
   String? moveOutDate;
+
+  // Currency formatter for US format
+  NumberFormat get currencyFormatter => NumberFormat.currency(
+        locale: 'en_US',
+        symbol: '\$',
+        decimalDigits: 2,
+      );
   @override
   void initState() {
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
@@ -511,8 +518,10 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                             //border: Border.all(color: blueColor),
                                           ),
                                           child: Container(
-                                              margin: const EdgeInsets.only(left: 5),
-                                              child: const Icon(Icons.arrow_back_ios,
+                                              margin: const EdgeInsets.only(
+                                                  left: 5),
+                                              child: const Icon(
+                                                  Icons.arrow_back_ios,
                                                   size: 14,
                                                   color: Colors.white)),
                                         ),
@@ -541,8 +550,10 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 Color.fromRGBO(16, 24, 40, 0.8),
                                             //  border: Border.all(color: blueColor),
                                           ),
-                                          child: const Icon(Icons.arrow_forward_ios,
-                                              size: 14, color: Colors.white),
+                                          child: const Icon(
+                                              Icons.arrow_forward_ios,
+                                              size: 14,
+                                              color: Colors.white),
                                         ),
                                       ),
                                     ),
@@ -1084,7 +1095,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                       .width -
                                                                   100,
                                                               child: Text(
-                                                                '\$${leaseLedger.data!.length > 0 ? leaseLedger.data?.first.balance!.toStringAsFixed(2) : 0.0}',
+                                                                '${currencyFormatter.format(leaseLedger.data!.length > 0 ? leaseLedger.data?.first.balance! : 0.0)}',
                                                                 style:
                                                                     TextStyle(
                                                                   fontSize: 14,
@@ -1130,7 +1141,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                             const SizedBox(
                                                                 height: 4),
                                                             Text(
-                                                              '\$${leasesummery.data?.amount!.toStringAsFixed(2)}',
+                                                              '${currencyFormatter.format(leasesummery.data?.amount!)}',
                                                               style: TextStyle(
                                                                 fontSize: 16,
                                                                 fontWeight:
@@ -1547,8 +1558,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                             },
                                                             child: Container(
                                                               height: 50,
-                                                              margin: const EdgeInsets
-                                                                  .all(5),
+                                                              margin:
+                                                                  const EdgeInsets
+                                                                      .all(5),
                                                               decoration:
                                                                   BoxDecoration(
                                                                 color:
@@ -1558,7 +1570,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                         .circular(
                                                                             10),
                                                               ),
-                                                              child: const Center(
+                                                              child:
+                                                                  const Center(
                                                                 child: Text(
                                                                   'Make Payment',
                                                                   style:
@@ -1593,8 +1606,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                             },
                                                             child: Container(
                                                               height: 50,
-                                                              margin: const EdgeInsets
-                                                                  .all(5),
+                                                              margin:
+                                                                  const EdgeInsets
+                                                                      .all(5),
                                                               decoration:
                                                                   BoxDecoration(
                                                                 color: Colors
@@ -1647,8 +1661,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                             },
                                                             child: Container(
                                                               height: 50,
-                                                              margin: const EdgeInsets
-                                                                  .all(5),
+                                                              margin:
+                                                                  const EdgeInsets
+                                                                      .all(5),
                                                               decoration:
                                                                   BoxDecoration(
                                                                 color: Colors
@@ -1687,8 +1702,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                             },
                                                             child: Container(
                                                               height: 50,
-                                                              margin: const EdgeInsets
-                                                                  .all(5),
+                                                              margin:
+                                                                  const EdgeInsets
+                                                                      .all(5),
                                                               decoration:
                                                                   BoxDecoration(
                                                                 color: Colors
@@ -2494,7 +2510,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                      '${snapshot.data!.data!.amount}',
+                                                                      '${currencyFormatter.format(snapshot.data!.data!.amount!)}',
                                                                   style: const TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
@@ -2579,7 +2595,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           DataCell(Text(
                                               '${snapshot.data!.data!.leaseType}')),
                                           DataCell(Text(
-                                              '${snapshot.data!.data!.amount}')),
+                                              '${currencyFormatter.format(snapshot.data!.data!.amount!)}')),
                                         ]),
                                         // Add more rows as needed
                                       ],
@@ -2845,7 +2861,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                       Expanded(
                                                         flex: 4,
                                                         child: Text(
-                                                          '\$${lease.amount!.toDouble().toStringAsFixed(2)}',
+                                                          '${currencyFormatter.format(lease.amount!.toDouble())}',
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
@@ -3273,7 +3289,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                         ),
                                                                         TextSpan(
                                                                           text:
-                                                                              '${lease.amount}',
+                                                                              '${currencyFormatter.format(lease.amount!)}',
                                                                           style: const TextStyle(
                                                                               fontWeight: FontWeight.w700,
                                                                               color: Colors.grey),
@@ -4410,7 +4426,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           MediaQuery.of(context).size.width < 500 ? 100 : 130,
                       decoration: BoxDecoration(
                         color: blueColor,
-                        borderRadius: const BorderRadius.all(Radius.circular(5)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(5)),
                       ),
                       child: Center(
                           child: Text(
