@@ -93,16 +93,36 @@ String reverseFormatDate(String formattedDate) {
   }
 
   try {
-    print("reverseFormatDate input: $formattedDate");
+    print("reverseFormatDate input: '$formattedDate'");
+    print("Input length: ${formattedDate.length}");
+    print("Input bytes: ${formattedDate.codeUnits}");
+
+    // Clean the input string - remove any extra whitespace
+    String cleanDate = formattedDate.trim();
+
+    // If the date is already in yyyy-MM-dd format, return it as is
+    if (RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(cleanDate)) {
+      print("Date is already in yyyy-MM-dd format, returning as is");
+      return cleanDate;
+    }
+
+    // Special handling for yyyy-MM-dd format that might have extra characters
+    if (RegExp(r'^\d{4}-\d{2}-\d{2}').hasMatch(cleanDate)) {
+      print("Date appears to be in yyyy-MM-dd format with extra characters");
+      String extractedDate = cleanDate.substring(0, 10);
+      print("Extracted date: $extractedDate");
+      return extractedDate;
+    }
 
     // List of possible date formats that DateProvider might return
+    // Prioritize dd-MM-yyyy format first since it's the most common UI format
     List<String> dateFormats = [
-      'MM/dd/yyyy',
-      'M/d/yyyy',
       'dd-MM-yyyy',
       'd-M-yyyy',
       'yyyy-MM-dd',
       'yyyy-M-d',
+      'MM/dd/yyyy',
+      'M/d/yyyy',
       'MM-dd-yyyy',
       'M-d-yyyy',
       'dd/MM/yyyy',
@@ -114,11 +134,43 @@ String reverseFormatDate(String formattedDate) {
     // Try to parse the date using different formats
     for (String format in dateFormats) {
       try {
-        parsedDate = DateFormat(format).parse(formattedDate);
+        parsedDate = DateFormat(format).parse(cleanDate);
         print("Successfully parsed with format: $format");
+        print("Parsed date: $parsedDate");
         break;
       } catch (e) {
+        print("Failed to parse with format $format: $e");
         continue;
+      }
+    }
+
+    // If parsing failed, try manual parsing for common formats
+    if (parsedDate == null) {
+      print("Trying manual parsing...");
+      if (RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(cleanDate)) {
+        // yyyy-MM-dd format
+        List<String> parts = cleanDate.split('-');
+        if (parts.length == 3) {
+          int year = int.tryParse(parts[0]) ?? 0;
+          int month = int.tryParse(parts[1]) ?? 0;
+          int day = int.tryParse(parts[2]) ?? 0;
+          if (year > 0 && month > 0 && month <= 12 && day > 0 && day <= 31) {
+            parsedDate = DateTime(year, month, day);
+            print("Manually parsed date: $parsedDate");
+          }
+        }
+      } else if (RegExp(r'^\d{2}-\d{2}-\d{4}$').hasMatch(cleanDate)) {
+        // dd-MM-yyyy format
+        List<String> parts = cleanDate.split('-');
+        if (parts.length == 3) {
+          int day = int.tryParse(parts[0]) ?? 0;
+          int month = int.tryParse(parts[1]) ?? 0;
+          int year = int.tryParse(parts[2]) ?? 0;
+          if (year > 0 && month > 0 && month <= 12 && day > 0 && day <= 31) {
+            parsedDate = DateTime(year, month, day);
+            print("Manually parsed date: $parsedDate");
+          }
+        }
       }
     }
 

@@ -91,51 +91,51 @@ class widget_302 {
           },
         ),
         actions: [
-          InkWell(
-            // onTap: () {
-            //   if (isPlanPageActive != true) {
-            //     Navigator.of(context).push(MaterialPageRoute(
-            //         builder: (context) => getPlanDetailScreen()));
-            //   }
-            // },
-            child: Container(
-              width: 150,
-              margin: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                color: blueColor,
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Consumer<checkPlanPurchaseProiver>(
-                builder: (context, provider, child) {
-                  if (provider.isLoading) {
-                    return CircularProgressIndicator();
-                  } else {
-                    String planName = provider.checkplanpurchaseModel?.data
-                        ?.planDetail?.planName ??
-                        'No Plan';
-                    if (planName == 'Free Plan') {
-                      planName = 'Buy Now';
-                    }
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Center(
-                          child: Text(
-                            planName,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            softWrap: false,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize:
-                              MediaQuery.of(context).size.width > 500 ? 18 : 14,
-                            ),
-                          )),
-                    );
-                  }
-                },
-              ),
-            ),
-          ),
+          // InkWell(
+          //   // onTap: () {
+          //   //   if (isPlanPageActive != true) {
+          //   //     Navigator.of(context).push(MaterialPageRoute(
+          //   //         builder: (context) => getPlanDetailScreen()));
+          //   //   }
+          //   // },
+          //   child: Container(
+          //     width: 150,
+          //     margin: const EdgeInsets.symmetric(vertical: 12),
+          //     decoration: BoxDecoration(
+          //       color: blueColor,
+          //       borderRadius: BorderRadius.circular(5),
+          //     ),
+          //     child: Consumer<checkPlanPurchaseProiver>(
+          //       builder: (context, provider, child) {
+          //         if (provider.isLoading) {
+          //           return CircularProgressIndicator();
+          //         } else {
+          //           String planName = provider.checkplanpurchaseModel?.data
+          //               ?.planDetail?.planName ??
+          //               'No Plan';
+          //           if (planName == 'Free Plan') {
+          //             planName = 'Buy Now';
+          //           }
+          //           return Padding(
+          //             padding: const EdgeInsets.symmetric(horizontal: 20),
+          //             child: Center(
+          //                 child: Text(
+          //                   planName,
+          //                   maxLines: 1,
+          //                   overflow: TextOverflow.ellipsis,
+          //                   softWrap: false,
+          //                   style: TextStyle(
+          //                     fontWeight: FontWeight.bold,
+          //                     fontSize:
+          //                     MediaQuery.of(context).size.width > 500 ? 18 : 14,
+          //                   ),
+          //                 )),
+          //           );
+          //         }
+          //       },
+          //     ),
+          //   ),
+          // ),
           const SizedBox(
             width: 10,
           ),
@@ -182,7 +182,7 @@ class widget_302 {
             },
           ),
           const SizedBox(
-            width: 10,
+            width: 20,
           ),
           FutureBuilder<String>(
             future: _getNameFromSharedPreferences(),

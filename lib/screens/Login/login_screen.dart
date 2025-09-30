@@ -443,7 +443,8 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 height: 60,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-                                  color: const Color.fromRGBO(196, 196, 196, .3),
+                                  color:
+                                      const Color.fromRGBO(196, 196, 196, .3),
                                 ),
                                 child: Stack(
                                   children: [
@@ -470,7 +471,8 @@ class _Login_ScreenState extends State<Login_Screen> {
                                                 )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: const EdgeInsets.all(14),
+                                          contentPadding:
+                                              const EdgeInsets.all(14),
                                           prefixIcon: Container(
                                             height: 25,
                                             width: 25,
@@ -999,7 +1001,8 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 height: 50,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-                                  color: const Color.fromRGBO(196, 196, 196, .3),
+                                  color:
+                                      const Color.fromRGBO(196, 196, 196, .3),
                                 ),
                                 child: Stack(
                                   children: [
@@ -1025,7 +1028,8 @@ class _Login_ScreenState extends State<Login_Screen> {
                                                 )
                                               : InputBorder.none,
                                           border: InputBorder.none,
-                                          contentPadding: const EdgeInsets.all(14),
+                                          contentPadding:
+                                              const EdgeInsets.all(14),
                                           prefixIcon: Container(
                                             height: 20,
                                             width: 20,
@@ -1716,7 +1720,8 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                     widget.onSelected(index);
                   },
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                     foregroundColor:
                         _selectedIndex == index ? Colors.white : blueColor,
                     backgroundColor:
@@ -1789,7 +1794,8 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                   widget.onSelected(index);
                 },
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                   foregroundColor:
                       _selectedIndex == index ? Colors.white : blueColor,
                   backgroundColor:
