@@ -917,7 +917,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                       fontWeight: pw.FontWeight.normal, fontSize: 10)),
               pw.Align(
                   alignment: pw.Alignment.centerRight,
-                  child: pw.Text('\$${property.amount.toStringAsFixed(2)}',
+                  child: pw.Text(formatCurrency(property.amount),
                       style: pw.TextStyle(
                           fontWeight: pw.FontWeight.normal, fontSize: 10))),
             ]);
@@ -933,7 +933,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                       fontWeight: pw.FontWeight.normal, fontSize: 10)),
               pw.Align(
                   alignment: pw.Alignment.centerRight,
-                  child: pw.Text('\$${property.amount.toStringAsFixed(2)}',
+                  child: pw.Text(formatCurrency(property.amount),
                       style: pw.TextStyle(
                           fontWeight: pw.FontWeight.normal, fontSize: 10))),
             ]);
@@ -949,7 +949,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                       fontWeight: pw.FontWeight.normal, fontSize: 10)),
               pw.Align(
                   alignment: pw.Alignment.centerRight,
-                  child: pw.Text('\$${property.amount.toStringAsFixed(2)}',
+                  child: pw.Text(formatCurrency(property.amount),
                       style: pw.TextStyle(
                           fontWeight: pw.FontWeight.normal, fontSize: 10))),
             ]);
@@ -1417,7 +1417,9 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                                                                   });
                                                                 },
                                                                 child: Text(
-                                                                  "${tenant.amount}",
+                                                                  formatCurrency(
+                                                                      tenant
+                                                                          .amount),
                                                                   style: TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
@@ -1454,7 +1456,8 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                                                         )),
                                                         Expanded(
                                                             child: Text(
-                                                          "${item.subTotal}",
+                                                          formatCurrency(
+                                                              item.subTotal),
                                                           style: TextStyle(
                                                             fontWeight:
                                                                 FontWeight.bold,

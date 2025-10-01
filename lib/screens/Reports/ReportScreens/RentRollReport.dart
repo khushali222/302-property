@@ -918,14 +918,14 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                   pw.Align(
                     alignment: pw.Alignment.centerRight,
                     child: pw.Text(
-                      '\$${leasedata.rentAmount?.toStringAsFixed(2) ?? '0.00'}',
+                      formatCurrency(leasedata.rentAmount),
                       style: const pw.TextStyle(fontSize: 7),
                     ),
                   ),
                   pw.Align(
                     alignment: pw.Alignment.centerRight,
                     child: pw.Text(
-                      '\$${leasedata.chargeAmount?.toStringAsFixed(2) ?? '0.00'}',
+                      formatCurrency(leasedata.chargeAmount),
                       style: const pw.TextStyle(fontSize: 7),
                     ),
                   ),
@@ -939,28 +939,28 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                   pw.Align(
                     alignment: pw.Alignment.centerRight,
                     child: pw.Text(
-                      '\$${leasedata.chargeTotal?.toStringAsFixed(2) ?? '0.00'}',
+                      formatCurrency(leasedata.chargeTotal),
                       style: const pw.TextStyle(fontSize: 7),
                     ),
                   ),
                   pw.Align(
                     alignment: pw.Alignment.centerRight,
                     child: pw.Text(
-                      '\$${leasedata.depositHeld?.toStringAsFixed(2) ?? '0.00'}',
+                      formatCurrency(leasedata.depositHeld),
                       style: const pw.TextStyle(fontSize: 7),
                     ),
                   ),
                   pw.Align(
                     alignment: pw.Alignment.centerRight,
                     child: pw.Text(
-                      '\$${leasedata.prepayments?.toStringAsFixed(2) ?? '0.00'}',
+                      formatCurrency(leasedata.prepayments),
                       style: const pw.TextStyle(fontSize: 7),
                     ),
                   ),
                   pw.Align(
                     alignment: pw.Alignment.centerRight,
                     child: pw.Text(
-                      '\$${leasedata.balanceDue?.toStringAsFixed(2) ?? '0.00'}',
+                      formatCurrency(leasedata.balanceDue),
                       style: const pw.TextStyle(fontSize: 7),
                     ),
                   ),
@@ -1018,7 +1018,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                         pw.Align(
                             alignment: pw.Alignment.centerRight,
                             child: pw.Text(
-                              '\$${rental.totals!.totalRent!.toStringAsFixed(2)}',
+                              formatCurrency(rental.totals!.totalRent),
                               style: pw.TextStyle(
                                   fontSize: 8, fontWeight: pw.FontWeight.bold),
                               textAlign: pw.TextAlign.right,
@@ -1026,7 +1026,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                         pw.Align(
                             alignment: pw.Alignment.centerRight,
                             child: pw.Text(
-                              '\$${rental.totals!.totalCharges!.toStringAsFixed(2)}',
+                              formatCurrency(rental.totals!.totalCharges),
                               style: pw.TextStyle(
                                   fontSize: 8, fontWeight: pw.FontWeight.bold),
                               textAlign: pw.TextAlign.right,
@@ -1034,7 +1034,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                         pw.Align(
                             alignment: pw.Alignment.centerRight,
                             child: pw.Text(
-                              '\$${rental.totals!.totalCredits!.toStringAsFixed(2)}',
+                              formatCurrency(rental.totals!.totalCredits),
                               style: pw.TextStyle(
                                   fontSize: 8, fontWeight: pw.FontWeight.bold),
                               textAlign: pw.TextAlign.right,
@@ -1042,7 +1042,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                         pw.Align(
                             alignment: pw.Alignment.centerRight,
                             child: pw.Text(
-                              '\$${rental.totals!.totalAmount!.toStringAsFixed(2)}',
+                              formatCurrency(rental.totals!.totalAmount),
                               style: pw.TextStyle(
                                   fontSize: 8, fontWeight: pw.FontWeight.bold),
                               textAlign: pw.TextAlign.right,
@@ -1050,7 +1050,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                         pw.Align(
                             alignment: pw.Alignment.centerRight,
                             child: pw.Text(
-                              '\$${rental.totals!.totalDeposits!.toStringAsFixed(2)}',
+                              formatCurrency(rental.totals!.totalDeposits),
                               style: pw.TextStyle(
                                   fontSize: 8, fontWeight: pw.FontWeight.bold),
                               textAlign: pw.TextAlign.right,
@@ -1058,7 +1058,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                         pw.Align(
                             alignment: pw.Alignment.centerRight,
                             child: pw.Text(
-                              '\$${rental.totals!.totalPrepayments!.toStringAsFixed(2)}',
+                              formatCurrency(rental.totals!.totalPrepayments),
                               style: pw.TextStyle(
                                   fontSize: 8, fontWeight: pw.FontWeight.bold),
                               textAlign: pw.TextAlign.right,
@@ -1066,7 +1066,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                         pw.Align(
                             alignment: pw.Alignment.centerRight,
                             child: pw.Text(
-                              '\$${rental.totals!.totalBalanceDue!.toStringAsFixed(2)}',
+                              formatCurrency(rental.totals!.totalBalanceDue),
                               style: pw.TextStyle(
                                   fontSize: 8, fontWeight: pw.FontWeight.bold),
                               textAlign: pw.TextAlign.right,
@@ -2033,7 +2033,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                                     'Select Rental Owners',
                                                     style: TextStyle(
                                                       fontSize: 14,
-                                                      color:  Colors.black,
+                                                      color: Colors.black,
                                                     ),
                                                     overflow:
                                                         TextOverflow.ellipsis,
@@ -2253,7 +2253,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                                     'Select Rental Owners',
                                                     style: TextStyle(
                                                       fontSize: 14,
-                                                      color:  Colors.black,
+                                                      color: Colors.black,
                                                     ),
                                                     overflow:
                                                         TextOverflow.ellipsis,
@@ -2877,26 +2877,32 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                                           "${lease.unit!.bedBath}"),
                                                       'Prepayments',
                                                       getDisplayValue(
-                                                          "\$${lease.prepayments!.toStringAsFixed(2)}"),
+                                                          formatCurrency(lease
+                                                              .prepayments)),
                                                       'Charges',
                                                       getDisplayValue(
-                                                          "\$${lease.chargeAmount!.toStringAsFixed(2)}"),
+                                                          formatCurrency(lease
+                                                              .chargeAmount)),
                                                     ),
                                                     buildTableRows(
                                                       'Total',
                                                       getDisplayValue(
-                                                          "\$${lease.chargeTotal!.toStringAsFixed(2)}"),
+                                                          formatCurrency(lease
+                                                              .chargeTotal)),
                                                       'Balance Due',
                                                       getDisplayValue(
-                                                          "\$${lease.balanceDue!.toStringAsFixed(2)}"),
+                                                          formatCurrency(lease
+                                                              .balanceDue)),
                                                       'Rent',
                                                       getDisplayValue(
-                                                          "\$${lease.rentAmount!.toStringAsFixed(2)}"),
+                                                          formatCurrency(lease
+                                                              .rentAmount)),
                                                     ),
                                                     buildTableRows(
                                                       'Deposit Held',
                                                       getDisplayValue(
-                                                          "\$${lease.depositHeld ?? "0.0"}"),
+                                                          formatCurrency(lease
+                                                              .depositHeld)),
                                                       'Tenants',
                                                       getDisplayValue(lease
                                                           .tenants!

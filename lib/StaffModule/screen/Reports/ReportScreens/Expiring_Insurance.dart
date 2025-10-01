@@ -264,7 +264,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                     lease.policyId ?? '',
                     formatDate(lease.effectiveDate ?? ''),
                     formatDate(lease.expirationDate ?? ''),
-                    '\$${lease.liabilityCoverage?.toString() ?? ''}',
+                    formatCurrency(lease.liabilityCoverage),
                     lease.tenantDetails != null
                         ? lease.tenantDetails
                             ?.map((tenant) =>
@@ -356,7 +356,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
           .setText(lease.expirationDate?.substring(0, 10) ?? "");
       sheet
           .getRangeByIndex(2 + i, 6)
-          .setText('\$${lease.liabilityCoverage.toString()}');
+          .setText(formatCurrency(lease.liabilityCoverage));
       String? tenantNames = lease.tenantDetails != null
           ? lease.tenantDetails
               ?.map((tenant) =>
@@ -443,7 +443,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
         formatPhoneNumberedit(lease.insuranceCompanyPhoneNumber ?? ''),
         lease.effectiveDate?.substring(0, 10) ?? '',
         lease.expirationDate?.substring(0, 10) ?? '',
-        '\$${lease.liabilityCoverage ?? 0.0}',
+        formatCurrency(lease.liabilityCoverage),
         lease.tenantDetails != null
             ? lease.tenantDetails
                 ?.map((tenant) =>
@@ -1515,13 +1515,14 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                                         });
                                                       },
                                                       child: Container(
-                                                        margin: const EdgeInsets.only(
-                                                            left: 5),
+                                                        margin: const EdgeInsets
+                                                            .only(left: 5),
                                                         padding: !isExpanded
-                                                            ? const EdgeInsets.only(
+                                                            ? const EdgeInsets
+                                                                .only(
                                                                 bottom: 10)
-                                                            : const EdgeInsets.only(
-                                                                top: 10),
+                                                            : const EdgeInsets
+                                                                .only(top: 10),
                                                         child: FaIcon(
                                                           isExpanded
                                                               ? FontAwesomeIcons
@@ -1590,10 +1591,11 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                             ),
                                             if (isExpanded)
                                               Container(
-                                                padding: const EdgeInsets.symmetric(
-                                                    horizontal: 8.0),
-                                                margin:
-                                                    const EdgeInsets.only(bottom: 20),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8.0),
+                                                margin: const EdgeInsets.only(
+                                                    bottom: 20),
                                                 child: SingleChildScrollView(
                                                   child: Column(
                                                     children: [
@@ -1996,7 +1998,8 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                             child: Column(
                               children: [
                                 Table(
-                                  defaultColumnWidth: const IntrinsicColumnWidth(),
+                                  defaultColumnWidth:
+                                      const IntrinsicColumnWidth(),
                                   columnWidths: {
                                     0: const FlexColumnWidth(),
                                     1: const FlexColumnWidth(),

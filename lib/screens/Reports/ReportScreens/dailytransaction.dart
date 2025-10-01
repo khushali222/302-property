@@ -1093,7 +1093,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                     children: [
                       pw.Text('Grand Total',
                           style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                      pw.Text('\$${grandtotal.toStringAsFixed(2)}',
+                      pw.Text(formatCurrency(grandtotal),
                           style: pw.TextStyle(fontWeight: pw.FontWeight.bold))
                     ])),
           ];
@@ -1193,7 +1193,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
           pw.Align(
             alignment: pw.Alignment.centerRight,
             child: pw.Text(
-              '\$${(property.totalAmount ?? 0.0).toStringAsFixed(2)}',
+              formatCurrency(property.totalAmount),
               style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
               // Total Amount formatted to 2 decimal places
               // Align text to the right
@@ -1212,8 +1212,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
               '', '', '', '', '', '',
               pw.Align(
                   alignment: pw.Alignment.centerRight,
-                  child: pw.Text(
-                      '\$${(payment.amount ?? 0.0).toStringAsFixed(2)}',
+                  child: pw.Text(formatCurrency(payment.amount),
                       style: pw.TextStyle(
                         fontSize: 10,
                       ),
@@ -1270,7 +1269,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
             padding: pw.EdgeInsets.only(left: 15)),
         pw.Align(
             alignment: pw.Alignment.centerRight,
-            child: pw.Text('\$${(owner.subtotal ?? 0.0).toStringAsFixed(2)}',
+            child: pw.Text(formatCurrency(owner.subtotal),
                 style:
                     pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
                 textAlign: pw.TextAlign.right // Align text to the right
@@ -1473,7 +1472,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
           property.paymentId ?? 'N/A',
           property.cc_type ?? 'N/A',
           property.cc_number ?? 'N/A',
-          '\$${property.totalAmount?.toStringAsFixed(2) ?? '0.00'}'
+          formatCurrency(property.totalAmount)
         ].join(','));
 
         // Iterate through payment entries for the current property
@@ -1487,7 +1486,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
             '',
             '',
             '',
-            '\$${payment.amount!.toStringAsFixed(2)}'
+            formatCurrency(payment.amount)
           ].join(','));
         }
 
@@ -1517,7 +1516,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
         '',
         '',
         '',
-        '\$${(owner.subtotal ?? 0.0).toStringAsFixed(2)}'
+        formatCurrency(owner.subtotal)
       ].join(','));
 
       // Accumulate grand total
@@ -1534,7 +1533,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
       '',
       '',
       '',
-      '\$${grandTotal.toStringAsFixed(2)}'
+      formatCurrency(grandTotal)
     ].join(','));
 
     // Convert buffer to list of bytes for CSV file
@@ -1890,7 +1889,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                     ),
                                     Spacer(),
                                     Text(
-                                      "\$${snapshot.data?.grandTotal.toStringAsFixed(2)} ",
+                                      formatCurrency(snapshot.data?.grandTotal),
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 15,
@@ -2019,7 +2018,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                       Expanded(
                                                         flex: 2,
                                                         child: Text(
-                                                          '\$${item.subtotal!.toStringAsFixed(2)}',
+                                                          formatCurrency(
+                                                              item.subtotal),
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
@@ -2193,7 +2193,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                               'Payment Details:',
                                                                               _getDisplayValue((tenant.cc_type != null && tenant.cc_number != null && tenant.cc_type!.isNotEmpty && tenant.cc_number!.isNotEmpty) ? "${tenant.cc_type} ${tenant.cc_number}" : "N/A"),
                                                                               'Total:',
-                                                                              _getDisplayValue("\$${tenant.totalAmount ?? '0.00'}"),
+                                                                              _getDisplayValue(formatCurrency(tenant.totalAmount)),
                                                                             )
                                                                           ],
                                                                         ),
@@ -2366,7 +2366,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                                       TextSpan(
                                                                                         children: [
                                                                                           TextSpan(
-                                                                                            text: ' \$ ${entry.amount ?? "N/A"}',
+                                                                                            text: ' ${formatCurrency(entry.amount)}',
                                                                                             style: TextStyle(
                                                                                               fontWeight: FontWeight.w700,
                                                                                               color: grey,

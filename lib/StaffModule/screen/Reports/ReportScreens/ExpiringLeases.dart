@@ -846,7 +846,8 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                                 style: ElevatedButton.styleFrom(
                                                     backgroundColor: blueColor),
                                                 onPressed: _fetchData,
-                                                child: const Text('Show Leases'),
+                                                child:
+                                                    const Text('Show Leases'),
                                               ),
                                               const SizedBox(width: 8),
                                               ElevatedButton(
@@ -1412,13 +1413,14 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                                         });
                                                       },
                                                       child: Container(
-                                                        margin: const EdgeInsets.only(
-                                                            left: 5),
+                                                        margin: const EdgeInsets
+                                                            .only(left: 5),
                                                         padding: !isExpanded
-                                                            ? const EdgeInsets.only(
+                                                            ? const EdgeInsets
+                                                                .only(
                                                                 bottom: 10)
-                                                            : const EdgeInsets.only(
-                                                                top: 10),
+                                                            : const EdgeInsets
+                                                                .only(top: 10),
                                                         child: FaIcon(
                                                           isExpanded
                                                               ? FontAwesomeIcons
@@ -1486,10 +1488,11 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                             ),
                                             if (isExpanded)
                                               Container(
-                                                padding: const EdgeInsets.symmetric(
-                                                    horizontal: 8.0),
-                                                margin:
-                                                    const EdgeInsets.only(bottom: 20),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8.0),
+                                                margin: const EdgeInsets.only(
+                                                    bottom: 20),
                                                 child: SingleChildScrollView(
                                                   child: Column(
                                                     children: [
@@ -1526,8 +1529,9 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                                                             color: blueColor), // Bold and black
                                                                       ),
                                                                       TextSpan(
-                                                                        text:
-                                                                            '${lease.amount}',
+                                                                        text: formatCurrency(lease
+                                                                            .amount
+                                                                            ?.toDouble()),
                                                                         style: TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.w700,
@@ -1976,7 +1980,8 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                             child: Column(
                               children: [
                                 Table(
-                                  defaultColumnWidth: const IntrinsicColumnWidth(),
+                                  defaultColumnWidth:
+                                      const IntrinsicColumnWidth(),
                                   columnWidths: {
                                     0: const FlexColumnWidth(),
                                     1: const FlexColumnWidth(),
@@ -2028,8 +2033,8 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                               pagedData[i].rentalAddress!),
                                           _buildDataCell(
                                               pagedData[i].tenantNames!),
-                                          _buildDataCell(
-                                              '\$${pagedData[i].amount.toString()}'),
+                                          _buildDataCell(formatCurrency(
+                                              pagedData[i].amount?.toDouble())),
                                           _buildDataCell(
                                               pagedData[i].createdAt!),
                                           _buildDataCell(pagedData[i].endDate!),

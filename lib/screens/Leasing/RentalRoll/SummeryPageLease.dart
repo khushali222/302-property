@@ -73,12 +73,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   //String moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
   String? moveOutDate;
 
-  // Currency formatter for US format
-  NumberFormat get currencyFormatter => NumberFormat.currency(
-        locale: 'en_US',
-        symbol: '\$',
-        decimalDigits: 2,
-      );
   @override
   void initState() {
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
@@ -1095,7 +1089,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                       .width -
                                                                   100,
                                                               child: Text(
-                                                                '${currencyFormatter.format(leaseLedger.data!.length > 0 ? leaseLedger.data?.first.balance! : 0.0)}',
+                                                                '${formatCurrency(leaseLedger.data!.length > 0 ? leaseLedger.data?.first.balance! : 0.0)}',
                                                                 style:
                                                                     TextStyle(
                                                                   fontSize: 14,
@@ -1141,7 +1135,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                             const SizedBox(
                                                                 height: 4),
                                                             Text(
-                                                              '${currencyFormatter.format(leasesummery.data?.amount!)}',
+                                                              '${formatCurrency(leasesummery.data?.amount?.toDouble())}',
                                                               style: TextStyle(
                                                                 fontSize: 16,
                                                                 fontWeight:
@@ -2510,7 +2504,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                      '${currencyFormatter.format(snapshot.data!.data!.amount!)}',
+                                                                      '${formatCurrency(snapshot.data!.data!.amount!.toDouble())}',
                                                                   style: const TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
@@ -2595,7 +2589,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           DataCell(Text(
                                               '${snapshot.data!.data!.leaseType}')),
                                           DataCell(Text(
-                                              '${currencyFormatter.format(snapshot.data!.data!.amount!)}')),
+                                              '${formatCurrency(snapshot.data!.data!.amount!.toDouble())}')),
                                         ]),
                                         // Add more rows as needed
                                       ],
@@ -2861,7 +2855,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                       Expanded(
                                                         flex: 4,
                                                         child: Text(
-                                                          '${currencyFormatter.format(lease.amount!.toDouble())}',
+                                                          '${formatCurrency(lease.amount!.toDouble())}',
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
@@ -3289,7 +3283,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                         ),
                                                                         TextSpan(
                                                                           text:
-                                                                              '${currencyFormatter.format(lease.amount!)}',
+                                                                              '${formatCurrency(lease.amount!)}',
                                                                           style: const TextStyle(
                                                                               fontWeight: FontWeight.w700,
                                                                               color: Colors.grey),

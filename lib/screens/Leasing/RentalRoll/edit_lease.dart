@@ -124,11 +124,14 @@ class _Edit_leaseState extends State<Edit_lease>
 
       if (fetchedDetails.securityCharges != null &&
           fetchedDetails.securityCharges!.length > 0)
-        securityDepositeAmount.text =
-            fetchedDetails.securityCharges!.first!.chargeType ==
-                    'Security Deposit'
-                ? fetchedDetails.securityCharges!.first!.amount.toString()
-                : '';
+        securityDepositeAmount.text = fetchedDetails
+                    .securityCharges!.first!.chargeType ==
+                'Security Deposit'
+            ? (fetchedDetails.securityCharges!.first!.amount?.toString() ?? '0')
+            : '';
+      else
+        // Handle case where deposit amount is 0 or no security charges exist
+        securityDepositeAmount.text = '0';
       if (fetchedDetails.securityCharges != null &&
           fetchedDetails.securityCharges!.length > 0)
         rent_security_id = fetchedDetails.securityCharges!.first!.chargeType ==
@@ -867,12 +870,14 @@ class _Edit_leaseState extends State<Edit_lease>
   String? _errorMessage;
   String convertToApiDate(String inputDate, BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
-    String userFormat = dateProvider.dateFormat; // e.g., "MM/dd/yyyy" or "dd/MM/yyyy"
+    String userFormat =
+        dateProvider.dateFormat; // e.g., "MM/dd/yyyy" or "dd/MM/yyyy"
 
     try {
       DateTime parsedDate = DateFormat(userFormat).parseStrict(inputDate);
       String apiDate = DateFormat("yyyy-MM-dd").format(parsedDate);
-      print("Input (user format: $userFormat): $inputDate → API format: $apiDate");
+      print(
+          "Input (user format: $userFormat): $inputDate → API format: $apiDate");
       return apiDate;
     } catch (e) {
       print("Failed to parse date: $inputDate using format: $userFormat");
@@ -3868,11 +3873,13 @@ class _Edit_leaseState extends State<Edit_lease>
                                                     'Recurring Charge'
                                                 ? (data['date'] ??
                                                     '') // Ensuring data['date'] is not null
-                                            :convertToApiDate(rentNextDueDate.text.trim(), context),
+                                                : convertToApiDate(
+                                                    rentNextDueDate.text.trim(),
+                                                    context),
 
-                                              // : reverseFormatDate(
-                                                //     rentNextDueDate.text
-                                                //         .trim()),
+                                            // : reverseFormatDate(
+                                            //     rentNextDueDate.text
+                                            //         .trim()),
                                             // date: data['date'] ?? '',
                                             isRepeatable: data['is_repeatable']
                                                     ?.toLowerCase() ==
@@ -3890,7 +3897,9 @@ class _Edit_leaseState extends State<Edit_lease>
                                                     rentAmount.text.trim()) ??
                                                 0.0,
                                             chargeType: 'Rent',
-                                            date: convertToApiDate(rentNextDueDate.text.trim(), context),
+                                            date: convertToApiDate(
+                                                rentNextDueDate.text.trim(),
+                                                context),
                                             // date: reverseFormatDate(
                                             //     rentNextDueDate.text.trim()),
                                             isRepeatable:
@@ -3909,8 +3918,9 @@ class _Edit_leaseState extends State<Edit_lease>
                                                       .trim()) ??
                                               0.0,
                                           chargeType: 'Security Deposit',
-                                          date: convertToApiDate(rentNextDueDate.text.trim(), context)
-                                          ,
+                                          date: convertToApiDate(
+                                              rentNextDueDate.text.trim(),
+                                              context),
                                           isRepeatable:
                                               false, // Set to false if it's not repeatable, adjust as needed
                                           memo: 'Security Deposit',
@@ -4049,14 +4059,18 @@ class _Edit_leaseState extends State<Edit_lease>
                                             leaseId: widget.leaseId,
                                             adminId: adminId ?? "",
                                             companyName: companyName,
-                                            endDate: convertToApiDate(endDateController.text.trim(), context),
+                                            endDate: convertToApiDate(
+                                                endDateController.text.trim(),
+                                                context),
                                             // endDate: reverseFormatDate(
                                             //     endDateController.text.trim()),
                                             entry: chargeEntries,
                                             leaseAmount: rentAmount.text.trim(),
                                             leaseType: _selectedLeaseType ?? "",
                                             rentalId: renderId,
-                                            startDate: convertToApiDate(startDateController.text.trim(), context),
+                                            startDate: convertToApiDate(
+                                                startDateController.text.trim(),
+                                                context),
                                             // startDate: reverseFormatDate(
                                             //     startDateController.text
                                             //         .trim()),

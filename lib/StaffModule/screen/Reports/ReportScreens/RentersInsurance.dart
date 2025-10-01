@@ -746,7 +746,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
         item.tenantName ?? '',
         item.rentersInsurance!.insuranceCompany ?? '',
         item.rentersInsurance!.policyId ?? '',
-        "\$${item.rentersInsurance!.liabilityCoverage.toString()}" ?? '',
+        formatCurrency(item.rentersInsurance!.liabilityCoverage),
         formateDates(item.rentersInsurance!.effectiveDate!) ?? '',
         formateDates(item.rentersInsurance!.expirationDate!) ?? '',
       ]);
@@ -1050,7 +1050,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
             .setText(item.rentersInsurance!.policyId ?? '');
         sheet.getRangeByIndex(rowIndex, 5).setText(
             item.rentersInsurance!.liabilityCoverage != null
-                ? "\$${item.rentersInsurance!.liabilityCoverage}"
+                ? formatCurrency(item.rentersInsurance!.liabilityCoverage)
                 : '');
         sheet.getRangeByIndex(rowIndex, 6).setText(
             formateDates(item.rentersInsurance!.effectiveDate.toString()) ??
@@ -1109,7 +1109,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
         item.tenantName ?? '',
         item.rentersInsurance!.insuranceCompany ?? '',
         item.rentersInsurance!.policyId ?? '',
-        "\$${item.rentersInsurance!.liabilityCoverage.toString()}" ?? '',
+        formatCurrency(item.rentersInsurance!.liabilityCoverage),
         formateDates(item.rentersInsurance!.effectiveDate!) ?? '',
         formateDates(item.rentersInsurance!.expirationDate!) ?? '',
       ]);
@@ -1519,7 +1519,9 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                                                       'Liability Coverage :',
                                                                       getDisplayValue(item.rentersInsurance?.liabilityCoverage.toString().isNotEmpty ==
                                                                               true
-                                                                          ? '\$${item.rentersInsurance?.liabilityCoverage.toString()}'
+                                                                          ? formatCurrency(item
+                                                                              .rentersInsurance
+                                                                              ?.liabilityCoverage)
                                                                           : 'N/A'),
                                                                       '',
                                                                       '')

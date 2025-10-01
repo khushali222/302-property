@@ -613,7 +613,8 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
         tableData.add([
           '${tenant.unitDetails}',
           tenant.tenantName ?? '',
-          '\$${tenant.pdfDelinquentTenantsData!.totalDaysAmount}',
+          formatCurrency(double.tryParse(
+              tenant.pdfDelinquentTenantsData!.totalDaysAmount ?? '0')),
           '\$${tenant.pdfDelinquentTenantsData!.last30Days}',
           '\$${tenant.pdfDelinquentTenantsData!.last31To60Days}',
           '\$${tenant.pdfDelinquentTenantsData!.last61To90Days}',
@@ -623,7 +624,8 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
       tableData.add([
         'Total ',
         '',
-        '\$${item.alltotalamount!.totalDaysAmount}',
+        formatCurrency(
+            double.tryParse(item.alltotalamount!.totalDaysAmount ?? '0')),
         '\$${item.alltotalamount!.last30Days}',
         '\$${item.alltotalamount!.last31To60Days}',
         '\$${item.alltotalamount!.last61To90Days}',
@@ -633,7 +635,8 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
     tableData.add([
       'Grand Total of all Properties',
       '',
-      '\$${globalDelinquentTenantsData!.totalDaysAmount}',
+      formatCurrency(
+          double.tryParse(globalDelinquentTenantsData!.totalDaysAmount ?? '0')),
       '\$${globalDelinquentTenantsData!.last30Days}',
       '\$${globalDelinquentTenantsData!.last31To60Days}',
       '\$${globalDelinquentTenantsData!.last61To90Days}',
@@ -703,9 +706,9 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
       for (var tenant in item.tenants!) {
         sheet.getRangeByIndex(rowIndex, 1).setText(tenant.unitDetails ?? '');
         sheet.getRangeByIndex(rowIndex, 2).setText(tenant.tenantName ?? '');
-        sheet
-            .getRangeByIndex(rowIndex, 3)
-            .setText('\$${tenant.pdfDelinquentTenantsData!.totalDaysAmount}');
+        sheet.getRangeByIndex(rowIndex, 3).setText(formatCurrency(
+            double.tryParse(
+                tenant.pdfDelinquentTenantsData!.totalDaysAmount ?? '0')));
         sheet
             .getRangeByIndex(rowIndex, 4)
             .setText('\$${tenant.pdfDelinquentTenantsData!.last30Days}');
@@ -724,9 +727,8 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
       // Add totals row
       sheet.getRangeByIndex(rowIndex, 1).setText('Total');
       sheet.getRangeByIndex(rowIndex, 2).setText('');
-      sheet
-          .getRangeByIndex(rowIndex, 3)
-          .setText('\$${item.alltotalamount!.totalDaysAmount}');
+      sheet.getRangeByIndex(rowIndex, 3).setText(formatCurrency(
+          double.tryParse(item.alltotalamount!.totalDaysAmount ?? '0')));
       sheet
           .getRangeByIndex(rowIndex, 4)
           .setText('\$${item.alltotalamount!.last30Days}');
@@ -745,9 +747,8 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
     // Add grand total row
     sheet.getRangeByIndex(rowIndex, 1).setText('Grand Total of all Properties');
     sheet.getRangeByIndex(rowIndex, 2).setText('');
-    sheet
-        .getRangeByIndex(rowIndex, 3)
-        .setText('\$${globalDelinquentTenantsData!.totalDaysAmount}');
+    sheet.getRangeByIndex(rowIndex, 3).setText(formatCurrency(
+        double.tryParse(globalDelinquentTenantsData!.totalDaysAmount ?? '0')));
     sheet
         .getRangeByIndex(rowIndex, 4)
         .setText('\$${globalDelinquentTenantsData!.last30Days}');
@@ -1346,7 +1347,7 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                                                                               ),
                                                                             ),
                                                                             TextSpan(
-                                                                              text: ' :  \$${tenant.pdfDelinquentTenantsData!.totalDaysAmount ?? '-'}',
+                                                                              text: ' :  ${formatCurrency(double.tryParse(tenant.pdfDelinquentTenantsData!.totalDaysAmount ?? '0'))}',
                                                                               style: TextStyle(
                                                                                 color: Colors.grey[500],
                                                                                 fontWeight: FontWeight.bold,
@@ -2004,7 +2005,7 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                                                                                 ),
                                                                               ),
                                                                               Text(
-                                                                                '${tenant.pdfDelinquentTenantsData!.totalDaysAmount ?? '-'}',
+                                                                                formatCurrency(double.tryParse(tenant.pdfDelinquentTenantsData!.totalDaysAmount ?? '0')),
                                                                                 style: TextStyle(
                                                                                   color: Colors.grey[500],
                                                                                   fontWeight: FontWeight.bold,

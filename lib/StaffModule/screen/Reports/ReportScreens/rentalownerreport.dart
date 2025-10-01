@@ -753,7 +753,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
           pw.Align(
             alignment: pw.Alignment.centerRight,
             child: pw.Text(
-              '\$${(property.totalAmount ?? 0.0).toStringAsFixed(2)}',
+              formatCurrency(property.totalAmount),
               style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
               // Total Amount formatted to 2 decimal places
               // Align text to the right
@@ -771,8 +771,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
             '', '', '', '', '', '',
             pw.Align(
                 alignment: pw.Alignment.centerRight,
-                child: pw.Text(
-                    '\$${(payment.amount ?? 0.0).toStringAsFixed(2)}',
+                child: pw.Text(formatCurrency(payment.amount),
                     style: pw.TextStyle(fontSize: 10),
                     textAlign: pw.TextAlign.right // Align text to the right
                     ))
@@ -1009,7 +1008,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
           property.paymentId ?? '',
           property.ccType ?? '',
           property.ccNumber ?? '',
-          '\$${property.totalAmount?.toStringAsFixed(2) ?? '0.00'}'
+          formatCurrency(property.totalAmount)
         ].join(','));
 
         // Iterate through payment entries for the current property
@@ -1023,7 +1022,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
             '',
             '',
             '',
-            '\$${payment.amount.toStringAsFixed(2)}'
+            formatCurrency(payment.amount)
           ].join(','));
         }
 
@@ -1713,7 +1712,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                                             'Payment Details:',
                                                                             _getDisplayValue("${tenant.ccType} ${tenant.ccNumber}"),
                                                                             'Payment Amount:',
-                                                                            _getDisplayValue("\$${tenant.totalAmount}")),
+                                                                            _getDisplayValue(formatCurrency(tenant.totalAmount))),
                                                                       ],
                                                                     ),
                                                                   ),
@@ -1890,7 +1889,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                                                   TextSpan(
                                                                                     children: [
                                                                                       TextSpan(
-                                                                                        text: ' \$ ${entry.amount ?? "N/A"}',
+                                                                                        text: ' ${formatCurrency(entry.amount)}',
                                                                                         style: TextStyle(
                                                                                           fontWeight: FontWeight.w700,
                                                                                           color: grey,

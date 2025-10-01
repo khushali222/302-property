@@ -263,7 +263,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                     lease.policyId ?? '',
                     formatDate(lease.effectiveDate ?? ''),
                     formatDate(lease.expirationDate ?? ''),
-                    '\$${lease.liabilityCoverage?.toString() ?? ''}',
+                    formatCurrency(lease.liabilityCoverage),
                     lease.tenantDetails != null
                         ? lease.tenantDetails
                             ?.map((tenant) =>
@@ -345,10 +345,17 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
       final lease = leaseData[i];
       sheet.getRangeByIndex(2 + i, 1).setText(lease.insuranceCompany ?? '');
       sheet.getRangeByIndex(2 + i, 2).setText(lease.policyId ?? '');
-      sheet.getRangeByIndex(2 + i, 3).setText(formatPhoneNumberedit(lease.insuranceCompanyPhoneNumber ?? ''));
-      sheet.getRangeByIndex(2 + i, 4).setText(lease.effectiveDate?.substring(0,10) ?? "");
-      sheet.getRangeByIndex(2 + i, 5).setText(lease.expirationDate?.substring(0,10) ?? "");
-      sheet.getRangeByIndex(2 + i, 6).setText('\$${lease.liabilityCoverage.toString()}');
+      sheet.getRangeByIndex(2 + i, 3).setText(
+          formatPhoneNumberedit(lease.insuranceCompanyPhoneNumber ?? ''));
+      sheet
+          .getRangeByIndex(2 + i, 4)
+          .setText(lease.effectiveDate?.substring(0, 10) ?? "");
+      sheet
+          .getRangeByIndex(2 + i, 5)
+          .setText(lease.expirationDate?.substring(0, 10) ?? "");
+      sheet
+          .getRangeByIndex(2 + i, 6)
+          .setText('\$${lease.liabilityCoverage.toString()}');
       String? tenantNames = lease.tenantDetails != null
           ? lease.tenantDetails
               ?.map((tenant) =>
@@ -362,7 +369,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
     final List<int> bytes = workbook.saveAsStream();
     workbook.dispose();
 
-  //  Generate a unique file name
+    //  Generate a unique file name
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Renters_insurance_report_$formattedDate.xlsx';
@@ -433,20 +440,20 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
         lease.insuranceCompany ?? '',
         lease.policyId ?? '',
         formatPhoneNumberedit(lease.insuranceCompanyPhoneNumber ?? ''),
-        lease.effectiveDate?.substring(0 ,10) ?? '',
-        lease.expirationDate?.substring(0 ,10) ?? '',
+        lease.effectiveDate?.substring(0, 10) ?? '',
+        lease.expirationDate?.substring(0, 10) ?? '',
         '\$${lease.liabilityCoverage ?? 0.0}',
         lease.tenantDetails != null
             ? lease.tenantDetails
-            ?.map((tenant) =>
-        "${tenant.tenantFirstName} ${tenant.tenantLastName}")
-            .join(', ')
+                ?.map((tenant) =>
+                    "${tenant.tenantFirstName} ${tenant.tenantLastName}")
+                .join(', ')
             : '',
       ].join(','));
     }
 // Convert buffer to list of bytes for CSV file
     final List<int> bytes = utf8.encode(csvBuffer.toString());
-     print(bytes);
+    print(bytes);
     // Define file name with current date and time
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
@@ -468,7 +475,6 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
     final File file = File(path);
 
     await file.writeAsBytes(bytes, flush: true);
-
 
     //Share.shareXFiles([XFile(path)]);
     // // Convert rows to CSV string

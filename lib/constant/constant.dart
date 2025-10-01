@@ -245,6 +245,19 @@ String getDisplayValue(String? value) {
   // Return 'N/A' if the value is null or empty, otherwise return the value
   return (value == null || value.trim().isEmpty) ? 'N/A' : value;
 }
+
+// Common currency formatting function for US-centric format
+String formatCurrency(double? amount) {
+  if (amount == null) return '\$0.00';
+
+  final formatter = NumberFormat.currency(
+    locale: 'en_US',
+    symbol: '\$',
+    decimalDigits: 2,
+  );
+
+  return formatter.format(amount);
+}
 //Color grey = Color.fromRGBO(21, 43, 83, .5);
 //Color grey = Color.fromRGBO(21, 43, 83, .5);
 

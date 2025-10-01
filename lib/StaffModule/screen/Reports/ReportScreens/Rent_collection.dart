@@ -515,13 +515,11 @@ class _Rent_collectionState extends State<Rent_collection> {
           ),
           pw.Align(
             alignment: pw.Alignment.centerRight,
-            child: pw.Text(
-                "\$${property.totalCharged?.toStringAsFixed(2)}" ?? 'N/A'),
+            child: pw.Text(formatCurrency(property.totalCharged) ?? 'N/A'),
           ),
           pw.Align(
             alignment: pw.Alignment.centerRight,
-            child: pw.Text(
-                "\$${property.totalPending?.toStringAsFixed(2)}" ?? 'N/A'),
+            child: pw.Text(formatCurrency(property.totalPending) ?? 'N/A'),
           ),
           pw.Align(
             alignment: pw.Alignment.centerRight,
@@ -542,16 +540,14 @@ class _Rent_collectionState extends State<Rent_collection> {
         pw.Align(
           alignment: pw.Alignment.centerRight,
           child: pw.Text(
-            "\$${owner.totalSummary?.totalCharged?.toStringAsFixed(2)}" ??
-                'N/A',
+            formatCurrency(owner.totalSummary?.totalCharged) ?? 'N/A',
             style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
           ),
         ),
         pw.Align(
           alignment: pw.Alignment.centerRight,
           child: pw.Text(
-            "\$${owner.totalSummary?.totalPending?.toStringAsFixed(2)}" ??
-                'N/A',
+            formatCurrency(owner.totalSummary?.totalPending) ?? 'N/A',
             style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
           ),
         ),
@@ -706,8 +702,8 @@ class _Rent_collectionState extends State<Rent_collection> {
       for (var property in owner.summary!) {
         tableData.add([
           property.rentalOwnerCompany ?? 'N/A',
-          "\$${property.totalCharged?.toStringAsFixed(2)}" ?? 'N/A',
-          "\$${property.totalPending?.toStringAsFixed(2)}" ?? 'N/A',
+          formatCurrency(property.totalCharged) ?? 'N/A',
+          formatCurrency(property.totalPending) ?? 'N/A',
           property.collectedPercentage?.toString() ?? 'N/A',
         ]);
       }
@@ -715,8 +711,8 @@ class _Rent_collectionState extends State<Rent_collection> {
       // Add Overall row
       tableData.add([
         'Overall',
-        "\$${owner.totalSummary?.totalCharged?.toStringAsFixed(2)}" ?? 'N/A',
-        "\$${owner.totalSummary?.totalPending?.toStringAsFixed(2)}" ?? 'N/A',
+        formatCurrency(owner.totalSummary?.totalCharged) ?? 'N/A',
+        formatCurrency(owner.totalSummary?.totalPending) ?? 'N/A',
         owner.totalSummary?.averageCollectedPercentage?.toString() ?? 'N/A',
       ]);
     }
@@ -1656,7 +1652,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                 },
                 child: Row(
                   children: [
-                    const Text(" Balance", style: TextStyle(color: Colors.white)),
+                    const Text(" Balance",
+                        style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
                     ascending3
                         ? const Padding(
@@ -1949,13 +1946,14 @@ class _Rent_collectionState extends State<Rent_collection> {
                                   width: 45,
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                        color:
-                                            const Color.fromRGBO(206, 212, 218, 1)),
+                                        color: const Color.fromRGBO(
+                                            206, 212, 218, 1)),
                                     borderRadius: BorderRadius.circular(0),
                                     color: Colors.white,
                                   ),
                                   child: IconButton(
-                                    icon: const FaIcon(FontAwesomeIcons.circlePlay,
+                                    icon: const FaIcon(
+                                        FontAwesomeIcons.circlePlay,
                                         size: 18),
                                     onPressed: () {
                                       setState(() {
@@ -1980,8 +1978,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                   width: 60,
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                        color:
-                                            const Color.fromRGBO(206, 212, 218, 1)),
+                                        color: const Color.fromRGBO(
+                                            206, 212, 218, 1)),
                                     borderRadius: BorderRadius.circular(0),
                                     color: Colors.white,
                                   ),
@@ -2111,7 +2109,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                               decoration: InputDecoration(
                                                 hintText:
                                                     'Search by address or company...',
-                                                prefixIcon: const Icon(Icons.search),
+                                                prefixIcon:
+                                                    const Icon(Icons.search),
                                                 border: OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(8),
@@ -2148,10 +2147,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                         contentPadding:
                                                             const EdgeInsets
                                                                 .symmetric(
-                                                                    horizontal:
-                                                                        12,
-                                                                    vertical:
-                                                                        8),
+                                                                horizontal: 12,
+                                                                vertical: 8),
                                                       ),
                                                       items: rentalOwners
                                                           .map((owner) {
@@ -2190,10 +2187,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                         contentPadding:
                                                             const EdgeInsets
                                                                 .symmetric(
-                                                                    horizontal:
-                                                                        12,
-                                                                    vertical:
-                                                                        8),
+                                                                horizontal: 12,
+                                                                vertical: 8),
                                                       ),
                                                       items: balanceFilters
                                                           .map((filter) {
@@ -2240,10 +2235,9 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                           contentPadding:
                                                               const EdgeInsets
                                                                   .symmetric(
-                                                                      horizontal:
-                                                                          12,
-                                                                      vertical:
-                                                                          8),
+                                                                  horizontal:
+                                                                      12,
+                                                                  vertical: 8),
                                                         ),
                                                         items: rentalOwners
                                                             .map((owner) {
@@ -2286,10 +2280,9 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                           contentPadding:
                                                               const EdgeInsets
                                                                   .symmetric(
-                                                                      horizontal:
-                                                                          12,
-                                                                      vertical:
-                                                                          8),
+                                                                  horizontal:
+                                                                      12,
+                                                                  vertical: 8),
                                                         ),
                                                         items: balanceFilters
                                                             .map((filter) {
@@ -2331,9 +2324,10 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                     currentPage = 0;
                                                   });
                                                 },
-                                                icon:
-                                                    const Icon(Icons.clear, size: 16),
-                                                label: const Text('Clear Filters'),
+                                                icon: const Icon(Icons.clear,
+                                                    size: 16),
+                                                label:
+                                                    const Text('Clear Filters'),
                                                 style: TextButton.styleFrom(
                                                   foregroundColor:
                                                       Colors.grey[600],
@@ -2537,7 +2531,8 @@ class _Rent_collectionState extends State<Rent_collection> {
             const SizedBox(height: 20),
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
+                border:
+                    Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
               ),
               child: Column(
                 children: [
@@ -2607,7 +2602,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                     child: Align(
                                       alignment: Alignment.centerRight,
                                       child: Text(
-                                        ' \$${item.totalPending!.toStringAsFixed(2) ?? '-'}',
+                                        ' ${formatCurrency(item.totalPending)}',
                                         style: TextStyle(
                                           color: blueColor,
                                           fontWeight: FontWeight.bold,
@@ -2705,8 +2700,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                       color: (sortedData.length % 2 == 0)
                           ? blueColor.withOpacity(0.09)
                           : Colors.white,
-                      border:
-                          Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
+                      border: Border.all(
+                          color: const Color.fromRGBO(152, 162, 179, .5)),
                     ),
                     child: Column(
                       children: <Widget>[
@@ -2761,7 +2756,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                   child: Align(
                                     alignment: Alignment.centerRight,
                                     child: Text(
-                                      '\$${data.totalSummary?.totalPending!.toStringAsFixed(2) ?? '-'}',
+                                      formatCurrency(
+                                          data.totalSummary?.totalPending),
                                       style: TextStyle(
                                         color: blueColor,
                                         fontWeight: FontWeight.bold,
@@ -2928,7 +2924,8 @@ class _Rent_collectionState extends State<Rent_collection> {
             const SizedBox(height: 20),
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
+                border:
+                    Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
               ),
               child: Column(
                 children: [
@@ -3393,7 +3390,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                             fontSize: 14,
                                                           ),
                                                         ),
-                                                        const SizedBox(height: 2),
+                                                        const SizedBox(
+                                                            height: 2),
                                                         Text(
                                                           '${card.tenantName ?? '-'}',
                                                           style: TextStyle(
@@ -3416,7 +3414,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                             fontSize: 14,
                                                           ),
                                                         ),
-                                                        const SizedBox(width: 15),
+                                                        const SizedBox(
+                                                            width: 15),
                                                         Expanded(
                                                           child: Text(
                                                             '${card.tenantName ?? '-'}',
@@ -3541,7 +3540,8 @@ class _Rent_collectionState extends State<Rent_collection> {
             if (currentPageData.isNotEmpty)
               Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
+                  border: Border.all(
+                      color: const Color.fromRGBO(152, 162, 179, .5)),
                 ),
                 child: Column(
                   children: [

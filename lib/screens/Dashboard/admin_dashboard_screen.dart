@@ -86,39 +86,6 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
     return count.toString();
   }
 
-  // String _formatCurrency(dynamic amount) {
-  //   final formatter = NumberFormat.currency(locale: 'en_US', symbol: '\$');
-  //   double value = 0.0;
-  //
-  //   if (amount is String) {
-  //     value = double.tryParse(amount) ?? 0.0;
-  //   } else if (amount is num) {
-  //     value = amount.toDouble();
-  //   }
-  //
-  //   return formatter.format(value);
-  // }
-  String _formatCurrency(dynamic amount) {
-    final formatter =
-        NumberFormat.currency(locale: 'en_US', symbol: '\$', decimalDigits: 2);
-
-    double value = 0.0;
-
-    if (amount is String) {
-      value = double.tryParse(amount.replaceAll(',', '')) ?? 0.0;
-    } else if (amount is num) {
-      value = amount.toDouble();
-    }
-
-    // If amount is exactly zero, return simple $0
-    if (value == 0.0) {
-      return '\$0';
-    }
-
-    // For non-zero values, format with US commas and 2 decimal places
-    return formatter.format(value);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -270,7 +237,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
     {"month": "Aug", "rentals": 8, "leases": 1, "occupiedPercentage": 12.5},
     {"month": "Sep", "rentals": 8, "leases": 9, "occupiedPercentage": 102.5},
   ];
-   Widget _dashboardCard(
+  Widget _dashboardCard(
       IconData icon, String number, String label, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
@@ -302,7 +269,8 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                         color: blueColor)),
                 Text(label,
                     style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.width < 400 ? 13 : 14,
+                        fontSize:
+                            MediaQuery.of(context).size.width < 400 ? 13 : 14,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87)),
               ],
@@ -414,7 +382,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                _formatCurrency(widget.totalRentPastDue),
+                                formatCurrency(widget.totalRentPastDue),
                                 style: TextStyle(
                                   fontSize: 18,
                                   color: const Color(0xFF7B7F87),
@@ -456,12 +424,11 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                               // ),
                               Text(
                                 selectedRentType == 'Rent Due'
-                                    ? _formatCurrency(
-                                        widget.currentMonthRentDue)
+                                    ? formatCurrency(widget.currentMonthRentDue)
                                     : selectedRentType == 'Rent Paid'
-                                        ? _formatCurrency(
+                                        ? formatCurrency(
                                             widget.currentMonthRentPaid)
-                                        : _formatCurrency(2000.00),
+                                        : formatCurrency(2000.00),
                                 style: TextStyle(
                                   fontSize: valueFont,
                                   color: const Color(0xFF7B7F87),
@@ -503,11 +470,11 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                               // ),
                               Text(
                                 selectedRentType == 'Rent Due'
-                                    ? _formatCurrency(widget.lastMonthRentDue)
+                                    ? formatCurrency(widget.lastMonthRentDue)
                                     : selectedRentType == 'Rent Paid'
-                                        ? _formatCurrency(
+                                        ? formatCurrency(
                                             widget.lastMonthRentPaid)
-                                        : _formatCurrency(250.00),
+                                        : formatCurrency(250.00),
                                 style: TextStyle(
                                   fontSize: valueFont,
                                   color: const Color(0xFF7B7F87),
