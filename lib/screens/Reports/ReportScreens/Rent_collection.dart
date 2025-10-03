@@ -172,6 +172,12 @@ class _Rent_collectionState extends State<Rent_collection> {
           }
         }
         rentalOwners = ownerSet.toList();
+        // Sort rental owners alphabetically, keeping 'All' at the beginning
+        rentalOwners.sort((a, b) {
+          if (a == 'All') return -1;
+          if (b == 'All') return 1;
+          return a.toLowerCase().compareTo(b.toLowerCase());
+        });
       });
       return data;
     } catch (e) {
@@ -1850,44 +1856,132 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                 // Stack filters vertically on small screens
                                                 return Column(
                                                   children: [
-                                                    DropdownButtonFormField<
-                                                        String>(
-                                                      value:
-                                                          selectedRentalOwner,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        labelText:
-                                                            'Rental Owner',
-                                                        border:
-                                                            OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                        ),
-                                                        contentPadding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal: 12,
-                                                                vertical: 8),
-                                                      ),
-                                                      items: rentalOwners
-                                                          .map((owner) {
-                                                        return DropdownMenuItem(
-                                                          value: owner,
-                                                          child: Text(
-                                                            owner,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
+                                                    DropdownButtonHideUnderline(
+                                                      child: Material(
+                                                        elevation: 3,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                        child: DropdownButton2<
+                                                            String>(
+                                                          isExpanded: true,
+                                                          hint: const Row(
+                                                            children: [
+                                                              SizedBox(
+                                                                width: 4,
+                                                              ),
+                                                              Expanded(
+                                                                child: Text(
+                                                                  'Rental Owner',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                    color: Color(
+                                                                        0xFF8A95A8),
+                                                                  ),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                ),
+                                                              ),
+                                                            ],
                                                           ),
-                                                        );
-                                                      }).toList(),
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          selectedRentalOwner =
-                                                              value;
-                                                        });
-                                                      },
+                                                          items: rentalOwners
+                                                              .map((String
+                                                                      item) =>
+                                                                  DropdownMenuItem<
+                                                                      String>(
+                                                                    value: item,
+                                                                    child: Text(
+                                                                      item,
+                                                                      style:
+                                                                          const TextStyle(
+                                                                        fontSize:
+                                                                            14,
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                        color: Colors
+                                                                            .black,
+                                                                      ),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                    ),
+                                                                  ))
+                                                              .toList(),
+                                                          value:
+                                                              selectedRentalOwner,
+                                                          onChanged: (value) {
+                                                            setState(() {
+                                                              selectedRentalOwner =
+                                                                  value;
+                                                            });
+                                                          },
+                                                          buttonStyleData:
+                                                              ButtonStyleData(
+                                                            height: 45,
+                                                            width:
+                                                                double.infinity,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    left: 14,
+                                                                    right: 14),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                              border:
+                                                                  Border.all(
+                                                                color: const Color(
+                                                                    0xFF8A95A8),
+                                                              ),
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                            elevation: 0,
+                                                          ),
+                                                          dropdownStyleData:
+                                                              DropdownStyleData(
+                                                            maxHeight: 250,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          14),
+                                                            ),
+                                                            offset:
+                                                                const Offset(
+                                                                    -20, 0),
+                                                            scrollbarTheme:
+                                                                ScrollbarThemeData(
+                                                              radius:
+                                                                  const Radius
+                                                                      .circular(
+                                                                      40),
+                                                              thickness:
+                                                                  MaterialStateProperty
+                                                                      .all(6),
+                                                              thumbVisibility:
+                                                                  MaterialStateProperty
+                                                                      .all(
+                                                                          true),
+                                                            ),
+                                                          ),
+                                                          menuItemStyleData:
+                                                              const MenuItemStyleData(
+                                                            height: 40,
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 14,
+                                                                    right: 14),
+                                                          ),
+                                                        ),
+                                                      ),
                                                     ),
                                                     const SizedBox(height: 10),
                                                     DropdownButtonFormField<
@@ -1937,46 +2031,136 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                   children: [
                                                     Expanded(
                                                       child:
-                                                          DropdownButtonFormField<
-                                                              String>(
-                                                        value:
-                                                            selectedRentalOwner,
-                                                        decoration:
-                                                            InputDecoration(
-                                                          labelText:
-                                                              'Rental Owner',
-                                                          border:
-                                                              OutlineInputBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8),
-                                                          ),
-                                                          contentPadding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  horizontal:
-                                                                      12,
-                                                                  vertical: 8),
-                                                        ),
-                                                        items: rentalOwners
-                                                            .map((owner) {
-                                                          return DropdownMenuItem(
-                                                            value: owner,
-                                                            child: Text(
-                                                              owner,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
+                                                          DropdownButtonHideUnderline(
+                                                        child: Material(
+                                                          elevation: 3,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                          child:
+                                                              DropdownButton2<
+                                                                  String>(
+                                                            isExpanded: true,
+                                                            hint: const Row(
+                                                              children: [
+                                                                SizedBox(
+                                                                  width: 4,
+                                                                ),
+                                                                Expanded(
+                                                                  child: Text(
+                                                                    'Rental Owner',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                      color: Color(
+                                                                          0xFF8A95A8),
+                                                                    ),
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
-                                                          );
-                                                        }).toList(),
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            selectedRentalOwner =
-                                                                value;
-                                                          });
-                                                        },
+                                                            items: rentalOwners
+                                                                .map((String
+                                                                        item) =>
+                                                                    DropdownMenuItem<
+                                                                        String>(
+                                                                      value:
+                                                                          item,
+                                                                      child:
+                                                                          Text(
+                                                                        item,
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontSize:
+                                                                              14,
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                          color:
+                                                                              Colors.black,
+                                                                        ),
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                      ),
+                                                                    ))
+                                                                .toList(),
+                                                            value:
+                                                                selectedRentalOwner,
+                                                            onChanged: (value) {
+                                                              setState(() {
+                                                                selectedRentalOwner =
+                                                                    value;
+                                                              });
+                                                            },
+                                                            buttonStyleData:
+                                                                ButtonStyleData(
+                                                              height: 45,
+                                                              width: double
+                                                                  .infinity,
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      left: 14,
+                                                                      right:
+                                                                          14),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8),
+                                                                border:
+                                                                    Border.all(
+                                                                  color: const Color(
+                                                                      0xFF8A95A8),
+                                                                ),
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              elevation: 0,
+                                                            ),
+                                                            dropdownStyleData:
+                                                                DropdownStyleData(
+                                                              maxHeight: 250,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            14),
+                                                              ),
+                                                              offset:
+                                                                  const Offset(
+                                                                      -20, 0),
+                                                              scrollbarTheme:
+                                                                  ScrollbarThemeData(
+                                                                radius:
+                                                                    const Radius
+                                                                        .circular(
+                                                                        40),
+                                                                thickness:
+                                                                    MaterialStateProperty
+                                                                        .all(6),
+                                                                thumbVisibility:
+                                                                    MaterialStateProperty
+                                                                        .all(
+                                                                            true),
+                                                              ),
+                                                            ),
+                                                            menuItemStyleData:
+                                                                const MenuItemStyleData(
+                                                              height: 40,
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      left: 14,
+                                                                      right:
+                                                                          14),
+                                                            ),
+                                                          ),
+                                                        ),
                                                       ),
                                                     ),
                                                     const SizedBox(width: 10),

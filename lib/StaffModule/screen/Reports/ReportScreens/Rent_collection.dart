@@ -172,6 +172,12 @@ class _Rent_collectionState extends State<Rent_collection> {
           }
         }
         rentalOwners = ownerSet.toList();
+        // Sort rental owners alphabetically, keeping 'All' at the beginning
+        rentalOwners.sort((a, b) {
+          if (a == 'All') return -1;
+          if (b == 'All') return 1;
+          return a.toLowerCase().compareTo(b.toLowerCase());
+        });
       });
       return data;
     } catch (e) {
