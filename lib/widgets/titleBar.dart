@@ -32,14 +32,22 @@ class titleBar extends StatelessWidget {
               ),
             ],
           ),
-          child: Text(
-            "${title}",
-            style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.of(context).size.width < 500
-                    ? size
-                    : MediaQuery.of(context).size.width * 0.035),
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Text(
+                  "${title}",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize:   MediaQuery.of(context).size.width <
+                          500
+                          ? 16
+                          : 20),
+                ),
+              ),
+            ],
           ),
         ),
       ),

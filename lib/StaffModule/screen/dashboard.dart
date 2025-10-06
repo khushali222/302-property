@@ -175,55 +175,73 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
     );
 
     if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body)['data'];
-      List<Rentals> rentals =
-          jsonResponse.map((data) => Rentals.fromJson(data)).toList();
+      final responseData = json.decode(response.body);
 
-      try {
-        Position userLocation = await getCurrentLocation();
-        Rentals? nearestProperty;
-        double minDistance = double.infinity;
-        List<Rentals> nearbyProperties = [];
+      // Check the statusCode in the response body
+      if (responseData['statusCode'] == 200) {
+        List jsonResponse = responseData['data'];
+        List<Rentals> rentals =
+            jsonResponse.map((data) => Rentals.fromJson(data)).toList();
 
-        for (Rentals rental in rentals) {
-          final coords = await getCoordinatesFromAddress(rental);
-          if (coords != null) {
-            double distanceInMeters = Geolocator.distanceBetween(
-              userLocation.latitude,
-              userLocation.longitude,
-              // 39.6613845,
-              // -75.6339627,
-              coords.latitude,
-              coords.longitude,
-            );
+        try {
+          Position userLocation = await getCurrentLocation();
+          Rentals? nearestProperty;
+          double minDistance = double.infinity;
+          List<Rentals> nearbyProperties = [];
 
-            double distanceInKm = distanceInMeters / 1000;
-            print("${rental.rentalAddress} $distanceInKm");
-            if (distanceInKm <= 5) {
-              // Track nearest
-              if (distanceInMeters < minDistance) {
-                minDistance = distanceInMeters;
-                nearestProperty = rental;
+          for (Rentals rental in rentals) {
+            final coords = await getCoordinatesFromAddress(rental);
+            if (coords != null) {
+              double distanceInMeters = Geolocator.distanceBetween(
+                userLocation.latitude,
+                userLocation.longitude,
+                // 39.6613845,
+                // -75.6339627,
+                coords.latitude,
+                coords.longitude,
+              );
+
+              double distanceInKm = distanceInMeters / 1000;
+              print("${rental.rentalAddress} $distanceInKm");
+              if (distanceInKm <= 5) {
+                // Track nearest
+                if (distanceInMeters < minDistance) {
+                  minDistance = distanceInMeters;
+                  nearestProperty = rental;
+                }
+                // Add to nearby (will remove nearest later to avoid duplication)
+                nearbyProperties.add(rental);
               }
-              // Add to nearby (will remove nearest later to avoid duplication)
-              nearbyProperties.add(rental);
             }
           }
-        }
 
-        // Remove nearest from nearby list to avoid duplication
-        if (nearestProperty != null) {
-          nearbyProperties
-              .removeWhere((r) => r.rentalId == nearestProperty!.rentalId);
-        }
+          // Remove nearest from nearby list to avoid duplication
+          if (nearestProperty != null) {
+            nearbyProperties
+                .removeWhere((r) => r.rentalId == nearestProperty!.rentalId);
+          }
 
-        print(nearbyProperties.length);
-        return {
-          "nearest": nearestProperty,
-          "nearby": nearbyProperties,
-        };
-      } catch (e) {
-        print('Error finding nearby properties: $e');
+          print(nearbyProperties.length);
+          return {
+            "nearest": nearestProperty,
+            "nearby": nearbyProperties,
+          };
+        } catch (e) {
+          print('Error finding nearby properties: $e');
+          setState(() {
+            loading = false;
+          });
+          return {};
+        }
+      } else if (responseData['statusCode'] == 201) {
+        // No rentals found for the specified admin
+        print('No rentals found: ${responseData['message']}');
+        setState(() {
+          loading = false;
+        });
+        return {};
+      } else {
+        print('API returned error: ${responseData['message']}');
         setState(() {
           loading = false;
         });
@@ -243,7 +261,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
       loading = true;
     });
     final result = await fetchProperties();
-    if (result != null) {
+    if (result.isNotEmpty) {
       List<Data> workOrders = await fetchWorkOrders("");
       print(result);
       nearstProperty = result["nearest"];
@@ -361,9 +379,9 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
     checkInternet();
     fetchNearbyProperties();
     dashboardData = DashboardData(countList: [0, 0], amountList: [0, 0]);
-    // fetchDatacount();
-    // fetchData();
-    // _loadName();
+    fetchDatacount();
+    fetchData();
+    _loadName();
   }
 
   ConnectivityResult? _connectivityResult;
@@ -742,7 +760,8 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                   ? const Color(0xFFF4F8FF)
                                                   : Colors.white,
                                               border: Border.all(
-                                                  color: const Color(0xFFDBE0E5)),
+                                                  color:
+                                                      const Color(0xFFDBE0E5)),
                                             ),
                                             // decoration: BoxDecoration(
                                             //   border: Border.all(color: blueColor),
@@ -802,18 +821,17 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                           },
                                                           child: Container(
                                                             margin:
-                                                                const EdgeInsets.only(
+                                                                const EdgeInsets
+                                                                    .only(
                                                                     left: 5,
                                                                     right: 8),
                                                             padding: !isExpanded
                                                                 ? const EdgeInsets
                                                                     .only(
-                                                                        bottom:
-                                                                            10)
+                                                                    bottom: 10)
                                                                 : const EdgeInsets
                                                                     .only(
-                                                                        top:
-                                                                            10),
+                                                                    top: 10),
                                                             child: FaIcon(
                                                               isExpanded
                                                                   ? FontAwesomeIcons
@@ -906,11 +924,12 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                                                 ),
                                                 if (isExpanded)
                                                   Container(
-                                                    padding:
-                                                        const EdgeInsets.symmetric(
-                                                            horizontal: 2),
-                                                    margin: const EdgeInsets.only(
-                                                        bottom: 1),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 2),
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            bottom: 1),
                                                     child:
                                                         SingleChildScrollView(
                                                       child: Column(
@@ -1390,9 +1409,12 @@ class _PropertyCardState extends State<PropertyCard> {
         ? Container(
             margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
             decoration: BoxDecoration(
-              color: widget.index % 2 != 0 ? const Color(0xFFF4F8FF) : Colors.white,
+              color: widget.index % 2 != 0
+                  ? const Color(0xFFF4F8FF)
+                  : Colors.white,
               borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
+              border:
+                  Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
               // border: Border.all(color: Colors.grey.shade300),
               // boxShadow: [
               //   BoxShadow(
@@ -1480,8 +1502,8 @@ class _PropertyCardState extends State<PropertyCard> {
                                       color: index % 2 != 0
                                           ? Colors.white
                                           : blueColor.withOpacity(0.09),
-                                      border:
-                                          Border.all(color: const Color(0xFFDBE0E5)),
+                                      border: Border.all(
+                                          color: const Color(0xFFDBE0E5)),
                                     ),
                                     // decoration: BoxDecoration(
                                     //   border: Border.all(color: blueColor),
@@ -1533,8 +1555,9 @@ class _PropertyCardState extends State<PropertyCard> {
                                                     });
                                                   },
                                                   child: Container(
-                                                    margin: const EdgeInsets.only(
-                                                        left: 5, right: 8),
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            left: 5, right: 8),
                                                     padding: !isExpanded
                                                         ? const EdgeInsets.only(
                                                             bottom: 10)
@@ -1589,7 +1612,8 @@ class _PropertyCardState extends State<PropertyCard> {
                                           Container(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 2),
-                                            margin: const EdgeInsets.only(bottom: 1),
+                                            margin: const EdgeInsets.only(
+                                                bottom: 1),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [

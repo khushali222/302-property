@@ -118,9 +118,11 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                   children: [
                     width < 400
                         ? Text(" Subject",
-                            style: TextStyle( color: blueColor, fontWeight: FontWeight.bold))
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold))
                         : Text(" Subject",
-                            style: TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     // SizedBox(width: 3),
                     // ascending1
@@ -170,7 +172,8 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                 child: Row(
                   children: [
                     Text("              Sent",
-                        style: TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 3),
                   ],
                 ),
@@ -334,15 +337,28 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                               vertical: 8),
                                           child: Row(
                                             children: [
-                                              Text(
-                                                email,
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: blueColor,
+                                              // Text(
+                                              //   email,
+                                              //   style: TextStyle(
+                                              //     fontWeight: FontWeight.bold,
+                                              //     color: blueColor,
+                                              //   ),
+                                              // ),
+                                              // Spacer(), // Push icon to the right
+                                              Expanded(
+                                                flex: 3,
+                                                child: Text(
+                                                  email,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: blueColor,
+                                                  ),
+                                                  overflow:
+                                                  TextOverflow.ellipsis,
+                                                  maxLines: 1,
                                                 ),
                                               ),
-                                              Spacer(), // Push icon to the right
-
+                                              const SizedBox(width: 8),
                                               if (isAccepted && isOpened)
                                                 Icon(Icons.done_all,
                                                     color: Colors.green)
@@ -878,7 +894,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                           //   border: Border.all(color: blueColor),
                                           // ),
                                           margin:
-                                          EdgeInsets.symmetric(vertical: 6),
+                                              EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
                                                 ? Color(0xFFF4F8FF)
@@ -886,7 +902,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                             border: Border.all(
                                                 color: Color(0xFFDBE0E5)),
                                             borderRadius:
-                                            BorderRadius.circular(10),
+                                                BorderRadius.circular(10),
                                           ),
                                           child: Column(
                                             children: <Widget>[

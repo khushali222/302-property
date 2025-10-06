@@ -608,7 +608,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     height: 20,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 0, right: 0),
+                    padding:  EdgeInsets.only(left:  (MediaQuery.of(context).size.width < 500)
+                        ? 0
+                        : 15, right: 0),
                     child: Row(
                       //mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -659,7 +661,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                             //  height: 45,
                             height: (MediaQuery.of(context).size.width < 500)
                                 ? 50
-                                : 45,
+                                : 60,
                             width: (MediaQuery.of(context).size.width < 500)
                                 ? MediaQuery.of(context).size.width * 0.25
                                 : MediaQuery.of(context).size.width * 0.25,
@@ -2322,18 +2324,22 @@ class _PropertiesTableState extends State<PropertiesTable> {
                 _sort(getField, columnIndex, !_sortAscending);
               }
             : null,
-        child: Padding(
-          padding: const EdgeInsets.all(18.0),
-          child: Row(
-            children: [
-              Text(text,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 18)),
-              if (_sortColumnIndex == columnIndex)
-                Icon(_sortAscending
-                    ? Icons.arrow_drop_down_outlined
-                    : Icons.arrow_drop_up_outlined),
-            ],
+        child:
+        Padding(
+          padding: const EdgeInsets.only(left: 13),
+          child: Container(
+            height: 60,
+            child: Row(
+              children: [
+                Text(text,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 18)),
+                if (_sortColumnIndex == columnIndex)
+                  Icon(_sortAscending
+                      ? Icons.arrow_drop_down_outlined
+                      : Icons.arrow_drop_up_outlined),
+              ],
+            ),
           ),
         ),
       ),

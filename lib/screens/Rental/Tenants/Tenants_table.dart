@@ -418,18 +418,22 @@ class _Tenants_tableState extends State<Tenants_table> {
                 _sort(getField, columnIndex, !_sortAscending);
               }
             : null,
-        child: Padding(
-          padding: const EdgeInsets.all(18.0),
-          child: Row(
-            children: [
-              Text(text,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 18)),
-              if (_sortColumnIndex == columnIndex)
-                Icon(_sortAscending
-                    ? Icons.arrow_drop_down_outlined
-                    : Icons.arrow_drop_up_outlined),
-            ],
+        child:
+        Padding(
+          padding: const EdgeInsets.only(left: 13),
+          child: Container(
+            height: 60,
+            child: Row(
+              children: [
+                Text(text,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 18)),
+                if (_sortColumnIndex == columnIndex)
+                  Icon(_sortAscending
+                      ? Icons.arrow_drop_down_outlined
+                      : Icons.arrow_drop_up_outlined),
+              ],
+            ),
           ),
         ),
       ),
@@ -688,7 +692,10 @@ class _Tenants_tableState extends State<Tenants_table> {
                   ),
                   //add propertytype
                   Padding(
-                    padding: const EdgeInsets.only(left: 0, right: 0),
+                    // padding: const EdgeInsets.only(left: 0, right: 0),
+                    padding:  EdgeInsets.only(left:  (MediaQuery.of(context).size.width < 500)
+                        ? 0
+                        : 18, right: 0),
                     child: Row(
                       // mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -729,7 +736,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                           child: Container(
                             height: (MediaQuery.of(context).size.width < 500)
                                 ? 50
-                                : MediaQuery.of(context).size.width * 0.05,
+                                : 60,
                             // height:  MediaQuery.of(context).size.width * 0.07,
                             // height:  40,
                             width: (MediaQuery.of(context).size.width < 500)
@@ -1581,7 +1588,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                 Container(
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0, vertical: 5),
+                                        horizontal: 15.0, vertical: 5),
                                     child: Column(
                                       children: [
                                         SingleChildScrollView(

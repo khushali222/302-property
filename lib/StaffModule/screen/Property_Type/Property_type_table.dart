@@ -480,21 +480,25 @@ class _PropertyTableState extends State<PropertyTable> {
       child: InkWell(
         onTap: getField != null
             ? () {
-                _sort(getField, columnIndex, !_sortAscending);
-              }
+          _sort(getField, columnIndex, !_sortAscending);
+        }
             : null,
-        child: Padding(
-          padding: const EdgeInsets.all(18.0),
-          child: Row(
-            children: [
-              Text(text,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 18)),
-              if (_sortColumnIndex == columnIndex)
-                Icon(_sortAscending
-                    ? Icons.arrow_drop_down_outlined
-                    : Icons.arrow_drop_up_outlined),
-            ],
+        child:
+        Padding(
+          padding: const EdgeInsets.only(left: 13),
+          child: Container(
+            height: 60,
+            child: Row(
+              children: [
+                Text(text,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 18)),
+                if (_sortColumnIndex == columnIndex)
+                  Icon(_sortAscending
+                      ? Icons.arrow_drop_down_outlined
+                      : Icons.arrow_drop_up_outlined),
+              ],
+            ),
           ),
         ),
       ),
@@ -709,7 +713,9 @@ class _PropertyTableState extends State<PropertyTable> {
                   //add propertytype
 
                   Padding(
-                    padding: const EdgeInsets.only(left: 0, right: 0),
+                    padding:  EdgeInsets.only(left:  (MediaQuery.of(context).size.width < 500)
+                        ? 0
+                        : 15, right: 0),
                     child: Row(
                       //mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -738,7 +744,7 @@ class _PropertyTableState extends State<PropertyTable> {
                             child: Container(
                               height: (MediaQuery.of(context).size.width < 500)
                                   ? 50
-                                  : MediaQuery.of(context).size.width * 0.062,
+                                  :60,
 
                               // height:  MediaQuery.of(context).size.width * 0.07,
                               // height:  40,
@@ -781,165 +787,169 @@ class _PropertyTableState extends State<PropertyTable> {
                           SizedBox(
                               width: permissions!.propertytypeAdd! ? 6 : 0),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 22),
+                          SizedBox(width: 20),
                       ],
                     ),
                   ),
                   SizedBox(height: 10),
                   //search
                   Padding(
-                    padding: const EdgeInsets.only(left: 11, right: 11),
+                    padding:  EdgeInsets.only(left:MediaQuery.of(context).size.width < 500 ? 12 : 31, right: MediaQuery.of(context).size.width < 500 ? 12 : 31),
                     child: Row(
                       children: [
-                        if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 1),
-                        if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 24),
-                        Material(
-                          elevation: 2,
-                          borderRadius: BorderRadius.circular(8),
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            // height: 40,
-                            height: MediaQuery.of(context).size.width < 500
-                                ? 45
-                                : 50,
-                            width: MediaQuery.of(context).size.width < 500
-                                ? MediaQuery.of(context).size.width * .52
-                                : MediaQuery.of(context).size.width * .49,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                                // border: Border.all(color: Colors.grey),
-                                border: Border.all(color: Color(0xFF8A95A8))),
-                            child: Stack(
-                              children: [
-                                Positioned.fill(
-                                  child: TextField(
-                                    style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 12
-                                                : 14),
-                                    // onChanged: (value) {
-                                    //   setState(() {
-                                    //     cvverror = false;
-                                    //   });
-                                    // },
-                                    // controller: cvv,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        searchvalue = value;
-                                        if (currentPage != 0) currentPage = 0;
-                                      });
-                                    },
-                                    cursorColor: blueColor,
-                                    decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: "Search here...",
-                                        hintStyle: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 14
-                                              : 18,
-                                          // fontWeight: FontWeight.bold,
-                                          color: Color(0xFF8A95A8),
-                                        ),
-                                        contentPadding: EdgeInsets.only(
-                                            left: 5, bottom: 12, top: 5)),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        DropdownButtonHideUnderline(
+                        // if (MediaQuery.of(context).size.width < 500)
+                        //   SizedBox(width: 1),
+                        // if (MediaQuery.of(context).size.width > 500)
+                        //   SizedBox(width: 24),
+                        Expanded(
                           child: Material(
-                            elevation: 3,
+                            elevation: 2,
                             borderRadius: BorderRadius.circular(8),
-                            child: DropdownButton2<String>(
-                              isExpanded: true,
-                              hint: const Row(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              // height: 40,
+                              height: MediaQuery.of(context).size.width < 500
+                                  ? 45
+                                  : 50,
+                              // width: MediaQuery.of(context).size.width < 500
+                              //     ? MediaQuery.of(context).size.width * .52
+                              //     : MediaQuery.of(context).size.width * .49,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  // border: Border.all(color: Colors.grey),
+                                  border: Border.all(color: Color(0xFF8A95A8))),
+                              child: Stack(
                                 children: [
-                                  SizedBox(
-                                    width: 4,
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      'Type',
+                                  Positioned.fill(
+                                    child: TextField(
                                       style: TextStyle(
-                                        fontSize: 14,
-                                        // fontWeight: FontWeight.bold,
-                                        color: Color(0xFF8A95A8),
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
+                                          fontSize:
+                                              MediaQuery.of(context).size.width <
+                                                      500
+                                                  ? 12
+                                                  : 14),
+                                      // onChanged: (value) {
+                                      //   setState(() {
+                                      //     cvverror = false;
+                                      //   });
+                                      // },
+                                      // controller: cvv,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          searchvalue = value;
+                                          if (currentPage != 0) currentPage = 0;
+                                        });
+                                      },
+                                      cursorColor: blueColor,
+                                      decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: "Search here...",
+                                          hintStyle: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 14
+                                                : 18,
+                                            // fontWeight: FontWeight.bold,
+                                            color: Color(0xFF8A95A8),
+                                          ),
+                                          contentPadding: EdgeInsets.only(
+                                              left: 5, bottom: 12, top: 5)),
                                     ),
                                   ),
                                 ],
                               ),
-                              items: items
-                                  .map(
-                                      (String item) => DropdownMenuItem<String>(
-                                            value: item,
-                                            child: Text(
-                                              item,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: DropdownButtonHideUnderline(
+                            child: Material(
+                              elevation: 3,
+                              borderRadius: BorderRadius.circular(8),
+                              child: DropdownButton2<String>(
+                                isExpanded: true,
+                                hint: const Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 4,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        'Type',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          // fontWeight: FontWeight.bold,
+                                          color: Color(0xFF8A95A8),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                items: items
+                                    .map(
+                                        (String item) => DropdownMenuItem<String>(
+                                              value: item,
+                                              child: Text(
+                                                item,
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ))
-                                  .toList(),
-                              value: selectedValue,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedValue = value;
-                                });
-                              },
-                              buttonStyleData: ButtonStyleData(
-                                height: MediaQuery.of(context).size.width < 500
-                                    ? 45
-                                    : 50,
-                                // width: 180,
-                                width: MediaQuery.of(context).size.width < 500
-                                    ? MediaQuery.of(context).size.width * .38
-                                    : MediaQuery.of(context).size.width * .4,
-                                padding:
-                                    const EdgeInsets.only(left: 14, right: 14),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                    // color: Colors.black26,
-                                    color: Color(0xFF8A95A8),
+                                            ))
+                                    .toList(),
+                                value: selectedValue,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedValue = value;
+                                  });
+                                },
+                                buttonStyleData: ButtonStyleData(
+                                  height: MediaQuery.of(context).size.width < 500
+                                      ? 45
+                                      : 50,
+                                  // width: 180,
+                                  width: MediaQuery.of(context).size.width < 500
+                                      ? MediaQuery.of(context).size.width * .38
+                                      : MediaQuery.of(context).size.width * .4,
+                                  padding:
+                                      const EdgeInsets.only(left: 14, right: 14),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      // color: Colors.black26,
+                                      color: Color(0xFF8A95A8),
+                                    ),
+                                    color: Colors.white,
                                   ),
-                                  color: Colors.white,
+                                  elevation: 0,
                                 ),
-                                elevation: 0,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                maxHeight: 200,
-                                width: 200,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(14),
-                                  //color: Colors.redAccent,
+                                dropdownStyleData: DropdownStyleData(
+                                  maxHeight: 200,
+                                  width: 200,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(14),
+                                    //color: Colors.redAccent,
+                                  ),
+                                  offset: const Offset(-20, 0),
+                                  scrollbarTheme: ScrollbarThemeData(
+                                    radius: const Radius.circular(40),
+                                    thickness: MaterialStateProperty.all(6),
+                                    thumbVisibility:
+                                        MaterialStateProperty.all(true),
+                                  ),
                                 ),
-                                offset: const Offset(-20, 0),
-                                scrollbarTheme: ScrollbarThemeData(
-                                  radius: const Radius.circular(40),
-                                  thickness: MaterialStateProperty.all(6),
-                                  thumbVisibility:
-                                      MaterialStateProperty.all(true),
+                                menuItemStyleData: const MenuItemStyleData(
+                                  height: 40,
+                                  padding: EdgeInsets.only(left: 14, right: 14),
                                 ),
-                              ),
-                              menuItemStyleData: const MenuItemStyleData(
-                                height: 40,
-                                padding: EdgeInsets.only(left: 14, right: 14),
                               ),
                             ),
                           ),
@@ -948,7 +958,7 @@ class _PropertyTableState extends State<PropertyTable> {
                     ),
                   ),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(height: 25),
+                    SizedBox(height: 22),
                   if (MediaQuery.of(context).size.width < 500)
                     Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -1647,7 +1657,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                                     _buildHeader(
                                                         'Updated On', 3, null),
                                                     _buildHeader(
-                                                        'Actions', 4, null),
+                                                        '   Actions', 4, null),
                                                   ],
                                                 ),
                                                 TableRow(

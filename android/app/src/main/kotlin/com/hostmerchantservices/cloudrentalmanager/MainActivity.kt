@@ -1,4 +1,4 @@
-package com.example.three_zero_two_property
+package com.hostmerchantservices.cloudrentalmanager
 
 import io.flutter.embedding.android.FlutterActivity
 

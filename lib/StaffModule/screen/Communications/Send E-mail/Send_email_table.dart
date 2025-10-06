@@ -117,9 +117,11 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                   children: [
                     width < 400
                         ? Text(" Subject",
-                            style: TextStyle( color: blueColor, fontWeight: FontWeight.bold))
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold))
                         : Text(" Subject",
-                            style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     // SizedBox(width: 3),
                     // ascending1
@@ -169,7 +171,8 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                 child: Row(
                   children: [
                     Text("              Sent",
-                        style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 3),
                   ],
                 ),
@@ -276,11 +279,13 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color(0xFF8A95A8)),
+                          borderSide:
+                              const BorderSide(color: Color(0xFF8A95A8)),
                         ),
                         hintText: "Search recipients...",
                         hintStyle: const TextStyle(color: Color(0xFF8A95A8)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 10),
                       ),
                     ),
                   ),
@@ -303,8 +308,8 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(4),
-                                    border:
-                                        Border.all(color: const Color(0xFF8A95A8)),
+                                    border: Border.all(
+                                        color: const Color(0xFF8A95A8)),
                                   ),
                                   child: SingleChildScrollView(
                                     child: Column(
@@ -333,15 +338,28 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                               vertical: 8),
                                           child: Row(
                                             children: [
-                                              Text(
-                                                email,
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: blueColor,
+                                              // Text(
+                                              //   email,
+                                              //   style: TextStyle(
+                                              //     fontWeight: FontWeight.bold,
+                                              //     color: blueColor,
+                                              //   ),
+                                              // ),
+                                              // const Spacer(), // Push icon to the right
+                                              Expanded(
+                                                flex: 3,
+                                                child: Text(
+                                                  email,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: blueColor,
+                                                  ),
+                                                  overflow:
+                                                  TextOverflow.ellipsis,
+                                                  maxLines: 1,
                                                 ),
                                               ),
-                                              const Spacer(), // Push icon to the right
-
+                                              const SizedBox(width: 8),
                                               if (isAccepted && isOpened)
                                                 const Icon(Icons.done_all,
                                                     color: Colors.green)
@@ -771,10 +789,10 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                       fontSize:
-                                      MediaQuery.of(context).size.width <
-                                          500
-                                          ? 14
-                                          : 17,
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 14
+                                              : 17,
                                     ),
                                   ),
                                 ],
@@ -859,8 +877,8 @@ class _Send_Email_tableState extends State<Send_Email_table> {
 
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
-                                          margin:
-                                          const EdgeInsets.symmetric(vertical: 6),
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
                                                 ? const Color(0xFFF4F8FF)
@@ -868,7 +886,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                             border: Border.all(
                                                 color: const Color(0xFFDBE0E5)),
                                             borderRadius:
-                                            BorderRadius.circular(10),
+                                                BorderRadius.circular(10),
                                           ),
                                           // decoration: BoxDecoration(
                                           //   border: Border.all(color: blueColor),
@@ -915,13 +933,16 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                                         },
                                                         child: Container(
                                                           margin:
-                                                              const EdgeInsets.only(
+                                                              const EdgeInsets
+                                                                  .only(
                                                                   left: 5,
                                                                   right: 5),
                                                           padding: !isExpanded
-                                                              ? const EdgeInsets.only(
+                                                              ? const EdgeInsets
+                                                                  .only(
                                                                   bottom: 10)
-                                                              : const EdgeInsets.only(
+                                                              : const EdgeInsets
+                                                                  .only(
                                                                   top: 10),
                                                           child: FaIcon(
                                                             isExpanded
@@ -1002,7 +1023,8 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                               ),
                                               if (isExpanded)
                                                 Container(
-                                                  padding: const EdgeInsets.symmetric(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
                                                       horizontal: 2.0),
                                                   margin: const EdgeInsets.only(
                                                       bottom: 2),
@@ -1122,44 +1144,45 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                                                           .emailId!);
                                                                 },
                                                                 child:
-                                                                Container(
+                                                                    Container(
                                                                   height: 40,
                                                                   decoration:
-                                                                  BoxDecoration(
+                                                                      BoxDecoration(
                                                                     border: Border.all(
                                                                         color: Colors
                                                                             .red,
                                                                         width:
-                                                                        1.5),
+                                                                            1.5),
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(8),
+                                                                        BorderRadius
+                                                                            .circular(8),
                                                                   ),
-                                                                  child: const Row(
+                                                                  child:
+                                                                      const Row(
                                                                     mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
+                                                                        MainAxisAlignment
+                                                                            .center,
                                                                     crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .center,
+                                                                        CrossAxisAlignment
+                                                                            .center,
                                                                     children: [
                                                                       FaIcon(
                                                                         FontAwesomeIcons
                                                                             .trashCan,
                                                                         size:
-                                                                        15,
+                                                                            15,
                                                                         color: Colors
                                                                             .red,
                                                                       ),
                                                                       SizedBox(
                                                                         width:
-                                                                        10,
+                                                                            10,
                                                                       ),
                                                                       Text(
                                                                         "Delete",
                                                                         style: TextStyle(
                                                                             color:
-                                                                            Colors.red,
+                                                                                Colors.red,
                                                                             fontWeight: FontWeight.bold),
                                                                       )
                                                                     ],
@@ -1181,46 +1204,46 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                                                       Propertytype);
                                                                 },
                                                                 child:
-                                                                Container(
+                                                                    Container(
                                                                   height: 40,
                                                                   decoration:
-                                                                  BoxDecoration(
+                                                                      BoxDecoration(
                                                                     border: Border.all(
                                                                         color:
-                                                                        blueColor,
+                                                                            blueColor,
                                                                         width:
-                                                                        1.5),
+                                                                            1.5),
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(8),
+                                                                        BorderRadius
+                                                                            .circular(8),
                                                                   ),
                                                                   child: Row(
                                                                     mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
+                                                                        MainAxisAlignment
+                                                                            .center,
                                                                     crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .center,
+                                                                        CrossAxisAlignment
+                                                                            .center,
                                                                     children: [
                                                                       FaIcon(
                                                                         FontAwesomeIcons
                                                                             .users,
                                                                         size:
-                                                                        18,
+                                                                            18,
                                                                         color:
-                                                                        blueColor,
+                                                                            blueColor,
                                                                       ),
                                                                       const SizedBox(
                                                                         width:
-                                                                        10,
+                                                                            10,
                                                                       ),
                                                                       Text(
                                                                         "Details",
                                                                         style: TextStyle(
                                                                             color:
-                                                                            blueColor,
+                                                                                blueColor,
                                                                             fontWeight:
-                                                                            FontWeight.bold),
+                                                                                FontWeight.bold),
                                                                       )
                                                                     ],
                                                                   ),
@@ -1252,8 +1275,9 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                             elevation: 3,
                                             child: Container(
                                               height: 40,
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 12.0),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12.0),
                                               decoration: BoxDecoration(
                                                 border: Border.all(
                                                     color: Colors.grey),
