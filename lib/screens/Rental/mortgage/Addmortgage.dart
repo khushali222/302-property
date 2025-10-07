@@ -147,12 +147,15 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     super.dispose();
   }
 
+// add the first date picker for the start date
+
   Future<void> _selectDate(BuildContext context,
-      TextEditingController controller, DateTime? initialDate) async {
+      TextEditingController controller, DateTime? initialDate,
+      {DateTime? firstDate}) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initialDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
+      firstDate: firstDate ?? DateTime(2000),
       lastDate: DateTime(2100),
       builder: (BuildContext context, Widget? child) {
         return Theme(
@@ -990,8 +993,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       controller: _nextPaymentDateController,
                       label: 'Next Payment Date',
                       hint: 'DD/MMM/YYYY',
-                      onTap: () => _selectDate(context,
-                          _nextPaymentDateController, _nextPaymentDate),
+                      onTap: () => _selectDate(
+                          context, _nextPaymentDateController, _nextPaymentDate,
+                          firstDate: _lastPaymentDate),
                     ),
                     const SizedBox(height: 24),
 
