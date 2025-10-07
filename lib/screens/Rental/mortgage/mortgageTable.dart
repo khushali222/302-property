@@ -459,60 +459,65 @@ class _MortgageTableState extends State<MortgageTable> {
           const SizedBox(height: 20),
           // Header Section with Title and Add Button
           Padding(
-            padding: const EdgeInsets.all(0),
+            padding: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width < 500 ? 12 : 30,
+                right: MediaQuery.of(context).size.width < 500 ? 12 : 30),
             child: Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: titleBar(
-                    width: MediaQuery.of(context).size.width * .64,
-                    title: 'Mortgage',
+                Expanded(
+                  flex: 3,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: titleBar(
+                      width: double.infinity,
+                      title: 'Mortgage',
+                    ),
                   ),
                 ),
-                //  const SizedBox(width: 16),
-                GestureDetector(
-                  onTap: _openAddMortgageForm,
-                  child: Container(
-                    height: (MediaQuery.of(context).size.width < 500)
-                        ? 50
-                        : MediaQuery.of(context).size.width * 0.063,
-                    width: (MediaQuery.of(context).size.width < 500)
-                        ? MediaQuery.of(context).size.width * 0.23
-                        : MediaQuery.of(context).size.width * 0.2,
-                    decoration: BoxDecoration(
-                      color: blueColor,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "+ Add",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 16 : 22,
+                Flexible(
+                  flex: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: GestureDetector(
+                      onTap: _openAddMortgageForm,
+                      child: Container(
+                        height:
+                            (MediaQuery.of(context).size.width < 768) ? 50 : 60,
+                        decoration: BoxDecoration(
+                          color: blueColor,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "+ Add",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 20),
               ],
             ),
           ),
-          const SizedBox(height: 10),
-
+          const SizedBox(height: 20),
           // Search and Filter Section
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 11),
+            padding: const EdgeInsets.only(left: 11, right: 11),
             child: Row(
               children: [
-                const SizedBox(width: 10),
+                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 2),
+                if (MediaQuery.of(context).size.width > 500)
+                  SizedBox(width: 20),
                 Material(
                   elevation: 0,
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
-                    height: 50,
+                    height: (MediaQuery.of(context).size.width < 768) ? 50 : 60,
                     width: MediaQuery.of(context).size.width * 0.49,
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -541,7 +546,7 @@ class _MortgageTableState extends State<MortgageTable> {
               ],
             ),
           ),
-          const SizedBox(height: 25),
+          // const SizedBox(height: 25),
 
           // Content Section
           Expanded(
@@ -583,7 +588,8 @@ class _MortgageTableState extends State<MortgageTable> {
                         ),
                       )
                     : SingleChildScrollView(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        padding: EdgeInsets.all(
+                            MediaQuery.of(context).size.width < 500 ? 10 : 28),
                         child: Column(
                           children: [
                             _buildHeaders(),

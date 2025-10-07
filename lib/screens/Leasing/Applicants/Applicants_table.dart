@@ -723,117 +723,106 @@ class _Applicants_tableState extends State<Applicants_table> {
                   const SizedBox(
                     height: 20,
                   ),
-                  //add propertytype
+                  // Header Section with Title and Action Buttons
                   Padding(
-                    padding: const EdgeInsets.only(left: 0, right: 0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
                     child: Row(
-                      // mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: titleBar(
-                            width: MediaQuery.of(context).size.width * .38,
-                            title: 'Applicants',
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 13,),
+                        Expanded(
+                          flex: 2,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: titleBar(
+                              width: double.infinity,
+                              title: 'Applicants',
+                            ),
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () async {
-                            print(applicantCount);
-                            print(applicantCountLimit);
-
-                            final result = await Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const AddApplicant()));
-                            if (result == true) {
-                              setState(() {
-                                futureApplicantdata =
-                                    ApplicantRepository().fetchApplicants();
-                              });
-                            }
-                          },
-                          child: Container(
-                            height: (MediaQuery.of(context).size.width < 500)
-                                ? 50
-                                : MediaQuery.of(context).size.width * 0.063,
-
-                            // height:  MediaQuery.of(context).size.width * 0.07,
-                            // height:  40,
-                            width: (MediaQuery.of(context).size.width < 500)
-                                ? MediaQuery.of(context).size.width * 0.25
-                                : MediaQuery.of(context).size.width * 0.2,
-                            decoration: BoxDecoration(
-                              color: blueColor,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
+                        Flexible(
+                          flex: 1,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.only(left: 4.0, right: 4.0),
+                            child: GestureDetector(
+                              onTap: () async {
+                                final result = await Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const AddApplicant()));
+                                if (result == true) {
+                                  setState(() {
+                                    futureApplicantdata =
+                                        ApplicantRepository().fetchApplicants();
+                                  });
+                                }
+                              },
+                              child: Container(
+                                height:
+                                    (MediaQuery.of(context).size.width < 768)
+                                        ? 50
+                                        : 60,
+                                decoration: BoxDecoration(
+                                  color: blueColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Center(
+                                  child: Text(
                                     "+ Add",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 16
-                                              : 20,
+                                      fontSize: 16,
                                     ),
                                   ),
-                                ],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        GestureDetector(
-                          onTap: () async {
-                            print(applicantCount);
-                            print(applicantCountLimit);
-                            _showInviteApplicantsDialog();
-                          },
-                          child: Container(
-                            height: (MediaQuery.of(context).size.width < 500)
-                                ? 50
-                                : MediaQuery.of(context).size.width * 0.063,
-
-                            // height:  MediaQuery.of(context).size.width * 0.07,
-                            // height:  40,
-                            width: (MediaQuery.of(context).size.width < 500)
-                                ? MediaQuery.of(context).size.width * 0.25
-                                : MediaQuery.of(context).size.width * 0.2,
-                            decoration: BoxDecoration(
-                              color: blueColor,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.mail_outline,
-                                      color: Colors.white, size: 20),
-                                  SizedBox(
-                                    width: 3,
+                        Flexible(
+                          flex: 1,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 4.0),
+                            child: GestureDetector(
+                              onTap: () async {
+                                _showInviteApplicantsDialog();
+                              },
+                              child: Container(
+                                height:
+                                    (MediaQuery.of(context).size.width < 768)
+                                        ? 50
+                                        : 60,
+                                decoration: BoxDecoration(
+                                  color: blueColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.mail_outline,
+                                          color: Colors.white, size: 16),
+                                      SizedBox(width: 3),
+                                      Text(
+                                        " Invite",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    " Invite",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 16
-                                              : 20,
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
                             ),
                           ),
                         ),
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 13,),
                       ],
                     ),
                   ),
@@ -977,11 +966,12 @@ class _Applicants_tableState extends State<Applicants_table> {
                       ],
                     ),
                   ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    const SizedBox(height: 25),
-                  if (MediaQuery.of(context).size.width < 500)
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   const SizedBox(height: 25),
+                  // if (MediaQuery.of(context).size.width < 500)
                     Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width < 500 ? 11 : 28),
                       child: FutureBuilder<List<Datum>>(
                         future: futureApplicantdata,
                         builder: (context, snapshot) {
@@ -1411,8 +1401,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                         .applicantId
                                                                         .toString());
                                                               },
-                                                              child:
-                                                              Container(
+                                                              child: Container(
                                                                 height: 35,
                                                                 width: 35,
                                                                 decoration: BoxDecoration(
@@ -1463,8 +1452,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                                                   });
                                                                 }
                                                               },
-                                                              child:
-                                                              Container(
+                                                              child: Container(
                                                                 height: 35,
                                                                 width: 35,
                                                                 decoration: BoxDecoration(
@@ -1670,180 +1658,180 @@ class _Applicants_tableState extends State<Applicants_table> {
                         },
                       ),
                     ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    FutureBuilder<List<Datum>>(
-                      future: futureApplicantdata,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return ShimmerTabletTable();
-                        } else if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
-                          return const Center(child: Text('No data available'));
-                        } else {
-                          _tableData = snapshot.data!;
-                          if (selectedValue == null && searchvalue.isEmpty) {
-                            _tableData = snapshot.data!;
-                          } else if (selectedValue == "All") {
-                            _tableData = snapshot.data!;
-                          } else if (searchvalue.isNotEmpty) {
-                            _tableData = snapshot.data!
-                                .where((applicant) =>
-                                    !applicant.applicantFirstName!
-                                        .toLowerCase()
-                                        .contains(searchvalue.toLowerCase()) ||
-                                    applicant.applicantLastName!
-                                        .toLowerCase()
-                                        .contains(searchvalue.toLowerCase()))
-                                .toList();
-                          } else {
-                            _tableData = snapshot.data!
-                                .where((applicant) =>
-                                    applicant.applicantFirstName ==
-                                    selectedValue)
-                                .toList();
-                          }
-                          _tableData = _tableData.reversed.toList();
-                          totalrecords = _tableData.length;
-                          return SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                Container(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 40.0, vertical: 5),
-                                    child: Column(
-                                      children: [
-                                        SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          child: SizedBox(
-                                            child: Table(
-                                              defaultColumnWidth:
-                                                  const IntrinsicColumnWidth(),
-                                              children: [
-                                                TableRow(
-                                                  decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        // color: blueColor
-                                                        ),
-                                                  ),
-                                                  children: [
-                                                    _buildHeader(
-                                                        'Name',
-                                                        0,
-                                                        (property) => property
-                                                            .applicantFirstName!),
-                                                    _buildHeader(
-                                                        'Email',
-                                                        1,
-                                                        (property) => property
-                                                            .applicantEmail!),
-                                                    _buildHeader(
-                                                        'Phone ..', 2, null),
-                                                    _buildHeader(
-                                                        'Home ..', 3, null),
-                                                    _buildHeader(
-                                                        'Actions', 4, null),
-                                                  ],
-                                                ),
-                                                TableRow(
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                    border: Border.symmetric(
-                                                        horizontal:
-                                                            BorderSide.none),
-                                                  ),
-                                                  children: List.generate(
-                                                      5,
-                                                      (index) => TableCell(
-                                                          child: Container(
-                                                              height: 20))),
-                                                ),
-                                                for (var i = 0;
-                                                    i < _pagedData.length;
-                                                    i++)
-                                                  TableRow(
-                                                    decoration: BoxDecoration(
-                                                      border: Border(
-                                                        left: BorderSide(
-                                                            color: blueColor),
-                                                        right: BorderSide(
-                                                            color: blueColor),
-                                                        top: BorderSide(
-                                                            color: blueColor),
-                                                        bottom: i ==
-                                                                _pagedData
-                                                                        .length -
-                                                                    1
-                                                            ? BorderSide(
-                                                                color:
-                                                                    blueColor)
-                                                            : BorderSide.none,
-                                                      ),
-                                                    ),
-                                                    children: [
-                                                      // Text(
-                                                      //     '${_pagedData[i].propertyType!}'),
-                                                      // Text(
-                                                      //     '${_pagedData[i].propertysubType!}'),
-                                                      // Text(
-                                                      //     '${formatDate(_pagedData[i].createdAt!)}'),
-                                                      // Text(
-                                                      //     '${formatDate(_pagedData[i].updatedAt!)}'),
-                                                      _buildDataCell(
-                                                          _pagedData[i]
-                                                              .applicantFirstName!,
-                                                          _pagedData[i]),
-                                                      _buildDataCell(
-                                                          _pagedData[i]
-                                                              .applicantEmail!,
-                                                          _pagedData[i]),
-                                                      _buildDataCell(
-                                                          _pagedData[i]
-                                                                      .applicantHomeNumber ==
-                                                                  null
-                                                              ? ''
-                                                              : _pagedData[i]
-                                                                  .applicantHomeNumber!
-                                                                  .toString(),
-                                                          _pagedData[i]),
-                                                      _buildDataCell(
-                                                          _pagedData[i]
-                                                                      .applicantHomeNumber ==
-                                                                  null
-                                                              ? ''
-                                                              : _pagedData[i]
-                                                                  .applicantHomeNumber!
-                                                                  .toString(),
-                                                          _pagedData[i]),
-                                                      // _buildDataCell(
-                                                      //   _pagedData[i]
-                                                      //       .applicantLastName!,
-                                                      // ),
-                                                      _buildActionsCell(
-                                                          _pagedData[i]),
-                                                    ],
-                                                  ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 25),
-                                        _buildPaginationControls(),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 25),
-                              ],
-                            ),
-                          );
-                        }
-                      },
-                    ),
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   FutureBuilder<List<Datum>>(
+                  //     future: futureApplicantdata,
+                  //     builder: (context, snapshot) {
+                  //       if (snapshot.connectionState ==
+                  //           ConnectionState.waiting) {
+                  //         return ShimmerTabletTable();
+                  //       } else if (snapshot.hasError) {
+                  //         return Center(
+                  //             child: Text('Error: ${snapshot.error}'));
+                  //       } else if (!snapshot.hasData ||
+                  //           snapshot.data!.isEmpty) {
+                  //         return const Center(child: Text('No data available'));
+                  //       } else {
+                  //         _tableData = snapshot.data!;
+                  //         if (selectedValue == null && searchvalue.isEmpty) {
+                  //           _tableData = snapshot.data!;
+                  //         } else if (selectedValue == "All") {
+                  //           _tableData = snapshot.data!;
+                  //         } else if (searchvalue.isNotEmpty) {
+                  //           _tableData = snapshot.data!
+                  //               .where((applicant) =>
+                  //                   !applicant.applicantFirstName!
+                  //                       .toLowerCase()
+                  //                       .contains(searchvalue.toLowerCase()) ||
+                  //                   applicant.applicantLastName!
+                  //                       .toLowerCase()
+                  //                       .contains(searchvalue.toLowerCase()))
+                  //               .toList();
+                  //         } else {
+                  //           _tableData = snapshot.data!
+                  //               .where((applicant) =>
+                  //                   applicant.applicantFirstName ==
+                  //                   selectedValue)
+                  //               .toList();
+                  //         }
+                  //         _tableData = _tableData.reversed.toList();
+                  //         totalrecords = _tableData.length;
+                  //         return SingleChildScrollView(
+                  //           child: Column(
+                  //             children: [
+                  //               Container(
+                  //                 child: Padding(
+                  //                   padding: const EdgeInsets.symmetric(
+                  //                       horizontal: 40.0, vertical: 5),
+                  //                   child: Column(
+                  //                     children: [
+                  //                       SingleChildScrollView(
+                  //                         scrollDirection: Axis.horizontal,
+                  //                         child: SizedBox(
+                  //                           child: Table(
+                  //                             defaultColumnWidth:
+                  //                                 const IntrinsicColumnWidth(),
+                  //                             children: [
+                  //                               TableRow(
+                  //                                 decoration: BoxDecoration(
+                  //                                   border: Border.all(
+                  //                                       // color: blueColor
+                  //                                       ),
+                  //                                 ),
+                  //                                 children: [
+                  //                                   _buildHeader(
+                  //                                       'Name',
+                  //                                       0,
+                  //                                       (property) => property
+                  //                                           .applicantFirstName!),
+                  //                                   _buildHeader(
+                  //                                       'Email',
+                  //                                       1,
+                  //                                       (property) => property
+                  //                                           .applicantEmail!),
+                  //                                   _buildHeader(
+                  //                                       'Phone ..', 2, null),
+                  //                                   _buildHeader(
+                  //                                       'Home ..', 3, null),
+                  //                                   _buildHeader(
+                  //                                       'Actions', 4, null),
+                  //                                 ],
+                  //                               ),
+                  //                               TableRow(
+                  //                                 decoration:
+                  //                                     const BoxDecoration(
+                  //                                   border: Border.symmetric(
+                  //                                       horizontal:
+                  //                                           BorderSide.none),
+                  //                                 ),
+                  //                                 children: List.generate(
+                  //                                     5,
+                  //                                     (index) => TableCell(
+                  //                                         child: Container(
+                  //                                             height: 20))),
+                  //                               ),
+                  //                               for (var i = 0;
+                  //                                   i < _pagedData.length;
+                  //                                   i++)
+                  //                                 TableRow(
+                  //                                   decoration: BoxDecoration(
+                  //                                     border: Border(
+                  //                                       left: BorderSide(
+                  //                                           color: blueColor),
+                  //                                       right: BorderSide(
+                  //                                           color: blueColor),
+                  //                                       top: BorderSide(
+                  //                                           color: blueColor),
+                  //                                       bottom: i ==
+                  //                                               _pagedData
+                  //                                                       .length -
+                  //                                                   1
+                  //                                           ? BorderSide(
+                  //                                               color:
+                  //                                                   blueColor)
+                  //                                           : BorderSide.none,
+                  //                                     ),
+                  //                                   ),
+                  //                                   children: [
+                  //                                     // Text(
+                  //                                     //     '${_pagedData[i].propertyType!}'),
+                  //                                     // Text(
+                  //                                     //     '${_pagedData[i].propertysubType!}'),
+                  //                                     // Text(
+                  //                                     //     '${formatDate(_pagedData[i].createdAt!)}'),
+                  //                                     // Text(
+                  //                                     //     '${formatDate(_pagedData[i].updatedAt!)}'),
+                  //                                     _buildDataCell(
+                  //                                         _pagedData[i]
+                  //                                             .applicantFirstName!,
+                  //                                         _pagedData[i]),
+                  //                                     _buildDataCell(
+                  //                                         _pagedData[i]
+                  //                                             .applicantEmail!,
+                  //                                         _pagedData[i]),
+                  //                                     _buildDataCell(
+                  //                                         _pagedData[i]
+                  //                                                     .applicantHomeNumber ==
+                  //                                                 null
+                  //                                             ? ''
+                  //                                             : _pagedData[i]
+                  //                                                 .applicantHomeNumber!
+                  //                                                 .toString(),
+                  //                                         _pagedData[i]),
+                  //                                     _buildDataCell(
+                  //                                         _pagedData[i]
+                  //                                                     .applicantHomeNumber ==
+                  //                                                 null
+                  //                                             ? ''
+                  //                                             : _pagedData[i]
+                  //                                                 .applicantHomeNumber!
+                  //                                                 .toString(),
+                  //                                         _pagedData[i]),
+                  //                                     // _buildDataCell(
+                  //                                     //   _pagedData[i]
+                  //                                     //       .applicantLastName!,
+                  //                                     // ),
+                  //                                     _buildActionsCell(
+                  //                                         _pagedData[i]),
+                  //                                   ],
+                  //                                 ),
+                  //                             ],
+                  //                           ),
+                  //                         ),
+                  //                       ),
+                  //                       const SizedBox(height: 25),
+                  //                       _buildPaginationControls(),
+                  //                     ],
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //               const SizedBox(height: 25),
+                  //             ],
+                  //           ),
+                  //         );
+                  //       }
+                  //     },
+                  //   ),
                 ],
               ),
             )

@@ -634,87 +634,79 @@ class _Lease_tableState extends State<Lease_table> {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
+                  // Header Section with Title and Add Button
                   Padding(
-                    padding: const EdgeInsets.all(0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
                     child: Row(
-                      // mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: titleBar(
-                            width: permissions!.leaseAdd!
-                                ? MediaQuery.of(context).size.width * .65
-                                : MediaQuery.of(context).size.width * .93,
-                            title: 'Leases',
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 13,),
+                        Expanded(
+                          flex: permissions!.leaseAdd! ? 3 : 1,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: titleBar(
+                              width: double.infinity,
+                              title: 'Leases',
+                            ),
                           ),
                         ),
                         if (permissions!.leaseAdd!)
-                          GestureDetector(
-                            onTap: () async {
-                              Provider.of<SelectedTenantsProvider>(context,
-                                      listen: false)
-                                  .clearTenant();
-                              Provider.of<SelectedCosignersProvider>(context,
-                                      listen: false)
-                                  .clearCosigner();
-                              Provider.of<SelectedApplicantProvider>(context,
-                                      listen: false)
-                                  .clearApplicant();
-                              final result = await Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) => addLease3()));
-                              if (result == true) {
-                                setState(() {
-                                  futureLease =
-                                      LeaseRepository().fetchLease("");
-                                  //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                                });
-                              }
-                              // if (leaseCount < leaseCountLimit) {
-                              //   final result = await Navigator.of(context).push(
-                              //       MaterialPageRoute(
-                              //           builder: (context) => addLease3()));
-                              //   if (result == true) {
-                              //     setState(() {
-                              //       futureLease = LeaseRepository().fetchLease("");
-                              //       //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                              //     });
-                              //     fetchLeaseadded();
-                              //   }
-                              // } else {
-                              //   _showAlertforLimit(context);
-                              // }
-                            },
-                            child: Container(
-                              height: (MediaQuery.of(context).size.width < 500)
-                                  ? 50
-                                  : MediaQuery.of(context).size.width * 0.063,
-                              width: (MediaQuery.of(context).size.width < 500)
-                                  ? MediaQuery.of(context).size.width * 0.25
-                                  : MediaQuery.of(context).size.width * 0.2,
-                              decoration: BoxDecoration(
-                                color: blueColor,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "+ Add",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 16
-                                            : 22,
+                          Flexible(
+                            flex: 1,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  Provider.of<SelectedTenantsProvider>(context,
+                                          listen: false)
+                                      .clearTenant();
+                                  Provider.of<SelectedCosignersProvider>(
+                                          context,
+                                          listen: false)
+                                      .clearCosigner();
+                                  Provider.of<SelectedApplicantProvider>(
+                                          context,
+                                          listen: false)
+                                      .clearApplicant();
+                                  final result = await Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                          builder: (context) => addLease3()));
+                                  if (result == true) {
+                                    setState(() {
+                                      futureLease =
+                                          LeaseRepository().fetchLease("");
+                                    });
+                                  }
+                                },
+                                child: Container(
+                                  height:
+                                      (MediaQuery.of(context).size.width < 768)
+                                          ? 50
+                                          : 60,
+                                  decoration: BoxDecoration(
+                                    color: blueColor,
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "+ Add",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: permissions!.leaseAdd! ? 6 : 0),
+                          SizedBox(width: 3),
                         if (MediaQuery.of(context).size.width > 500)
-                          const SizedBox(width: 22),
+                          SizedBox(width: 18),
                       ],
                     ),
                   ),
@@ -773,7 +765,8 @@ class _Lease_tableState extends State<Lease_table> {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: const Color(0xFF8A95A8)),
+                              border:
+                                  Border.all(color: const Color(0xFF8A95A8)),
                             ),
                             child: TextField(
                               onChanged: (value) {
@@ -899,11 +892,12 @@ class _Lease_tableState extends State<Lease_table> {
                       ],
                     ),
                   ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    const SizedBox(height: 25),
-                  if (MediaQuery.of(context).size.width < 500)
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   const SizedBox(height: 25),
+                  // if (MediaQuery.of(context).size.width < 500)
                     Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width < 500 ? 11 : 28),
                       child: FutureBuilder<List<Lease1>>(
                         future: futureLease,
                         builder: (context, snapshot) {
@@ -1044,8 +1038,8 @@ class _Lease_tableState extends State<Lease_table> {
                                         Lease1 lease = entry.value;
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
-                                          margin:
-                                              const EdgeInsets.symmetric(vertical: 6),
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
                                                 ? const Color(0xFFF4F8FF)
@@ -1084,13 +1078,16 @@ class _Lease_tableState extends State<Lease_table> {
                                                         },
                                                         child: Container(
                                                           margin:
-                                                              const EdgeInsets.only(
+                                                              const EdgeInsets
+                                                                  .only(
                                                                   left: 5,
                                                                   right: 5),
                                                           padding: !isExpanded
-                                                              ? const EdgeInsets.only(
+                                                              ? const EdgeInsets
+                                                                  .only(
                                                                   bottom: 10)
-                                                              : const EdgeInsets.only(
+                                                              : const EdgeInsets
+                                                                  .only(
                                                                   top: 10),
                                                           child: FaIcon(
                                                             isExpanded
@@ -1216,7 +1213,8 @@ class _Lease_tableState extends State<Lease_table> {
                                               ),
                                               if (isExpanded)
                                                 Container(
-                                                  padding: const EdgeInsets.symmetric(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
                                                       horizontal: 2.0),
                                                   margin: const EdgeInsets.only(
                                                       bottom: 2),
@@ -1352,7 +1350,8 @@ class _Lease_tableState extends State<Lease_table> {
                                                                         BorderRadius
                                                                             .circular(8),
                                                                   ),
-                                                                  child: const Row(
+                                                                  child:
+                                                                      const Row(
                                                                     mainAxisAlignment:
                                                                         MainAxisAlignment
                                                                             .center,
@@ -1425,7 +1424,8 @@ class _Lease_tableState extends State<Lease_table> {
                                                                       color: Colors
                                                                           .green
                                                                           .shade50), // color:Colors.grey[100],
-                                                                  child: const Row(
+                                                                  child:
+                                                                      const Row(
                                                                     mainAxisAlignment:
                                                                         MainAxisAlignment
                                                                             .center,
@@ -1469,7 +1469,8 @@ class _Lease_tableState extends State<Lease_table> {
                                                                       color: Colors
                                                                           .red
                                                                           .shade50),
-                                                                  child: const Row(
+                                                                  child:
+                                                                      const Row(
                                                                     mainAxisAlignment:
                                                                         MainAxisAlignment
                                                                             .center,
@@ -1520,8 +1521,9 @@ class _Lease_tableState extends State<Lease_table> {
                                             elevation: 3,
                                             child: Container(
                                               height: 40,
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 12.0),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12.0),
                                               decoration: BoxDecoration(
                                                 border: Border.all(
                                                     color: Colors.grey),
@@ -1626,224 +1628,224 @@ class _Lease_tableState extends State<Lease_table> {
                         },
                       ),
                     ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    FutureBuilder<List<Lease1>>(
-                      future: futureLease,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return ShimmerTabletTable();
-                        } else if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
-                          return Container(
-                            height: MediaQuery.of(context).size.height * .5,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    "assets/images/no_data.jpg",
-                                    height: 200,
-                                    width: 200,
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    "No Data Available",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor,
-                                        fontSize: 16),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        } else {
-                          List<Lease1>? filteredData = [];
-                          _tableData = snapshot.data!;
-                          if (selectedRole == null && searchValue == "") {
-                            filteredData = snapshot.data;
-                          } else if (selectedRole == "All") {
-                            filteredData = snapshot.data;
-                          } else if (searchValue.isNotEmpty) {
-                            filteredData = snapshot.data!
-                                .where((lease) =>
-                                    (lease.rentalAddress
-                                            ?.toLowerCase()
-                                            .contains(
-                                                searchValue.toLowerCase()) ??
-                                        false) ||
-                                    (lease.tenantNames?.toLowerCase().contains(
-                                            searchValue.toLowerCase()) ??
-                                        false))
-                                .toList();
-                          }
-                          // Remove filteredData?.reversed.toList() to let sortData handle the ordering
-                          // filteredData = filteredData?.reversed.toList();
-                          _tableData = filteredData!;
-                          totalrecords = _tableData.length;
-                          return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 23.0),
-                            child: Column(
-                              children: [
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 15),
-                                    child: Container(
-                                      // width: MediaQuery.of(context).size.width * .91,
-                                      child: Table(
-                                        defaultColumnWidth:
-                                            const IntrinsicColumnWidth(),
-                                        children: [
-                                          TableRow(
-                                            decoration: BoxDecoration(
-                                                border: Border.all()),
-                                            children: [
-                                              //_buildHeader('FirstName', 0, (staff) => staff.rentalOwnerFirstName!),
-                                              //  _buildHeader('LastName', 1, (staff) => staff.rentalOwnerLastName!),
-                                              _buildHeader(
-                                                  'Lease',
-                                                  0,
-                                                  (lease) =>
-                                                      '${lease.rentalAddress ?? ''}'
-                                                      '${lease.tenantNames ?? ''}'),
-                                              // _buildHeader('Lease', 0,
-                                              //         (lease) => '${lease.rentalAddress!} '),
-                                              _buildHeader('Lease Start', 1,
-                                                  (lease) => lease.startDate!),
-                                              _buildHeader('Lease End', 2,
-                                                  (lease) => lease.endDate!),
-                                              _buildHeader('Rent Cycle', 3,
-                                                  (lease) => lease.rentCycle!),
-                                              _buildHeader(
-                                                  'Balance Due',
-                                                  4,
-                                                  (lease) =>
-                                                      lease.rentDueDate!),
-                                              _buildHeader('Rent', 5,
-                                                  (lease) => lease.amount!),
-                                              _buildHeader('Deposit Held', 6,
-                                                  (lease) => lease.deposit!),
-                                              _buildHeader(
-                                                  'Charges',
-                                                  7,
-                                                  (lease) =>
-                                                      lease.recurringCharge!),
-                                              _buildHeader('Created At', 8,
-                                                  (lease) => lease.createdAt!),
-                                              _buildHeader('Updated At', 9,
-                                                  (lease) => lease.updatedAt!),
-                                              _buildHeader('Actions', 10, null),
-                                            ],
-                                          ),
-                                          TableRow(
-                                            decoration: const BoxDecoration(
-                                              border: Border.symmetric(
-                                                  horizontal: BorderSide.none),
-                                            ),
-                                            children: List.generate(
-                                                11,
-                                                (index) => TableCell(
-                                                    child:
-                                                        Container(height: 20))),
-                                          ),
-                                          for (var i = 0;
-                                              i < _pagedData.length;
-                                              i++)
-                                            TableRow(
-                                              decoration: BoxDecoration(
-                                                border: Border(
-                                                  left: BorderSide(
-                                                      color: blueColor),
-                                                  right: BorderSide(
-                                                      color: blueColor),
-                                                  top: BorderSide(
-                                                      color: blueColor),
-                                                  bottom:
-                                                      i == _pagedData.length - 1
-                                                          ? BorderSide(
-                                                              color: blueColor)
-                                                          : BorderSide.none,
-                                                ),
-                                              ),
-                                              children: [
-                                                //_buildDataCell(_pagedData[i].rentalOwnerFirstName!),
-                                                InkWell(
-                                                  onTap: () {
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                SummeryPageLease(
-                                                                    leaseId: _pagedData[
-                                                                            i]
-                                                                        .leaseId!)));
-                                                  },
-                                                  child: _buildDataCell(
-                                                      '${_pagedData[i].rentalAddress ?? ''}${_pagedData[i].tenantNames ?? ''}'),
-                                                ),
-                                                // _buildDataCell('${_pagedData[i].rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerLastName ?? ''}'),
-                                                _buildDataCell(
-                                                    _pagedData[i].startDate!),
-                                                _buildDataCell(
-                                                    _pagedData[i].endDate!),
-                                                _buildDataCell(
-                                                    _pagedData[i].rentCycle!),
-                                                _buildDataCell(_pagedData[i]
-                                                            .totalBalance! <
-                                                        0
-                                                    ? ' - \$${_pagedData[i].totalBalance!.abs().toStringAsFixed(2)}'
-                                                    : ' \$ ${_pagedData[i].totalBalance!.abs().toStringAsFixed(2)}'),
-                                                _buildDataCell(_pagedData[i]
-                                                    .amount
-                                                    .toString()),
-                                                _buildDataCell((_pagedData[i]
-                                                        .deposit
-                                                        ?.toString() ??
-                                                    "")),
-                                                _buildDataCell((_pagedData[i]
-                                                        .recurringCharge
-                                                        ?.toString() ??
-                                                    "")),
-                                                _buildDataCell(Provider.of<
-                                                            DateProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .formatCurrentDateTime(
-                                                        '${_pagedData[i].createdAt}')),
-                                                _buildDataCell(Provider.of<
-                                                            DateProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .formatCurrentDateTime(
-                                                        '${_pagedData[i].updatedAt}')),
-                                                _buildActionsCell(
-                                                    _pagedData[i]),
-                                              ],
-                                            ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                if (_tableData.isEmpty)
-                                  const Text("No Search Records Found"),
-                                const SizedBox(height: 25),
-                                _buildPaginationControls(),
-                              ],
-                            ),
-                          );
-                        }
-                      },
-                    ),
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   FutureBuilder<List<Lease1>>(
+                  //     future: futureLease,
+                  //     builder: (context, snapshot) {
+                  //       if (snapshot.connectionState ==
+                  //           ConnectionState.waiting) {
+                  //         return ShimmerTabletTable();
+                  //       } else if (snapshot.hasError) {
+                  //         return Center(
+                  //             child: Text('Error: ${snapshot.error}'));
+                  //       } else if (!snapshot.hasData ||
+                  //           snapshot.data!.isEmpty) {
+                  //         return Container(
+                  //           height: MediaQuery.of(context).size.height * .5,
+                  //           child: Center(
+                  //             child: Column(
+                  //               mainAxisAlignment: MainAxisAlignment.center,
+                  //               crossAxisAlignment: CrossAxisAlignment.center,
+                  //               children: [
+                  //                 Image.asset(
+                  //                   "assets/images/no_data.jpg",
+                  //                   height: 200,
+                  //                   width: 200,
+                  //                 ),
+                  //                 const SizedBox(
+                  //                   height: 10,
+                  //                 ),
+                  //                 Text(
+                  //                   "No Data Available",
+                  //                   style: TextStyle(
+                  //                       fontWeight: FontWeight.bold,
+                  //                       color: blueColor,
+                  //                       fontSize: 16),
+                  //                 )
+                  //               ],
+                  //             ),
+                  //           ),
+                  //         );
+                  //       } else {
+                  //         List<Lease1>? filteredData = [];
+                  //         _tableData = snapshot.data!;
+                  //         if (selectedRole == null && searchValue == "") {
+                  //           filteredData = snapshot.data;
+                  //         } else if (selectedRole == "All") {
+                  //           filteredData = snapshot.data;
+                  //         } else if (searchValue.isNotEmpty) {
+                  //           filteredData = snapshot.data!
+                  //               .where((lease) =>
+                  //                   (lease.rentalAddress
+                  //                           ?.toLowerCase()
+                  //                           .contains(
+                  //                               searchValue.toLowerCase()) ??
+                  //                       false) ||
+                  //                   (lease.tenantNames?.toLowerCase().contains(
+                  //                           searchValue.toLowerCase()) ??
+                  //                       false))
+                  //               .toList();
+                  //         }
+                  //         // Remove filteredData?.reversed.toList() to let sortData handle the ordering
+                  //         // filteredData = filteredData?.reversed.toList();
+                  //         _tableData = filteredData!;
+                  //         totalrecords = _tableData.length;
+                  //         return Padding(
+                  //           padding:
+                  //               const EdgeInsets.symmetric(horizontal: 23.0),
+                  //           child: Column(
+                  //             children: [
+                  //               SingleChildScrollView(
+                  //                 scrollDirection: Axis.horizontal,
+                  //                 child: Padding(
+                  //                   padding: const EdgeInsets.only(left: 15),
+                  //                   child: Container(
+                  //                     // width: MediaQuery.of(context).size.width * .91,
+                  //                     child: Table(
+                  //                       defaultColumnWidth:
+                  //                           const IntrinsicColumnWidth(),
+                  //                       children: [
+                  //                         TableRow(
+                  //                           decoration: BoxDecoration(
+                  //                               border: Border.all()),
+                  //                           children: [
+                  //                             //_buildHeader('FirstName', 0, (staff) => staff.rentalOwnerFirstName!),
+                  //                             //  _buildHeader('LastName', 1, (staff) => staff.rentalOwnerLastName!),
+                  //                             _buildHeader(
+                  //                                 'Lease',
+                  //                                 0,
+                  //                                 (lease) =>
+                  //                                     '${lease.rentalAddress ?? ''}'
+                  //                                     '${lease.tenantNames ?? ''}'),
+                  //                             // _buildHeader('Lease', 0,
+                  //                             //         (lease) => '${lease.rentalAddress!} '),
+                  //                             _buildHeader('Lease Start', 1,
+                  //                                 (lease) => lease.startDate!),
+                  //                             _buildHeader('Lease End', 2,
+                  //                                 (lease) => lease.endDate!),
+                  //                             _buildHeader('Rent Cycle', 3,
+                  //                                 (lease) => lease.rentCycle!),
+                  //                             _buildHeader(
+                  //                                 'Balance Due',
+                  //                                 4,
+                  //                                 (lease) =>
+                  //                                     lease.rentDueDate!),
+                  //                             _buildHeader('Rent', 5,
+                  //                                 (lease) => lease.amount!),
+                  //                             _buildHeader('Deposit Held', 6,
+                  //                                 (lease) => lease.deposit!),
+                  //                             _buildHeader(
+                  //                                 'Charges',
+                  //                                 7,
+                  //                                 (lease) =>
+                  //                                     lease.recurringCharge!),
+                  //                             _buildHeader('Created At', 8,
+                  //                                 (lease) => lease.createdAt!),
+                  //                             _buildHeader('Updated At', 9,
+                  //                                 (lease) => lease.updatedAt!),
+                  //                             _buildHeader('Actions', 10, null),
+                  //                           ],
+                  //                         ),
+                  //                         TableRow(
+                  //                           decoration: const BoxDecoration(
+                  //                             border: Border.symmetric(
+                  //                                 horizontal: BorderSide.none),
+                  //                           ),
+                  //                           children: List.generate(
+                  //                               11,
+                  //                               (index) => TableCell(
+                  //                                   child:
+                  //                                       Container(height: 20))),
+                  //                         ),
+                  //                         for (var i = 0;
+                  //                             i < _pagedData.length;
+                  //                             i++)
+                  //                           TableRow(
+                  //                             decoration: BoxDecoration(
+                  //                               border: Border(
+                  //                                 left: BorderSide(
+                  //                                     color: blueColor),
+                  //                                 right: BorderSide(
+                  //                                     color: blueColor),
+                  //                                 top: BorderSide(
+                  //                                     color: blueColor),
+                  //                                 bottom:
+                  //                                     i == _pagedData.length - 1
+                  //                                         ? BorderSide(
+                  //                                             color: blueColor)
+                  //                                         : BorderSide.none,
+                  //                               ),
+                  //                             ),
+                  //                             children: [
+                  //                               //_buildDataCell(_pagedData[i].rentalOwnerFirstName!),
+                  //                               InkWell(
+                  //                                 onTap: () {
+                  //                                   Navigator.push(
+                  //                                       context,
+                  //                                       MaterialPageRoute(
+                  //                                           builder: (context) =>
+                  //                                               SummeryPageLease(
+                  //                                                   leaseId: _pagedData[
+                  //                                                           i]
+                  //                                                       .leaseId!)));
+                  //                                 },
+                  //                                 child: _buildDataCell(
+                  //                                     '${_pagedData[i].rentalAddress ?? ''}${_pagedData[i].tenantNames ?? ''}'),
+                  //                               ),
+                  //                               // _buildDataCell('${_pagedData[i].rentalOwnerFirstName ?? ''} ${_pagedData[i].rentalOwnerLastName ?? ''}'),
+                  //                               _buildDataCell(
+                  //                                   _pagedData[i].startDate!),
+                  //                               _buildDataCell(
+                  //                                   _pagedData[i].endDate!),
+                  //                               _buildDataCell(
+                  //                                   _pagedData[i].rentCycle!),
+                  //                               _buildDataCell(_pagedData[i]
+                  //                                           .totalBalance! <
+                  //                                       0
+                  //                                   ? ' - \$${_pagedData[i].totalBalance!.abs().toStringAsFixed(2)}'
+                  //                                   : ' \$ ${_pagedData[i].totalBalance!.abs().toStringAsFixed(2)}'),
+                  //                               _buildDataCell(_pagedData[i]
+                  //                                   .amount
+                  //                                   .toString()),
+                  //                               _buildDataCell((_pagedData[i]
+                  //                                       .deposit
+                  //                                       ?.toString() ??
+                  //                                   "")),
+                  //                               _buildDataCell((_pagedData[i]
+                  //                                       .recurringCharge
+                  //                                       ?.toString() ??
+                  //                                   "")),
+                  //                               _buildDataCell(Provider.of<
+                  //                                           DateProvider>(
+                  //                                       context,
+                  //                                       listen: false)
+                  //                                   .formatCurrentDateTime(
+                  //                                       '${_pagedData[i].createdAt}')),
+                  //                               _buildDataCell(Provider.of<
+                  //                                           DateProvider>(
+                  //                                       context,
+                  //                                       listen: false)
+                  //                                   .formatCurrentDateTime(
+                  //                                       '${_pagedData[i].updatedAt}')),
+                  //                               _buildActionsCell(
+                  //                                   _pagedData[i]),
+                  //                             ],
+                  //                           ),
+                  //                       ],
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //               if (_tableData.isEmpty)
+                  //                 const Text("No Search Records Found"),
+                  //               const SizedBox(height: 25),
+                  //               _buildPaginationControls(),
+                  //             ],
+                  //           ),
+                  //         );
+                  //       }
+                  //     },
+                  //   ),
                 ],
               ),
             )

@@ -597,25 +597,22 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                   // Export Buttons
 
                   //add propertytype
+                  // Header Section with Title
                   Padding(
-                    padding: const EdgeInsets.only(left: 0, right: 0),
-                    child: Row(
-                      //mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: titleBar(
-                            width: MediaQuery.of(context).size.width * .91,
-                            title: 'Scheduled Payment',
-                          ),
-                        ),
-                      ],
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+                      child: titleBar(
+                        width: double.infinity,
+                        title: 'Scheduled Payment',
+                      ),
                     ),
                   ),
                   const SizedBox(height: 10),
                   //search
                   Padding(
-                    padding: const EdgeInsets.only(left: 11, right: 20),
+                    padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 25 : 14, right:MediaQuery.of(context).size.width > 500? 26 : 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -731,11 +728,12 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                       ],
                     ),
                   ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    const SizedBox(height: 25),
-                  if (MediaQuery.of(context).size.width < 500)
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   const SizedBox(height: 25),
+                  // if (MediaQuery.of(context).size.width < 500)
                     Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width < 500 ? 11 : 28),
                       child: FutureBuilder<List<Scheduled_Payment>>(
                         future: futurescheduledpayment,
                         builder: (context, snapshot) {

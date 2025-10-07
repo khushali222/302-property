@@ -329,10 +329,11 @@ class _Workorder_tableState extends State<Workorder_table> {
           },
           color: blueColor,
         ),
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -621,71 +622,68 @@ class _Workorder_tableState extends State<Workorder_table> {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  //add Data
+                  // Header Section with Title and Add Button
                   Padding(
-                    padding: const EdgeInsets.only(left: 0, right: 0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14.0, vertical: 8.0),
                     child: Row(
-                      //  mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: titleBar(
-                            width: MediaQuery.of(context).size.width * .65,
-                            title: 'Work Orders',
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 13,),
+                        Expanded(
+                          flex: 3,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: titleBar(
+                              width: double.infinity,
+                              title: 'Work Orders',
+                            ),
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () async {
-                            final result = await Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        ResponsiveAddWorkOrder()));
-                            if (result == true) {
-                              setState(() {
-                                futureworkorders =
-                                    WorkOrderRepository().fetchWorkOrders();
-                              });
-                            }
-                          },
-                          child: Container(
-                            height: (MediaQuery.of(context).size.width < 500)
-                                ? 50
-                                : MediaQuery.of(context).size.width * 0.062,
-
-                            // height:  MediaQuery.of(context).size.width * 0.07,
-                            // height:  40,
-                            width: (MediaQuery.of(context).size.width < 500)
-                                ? MediaQuery.of(context).size.width * 0.25
-                                : MediaQuery.of(context).size.width * 0.25,
-                            decoration: BoxDecoration(
-                              color: blueColor,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
+                        Flexible(
+                          flex: 1,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: GestureDetector(
+                              onTap: () async {
+                                final result = await Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ResponsiveAddWorkOrder()));
+                                if (result == true) {
+                                  setState(() {
+                                    futureworkorders =
+                                        WorkOrderRepository().fetchWorkOrders();
+                                  });
+                                }
+                              },
+                              child: Container(
+                                height:
+                                    (MediaQuery.of(context).size.width < 768)
+                                        ? 50
+                                        : 60,
+                                decoration: BoxDecoration(
+                                  color: blueColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Center(
+                                  child: Text(
                                     "+ Add",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 16
-                                              : 20,
+                                      fontSize: 16,
                                     ),
                                   ),
-                                ],
+                                ),
                               ),
                             ),
                           ),
                         ),
                         if (MediaQuery.of(context).size.width < 500)
-                          const SizedBox(width: 6),
+                          SizedBox(width: 3),
                         if (MediaQuery.of(context).size.width > 500)
-                          const SizedBox(width: 22),
+                          SizedBox(width: 18),
                       ],
                     ),
                   ),
@@ -698,7 +696,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                         if (MediaQuery.of(context).size.width < 500)
                           const SizedBox(width: 2),
                         if (MediaQuery.of(context).size.width > 500)
-                          const SizedBox(width: 25),
+                          const SizedBox(width: 18),
                         Material(
                           elevation: 3,
                           borderRadius: BorderRadius.circular(8),
@@ -852,7 +850,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                         if (MediaQuery.of(context).size.width < 500)
                           const SizedBox(width: 2),
                         if (MediaQuery.of(context).size.width > 500)
-                          const SizedBox(width: 28),
+                          const SizedBox(width: 20),
                       ],
                     ),
                   ),
@@ -902,11 +900,12 @@ class _Workorder_tableState extends State<Workorder_table> {
                       ],
                     ),
                   ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    const SizedBox(height: 25),
-                  if (MediaQuery.of(context).size.width < 500)
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   const SizedBox(height: 25),
+                  // if (MediaQuery.of(context).size.width < 500)
                     Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width < 500 ? 11 : 28),
                       child: FutureBuilder<List<Data>>(
                         future: futureworkorders,
                         builder: (context, snapshot) {
@@ -1034,7 +1033,8 @@ class _Workorder_tableState extends State<Workorder_table> {
                                           ? const Color(0xFFF4F8FF)
                                           : Colors.white,
                                   borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: const Color(0xFFDBE0E5)),
+                                  border: Border.all(
+                                      color: const Color(0xFFDBE0E5)),
                                   // boxShadow: [
                                   //   BoxShadow(
                                   //     color: Colors.black12,
@@ -1417,8 +1417,9 @@ class _Workorder_tableState extends State<Workorder_table> {
                                               elevation: 3,
                                               child: Container(
                                                 height: 40,
-                                                padding: const EdgeInsets.symmetric(
-                                                    horizontal: 12.0),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 12.0),
                                                 decoration: BoxDecoration(
                                                   border: Border.all(
                                                       color: Colors.grey),

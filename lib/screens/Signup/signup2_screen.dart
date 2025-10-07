@@ -12,6 +12,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 
 import '../../widgets/dialogbox.dart';
+import '../Login/login_screen.dart';
 
 class Signup2 extends StatefulWidget {
   String? firstname;
@@ -1052,19 +1053,19 @@ class _Signup2State extends State<Signup2> {
                 onTap: () {
                   // Navigator.pop(context);
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Dashboard()));
+                      MaterialPageRoute(builder: (context) => Login_Screen()));
                 },
                 child: Container(
-                  width: 134,
+                  width: 184,
                   height: 34,
                   decoration: BoxDecoration(
                       color: Color(0xFF152B51),
                       borderRadius: BorderRadius.circular(6)),
                   child: Center(
                     child: Text(
-                      "Get Started",
+                      "Get Started With Login",
                       style:
-                          TextStyle(color: Colors.white, fontFamily: 'mulish'),
+                      TextStyle(color: Colors.white, fontFamily: 'mulish'),
                     ),
                   ),
                 ),
