@@ -130,11 +130,13 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                   children: [
                     width < 400
                         ? Text("        Work Order",
-                            style: TextStyle(  color: blueColor,
+                            style: TextStyle(
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15))
                         : Text("         Work Order",
-                            style: TextStyle(  color: blueColor,
+                            style: TextStyle(
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
@@ -185,9 +187,11 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                 },
                 child: Row(
                   children: [
-                    Text(" Property", style: TextStyle(  color: blueColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15)),
+                    Text(" Property",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
                     /* ascending2
                         ? Padding(
@@ -236,9 +240,11 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Status", style: TextStyle(  color: blueColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15)),
+                    Text("Status",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
                     /*ascending3
                         ? Padding(
@@ -339,10 +345,11 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
         backgroundColor: Colors.white,
       ),
       buttons: [
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -773,73 +780,64 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                   ),
                   //add propertytype
 
+                  // Header Section with Title and Add Button
                   Padding(
-                    padding: const EdgeInsets.only(left: 0, right: 0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
                     child: Row(
-                      // mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        titleBar(
-                          width: permissions!.workorderAdd
-                              ? MediaQuery.of(context).size.width * .65
-                              : MediaQuery.of(context).size.width * .93,
-                          title: 'Work Orders',
+                        Expanded(
+                          flex: permissions!.workorderAdd ? 3 : 1,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: titleBar(
+                              width: double.infinity,
+                              title: 'Work Orders',
+                            ),
+                          ),
                         ),
                         if (permissions!.workorderAdd)
-                          GestureDetector(
-                            onTap: () async {
-                              final result = await Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) => Add_Workorder()));
+                          Flexible(
+                            flex: 1,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  final result = await Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                          builder: (context) =>
+                                              Add_Workorder()));
 
-                              if (result == true) {
-                                setState(() {
-                                  futureworkorder =
-                                      WorkOrderRepository().fetchWorkOrders();
-                                });
-                              }
-                            },
-                            child: Container(
-                              height: (MediaQuery.of(context).size.width < 500)
-                                  ? 50
-                                  : MediaQuery.of(context).size.width * 0.065,
-
-                              // height:  MediaQuery.of(context).size.width * 0.07,
-                              // height:  40,
-                              width: (MediaQuery.of(context).size.width > 500)
-                                  ? MediaQuery.of(context).size.width * 0.3
-                                  : MediaQuery.of(context).size.width * 0.25,
-                              decoration: BoxDecoration(
-                                color: blueColor,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
+                                  if (result == true) {
+                                    setState(() {
+                                      futureworkorder = WorkOrderRepository()
+                                          .fetchWorkOrders();
+                                    });
+                                  }
+                                },
+                                child: Container(
+                                  height:
+                                      (MediaQuery.of(context).size.width < 768)
+                                          ? 50
+                                          : 60,
+                                  decoration: BoxDecoration(
+                                    color: blueColor,
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Center(
+                                    child: Text(
                                       "+ Add",
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            (MediaQuery.of(context).size.width >
-                                                    500)
-                                                ? MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.028
-                                                : 16,
+                                        fontSize: 16,
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: permissions!.workorderAdd ? 6 : 0),
-                        if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 22),
                       ],
                     ),
                   ),
@@ -1140,7 +1138,6 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                   _buildHeaders(),
                                   SizedBox(height: 10),
                                   Container(
-
                                     child: Column(
                                       children: currentPageData
                                           .asMap()
@@ -1154,7 +1151,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
                                           margin:
-                                          EdgeInsets.symmetric(vertical: 6),
+                                              EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
                                                 ? Color(0xFFF4F8FF)
@@ -1162,7 +1159,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                             border: Border.all(
                                                 color: Color(0xFFDBE0E5)),
                                             borderRadius:
-                                            BorderRadius.circular(10),
+                                                BorderRadius.circular(10),
                                           ),
                                           child: Column(
                                             children: <Widget>[

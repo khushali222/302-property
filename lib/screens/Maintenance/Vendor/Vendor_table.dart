@@ -127,13 +127,17 @@ class _Vendor_tableState extends State<Vendor_table> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Name ", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold))
-                        : Text("Name", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
+                        ? Text("Name ",
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold))
+                        : Text("Name",
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
                     ascending1
                         ? Padding(
-                            padding:  const EdgeInsets.only(top: 7, left: 2),
+                            padding: const EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
@@ -141,12 +145,9 @@ class _Vendor_tableState extends State<Vendor_table> {
                             ),
                           )
                         : Padding(
-                            padding:  const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color:blueColor
-                            ),
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(FontAwesomeIcons.sortDown,
+                                size: 20, color: blueColor),
                           ),
                   ],
                 ),
@@ -177,11 +178,13 @@ class _Vendor_tableState extends State<Vendor_table> {
                 },
                 child: Row(
                   children: [
-                    Text("  Phone  Number", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
+                    Text("  Phone  Number",
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 5),
                     ascending2
                         ? Padding(
-                            padding:  const EdgeInsets.only(top: 7, left: 2),
+                            padding: const EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
@@ -189,7 +192,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                             ),
                           )
                         : Padding(
-                            padding:  const EdgeInsets.only(bottom: 7, left: 2),
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -364,10 +367,11 @@ class _Vendor_tableState extends State<Vendor_table> {
           },
           color: blueColor,
         ),
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -663,84 +667,69 @@ class _Vendor_tableState extends State<Vendor_table> {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  //add propertytype
+                  // Header Section with Title and Add Button
                   Padding(
-                    padding: const EdgeInsets.only(left: 0, right: 0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
                     child: Row(
-                      //  mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: titleBar(
-                            width: MediaQuery.of(context).size.width * .65,
-                            title: 'Vendor',
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 13,),
+                        Expanded(
+                          flex: 3,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: titleBar(
+                              width: double.infinity,
+                              title: 'Vendor',
+                            ),
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () async {
-                            // if (vendorCount < vendorCountLimit) {
-                            //   final result = await Navigator.of(context).push(
-                            //       MaterialPageRoute(
-                            //           builder: (context) => Add_vendor()));
-                            //   if (result == true) {
-                            //     setState(() {
-                            //       futurePropertyTypes =
-                            //           VendorRepository(baseUrl: '').getVendors();
-                            //     });
-                            //     fetchvendoradded();
-                            //   }
-                            // } else {
-                            //   _showAlertforLimit(context);
-                            // }
-                            final result = await Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) => const Add_vendor()));
-                            if (result == true) {
-                              setState(() {
-                                futurePropertyTypes =
-                                    VendorRepository(baseUrl: '').getVendors();
-                              });
-                            }
-                          },
-                          child: Container(
-                            height: (MediaQuery.of(context).size.width < 500)
-                                ? 50
-                                : MediaQuery.of(context).size.width * 0.058,
-
-                            // height:  MediaQuery.of(context).size.width * 0.07,
-                            // height:  40,
-                            width: (MediaQuery.of(context).size.width < 500)
-                                ? MediaQuery.of(context).size.width * 0.25
-                                : MediaQuery.of(context).size.width * 0.2,
-                            decoration: BoxDecoration(
-                              color: blueColor,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
+                        Flexible(
+                          flex: 1,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: GestureDetector(
+                              onTap: () async {
+                                final result = await Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const Add_vendor()));
+                                if (result == true) {
+                                  setState(() {
+                                    futurePropertyTypes =
+                                        VendorRepository(baseUrl: '')
+                                            .getVendors();
+                                  });
+                                }
+                              },
+                              child: Container(
+                                height:
+                                    (MediaQuery.of(context).size.width < 768)
+                                        ? 50
+                                        : 60,
+                                decoration: BoxDecoration(
+                                  color: blueColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Center(
+                                  child: Text(
                                     "+ Add",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 16
-                                              : 20,
+                                      fontSize: 16,
                                     ),
                                   ),
-                                ],
+                                ),
                               ),
                             ),
                           ),
                         ),
                         if (MediaQuery.of(context).size.width < 500)
-                          const SizedBox(width: 6),
+                          SizedBox(width: 3),
                         if (MediaQuery.of(context).size.width > 500)
-                          const SizedBox(width: 22),
+                          SizedBox(width: 18),
                       ],
                     ),
                   ),
@@ -753,7 +742,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                         if (MediaQuery.of(context).size.width < 500)
                           const SizedBox(width: 2),
                         if (MediaQuery.of(context).size.width > 500)
-                          const SizedBox(width: 24),
+                          const SizedBox(width: 18),
                         Material(
                           elevation: 3,
                           borderRadius: BorderRadius.circular(8),
@@ -770,7 +759,8 @@ class _Vendor_tableState extends State<Vendor_table> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(8),
                                 // border: Border.all(color: Colors.grey),
-                                border: Border.all(color: const Color(0xFF8A95A8))),
+                                border:
+                                    Border.all(color: const Color(0xFF8A95A8))),
                             child: Stack(
                               children: [
                                 Positioned.fill(
@@ -853,11 +843,12 @@ class _Vendor_tableState extends State<Vendor_table> {
                       ],
                     ),
                   ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    const SizedBox(height: 25),
-                  if (MediaQuery.of(context).size.width < 500)
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   const SizedBox(height: 25),
+                  // if (MediaQuery.of(context).size.width < 500)
                     Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width < 500 ? 11 : 28),
                       child: FutureBuilder<List<Vendor>>(
                         future: futurePropertyTypes,
                         builder: (context, snapshot) {
@@ -955,8 +946,8 @@ class _Vendor_tableState extends State<Vendor_table> {
                                           // decoration: BoxDecoration(
                                           //   border: Border.all(color: blueColor),
                                           // ),
-                                          margin:
-                                          const EdgeInsets.symmetric(vertical: 6),
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
                                                 ? const Color(0xFFF4F8FF)
@@ -964,7 +955,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                             border: Border.all(
                                                 color: const Color(0xFFDBE0E5)),
                                             borderRadius:
-                                            BorderRadius.circular(10),
+                                                BorderRadius.circular(10),
                                           ),
                                           child: Column(
                                             children: <Widget>[
@@ -1008,12 +999,15 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                         },
                                                         child: Container(
                                                           margin:
-                                                              const EdgeInsets.only(
+                                                              const EdgeInsets
+                                                                  .only(
                                                                   left: 5),
                                                           padding: !isExpanded
-                                                              ? const EdgeInsets.only(
+                                                              ? const EdgeInsets
+                                                                  .only(
                                                                   bottom: 10)
-                                                              : const EdgeInsets.only(
+                                                              : const EdgeInsets
+                                                                  .only(
                                                                   top: 10),
                                                           child: FaIcon(
                                                             isExpanded
@@ -1161,7 +1155,8 @@ class _Vendor_tableState extends State<Vendor_table> {
                                               ),
                                               if (isExpanded)
                                                 Container(
-                                                  padding: const EdgeInsets.symmetric(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
                                                       horizontal: 2.0),
                                                   margin: const EdgeInsets.only(
                                                       bottom: 2),
@@ -1347,7 +1342,8 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                                         BorderRadius
                                                                             .circular(8),
                                                                   ), // color:Colors.grey[100],
-                                                                  child: const Row(
+                                                                  child:
+                                                                      const Row(
                                                                     mainAxisAlignment:
                                                                         MainAxisAlignment
                                                                             .center,
@@ -1405,7 +1401,8 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                                         BorderRadius
                                                                             .circular(8),
                                                                   ),
-                                                                  child: const Row(
+                                                                  child:
+                                                                      const Row(
                                                                     mainAxisAlignment:
                                                                         MainAxisAlignment
                                                                             .center,
@@ -1462,8 +1459,9 @@ class _Vendor_tableState extends State<Vendor_table> {
                                             elevation: 3,
                                             child: Container(
                                               height: 40,
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 12.0),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12.0),
                                               decoration: BoxDecoration(
                                                 border: Border.all(
                                                     color: Colors.grey),
@@ -1568,166 +1566,167 @@ class _Vendor_tableState extends State<Vendor_table> {
                         },
                       ),
                     ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    FutureBuilder<List<Vendor>>(
-                      future: futurePropertyTypes,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return ShimmerTabletTable();
-                        } else if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
-                          return Container(
-                            height: MediaQuery.of(context).size.height * .5,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    "assets/images/no_data.jpg",
-                                    height: 200,
-                                    width: 200,
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    "No Data Available",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor,
-                                        fontSize: 16),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        } else {
-                          _tableData = snapshot.data!;
-                          if (searchvalue != "") {
-                            _tableData = snapshot.data!
-                                .where((property) =>
-                                    property.vendorName!
-                                        .toLowerCase()
-                                        .contains(searchvalue.toLowerCase()) ||
-                                    property.vendorPhoneNumber!
-                                        .toLowerCase()
-                                        .contains(searchvalue.toLowerCase()))
-                                .toList();
-                          }
-                          totalrecords = _tableData.length;
-                          return SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                Container(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 22.0, vertical: 5),
-                                    child: Column(
-                                      children: [
-                                        SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          child: Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .91,
-                                            child: Table(
-                                              defaultColumnWidth:
-                                                  const IntrinsicColumnWidth(),
-                                              children: [
-                                                TableRow(
-                                                  decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        // color: blueColor
-                                                        ),
-                                                  ),
-                                                  children: [
-                                                    _buildHeader(
-                                                        'Name',
-                                                        0,
-                                                        (property) => property
-                                                            .vendorName!),
-                                                    _buildHeader(
-                                                        'PhoneNumber',
-                                                        1,
-                                                        (property) => property
-                                                            .vendorPhoneNumber!),
-                                                    _buildHeader(
-                                                        'Email', 2, null),
-                                                    _buildHeader(
-                                                        'Actions', 4, null),
-                                                  ],
-                                                ),
-                                                TableRow(
-                                                  decoration: const BoxDecoration(
-                                                    border: Border.symmetric(
-                                                        horizontal:
-                                                            BorderSide.none),
-                                                  ),
-                                                  children: List.generate(
-                                                      4,
-                                                      (index) => TableCell(
-                                                          child: Container(
-                                                              height: 20))),
-                                                ),
-                                                for (var i = 0;
-                                                    i < _pagedData.length;
-                                                    i++)
-                                                  TableRow(
-                                                    decoration: BoxDecoration(
-                                                      border: Border(
-                                                        left: BorderSide(
-                                                            color: blueColor),
-                                                        right: BorderSide(
-                                                            color: blueColor),
-                                                        top: BorderSide(
-                                                            color: blueColor),
-                                                        bottom: i ==
-                                                                _pagedData
-                                                                        .length -
-                                                                    1
-                                                            ? BorderSide(
-                                                                color:
-                                                                    blueColor)
-                                                            : BorderSide.none,
-                                                      ),
-                                                    ),
-                                                    children: [
-                                                      _buildDataCell(
-                                                          _pagedData[i]
-                                                              .vendorName!),
-                                                      _buildDataCell(_pagedData[
-                                                              i]
-                                                          .vendorPhoneNumber!),
-                                                      _buildDataCell(
-                                                          _pagedData[i]
-                                                              .vendorEmail!),
-                                                      _buildActionsCell(
-                                                          _pagedData[i]),
-                                                    ],
-                                                  ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 25),
-                                        _buildPaginationControls(),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 25),
-                              ],
-                            ),
-                          );
-                        }
-                      },
-                    ),
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   FutureBuilder<List<Vendor>>(
+                  //     future: futurePropertyTypes,
+                  //     builder: (context, snapshot) {
+                  //       if (snapshot.connectionState ==
+                  //           ConnectionState.waiting) {
+                  //         return ShimmerTabletTable();
+                  //       } else if (snapshot.hasError) {
+                  //         return Center(
+                  //             child: Text('Error: ${snapshot.error}'));
+                  //       } else if (!snapshot.hasData ||
+                  //           snapshot.data!.isEmpty) {
+                  //         return Container(
+                  //           height: MediaQuery.of(context).size.height * .5,
+                  //           child: Center(
+                  //             child: Column(
+                  //               mainAxisAlignment: MainAxisAlignment.center,
+                  //               crossAxisAlignment: CrossAxisAlignment.center,
+                  //               children: [
+                  //                 Image.asset(
+                  //                   "assets/images/no_data.jpg",
+                  //                   height: 200,
+                  //                   width: 200,
+                  //                 ),
+                  //                 const SizedBox(
+                  //                   height: 10,
+                  //                 ),
+                  //                 Text(
+                  //                   "No Data Available",
+                  //                   style: TextStyle(
+                  //                       fontWeight: FontWeight.bold,
+                  //                       color: blueColor,
+                  //                       fontSize: 16),
+                  //                 )
+                  //               ],
+                  //             ),
+                  //           ),
+                  //         );
+                  //       } else {
+                  //         _tableData = snapshot.data!;
+                  //         if (searchvalue != "") {
+                  //           _tableData = snapshot.data!
+                  //               .where((property) =>
+                  //                   property.vendorName!
+                  //                       .toLowerCase()
+                  //                       .contains(searchvalue.toLowerCase()) ||
+                  //                   property.vendorPhoneNumber!
+                  //                       .toLowerCase()
+                  //                       .contains(searchvalue.toLowerCase()))
+                  //               .toList();
+                  //         }
+                  //         totalrecords = _tableData.length;
+                  //         return SingleChildScrollView(
+                  //           child: Column(
+                  //             children: [
+                  //               Container(
+                  //                 child: Padding(
+                  //                   padding: const EdgeInsets.symmetric(
+                  //                       horizontal: 22.0, vertical: 5),
+                  //                   child: Column(
+                  //                     children: [
+                  //                       SingleChildScrollView(
+                  //                         scrollDirection: Axis.horizontal,
+                  //                         child: Container(
+                  //                           width: MediaQuery.of(context)
+                  //                                   .size
+                  //                                   .width *
+                  //                               .91,
+                  //                           child: Table(
+                  //                             defaultColumnWidth:
+                  //                                 const IntrinsicColumnWidth(),
+                  //                             children: [
+                  //                               TableRow(
+                  //                                 decoration: BoxDecoration(
+                  //                                   border: Border.all(
+                  //                                       // color: blueColor
+                  //                                       ),
+                  //                                 ),
+                  //                                 children: [
+                  //                                   _buildHeader(
+                  //                                       'Name',
+                  //                                       0,
+                  //                                       (property) => property
+                  //                                           .vendorName!),
+                  //                                   _buildHeader(
+                  //                                       'PhoneNumber',
+                  //                                       1,
+                  //                                       (property) => property
+                  //                                           .vendorPhoneNumber!),
+                  //                                   _buildHeader(
+                  //                                       'Email', 2, null),
+                  //                                   _buildHeader(
+                  //                                       'Actions', 4, null),
+                  //                                 ],
+                  //                               ),
+                  //                               TableRow(
+                  //                                 decoration:
+                  //                                     const BoxDecoration(
+                  //                                   border: Border.symmetric(
+                  //                                       horizontal:
+                  //                                           BorderSide.none),
+                  //                                 ),
+                  //                                 children: List.generate(
+                  //                                     4,
+                  //                                     (index) => TableCell(
+                  //                                         child: Container(
+                  //                                             height: 20))),
+                  //                               ),
+                  //                               for (var i = 0;
+                  //                                   i < _pagedData.length;
+                  //                                   i++)
+                  //                                 TableRow(
+                  //                                   decoration: BoxDecoration(
+                  //                                     border: Border(
+                  //                                       left: BorderSide(
+                  //                                           color: blueColor),
+                  //                                       right: BorderSide(
+                  //                                           color: blueColor),
+                  //                                       top: BorderSide(
+                  //                                           color: blueColor),
+                  //                                       bottom: i ==
+                  //                                               _pagedData
+                  //                                                       .length -
+                  //                                                   1
+                  //                                           ? BorderSide(
+                  //                                               color:
+                  //                                                   blueColor)
+                  //                                           : BorderSide.none,
+                  //                                     ),
+                  //                                   ),
+                  //                                   children: [
+                  //                                     _buildDataCell(
+                  //                                         _pagedData[i]
+                  //                                             .vendorName!),
+                  //                                     _buildDataCell(_pagedData[
+                  //                                             i]
+                  //                                         .vendorPhoneNumber!),
+                  //                                     _buildDataCell(
+                  //                                         _pagedData[i]
+                  //                                             .vendorEmail!),
+                  //                                     _buildActionsCell(
+                  //                                         _pagedData[i]),
+                  //                                   ],
+                  //                                 ),
+                  //                             ],
+                  //                           ),
+                  //                         ),
+                  //                       ),
+                  //                       const SizedBox(height: 25),
+                  //                       _buildPaginationControls(),
+                  //                     ],
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //               const SizedBox(height: 25),
+                  //             ],
+                  //           ),
+                  //         );
+                  //       }
+                  //     },
+                  //   ),
                 ],
               ),
             )

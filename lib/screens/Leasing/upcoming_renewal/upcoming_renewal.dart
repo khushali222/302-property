@@ -163,7 +163,8 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                     // Sorting logic here
                   });
                 },
-                child: Row(mainAxisAlignment: MainAxisAlignment.end,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Flexible(
                       child: Text(
@@ -250,10 +251,11 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
           },
           color: blueColor,
         ),
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -558,20 +560,16 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                   const SizedBox(
                     height: 20,
                   ),
-                  //add propertytype
+                  // Header Section with Title
                   Padding(
-                    padding: const EdgeInsets.only(left: 1, right: 0),
-                    child: Row(
-                      //mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: titleBar(
-                            width: MediaQuery.of(context).size.width * .92,
-                            title: 'Upcoming Renewal',
-                          ),
-                        ),
-                      ],
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15.0, vertical: 8.0),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+                      child: titleBar(
+                        width: double.infinity,
+                        title: 'Upcoming Renewal',
+                      ),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -583,13 +581,14 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                         if (MediaQuery.of(context).size.width < 500)
                           const SizedBox(width: 1),
                         if (MediaQuery.of(context).size.width > 500)
-                          const SizedBox(width: 24),
+                          const SizedBox(width: 18),
                         Expanded(
                           child: Material(
                             elevation: 2,
                             borderRadius: BorderRadius.circular(8),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
                               // height: 40,
                               height: MediaQuery.of(context).size.width < 500
                                   ? 45
@@ -601,7 +600,8 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(8),
                                   // border: Border.all(color: Colors.grey),
-                                  border: Border.all(color: const Color(0xFF8A95A8))),
+                                  border: Border.all(
+                                      color: const Color(0xFF8A95A8))),
                               child: Stack(
                                 children: [
                                   Positioned.fill(
@@ -648,14 +648,17 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                             ),
                           ),
                         ),
+                        if (MediaQuery.of(context).size.width > 500)
+                          const SizedBox(width: 16),
                       ],
                     ),
                   ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    const SizedBox(height: 25),
-                  if (MediaQuery.of(context).size.width < 500)
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   const SizedBox(height: 25),
+                  // if (MediaQuery.of(context).size.width < 500)
                     Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width < 500 ? 11 : 28),
                       child: FutureBuilder<List<upcoming_renewal>>(
                         future: futureLeaseRenewal,
                         builder: (context, snapshot) {
@@ -774,8 +777,8 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                             .join(" , ");
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
-                                          margin:
-                                              const EdgeInsets.symmetric(vertical: 6),
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
                                                 ? const Color(0xFFF4F8FF)
@@ -830,13 +833,16 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                         },
                                                         child: Container(
                                                           margin:
-                                                              const EdgeInsets.only(
+                                                              const EdgeInsets
+                                                                  .only(
                                                                   left: 5,
                                                                   right: 5),
                                                           padding: !isExpanded
-                                                              ? const EdgeInsets.only(
+                                                              ? const EdgeInsets
+                                                                  .only(
                                                                   bottom: 10)
-                                                              : const EdgeInsets.only(
+                                                              : const EdgeInsets
+                                                                  .only(
                                                                   top: 10),
                                                           child: FaIcon(
                                                             isExpanded
@@ -866,7 +872,8 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                           },
                                                           child: Text(
                                                             ' ${Propertytype.rentalAddress}',
-                                                            style: const TextStyle(
+                                                            style:
+                                                                const TextStyle(
                                                               color:
                                                                   Colors.black,
                                                               fontSize: 13,
@@ -891,7 +898,8 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                             formatDate(
                                                                     '${Propertytype.remainingDays!.toStringAsFixed(0)}') +
                                                                 ' days',
-                                                            style: const TextStyle(
+                                                            style:
+                                                                const TextStyle(
                                                               color:
                                                                   Colors.black,
                                                               fontSize: 13,
@@ -916,7 +924,8 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                   //
                                                   // margin: EdgeInsets.only(
                                                   //     bottom: 2),
-                                                  decoration: const BoxDecoration(
+                                                  decoration:
+                                                      const BoxDecoration(
                                                     border: Border(
                                                       top: BorderSide(
                                                           color:
@@ -943,7 +952,9 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                                       8.0),
                                                           child: Row(
                                                             children: [
-                                                              const SizedBox(width: 11,),
+                                                              const SizedBox(
+                                                                width: 11,
+                                                              ),
                                                               Text(
                                                                 'Tenants : ',
                                                                 style:
@@ -953,7 +964,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                      fontSize: 13,
+                                                                  fontSize: 13,
                                                                 ),
                                                               ),
                                                               Expanded(
@@ -1207,116 +1218,117 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                   ),
                                   const SizedBox(height: 20),
                                   if (data.length > itemsPerPage)
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          // Text('Rows per page:'),
-                                          const SizedBox(width: 10),
-                                          Material(
-                                            elevation: 3,
-                                            child: Container(
-                                              height: 40,
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 12.0),
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Colors.grey),
-                                              ),
-                                              child:
-                                                  DropdownButtonHideUnderline(
-                                                child: DropdownButton<int>(
-                                                  value: itemsPerPage,
-                                                  items: itemsPerPageOptions
-                                                      .map((int value) {
-                                                    return DropdownMenuItem<
-                                                        int>(
-                                                      value: value,
-                                                      child: Text(
-                                                          value.toString()),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: data.length >
-                                                          itemsPerPageOptions
-                                                              .first // Condition to check if dropdown should be enabled
-                                                      ? (newValue) {
-                                                          setState(() {
-                                                            itemsPerPage =
-                                                                newValue!;
-                                                            currentPage =
-                                                                0; // Reset to first page when items per page change
-                                                          });
-                                                        }
-                                                      : null,
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            // Text('Rows per page:'),
+                                            const SizedBox(width: 10),
+                                            Material(
+                                              elevation: 3,
+                                              child: Container(
+                                                height: 40,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 12.0),
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: Colors.grey),
+                                                ),
+                                                child:
+                                                    DropdownButtonHideUnderline(
+                                                  child: DropdownButton<int>(
+                                                    value: itemsPerPage,
+                                                    items: itemsPerPageOptions
+                                                        .map((int value) {
+                                                      return DropdownMenuItem<
+                                                          int>(
+                                                        value: value,
+                                                        child: Text(
+                                                            value.toString()),
+                                                      );
+                                                    }).toList(),
+                                                    onChanged: data.length >
+                                                            itemsPerPageOptions
+                                                                .first // Condition to check if dropdown should be enabled
+                                                        ? (newValue) {
+                                                            setState(() {
+                                                              itemsPerPage =
+                                                                  newValue!;
+                                                              currentPage =
+                                                                  0; // Reset to first page when items per page change
+                                                            });
+                                                          }
+                                                        : null,
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons
-                                                  .circleChevronLeft,
-                                              color: currentPage == 0
-                                                  ? Colors.grey
-                                                  : blueColor,
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            IconButton(
+                                              icon: FaIcon(
+                                                FontAwesomeIcons
+                                                    .circleChevronLeft,
+                                                color: currentPage == 0
+                                                    ? Colors.grey
+                                                    : blueColor,
+                                              ),
+                                              onPressed: currentPage == 0
+                                                  ? null
+                                                  : () {
+                                                      setState(() {
+                                                        currentPage--;
+                                                      });
+                                                    },
                                             ),
-                                            onPressed: currentPage == 0
-                                                ? null
-                                                : () {
-                                                    setState(() {
-                                                      currentPage--;
-                                                    });
-                                                  },
-                                          ),
-                                          // IconButton(
-                                          //   icon: Icon(Icons.arrow_back),
-                                          //   onPressed: currentPage > 0
-                                          //       ? () {
-                                          //     setState(() {
-                                          //       currentPage--;
-                                          //     });
-                                          //   }
-                                          //       : null,
-                                          // ),
-                                          Text(
-                                              'Page ${currentPage + 1} of $totalPages'),
-                                          // IconButton(
-                                          //   icon: Icon(Icons.arrow_forward),
-                                          //   onPressed: currentPage < totalPages - 1
-                                          //       ? () {
-                                          //     setState(() {
-                                          //       currentPage++;
-                                          //     });
-                                          //   }
-                                          //       : null,
-                                          // ),
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons
-                                                  .circleChevronRight,
-                                              color:
+                                            // IconButton(
+                                            //   icon: Icon(Icons.arrow_back),
+                                            //   onPressed: currentPage > 0
+                                            //       ? () {
+                                            //     setState(() {
+                                            //       currentPage--;
+                                            //     });
+                                            //   }
+                                            //       : null,
+                                            // ),
+                                            Text(
+                                                'Page ${currentPage + 1} of $totalPages'),
+                                            // IconButton(
+                                            //   icon: Icon(Icons.arrow_forward),
+                                            //   onPressed: currentPage < totalPages - 1
+                                            //       ? () {
+                                            //     setState(() {
+                                            //       currentPage++;
+                                            //     });
+                                            //   }
+                                            //       : null,
+                                            // ),
+                                            IconButton(
+                                              icon: FaIcon(
+                                                FontAwesomeIcons
+                                                    .circleChevronRight,
+                                                color:
+                                                    currentPage < totalPages - 1
+                                                        ? blueColor
+                                                        : Colors.grey,
+                                              ),
+                                              onPressed:
                                                   currentPage < totalPages - 1
-                                                      ? blueColor
-                                                      : Colors.grey,
+                                                      ? () {
+                                                          setState(() {
+                                                            currentPage++;
+                                                          });
+                                                        }
+                                                      : null,
                                             ),
-                                            onPressed:
-                                                currentPage < totalPages - 1
-                                                    ? () {
-                                                        setState(() {
-                                                          currentPage++;
-                                                        });
-                                                      }
-                                                    : null,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                 ],
                               ),
                             );

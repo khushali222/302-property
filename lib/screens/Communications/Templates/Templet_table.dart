@@ -110,10 +110,15 @@ class _TempletTableState extends State<TempletTable> {
                   children: [
                     width < 400
                         ? Text("Name",
-                            style: TextStyle( color: blueColor, fontWeight: FontWeight.bold, fontSize: 18))
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18))
                         : Text("Name",
-                            style:
-                                TextStyle( color: blueColor, fontWeight: FontWeight.bold, fontSize: 18)),
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
@@ -164,7 +169,10 @@ class _TempletTableState extends State<TempletTable> {
                   children: [
                     SizedBox(width: 15),
                     Text("Type",
-                        style: TextStyle( color: blueColor, fontWeight: FontWeight.bold, fontSize: 18)),
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18)),
                     SizedBox(width: 5),
                     ascending2
                         ? Padding(
@@ -180,7 +188,7 @@ class _TempletTableState extends State<TempletTable> {
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
-                              color:blueColor,
+                              color: blueColor,
                             ),
                           ),
                   ],
@@ -330,10 +338,11 @@ class _TempletTableState extends State<TempletTable> {
           },
           color: blueColor,
         ),
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -394,80 +403,74 @@ class _TempletTableState extends State<TempletTable> {
             SizedBox(
               height: 20,
             ),
-            //add propertytype
+            // Header Section with Title and Add Button
             Padding(
-              padding: const EdgeInsets.only(left: 0, right: 0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Row(
-                //mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: titleBar(
-                      width: MediaQuery.of(context).size.width * .65,
-                      title: 'Templates',
+                  if (MediaQuery.of(context).size.width > 500)
+                    SizedBox(width: 13,),
+                  Expanded(
+                    flex: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: titleBar(
+                        width: double.infinity,
+                        title: 'Templates',
+                      ),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () async {
-                      final result = await Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => Add_Email_templet()));
-                      if (result == true) {
-                        setState(() {
-                          futureTemplet = TempletRepository().fetchTemplets();
-                        });
-                      }
-                    },
-                    child: Container(
-                      height: (MediaQuery.of(context).size.width < 500)
-                          ? 50
-                          : MediaQuery.of(context).size.width * 0.062,
-        
-                      // height:  MediaQuery.of(context).size.width * 0.07,
-                      // height:  40,
-                      width: (MediaQuery.of(context).size.width < 500)
-                          ? MediaQuery.of(context).size.width * 0.25
-                          : MediaQuery.of(context).size.width * 0.25,
-                      decoration: BoxDecoration(
-                        color: blueColor,
-                        borderRadius: BorderRadius.circular(5),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey,
-                            offset: Offset(0.0, 4.0),
-                            blurRadius: 6.0,
+                  Flexible(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: GestureDetector(
+                        onTap: () async {
+                          final result = await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => Add_Email_templet()));
+                          if (result == true) {
+                            setState(() {
+                              futureTemplet =
+                                  TempletRepository().fetchTemplets();
+                            });
+                          }
+                        },
+                        child: Container(
+                          height: (MediaQuery.of(context).size.width < 768)
+                              ? 50
+                              : 60,
+                          decoration: BoxDecoration(
+                            color: blueColor,
+                            borderRadius: BorderRadius.circular(5),
                           ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
+                          child: Center(
+                            child: Text(
                               "+ Add",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontSize: MediaQuery.of(context).size.width < 500
-                                    ? 16
-                                    : 20,
+                                fontSize: 16,
                               ),
                             ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                  if (MediaQuery.of(context).size.width < 500) SizedBox(width: 6),
+                  if (MediaQuery.of(context).size.width < 500)
+                    SizedBox(width: 3),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 22),
+                    SizedBox(width: 18),
                 ],
               ),
             ),
-            if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
-            if (MediaQuery.of(context).size.width < 500)
+            // if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
+            // if (MediaQuery.of(context).size.width < 500)
               Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: EdgeInsets.all(
+                    MediaQuery.of(context).size.width < 500 ? 11 : 28),
                 child: FutureBuilder<List<EmailTemplate>>(
                   future: futureTemplet,
                   builder: (context, snapshot) {
@@ -542,24 +545,24 @@ class _TempletTableState extends State<TempletTable> {
                               // decoration: BoxDecoration(
                               //     border: Border.all(color: blueColor)),
                               child: Column(
-                                children:
-                                    currentPageData.asMap().entries.map((entry) {
+                                children: currentPageData
+                                    .asMap()
+                                    .entries
+                                    .map((entry) {
                                   int index = entry.key;
                                   bool isExpanded = expandedIndex == index;
                                   EmailTemplate rentals = entry.value;
-                                //  print(rentals.body);
+                                  //  print(rentals.body);
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
-                                    margin:
-                                    EdgeInsets.symmetric(vertical: 6),
+                                    margin: EdgeInsets.symmetric(vertical: 6),
                                     decoration: BoxDecoration(
                                       color: index % 2 != 0
                                           ? Color(0xFFF4F8FF)
                                           : Colors.white,
-                                      border: Border.all(
-                                          color: Color(0xFFDBE0E5)),
-                                      borderRadius:
-                                      BorderRadius.circular(10),
+                                      border:
+                                          Border.all(color: Color(0xFFDBE0E5)),
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
                                     // decoration: BoxDecoration(
                                     //   border: Border.all(color: blueColor),
@@ -646,10 +649,11 @@ class _TempletTableState extends State<TempletTable> {
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                    width: MediaQuery.of(context)
-                                                            .size
-                                                            .width *
-                                                        .08),
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .08),
                                                 Expanded(
                                                   flex: 3,
                                                   child: Text(
@@ -660,7 +664,8 @@ class _TempletTableState extends State<TempletTable> {
                                                     // '${rentals.rentalOwnerPhoneNumber}',
                                                     style: TextStyle(
                                                       color: blueColor,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       fontSize: 15,
                                                     ),
                                                   ),
@@ -688,7 +693,8 @@ class _TempletTableState extends State<TempletTable> {
                                                             : FontAwesomeIcons
                                                                 .sortDown,
                                                         size: 40,
-                                                        color: Colors.transparent,
+                                                        color:
+                                                            Colors.transparent,
                                                       ),
                                                       Expanded(
                                                         child: Column(
@@ -753,8 +759,7 @@ class _TempletTableState extends State<TempletTable> {
                                                                             .isEmpty
                                                                         ? 'N/A'
                                                                         : extractText(
-                                                                            rentals
-                                                                                .body!),
+                                                                            rentals.body!),
                                                                     style:
                                                                         TextStyle(
                                                                       fontWeight:
@@ -801,8 +806,7 @@ class _TempletTableState extends State<TempletTable> {
                                                                     MaterialPageRoute(
                                                                         builder: (context) =>
                                                                             Add_Email_templet(
-                                                                              templetid:
-                                                                                  rentals.templateId,
+                                                                              templetid: rentals.templateId,
                                                                             )));
                                                             if (check == true) {
                                                               setState(() {
@@ -814,11 +818,16 @@ class _TempletTableState extends State<TempletTable> {
                                                           },
                                                           child: Container(
                                                             height: 40,
-                                                            decoration: BoxDecoration(
-                                                              border: Border.all(color: Colors.green, width: 1.5),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              border: Border.all(
+                                                                  color: Colors
+                                                                      .green,
+                                                                  width: 1.5),
                                                               borderRadius:
-                                                              BorderRadius.circular(
-                                                                  8),
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
                                                             ), // color:Colors.grey[100],
                                                             child: Row(
                                                               mainAxisAlignment:
@@ -832,8 +841,8 @@ class _TempletTableState extends State<TempletTable> {
                                                                   FontAwesomeIcons
                                                                       .edit,
                                                                   size: 15,
-                                                                  color:
-                                                                      Colors.green,
+                                                                  color: Colors
+                                                                      .green,
                                                                 ),
                                                                 SizedBox(
                                                                   width: 10,
@@ -841,8 +850,8 @@ class _TempletTableState extends State<TempletTable> {
                                                                 Text(
                                                                   "Edit",
                                                                   style: TextStyle(
-                                                                      color:
-                                                                          Colors.green,
+                                                                      color: Colors
+                                                                          .green,
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .bold),
@@ -867,11 +876,15 @@ class _TempletTableState extends State<TempletTable> {
                                                             height: 40,
                                                             decoration:
                                                                 BoxDecoration(
-                                                                  border: Border.all(color: Colors.red, width: 1.5),
-                                                                  borderRadius:
-                                                                  BorderRadius.circular(
-                                                                      8),
-                                                                ),
+                                                              border: Border.all(
+                                                                  color: Colors
+                                                                      .red,
+                                                                  width: 1.5),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                            ),
                                                             child: Row(
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
@@ -884,8 +897,8 @@ class _TempletTableState extends State<TempletTable> {
                                                                   FontAwesomeIcons
                                                                       .trashCan,
                                                                   size: 15,
-                                                                  color:
-                                                                      Colors.red,
+                                                                  color: Colors
+                                                                      .red,
                                                                 ),
                                                                 SizedBox(
                                                                   width: 10,
@@ -893,8 +906,8 @@ class _TempletTableState extends State<TempletTable> {
                                                                 Text(
                                                                   "Delete",
                                                                   style: TextStyle(
-                                                                      color:
-                                                                          Colors.red,
+                                                                      color: Colors
+                                                                          .red,
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .bold),
@@ -932,7 +945,8 @@ class _TempletTableState extends State<TempletTable> {
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 12.0),
                                         decoration: BoxDecoration(
-                                          border: Border.all(color: Colors.grey),
+                                          border:
+                                              Border.all(color: Colors.grey),
                                         ),
                                         child: DropdownButtonHideUnderline(
                                           child: DropdownButton<int>(

@@ -314,7 +314,7 @@ class _RentalownersSummeryForMobileState
                     ],
                   ),
                   child: const Text(
-                    "Summery",
+                    "Summary",
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -1239,7 +1239,7 @@ class _RentalownersSummeryForTabletState
                           ],
                         ),
                         child: const Text(
-                          "Summery",
+                          "Summary",
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,

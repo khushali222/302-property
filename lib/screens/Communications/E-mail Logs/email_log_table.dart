@@ -782,23 +782,16 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                     height: 20,
                   ),
                   //add propertytype
+                  // Header Section with Title
                   Padding(
-                    padding: const EdgeInsets.only(left: 4, right: 0),
-                    child: Row(
-                      //mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: titleBar(
-                            width: MediaQuery.of(context).size.width * .90,
-                            title: 'Email Logs',
-                          ),
-                        ),
-                        if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 4),
-                        if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 22),
-                      ],
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+                      child: titleBar(
+                        width: double.infinity,
+                        title: 'Email Logs',
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -811,7 +804,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                         if (MediaQuery.of(context).size.width < 500)
                           SizedBox(width: 1),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 24),
+                          SizedBox(width: 18),
                         Material(
                           elevation: 2,
                           borderRadius: BorderRadius.circular(8),
@@ -876,9 +869,10 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                       ],
                     ),
                   ),
-                  if (MediaQuery.of(context).size.width < 500)
+                  // if (MediaQuery.of(context).size.width < 500)
                     Padding(
-                      padding: const EdgeInsets.all(15.0),
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width < 500 ? 11 : 28),
                       child: FutureBuilder<Email_log_table>(
                         future: futureEmailss,
                         builder: (context, snapshot) {

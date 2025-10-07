@@ -155,7 +155,7 @@ class _StaffTableState extends State<StaffTable> {
                                 color: blueColor, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 3),
                     ascending1
-                        ?  Padding(
+                        ? Padding(
                             padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
@@ -163,12 +163,12 @@ class _StaffTableState extends State<StaffTable> {
                               color: blueColor,
                             ),
                           )
-                        :  Padding(
+                        : Padding(
                             padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
-                              color:blueColor,
+                              color: blueColor,
                             ),
                           ),
                   ],
@@ -729,83 +729,68 @@ class _StaffTableState extends State<StaffTable> {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
+                  // Header Section with Title and Add Button
                   Padding(
-                    padding: const EdgeInsets.all(0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
                     child: Row(
-                      //  mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: titleBar(
-                            width: MediaQuery.of(context).size.width * .65,
-                            title: 'Staff Members',
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 13,),
+                        Expanded(
+                          flex: 3,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: titleBar(
+                              width: double.infinity,
+                              title: 'Staff Members',
+                            ),
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () async {
-                            final result = await Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) => const Add_staffmember()));
-                            if (result == true) {
-                              setState(() {
-                                futureStaffMembers =
-                                    StaffMemberRepository().fetchStaffmembers();
-                              });
-                            }
-                            // if (rentalCount < staffCountLimit) {
-                            //   final result = await Navigator.of(context).push(
-                            //       MaterialPageRoute(
-                            //           builder: (context) => Add_staffmember()));
-                            //   if (result == true) {
-                            //     setState(() {
-                            //       futureStaffMembers =
-                            //           StaffMemberRepository().fetchStaffmembers();
-                            //     });
-                            //     fetchstaffadded();
-                            //   }
-                            // } else {
-                            //   _showAlertforLimit(context);
-                            // }
-                          },
-                          child: Container(
-                            // height: 40,
-                            height: (MediaQuery.of(context).size.width < 500)
-                                ? 50
-                                : MediaQuery.of(context).size.width * 0.062,
-                            width: (MediaQuery.of(context).size.width < 500)
-                                ? MediaQuery.of(context).size.width * 0.24
-                                : MediaQuery.of(context).size.width * 0.25,
-                            decoration: BoxDecoration(
-                              color: blueColor,
-                              borderRadius: BorderRadius.circular(5),
-                              boxShadow: [
-                                const BoxShadow(
-                                  color: Colors.grey,
-                                  offset: Offset(0.0, 1.0),
-                                  blurRadius: 6.0,
+                        Flexible(
+                          flex: 1,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: GestureDetector(
+                              onTap: () async {
+                                final result = await Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const Add_staffmember()));
+                                if (result == true) {
+                                  setState(() {
+                                    futureStaffMembers = StaffMemberRepository()
+                                        .fetchStaffmembers();
+                                  });
+                                }
+                              },
+                              child: Container(
+                                height:
+                                    (MediaQuery.of(context).size.width < 768)
+                                        ? 50
+                                        : 60,
+                                decoration: BoxDecoration(
+                                  color: blueColor,
+                                  borderRadius: BorderRadius.circular(5),
                                 ),
-                              ],
-                            ),
-                            child: Center(
-                              child: Text(
-                                "+ Add",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 16
-                                          : 20,
+                                child: Center(
+                                  child: Text(
+                                    "+ Add",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 5),
                         if (MediaQuery.of(context).size.width < 500)
-                          const SizedBox(width: 6),
+                          SizedBox(width: 3),
                         if (MediaQuery.of(context).size.width > 500)
-                          const SizedBox(width: 22),
+                          SizedBox(width: 18),
                       ],
                     ),
                   ),
@@ -824,7 +809,8 @@ class _StaffTableState extends State<StaffTable> {
                             elevation: 3,
                             borderRadius: BorderRadius.circular(8),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
                               // height: 40,
                               height: MediaQuery.of(context).size.width < 500
                                   ? 49
@@ -835,7 +821,8 @@ class _StaffTableState extends State<StaffTable> {
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: const Color(0xFF8A95A8)),
+                                border:
+                                    Border.all(color: const Color(0xFF8A95A8)),
                               ),
                               child: TextField(
                                 style: TextStyle(
@@ -874,11 +861,12 @@ class _StaffTableState extends State<StaffTable> {
                       ],
                     ),
                   ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    const SizedBox(height: 25),
-                  if (MediaQuery.of(context).size.width < 500)
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   const SizedBox(height: 25),
+                  // if (MediaQuery.of(context).size.width < 500)
                     Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width < 500 ? 11 : 28),
                       child: FutureBuilder<List<Staffmembers>>(
                         future: futureStaffMembers,
                         builder: (context, snapshot) {
@@ -999,8 +987,8 @@ class _StaffTableState extends State<StaffTable> {
                                             expandedIndex == index;
                                         Staffmembers staffmembers = entry.value;
                                         return Container(
-                                          margin:
-                                              const EdgeInsets.symmetric(vertical: 6),
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
                                                 ? const Color(0xFFF4F8FF)
@@ -1042,7 +1030,8 @@ class _StaffTableState extends State<StaffTable> {
                                                                   .grey[600],
                                                               size: 20,
                                                             ),
-                                                            const SizedBox(width: 8),
+                                                            const SizedBox(
+                                                                width: 8),
                                                             Flexible(
                                                               child: Text(
                                                                 '${staffmembers.staffmemberName}',
@@ -1068,7 +1057,8 @@ class _StaffTableState extends State<StaffTable> {
                                                         flex: 2,
                                                         child: Text(
                                                           '${staffmembers.staffmemberDesignation}',
-                                                          style: const TextStyle(
+                                                          style:
+                                                              const TextStyle(
                                                             color: Colors.black,
                                                             fontWeight:
                                                                 FontWeight.w500,
@@ -1087,8 +1077,10 @@ class _StaffTableState extends State<StaffTable> {
                                               ),
                                               if (isExpanded)
                                                 Container(
-                                                  padding: const EdgeInsets.all(16),
-                                                  decoration: const BoxDecoration(
+                                                  padding:
+                                                      const EdgeInsets.all(16),
+                                                  decoration:
+                                                      const BoxDecoration(
                                                     border: Border(
                                                       top: BorderSide(
                                                           color:
@@ -1141,7 +1133,8 @@ class _StaffTableState extends State<StaffTable> {
                                                               ],
                                                             ),
                                                           ),
-                                                          const SizedBox(width: 16),
+                                                          const SizedBox(
+                                                              width: 16),
                                                           Expanded(
                                                             child: Column(
                                                               mainAxisAlignment:
@@ -1232,7 +1225,8 @@ class _StaffTableState extends State<StaffTable> {
                                                               ],
                                                             ),
                                                           ),
-                                                          const SizedBox(width: 16),
+                                                          const SizedBox(
+                                                              width: 16),
                                                           Expanded(
                                                             child: Column(
                                                               mainAxisAlignment:
@@ -1475,7 +1469,8 @@ class _StaffTableState extends State<StaffTable> {
                                                       //
                                                       //   ],
                                                       // ),
-                                                      const SizedBox(height: 20),
+                                                      const SizedBox(
+                                                          height: 20),
                                                       Row(
                                                         children: [
                                                           Expanded(
@@ -1517,7 +1512,8 @@ class _StaffTableState extends State<StaffTable> {
                                                                           .circular(
                                                                               8),
                                                                 ),
-                                                                child: const Center(
+                                                                child:
+                                                                    const Center(
                                                                   child: Text(
                                                                     "Edit",
                                                                     style:
@@ -1535,7 +1531,8 @@ class _StaffTableState extends State<StaffTable> {
                                                               ),
                                                             ),
                                                           ),
-                                                          const SizedBox(width: 15),
+                                                          const SizedBox(
+                                                              width: 15),
                                                           Expanded(
                                                             child: InkWell(
                                                               onTap: () {
@@ -1558,7 +1555,8 @@ class _StaffTableState extends State<StaffTable> {
                                                                           .circular(
                                                                               8),
                                                                 ),
-                                                                child: const Center(
+                                                                child:
+                                                                    const Center(
                                                                   child: Text(
                                                                     "Delete",
                                                                     style:
@@ -1600,8 +1598,9 @@ class _StaffTableState extends State<StaffTable> {
                                               elevation: 3,
                                               child: Container(
                                                 height: 40,
-                                                padding: const EdgeInsets.symmetric(
-                                                    horizontal: 12.0),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 12.0),
                                                 decoration: BoxDecoration(
                                                   border: Border.all(
                                                       color: Colors.grey),
@@ -1706,161 +1705,161 @@ class _StaffTableState extends State<StaffTable> {
                         },
                       ),
                     ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    FutureBuilder<List<Staffmembers>>(
-                      future: futureStaffMembers,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return ShimmerTabletTable();
-                        } else if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
-                          return Container(
-                            height: MediaQuery.of(context).size.height * .5,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    "assets/images/no_data.jpg",
-                                    height: 200,
-                                    width: 200,
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    "No Data Available",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor,
-                                        fontSize: 16),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        } else {
-                          List<Staffmembers>? filteredData = [];
-                          if (selectedRole == null && searchValue == "") {
-                            filteredData = snapshot.data;
-                          } else if (selectedRole == "All") {
-                            filteredData = snapshot.data;
-                          } else if (searchValue.isNotEmpty) {
-                            filteredData = snapshot.data!
-                                .where((staff) =>
-                                    staff.staffmemberName!
-                                        .toLowerCase()
-                                        .contains(searchValue.toLowerCase()) ||
-                                    staff.staffmemberDesignation!
-                                        .toLowerCase()
-                                        .contains(searchValue.toLowerCase()))
-                                .toList();
-                          } else {
-                            filteredData = snapshot.data!
-                                .where((staff) =>
-                                    staff.staffmemberDesignation ==
-                                    selectedRole)
-                                .toList();
-                          }
-                          //_tableData = snapshot.data!;
-                          // _tableData = snapshot.data!;
-                          _tableData = filteredData!;
-                          totalrecords = _tableData.length;
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 25.0, vertical: 5),
-                            child: Column(
-                              children: [
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * .91,
-                                    child: Table(
-                                      defaultColumnWidth:
-                                          const IntrinsicColumnWidth(),
-                                      children: [
-                                        TableRow(
-                                          decoration: BoxDecoration(
-                                              border: Border.all()),
-                                          children: [
-                                            _buildHeader(
-                                                'Name',
-                                                0,
-                                                (staff) =>
-                                                    staff.staffmemberName!),
-                                            _buildHeader(
-                                                'Role',
-                                                1,
-                                                (staff) => staff
-                                                    .staffmemberDesignation!),
-                                            _buildHeader('Email', 2, null),
-                                            _buildHeader('Phone', 3, null),
-                                            _buildHeader('Actions', 4, null),
-                                          ],
-                                        ),
-                                        TableRow(
-                                          decoration: const BoxDecoration(
-                                            border: Border.symmetric(
-                                                horizontal: BorderSide.none),
-                                          ),
-                                          children: List.generate(
-                                              5,
-                                              (index) => TableCell(
-                                                  child:
-                                                      Container(height: 20))),
-                                        ),
-                                        for (var i = 0;
-                                            i < _pagedData.length;
-                                            i++)
-                                          TableRow(
-                                            decoration: BoxDecoration(
-                                              border: Border(
-                                                left: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
-                                                right: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
-                                                top: const BorderSide(
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1)),
-                                                bottom:
-                                                    i == _pagedData.length - 1
-                                                        ? BorderSide(
-                                                            color: blueColor)
-                                                        : BorderSide.none,
-                                              ),
-                                            ),
-                                            children: [
-                                              _buildDataCell(_pagedData[i]
-                                                  .staffmemberName!),
-                                              _buildDataCell(_pagedData[i]
-                                                  .staffmemberDesignation!),
-                                              _buildDataCell(_pagedData[i]
-                                                  .staffmemberEmail!),
-                                              _buildDataCell(_pagedData[i]
-                                                  .staffmemberPhoneNumber!),
-                                              _buildActionsCell(_pagedData[i]),
-                                            ],
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 25),
-                                _buildPaginationControls(),
-                              ],
-                            ),
-                          );
-                        }
-                      },
-                    ),
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   FutureBuilder<List<Staffmembers>>(
+                  //     future: futureStaffMembers,
+                  //     builder: (context, snapshot) {
+                  //       if (snapshot.connectionState ==
+                  //           ConnectionState.waiting) {
+                  //         return ShimmerTabletTable();
+                  //       } else if (snapshot.hasError) {
+                  //         return Center(
+                  //             child: Text('Error: ${snapshot.error}'));
+                  //       } else if (!snapshot.hasData ||
+                  //           snapshot.data!.isEmpty) {
+                  //         return Container(
+                  //           height: MediaQuery.of(context).size.height * .5,
+                  //           child: Center(
+                  //             child: Column(
+                  //               mainAxisAlignment: MainAxisAlignment.center,
+                  //               crossAxisAlignment: CrossAxisAlignment.center,
+                  //               children: [
+                  //                 Image.asset(
+                  //                   "assets/images/no_data.jpg",
+                  //                   height: 200,
+                  //                   width: 200,
+                  //                 ),
+                  //                 const SizedBox(
+                  //                   height: 10,
+                  //                 ),
+                  //                 Text(
+                  //                   "No Data Available",
+                  //                   style: TextStyle(
+                  //                       fontWeight: FontWeight.bold,
+                  //                       color: blueColor,
+                  //                       fontSize: 16),
+                  //                 )
+                  //               ],
+                  //             ),
+                  //           ),
+                  //         );
+                  //       } else {
+                  //         List<Staffmembers>? filteredData = [];
+                  //         if (selectedRole == null && searchValue == "") {
+                  //           filteredData = snapshot.data;
+                  //         } else if (selectedRole == "All") {
+                  //           filteredData = snapshot.data;
+                  //         } else if (searchValue.isNotEmpty) {
+                  //           filteredData = snapshot.data!
+                  //               .where((staff) =>
+                  //                   staff.staffmemberName!
+                  //                       .toLowerCase()
+                  //                       .contains(searchValue.toLowerCase()) ||
+                  //                   staff.staffmemberDesignation!
+                  //                       .toLowerCase()
+                  //                       .contains(searchValue.toLowerCase()))
+                  //               .toList();
+                  //         } else {
+                  //           filteredData = snapshot.data!
+                  //               .where((staff) =>
+                  //                   staff.staffmemberDesignation ==
+                  //                   selectedRole)
+                  //               .toList();
+                  //         }
+                  //         //_tableData = snapshot.data!;
+                  //         // _tableData = snapshot.data!;
+                  //         _tableData = filteredData!;
+                  //         totalrecords = _tableData.length;
+                  //         return Padding(
+                  //           padding: const EdgeInsets.symmetric(
+                  //               horizontal: 25.0, vertical: 5),
+                  //           child: Column(
+                  //             children: [
+                  //               SingleChildScrollView(
+                  //                 scrollDirection: Axis.horizontal,
+                  //                 child: Container(
+                  //                   width:
+                  //                       MediaQuery.of(context).size.width * .91,
+                  //                   child: Table(
+                  //                     defaultColumnWidth:
+                  //                         const IntrinsicColumnWidth(),
+                  //                     children: [
+                  //                       TableRow(
+                  //                         decoration: BoxDecoration(
+                  //                             border: Border.all()),
+                  //                         children: [
+                  //                           _buildHeader(
+                  //                               'Name',
+                  //                               0,
+                  //                               (staff) =>
+                  //                                   staff.staffmemberName!),
+                  //                           _buildHeader(
+                  //                               'Role',
+                  //                               1,
+                  //                               (staff) => staff
+                  //                                   .staffmemberDesignation!),
+                  //                           _buildHeader('Email', 2, null),
+                  //                           _buildHeader('Phone', 3, null),
+                  //                           _buildHeader('Actions', 4, null),
+                  //                         ],
+                  //                       ),
+                  //                       TableRow(
+                  //                         decoration: const BoxDecoration(
+                  //                           border: Border.symmetric(
+                  //                               horizontal: BorderSide.none),
+                  //                         ),
+                  //                         children: List.generate(
+                  //                             5,
+                  //                             (index) => TableCell(
+                  //                                 child:
+                  //                                     Container(height: 20))),
+                  //                       ),
+                  //                       for (var i = 0;
+                  //                           i < _pagedData.length;
+                  //                           i++)
+                  //                         TableRow(
+                  //                           decoration: BoxDecoration(
+                  //                             border: Border(
+                  //                               left: const BorderSide(
+                  //                                   color: Color.fromRGBO(
+                  //                                       21, 43, 81, 1)),
+                  //                               right: const BorderSide(
+                  //                                   color: Color.fromRGBO(
+                  //                                       21, 43, 81, 1)),
+                  //                               top: const BorderSide(
+                  //                                   color: Color.fromRGBO(
+                  //                                       21, 43, 81, 1)),
+                  //                               bottom:
+                  //                                   i == _pagedData.length - 1
+                  //                                       ? BorderSide(
+                  //                                           color: blueColor)
+                  //                                       : BorderSide.none,
+                  //                             ),
+                  //                           ),
+                  //                           children: [
+                  //                             _buildDataCell(_pagedData[i]
+                  //                                 .staffmemberName!),
+                  //                             _buildDataCell(_pagedData[i]
+                  //                                 .staffmemberDesignation!),
+                  //                             _buildDataCell(_pagedData[i]
+                  //                                 .staffmemberEmail!),
+                  //                             _buildDataCell(_pagedData[i]
+                  //                                 .staffmemberPhoneNumber!),
+                  //                             _buildActionsCell(_pagedData[i]),
+                  //                           ],
+                  //                         ),
+                  //                     ],
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //               const SizedBox(height: 25),
+                  //               _buildPaginationControls(),
+                  //             ],
+                  //           ),
+                  //         );
+                  //       }
+                  //     },
+                  //   ),
                 ],
               ),
             )

@@ -601,18 +601,14 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
             ),
             //add propertytype
             Padding(
-              padding: const EdgeInsets.only(left: 0, right: 0),
-              child: Row(
-                //mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: titleBar(
-                      width: MediaQuery.of(context).size.width * .91,
-                      title: 'Upcoming Renewal',
-                    ),
-                  ),
-                ],
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0, vertical: 8.0),
+              child: Padding(
+                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+                child: titleBar(
+                  width: double.infinity,
+                  title: 'Upcoming Renewal',
+                ),
               ),
             ),
             const SizedBox(height: 10),
@@ -624,7 +620,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                   if (MediaQuery.of(context).size.width < 500)
                     const SizedBox(width: 1),
                   if (MediaQuery.of(context).size.width > 500)
-                    const SizedBox(width: 24),
+                    const SizedBox(width: 18),
                   Material(
                     elevation: 2,
                     borderRadius: BorderRadius.circular(8),
@@ -680,13 +676,16 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                       ),
                     ),
                   ),
+                  if (MediaQuery.of(context).size.width > 500)
+                    const SizedBox(width: 16),
                 ],
               ),
             ),
-            if (MediaQuery.of(context).size.width > 500) const SizedBox(height: 25),
-            if (MediaQuery.of(context).size.width < 500)
+            // if (MediaQuery.of(context).size.width > 500) const SizedBox(height: 25),
+            // if (MediaQuery.of(context).size.width < 500)
               Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: EdgeInsets.all(
+                    MediaQuery.of(context).size.width < 500 ? 11 : 28),
                 child: FutureBuilder<List<upcoming_renewal>>(
                   future: futureLeaseRenewal,
                   builder: (context, snapshot) {

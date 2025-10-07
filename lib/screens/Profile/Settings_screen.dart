@@ -583,11 +583,11 @@ class _TabBarExampleState extends State<TabBarExample> {
       bool success = await mailrepository.updateMailData(data);
 
       if (success) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('mail Updated Successfully')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('mail Updated Successfully')));
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('Failed to Update mail')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to Update mail')));
       }
     } catch (e) {
       print('Failed to update mail data: $e');
@@ -655,11 +655,11 @@ class _TabBarExampleState extends State<TabBarExample> {
       bool success = await mailrepository.AddMailData(id, data);
 
       if (success) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('mail Updated Successfully')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('mail Updated Successfully')));
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('Failed to Update ,ail')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to Update ,ail')));
       }
     } catch (e) {
       print('Failed to update mail data: $e');
@@ -2520,8 +2520,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                   .size
                                                                   .width *
                                                               .037,
-                                                          color:
-                                                              const Color(0xFF8A95A8),
+                                                          color: const Color(
+                                                              0xFF8A95A8),
                                                         ),
                                                         // enabledBorder: passworderror
                                                         //     ? OutlineInputBorder(
@@ -2535,7 +2535,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                         border:
                                                             InputBorder.none,
                                                         contentPadding:
-                                                            const EdgeInsets.all(13),
+                                                            const EdgeInsets
+                                                                .all(13),
                                                         suffixIcon: Icon(
                                                           Icons.percent,
                                                           color: blueColor,
@@ -2603,8 +2604,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                   .size
                                                                   .width *
                                                               .037,
-                                                          color:
-                                                              const Color(0xFF8A95A8),
+                                                          color: const Color(
+                                                              0xFF8A95A8),
                                                         ),
                                                         // enabledBorder: passworderror
                                                         //     ? OutlineInputBorder(
@@ -2618,7 +2619,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                         border:
                                                             InputBorder.none,
                                                         contentPadding:
-                                                            const EdgeInsets.all(13),
+                                                            const EdgeInsets
+                                                                .all(13),
                                                         suffixIcon: Icon(
                                                           Icons.percent,
                                                           color: blueColor,
@@ -2717,8 +2719,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
-                                                              const EdgeInsets.all(
-                                                                  13),
+                                                              const EdgeInsets
+                                                                  .all(13),
                                                           suffixIcon: Icon(
                                                             Icons.percent,
                                                             color: blueColor,
@@ -2805,8 +2807,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
-                                                              const EdgeInsets.all(
-                                                                  13),
+                                                              const EdgeInsets
+                                                                  .all(13),
                                                           suffixIcon: Icon(
                                                             Icons.percent,
                                                             color: blueColor,
@@ -2972,7 +2974,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                 .size
                                                                 .width *
                                                             .037,
-                                                    color: const Color(0xFF8A95A8),
+                                                    color:
+                                                        const Color(0xFF8A95A8),
                                                   ),
                                                   // enabledBorder: passworderror
                                                   //     ? OutlineInputBorder(
@@ -3067,7 +3070,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                 .size
                                                                 .width *
                                                             .037,
-                                                    color: const Color(0xFF8A95A8),
+                                                    color:
+                                                        const Color(0xFF8A95A8),
                                                   ),
                                                   // enabledBorder: passworderror
                                                   //     ? OutlineInputBorder(
@@ -3344,8 +3348,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 });
                                               },
                                               //  controller: password,
-                                              cursorColor:
-                                                  const Color.fromRGBO(21, 43, 81, 1),
+                                              cursorColor: const Color.fromRGBO(
+                                                  21, 43, 81, 1),
                                               decoration: InputDecoration(
                                                 hintText: "Enter email",
                                                 hintStyle: TextStyle(
@@ -3354,7 +3358,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                               .size
                                                               .width *
                                                           .037,
-                                                  color: const Color(0xFF8A95A8),
+                                                  color:
+                                                      const Color(0xFF8A95A8),
                                                 ),
                                                 border: InputBorder.none,
                                                 contentPadding:
@@ -3449,8 +3454,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                       });
                                                     },
                                                     //  controller: password,
-                                                    cursorColor: const Color.fromRGBO(
-                                                        21, 43, 81, 1),
+                                                    cursorColor:
+                                                        const Color.fromRGBO(
+                                                            21, 43, 81, 1),
                                                     decoration: InputDecoration(
                                                       // hintText: "Enter password",
                                                       hintStyle: TextStyle(
@@ -3459,13 +3465,14 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                 .size
                                                                 .width *
                                                             .037,
-                                                        color:
-                                                            const Color(0xFF8A95A8),
+                                                        color: const Color(
+                                                            0xFF8A95A8),
                                                       ),
 
                                                       border: InputBorder.none,
                                                       contentPadding:
-                                                          const EdgeInsets.all(13),
+                                                          const EdgeInsets.all(
+                                                              13),
                                                     ),
                                                   ),
                                                 ),
@@ -3672,7 +3679,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                 .size
                                                                 .width *
                                                             .037,
-                                                    color: const Color(0xFF8A95A8),
+                                                    color:
+                                                        const Color(0xFF8A95A8),
                                                   ),
                                                   // enabledBorder: passworderror
                                                   //     ? OutlineInputBorder(
@@ -3854,8 +3862,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                   .size
                                                                   .width *
                                                               .037,
-                                                          color:
-                                                              const Color(0xFF8A95A8),
+                                                          color: const Color(
+                                                              0xFF8A95A8),
                                                         ),
                                                         // enabledBorder: passworderror
                                                         //     ? OutlineInputBorder(
@@ -3869,7 +3877,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                         border:
                                                             InputBorder.none,
                                                         contentPadding:
-                                                            const EdgeInsets.all(13),
+                                                            const EdgeInsets
+                                                                .all(13),
                                                         suffixIcon:
                                                             calculationType ==
                                                                     "percent"
@@ -3950,8 +3959,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                   .size
                                                                   .width *
                                                               .037,
-                                                          color:
-                                                              const Color(0xFF8A95A8),
+                                                          color: const Color(
+                                                              0xFF8A95A8),
                                                         ),
                                                         // enabledBorder: passworderror
                                                         //     ? OutlineInputBorder(
@@ -3965,7 +3974,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                         border:
                                                             InputBorder.none,
                                                         contentPadding:
-                                                            const EdgeInsets.all(13),
+                                                            const EdgeInsets
+                                                                .all(13),
                                                         // suffixIcon: Icon(
                                                         //   Icons.percent,
                                                         //   color: blueColor,
@@ -4202,7 +4212,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                               500
                                                           ? 15
                                                           : 20,
-                                                  color: const Color(0xFF8A95A8),
+                                                  color:
+                                                      const Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold),
                                             ),
                                             const SizedBox(height: 5),
@@ -4257,8 +4268,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
-                                                              const EdgeInsets.all(
-                                                                  13),
+                                                              const EdgeInsets
+                                                                  .all(13),
                                                           suffixIcon:
                                                               calculationType ==
                                                                       "percent"
@@ -4303,7 +4314,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                               500
                                                           ? 15
                                                           : 20,
-                                                  color: const Color(0xFF8A95A8),
+                                                  color:
+                                                      const Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold),
                                             ),
                                             const SizedBox(height: 5),
@@ -4358,8 +4370,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                           border:
                                                               InputBorder.none,
                                                           contentPadding:
-                                                              const EdgeInsets.all(
-                                                                  13),
+                                                              const EdgeInsets
+                                                                  .all(13),
                                                           // suffixIcon: Icon(
                                                           //   Icons.percent,
                                                           //   color: blueColor,
@@ -4433,7 +4445,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                               DropdownMenuItem<String>(
                                                 value: "Late Fee Income",
                                                 child: Padding(
-                                                  padding: const EdgeInsets.symmetric(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
                                                       horizontal: 13),
                                                   child: Text(
                                                     "Late Fee Income",
@@ -4454,9 +4467,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 return DropdownMenuItem<String>(
                                                   value: account.account ?? '',
                                                   child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.symmetric(
-                                                            horizontal: 13),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 13),
                                                     child: Text(
                                                       account.account ?? '',
                                                       style: TextStyle(
@@ -4551,7 +4564,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                               .size
                                                               .width *
                                                           .037,
-                                                  color: const Color(0xFF8A95A8),
+                                                  color:
+                                                      const Color(0xFF8A95A8),
                                                 ),
                                               ),
                                               isExpanded: true,
@@ -4560,9 +4574,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 DropdownMenuItem<String>(
                                                   value: "Late Fee Income",
                                                   child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.symmetric(
-                                                            horizontal: 13),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 13),
                                                     child: Text(
                                                       "Late Fee Income",
                                                       style: TextStyle(
@@ -4584,9 +4598,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                     value:
                                                         account.account ?? '',
                                                     child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.symmetric(
-                                                              horizontal: 13),
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 13),
                                                       child: Text(
                                                         account.account ?? '',
                                                         style: TextStyle(
@@ -4684,7 +4698,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                 .size
                                                                 .width *
                                                             .037,
-                                                    color: const Color(0xFF8A95A8),
+                                                    color:
+                                                        const Color(0xFF8A95A8),
                                                   ),
                                                   border: InputBorder.none,
                                                   contentPadding:
@@ -4751,11 +4766,13 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                   .size
                                                                   .width *
                                                               .037,
-                                                      color: const Color(0xFF8A95A8),
+                                                      color: const Color(
+                                                          0xFF8A95A8),
                                                     ),
                                                     border: InputBorder.none,
                                                     contentPadding:
-                                                        const EdgeInsets.all(13),
+                                                        const EdgeInsets.all(
+                                                            13),
                                                   ),
                                                 ),
                                               ),
@@ -5047,12 +5064,13 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                         entry.value;
                                                     //return CustomExpansionTile(data: Propertytype, index: index);
                                                     return Container(
-                                                      margin:
-                                                          const EdgeInsets.symmetric(
-                                                              vertical: 6),
+                                                      margin: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 6),
                                                       decoration: BoxDecoration(
                                                         color: index % 2 != 0
-                                                            ? const Color(0xFFF4F8FF)
+                                                            ? const Color(
+                                                                0xFFF4F8FF)
                                                             : Colors.white,
                                                         border: Border.all(
                                                             color: const Color(
@@ -5110,16 +5128,19 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                     },
                                                                     child:
                                                                         Container(
-                                                                      margin: const EdgeInsets.only(
+                                                                      margin: const EdgeInsets
+                                                                          .only(
                                                                           left:
                                                                               5,
                                                                           right:
                                                                               5),
                                                                       padding: !isExpanded
-                                                                          ? const EdgeInsets.only(
+                                                                          ? const EdgeInsets
+                                                                              .only(
                                                                               bottom:
                                                                                   10)
-                                                                          : const EdgeInsets.only(
+                                                                          : const EdgeInsets
+                                                                              .only(
                                                                               top: 10),
                                                                       child:
                                                                           FaIcon(
@@ -5214,12 +5235,14 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                           ),
                                                           if (isExpanded)
                                                             Container(
-                                                              padding: const EdgeInsets
-                                                                  .only(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
                                                                       left: 2,
                                                                       right: 2),
-                                                              margin: const EdgeInsets
-                                                                  .only(
+                                                              margin:
+                                                                  const EdgeInsets
+                                                                      .only(
                                                                       bottom:
                                                                           2),
                                                               child:
@@ -5291,8 +5314,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                         elevation: 3,
                                                         child: Container(
                                                           height: 40,
-                                                          padding: const EdgeInsets
-                                                              .symmetric(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
                                                                   horizontal:
                                                                       12.0),
                                                           decoration:
@@ -5524,7 +5548,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                       ],
                                                     ),
                                                     TableRow(
-                                                      decoration: const BoxDecoration(
+                                                      decoration:
+                                                          const BoxDecoration(
                                                         border:
                                                             Border.symmetric(
                                                                 horizontal:
@@ -5551,13 +5576,14 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                                         43,
                                                                         81,
                                                                         1)),
-                                                            right: const BorderSide(
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        21,
-                                                                        43,
-                                                                        81,
-                                                                        1)),
+                                                            right:
+                                                                const BorderSide(
+                                                                    color: Color
+                                                                        .fromRGBO(
+                                                                            21,
+                                                                            43,
+                                                                            81,
+                                                                            1)),
                                                             top: const BorderSide(
                                                                 color: Color
                                                                     .fromRGBO(
@@ -5965,7 +5991,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 contentPadding:
                                                     const EdgeInsets.symmetric(
                                                         horizontal: 15),
-                                                border: const OutlineInputBorder(),
+                                                border:
+                                                    const OutlineInputBorder(),
                                                 filled: true,
                                                 fillColor: Colors.grey.shade200,
                                               ),
@@ -6021,7 +6048,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 contentPadding:
                                                     const EdgeInsets.symmetric(
                                                         horizontal: 15),
-                                                border: const OutlineInputBorder(),
+                                                border:
+                                                    const OutlineInputBorder(),
                                                 filled: true,
                                                 fillColor: Colors.grey.shade200,
                                               ),
@@ -6983,8 +7011,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 children: [
                                   Expanded(
                                     child: Container(
-                                      padding:
-                                          const EdgeInsets.symmetric(horizontal: 16),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16),
                                       height: 48,
                                       decoration: BoxDecoration(
                                         border: Border.all(
@@ -6994,7 +7022,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       alignment: Alignment.centerLeft,
                                       child: TextField(
                                         controller: categories,
-                                        decoration: const InputDecoration.collapsed(
+                                        decoration:
+                                            const InputDecoration.collapsed(
                                           hintText: 'Enter category name',
                                         ),
                                       ),
@@ -7014,8 +7043,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     child: Container(
                                       height: 43,
                                       width: 150,
-                                      padding:
-                                          const EdgeInsets.symmetric(horizontal: 20),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20),
                                       decoration: BoxDecoration(
                                         color: const Color(
                                             0xFF1A2F5B), // Dark blue like the image
@@ -7108,7 +7137,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                           int idx = entry.key;
                                           var cat = entry.value;
                                           return Container(
-                                            margin: const EdgeInsets.only(bottom: 8),
+                                            margin: const EdgeInsets.only(
+                                                bottom: 8),
                                             decoration: BoxDecoration(
                                               border: Border.all(
                                                   color: Colors.grey.shade400,
@@ -7123,10 +7153,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                               children: [
                                                 Expanded(
                                                   child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.symmetric(
-                                                            vertical: 16,
-                                                            horizontal: 12),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 16,
+                                                        horizontal: 12),
                                                     child: Text(
                                                       cat.name ?? '',
                                                       style: const TextStyle(
@@ -7617,7 +7647,8 @@ class _TabBarExampleState extends State<TabBarExample> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(label,
-            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.grey)),
         const SizedBox(height: 8.0),
         Material(
           elevation: 3,
