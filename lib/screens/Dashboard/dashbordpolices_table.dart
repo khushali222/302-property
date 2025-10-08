@@ -484,7 +484,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
         children: [
           //SizedBox(height: 20),
           //Text("Renter's Insurance Policies Expiring Within 90 days",style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),),
-          if (MediaQuery.of(context).size.width < 500)
+          //if (MediaQuery.of(context).size.width < 500)
             Padding(
               padding: const EdgeInsets.all(0.0),
               child: FutureBuilder<List<ExpiringRentersInsuranceData>>(
@@ -702,160 +702,160 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                 },
               ),
             ),
-          if (MediaQuery.of(context).size.width > 500)
-            FutureBuilder<List<ExpiringRentersInsuranceData>>(
-              future: futurepolices,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return ShimmerTabletTable();
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Container(
-                    height: MediaQuery.of(context).size.height * .5,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            "assets/images/no_data.jpg",
-                            height: 200,
-                            width: 200,
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            "No Data Available",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: blueColor,
-                                fontSize: 16),
-                          )
-                        ],
-                      ),
-                    ),
-                  );
-                } else {
-                  _tableData = snapshot.data!;
-                  if (selectedValue == null && searchvalue.isEmpty) {
-                    _tableData = snapshot.data!;
-                  } else if (selectedValue == "All") {
-                    _tableData = snapshot.data!;
-                  } else if (searchvalue.isNotEmpty) {
-                    _tableData = snapshot.data!
-                        .where((property) => property.insuranceCompany!
-                            .toLowerCase()
-                            .contains(searchvalue.toLowerCase()))
-                        .toList();
-                  } else {
-                    _tableData = snapshot.data!
-                        .where((property) =>
-                            property.insuranceCompany == selectedValue)
-                        .toList();
-                  }
-                  totalrecords = _tableData.length;
-                  return SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Container(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 24.0, vertical: 5),
-                            child: Column(
-                              children: [
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * .91,
-                                    child: Table(
-                                      defaultColumnWidth:
-                                          IntrinsicColumnWidth(),
-                                      children: [
-                                        TableRow(
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                // color: blueColor
-                                                ),
-                                          ),
-                                          children: [
-                                            _buildHeader(
-                                                'Main Type',
-                                                0,
-                                                (property) =>
-                                                    property.tenantName!),
-                                            _buildHeader(
-                                                'Subtype',
-                                                1,
-                                                (property) =>
-                                                    property.rentalAddress!),
-                                            _buildHeader(
-                                                'Created At',
-                                                2,
-                                                (property) =>
-                                                    property.expirationDate!),
-                                          ],
-                                        ),
-                                        TableRow(
-                                          decoration: BoxDecoration(
-                                            border: Border.symmetric(
-                                                horizontal: BorderSide.none),
-                                          ),
-                                          children: List.generate(
-                                              3,
-                                              (index) => TableCell(
-                                                  child:
-                                                      Container(height: 20))),
-                                        ),
-                                        for (var i = 0;
-                                            i < _pagedData.length;
-                                            i++)
-                                          TableRow(
-                                            decoration: BoxDecoration(
-                                              border: Border(
-                                                left: BorderSide(
-                                                    color: blueColor),
-                                                right: BorderSide(
-                                                    color: blueColor),
-                                                top: BorderSide(
-                                                    color: blueColor),
-                                                bottom:
-                                                    i == _pagedData.length - 1
-                                                        ? BorderSide(
-                                                            color: blueColor)
-                                                        : BorderSide.none,
-                                              ),
-                                            ),
-                                            children: [
-                                              _buildDataCell(
-                                                  _pagedData[i].tenantName!),
-                                              _buildDataCell(
-                                                  _pagedData[i].rentalAddress!),
-                                              _buildDataCell(
-                                                formatDate(_pagedData[i]
-                                                    .expirationDate!),
-                                              ),
-                                            ],
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 25),
-                                _buildPaginationControls(),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 25),
-                      ],
-                    ),
-                  );
-                }
-              },
-            ),
+          // if (MediaQuery.of(context).size.width > 500)
+          //   FutureBuilder<List<ExpiringRentersInsuranceData>>(
+          //     future: futurepolices,
+          //     builder: (context, snapshot) {
+          //       if (snapshot.connectionState == ConnectionState.waiting) {
+          //         return ShimmerTabletTable();
+          //       } else if (snapshot.hasError) {
+          //         return Center(child: Text('Error: ${snapshot.error}'));
+          //       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          //         return Container(
+          //           height: MediaQuery.of(context).size.height * .5,
+          //           child: Center(
+          //             child: Column(
+          //               mainAxisAlignment: MainAxisAlignment.center,
+          //               crossAxisAlignment: CrossAxisAlignment.center,
+          //               children: [
+          //                 Image.asset(
+          //                   "assets/images/no_data.jpg",
+          //                   height: 200,
+          //                   width: 200,
+          //                 ),
+          //                 SizedBox(
+          //                   height: 10,
+          //                 ),
+          //                 Text(
+          //                   "No Data Available",
+          //                   style: TextStyle(
+          //                       fontWeight: FontWeight.bold,
+          //                       color: blueColor,
+          //                       fontSize: 16),
+          //                 )
+          //               ],
+          //             ),
+          //           ),
+          //         );
+          //       } else {
+          //         _tableData = snapshot.data!;
+          //         if (selectedValue == null && searchvalue.isEmpty) {
+          //           _tableData = snapshot.data!;
+          //         } else if (selectedValue == "All") {
+          //           _tableData = snapshot.data!;
+          //         } else if (searchvalue.isNotEmpty) {
+          //           _tableData = snapshot.data!
+          //               .where((property) => property.insuranceCompany!
+          //                   .toLowerCase()
+          //                   .contains(searchvalue.toLowerCase()))
+          //               .toList();
+          //         } else {
+          //           _tableData = snapshot.data!
+          //               .where((property) =>
+          //                   property.insuranceCompany == selectedValue)
+          //               .toList();
+          //         }
+          //         totalrecords = _tableData.length;
+          //         return SingleChildScrollView(
+          //           child: Column(
+          //             children: [
+          //               Container(
+          //                 child: Padding(
+          //                   padding: const EdgeInsets.symmetric(
+          //                       horizontal: 24.0, vertical: 5),
+          //                   child: Column(
+          //                     children: [
+          //                       SingleChildScrollView(
+          //                         scrollDirection: Axis.horizontal,
+          //                         child: Container(
+          //                           width:
+          //                               MediaQuery.of(context).size.width * .91,
+          //                           child: Table(
+          //                             defaultColumnWidth:
+          //                                 IntrinsicColumnWidth(),
+          //                             children: [
+          //                               TableRow(
+          //                                 decoration: BoxDecoration(
+          //                                   border: Border.all(
+          //                                       // color: blueColor
+          //                                       ),
+          //                                 ),
+          //                                 children: [
+          //                                   _buildHeader(
+          //                                       'Main Type',
+          //                                       0,
+          //                                       (property) =>
+          //                                           property.tenantName!),
+          //                                   _buildHeader(
+          //                                       'Subtype',
+          //                                       1,
+          //                                       (property) =>
+          //                                           property.rentalAddress!),
+          //                                   _buildHeader(
+          //                                       'Created At',
+          //                                       2,
+          //                                       (property) =>
+          //                                           property.expirationDate!),
+          //                                 ],
+          //                               ),
+          //                               TableRow(
+          //                                 decoration: BoxDecoration(
+          //                                   border: Border.symmetric(
+          //                                       horizontal: BorderSide.none),
+          //                                 ),
+          //                                 children: List.generate(
+          //                                     3,
+          //                                     (index) => TableCell(
+          //                                         child:
+          //                                             Container(height: 20))),
+          //                               ),
+          //                               for (var i = 0;
+          //                                   i < _pagedData.length;
+          //                                   i++)
+          //                                 TableRow(
+          //                                   decoration: BoxDecoration(
+          //                                     border: Border(
+          //                                       left: BorderSide(
+          //                                           color: blueColor),
+          //                                       right: BorderSide(
+          //                                           color: blueColor),
+          //                                       top: BorderSide(
+          //                                           color: blueColor),
+          //                                       bottom:
+          //                                           i == _pagedData.length - 1
+          //                                               ? BorderSide(
+          //                                                   color: blueColor)
+          //                                               : BorderSide.none,
+          //                                     ),
+          //                                   ),
+          //                                   children: [
+          //                                     _buildDataCell(
+          //                                         _pagedData[i].tenantName!),
+          //                                     _buildDataCell(
+          //                                         _pagedData[i].rentalAddress!),
+          //                                     _buildDataCell(
+          //                                       formatDate(_pagedData[i]
+          //                                           .expirationDate!),
+          //                                     ),
+          //                                   ],
+          //                                 ),
+          //                             ],
+          //                           ),
+          //                         ),
+          //                       ),
+          //                       SizedBox(height: 25),
+          //                       _buildPaginationControls(),
+          //                     ],
+          //                   ),
+          //                 ),
+          //               ),
+          //               SizedBox(height: 25),
+          //             ],
+          //           ),
+          //         );
+          //       }
+          //     },
+          //   ),
         ],
       ),
     );

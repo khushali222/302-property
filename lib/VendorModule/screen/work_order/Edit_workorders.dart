@@ -23,6 +23,8 @@ import '../../widgets/appbar.dart';
 import '../../widgets/drawer_tiles.dart';
 import '../../../widgets/titleBar.dart';
 import 'package:http/http.dart' as http;
+import '../../../Model/All_categories_model.dart';
+import '../../../repository/fetch_allcategories.dart';
 
 class Edit_Workorder extends StatefulWidget {
   EditData? property;
@@ -48,6 +50,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
   bool _isLoadingstaff = false;
   bool _isLoadingtenant = false;
   bool _Loading = false;
+  bool _isLoadingCategories = false;
   Map<String, String> properties = {}; // Mapping of rental_id to rental_address
   Map<String, String> units = {}; // Mapping of unit_id to rental_unit
   String? _selectedPropertyId;
@@ -77,6 +80,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
     // _loadStaff();
     // _loadTenant();
     fetchWorkordersDetails(widget.workorderId);
+    _loadDropdownCategories();
     partsAndLabor.clear();
   }
 
@@ -84,7 +88,8 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
     //try {
     // await _loadProperties();
     EditData fetchedDetails =
-        await WorkOrderRepository().fetchWorkordersDetails(workorderId);
+    await WorkOrderRepository().fetchWorkordersDetails(workorderId);
+    print('fetchedDetails after fetch ${json.encode(fetchedDetails)}');
     print(workorderId);
 
     print('Address ${fetchedDetails.propertyData?.address}');
@@ -101,58 +106,73 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
     }
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
-      properties.addAll({
-        "${fetchedDetails.propertyData!.rental_id}":
-            "${fetchedDetails.propertyData!.address}"
-      });
+      if (fetchedDetails.propertyData != null) {
+        properties.addAll({
+          "${fetchedDetails.propertyData!.rental_id}":
+          "${fetchedDetails.propertyData!.address}"
+        });
+      }
 
       if (fetchedDetails.staffData != null)
         staffs.addAll({
           "${fetchedDetails.staffData!.staffmember_id}":
-              "${fetchedDetails.staffData!.staffName}"
+          "${fetchedDetails.staffData!.staffName}"
         });
       if (fetchedDetails.workOrderImages != null) {
         _imageUrls = fetchedDetails.workOrderImages!.map((fileName) {
           return '$fileName'; // Adjust the path as needed
         }).toList();
       }
-      print(fetchedDetails.workOrderImages);
+      print("    unit id is   ${fetchedDetails.unitId}");
+      print(
+          "    fetchedDetails.workCategory is   ${fetchedDetails.workCategory}");
       // print(fetchedDetails.rental.rentalAddress);
-      subject.text = fetchedDetails.workSubject!;
+      subject.text = fetchedDetails.workSubject ?? '';
       _selectedstaffId = fetchedDetails.staffData?.staffName;
-      _selectedCategory = fetchedDetails.workCategory;
-      perform.text = fetchedDetails.workPerformed!;
-      _selectedStatus = fetchedDetails.status!;
-      vendornote.text = fetchedDetails.vendorNotes!;
-      _dateController.text = fetchedDetails.date!;
-      _selectedOption = fetchedDetails.priority!;
+      // Set the selected dropdown category if it matches
+      if (fetchedDetails.workCategory != null &&
+          _dropdownCategories.isNotEmpty) {
+        final match = _dropdownCategories
+            .where((cat) => cat.name == fetchedDetails.workCategory)
+            .firstOrNull;
+        if (match != null) {
+          _selectedDropdownCategory = match;
+        }
+      }
+      perform.text = fetchedDetails.workPerformed ?? '';
+      _selectedStatus = fetchedDetails.status;
+      vendornote.text = fetchedDetails.vendorNotes ?? '';
+      _dateController.text = fetchedDetails.date ?? '';
+      _selectedOption = fetchedDetails.priority ?? 'Normal';
       _selectedPropertyId = fetchedDetails.rentalId;
-      renderId = fetchedDetails.rentalId!;
+      renderId = fetchedDetails.rentalId ?? '';
       _selectedUnitId = fetchedDetails.unitId;
-      isChecked = fetchedDetails.isBillable!;
+      isChecked = fetchedDetails.isBillable ?? false;
       _selectedvendorsId =
-          fetchedDetails.vendorId!.isEmpty ? null : fetchedDetails.vendorId;
+      fetchedDetails.vendorId == null || fetchedDetails.vendorId!.isEmpty
+          ? null
+          : fetchedDetails.vendorId;
       _selectedstaffId = fetchedDetails.staffmemberId;
       _selectedtenantId =
-          fetchedDetails.tenantId == null ? null : fetchedDetails.tenantId;
+      fetchedDetails.tenantId == null ? null : fetchedDetails.tenantId;
       _selectedEntry = entryAllowedString;
 
       partsAndLabor =
           fetchedDetails.partsandchargeData?.map<Map<String, dynamic>>((data) {
-                print(data.partsId);
-                return {
-                  "parts_id": data.partsId,
-                  "qtyController": TextEditingController(
-                      text: data.partsQuantity?.toString() ?? '0'),
-                  "selectedAccount": data.account ?? '',
-                  "descriptionController":
-                      TextEditingController(text: data.description ?? ''),
-                  "priceController": TextEditingController(
-                      text: data.partsPrice?.toString() ?? '0.0'),
-                  "totalController": TextEditingController(
-                      text: data.amount?.toString() ?? '0.0'),
-                };
-              }).toList() ??
+            print(data.partsId);
+            return {
+              "parts_id": data.partsId,
+              "qtyController": TextEditingController(
+                  text: data.partsQuantity?.toString() ?? '0'),
+              "selectedAccount": data.account ?? '',
+              "descriptionController":
+              TextEditingController(text: data.description ?? ''),
+              "priceController": TextEditingController(
+                  text: data.partsPrice?.toString() ?? '0.0'),
+              "totalController": TextEditingController(
+                  text: data.amount?.toString() ?? '0.0'),
+            };
+          }).toList() ??
               [];
       print(partsAndLabor);
       print(partsAndLabor.runtimeType);
@@ -163,9 +183,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
     });
 
     print(fetchedDetails.tenantId);
-    _loadUnits(_selectedPropertyId!);
-    if (_selectedUnitId != null) {
-      _loadTenant(_selectedPropertyId!, _selectedUnitId!);
+    if (_selectedPropertyId != null) {
+      _loadUnits(_selectedPropertyId!);
+      if (_selectedUnitId != null) {
+        _loadTenant(_selectedPropertyId!, _selectedUnitId!);
+      }
     }
     // _loadUnits(renderId)
     /* if (_selectedProperty != null) {
@@ -240,6 +262,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
               data['rental_unit'].toString();
         });
         //  200 no hoy tyare _loadtennant
+        print('unit addresses: $unitAddresses');
         setState(() {
           units = unitAddresses;
           _isLoading = false;
@@ -382,15 +405,27 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
     }
   }
 
-  String? _selectedCategory;
-  final List<String> _category = [
-    'Complaint',
-    'Contribution Request',
-    'Feedback/Suggestion',
-    'General Inquiry',
-    'Maintenance Request',
-    'Other'
-  ];
+  Future<void> _loadDropdownCategories() async {
+    setState(() {
+      _isLoadingCategories = true;
+    });
+    try {
+      final cats = await FetchAllcategories().fetchAllCategories();
+      print('Fetched categories in EditWorkOrder: ' + cats.toString());
+      setState(() {
+        _dropdownCategories = cats;
+        _isLoadingCategories = false;
+      });
+    } catch (e) {
+      print('Error fetching categories in EditWorkOrder: ' + e.toString());
+      setState(() {
+        _isLoadingCategories = false;
+      });
+    }
+  }
+
+  List<allcategories_model> _dropdownCategories = [];
+  allcategories_model? _selectedDropdownCategory;
   String? _selectedEntry;
   final List<String> _entry = [
     'true',
@@ -817,112 +852,113 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                     ),
                                     _imageUrls.isNotEmpty
                                         ? Row(
-                                            children: [
-                                              Expanded(
-                                                child: Container(
-                                                  child: Wrap(
-                                                    spacing:
-                                                        8.0, // Horizontal spacing between items
-                                                    runSpacing:
-                                                        8.0, // Vertical spacing between rows
-                                                    children: List.generate(
-                                                      _imageUrls.length,
-                                                      (index) {
-                                                        bool isMp4 = isVideo(
-                                                            _imageUrls[index]);
-                                                        return Container(
-                                                          width: 85,
-                                                          child: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Row(
+                                      children: [
+                                        Expanded(
+                                          child: Container(
+                                            child: Wrap(
+                                              spacing:
+                                              8.0, // Horizontal spacing between items
+                                              runSpacing:
+                                              8.0, // Vertical spacing between rows
+                                              children: List.generate(
+                                                _imageUrls.length,
+                                                    (index) {
+                                                  bool isMp4 = isVideo(
+                                                      _imageUrls[index]);
+                                                  return Container(
+                                                    width: 85,
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .start,
+                                                      crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .start,
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            const SizedBox(
+                                                                width:
+                                                                60),
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                setState(
+                                                                        () {
+                                                                      _imageUrls
+                                                                          .removeAt(index);
+                                                                    });
+                                                              },
+                                                              child:
+                                                              const Icon(
+                                                                Icons
+                                                                    .close,
+                                                                color: Colors
+                                                                    .grey,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                          crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                          children: [
+                                                            isMp4
+                                                                ? GestureDetector(
+                                                              onTap:
+                                                                  () {
+                                                                _showVideoDialog('$image_url${_imageUrls[index]}');
+                                                              },
+                                                              child:
+                                                              Stack(
+                                                                alignment:
+                                                                Alignment.center,
                                                                 children: [
-                                                                  const SizedBox(
-                                                                      width:
-                                                                          60),
-                                                                  GestureDetector(
-                                                                    onTap: () {
-                                                                      setState(
-                                                                          () {
-                                                                        _imageUrls
-                                                                            .removeAt(index);
-                                                                      });
-                                                                    },
-                                                                    child: const Icon(
-                                                                      Icons
-                                                                          .close,
-                                                                      color: Colors
-                                                                          .grey,
-                                                                    ),
-                                                                  ),
+                                                                  // Image.file(
+                                                                  // File(snapshot.data!),
+                                                                  // height:80,
+                                                                  // width: 80,
+                                                                  // fit: BoxFit.cover,
+                                                                  // ),
+                                                                  VideoItem(url: '$image_url${_imageUrls[index]}'),
+                                                                  const Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
                                                                 ],
                                                               ),
-                                                              Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  isMp4
-                                                                      ? GestureDetector(
-                                                                          onTap:
-                                                                              () {
-                                                                            _showVideoDialog('$image_url${_imageUrls[index]}');
-                                                                          },
-                                                                          child:
-                                                                              Stack(
-                                                                            alignment:
-                                                                                Alignment.center,
-                                                                            children: [
-                                                                              // Image.file(
-                                                                              // File(snapshot.data!),
-                                                                              // height:80,
-                                                                              // width: 80,
-                                                                              // fit: BoxFit.cover,
-                                                                              // ),
-                                                                              VideoItem(url: '$image_url${_imageUrls[index]}'),
-                                                                              const Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
-                                                                            ],
-                                                                          ),
-                                                                        )
-                                                                      : Container(
-                                                                          child:
-                                                                              Image.network(
-                                                                            "$image_url${_imageUrls[index]}",
-                                                                            height:
-                                                                                80,
-                                                                            width:
-                                                                                80,
-                                                                            fit:
-                                                                                BoxFit.cover,
-                                                                            errorBuilder: (context,
-                                                                                error,
-                                                                                stackTrace) {
-                                                                              return const Icon(Icons.error); // Placeholder for errors
-                                                                            },
-                                                                          ),
-                                                                        ),
-                                                                ],
+                                                            )
+                                                                : Container(
+                                                              child:
+                                                              Image.network(
+                                                                "$image_url${_imageUrls[index]}",
+                                                                height:
+                                                                80,
+                                                                width:
+                                                                80,
+                                                                fit:
+                                                                BoxFit.cover,
+                                                                errorBuilder: (context,
+                                                                    error,
+                                                                    stackTrace) {
+                                                                  return const Icon(Icons.error); // Placeholder for errors
+                                                                },
                                                               ),
-                                                            ],
-                                                          ),
-                                                        );
-                                                      },
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
                                                     ),
-                                                  ),
-                                                ),
+                                                  );
+                                                },
                                               ),
-                                            ],
-                                          )
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )
                                         : const Center(
-                                            child: Text("No images selected.")),
+                                        child: Text("No images selected.")),
                                     const SizedBox(
                                       height: 10,
                                     ),
@@ -931,21 +967,23 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                         Expanded(
                                           child: Column(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                            MainAxisAlignment.start,
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                             children: [
                                               const Text('Property *',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
-                                                          FontWeight.bold,
+                                                      FontWeight.bold,
                                                       color: Colors.grey)),
                                               DropdownButtonHideUnderline(
                                                 child: DropdownButtonFormField2<
                                                     String>(
-                                                  decoration: const InputDecoration(
-                                                      border: InputBorder.none),
+                                                  decoration:
+                                                  const InputDecoration(
+                                                      border:
+                                                      InputBorder.none),
                                                   isExpanded: true,
                                                   hint: const Row(
                                                     children: [
@@ -955,7 +993,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                           style: TextStyle(
                                                             fontSize: 14,
                                                             fontWeight:
-                                                                FontWeight.w400,
+                                                            FontWeight.w400,
                                                             color: Color(
                                                                 0xFFb0b6c3),
                                                           ),
@@ -975,7 +1013,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                         style: const TextStyle(
                                                           fontSize: 14,
                                                           fontWeight:
-                                                              FontWeight.w400,
+                                                          FontWeight.w400,
                                                           color: Colors.black87,
                                                         ),
                                                         overflow: TextOverflow
@@ -1003,55 +1041,55 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                     });
                                                   },*/
                                                   buttonStyleData:
-                                                      ButtonStyleData(
+                                                  ButtonStyleData(
                                                     height: 45,
                                                     width: 160,
                                                     padding:
-                                                        const EdgeInsets.only(
-                                                            left: 14,
-                                                            right: 14),
+                                                    const EdgeInsets.only(
+                                                        left: 14,
+                                                        right: 14),
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              6),
+                                                      BorderRadius.circular(
+                                                          6),
                                                       color: Colors.white,
                                                     ),
                                                     elevation: 2,
                                                   ),
                                                   iconStyleData:
-                                                      const IconStyleData(
+                                                  const IconStyleData(
                                                     icon: Icon(
                                                       Icons.arrow_drop_down,
                                                     ),
                                                     iconSize: 24,
                                                     iconEnabledColor:
-                                                        Color(0xFFb0b6c3),
+                                                    Color(0xFFb0b6c3),
                                                     iconDisabledColor:
-                                                        Colors.grey,
+                                                    Colors.grey,
                                                   ),
                                                   dropdownStyleData:
-                                                      DropdownStyleData(
+                                                  DropdownStyleData(
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              6),
+                                                      BorderRadius.circular(
+                                                          6),
                                                       color: Colors.white,
                                                     ),
                                                     scrollbarTheme:
-                                                        ScrollbarThemeData(
+                                                    ScrollbarThemeData(
                                                       radius:
-                                                          const Radius.circular(
-                                                              6),
+                                                      const Radius.circular(
+                                                          6),
                                                       thickness:
-                                                          MaterialStateProperty
-                                                              .all(6),
+                                                      MaterialStateProperty
+                                                          .all(6),
                                                       thumbVisibility:
-                                                          MaterialStateProperty
-                                                              .all(true),
+                                                      MaterialStateProperty
+                                                          .all(true),
                                                     ),
                                                   ),
                                                   menuItemStyleData:
-                                                      const MenuItemStyleData(
+                                                  const MenuItemStyleData(
                                                     height: 40,
                                                     padding: EdgeInsets.only(
                                                         left: 14, right: 14),
@@ -1074,74 +1112,81 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                             children: [
                                               units.isNotEmpty
                                                   ? const Text('Unit',
-                                                      style: TextStyle(
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.grey))
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      color: Colors.grey))
                                                   : Container(),
                                               const SizedBox(height: 0),
                                               units.isNotEmpty
                                                   ? DropdownButtonHideUnderline(
-                                                      child:
-                                                          DropdownButtonFormField2<
-                                                              String>(
-                                                        decoration:
-                                                            const InputDecoration(
-                                                                border:
-                                                                    InputBorder
-                                                                        .none),
-                                                        isExpanded: true,
-                                                        hint: const Row(
-                                                          children: [
-                                                            Expanded(
-                                                              child: Text(
-                                                                'Select Unit',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 14,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  color: Color(
-                                                                      0xFFb0b6c3),
-                                                                ),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                              ),
-                                                            ),
-                                                          ],
+                                                child:
+                                                DropdownButtonFormField2<
+                                                    String>(
+                                                  decoration:
+                                                  const InputDecoration(
+                                                      border:
+                                                      InputBorder
+                                                          .none),
+                                                  isExpanded: true,
+                                                  hint: const Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: Text(
+                                                          'Select Unit',
+                                                          style:
+                                                          TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .w400,
+                                                            color: Color(
+                                                                0xFFb0b6c3),
+                                                          ),
+                                                          overflow:
+                                                          TextOverflow
+                                                              .ellipsis,
                                                         ),
-                                                        items: units.keys
-                                                            .map((unitId) {
-                                                          return DropdownMenuItem<
-                                                              String>(
-                                                            value: unitId,
-                                                            child: Text(
-                                                              units[unitId]!,
-                                                              style:
-                                                                  const TextStyle(
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                color: Colors
-                                                                    .black87,
-                                                              ),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            ),
-                                                          );
-                                                        }).toList(),
-                                                        value: _selectedUnitId,
-                                                        onChanged:
-                                                            null /*(value) {
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  items: units.keys
+                                                      .map((unitId) {
+                                                    return DropdownMenuItem<
+                                                        String>(
+                                                      value: unitId,
+                                                      child: Text(
+                                                        units[unitId]!,
+                                                        style:
+                                                        const TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .w400,
+                                                          color: Colors
+                                                              .black87,
+                                                        ),
+                                                        overflow:
+                                                        TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                  value: _selectedUnitId ==
+                                                      null ||
+                                                      _selectedUnitId!
+                                                          .isEmpty ||
+                                                      !units.containsKey(
+                                                          _selectedUnitId)
+                                                      ? null
+                                                      : _selectedUnitId,
+                                                  onChanged:
+                                                  null /*(value) {
                                                 setState(() {
                                                   unitId = value.toString();
                                                   _selectedUnitId = value;
@@ -1153,75 +1198,75 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
 
                                                 });
                                               }*/
-                                                        ,
-                                                        buttonStyleData:
-                                                            ButtonStyleData(
-                                                          height: 45,
-                                                          width: 160,
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 14,
-                                                                  right: 14),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        6),
-                                                            color: Colors.white,
-                                                          ),
-                                                          elevation: 2,
-                                                        ),
-                                                        iconStyleData:
-                                                            const IconStyleData(
-                                                          icon: Icon(Icons
-                                                              .arrow_drop_down),
-                                                          iconSize: 24,
-                                                          iconEnabledColor:
-                                                              Color(0xFFb0b6c3),
-                                                          iconDisabledColor:
-                                                              Colors.grey,
-                                                        ),
-                                                        dropdownStyleData:
-                                                            DropdownStyleData(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        6),
-                                                            color: Colors.white,
-                                                          ),
-                                                          scrollbarTheme:
-                                                              ScrollbarThemeData(
-                                                            radius: const Radius
-                                                                .circular(6),
-                                                            thickness:
-                                                                MaterialStateProperty
-                                                                    .all(6),
-                                                            thumbVisibility:
-                                                                MaterialStateProperty
-                                                                    .all(true),
-                                                          ),
-                                                        ),
-                                                        menuItemStyleData:
-                                                            const MenuItemStyleData(
-                                                          height: 40,
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  left: 14,
-                                                                  right: 14),
-                                                        ),
-                                                        validator: (value) {
-                                                          if (value == null ||
-                                                              value.isEmpty) {
-                                                            return 'Please select an option';
-                                                          }
-                                                          return null;
-                                                        },
-                                                      ),
-                                                    )
+                                                  ,
+                                                  buttonStyleData:
+                                                  ButtonStyleData(
+                                                    height: 45,
+                                                    width: 160,
+                                                    padding:
+                                                    const EdgeInsets
+                                                        .only(
+                                                        left: 14,
+                                                        right: 14),
+                                                    decoration:
+                                                    BoxDecoration(
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(
+                                                          6),
+                                                      color: Colors.white,
+                                                    ),
+                                                    elevation: 2,
+                                                  ),
+                                                  iconStyleData:
+                                                  const IconStyleData(
+                                                    icon: Icon(Icons
+                                                        .arrow_drop_down),
+                                                    iconSize: 24,
+                                                    iconEnabledColor:
+                                                    Color(0xFFb0b6c3),
+                                                    iconDisabledColor:
+                                                    Colors.grey,
+                                                  ),
+                                                  dropdownStyleData:
+                                                  DropdownStyleData(
+                                                    decoration:
+                                                    BoxDecoration(
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(
+                                                          6),
+                                                      color: Colors.white,
+                                                    ),
+                                                    scrollbarTheme:
+                                                    ScrollbarThemeData(
+                                                      radius: const Radius
+                                                          .circular(6),
+                                                      thickness:
+                                                      MaterialStateProperty
+                                                          .all(6),
+                                                      thumbVisibility:
+                                                      MaterialStateProperty
+                                                          .all(true),
+                                                    ),
+                                                  ),
+                                                  menuItemStyleData:
+                                                  const MenuItemStyleData(
+                                                    height: 40,
+                                                    padding:
+                                                    EdgeInsets.only(
+                                                        left: 14,
+                                                        right: 14),
+                                                  ),
+                                                  validator: (value) {
+                                                    if (value == null ||
+                                                        value.isEmpty) {
+                                                      return 'Please select an option';
+                                                    }
+                                                    return null;
+                                                  },
+                                                ),
+                                              )
                                                   : Container(),
                                             ],
                                           ),
@@ -1236,97 +1281,108 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                     ),
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      MainAxisAlignment.start,
                                       children: [
                                         Expanded(
                                           child: Column(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                            MainAxisAlignment.start,
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                             children: [
                                               const Text('Category',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
-                                                          FontWeight.bold,
+                                                      FontWeight.bold,
                                                       color: Colors.grey)),
                                               const SizedBox(
                                                 height: 10,
                                               ),
                                               DropdownButtonHideUnderline(
-                                                child: DropdownButton2<String>(
+                                                child: DropdownButton2<
+                                                    allcategories_model>(
                                                   isExpanded: true,
-                                                  hint: const Text('Select Category'),
-                                                  value: _selectedCategory,
-                                                  items:
-                                                      _category.map((method) {
+                                                  hint: Text(_isLoadingCategories
+                                                      ? 'Loading categories...'
+                                                      : 'Select Category'),
+                                                  value: _dropdownCategories
+                                                      .contains(
+                                                      _selectedDropdownCategory)
+                                                      ? _selectedDropdownCategory
+                                                      : null,
+                                                  items: _dropdownCategories
+                                                      .map((cat) {
                                                     return DropdownMenuItem<
-                                                        String>(
-                                                      value: method,
-                                                      child: Text(method),
+                                                        allcategories_model>(
+                                                      value: cat,
+                                                      child:
+                                                      Text(cat.name ?? ''),
                                                     );
                                                   }).toList(),
                                                   onChanged:
-                                                      null /*(String? newValue) {
-                                                setState(() {
-                                                  _selectedCategory = newValue;
-                                                  _showTextField = _selectedCategory == 'Other';
-
-                                                });
-                                                print('Selected category: $_selectedCategory');
-                                              }*/
-                                                  ,
+                                                  _isLoadingCategories
+                                                      ? null // disables dropdown while loading
+                                                      : (allcategories_model?
+                                                  newValue) {
+                                                    setState(() {
+                                                      _selectedDropdownCategory =
+                                                          newValue;
+                                                      _showTextField =
+                                                          newValue?.name ==
+                                                              'Other';
+                                                    });
+                                                  },
                                                   buttonStyleData:
-                                                      ButtonStyleData(
+                                                  ButtonStyleData(
                                                     height: 45,
                                                     width: 250,
                                                     padding:
-                                                        const EdgeInsets.only(
-                                                            left: 14,
-                                                            right: 14),
+                                                    const EdgeInsets.only(
+                                                        left: 14,
+                                                        right: 14),
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              6),
+                                                      BorderRadius.circular(
+                                                          6),
                                                       color: Colors.white,
                                                     ),
                                                     elevation: 2,
                                                   ),
                                                   iconStyleData:
-                                                      const IconStyleData(
+                                                  const IconStyleData(
                                                     icon: Icon(
                                                       Icons.arrow_drop_down,
                                                     ),
                                                     iconSize: 24,
                                                     iconEnabledColor:
-                                                        Color(0xFFb0b6c3),
+                                                    Color(0xFFb0b6c3),
                                                     iconDisabledColor:
-                                                        Colors.grey,
+                                                    Colors.grey,
                                                   ),
                                                   dropdownStyleData:
-                                                      DropdownStyleData(
+                                                  DropdownStyleData(
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              6),
+                                                      BorderRadius.circular(
+                                                          6),
                                                       color: Colors.white,
                                                     ),
                                                     scrollbarTheme:
-                                                        ScrollbarThemeData(
+                                                    ScrollbarThemeData(
                                                       radius:
-                                                          const Radius.circular(
-                                                              6),
+                                                      const Radius.circular(
+                                                          6),
                                                       thickness:
-                                                          MaterialStateProperty
-                                                              .all(6),
+                                                      MaterialStateProperty
+                                                          .all(6),
                                                       thumbVisibility:
-                                                          MaterialStateProperty
-                                                              .all(true),
+                                                      MaterialStateProperty
+                                                          .all(true),
                                                     ),
                                                   ),
                                                   menuItemStyleData:
-                                                      const MenuItemStyleData(
+                                                  const MenuItemStyleData(
                                                     height: 50,
                                                     padding: EdgeInsets.only(
                                                         left: 14, right: 14),
@@ -1342,15 +1398,15 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                         Expanded(
                                           child: Column(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                            MainAxisAlignment.start,
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                             children: [
                                               const Text('Entery allowed ',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
-                                                          FontWeight.bold,
+                                                      FontWeight.bold,
                                                       color: Colors.grey)),
                                               const SizedBox(
                                                 height: 10,
@@ -1368,7 +1424,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                     );
                                                   }).toList(),
                                                   onChanged:
-                                                      null /*(String? newValue) {
+                                                  null /*(String? newValue) {
                                                                                   setState(() {
                                               _selectedEntry = newValue;
                                               //_selectedPaymentMethod = addRow();
@@ -1380,54 +1436,54 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                                                 }*/
                                                   ,
                                                   buttonStyleData:
-                                                      ButtonStyleData(
+                                                  ButtonStyleData(
                                                     height: 45,
                                                     padding:
-                                                        const EdgeInsets.only(
-                                                            left: 14,
-                                                            right: 14),
+                                                    const EdgeInsets.only(
+                                                        left: 14,
+                                                        right: 14),
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              6),
+                                                      BorderRadius.circular(
+                                                          6),
                                                       color: Colors.white,
                                                     ),
                                                     elevation: 2,
                                                   ),
                                                   iconStyleData:
-                                                      const IconStyleData(
+                                                  const IconStyleData(
                                                     icon: Icon(
                                                       Icons.arrow_drop_down,
                                                     ),
                                                     iconSize: 24,
                                                     iconEnabledColor:
-                                                        Color(0xFFb0b6c3),
+                                                    Color(0xFFb0b6c3),
                                                     iconDisabledColor:
-                                                        Colors.grey,
+                                                    Colors.grey,
                                                   ),
                                                   dropdownStyleData:
-                                                      DropdownStyleData(
+                                                  DropdownStyleData(
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              6),
+                                                      BorderRadius.circular(
+                                                          6),
                                                       color: Colors.white,
                                                     ),
                                                     scrollbarTheme:
-                                                        ScrollbarThemeData(
+                                                    ScrollbarThemeData(
                                                       radius:
-                                                          const Radius.circular(
-                                                              6),
+                                                      const Radius.circular(
+                                                          6),
                                                       thickness:
-                                                          MaterialStateProperty
-                                                              .all(6),
+                                                      MaterialStateProperty
+                                                          .all(6),
                                                       thumbVisibility:
-                                                          MaterialStateProperty
-                                                              .all(true),
+                                                      MaterialStateProperty
+                                                          .all(true),
                                                     ),
                                                   ),
                                                   menuItemStyleData:
-                                                      const MenuItemStyleData(
+                                                  const MenuItemStyleData(
                                                     height: 40,
                                                     padding: EdgeInsets.only(
                                                         left: 14, right: 14),
@@ -1440,93 +1496,93 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                         Expanded(
                                           child: Column(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                            MainAxisAlignment.start,
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                             children: [
                                               const Text('Assigned To *',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
-                                                          FontWeight.bold,
+                                                      FontWeight.bold,
                                                       color: Colors.grey)),
                                               const SizedBox(
                                                 height: 2,
                                               ),
                                               _isLoadingstaff
                                                   ? const Center(
-                                                      child:
-                                                          SpinKitFadingCircle(
-                                                        color: Colors.black,
-                                                        size: 50.0,
-                                                      ),
-                                                    )
+                                                child:
+                                                SpinKitFadingCircle(
+                                                  color: Colors.black,
+                                                  size: 50.0,
+                                                ),
+                                              )
                                                   : Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        DropdownButtonHideUnderline(
-                                                          child:
-                                                              DropdownButtonFormField2<
-                                                                  String>(
-                                                            decoration:
-                                                                const InputDecoration(
-                                                                    border:
-                                                                        InputBorder
-                                                                            .none),
-                                                            isExpanded: true,
-                                                            hint: const Row(
-                                                              children: [
-                                                                Expanded(
-                                                                  child: Text(
-                                                                    'Select here',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          14,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w400,
-                                                                      color: Color(
-                                                                          0xFFb0b6c3),
-                                                                    ),
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                  ),
-                                                                ),
-                                                              ],
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment
+                                                    .start,
+                                                children: [
+                                                  DropdownButtonHideUnderline(
+                                                    child:
+                                                    DropdownButtonFormField2<
+                                                        String>(
+                                                      decoration:
+                                                      const InputDecoration(
+                                                          border:
+                                                          InputBorder
+                                                              .none),
+                                                      isExpanded: true,
+                                                      hint: const Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child: Text(
+                                                              'Select here',
+                                                              style:
+                                                              TextStyle(
+                                                                fontSize:
+                                                                14,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .w400,
+                                                                color: Color(
+                                                                    0xFFb0b6c3),
+                                                              ),
+                                                              overflow:
+                                                              TextOverflow
+                                                                  .ellipsis,
                                                             ),
-                                                            items: staffs.keys.map(
-                                                                (staffmember_id) {
-                                                              return DropdownMenuItem<
-                                                                  String>(
-                                                                value:
-                                                                    staffmember_id,
-                                                                child: Text(
-                                                                  staffs[
-                                                                      staffmember_id]!,
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    fontSize:
-                                                                        14,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
-                                                                    color: Colors
-                                                                        .black87,
-                                                                  ),
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      items: staffs.keys.map(
+                                                              (staffmember_id) {
+                                                            return DropdownMenuItem<
+                                                                String>(
+                                                              value:
+                                                              staffmember_id,
+                                                              child: Text(
+                                                                staffs[
+                                                                staffmember_id]!,
+                                                                style:
+                                                                const TextStyle(
+                                                                  fontSize:
+                                                                  14,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                                  color: Colors
+                                                                      .black87,
                                                                 ),
-                                                              );
-                                                            }).toList(),
-                                                            value:
-                                                                _selectedstaffId,
-                                                            onChanged:
-                                                                null /*(value) {
+                                                                overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                              ),
+                                                            );
+                                                          }).toList(),
+                                                      value:
+                                                      _selectedstaffId,
+                                                      onChanged:
+                                                      null /*(value) {
                                                 setState(() {
                                                   // _selectedUnitId = null;
                                                   _selectedstaffId = value;
@@ -1540,89 +1596,89 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                       value!); // Fetch units for the selected property
                                                 });
                                               }*/
-                                                            ,
-                                                            buttonStyleData:
-                                                                ButtonStyleData(
-                                                              height: 45,
-                                                              width: 160,
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      left: 14,
-                                                                      right:
-                                                                          14),
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            6),
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                              elevation: 2,
-                                                            ),
-                                                            iconStyleData:
-                                                                const IconStyleData(
-                                                              icon: Icon(
-                                                                Icons
-                                                                    .arrow_drop_down,
-                                                              ),
-                                                              iconSize: 24,
-                                                              iconEnabledColor:
-                                                                  Color(
-                                                                      0xFFb0b6c3),
-                                                              iconDisabledColor:
-                                                                  Colors.grey,
-                                                            ),
-                                                            dropdownStyleData:
-                                                                DropdownStyleData(
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            6),
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                              scrollbarTheme:
-                                                                  ScrollbarThemeData(
-                                                                radius:
-                                                                    const Radius
-                                                                        .circular(
-                                                                        6),
-                                                                thickness:
-                                                                    MaterialStateProperty
-                                                                        .all(6),
-                                                                thumbVisibility:
-                                                                    MaterialStateProperty
-                                                                        .all(
-                                                                            true),
-                                                              ),
-                                                            ),
-                                                            menuItemStyleData:
-                                                                const MenuItemStyleData(
-                                                              height: 40,
-                                                              padding: EdgeInsets
-                                                                  .only(
-                                                                      left: 14,
-                                                                      right:
-                                                                          14),
-                                                            ),
-                                                            validator: (value) {
-                                                              if (value ==
-                                                                      null ||
-                                                                  value
-                                                                      .isEmpty) {
-                                                                return 'Please select an option';
-                                                              }
-                                                              return null;
-                                                            },
-                                                          ),
+                                                      ,
+                                                      buttonStyleData:
+                                                      ButtonStyleData(
+                                                        height: 45,
+                                                        width: 160,
+                                                        padding:
+                                                        const EdgeInsets
+                                                            .only(
+                                                            left: 14,
+                                                            right:
+                                                            14),
+                                                        decoration:
+                                                        BoxDecoration(
+                                                          borderRadius:
+                                                          BorderRadius
+                                                              .circular(
+                                                              6),
+                                                          color: Colors
+                                                              .white,
                                                         ),
-                                                      ],
+                                                        elevation: 2,
+                                                      ),
+                                                      iconStyleData:
+                                                      const IconStyleData(
+                                                        icon: Icon(
+                                                          Icons
+                                                              .arrow_drop_down,
+                                                        ),
+                                                        iconSize: 24,
+                                                        iconEnabledColor:
+                                                        Color(
+                                                            0xFFb0b6c3),
+                                                        iconDisabledColor:
+                                                        Colors.grey,
+                                                      ),
+                                                      dropdownStyleData:
+                                                      DropdownStyleData(
+                                                        decoration:
+                                                        BoxDecoration(
+                                                          borderRadius:
+                                                          BorderRadius
+                                                              .circular(
+                                                              6),
+                                                          color: Colors
+                                                              .white,
+                                                        ),
+                                                        scrollbarTheme:
+                                                        ScrollbarThemeData(
+                                                          radius:
+                                                          const Radius
+                                                              .circular(
+                                                              6),
+                                                          thickness:
+                                                          MaterialStateProperty
+                                                              .all(6),
+                                                          thumbVisibility:
+                                                          MaterialStateProperty
+                                                              .all(
+                                                              true),
+                                                        ),
+                                                      ),
+                                                      menuItemStyleData:
+                                                      const MenuItemStyleData(
+                                                        height: 40,
+                                                        padding: EdgeInsets
+                                                            .only(
+                                                            left: 14,
+                                                            right:
+                                                            14),
+                                                      ),
+                                                      validator: (value) {
+                                                        if (value ==
+                                                            null ||
+                                                            value
+                                                                .isEmpty) {
+                                                          return 'Please select an option';
+                                                        }
+                                                        return null;
+                                                      },
                                                     ),
+                                                  ),
+                                                ],
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -1712,7 +1768,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                 style: TextStyle(
                                                     color: blueColor,
                                                     fontWeight:
-                                                        FontWeight.bold)),
+                                                    FontWeight.bold)),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),
@@ -1720,7 +1776,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                 style: TextStyle(
                                                     color: blueColor,
                                                     fontWeight:
-                                                        FontWeight.bold)),
+                                                    FontWeight.bold)),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),
@@ -1728,7 +1784,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                 style: TextStyle(
                                                     color: blueColor,
                                                     fontWeight:
-                                                        FontWeight.bold)),
+                                                    FontWeight.bold)),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),
@@ -1736,7 +1792,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                 style: TextStyle(
                                                     color: blueColor,
                                                     fontWeight:
-                                                        FontWeight.bold)),
+                                                    FontWeight.bold)),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),
@@ -1744,7 +1800,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                 style: TextStyle(
                                                     color: blueColor,
                                                     fontWeight:
-                                                        FontWeight.bold)),
+                                                    FontWeight.bold)),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),
@@ -1752,7 +1808,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                 style: TextStyle(
                                                     color: blueColor,
                                                     fontWeight:
-                                                        FontWeight.bold)),
+                                                    FontWeight.bold)),
                                           ),
                                         ]),
                                         /* ...summery.partsandchargeData!.asMap().entries.map((entry) {
@@ -1789,24 +1845,26 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                           int index = entry.key;
                                           return TableRow(children: [
                                             Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                              const EdgeInsets.all(8.0),
                                               child: CustomTextField(
                                                 hintText: 'Quantity',
                                                 controller: partsAndLabor[index]
-                                                    ['qtyController'],
+                                                ['qtyController'],
                                                 keyboardType:
-                                                    TextInputType.number,
+                                                TextInputType.number,
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                              const EdgeInsets.all(8.0),
                                               child:
-                                                  DropdownButtonHideUnderline(
+                                              DropdownButtonHideUnderline(
                                                 child: DropdownButton2<String>(
                                                   isExpanded: true,
                                                   hint: const Text('Select'),
                                                   value: partsAndLabor[index]
-                                                      ['selectedAccount'],
+                                                  ['selectedAccount'],
                                                   items: _account.map((method) {
                                                     return DropdownMenuItem<
                                                         String>(
@@ -1818,62 +1876,62 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                       (String? newValue) {
                                                     setState(() {
                                                       partsAndLabor[index][
-                                                              'selectedAccount'] =
+                                                      'selectedAccount'] =
                                                           newValue;
                                                     });
                                                     print(
                                                         'Selected account: ${partsAndLabor[index]['selectedAccount']}');
                                                   },
                                                   buttonStyleData:
-                                                      ButtonStyleData(
+                                                  ButtonStyleData(
                                                     height: 45,
                                                     // width: 300,
                                                     padding:
-                                                        const EdgeInsets.only(
-                                                            left: 14,
-                                                            right: 14),
+                                                    const EdgeInsets.only(
+                                                        left: 14,
+                                                        right: 14),
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              6),
+                                                      BorderRadius.circular(
+                                                          6),
                                                       color: Colors.white,
                                                     ),
                                                     elevation: 2,
                                                   ),
                                                   iconStyleData:
-                                                      const IconStyleData(
+                                                  const IconStyleData(
                                                     icon: Icon(
                                                       Icons.arrow_drop_down,
                                                     ),
                                                     iconSize: 24,
                                                     iconEnabledColor:
-                                                        Color(0xFFb0b6c3),
+                                                    Color(0xFFb0b6c3),
                                                     iconDisabledColor:
-                                                        Colors.grey,
+                                                    Colors.grey,
                                                   ),
                                                   dropdownStyleData:
-                                                      DropdownStyleData(
+                                                  DropdownStyleData(
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              6),
+                                                      BorderRadius.circular(
+                                                          6),
                                                       color: Colors.white,
                                                     ),
                                                     scrollbarTheme:
-                                                        ScrollbarThemeData(
+                                                    ScrollbarThemeData(
                                                       radius:
-                                                          const Radius.circular(
-                                                              6),
+                                                      const Radius.circular(
+                                                          6),
                                                       thickness:
-                                                          MaterialStateProperty
-                                                              .all(6),
+                                                      MaterialStateProperty
+                                                          .all(6),
                                                       thumbVisibility:
-                                                          MaterialStateProperty
-                                                              .all(true),
+                                                      MaterialStateProperty
+                                                          .all(true),
                                                     ),
                                                   ),
                                                   menuItemStyleData:
-                                                      const MenuItemStyleData(
+                                                  const MenuItemStyleData(
                                                     height: 50,
                                                     padding: EdgeInsets.only(
                                                         left: 14, right: 14),
@@ -1882,38 +1940,42 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                              const EdgeInsets.all(8.0),
                                               child: CustomTextField(
                                                 hintText: 'Description',
                                                 controller: partsAndLabor[index]
-                                                    ['descriptionController'],
+                                                ['descriptionController'],
                                                 keyboardType:
-                                                    TextInputType.text,
+                                                TextInputType.text,
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                              const EdgeInsets.all(8.0),
                                               child: CustomTextField(
                                                 hintText: 'Price',
                                                 controller: partsAndLabor[index]
-                                                    ['priceController'],
+                                                ['priceController'],
                                                 keyboardType:
-                                                    TextInputType.number,
+                                                TextInputType.number,
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                              const EdgeInsets.all(8.0),
                                               child: CustomTextField(
                                                 hintText: 'Total',
                                                 controller: partsAndLabor[index]
-                                                    ['totalController'],
+                                                ['totalController'],
                                                 keyboardType:
-                                                    TextInputType.number,
+                                                TextInputType.number,
                                                 readOnnly: true,
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                              const EdgeInsets.all(8.0),
                                               child: IconButton(
                                                 icon: const Icon(Icons.close,
                                                     color: Colors.black),
@@ -1941,28 +2003,28 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                             child: Text('Total',
                                                 style: TextStyle(
                                                     fontWeight:
-                                                        FontWeight.bold)),
+                                                    FontWeight.bold)),
                                           ),
                                           const Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('',
                                                 style: TextStyle(
                                                     fontWeight:
-                                                        FontWeight.bold)),
+                                                    FontWeight.bold)),
                                           ),
                                           const Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('',
                                                 style: TextStyle(
                                                     fontWeight:
-                                                        FontWeight.bold)),
+                                                    FontWeight.bold)),
                                           ),
                                           const Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Text('',
                                                 style: TextStyle(
                                                     fontWeight:
-                                                        FontWeight.bold)),
+                                                    FontWeight.bold)),
                                           ),
                                           /* const Padding(
                                             padding: EdgeInsets.all(8.0),
@@ -2197,9 +2259,9 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                     ),
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      MainAxisAlignment.start,
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                      CrossAxisAlignment.center,
                                       children: [
                                         Expanded(
                                           flex: 1,
@@ -2209,7 +2271,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                               value: 'High',
                                               groupValue: _selectedOption,
                                               onChanged:
-                                                  _handleRadioValueChange,
+                                              _handleRadioValueChange,
                                             ),
                                           ),
                                         ),
@@ -2221,7 +2283,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                               value: 'Normal',
                                               groupValue: _selectedOption,
                                               onChanged:
-                                                  _handleRadioValueChange,
+                                              _handleRadioValueChange,
                                             ),
                                           ),
                                         ),
@@ -2233,7 +2295,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                               value: 'Low',
                                               groupValue: _selectedOption,
                                               onChanged:
-                                                  _handleRadioValueChange,
+                                              _handleRadioValueChange,
                                             ),
                                           ),
                                         ),
@@ -2253,15 +2315,15 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                         Expanded(
                                           child: Column(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                            MainAxisAlignment.start,
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                             children: [
                                               const Text('Status *',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
-                                                          FontWeight.bold,
+                                                      FontWeight.bold,
                                                       color: Colors.grey)),
                                               const SizedBox(
                                                 height: 10,
@@ -2288,55 +2350,55 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                         'Selected category: $_selectedStatus');
                                                   },
                                                   buttonStyleData:
-                                                      ButtonStyleData(
+                                                  ButtonStyleData(
                                                     height: 45,
                                                     width: 200,
                                                     padding:
-                                                        const EdgeInsets.only(
-                                                            left: 14,
-                                                            right: 14),
+                                                    const EdgeInsets.only(
+                                                        left: 14,
+                                                        right: 14),
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              6),
+                                                      BorderRadius.circular(
+                                                          6),
                                                       color: Colors.white,
                                                     ),
                                                     elevation: 2,
                                                   ),
                                                   iconStyleData:
-                                                      const IconStyleData(
+                                                  const IconStyleData(
                                                     icon: Icon(
                                                       Icons.arrow_drop_down,
                                                     ),
                                                     iconSize: 24,
                                                     iconEnabledColor:
-                                                        Color(0xFFb0b6c3),
+                                                    Color(0xFFb0b6c3),
                                                     iconDisabledColor:
-                                                        Colors.grey,
+                                                    Colors.grey,
                                                   ),
                                                   dropdownStyleData:
-                                                      DropdownStyleData(
+                                                  DropdownStyleData(
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              6),
+                                                      BorderRadius.circular(
+                                                          6),
                                                       color: Colors.white,
                                                     ),
                                                     scrollbarTheme:
-                                                        ScrollbarThemeData(
+                                                    ScrollbarThemeData(
                                                       radius:
-                                                          const Radius.circular(
-                                                              6),
+                                                      const Radius.circular(
+                                                          6),
                                                       thickness:
-                                                          MaterialStateProperty
-                                                              .all(6),
+                                                      MaterialStateProperty
+                                                          .all(6),
                                                       thumbVisibility:
-                                                          MaterialStateProperty
-                                                              .all(true),
+                                                      MaterialStateProperty
+                                                          .all(true),
                                                     ),
                                                   ),
                                                   menuItemStyleData:
-                                                      const MenuItemStyleData(
+                                                  const MenuItemStyleData(
                                                     height: 40,
                                                     padding: EdgeInsets.only(
                                                         left: 14, right: 14),
@@ -2353,15 +2415,15 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                           flex: 1,
                                           child: Column(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                            MainAxisAlignment.start,
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                             children: [
                                               const Text('Due Date',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
-                                                          FontWeight.bold,
+                                                      FontWeight.bold,
                                                       color: Colors.grey)),
                                               const SizedBox(
                                                 height: 10,
@@ -2369,9 +2431,9 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                               Container(
                                                 height: 46,
                                                 padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 12.0,
-                                                        vertical: 0),
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 12.0,
+                                                    vertical: 0),
                                                 decoration: BoxDecoration(
                                                     color: Colors.white,
                                                     boxShadow: [
@@ -2380,17 +2442,17 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                         offset: Offset(1.0,
                                                             1.0), // Shadow offset to the bottom right
                                                         blurRadius:
-                                                            8.0, // How much to blur the shadow
+                                                        8.0, // How much to blur the shadow
                                                         spreadRadius:
-                                                            0.0, // How much the shadow should spread
+                                                        0.0, // How much the shadow should spread
                                                       ),
                                                     ],
                                                     border: Border.all(
                                                         width: 0,
                                                         color: Colors.white),
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            6.0)),
+                                                    BorderRadius.circular(
+                                                        6.0)),
                                                 child: TextFormField(
                                                   style: const TextStyle(
                                                     color: Color(
@@ -2403,10 +2465,10 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                   decoration: InputDecoration(
                                                     hintStyle: const TextStyle(
                                                         fontWeight:
-                                                            FontWeight.w500,
+                                                        FontWeight.w500,
                                                         fontSize: 13,
                                                         color:
-                                                            Color(0xFFb0b6c3)),
+                                                        Color(0xFFb0b6c3)),
                                                     border: InputBorder.none,
                                                     // labelText: 'Select Date',
                                                     hintText: 'yyyy-mm-dd',
@@ -2458,22 +2520,22 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                       backgroundColor: blueColor,
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
-                                            BorderRadius.circular(8.0),
+                                        BorderRadius.circular(8.0),
                                       ),
                                     ),
                                     onPressed: _submitForm,
                                     child: isloading
                                         ? const Center(
-                                            child: SpinKitFadingCircle(
-                                              color: Colors.white,
-                                              size: 55.0,
-                                            ),
-                                          )
+                                      child: SpinKitFadingCircle(
+                                        color: Colors.white,
+                                        size: 55.0,
+                                      ),
+                                    )
                                         : const Text(
-                                            'Update Work Order',
-                                            style: TextStyle(
-                                                color: Color(0xFFf7f8f9)),
-                                          ),
+                                      'Update Work Order',
+                                      style: TextStyle(
+                                          color: Color(0xFFf7f8f9)),
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(
@@ -2484,14 +2546,15 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                     width: 120,
                                     decoration: BoxDecoration(
                                         borderRadius:
-                                            BorderRadius.circular(8.0)),
+                                        BorderRadius.circular(8.0)),
                                     child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                            backgroundColor: const Color(0xFFffffff),
+                                            backgroundColor:
+                                            const Color(0xFFffffff),
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
-                                                    BorderRadius.circular(
-                                                        8.0))),
+                                                BorderRadius.circular(
+                                                    8.0))),
                                         onPressed: () {
                                           Navigator.pop(context);
                                         },
@@ -2604,114 +2667,114 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               // ),
                               _imageUrls.isNotEmpty
                                   ? Row(
-                                      children: [
-                                        Expanded(
-                                          child: Container(
-                                            child: Wrap(
-                                              spacing:
-                                                  8.0, // Horizontal spacing between items
-                                              runSpacing:
-                                                  8.0, // Vertical spacing between rows
-                                              children: List.generate(
-                                                _imageUrls.length,
-                                                (index) {
-                                                  bool isMp4 = isVideo(
-                                                      _imageUrls[index]);
-                                                  return Container(
-                                                    width: 85,
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        // Row(
-                                                        //   children: [
-                                                        //     SizedBox(width: 60),
-                                                        //     GestureDetector(
-                                                        //       onTap: () {
-                                                        //         setState(() {
-                                                        //           _imageUrls.removeAt(index);
-                                                        //         });
-                                                        //       },
-                                                        //       child: Icon(
-                                                        //         Icons.close,
-                                                        //         color: Colors.grey,
-                                                        //       ),
-                                                        //     ),
-                                                        //   ],
-                                                        // ),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            isMp4
-                                                                ? Container(
-                                                                    height: 80,
-                                                                    width: 80,
-                                                                    child:
-                                                                        GestureDetector(
-                                                                      onTap:
-                                                                          () {
-                                                                        _showVideoDialog(
-                                                                            '$image_url${_imageUrls[index]}');
-                                                                      },
-                                                                      child:
-                                                                          Stack(
-                                                                        alignment:
-                                                                            Alignment.center,
-                                                                        children: [
-                                                                          // Image.file(
-                                                                          //   File(snapshot.data!),
-                                                                          //   height: 80,
-                                                                          //   width: 80,
-                                                                          //   fit: BoxFit.cover,
-                                                                          // ),
-                                                                          VideoItem(
-                                                                              url: '$image_url${_imageUrls[index]}'),
-                                                                          const Icon(
-                                                                              Icons.play_circle_fill,
-                                                                              color: Colors.white,
-                                                                              size: 40),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  )
-                                                                : Container(
-                                                                    child: Image
-                                                                        .network(
-                                                                      "$image_url${_imageUrls[index]}",
-                                                                      height:
-                                                                          80,
-                                                                      width: 80,
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                      errorBuilder: (context,
-                                                                          error,
-                                                                          stackTrace) {
-                                                                        return const Icon(
-                                                                            Icons.error); // Placeholder for errors
-                                                                      },
-                                                                    ),
-                                                                  ),
-                                                          ],
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      child: Wrap(
+                                        spacing:
+                                        8.0, // Horizontal spacing between items
+                                        runSpacing:
+                                        8.0, // Vertical spacing between rows
+                                        children: List.generate(
+                                          _imageUrls.length,
+                                              (index) {
+                                            bool isMp4 = isVideo(
+                                                _imageUrls[index]);
+                                            return Container(
+                                              width: 85,
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .start,
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment
+                                                    .start,
+                                                children: [
+                                                  // Row(
+                                                  //   children: [
+                                                  //     SizedBox(width: 60),
+                                                  //     GestureDetector(
+                                                  //       onTap: () {
+                                                  //         setState(() {
+                                                  //           _imageUrls.removeAt(index);
+                                                  //         });
+                                                  //       },
+                                                  //       child: Icon(
+                                                  //         Icons.close,
+                                                  //         color: Colors.grey,
+                                                  //       ),
+                                                  //     ),
+                                                  //   ],
+                                                  // ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .start,
+                                                    crossAxisAlignment:
+                                                    CrossAxisAlignment
+                                                        .start,
+                                                    children: [
+                                                      isMp4
+                                                          ? Container(
+                                                        height: 80,
+                                                        width: 80,
+                                                        child:
+                                                        GestureDetector(
+                                                          onTap:
+                                                              () {
+                                                            _showVideoDialog(
+                                                                '$image_url${_imageUrls[index]}');
+                                                          },
+                                                          child:
+                                                          Stack(
+                                                            alignment:
+                                                            Alignment.center,
+                                                            children: [
+                                                              // Image.file(
+                                                              //   File(snapshot.data!),
+                                                              //   height: 80,
+                                                              //   width: 80,
+                                                              //   fit: BoxFit.cover,
+                                                              // ),
+                                                              VideoItem(
+                                                                  url: '$image_url${_imageUrls[index]}'),
+                                                              const Icon(
+                                                                  Icons.play_circle_fill,
+                                                                  color: Colors.white,
+                                                                  size: 40),
+                                                            ],
+                                                          ),
                                                         ),
-                                                      ],
-                                                    ),
-                                                  );
-                                                },
+                                                      )
+                                                          : Container(
+                                                        child: Image
+                                                            .network(
+                                                          "$image_url${_imageUrls[index]}",
+                                                          height:
+                                                          80,
+                                                          width: 80,
+                                                          fit: BoxFit
+                                                              .cover,
+                                                          errorBuilder: (context,
+                                                              error,
+                                                              stackTrace) {
+                                                            return const Icon(
+                                                                Icons.error); // Placeholder for errors
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
                                               ),
-                                            ),
-                                          ),
+                                            );
+                                          },
                                         ),
-                                      ],
-                                    )
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
                                   : const Center(child: Text("")),
                               const SizedBox(
                                 height: 10,
@@ -2726,57 +2789,57 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               ),
                               _isLoading
                                   ? const Center(
-                                      child: SpinKitFadingCircle(
-                                        color: Colors.black,
-                                        size: 50.0,
-                                      ),
-                                    )
+                                child: SpinKitFadingCircle(
+                                  color: Colors.black,
+                                  size: 50.0,
+                                ),
+                              )
                                   : Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        DropdownButtonHideUnderline(
-                                          child:
-                                              DropdownButtonFormField2<String>(
-                                            decoration: const InputDecoration(
-                                                border: InputBorder.none),
-                                            isExpanded: true,
-                                            hint: const Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Text(
-                                                    'Select Property',
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      color: Color(0xFFb0b6c3),
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ),
-                                              ],
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: [
+                                  DropdownButtonHideUnderline(
+                                    child:
+                                    DropdownButtonFormField2<String>(
+                                      decoration: const InputDecoration(
+                                          border: InputBorder.none),
+                                      isExpanded: true,
+                                      hint: const Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              'Select Property',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight:
+                                                FontWeight.w400,
+                                                color: Color(0xFFb0b6c3),
+                                              ),
+                                              overflow:
+                                              TextOverflow.ellipsis,
                                             ),
-                                            items:
-                                                properties.keys.map((rentalId) {
-                                              return DropdownMenuItem<String>(
-                                                value: rentalId,
-                                                child: Text(
-                                                  properties[rentalId]!,
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w400,
-                                                    color: Colors.black87,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              );
-                                            }).toList(),
-                                            value: _selectedPropertyId,
-                                            onChanged: null,
-                                            /*(value) {
+                                          ),
+                                        ],
+                                      ),
+                                      items:
+                                      properties.keys.map((rentalId) {
+                                        return DropdownMenuItem<String>(
+                                          value: rentalId,
+                                          child: Text(
+                                            properties[rentalId]!,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.black87,
+                                            ),
+                                            overflow:
+                                            TextOverflow.ellipsis,
+                                          ),
+                                        );
+                                      }).toList(),
+                                      value: _selectedPropertyId,
+                                      onChanged: null,
+                                      /*(value) {
                                         setState(() {
                                           _selectedUnitId = null;
                                           _selectedPropertyId = value;
@@ -2793,118 +2856,124 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                           }
                                         });
                                       },*/
-                                            buttonStyleData: ButtonStyleData(
-                                              height: 45,
-                                              width: 160,
-                                              padding: const EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                color: Colors.white,
-                                              ),
-                                              elevation: 2,
-                                            ),
-                                            iconStyleData: const IconStyleData(
-                                              icon: Icon(
-                                                Icons.arrow_drop_down,
-                                              ),
-                                              iconSize: 24,
-                                              iconEnabledColor:
-                                                  Color(0xFFb0b6c3),
-                                              iconDisabledColor: Colors.grey,
-                                            ),
-                                            dropdownStyleData:
-                                                DropdownStyleData(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                color: Colors.white,
-                                              ),
-                                              scrollbarTheme:
-                                                  ScrollbarThemeData(
-                                                radius:
-                                                    const Radius.circular(6),
-                                                thickness:
-                                                    MaterialStateProperty.all(
-                                                        6),
-                                                thumbVisibility:
-                                                    MaterialStateProperty.all(
-                                                        true),
-                                              ),
-                                            ),
-                                            menuItemStyleData:
-                                                const MenuItemStyleData(
-                                              height: 40,
-                                              padding: EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                            ),
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'Please select an option';
-                                              }
-                                              return null;
-                                            },
-                                          ),
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 45,
+                                        width: 160,
+                                        padding: const EdgeInsets.only(
+                                            left: 14, right: 14),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(6),
+                                          color: Colors.white,
                                         ),
-                                        units.isNotEmpty
-                                            ? const Text('Unit',
-                                                style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.grey))
-                                            : Container(),
-                                        const SizedBox(height: 0),
-                                        units.isNotEmpty
-                                            ? DropdownButtonHideUnderline(
-                                                child: DropdownButtonFormField2<
-                                                    String>(
-                                                  decoration: const InputDecoration(
-                                                      border: InputBorder.none),
-                                                  isExpanded: true,
-                                                  hint: const Row(
-                                                    children: [
-                                                      Expanded(
-                                                        child: Text(
-                                                          'Select Unit',
-                                                          style: TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            color: Color(
-                                                                0xFFb0b6c3),
-                                                          ),
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  items:
-                                                      units.keys.map((unitId) {
-                                                    return DropdownMenuItem<
-                                                        String>(
-                                                      value: unitId,
-                                                      child: Text(
-                                                        units[unitId]!,
-                                                        style: const TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          color: Colors.black87,
-                                                        ),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      ),
-                                                    );
-                                                  }).toList(),
-                                                  value:
-                                                      _selectedUnitId!.isEmpty
-                                                          ? null
-                                                          : _selectedUnitId,
-                                                  onChanged:
-                                                      null /*(value) {
+                                        elevation: 2,
+                                      ),
+                                      iconStyleData: const IconStyleData(
+                                        icon: Icon(
+                                          Icons.arrow_drop_down,
+                                        ),
+                                        iconSize: 24,
+                                        iconEnabledColor:
+                                        Color(0xFFb0b6c3),
+                                        iconDisabledColor: Colors.grey,
+                                      ),
+                                      dropdownStyleData:
+                                      DropdownStyleData(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(6),
+                                          color: Colors.white,
+                                        ),
+                                        scrollbarTheme:
+                                        ScrollbarThemeData(
+                                          radius:
+                                          const Radius.circular(6),
+                                          thickness:
+                                          MaterialStateProperty.all(
+                                              6),
+                                          thumbVisibility:
+                                          MaterialStateProperty.all(
+                                              true),
+                                        ),
+                                      ),
+                                      menuItemStyleData:
+                                      const MenuItemStyleData(
+                                        height: 40,
+                                        padding: EdgeInsets.only(
+                                            left: 14, right: 14),
+                                      ),
+                                      validator: (value) {
+                                        if (value == null ||
+                                            value.isEmpty) {
+                                          return 'Please select an option';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ),
+                                  units.isNotEmpty
+                                      ? const Text('Unit',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey))
+                                      : Container(),
+                                  const SizedBox(height: 0),
+                                  units.isNotEmpty
+                                      ? DropdownButtonHideUnderline(
+                                    child: DropdownButtonFormField2<
+                                        String>(
+                                      decoration:
+                                      const InputDecoration(
+                                          border:
+                                          InputBorder.none),
+                                      isExpanded: true,
+                                      hint: const Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              'Select Unit',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight:
+                                                FontWeight.w400,
+                                                color: Color(
+                                                    0xFFb0b6c3),
+                                              ),
+                                              overflow: TextOverflow
+                                                  .ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      items:
+                                      units.keys.map((unitId) {
+                                        return DropdownMenuItem<
+                                            String>(
+                                          value: unitId,
+                                          child: Text(
+                                            units[unitId]!,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight:
+                                              FontWeight.w400,
+                                              color: Colors.black87,
+                                            ),
+                                            overflow: TextOverflow
+                                                .ellipsis,
+                                          ),
+                                        );
+                                      }).toList(),
+                                      value: _selectedUnitId ==
+                                          null ||
+                                          _selectedUnitId!
+                                              .isEmpty ||
+                                          !units.containsKey(
+                                              _selectedUnitId)
+                                          ? null
+                                          : _selectedUnitId,
+                                      onChanged:
+                                      null /*(value) {
                                         setState(() {
                                           unitId = value.toString();
                                           _selectedUnitId = value;
@@ -2916,65 +2985,65 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
 
                                         });
                                       }*/
-                                                  ,
-                                                  buttonStyleData:
-                                                      ButtonStyleData(
-                                                    height: 45,
-                                                    width: 160,
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 14,
-                                                            right: 14),
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              6),
-                                                      color: Colors.white,
-                                                    ),
-                                                    elevation: 2,
-                                                  ),
-                                                  iconStyleData:
-                                                      const IconStyleData(
-                                                    icon: Icon(
-                                                        Icons.arrow_drop_down),
-                                                    iconSize: 24,
-                                                    iconEnabledColor:
-                                                        Color(0xFFb0b6c3),
-                                                    iconDisabledColor:
-                                                        Colors.grey,
-                                                  ),
-                                                  dropdownStyleData:
-                                                      DropdownStyleData(
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              6),
-                                                      color: Colors.white,
-                                                    ),
-                                                    scrollbarTheme:
-                                                        ScrollbarThemeData(
-                                                      radius:
-                                                          const Radius.circular(
-                                                              6),
-                                                      thickness:
-                                                          MaterialStateProperty
-                                                              .all(6),
-                                                      thumbVisibility:
-                                                          MaterialStateProperty
-                                                              .all(true),
-                                                    ),
-                                                  ),
-                                                  menuItemStyleData:
-                                                      const MenuItemStyleData(
-                                                    height: 40,
-                                                    padding: EdgeInsets.only(
-                                                        left: 14, right: 14),
-                                                  ),
-                                                ),
-                                              )
-                                            : Container(),
-                                      ],
+                                      ,
+                                      buttonStyleData:
+                                      ButtonStyleData(
+                                        height: 45,
+                                        width: 160,
+                                        padding:
+                                        const EdgeInsets.only(
+                                            left: 14,
+                                            right: 14),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(
+                                              6),
+                                          color: Colors.white,
+                                        ),
+                                        elevation: 2,
+                                      ),
+                                      iconStyleData:
+                                      const IconStyleData(
+                                        icon: Icon(
+                                            Icons.arrow_drop_down),
+                                        iconSize: 24,
+                                        iconEnabledColor:
+                                        Color(0xFFb0b6c3),
+                                        iconDisabledColor:
+                                        Colors.grey,
+                                      ),
+                                      dropdownStyleData:
+                                      DropdownStyleData(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(
+                                              6),
+                                          color: Colors.white,
+                                        ),
+                                        scrollbarTheme:
+                                        ScrollbarThemeData(
+                                          radius:
+                                          const Radius.circular(
+                                              6),
+                                          thickness:
+                                          MaterialStateProperty
+                                              .all(6),
+                                          thumbVisibility:
+                                          MaterialStateProperty
+                                              .all(true),
+                                        ),
+                                      ),
+                                      menuItemStyleData:
+                                      const MenuItemStyleData(
+                                        height: 40,
+                                        padding: EdgeInsets.only(
+                                            left: 14, right: 14),
+                                      ),
                                     ),
+                                  )
+                                      : Container(),
+                                ],
+                              ),
                               const SizedBox(
                                 height: 10,
                               ),
@@ -2987,26 +3056,32 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                 height: 10,
                               ),
                               DropdownButtonHideUnderline(
-                                child: DropdownButton2<String>(
+                                child: DropdownButton2<allcategories_model>(
                                   isExpanded: true,
-                                  hint: const Text('Select Category'),
-                                  value: _selectedCategory,
-                                  items: _category.map((method) {
-                                    return DropdownMenuItem<String>(
-                                      value: method,
-                                      child: Text(method),
+                                  hint: Text(_isLoadingCategories
+                                      ? 'Loading categories...'
+                                      : 'Select Category'),
+                                  value: _dropdownCategories
+                                      .contains(_selectedDropdownCategory)
+                                      ? _selectedDropdownCategory
+                                      : null,
+                                  items: _dropdownCategories.map((cat) {
+                                    return DropdownMenuItem<
+                                        allcategories_model>(
+                                      value: cat,
+                                      child: Text(cat.name ?? ''),
                                     );
                                   }).toList(),
-                                  onChanged:
-                                      null /*(String? newValue) {
+                                  onChanged: _isLoadingCategories
+                                      ? null // disables dropdown while loading
+                                      : (allcategories_model? newValue) {
                                     setState(() {
-                                      _selectedCategory = newValue;
-                                      _showTextField = _selectedCategory == 'Other';
-
+                                      _selectedDropdownCategory =
+                                          newValue;
+                                      _showTextField =
+                                          newValue?.name == 'Other';
                                     });
-                                    print('Selected category: $_selectedCategory');
-                                  }*/
-                                  ,
+                                  },
                                   buttonStyleData: ButtonStyleData(
                                     height: 45,
                                     padding: const EdgeInsets.only(
@@ -3034,23 +3109,23 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                       radius: const Radius.circular(6),
                                       thickness: MaterialStateProperty.all(6),
                                       thumbVisibility:
-                                          MaterialStateProperty.all(true),
+                                      MaterialStateProperty.all(true),
                                     ),
                                   ),
                                   menuItemStyleData: const MenuItemStyleData(
                                     height: 50,
                                     padding:
-                                        EdgeInsets.only(left: 14, right: 14),
+                                    EdgeInsets.only(left: 14, right: 14),
                                   ),
                                 ),
                               ),
                               _showTextField
                                   ? Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 10, bottom: 10),
-                                      child: buildTextField('Other Category',
-                                          'Enter Other Category', other),
-                                    )
+                                padding: const EdgeInsets.only(
+                                    top: 10, bottom: 10),
+                                child: buildTextField('Other Category',
+                                    'Enter Other Category', other),
+                              )
                                   : Container(),
                               const SizedBox(
                                 height: 10,
@@ -3195,7 +3270,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                     );
                                   }).toList(),
                                   onChanged:
-                                      null /*(String? newValue) {
+                                  null /*(String? newValue) {
                                     setState(() {
                                       _selectedEntry = newValue;
                                       //_selectedPaymentMethod = addRow();
@@ -3233,13 +3308,13 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                       radius: const Radius.circular(6),
                                       thickness: MaterialStateProperty.all(6),
                                       thumbVisibility:
-                                          MaterialStateProperty.all(true),
+                                      MaterialStateProperty.all(true),
                                     ),
                                   ),
                                   menuItemStyleData: const MenuItemStyleData(
                                     height: 40,
                                     padding:
-                                        EdgeInsets.only(left: 14, right: 14),
+                                    EdgeInsets.only(left: 14, right: 14),
                                   ),
                                 ),
                               ),
@@ -3256,57 +3331,57 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               ),
                               _isLoadingstaff
                                   ? const Center(
-                                      child: SpinKitFadingCircle(
-                                        color: Colors.black,
-                                        size: 50.0,
-                                      ),
-                                    )
+                                child: SpinKitFadingCircle(
+                                  color: Colors.black,
+                                  size: 50.0,
+                                ),
+                              )
                                   : Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        DropdownButtonHideUnderline(
-                                          child:
-                                              DropdownButtonFormField2<String>(
-                                            decoration: const InputDecoration(
-                                                border: InputBorder.none),
-                                            isExpanded: true,
-                                            hint: const Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Text(
-                                                    'Select here',
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      color: Color(0xFFb0b6c3),
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ),
-                                              ],
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: [
+                                  DropdownButtonHideUnderline(
+                                    child:
+                                    DropdownButtonFormField2<String>(
+                                      decoration: const InputDecoration(
+                                          border: InputBorder.none),
+                                      isExpanded: true,
+                                      hint: const Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              'Select here',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight:
+                                                FontWeight.w400,
+                                                color: Color(0xFFb0b6c3),
+                                              ),
+                                              overflow:
+                                              TextOverflow.ellipsis,
                                             ),
-                                            items: staffs.keys
-                                                .map((staffmember_id) {
-                                              return DropdownMenuItem<String>(
-                                                value: staffmember_id,
-                                                child: Text(
-                                                  staffs[staffmember_id]!,
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w400,
-                                                    color: Colors.black87,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              );
-                                            }).toList(),
-                                            value: _selectedstaffId,
-                                            onChanged:
-                                                null /*(value) {
+                                          ),
+                                        ],
+                                      ),
+                                      items: staffs.keys
+                                          .map((staffmember_id) {
+                                        return DropdownMenuItem<String>(
+                                          value: staffmember_id,
+                                          child: Text(
+                                            staffs[staffmember_id]!,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.black87,
+                                            ),
+                                            overflow:
+                                            TextOverflow.ellipsis,
+                                          ),
+                                        );
+                                      }).toList(),
+                                      value: _selectedstaffId,
+                                      onChanged:
+                                      null /*(value) {
                                         setState(() {
                                           // _selectedUnitId = null;
                                           _selectedstaffId = value;
@@ -3320,64 +3395,64 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                               value!); // Fetch units for the selected property
                                         });
                                       }*/
-                                            ,
-                                            buttonStyleData: ButtonStyleData(
-                                              height: 45,
-                                              width: 160,
-                                              padding: const EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                color: Colors.white,
-                                              ),
-                                              elevation: 2,
-                                            ),
-                                            iconStyleData: const IconStyleData(
-                                              icon: Icon(
-                                                Icons.arrow_drop_down,
-                                              ),
-                                              iconSize: 24,
-                                              iconEnabledColor:
-                                                  Color(0xFFb0b6c3),
-                                              iconDisabledColor: Colors.grey,
-                                            ),
-                                            dropdownStyleData:
-                                                DropdownStyleData(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                color: Colors.white,
-                                              ),
-                                              scrollbarTheme:
-                                                  ScrollbarThemeData(
-                                                radius:
-                                                    const Radius.circular(6),
-                                                thickness:
-                                                    MaterialStateProperty.all(
-                                                        6),
-                                                thumbVisibility:
-                                                    MaterialStateProperty.all(
-                                                        true),
-                                              ),
-                                            ),
-                                            menuItemStyleData:
-                                                const MenuItemStyleData(
-                                              height: 40,
-                                              padding: EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                            ),
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'Please select an option';
-                                              }
-                                              return null;
-                                            },
-                                          ),
+                                      ,
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 45,
+                                        width: 160,
+                                        padding: const EdgeInsets.only(
+                                            left: 14, right: 14),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(6),
+                                          color: Colors.white,
                                         ),
-                                      ],
+                                        elevation: 2,
+                                      ),
+                                      iconStyleData: const IconStyleData(
+                                        icon: Icon(
+                                          Icons.arrow_drop_down,
+                                        ),
+                                        iconSize: 24,
+                                        iconEnabledColor:
+                                        Color(0xFFb0b6c3),
+                                        iconDisabledColor: Colors.grey,
+                                      ),
+                                      dropdownStyleData:
+                                      DropdownStyleData(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(6),
+                                          color: Colors.white,
+                                        ),
+                                        scrollbarTheme:
+                                        ScrollbarThemeData(
+                                          radius:
+                                          const Radius.circular(6),
+                                          thickness:
+                                          MaterialStateProperty.all(
+                                              6),
+                                          thumbVisibility:
+                                          MaterialStateProperty.all(
+                                              true),
+                                        ),
+                                      ),
+                                      menuItemStyleData:
+                                      const MenuItemStyleData(
+                                        height: 40,
+                                        padding: EdgeInsets.only(
+                                            left: 14, right: 14),
+                                      ),
+                                      validator: (value) {
+                                        if (value == null ||
+                                            value.isEmpty) {
+                                          return 'Please select an option';
+                                        }
+                                        return null;
+                                      },
                                     ),
+                                  ),
+                                ],
+                              ),
                               const SizedBox(
                                 height: 10,
                               ),
@@ -3733,7 +3808,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       const Text('Status *',
                                           style: TextStyle(
@@ -3768,7 +3843,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                 left: 14, right: 14),
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(6),
+                                              BorderRadius.circular(6),
                                               color: Colors.white,
                                             ),
                                             elevation: 2,
@@ -3784,20 +3859,20 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                           dropdownStyleData: DropdownStyleData(
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(6),
+                                              BorderRadius.circular(6),
                                               color: Colors.white,
                                             ),
                                             scrollbarTheme: ScrollbarThemeData(
                                               radius: const Radius.circular(6),
                                               thickness:
-                                                  MaterialStateProperty.all(6),
+                                              MaterialStateProperty.all(6),
                                               thumbVisibility:
-                                                  MaterialStateProperty.all(
-                                                      true),
+                                              MaterialStateProperty.all(
+                                                  true),
                                             ),
                                           ),
                                           menuItemStyleData:
-                                              const MenuItemStyleData(
+                                          const MenuItemStyleData(
                                             height: 40,
                                             padding: EdgeInsets.only(
                                                 left: 14, right: 14),
@@ -3812,9 +3887,9 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                   Expanded(
                                     child: Column(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      MainAxisAlignment.start,
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
                                         const Text('Due Date',
                                             style: TextStyle(
@@ -3827,7 +3902,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                         Material(
                                           elevation: 3,
                                           borderRadius:
-                                              BorderRadius.circular(6.0),
+                                          BorderRadius.circular(6.0),
                                           child: Container(
                                             height: 45,
                                             padding: const EdgeInsets.symmetric(
@@ -3849,7 +3924,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                     width: 0,
                                                     color: Colors.white),
                                                 borderRadius:
-                                                    BorderRadius.circular(6.0)),
+                                                BorderRadius.circular(6.0)),
                                             child: TextFormField(
                                               style: const TextStyle(
                                                 color: Color(
@@ -3915,16 +3990,16 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               onPressed: _submitForm,
                               child: isloading
                                   ? const Center(
-                                      child: SpinKitFadingCircle(
-                                        color: Colors.white,
-                                        size: 55.0,
-                                      ),
-                                    )
+                                child: SpinKitFadingCircle(
+                                  color: Colors.white,
+                                  size: 55.0,
+                                ),
+                              )
                                   : const Text(
-                                      'Edit Work Order',
-                                      style:
-                                          TextStyle(color: Color(0xFFf7f8f9)),
-                                    ),
+                                'Edit Work Order',
+                                style:
+                                TextStyle(color: Color(0xFFf7f8f9)),
+                              ),
                             ),
                           ),
                           const SizedBox(
@@ -3940,7 +4015,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                       backgroundColor: const Color(0xFFffffff),
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
-                                              BorderRadius.circular(8.0))),
+                                          BorderRadius.circular(8.0))),
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
@@ -3967,7 +4042,8 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(label,
-            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.grey)),
         const SizedBox(height: 8.0),
         Material(
           elevation: 3,
@@ -4026,7 +4102,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         workOrderid: widget.workorderId,
         workSubject: subject.text.trim(),
         staffMemberName: _selectedStaffs,
-        workCategory: _selectedCategory,
+        workCategory: _selectedDropdownCategory?.name,
         workPerformed: perform.text.trim(),
         status: _selectedStatus,
         rentalAddress: properties[_selectedPropertyId],
@@ -4044,7 +4120,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         entry: _selectedEntry == 'yes',
         parts: parts,
         notificationTime:
-            DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+        DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
       )
           .then((value) {
         setState(() {

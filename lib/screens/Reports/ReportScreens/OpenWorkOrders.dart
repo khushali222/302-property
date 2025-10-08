@@ -202,172 +202,175 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
   bool ascending3 = false;
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
-    return Container(
-      decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
+    return Padding(
+      padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 10 : 0, right:MediaQuery.of(context).size.width > 500? 10 : 0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: blueColor,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(13),
+            topRight: Radius.circular(13),
+          ),
         ),
-      ),
-      child: ListTile(
-        contentPadding: EdgeInsets.zero,
-        // leading: Container(
-        //   child: Icon(
-        //     Icons.expand_less,
-        //     color: Colors.transparent,
-        //   ),
-        // ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              child: Icon(
-                Icons.expand_less,
-                color: Colors.transparent,
-              ),
-            ),
-            Expanded(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting1 == true) {
-                      sorting2 = false;
-                      sorting3 = false;
-                      ascending1 = !ascending1;
-                      ascending2 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = true;
-                      sorting2 = false;
-                      sorting3 = false;
-                      ascending1 = true;
-                      ascending2 = false;
-                      ascending3 = false;
-                    }
-                  });
-                },
-                child: Row(
-                  children: [
-                    width < 400
-                        ? Text("Date", style: TextStyle(color: Colors.white))
-                        : Text("Date", style: TextStyle(color: Colors.white)),
-                    // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
-                    ascending1
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                  ],
+        child: ListTile(
+          contentPadding: EdgeInsets.zero,
+          // leading: Container(
+          //   child: Icon(
+          //     Icons.expand_less,
+          //     color: Colors.transparent,
+          //   ),
+          // ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                child: Icon(
+                  Icons.expand_less,
+                  color: Colors.transparent,
                 ),
               ),
-            ),
-            Expanded(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting2) {
-                      sorting1 = false;
-                      sorting2 = true;
-                      sorting3 = false;
-                      ascending2 = !ascending2;
-                      ascending1 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = true;
-                      sorting3 = false;
-                      ascending2 = true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    }
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("Address", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
-                    ascending2
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
+              Expanded(
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      if (sorting1 == true) {
+                        sorting2 = false;
+                        sorting3 = false;
+                        ascending1 = !ascending1;
+                        ascending2 = false;
+                        ascending3 = false;
+                      } else {
+                        sorting1 = true;
+                        sorting2 = false;
+                        sorting3 = false;
+                        ascending1 = true;
+                        ascending2 = false;
+                        ascending3 = false;
+                      }
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      width < 400
+                          ? Text("Date", style: TextStyle(color: Colors.white))
+                          : Text("Date", style: TextStyle(color: Colors.white)),
+                      // Text("Property", style: TextStyle(color: Colors.white)),
+                      SizedBox(width: 3),
+                      ascending1
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 7, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortUp,
+                                size: 20,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.only(bottom: 7, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortDown,
+                                size: 20,
+                                color: Colors.white,
+                              ),
                             ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting3) {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = true;
-                      ascending3 = !ascending3;
-                      ascending2 = false;
-                      ascending1 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = true;
-                      ascending3 = true;
-                      ascending2 = false;
-                      ascending1 = false;
-                    }
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("Work", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
-                    ascending3
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
+              Expanded(
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      if (sorting2) {
+                        sorting1 = false;
+                        sorting2 = true;
+                        sorting3 = false;
+                        ascending2 = !ascending2;
+                        ascending1 = false;
+                        ascending3 = false;
+                      } else {
+                        sorting1 = false;
+                        sorting2 = true;
+                        sorting3 = false;
+                        ascending2 = true;
+                        ascending1 = false;
+                        ascending3 = false;
+                      }
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Text("Address", style: TextStyle(color: Colors.white)),
+                      SizedBox(width: 5),
+                      ascending2
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 7, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortUp,
+                                size: 20,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.only(bottom: 7, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortDown,
+                                size: 20,
+                                color: Colors.white,
+                              ),
                             ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+              Expanded(
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      if (sorting3) {
+                        sorting1 = false;
+                        sorting2 = false;
+                        sorting3 = true;
+                        ascending3 = !ascending3;
+                        ascending2 = false;
+                        ascending1 = false;
+                      } else {
+                        sorting1 = false;
+                        sorting2 = false;
+                        sorting3 = true;
+                        ascending3 = true;
+                        ascending2 = false;
+                        ascending1 = false;
+                      }
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Text("Work", style: TextStyle(color: Colors.white)),
+                      SizedBox(width: 5),
+                      ascending3
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 7, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortUp,
+                                size: 20,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.only(bottom: 7, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortDown,
+                                size: 20,
+                                color: Colors.white,
+                              ),
+                            ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -714,11 +717,18 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
               child: Column(
                 children: [
                   const SizedBox(height: 16),
-                  titleBar(
-                    title: 'Open Work Order',
-                    width: MediaQuery.of(context).size.width * .91,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+                      child: titleBar(
+                        width: double.infinity,
+                        title: "Open Work Order",
+                      ),
+                    ),
                   ),
-                  if (MediaQuery.of(context).size.width < 500)
+                  // if (MediaQuery.of(context).size.width < 500)
                     Padding(
                       padding: const EdgeInsets.only(
                         left: 10.0,
@@ -807,104 +817,182 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                 SizedBox(
                                   height: 8,
                                 ),
-                                Expanded(
-                                  flex: 0,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 5.0,
-                                      right: 5.0,
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Material(
-                                          elevation: 3,
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10),
-                                            // height: 40,
-                                            height: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 48
-                                                : 50,
-                                            width: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .53
-                                                : MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .4,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              border: Border.all(
-                                                  color:
-                                                      const Color(0xFF8A95A8)),
-                                            ),
-                                            child: TextField(
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  searchvalue = value;
-                                                });
-                                              },
-                                              decoration: const InputDecoration(
-                                                border: InputBorder.none,
-                                                hintText: "Search here...",
-                                                hintStyle: TextStyle(
-                                                    color: Color(0xFF8A95A8)),
-                                                // contentPadding: EdgeInsets.all(10),
+                                // Padding(
+                                //   padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 10 : 0, right:MediaQuery.of(context).size.width > 500? 10 : 0),
+                                //   child: Expanded(
+                                //     flex: 0,
+                                //     child: Padding(
+                                //       padding: const EdgeInsets.only(
+                                //         left: 5.0,
+                                //         right: 5.0,
+                                //       ),
+                                //       child: Row(
+                                //         mainAxisAlignment:
+                                //             MainAxisAlignment.spaceBetween,
+                                //         children: [
+                                //           Material(
+                                //             elevation: 3,
+                                //             borderRadius:
+                                //                 BorderRadius.circular(8),
+                                //             child: Container(
+                                //               padding: const EdgeInsets.symmetric(
+                                //                   horizontal: 10),
+                                //               // height: 40,
+                                //               height: MediaQuery.of(context)
+                                //                           .size
+                                //                           .width <
+                                //                       500
+                                //                   ? 48
+                                //                   : 50,
+                                //               width: MediaQuery.of(context)
+                                //                           .size
+                                //                           .width <
+                                //                       500
+                                //                   ? MediaQuery.of(context)
+                                //                           .size
+                                //                           .width *
+                                //                       .53
+                                //                   : MediaQuery.of(context)
+                                //                           .size
+                                //                           .width *
+                                //                       .4,
+                                //               decoration: BoxDecoration(
+                                //                 color: Colors.white,
+                                //                 borderRadius:
+                                //                     BorderRadius.circular(8),
+                                //                 border: Border.all(
+                                //                     color:
+                                //                         const Color(0xFF8A95A8)),
+                                //               ),
+                                //               child: TextField(
+                                //                 onChanged: (value) {
+                                //                   setState(() {
+                                //                     searchvalue = value;
+                                //                   });
+                                //                 },
+                                //                 decoration: const InputDecoration(
+                                //                   border: InputBorder.none,
+                                //                   hintText: "Search here...",
+                                //                   hintStyle: TextStyle(
+                                //                       color: Color(0xFF8A95A8)),
+                                //                   // contentPadding: EdgeInsets.all(10),
+                                //                 ),
+                                //               ),
+                                //             ),
+                                //           ),
+                                //           ElevatedButton(
+                                //             style: ElevatedButton.styleFrom(
+                                //               backgroundColor: blueColor,
+                                //             ),
+                                //             onPressed: () {},
+                                //             child: PopupMenuButton<String>(
+                                //               onSelected: (value) async {
+                                //                 // Add your export logic here based on the selected value
+                                //                 if (value == 'PDF') {
+                                //                   print('pdf');
+                                //                   generateWorkOrderPdf(data);
+                                //                   // Export as PDF
+                                //                 } else if (value == 'XLSX') {
+                                //                   print('XLSX');
+                                //                   generateWorkOrderExcel(data);
+                                //                   // Export as XLSX
+                                //                 } else if (value == 'CSV') {
+                                //                   print('CSV');
+                                //                   generateWorkOrderCsv(data);
+                                //                   // Export as CSV
+                                //                 }
+                                //               },
+                                //               itemBuilder:
+                                //                   (BuildContext context) =>
+                                //                       <PopupMenuEntry<String>>[
+                                //                 const PopupMenuItem<String>(
+                                //                   value: 'PDF',
+                                //                   child: Text('PDF'),
+                                //                 ),
+                                //                 const PopupMenuItem<String>(
+                                //                   value: 'XLSX',
+                                //                   child: Text('XLSX'),
+                                //                 ),
+                                //                 const PopupMenuItem<String>(
+                                //                   value: 'CSV',
+                                //                   child: Text('CSV'),
+                                //                 ),
+                                //               ],
+                                //               child: Row(
+                                //                 mainAxisSize: MainAxisSize.min,
+                                //                 children: [
+                                //                   Text('Export'),
+                                //                   Icon(Icons.arrow_drop_down),
+                                //                 ],
+                                //               ),
+                                //             ),
+                                //           )
+                                //         ],
+                                //       ),
+                                //     ),
+                                //   ),
+                                // ),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    left: MediaQuery.of(context).size.width > 500 ? 10 : 0,
+                                    right: MediaQuery.of(context).size.width > 500 ? 10 : 0,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      // Search box expands
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                          child: Material(
+                                            elevation: 3,
+                                            borderRadius: BorderRadius.circular(8),
+                                            child: Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                                              height: MediaQuery.of(context).size.width < 500 ? 48 : 50,
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.circular(8),
+                                                border: Border.all(color: const Color(0xFF8A95A8)),
+                                              ),
+                                              child: TextField(
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    searchvalue = value;
+                                                  });
+                                                },
+                                                decoration: const InputDecoration(
+                                                  border: InputBorder.none,
+                                                  hintText: "Search here...",
+                                                  hintStyle: TextStyle(color: Color(0xFF8A95A8)),
+                                                ),
                                               ),
                                             ),
                                           ),
                                         ),
-                                        ElevatedButton(
+                                      ),
+
+                                      // Export button takes only required space
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                        child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: blueColor,
                                           ),
                                           onPressed: () {},
                                           child: PopupMenuButton<String>(
                                             onSelected: (value) async {
-                                              // Add your export logic here based on the selected value
                                               if (value == 'PDF') {
-                                                print('pdf');
                                                 generateWorkOrderPdf(data);
-                                                // Export as PDF
                                               } else if (value == 'XLSX') {
-                                                print('XLSX');
                                                 generateWorkOrderExcel(data);
-                                                // Export as XLSX
                                               } else if (value == 'CSV') {
-                                                print('CSV');
                                                 generateWorkOrderCsv(data);
-                                                // Export as CSV
                                               }
                                             },
-                                            itemBuilder:
-                                                (BuildContext context) =>
-                                                    <PopupMenuEntry<String>>[
-                                              const PopupMenuItem<String>(
-                                                value: 'PDF',
-                                                child: Text('PDF'),
-                                              ),
-                                              const PopupMenuItem<String>(
-                                                value: 'XLSX',
-                                                child: Text('XLSX'),
-                                              ),
-                                              const PopupMenuItem<String>(
-                                                value: 'CSV',
-                                                child: Text('CSV'),
-                                              ),
+                                            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                                              const PopupMenuItem<String>(value: 'PDF', child: Text('PDF')),
+                                              const PopupMenuItem<String>(value: 'XLSX', child: Text('XLSX')),
+                                              const PopupMenuItem<String>(value: 'CSV', child: Text('CSV')),
                                             ],
                                             child: Row(
                                               mainAxisSize: MainAxisSize.min,
@@ -914,259 +1002,263 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                               ],
                                             ),
                                           ),
-                                        )
-                                      ],
-                                    ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                SizedBox(height: 10),
+
+                                SizedBox(height: 15),
                                 _buildHeaders(),
-                                SizedBox(height: 10),
-                                Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Color.fromRGBO(
-                                              152, 162, 179, .5))),
-                                  // decoration: BoxDecoration(
-                                  //     border: Border.all(color: blueColor)),
-                                  child: Column(
-                                    children: currentPageData
-                                        .asMap()
-                                        .entries
-                                        .map((entry) {
-                                      int index = entry.key;
-                                      bool isExpanded = expandedIndex == index;
-                                      WorkOrderReportData workOrder =
-                                          entry.value;
+                                SizedBox(height: 15),
+                                Padding(
+                                  padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 10 : 0, right:MediaQuery.of(context).size.width > 500? 10 : 0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Color.fromRGBO(
+                                                152, 162, 179, .5))),
+                                    // decoration: BoxDecoration(
+                                    //     border: Border.all(color: blueColor)),
+                                    child: Column(
+                                      children: currentPageData
+                                          .asMap()
+                                          .entries
+                                          .map((entry) {
+                                        int index = entry.key;
+                                        bool isExpanded = expandedIndex == index;
+                                        WorkOrderReportData workOrder =
+                                            entry.value;
 
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                          color: index % 2 != 0
-                                              ? Colors.white
-                                              : blueColor.withOpacity(0.09),
-                                          border: Border.all(
-                                              color: Color.fromRGBO(
-                                                  152, 162, 179, .5)),
-                                        ),
-                                        // decoration: BoxDecoration(
-                                        //   border: Border.all(color: blueColor),
-                                        // ),
-                                        child: Column(
-                                          children: <Widget>[
-                                            ListTile(
-                                              contentPadding: EdgeInsets.zero,
-                                              title: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(2.0),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    InkWell(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          if (expandedIndex ==
-                                                              index) {
-                                                            expandedIndex =
-                                                                null;
-                                                          } else {
-                                                            expandedIndex =
-                                                                index;
-                                                          }
-                                                        });
-                                                      },
-                                                      child: Container(
-                                                        margin: EdgeInsets.only(
-                                                            left: 5),
-                                                        padding: !isExpanded
-                                                            ? EdgeInsets.only(
-                                                                bottom: 10)
-                                                            : EdgeInsets.only(
-                                                                top: 10),
-                                                        child: FaIcon(
-                                                          isExpanded
-                                                              ? FontAwesomeIcons
-                                                                  .sortUp
-                                                              : FontAwesomeIcons
-                                                                  .sortDown,
-                                                          size: 20,
-                                                          color: blueColor,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      child: Text(
-                                                        '   ${workOrder.date == null ? '-- - - -- ----' : dateProvider.formatCurrentDate(workOrder.date!)} ',
-                                                        style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 13,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .04),
-                                                    Expanded(
-                                                      child: Text(
-                                                        '${workOrder.rentalAddress ?? '-'}',
-                                                        style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 13,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .04),
-                                                    Expanded(
-                                                      child: Text(
-                                                        '${workOrder.workSubject ?? '-'}',
-                                                        style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 13,
-                                                        ),
-                                                      ),
-                                                    ),
-
-                                                    // SizedBox(
-                                                    //     width: MediaQuery.of(context)
-                                                    //             .size
-                                                    //             .width *
-                                                    //         .08),
-                                                    // Expanded(
-                                                    //   child: Text(
-                                                    //     // '${widget.data.createdAt}',
-                                                    //     '${lease.status}',
-                                                    //     style: TextStyle(
-                                                    //       color: blueColor,
-                                                    //       fontWeight: FontWeight.bold,
-                                                    //       fontSize: 13,
-                                                    //     ),
-                                                    //   ),
-                                                    // ),
-                                                    SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .02),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            if (isExpanded)
-                                              Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 8.0),
-                                                margin:
-                                                    EdgeInsets.only(bottom: 20),
-                                                child: SingleChildScrollView(
-                                                  child: Column(
-                                                    children: [
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          FaIcon(
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                            color: index % 2 != 0
+                                                ? Colors.white
+                                                : blueColor.withOpacity(0.09),
+                                            border: Border.all(
+                                                color: Color.fromRGBO(
+                                                    152, 162, 179, .5)),
+                                          ),
+                                          // decoration: BoxDecoration(
+                                          //   border: Border.all(color: blueColor),
+                                          // ),
+                                          child: Column(
+                                            children: <Widget>[
+                                              ListTile(
+                                                contentPadding: EdgeInsets.zero,
+                                                title: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(2.0),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.center,
+                                                    children: <Widget>[
+                                                      InkWell(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            if (expandedIndex ==
+                                                                index) {
+                                                              expandedIndex =
+                                                                  null;
+                                                            } else {
+                                                              expandedIndex =
+                                                                  index;
+                                                            }
+                                                          });
+                                                        },
+                                                        child: Container(
+                                                          margin: EdgeInsets.only(
+                                                              left: 5),
+                                                          padding: !isExpanded
+                                                              ? EdgeInsets.only(
+                                                                  bottom: 10)
+                                                              : EdgeInsets.only(
+                                                                  top: 10),
+                                                          child: FaIcon(
                                                             isExpanded
                                                                 ? FontAwesomeIcons
                                                                     .sortUp
                                                                 : FontAwesomeIcons
                                                                     .sortDown,
-                                                            size: 50,
-                                                            color: Colors
-                                                                .transparent,
+                                                            size: 20,
+                                                            color: blueColor,
                                                           ),
-                                                          Expanded(
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: <Widget>[
-                                                                Text.rich(
-                                                                  TextSpan(
-                                                                    children: [
-                                                                      TextSpan(
-                                                                        text:
-                                                                            'Description:  ',
-                                                                        style: TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            color: blueColor), // Bold and black
-                                                                      ),
-                                                                      TextSpan(
-                                                                        text:
-                                                                            '${workOrder.workPerformed ?? '-'}',
-                                                                        style: TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.w700,
-                                                                            color: grey), // Light and grey
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 5,
-                                                                ),
-                                                                Text.rich(
-                                                                  TextSpan(
-                                                                    children: [
-                                                                      TextSpan(
-                                                                        text:
-                                                                            'Note: ',
-                                                                        style: TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            color: blueColor), // Bold and black
-                                                                      ),
-                                                                      TextSpan(
-                                                                        text:
-                                                                            '${workOrder.vendorNotes}',
-                                                                        style: TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.w700,
-                                                                            color: grey), // Light and grey
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                                SizedBox(
-                                                                  height: 5,
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          Container(
-                                                            width: 40,
-                                                            child: Column(
-                                                              children: [],
-                                                            ),
-                                                          ),
-                                                        ],
+                                                        ),
                                                       ),
+                                                      Expanded(
+                                                        child: Text(
+                                                          '   ${workOrder.date == null ? '-- - - -- ----' : dateProvider.formatCurrentDate(workOrder.date!)} ',
+                                                          style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              .04),
+                                                      Expanded(
+                                                        child: Text(
+                                                          '${workOrder.rentalAddress ?? '-'}',
+                                                          style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              .04),
+                                                      Expanded(
+                                                        child: Text(
+                                                          '${workOrder.workSubject ?? '-'}',
+                                                          style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ),
+
+                                                      // SizedBox(
+                                                      //     width: MediaQuery.of(context)
+                                                      //             .size
+                                                      //             .width *
+                                                      //         .08),
+                                                      // Expanded(
+                                                      //   child: Text(
+                                                      //     // '${widget.data.createdAt}',
+                                                      //     '${lease.status}',
+                                                      //     style: TextStyle(
+                                                      //       color: blueColor,
+                                                      //       fontWeight: FontWeight.bold,
+                                                      //       fontSize: 13,
+                                                      //     ),
+                                                      //   ),
+                                                      // ),
+                                                      SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              .02),
                                                     ],
                                                   ),
                                                 ),
                                               ),
-                                          ],
-                                        ),
-                                      );
-                                    }).toList(),
+                                              if (isExpanded)
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 8.0),
+                                                  margin:
+                                                      EdgeInsets.only(bottom: 20),
+                                                  child: SingleChildScrollView(
+                                                    child: Column(
+                                                      children: [
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            FaIcon(
+                                                              isExpanded
+                                                                  ? FontAwesomeIcons
+                                                                      .sortUp
+                                                                  : FontAwesomeIcons
+                                                                      .sortDown,
+                                                              size: 50,
+                                                              color: Colors
+                                                                  .transparent,
+                                                            ),
+                                                            Expanded(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: <Widget>[
+                                                                  Text.rich(
+                                                                    TextSpan(
+                                                                      children: [
+                                                                        TextSpan(
+                                                                          text:
+                                                                              'Description:  ',
+                                                                          style: TextStyle(
+                                                                              fontWeight:
+                                                                                  FontWeight.bold,
+                                                                              color: blueColor), // Bold and black
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text:
+                                                                              '${workOrder.workPerformed ?? '-'}',
+                                                                          style: TextStyle(
+                                                                              fontWeight:
+                                                                                  FontWeight.w700,
+                                                                              color: grey), // Light and grey
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                  Text.rich(
+                                                                    TextSpan(
+                                                                      children: [
+                                                                        TextSpan(
+                                                                          text:
+                                                                              'Note: ',
+                                                                          style: TextStyle(
+                                                                              fontWeight:
+                                                                                  FontWeight.bold,
+                                                                              color: blueColor), // Bold and black
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text:
+                                                                              '${workOrder.vendorNotes}',
+                                                                          style: TextStyle(
+                                                                              fontWeight:
+                                                                                  FontWeight.w700,
+                                                                              color: grey), // Light and grey
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            Container(
+                                                              width: 40,
+                                                              child: Column(
+                                                                children: [],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
                                   ),
                                 ),
                                 SizedBox(height: 20),
@@ -1255,280 +1347,280 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                         },
                       ),
                     ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    const SizedBox(height: 16),
-                  if (MediaQuery.of(context).size.width > 500)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 21.0, right: 21.0),
-                      child: Expanded(
-                          flex: 0,
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.only(left: 16.0, right: 16.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Material(
-                                  elevation: 3,
-                                  borderRadius: BorderRadius.circular(2),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10),
-                                    // height: 40,
-                                    height:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 48
-                                            : 50,
-                                    width: MediaQuery.of(context).size.width <
-                                            500
-                                        ? MediaQuery.of(context).size.width *
-                                            .45
-                                        : MediaQuery.of(context).size.width *
-                                            .4,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(2),
-                                      border: Border.all(
-                                          color: const Color(0xFF8A95A8)),
-                                    ),
-                                    child: TextField(
-                                      onChanged: (value) {
-                                        setState(() {
-                                          searchvalue = value;
-                                        });
-                                      },
-                                      decoration: const InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: "Search here...",
-                                        hintStyle:
-                                            TextStyle(color: Color(0xFF8A95A8)),
-                                        // contentPadding: EdgeInsets.all(10),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: blueColor,
-                                  ),
-                                  onPressed: () {},
-                                  child: PopupMenuButton<String>(
-                                    onSelected: (value) async {
-                                      // Add your export logic here based on the selected value
-                                      if (value == 'PDF') {
-                                        print('pdf');
-                                        // Export as PDF
-                                      } else if (value == 'XLSX') {
-                                        print('XLSX');
-                                        // Export as XLSX
-                                      } else if (value == 'CSV') {
-                                        print('CSV');
-                                        // Export as CSV
-                                      }
-                                    },
-                                    itemBuilder: (BuildContext context) =>
-                                        <PopupMenuEntry<String>>[
-                                      const PopupMenuItem<String>(
-                                        value: 'PDF',
-                                        child: Text('PDF'),
-                                      ),
-                                      const PopupMenuItem<String>(
-                                        value: 'XLSX',
-                                        child: Text('XLSX'),
-                                      ),
-                                      const PopupMenuItem<String>(
-                                        value: 'CSV',
-                                        child: Text('CSV'),
-                                      ),
-                                    ],
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text('Export'),
-                                        Icon(Icons.arrow_drop_down),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          )),
-                    ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    const SizedBox(height: 16),
-                  if (MediaQuery.of(context).size.width > 500)
-                    FutureBuilder<List<WorkOrderReportData>>(
-                      future: _futureReport,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return ShimmerTabletTable();
-                        } else if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
-                          return Container(
-                            height: MediaQuery.of(context).size.height * .5,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    "assets/images/no_data.jpg",
-                                    height: 200,
-                                    width: 200,
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    "No Data Available",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor,
-                                        fontSize: 16),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        }
-
-                        var data = snapshot.data!;
-
-                        // Apply filtering based on selectedValue and searchvalue
-                        if (selectedValue == null && searchvalue.isEmpty) {
-                          data = snapshot.data!;
-                        } else if (selectedValue == "All") {
-                          data = snapshot.data!;
-                        } else if (searchvalue.isNotEmpty) {
-                          data = snapshot.data!
-                              .where((workOrder) =>
-                                  (workOrder.workSubject ?? '')
-                                      .toLowerCase()
-                                      .contains(searchvalue.toLowerCase()) ||
-                                  (workOrder.rentalAddress ?? '')
-                                      .toLowerCase()
-                                      .contains(searchvalue.toLowerCase()))
-                              .toList();
-                        } else {
-                          data = snapshot.data!
-                              .where((workOrder) =>
-                                  workOrder.workSubject == selectedValue)
-                              .toList();
-                        }
-
-                        // Update _tableData with the filtered data
-                        _tableData = data;
-
-                        // Get the paged data
-                        final pagedData = _pagedData;
-
-                        return SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.95,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                children: [
-                                  Table(
-                                    defaultColumnWidth: IntrinsicColumnWidth(),
-                                    columnWidths: {
-                                      0: FlexColumnWidth(),
-                                      1: FlexColumnWidth(),
-                                      2: FlexColumnWidth(),
-                                      3: FlexColumnWidth(),
-                                      4: FlexColumnWidth(),
-                                    },
-                                    children: [
-                                      TableRow(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: blueColor),
-                                        ),
-                                        children: [
-                                          _buildHeader(
-                                              'Date',
-                                              0,
-                                              (workOrder) =>
-                                                  workOrder.date ?? ''),
-                                          _buildHeader(
-                                              'Address',
-                                              1,
-                                              (workOrder) =>
-                                                  workOrder.rentalAddress ??
-                                                  ''),
-                                          _buildHeader(
-                                              'Work',
-                                              2,
-                                              (workOrder) =>
-                                                  workOrder.workSubject ?? ''),
-                                          _buildHeader(
-                                              'Description',
-                                              3,
-                                              (workOrder) =>
-                                                  workOrder.workPerformed ??
-                                                  ''),
-                                          _buildHeader(
-                                              'Note',
-                                              5,
-                                              (workOrder) =>
-                                                  workOrder.vendorNotes ?? ''),
-                                        ],
-                                      ),
-                                      TableRow(
-                                        decoration: BoxDecoration(
-                                          border: Border.symmetric(
-                                              horizontal: BorderSide.none),
-                                        ),
-                                        children: List.generate(
-                                            5,
-                                            (index) => TableCell(
-                                                child: Container(height: 20))),
-                                      ),
-                                      for (var i = 0; i < pagedData.length; i++)
-                                        TableRow(
-                                          decoration: BoxDecoration(
-                                            border: Border(
-                                              left:
-                                                  BorderSide(color: blueColor),
-                                              right:
-                                                  BorderSide(color: blueColor),
-                                              top: BorderSide(color: blueColor),
-                                              bottom: i == pagedData.length - 1
-                                                  ? BorderSide(color: blueColor)
-                                                  : BorderSide.none,
-                                            ),
-                                          ),
-                                          children: [
-                                            _buildDataCell(
-                                                pagedData[i].date ?? ''),
-                                            _buildDataCell(
-                                                pagedData[i].rentalAddress ??
-                                                    ''),
-                                            _buildDataCell(
-                                                pagedData[i].workSubject ?? ''),
-                                            _buildDataCell(
-                                                pagedData[i].workPerformed ??
-                                                    ''),
-                                            _buildDataCell(
-                                                pagedData[i].vendorNotes ?? ''),
-                                          ],
-                                        ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 25),
-                                  _buildPaginationControls(),
-                                  SizedBox(height: 25),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    )
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   const SizedBox(height: 16),
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   Padding(
+                  //     padding: const EdgeInsets.only(left: 21.0, right: 21.0),
+                  //     child: Expanded(
+                  //         flex: 0,
+                  //         child: Padding(
+                  //           padding:
+                  //               const EdgeInsets.only(left: 16.0, right: 16.0),
+                  //           child: Row(
+                  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //             children: [
+                  //               Material(
+                  //                 elevation: 3,
+                  //                 borderRadius: BorderRadius.circular(2),
+                  //                 child: Container(
+                  //                   padding: const EdgeInsets.symmetric(
+                  //                       horizontal: 10),
+                  //                   // height: 40,
+                  //                   height:
+                  //                       MediaQuery.of(context).size.width < 500
+                  //                           ? 48
+                  //                           : 50,
+                  //                   width: MediaQuery.of(context).size.width <
+                  //                           500
+                  //                       ? MediaQuery.of(context).size.width *
+                  //                           .45
+                  //                       : MediaQuery.of(context).size.width *
+                  //                           .4,
+                  //                   decoration: BoxDecoration(
+                  //                     color: Colors.white,
+                  //                     borderRadius: BorderRadius.circular(2),
+                  //                     border: Border.all(
+                  //                         color: const Color(0xFF8A95A8)),
+                  //                   ),
+                  //                   child: TextField(
+                  //                     onChanged: (value) {
+                  //                       setState(() {
+                  //                         searchvalue = value;
+                  //                       });
+                  //                     },
+                  //                     decoration: const InputDecoration(
+                  //                       border: InputBorder.none,
+                  //                       hintText: "Search here...",
+                  //                       hintStyle:
+                  //                           TextStyle(color: Color(0xFF8A95A8)),
+                  //                       // contentPadding: EdgeInsets.all(10),
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //               ElevatedButton(
+                  //                 style: ElevatedButton.styleFrom(
+                  //                   backgroundColor: blueColor,
+                  //                 ),
+                  //                 onPressed: () {},
+                  //                 child: PopupMenuButton<String>(
+                  //                   onSelected: (value) async {
+                  //                     // Add your export logic here based on the selected value
+                  //                     if (value == 'PDF') {
+                  //                       print('pdf');
+                  //                       // Export as PDF
+                  //                     } else if (value == 'XLSX') {
+                  //                       print('XLSX');
+                  //                       // Export as XLSX
+                  //                     } else if (value == 'CSV') {
+                  //                       print('CSV');
+                  //                       // Export as CSV
+                  //                     }
+                  //                   },
+                  //                   itemBuilder: (BuildContext context) =>
+                  //                       <PopupMenuEntry<String>>[
+                  //                     const PopupMenuItem<String>(
+                  //                       value: 'PDF',
+                  //                       child: Text('PDF'),
+                  //                     ),
+                  //                     const PopupMenuItem<String>(
+                  //                       value: 'XLSX',
+                  //                       child: Text('XLSX'),
+                  //                     ),
+                  //                     const PopupMenuItem<String>(
+                  //                       value: 'CSV',
+                  //                       child: Text('CSV'),
+                  //                     ),
+                  //                   ],
+                  //                   child: Row(
+                  //                     mainAxisSize: MainAxisSize.min,
+                  //                     children: [
+                  //                       Text('Export'),
+                  //                       Icon(Icons.arrow_drop_down),
+                  //                     ],
+                  //                   ),
+                  //                 ),
+                  //               )
+                  //             ],
+                  //           ),
+                  //         )),
+                  //   ),
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   const SizedBox(height: 16),
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   FutureBuilder<List<WorkOrderReportData>>(
+                  //     future: _futureReport,
+                  //     builder: (context, snapshot) {
+                  //       if (snapshot.connectionState ==
+                  //           ConnectionState.waiting) {
+                  //         return ShimmerTabletTable();
+                  //       } else if (snapshot.hasError) {
+                  //         return Center(
+                  //             child: Text('Error: ${snapshot.error}'));
+                  //       } else if (!snapshot.hasData ||
+                  //           snapshot.data!.isEmpty) {
+                  //         return Container(
+                  //           height: MediaQuery.of(context).size.height * .5,
+                  //           child: Center(
+                  //             child: Column(
+                  //               mainAxisAlignment: MainAxisAlignment.center,
+                  //               crossAxisAlignment: CrossAxisAlignment.center,
+                  //               children: [
+                  //                 Image.asset(
+                  //                   "assets/images/no_data.jpg",
+                  //                   height: 200,
+                  //                   width: 200,
+                  //                 ),
+                  //                 SizedBox(
+                  //                   height: 10,
+                  //                 ),
+                  //                 Text(
+                  //                   "No Data Available",
+                  //                   style: TextStyle(
+                  //                       fontWeight: FontWeight.bold,
+                  //                       color: blueColor,
+                  //                       fontSize: 16),
+                  //                 )
+                  //               ],
+                  //             ),
+                  //           ),
+                  //         );
+                  //       }
+                  //
+                  //       var data = snapshot.data!;
+                  //
+                  //       // Apply filtering based on selectedValue and searchvalue
+                  //       if (selectedValue == null && searchvalue.isEmpty) {
+                  //         data = snapshot.data!;
+                  //       } else if (selectedValue == "All") {
+                  //         data = snapshot.data!;
+                  //       } else if (searchvalue.isNotEmpty) {
+                  //         data = snapshot.data!
+                  //             .where((workOrder) =>
+                  //                 (workOrder.workSubject ?? '')
+                  //                     .toLowerCase()
+                  //                     .contains(searchvalue.toLowerCase()) ||
+                  //                 (workOrder.rentalAddress ?? '')
+                  //                     .toLowerCase()
+                  //                     .contains(searchvalue.toLowerCase()))
+                  //             .toList();
+                  //       } else {
+                  //         data = snapshot.data!
+                  //             .where((workOrder) =>
+                  //                 workOrder.workSubject == selectedValue)
+                  //             .toList();
+                  //       }
+                  //
+                  //       // Update _tableData with the filtered data
+                  //       _tableData = data;
+                  //
+                  //       // Get the paged data
+                  //       final pagedData = _pagedData;
+                  //
+                  //       return SingleChildScrollView(
+                  //         scrollDirection: Axis.horizontal,
+                  //         child: SizedBox(
+                  //           width: MediaQuery.of(context).size.width * 0.95,
+                  //           child: Padding(
+                  //             padding: const EdgeInsets.all(16.0),
+                  //             child: Column(
+                  //               children: [
+                  //                 Table(
+                  //                   defaultColumnWidth: IntrinsicColumnWidth(),
+                  //                   columnWidths: {
+                  //                     0: FlexColumnWidth(),
+                  //                     1: FlexColumnWidth(),
+                  //                     2: FlexColumnWidth(),
+                  //                     3: FlexColumnWidth(),
+                  //                     4: FlexColumnWidth(),
+                  //                   },
+                  //                   children: [
+                  //                     TableRow(
+                  //                       decoration: BoxDecoration(
+                  //                         border: Border.all(color: blueColor),
+                  //                       ),
+                  //                       children: [
+                  //                         _buildHeader(
+                  //                             'Date',
+                  //                             0,
+                  //                             (workOrder) =>
+                  //                                 workOrder.date ?? ''),
+                  //                         _buildHeader(
+                  //                             'Address',
+                  //                             1,
+                  //                             (workOrder) =>
+                  //                                 workOrder.rentalAddress ??
+                  //                                 ''),
+                  //                         _buildHeader(
+                  //                             'Work',
+                  //                             2,
+                  //                             (workOrder) =>
+                  //                                 workOrder.workSubject ?? ''),
+                  //                         _buildHeader(
+                  //                             'Description',
+                  //                             3,
+                  //                             (workOrder) =>
+                  //                                 workOrder.workPerformed ??
+                  //                                 ''),
+                  //                         _buildHeader(
+                  //                             'Note',
+                  //                             5,
+                  //                             (workOrder) =>
+                  //                                 workOrder.vendorNotes ?? ''),
+                  //                       ],
+                  //                     ),
+                  //                     TableRow(
+                  //                       decoration: BoxDecoration(
+                  //                         border: Border.symmetric(
+                  //                             horizontal: BorderSide.none),
+                  //                       ),
+                  //                       children: List.generate(
+                  //                           5,
+                  //                           (index) => TableCell(
+                  //                               child: Container(height: 20))),
+                  //                     ),
+                  //                     for (var i = 0; i < pagedData.length; i++)
+                  //                       TableRow(
+                  //                         decoration: BoxDecoration(
+                  //                           border: Border(
+                  //                             left:
+                  //                                 BorderSide(color: blueColor),
+                  //                             right:
+                  //                                 BorderSide(color: blueColor),
+                  //                             top: BorderSide(color: blueColor),
+                  //                             bottom: i == pagedData.length - 1
+                  //                                 ? BorderSide(color: blueColor)
+                  //                                 : BorderSide.none,
+                  //                           ),
+                  //                         ),
+                  //                         children: [
+                  //                           _buildDataCell(
+                  //                               pagedData[i].date ?? ''),
+                  //                           _buildDataCell(
+                  //                               pagedData[i].rentalAddress ??
+                  //                                   ''),
+                  //                           _buildDataCell(
+                  //                               pagedData[i].workSubject ?? ''),
+                  //                           _buildDataCell(
+                  //                               pagedData[i].workPerformed ??
+                  //                                   ''),
+                  //                           _buildDataCell(
+                  //                               pagedData[i].vendorNotes ?? ''),
+                  //                         ],
+                  //                       ),
+                  //                   ],
+                  //                 ),
+                  //                 SizedBox(height: 25),
+                  //                 _buildPaginationControls(),
+                  //                 SizedBox(height: 25),
+                  //               ],
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       );
+                  //     },
+                  //   )
                 ],
               ),
             )

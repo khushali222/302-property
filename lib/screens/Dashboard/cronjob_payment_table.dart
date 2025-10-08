@@ -1714,7 +1714,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
         children: [
           //SizedBox(height: 20),
           //Text("Renter's Insurance Policies Expiring Within 90 days",style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),),
-          if (MediaQuery.of(context).size.width < 500)
+          // if (MediaQuery.of(context).size.width < 500)
             Padding(
               padding: const EdgeInsets.all(0.0),
               child: FutureBuilder<LeaseResponse>(

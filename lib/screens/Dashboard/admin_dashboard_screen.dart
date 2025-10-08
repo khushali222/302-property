@@ -96,73 +96,114 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Dashboard',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                double screenWidth = constraints.maxWidth;
+                double titleFontSize = screenWidth < 600
+                    ? 18
+                    : (screenWidth < 900 ? 22 : (screenWidth < 1200 ? 26 : 30));
+                return Text('Main Dashboard',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: titleFontSize));
+              },
+            ),
             const SizedBox(height: 16),
-            GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              childAspectRatio: 2.2,
-              children: [
-                _dashboardCard(
-                  "assets/icons/Group 1.svg",
-                  _formatCount(widget.countList[0]),
-                  'Properties  ->',
-                  () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PropertiesTable()));
-                  },
-                ),
-                _dashboardCard(
-                  "assets/icons/Frame.svg",
-                  _formatCount(widget.countList[1]),
-                  'Tenants  ->',
-                  () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Tenants_table()));
-                  },
-                ),
-                _dashboardCard(
-                  "assets/icons/Vector.svg",
-                  _formatCount(widget.countList[2]),
-                  'Applicants  ->',
-                  () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Applicants_table()));
-                  },
-                ),
-                _dashboardCard(
-                  "assets/icons/Vector (1).svg",
-                  _formatCount(widget.countList[3]),
-                  'Vendors  ->',
-                  () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Vendor_table()));
-                  },
-                ),
-                _dashboardCard(
-                  "assets/icons/Frame (1).svg",
-                  _formatCount(widget.countList[4]),
-                  'Work Orders ->',
-                  () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Workorder_table()));
-                  },
-                ),
-              ],
+            LayoutBuilder(
+              builder: (context, constraints) {
+                double screenWidth = constraints.maxWidth;
+                int crossAxisCount;
+                double childAspectRatio;
+                double spacing;
+
+                // Responsive grid configuration
+                if (screenWidth < 600) {
+                  // Mobile: 2 columns
+                  crossAxisCount = 2;
+                  childAspectRatio = 2.2;
+                  spacing = 10;
+                } else if (screenWidth < 900) {
+                  // Small tablet: 3 columns
+                  crossAxisCount = 3;
+                  childAspectRatio = 2.5;
+                  spacing = 12;
+                } else if (screenWidth < 1200) {
+                  // Medium tablet: 4 columns
+                  crossAxisCount = 4;
+                  childAspectRatio = 2.8;
+                  spacing = 15;
+                } else {
+                  // Large tablet/desktop: 5 columns
+                  crossAxisCount = 5;
+                  childAspectRatio = 3.0;
+                  spacing = 18;
+                }
+
+                return GridView.count(
+                  crossAxisCount: crossAxisCount,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  mainAxisSpacing: spacing,
+                  crossAxisSpacing: spacing,
+                  childAspectRatio: childAspectRatio,
+                  children: [
+                    _dashboardCard(
+                      "assets/icons/Group 1.svg",
+                      _formatCount(widget.countList[0]),
+                      'Properties  ->',
+                      () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PropertiesTable()));
+                      },
+                    ),
+                    _dashboardCard(
+                      "assets/icons/Frame.svg",
+                      _formatCount(widget.countList[1]),
+                      'Tenants  ->',
+                      () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Tenants_table()));
+                      },
+                    ),
+                    _dashboardCard(
+                      "assets/icons/Vector.svg",
+                      _formatCount(widget.countList[2]),
+                      'Applicants  ->',
+                      () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Applicants_table()));
+                      },
+                    ),
+                    _dashboardCard(
+                      "assets/icons/Vector (1).svg",
+                      _formatCount(widget.countList[3]),
+                      'Vendors  ->',
+                      () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Vendor_table()));
+                      },
+                    ),
+                    _dashboardCard(
+                      "assets/icons/Frame (1).svg",
+                      _formatCount(widget.countList[4]),
+                      'Work Orders ->',
+                      () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Workorder_table()));
+                      },
+                    ),
+                  ],
+                );
+              },
             ),
             const SizedBox(height: 15),
             _rentDataSection(context),
@@ -240,269 +281,316 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
   ];
   Widget _dashboardCard(
       String icon, String number, String label, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black12, blurRadius: 6, offset: Offset(0, 2))
-          ],
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-        child: Row(
-          children: [
-            CircleAvatar(
-              backgroundColor: Colors.blue[50],
-              child: SvgPicture.asset(icon, color: blueColor),
-            ),
-            SizedBox(width: 12),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(number,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: blueColor)),
-                Text(label,
-                    style: TextStyle(
-                        fontSize:
-                            MediaQuery.of(context).size.width < 400 ? 13 : 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87)),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double screenWidth = constraints.maxWidth;
+        double numberFontSize;
+        double labelFontSize;
+        double horizontalPadding;
+        double verticalPadding;
+        double spacing;
+
+        // Consistent responsive sizing for dashboard cards
+        if (screenWidth < 600) {
+          // Mobile - keep original sizing
+          numberFontSize = 16;
+          labelFontSize = screenWidth < 400 ? 13 : 14;
+          horizontalPadding = 5;
+          verticalPadding = 10;
+          spacing = 12;
+        } else if (screenWidth < 900) {
+          // Small tablet - bigger text for better readability
+          numberFontSize = 20;
+          labelFontSize = 18;
+          horizontalPadding = 8;
+          verticalPadding = 12;
+          spacing = 14;
+        } else if (screenWidth < 1200) {
+          // Medium tablet - bigger text for better readability
+          numberFontSize = 22;
+          labelFontSize = 20;
+          horizontalPadding = 10;
+          verticalPadding = 14;
+          spacing = 16;
+        } else {
+          // Large tablet/desktop - bigger text for better readability
+          numberFontSize = 24;
+          labelFontSize = 22;
+          horizontalPadding = 12;
+          verticalPadding = 16;
+          spacing = 18;
+        }
+
+        return GestureDetector(
+          onTap: onTap,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.black12, blurRadius: 6, offset: Offset(0, 2))
               ],
             ),
-          ],
-        ),
-      ),
+            padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding, vertical: verticalPadding),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: Colors.blue[50],
+                  child: SvgPicture.asset(icon, color: blueColor),
+                ),
+                SizedBox(width: spacing),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(number,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: numberFontSize,
+                            color: blueColor)),
+                    Text(label,
+                        style: TextStyle(
+                            fontSize: labelFontSize,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
   Widget _rentDataSection(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        double maxWidth =
-            constraints.maxWidth > 500 ? 500 : constraints.maxWidth;
-        double titleFont = maxWidth > 500 ? 28 : 18;
-        double dropdownFont = maxWidth > 500 ? 20 : 16;
-        double sectionFont = maxWidth > 500 ? 22 : 16;
-        double valueFont = maxWidth > 500 ? 28 : 16;
+        double screenWidth = constraints.maxWidth;
 
-        return Center(
-          child: Container(
-            width: maxWidth,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(28),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 10, 24, 0),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        key: _dropdownKey,
-                        onTap: () => _showRentTypeMenu(context),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 18, vertical: 10),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: const Color(0xFFE5E5E5), width: 2),
-                            borderRadius: BorderRadius.circular(32),
-                            color: Colors.transparent,
-                          ),
-                          child: Row(
-                            children: [
-                              Text(
-                                selectedRentType,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: dropdownFont,
-                                  color: const Color(0xFF3B4256),
-                                ),
+        // Consistent responsive font sizing across dashboard
+        double titleFont = screenWidth < 600
+            ? 18
+            : (screenWidth < 900 ? 22 : (screenWidth < 1200 ? 26 : 30));
+        double dropdownFont = screenWidth < 600
+            ? 16
+            : (screenWidth < 900 ? 18 : (screenWidth < 1200 ? 20 : 22));
+        double sectionFont = screenWidth < 600
+            ? 16
+            : (screenWidth < 900 ? 18 : (screenWidth < 1200 ? 20 : 22));
+        double valueFont = screenWidth < 600
+            ? 16
+            : (screenWidth < 900 ? 18 : (screenWidth < 1200 ? 20 : 22));
+
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 10, 24, 0),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      key: _dropdownKey,
+                      onTap: () => _showRentTypeMenu(context),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 18, vertical: 10),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: const Color(0xFFE5E5E5), width: 2),
+                          borderRadius: BorderRadius.circular(32),
+                          color: Colors.transparent,
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              selectedRentType,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: dropdownFont,
+                                color: const Color(0xFF3B4256),
                               ),
-                              const SizedBox(width: 8),
-                              const Icon(Icons.keyboard_arrow_down_rounded,
-                                  color: Color(0xFF1A2746), size: 28),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(width: 8),
+                            const Icon(Icons.keyboard_arrow_down_rounded,
+                                color: Color(0xFF1A2746), size: 28),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                  child: Divider(thickness: 2, color: Color(0xFFE5E5E5)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        selectedRentType,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: sectionFont,
-                          color: const Color(0xFF1A2746),
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                      if (selectedRentType == 'Rent Past Due')
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    RentPastDueReports(title: 'Rent Past Due'),
-                                settings: RouteSettings(
-                                  arguments: {
-                                    'monthType': 'All',
-                                    'chargeType': 'Charges'
-                                  },
-                                ),
-                              ),
-                            );
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                formatCurrency(widget.totalRentPastDue),
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: const Color(0xFF7B7F87),
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      else ...[
-                        GestureDetector(
-                          onTap: () {
-                            _navigateToRespectiveScreen(
-                                context, selectedRentType, "Current Month");
-                          },
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  'Current Month',
-                                  style: TextStyle(
-                                    fontSize: valueFont,
-                                    color: const Color(0xFF7B7F87),
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ),
-                              // Text(
-                              //   selectedRentType == 'Rent Due'
-                              //       ? '\$${widget.currentMonthRentDue}'
-                              //       : selectedRentType == 'Rent Paid'
-                              //           ? '\$${widget.currentMonthRentPaid}'
-                              //           : '\$2000.00',
-                              //   style: TextStyle(
-                              //     fontSize: valueFont,
-                              //     color: const Color(0xFF7B7F87),
-                              //     fontWeight: FontWeight.w400,
-                              //   ),
-                              // ),
-                              Text(
-                                selectedRentType == 'Rent Due'
-                                    ? formatCurrency(widget.currentMonthRentDue)
-                                    : selectedRentType == 'Rent Paid'
-                                        ? formatCurrency(
-                                            widget.currentMonthRentPaid)
-                                        : formatCurrency(2000.00),
-                                style: TextStyle(
-                                  fontSize: valueFont,
-                                  color: const Color(0xFF7B7F87),
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        GestureDetector(
-                          onTap: () {
-                            _navigateToRespectiveScreen(
-                                context, selectedRentType, "Last Month");
-                          },
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  'Last Month',
-                                  style: TextStyle(
-                                    fontSize: valueFont,
-                                    color: const Color(0xFF7B7F87),
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ),
-                              // Text(
-                              //   selectedRentType == 'Rent Due'
-                              //       ? '\$${widget.lastMonthRentDue}'
-                              //       : selectedRentType == 'Rent Paid'
-                              //           ? '\$${widget.lastMonthRentPaid}'
-                              //           : '\$250.00',
-                              //   style: TextStyle(
-                              //     fontSize: valueFont,
-                              //     color: const Color(0xFF7B7F87),
-                              //     fontWeight: FontWeight.w400,
-                              //   ),
-                              // ),
-                              Text(
-                                selectedRentType == 'Rent Due'
-                                    ? formatCurrency(widget.lastMonthRentDue)
-                                    : selectedRentType == 'Rent Paid'
-                                        ? formatCurrency(
-                                            widget.lastMonthRentPaid)
-                                        : formatCurrency(250.00),
-                                style: TextStyle(
-                                  fontSize: valueFont,
-                                  color: const Color(0xFF7B7F87),
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                      const SizedBox(height: 16),
-                    ],
-                  ),
-                ),
-                // Bottom bar
-                Container(
-                  height: 18,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF1A2746),
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(28),
-                      bottomRight: Radius.circular(28),
                     ),
+                  ],
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                child: Divider(thickness: 2, color: Color(0xFFE5E5E5)),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      selectedRentType,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: sectionFont,
+                        color: const Color(0xFF1A2746),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    if (selectedRentType == 'Rent Past Due')
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  RentPastDueReports(title: 'Rent Past Due'),
+                              settings: RouteSettings(
+                                arguments: {
+                                  'monthType': 'All',
+                                  'chargeType': 'Charges'
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              formatCurrency(widget.totalRentPastDue),
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: const Color(0xFF7B7F87),
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    else ...[
+                      GestureDetector(
+                        onTap: () {
+                          _navigateToRespectiveScreen(
+                              context, selectedRentType, "Current Month");
+                        },
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Current Month',
+                                style: TextStyle(
+                                  fontSize: valueFont,
+                                  color: const Color(0xFF7B7F87),
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                            // Text(
+                            //   selectedRentType == 'Rent Due'
+                            //       ? '\$${widget.currentMonthRentDue}'
+                            //       : selectedRentType == 'Rent Paid'
+                            //           ? '\$${widget.currentMonthRentPaid}'
+                            //           : '\$2000.00',
+                            //   style: TextStyle(
+                            //     fontSize: valueFont,
+                            //     color: const Color(0xFF7B7F87),
+                            //     fontWeight: FontWeight.w400,
+                            //   ),
+                            // ),
+                            Text(
+                              selectedRentType == 'Rent Due'
+                                  ? formatCurrency(widget.currentMonthRentDue)
+                                  : selectedRentType == 'Rent Paid'
+                                      ? formatCurrency(
+                                          widget.currentMonthRentPaid)
+                                      : formatCurrency(2000.00),
+                              style: TextStyle(
+                                fontSize: valueFont,
+                                color: const Color(0xFF7B7F87),
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      GestureDetector(
+                        onTap: () {
+                          _navigateToRespectiveScreen(
+                              context, selectedRentType, "Last Month");
+                        },
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Last Month',
+                                style: TextStyle(
+                                  fontSize: valueFont,
+                                  color: const Color(0xFF7B7F87),
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                            // Text(
+                            //   selectedRentType == 'Rent Due'
+                            //       ? '\$${widget.lastMonthRentDue}'
+                            //       : selectedRentType == 'Rent Paid'
+                            //           ? '\$${widget.lastMonthRentPaid}'
+                            //           : '\$250.00',
+                            //   style: TextStyle(
+                            //     fontSize: valueFont,
+                            //     color: const Color(0xFF7B7F87),
+                            //     fontWeight: FontWeight.w400,
+                            //   ),
+                            // ),
+                            Text(
+                              selectedRentType == 'Rent Due'
+                                  ? formatCurrency(widget.lastMonthRentDue)
+                                  : selectedRentType == 'Rent Paid'
+                                      ? formatCurrency(widget.lastMonthRentPaid)
+                                      : formatCurrency(250.00),
+                              style: TextStyle(
+                                fontSize: valueFont,
+                                color: const Color(0xFF7B7F87),
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+              // Bottom bar
+              Container(
+                height: 18,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF1A2746),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(28),
+                    bottomRight: Radius.circular(28),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
@@ -788,9 +876,16 @@ class _RentTypePopup extends StatelessWidget {
     final double popupWidth = screenWidth < 450
         ? screenWidth * 0.45
         : (screenWidth < 500 ? screenWidth * 0.20 : 320);
-    final double fontSize = screenWidth < 450 ? 16 : 22;
-    final double verticalPad = screenWidth < 450 ? 16 : 22;
-    final double horizontalPad = screenWidth < 450 ? 10 : 18;
+    // Consistent responsive font sizing
+    final double fontSize = screenWidth < 600
+        ? 16
+        : (screenWidth < 900 ? 18 : (screenWidth < 1200 ? 20 : 22));
+    final double verticalPad = screenWidth < 600
+        ? 16
+        : (screenWidth < 900 ? 18 : (screenWidth < 1200 ? 20 : 22));
+    final double horizontalPad = screenWidth < 600
+        ? 10
+        : (screenWidth < 900 ? 12 : (screenWidth < 1200 ? 14 : 18));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

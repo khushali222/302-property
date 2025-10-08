@@ -800,6 +800,81 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                       ),
                     ),
                   ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12, right: 12),
+                    child: Row(
+                      children: [
+                        if (MediaQuery.of(context).size.width < 500)
+                          SizedBox(width: 1),
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 18),
+                        Material(
+                          elevation: 2,
+                          borderRadius: BorderRadius.circular(8),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            // height: 40,
+                            height: MediaQuery.of(context).size.width < 500
+                                ? 45
+                                : 50,
+                            width: MediaQuery.of(context).size.width < 500
+                                ? MediaQuery.of(context).size.width * .52
+                                : MediaQuery.of(context).size.width * .49,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                // border: Border.all(color: Colors.grey),
+                                border: Border.all(color: Color(0xFF8A95A8))),
+                            child: Stack(
+                              children: [
+                                Positioned.fill(
+                                  child: TextField(
+                                    style: TextStyle(
+                                        fontSize:
+                                        MediaQuery.of(context).size.width <
+                                            500
+                                            ? 15
+                                            : 14),
+                                    // onChanged: (value) {
+                                    //   setState(() {
+                                    //     cvverror = false;
+                                    //   });
+                                    // },
+                                    // controller: cvv,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        searchvalue = value;
+                                        if (_currentPage != 0) _currentPage = 0;
+                                      });
+                                    },
+                                    cursorColor: blueColor,
+                                    decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: "Search here...",
+                                        hintStyle: TextStyle(
+                                          fontSize: MediaQuery.of(context)
+                                              .size
+                                              .width <
+                                              500
+                                              ? 14
+                                              : 18,
+                                          // fontWeight: FontWeight.bold,
+                                          color: Color(0xFF8A95A8),
+                                        ),
+                                        contentPadding: EdgeInsets.only(
+                                            left: 5, bottom: 12, top: 5)),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   // if (MediaQuery.of(context).size.width < 500)
                     Padding(
                       padding: EdgeInsets.all(
