@@ -8,18 +8,20 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:camera/camera.dart';
 import 'package:intl/intl.dart';
+import '../../../widgets/camera_capture_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../widgets/VideoPlayerWidget.dart';
 import '../../widgets/appbar.dart';
 import 'package:three_zero_two_property/TenantsModule/repository/workorder.dart';
 import 'package:three_zero_two_property/TenantsModule/widgets/drawer_tiles.dart';
 
-
 import '../../../constant/constant.dart';
 import '../../../screens/Maintenance/Vendor/add_vendor.dart';
 import '../../../widgets/titleBar.dart';
-import 'package:http/http.dart'as http;
+import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -56,7 +58,8 @@ class _ImageUploadPageState extends State<ImageUploadPage> {
     final String uploadUrl = '$image_upload_url/api/images/upload';
     print(uploadUrl);
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
-    request.files.add(await http.MultipartFile.fromPath('files', imageFile.path));
+    request.files
+        .add(await http.MultipartFile.fromPath('files', imageFile.path));
 
     var response = await request.send();
     var responseData = await http.Response.fromStream(response);
@@ -69,6 +72,210 @@ class _ImageUploadPageState extends State<ImageUploadPage> {
     } else {
       throw Exception('Failed to upload file: ${responseBody['message']}');
     }
+  }
+
+  // Show image source selection dialog
+  void _showImageSourceDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Title
+                Text(
+                  'Select Media From',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Options Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // Gallery Option
+                    _buildSourceOption(
+                      icon: Icons.photo_library,
+                      label: 'Gallery',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        _pickImageFromSource(ImageSource.gallery);
+                      },
+                    ),
+
+                    const SizedBox(width: 20),
+
+                    // Camera Option
+                    _buildSourceOption(
+                      icon: Icons.camera_alt,
+                      label: 'Camera',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        _openCameraInterface();
+                      },
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Build individual source option
+  Widget _buildSourceOption({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 100,
+        height: 100,
+        decoration: BoxDecoration(
+          color: Colors.grey[50],
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey[200]!, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: blueColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                color: blueColor,
+                size: 28,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Pick image from specific source
+  Future<void> _pickImageFromSource(ImageSource source) async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickMedia();
+
+    if (image != null) {
+      setState(() {
+        selectedImages.add(File(image.path));
+      });
+      _uploadImage(File(image.path));
+    }
+  }
+
+  Future<void> _uploadImage(File imageFile) async {
+    try {
+      String? fileName = await uploadImage(imageFile);
+      setState(() {
+        uploaded_images.add(fileName!);
+      });
+    } catch (e) {
+      print('Image upload failed: $e');
+    }
+  }
+
+  // Open unified camera interface for both photos and videos
+  Future<void> _openCameraInterface() async {
+    try {
+      // Get available cameras
+      final cameras = await availableCameras();
+      if (cameras.isEmpty) {
+        _showErrorDialog('No cameras found on this device');
+        return;
+      }
+
+      // Use the first available camera (usually back camera)
+      final camera = cameras.first;
+
+      // Navigate to camera screen
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CameraCaptureScreen(
+            camera: camera,
+            onImageCaptured: (File imageFile) {
+              // Handle captured image
+              setState(() {
+                selectedImages.add(imageFile);
+              });
+              _uploadImage(imageFile);
+            },
+            onVideoCaptured: (File videoFile) async {
+              // Handle captured video
+              setState(() {
+                selectedImages.add(videoFile);
+              });
+              _uploadImage(videoFile);
+            },
+          ),
+        ),
+      );
+    } catch (e) {
+      _showErrorDialog('Failed to open camera: $e');
+    }
+  }
+
+  // Show error dialog
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> selectImages() async {
@@ -96,9 +303,11 @@ class _ImageUploadPageState extends State<ImageUploadPage> {
       setState(() {
         selectedImages = [];
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Images uploaded successfully')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Images uploaded successfully')));
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to upload images')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Failed to upload images')));
     } finally {
       setState(() {
         isLoading = false;
@@ -149,8 +358,8 @@ class _ImageUploadPageState extends State<ImageUploadPage> {
                 onPressed: isLoading
                     ? null
                     : () async {
-                  await selectImages();
-                },
+                        _showImageSourceDialog();
+                      },
                 child: Text(
                   'Select Images',
                   style: TextStyle(color: Color(0xFFf7f8f9)),
@@ -174,19 +383,19 @@ class _ImageUploadPageState extends State<ImageUploadPage> {
                 onPressed: isLoading
                     ? null
                     : () async {
-                  await uploadSelectedImages();
-                },
+                        await uploadSelectedImages();
+                      },
                 child: isLoading
                     ? Center(
-                  child: SpinKitFadingCircle(
-                    color: Colors.white,
-                    size: 25.0,
-                  ),
-                )
+                        child: SpinKitFadingCircle(
+                          color: Colors.white,
+                          size: 25.0,
+                        ),
+                      )
                     : Text(
-                  'Upload here',
-                  style: TextStyle(color: Color(0xFFf7f8f9)),
-                ),
+                        'Upload here',
+                        style: TextStyle(color: Color(0xFFf7f8f9)),
+                      ),
               ),
             ),
           ],
@@ -223,6 +432,210 @@ class _Add_WorkorderState extends State<Add_Workorder> {
   String? _selectedUnitId;
   String? _selectedUnit;
   String? _selectedRentaId;
+  // Show image source selection dialog
+  void _showImageSourceDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Title
+                Text(
+                  'Select Media From',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Options Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // Gallery Option
+                    _buildSourceOption(
+                      icon: Icons.photo_library,
+                      label: 'Gallery',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        _pickImageFromSource(ImageSource.gallery);
+                      },
+                    ),
+
+                    const SizedBox(width: 20),
+
+                    // Camera Option
+                    _buildSourceOption(
+                      icon: Icons.camera_alt,
+                      label: 'Camera',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        _openCameraInterface();
+                      },
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Build individual source option
+  Widget _buildSourceOption({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 100,
+        height: 100,
+        decoration: BoxDecoration(
+          color: Colors.grey[50],
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey[200]!, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: blueColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                color: blueColor,
+                size: 28,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Pick image from specific source
+  Future<void> _pickImageFromSource(ImageSource source) async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickMedia();
+
+    if (image != null) {
+      setState(() {
+        selectedImages.add(File(image.path));
+      });
+      _uploadImage(File(image.path));
+    }
+  }
+
+  Future<void> _uploadImage(File imageFile) async {
+    try {
+      String? fileName = await uploadImage(imageFile);
+      setState(() {
+        uploaded_images.add(fileName!);
+      });
+    } catch (e) {
+      print('Image upload failed: $e');
+    }
+  }
+
+  // Open unified camera interface for both photos and videos
+  Future<void> _openCameraInterface() async {
+    try {
+      // Get available cameras
+      final cameras = await availableCameras();
+      if (cameras.isEmpty) {
+        _showErrorDialog('No cameras found on this device');
+        return;
+      }
+
+      // Use the first available camera (usually back camera)
+      final camera = cameras.first;
+
+      // Navigate to camera screen
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CameraCaptureScreen(
+            camera: camera,
+            onImageCaptured: (File imageFile) {
+              // Handle captured image
+              setState(() {
+                selectedImages.add(imageFile);
+              });
+              _uploadImage(imageFile);
+            },
+            onVideoCaptured: (File videoFile) async {
+              // Handle captured video
+              setState(() {
+                selectedImages.add(videoFile);
+              });
+              _uploadImage(videoFile);
+            },
+          ),
+        ),
+      );
+    } catch (e) {
+      _showErrorDialog('Failed to open camera: $e');
+    }
+  }
+
+  // Show error dialog
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> selectImages() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.media,
@@ -239,32 +652,34 @@ class _Add_WorkorderState extends State<Add_Workorder> {
 
   Future<void> uploadSelectedImages() async {
     setState(() {
-    //  isLoading = true;
+      //  isLoading = true;
     });
 
     try {
       for (File image in selectedImages) {
-       var image_name =  await uploadImage(image);
-       print(image_name);
-       uploaded_images.add(image_name);
+        var image_name = await uploadImage(image);
+        print(image_name);
+        uploaded_images.add(image_name);
       }
       setState(() {
         selectedImages = [];
       });
-   //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Images uploaded successfully')));
+      //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Images uploaded successfully')));
     } catch (e) {
-     // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to upload images')));
+      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to upload images')));
     } finally {
       setState(() {
-       // isLoading = false;
+        // isLoading = false;
       });
     }
   }
+
   Future<String?> uploadImage(File imageFile) async {
     final String uploadUrl = '$image_upload_url/api/images/upload';
     print(uploadUrl);
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
-    request.files.add(await http.MultipartFile.fromPath('files', imageFile.path));
+    request.files
+        .add(await http.MultipartFile.fromPath('files', imageFile.path));
 
     var response = await request.send();
     var responseData = await http.Response.fromStream(response);
@@ -278,6 +693,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
       throw Exception('Failed to upload file: ${responseBody['message']}');
     }
   }
+
   Future<void> _loadProperties() async {
     print("Calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -290,12 +706,14 @@ class _Add_WorkorderState extends State<Add_Workorder> {
 
     try {
       final response =
-      await http.get(Uri.parse('${Api_url}/api/tenant/tenant_property/$id'),
-          //api/tenant/tenant_property
-          headers: {"authorization" : "CRM $token","id":"CRM $id",}
-      );
+          await http.get(Uri.parse('${Api_url}/api/tenant/tenant_property/$id'),
+              //api/tenant/tenant_property
+              headers: {
+            "authorization": "CRM $token",
+            "id": "CRM $id",
+          });
       print('${Api_url}/api/rentals/rentals/$id');
-print("${response.body}");
+      print("${response.body}");
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> addresses = {};
@@ -309,9 +727,10 @@ print("${response.body}");
         // });
         jsonResponse.forEach((data) {
           // Combine rental_id and address to create a unique key
-          String key = '${data['rental_id']} - ${data['rental_adress']} - ${data['status']}';
-          addresses[key] = '${data['rental_adress']} - ${data['status']}'; // Value remains the rental_id
-
+          String key =
+              '${data['rental_id']} - ${data['rental_adress']} - ${data['status']}';
+          addresses[key] =
+              '${data['rental_adress']} - ${data['status']}'; // Value remains the rental_id
         });
 
         setState(() {
@@ -319,7 +738,7 @@ print("${response.body}");
           _isLoading = false;
         });
       } else {
-      //  throw Exception('Failed to load data');
+        //  throw Exception('Failed to load data');
       }
     } catch (e) {
       setState(() {
@@ -330,6 +749,7 @@ print("${response.body}");
       // );
     }
   }
+
   void _showVideoDialog(String videoFile) {
     showDialog(
       context: context,
@@ -338,6 +758,7 @@ print("${response.body}");
       },
     );
   }
+
   Future<void> _loadUnits(String rentalId) async {
     setState(() {
       _isLoading = true;
@@ -347,8 +768,13 @@ print("${response.body}");
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     try {
-      final response =
-      await http.get(Uri.parse('$Api_url/api/unit/rental_unit_dropdown/$rentalId?tenant_id=$id'),headers: {"authorization" : "CRM $token","id":"CRM $id",});
+      final response = await http.get(
+          Uri.parse(
+              '$Api_url/api/unit/rental_unit_dropdown/$rentalId?tenant_id=$id'),
+          headers: {
+            "authorization": "CRM $token",
+            "id": "CRM $id",
+          });
       print('$Api_url/api/unit/rental_unit/$rentalId');
 
       if (response.statusCode == 200) {
@@ -382,10 +808,21 @@ print("${response.body}");
     super.initState();
     _loadProperties();
   }
+
   String? _selectedCategory;
-  final List<String> _category = ['Complaint', 'Contribution Request', 'Feedback/Suggestion', 'General inquiry','Maintenance Request','Other'];
+  final List<String> _category = [
+    'Complaint',
+    'Contribution Request',
+    'Feedback/Suggestion',
+    'General inquiry',
+    'Maintenance Request',
+    'Other'
+  ];
   String? _selectedEntry;
-  final List<String> _entry = ['Yes', 'No', ];
+  final List<String> _entry = [
+    'Yes',
+    'No',
+  ];
   List<Map<String, dynamic>> rows = [];
   bool _showTextField = false;
   String renderId = '';
@@ -398,13 +835,17 @@ print("${response.body}");
     double screenWidth = MediaQuery.of(context).size.height;
     return Scaffold(
       key: key,
-      appBar: widget_302.App_Bar(context: context,onDrawerIconPressed: () {
-         // print("calling appbar");
-    key.currentState!.openDrawer();
-    // Scaffold.of(context).openDrawer();
-    }),
+      appBar: widget_302.App_Bar(
+          context: context,
+          onDrawerIconPressed: () {
+            // print("calling appbar");
+            key.currentState!.openDrawer();
+            // Scaffold.of(context).openDrawer();
+          }),
       backgroundColor: Colors.white,
-      drawer:  CustomDrawer(currentpage: 'Work Order',),
+      drawer: CustomDrawer(
+        currentpage: 'Work Order',
+      ),
       body: Form(
         key: _formkey,
         child: Container(
@@ -476,106 +917,112 @@ print("${response.body}");
                             ),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                blueColor,
+                                backgroundColor: blueColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
                               ),
                               onPressed: () async {
-                                // _pickImage().then((_) {
-                                //   setState(
-                                //           () {}); // Rebuild the widget after selecting the image
-                                // });
-                                await selectImages();
+                                _showImageSourceDialog();
                               },
                               child: isLoading
                                   ? Center(
-                                child: SpinKitFadingCircle(
-                                  color: Colors.white,
-                                  size: 55.0,
-                                ),
-                              )
+                                      child: SpinKitFadingCircle(
+                                        color: Colors.white,
+                                        size: 55.0,
+                                      ),
+                                    )
                                   : Text(
-                                'Upload here',
-                                style:
-                                TextStyle(color: Color(0xFFf7f8f9)),
-                              ),
+                                      'Upload here',
+                                      style:
+                                          TextStyle(color: Color(0xFFf7f8f9)),
+                                    ),
                             ),
                           ),
-                          SizedBox(height: 10,),
+                          SizedBox(
+                            height: 10,
+                          ),
                           Wrap(
                             spacing: 10,
                             runSpacing: 10,
                             children: uploaded_images.map((imageUrl) {
                               bool isMp4 = isVideo(imageUrl!);
                               return Container(
-                                width:  uploaded_images.length == 1
+                                width: uploaded_images.length == 1
                                     ? MediaQuery.of(context).size.width / 4
-                                    : (MediaQuery.of(context).size.width / 4) - 10,
+                                    : (MediaQuery.of(context).size.width / 4) -
+                                        10,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: InkWell(
-                                  onLongPress: (){
+                                  onLongPress: () {
                                     setState(() {
                                       uploaded_images.remove(imageUrl);
                                     });
                                   },
-                                  child:   isMp4 ?
-                                  Container(
-                                    height: 80,
-                                    width: 80,
-                                    child: GestureDetector(
-                                      onTap: (){
-                                        _showVideoDialog('$image_url${imageUrl}');
-                                      },
-                                      child: Stack(
-                                        alignment: Alignment.center,
-                                        children: [
-                                          // Image.file(
-                                          //   File(snapshot.data!),
-                                          //   height:80,
-                                          //   width: 80,
-                                          //   fit: BoxFit.cover,
-                                          // ),
-                                          VideoItem(url: '$image_url${imageUrl}'),
-                                          Icon(Icons.play_circle_fill, color: Colors.white, size: 40),
-                                        ],
-                                      ),
-                                    ),
-                                  ):
-                                  Container(
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            SizedBox(width: 68),
-                                            GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  uploaded_images.remove(imageUrl);
-                                                });
-                                              },
-                                              child: Icon(
-                                                Icons.close,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Image.network(
-                                          "$image_url${imageUrl}",
+                                  child: isMp4
+                                      ? Container(
                                           height: 80,
                                           width: 80,
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (context, error, stackTrace) {
-                                            return Icon(Icons.error); // Placeholder for errors
-                                          },
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              _showVideoDialog(
+                                                  '$image_url${imageUrl}');
+                                            },
+                                            child: Stack(
+                                              alignment: Alignment.center,
+                                              children: [
+                                                // Image.file(
+                                                //   File(snapshot.data!),
+                                                //   height:80,
+                                                //   width: 80,
+                                                //   fit: BoxFit.cover,
+                                                // ),
+                                                VideoItem(
+                                                    url:
+                                                        '$image_url${imageUrl}'),
+                                                Icon(Icons.play_circle_fill,
+                                                    color: Colors.white,
+                                                    size: 40),
+                                              ],
+                                            ),
+                                          ),
+                                        )
+                                      : Container(
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  SizedBox(width: 68),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        uploaded_images
+                                                            .remove(imageUrl);
+                                                      });
+                                                    },
+                                                    child: Icon(
+                                                      Icons.close,
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Image.network(
+                                                "$image_url${imageUrl}",
+                                                height: 80,
+                                                width: 80,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (context, error,
+                                                    stackTrace) {
+                                                  return Icon(Icons
+                                                      .error); // Placeholder for errors
+                                                },
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ],
-                                    ),
-                                  ),
                                 ),
                               );
                             }).toList(),
@@ -591,13 +1038,13 @@ print("${response.body}");
                           SizedBox(
                             height: 10,
                           ),
-                           Column(
+                          Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               DropdownButtonHideUnderline(
                                 child: DropdownButtonFormField2<String>(
-                                  decoration: InputDecoration(
-                                      border: InputBorder.none),
+                                  decoration:
+                                      InputDecoration(border: InputBorder.none),
                                   isExpanded: true,
                                   hint: const Row(
                                     children: [
@@ -615,11 +1062,10 @@ print("${response.body}");
                                     ],
                                   ),
                                   items: properties.keys.map((rentalId) {
-
                                     return DropdownMenuItem<String>(
                                       value: rentalId,
                                       child: Text(
-                                       '${ properties[rentalId]!}',
+                                        '${properties[rentalId]!}',
                                         style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w400,
@@ -635,15 +1081,17 @@ print("${response.body}");
                                       _propertyErrorMessage = null;
                                       _selectedUnitId = null;
                                       _selectedPropertyId = value;
-                                      _selectedProperty = properties[value]; // Store selected rental_adress
-                                    //  _selectedProperty = properties[value]; // Store selected rental_adress
+                                      _selectedProperty = properties[
+                                          value]; // Store selected rental_adress
+                                      //  _selectedProperty = properties[value]; // Store selected rental_adress
                                       String? selectedKey = value;
-                                      List<String> splitValue = selectedKey!.split(' - ');
+                                      List<String> splitValue =
+                                          selectedKey!.split(' - ');
 
                                       _selectedRentaId = splitValue[0];
-                                       String status = splitValue[2];
+                                      String status = splitValue[2];
                                       // print('rentalid ${rentalId}');
-                                       print('rental status ${status}');
+                                      print('rental status ${status}');
                                       renderId = value.toString();
                                       print(
                                           'Selected Property: $_selectedPropertyId');
@@ -652,7 +1100,7 @@ print("${response.body}");
                                           _selectedRentaId!); // Fetch units for the selected propert
                                       if (status.contains('Expired')) {
                                         _propertyErrorMessage =
-                                        'Your lease for this property has expired. The work order will appear only on the admin/staff dashboard.';
+                                            'Your lease for this property has expired. The work order will appear only on the admin/staff dashboard.';
                                       }
                                     });
                                   },
@@ -662,8 +1110,7 @@ print("${response.body}");
                                     padding: const EdgeInsets.only(
                                         left: 14, right: 14),
                                     decoration: BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.circular(6),
+                                      borderRadius: BorderRadius.circular(6),
                                       color: Colors.white,
                                     ),
                                     elevation: 2,
@@ -678,23 +1125,20 @@ print("${response.body}");
                                   ),
                                   dropdownStyleData: DropdownStyleData(
                                     decoration: BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.circular(6),
+                                      borderRadius: BorderRadius.circular(6),
                                       color: Colors.white,
                                     ),
                                     scrollbarTheme: ScrollbarThemeData(
                                       radius: const Radius.circular(6),
-                                      thickness:
-                                      MaterialStateProperty.all(6),
+                                      thickness: MaterialStateProperty.all(6),
                                       thumbVisibility:
-                                      MaterialStateProperty.all(true),
+                                          MaterialStateProperty.all(true),
                                     ),
                                   ),
-                                  menuItemStyleData:
-                                  const MenuItemStyleData(
+                                  menuItemStyleData: const MenuItemStyleData(
                                     height: 40,
-                                    padding: EdgeInsets.only(
-                                        left: 14, right: 14),
+                                    padding:
+                                        EdgeInsets.only(left: 14, right: 14),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -705,117 +1149,106 @@ print("${response.body}");
                                 ),
                               ),
                               units.isNotEmpty
-                                  ?  Text('Unit',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: blueColor))
+                                  ? Text('Unit',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor))
                                   : Container(),
                               const SizedBox(height: 0),
                               units.isNotEmpty
                                   ? DropdownButtonHideUnderline(
-                                child:
-                                DropdownButtonFormField2<String>(
-                                  decoration: InputDecoration(
-                                      border: InputBorder.none),
-                                  isExpanded: true,
-                                  hint: const Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          'Select Unit',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight:
-                                            FontWeight.w400,
-                                            color: Color(0xFFb0b6c3),
-                                          ),
-                                          overflow:
-                                          TextOverflow.ellipsis,
+                                      child: DropdownButtonFormField2<String>(
+                                        decoration: InputDecoration(
+                                            border: InputBorder.none),
+                                        isExpanded: true,
+                                        hint: const Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                'Select Unit',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Color(0xFFb0b6c3),
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  items: units.keys.map((unitId) {
-                                    return DropdownMenuItem<String>(
-                                      value: unitId,
-                                      child: Text(
-                                        units[unitId]!,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.black87,
-                                        ),
-                                        overflow:
-                                        TextOverflow.ellipsis,
-                                      ),
-                                    );
-                                  }).toList(),
-                                  value: _selectedUnitId,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      unitId = value.toString();
-                                      _selectedUnitId = value;
-                                      _selectedUnit = units[
-                                      value]; // Store selected rental_unit
+                                        items: units.keys.map((unitId) {
+                                          return DropdownMenuItem<String>(
+                                            value: unitId,
+                                            child: Text(
+                                              units[unitId]!,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.black87,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          );
+                                        }).toList(),
+                                        value: _selectedUnitId,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            unitId = value.toString();
+                                            _selectedUnitId = value;
+                                            _selectedUnit = units[
+                                                value]; // Store selected rental_unit
 
-                                      print(
-                                          'Selected Unit: $_selectedUnit');
-                                    });
-                                  },
-                                  buttonStyleData: ButtonStyleData(
-                                    height: 45,
-                                    width: 160,
-                                    padding: const EdgeInsets.only(
-                                        left: 14, right: 14),
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.circular(6),
-                                      color: Colors.white,
-                                    ),
-                                    elevation: 2,
-                                  ),
-                                  iconStyleData: const IconStyleData(
-                                    icon: Icon(Icons.arrow_drop_down),
-                                    iconSize: 24,
-                                    iconEnabledColor:
-                                    Color(0xFFb0b6c3),
-                                    iconDisabledColor: Colors.grey,
-                                  ),
-                                  dropdownStyleData:
-                                  DropdownStyleData(
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.circular(6),
-                                      color: Colors.white,
-                                    ),
-                                    scrollbarTheme:
-                                    ScrollbarThemeData(
-                                      radius:
-                                      const Radius.circular(6),
-                                      thickness:
-                                      MaterialStateProperty.all(
-                                          6),
-                                      thumbVisibility:
-                                      MaterialStateProperty.all(
-                                          true),
-                                    ),
-                                  ),
-                                  menuItemStyleData:
-                                  const MenuItemStyleData(
-                                    height: 40,
-                                    padding: EdgeInsets.only(
-                                        left: 14, right: 14),
-                                  ),
-                                  validator: (value) {
-                                    if (value == null ||
-                                        value.isEmpty) {
-                                      return 'Please select an option';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              )
+                                            print(
+                                                'Selected Unit: $_selectedUnit');
+                                          });
+                                        },
+                                        buttonStyleData: ButtonStyleData(
+                                          height: 45,
+                                          width: 160,
+                                          padding: const EdgeInsets.only(
+                                              left: 14, right: 14),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                            color: Colors.white,
+                                          ),
+                                          elevation: 2,
+                                        ),
+                                        iconStyleData: const IconStyleData(
+                                          icon: Icon(Icons.arrow_drop_down),
+                                          iconSize: 24,
+                                          iconEnabledColor: Color(0xFFb0b6c3),
+                                          iconDisabledColor: Colors.grey,
+                                        ),
+                                        dropdownStyleData: DropdownStyleData(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                            color: Colors.white,
+                                          ),
+                                          scrollbarTheme: ScrollbarThemeData(
+                                            radius: const Radius.circular(6),
+                                            thickness:
+                                                MaterialStateProperty.all(6),
+                                            thumbVisibility:
+                                                MaterialStateProperty.all(true),
+                                          ),
+                                        ),
+                                        menuItemStyleData:
+                                            const MenuItemStyleData(
+                                          height: 40,
+                                          padding: EdgeInsets.only(
+                                              left: 14, right: 14),
+                                        ),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please select an option';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    )
                                   : Container(),
                             ],
                           ),
@@ -871,7 +1304,7 @@ print("${response.body}");
                                             left: 14, right: 14),
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                          BorderRadius.circular(6),
+                                              BorderRadius.circular(6),
                                           color: Colors.white,
                                         ),
                                         elevation: 2,
@@ -885,19 +1318,19 @@ print("${response.body}");
                                       dropdownStyleData: DropdownStyleData(
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                          BorderRadius.circular(6),
+                                              BorderRadius.circular(6),
                                           color: Colors.white,
                                         ),
                                         scrollbarTheme: ScrollbarThemeData(
                                           radius: const Radius.circular(6),
                                           thickness:
-                                          MaterialStateProperty.all(6),
+                                              MaterialStateProperty.all(6),
                                           thumbVisibility:
-                                          MaterialStateProperty.all(true),
+                                              MaterialStateProperty.all(true),
                                         ),
                                       ),
                                       menuItemStyleData:
-                                      const MenuItemStyleData(
+                                          const MenuItemStyleData(
                                         height: 50,
                                         padding: EdgeInsets.only(
                                             left: 14, right: 14),
@@ -922,11 +1355,11 @@ print("${response.body}");
                           ),
                           _showTextField
                               ? Padding(
-                            padding: const EdgeInsets.only(
-                                top: 10, bottom: 10),
-                            child: buildTextField('Other Category',
-                                'Enter Other Category', other),
-                          )
+                                  padding: const EdgeInsets.only(
+                                      top: 10, bottom: 10),
+                                  child: buildTextField('Other Category',
+                                      'Enter Other Category', other),
+                                )
                               : Container(),
                           SizedBox(
                             height: 10,
@@ -956,14 +1389,14 @@ print("${response.body}");
                                   //_selectedPaymentMethod = addRow();
                                   // if(_selectedCategory == 'Other')
                                   // addRow();
-
                                 });
                                 print('Selected category: $_selectedEntry');
                               },
                               buttonStyleData: ButtonStyleData(
                                 height: 45,
-                              //  width: 200,
-                                padding: const EdgeInsets.only(left: 1, right: 14),
+                                //  width: 200,
+                                padding:
+                                    const EdgeInsets.only(left: 1, right: 14),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(6),
                                   color: Colors.white,
@@ -986,7 +1419,8 @@ print("${response.body}");
                                 scrollbarTheme: ScrollbarThemeData(
                                   radius: const Radius.circular(6),
                                   thickness: MaterialStateProperty.all(6),
-                                  thumbVisibility: MaterialStateProperty.all(true),
+                                  thumbVisibility:
+                                      MaterialStateProperty.all(true),
                                 ),
                               ),
                               menuItemStyleData: const MenuItemStyleData(
@@ -1015,14 +1449,14 @@ print("${response.body}");
                           SizedBox(
                             height: 10,
                           ),
-
                         ],
                       ),
                     ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 16,right: 16,left: 16,bottom: 5),
+                  padding: const EdgeInsets.only(
+                      top: 16, right: 16, left: 16, bottom: 5),
                   child: Row(
                     children: [
                       Container(
@@ -1041,15 +1475,15 @@ print("${response.body}");
                           onPressed: _submitForm,
                           child: isloading
                               ? Center(
-                            child: SpinKitFadingCircle(
-                              color: Colors.white,
-                              size: 55.0,
-                            ),
-                          )
+                                  child: SpinKitFadingCircle(
+                                    color: Colors.white,
+                                    size: 55.0,
+                                  ),
+                                )
                               : Text(
-                            'Add Work Order',
-                            style: TextStyle(color: Color(0xFFf7f8f9)),
-                          ),
+                                  'Add Work Order',
+                                  style: TextStyle(color: Color(0xFFf7f8f9)),
+                                ),
                         ),
                       ),
                       SizedBox(
@@ -1065,7 +1499,7 @@ print("${response.body}");
                                   backgroundColor: Color(0xFFffffff),
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
-                                      BorderRadius.circular(8.0))),
+                                          BorderRadius.circular(8.0))),
                               onPressed: () {
                                 Navigator.pop(context);
                               },
@@ -1076,9 +1510,11 @@ print("${response.body}");
                     ],
                   ),
                 ),
-                if (_propertyErrorMessage != null) // Display error message if present
+                if (_propertyErrorMessage !=
+                    null) // Display error message if present
                   Padding(
-                    padding: const EdgeInsets.only(top: 8.0,left: 16,right: 16),
+                    padding:
+                        const EdgeInsets.only(top: 8.0, left: 16, right: 16),
                     child: Text(
                       _propertyErrorMessage!,
                       textAlign: TextAlign.justify,
@@ -1103,11 +1539,14 @@ print("${response.body}");
   bool isVideo(String url) {
     return url.toLowerCase().endsWith(".mp4");
   }
-  Widget buildTextField(String label, String hintText, TextEditingController controller) {
+
+  Widget buildTextField(
+      String label, String hintText, TextEditingController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(label, style: TextStyle(fontWeight: FontWeight.bold,color: Colors.grey)),
+        Text(label,
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
         SizedBox(height: 8.0),
         Material(
           elevation: 3,
@@ -1131,6 +1570,7 @@ print("${response.body}");
       ],
     );
   }
+
   bool isLoading = false;
   bool isloading = false;
   bool formValid = true;
@@ -1155,7 +1595,6 @@ print("${response.body}");
           adminId: admin_id,
           workOrder_images: uploaded_images,
           workSubject: subject.text.trim(),
-
           workCategory: _selectedCategory!,
           workPerformed: perform.text.trim(),
           status: 'New',
@@ -1165,7 +1604,8 @@ print("${response.body}");
           rentalid: _selectedRentaId,
           unitid: unitId,
           entry: _selectedEntry == 'Yes',
-          notificationTime: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+          notificationTime:
+              DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
         );
 
         Fluttertoast.showToast(
@@ -1175,8 +1615,7 @@ print("${response.body}");
             timeInSecForIosWeb: 1,
             backgroundColor: Colors.green,
             textColor: Colors.white,
-            fontSize: 16.0
-        );
+            fontSize: 16.0);
         Navigator.pop(context, true);
         // Handle success: Maybe navigate to another screen or reset the form
       } catch (e) {
@@ -1187,8 +1626,7 @@ print("${response.body}");
             timeInSecForIosWeb: 1,
             backgroundColor: Colors.red,
             textColor: Colors.white,
-            fontSize: 16.0
-        );
+            fontSize: 16.0);
 
         // Handle error: Log the error, show a dialog, etc.
         print(e);
@@ -1204,7 +1642,4 @@ print("${response.body}");
       print('Form is invalid');
     }
   }
-
 }
-
-

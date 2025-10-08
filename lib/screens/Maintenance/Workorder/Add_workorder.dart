@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:async';
 import 'package:three_zero_two_property/Model/WorkOrderSetting.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,11 +9,13 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:camera/camera.dart';
 import 'package:intl/intl.dart';
+import '../../../widgets/camera_capture_screen.dart';
 import 'dart:typed_data';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:video_thumbnail/video_thumbnail.dart' as video_thumbnail;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/repository/SettingWorkorder.dart';
 import 'package:three_zero_two_property/repository/workorder.dart';
@@ -31,6 +34,7 @@ import '../../../widgets/custom_drawer.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import '../../../provider/dateProvider.dart';
+import 'package:camera/camera.dart' as camera;
 
 final RouteObserver<ModalRoute<void>> routeObserver =
     RouteObserver<ModalRoute<void>>();
@@ -745,7 +749,132 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
     }
   }
 
-  Future<void> _pickImage() async {
+  // Show image source selection dialog
+  void _showImageSourceDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Title
+                Text(
+                  'Select Media From',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Options Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // Gallery Option
+                    _buildSourceOption(
+                      icon: Icons.photo_library,
+                      label: 'Gallery',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        _pickImageFromSource(ImageSource.gallery);
+                      },
+                    ),
+
+                    const SizedBox(width: 20),
+
+                    // Camera Option
+                    _buildSourceOption(
+                      icon: Icons.camera_alt,
+                      label: 'Camera',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        _openCameraInterface();
+                      },
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Build individual source option
+  Widget _buildSourceOption({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 100,
+        height: 100,
+        decoration: BoxDecoration(
+          color: Colors.grey[50],
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey[200]!, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: blueColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                color: blueColor,
+                size: 28,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Pick image from specific source
+  Future<void> _pickImageFromSource(ImageSource source) async {
+    print('pickImageFromSource');
+    print(source);
     final ImagePicker _picker = ImagePicker();
     final XFile? image = await _picker.pickMedia();
 
@@ -768,20 +897,82 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
           videofiles.add(file);
         });
       }
-
-      setState(() {
-        _image = File(image.path);
-        // _images.add(File(image.path));
-      });
-      _uploadImage(File(image.path));
+      _uploadImage(file);
     }
   }
 
+  // Open unified camera interface for both photos and videos
+  Future<void> _openCameraInterface() async {
+    try {
+      // Get available cameras
+      final cameras = await availableCameras();
+      if (cameras.isEmpty) {
+        _showErrorDialog('No cameras found on this device');
+        return;
+      }
+
+      // Use the first available camera (usually back camera)
+      final camera = cameras.first;
+
+      // Navigate to camera screen
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CameraCaptureScreen(
+            camera: camera,
+            onImageCaptured: (File imageFile) {
+              // Handle captured image
+              setState(() {
+                _images.add(imageFile);
+                isvideo.add(false);
+                videofiles.add(imageFile);
+              });
+              _uploadImage(imageFile);
+            },
+            onVideoCaptured: (File videoFile) async {
+              // Handle captured video
+              String? thumbnailPath =
+                  await _generateVideoThumbnail(videoFile.path);
+              if (thumbnailPath != null) {
+                setState(() {
+                  _images.add(File(thumbnailPath));
+                  isvideo.add(true);
+                  videofiles.add(videoFile);
+                });
+              }
+              _uploadImage(videoFile);
+            },
+          ),
+        ),
+      );
+    } catch (e) {
+      _showErrorDialog('Failed to open camera: $e');
+    }
+  }
+
+  // Show error dialog
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<String?> _generateVideoThumbnail(String videoPath) async {
-    final String? thumbPath = await VideoThumbnail.thumbnailFile(
+    final String? thumbPath =
+        await video_thumbnail.VideoThumbnail.thumbnailFile(
       video: videoPath,
       thumbnailPath: (await getTemporaryDirectory()).path,
-      imageFormat: ImageFormat.PNG,
+      imageFormat: video_thumbnail.ImageFormat.PNG,
       maxHeight: 80,
       quality: 50,
     );
@@ -907,9 +1098,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               onPressed: _images.length >= 10
                                   ? null // disables the button
                                   : () async {
-                                      _pickImage().then((_) {
-                                        setState(() {});
-                                      });
+                                      _showImageSourceDialog();
                                     },
                               // onPressed: () async {
                               //   _pickImage().then((_) {
@@ -3245,9 +3434,10 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
   String? _uploadedFileName;
   List<String> _uploadedFileNames = [];
   Future<String?> uploadImage(File imageFile) async {
+    print('uploadImage');
     print(imageFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
-
+    print(uploadUrl);
     var request = http.MultipartRequest(
         'POST',
         Uri.parse(
@@ -3269,6 +3459,222 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
     }
   }
 
+  // Show image source selection dialog
+  void _showImageSourceDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Title
+                Text(
+                  'Select Image From',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Options Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // Gallery Option
+                    _buildSourceOption(
+                      icon: Icons.photo_library,
+                      label: 'Gallery',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        _pickImageFromSource(ImageSource.gallery);
+                      },
+                    ),
+
+                    const SizedBox(width: 20),
+
+                    // Camera Option
+                    _buildSourceOption(
+                      icon: Icons.camera_alt,
+                      label: 'Camera',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        _openCameraInterface();
+                      },
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Build individual source option
+  Widget _buildSourceOption({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 100,
+        height: 100,
+        decoration: BoxDecoration(
+          color: Colors.grey[50],
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey[200]!, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: blueColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                color: blueColor,
+                size: 28,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Pick image from specific source
+  Future<void> _pickImageFromSource(ImageSource source) async {
+    print('pickImageFromSource');
+    print(source);
+    try {
+      final ImagePicker _picker = ImagePicker();
+      final XFile? image = await _picker.pickMedia();
+
+      if (image != null) {
+        setState(() {
+          _image = File(image.path);
+          _images.add(File(image.path));
+        });
+        _uploadImage(File(image.path));
+      }
+    } catch (e) {
+      print('Image upload failed: $e');
+    }
+  }
+
+  // Open unified camera interface for both photos and videos
+  Future<void> _openCameraInterface() async {
+    try {
+      // Get available cameras
+      final cameras = await availableCameras();
+      if (cameras.isEmpty) {
+        _showErrorDialog('No cameras found on this device');
+        return;
+      }
+
+      // Use the first available camera (usually back camera)
+      final camera = cameras.first;
+
+      // Navigate to camera screen
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CameraCaptureScreen(
+            camera: camera,
+            onImageCaptured: (File imageFile) {
+              // Handle captured image
+              setState(() {
+                _image = File(imageFile.path);
+                _images.add(imageFile);
+              });
+              _uploadImage(imageFile);
+            },
+            onVideoCaptured: (File videoFile) async {
+              // Handle captured video
+              String? thumbnailPath =
+                  await _generateVideoThumbnail(videoFile.path);
+              if (thumbnailPath != null) {
+                setState(() {
+                  _images.add(File(thumbnailPath));
+                });
+              }
+            },
+          ),
+        ),
+      );
+    } catch (e) {
+      _showErrorDialog('Failed to open camera: $e');
+    }
+  }
+
+  // Show error dialog
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<String?> _generateVideoThumbnail(String videoPath) async {
+    final String? thumbPath =
+        await video_thumbnail.VideoThumbnail.thumbnailFile(
+      video: videoPath,
+      thumbnailPath: (await getTemporaryDirectory()).path,
+      imageFormat: video_thumbnail.ImageFormat.PNG,
+      maxHeight: 80,
+      quality: 50,
+    );
+    return thumbPath;
+  }
+
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
@@ -3283,6 +3689,8 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
   }
 
   Future<void> _uploadImage(File imageFile) async {
+    print('uploadImage');
+    print(imageFile.path);
     try {
       String? fileName = await uploadImage(imageFile);
       setState(() {
@@ -3382,10 +3790,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                 ),
                               ),
                               onPressed: () async {
-                                _pickImage().then((_) {
-                                  setState(
-                                      () {}); // Rebuild the widget after selecting the image
-                                });
+                                _showImageSourceDialog();
                               },
                               child: isLoading
                                   ? const Center(
