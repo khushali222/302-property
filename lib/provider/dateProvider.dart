@@ -263,16 +263,6 @@ class DateProvider with ChangeNotifier {
       } else {
         final jsonData = jsonDecode(response.body);
         await checkToken(token);
-
-        // Show success toast message
-        Fluttertoast.showToast(
-          msg: jsonData['message'] ?? 'Date format saved successfully!',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.black87,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
       }
     }
   }
@@ -286,11 +276,27 @@ class DateProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void updateDateFormatLocally(String newFormat, selectIndex) {
+    print(newFormat);
+    _dateFormat = newFormat;
+    dateformateselect = selectIndex;
+    _saveSelectedDateFormat();
+    notifyListeners();
+  }
+
   void updateTimeFormat(String newTimeFormat, selectIndex) {
     print(newTimeFormat);
     _timeFormat = newTimeFormat;
     timeformateselect = selectIndex;
     _saveDateFormat();
+    _saveSelectedTimeFormat();
+    notifyListeners();
+  }
+
+  void updateTimeFormatLocally(String newTimeFormat, selectIndex) {
+    print(newTimeFormat);
+    _timeFormat = newTimeFormat;
+    timeformateselect = selectIndex;
     _saveSelectedTimeFormat();
     notifyListeners();
   }

@@ -638,7 +638,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
           'interest_rate': _interestRateController.text.trim(),
           'start_date': _startDate != null ? _startDate!.toIso8601String() : '',
           'end_date': _endDate != null ? _endDate!.toIso8601String() : '',
-          'status': _statusController.text.trim().toLowerCase(),
+          'status':  _statusController.text.trim().toLowerCase().replaceAll(' ', '_'),
           'remaining_balance': _remainingBalanceController.text.trim(),
           'last_payment_date': _lastPaymentDate != null
               ? _lastPaymentDate!.toIso8601String()

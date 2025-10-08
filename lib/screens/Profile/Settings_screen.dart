@@ -5708,7 +5708,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   onChanged: (value) {
                                                     setState(() {
                                                       dateProvider
-                                                          .updateDateFormat(
+                                                          .updateDateFormatLocally(
                                                               'MM/dd/yyyy',
                                                               value);
                                                       dateformateselect =
@@ -5763,7 +5763,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   onChanged: (value) {
                                                     setState(() {
                                                       dateProvider
-                                                          .updateDateFormat(
+                                                          .updateDateFormatLocally(
                                                               'yyyy-MM-dd',
                                                               value);
                                                       dateformateselect =
@@ -5822,7 +5822,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   onChanged: (value) {
                                                     setState(() {
                                                       dateProvider
-                                                          .updateDateFormat(
+                                                          .updateDateFormatLocally(
                                                               'yyyy-MMM-dd',
                                                               value);
                                                       dateformateselect =
@@ -6103,7 +6103,21 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       : dateProvider.dateFormat;
 
                                   print("Custom Date: $customdate");
-                                  if (dateformateselect == 3 &&
+
+                                  // Save the date format based on selection
+                                  if (dateformateselect == 0) {
+                                    context
+                                        .read<DateProvider>()
+                                        .updateDateFormat('MM/dd/yyyy', 0);
+                                  } else if (dateformateselect == 1) {
+                                    context
+                                        .read<DateProvider>()
+                                        .updateDateFormat('yyyy-MM-dd', 1);
+                                  } else if (dateformateselect == 2) {
+                                    context
+                                        .read<DateProvider>()
+                                        .updateDateFormat('yyyy-MMM-dd', 2);
+                                  } else if (dateformateselect == 3 &&
                                       customdate != null) {
                                     // Save the custom date format
                                     String fixedDate =
@@ -6111,11 +6125,17 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     context
                                         .read<DateProvider>()
                                         .updateDateFormat(fixedDate!, 3);
-                                    // Optionally, show a success message
-                                    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                    //   content: Text("Date format saved!"),
-                                    // ));
                                   }
+
+                                  // Show success message
+                                  Fluttertoast.showToast(
+                                    msg: "Date format updated successfully",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
+                                    backgroundColor: Colors.black87,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0,
+                                  );
                                 },
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(5.0),
