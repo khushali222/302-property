@@ -2202,7 +2202,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       height: 12,
                                                     ),
                                                     Text(
-                                                      'Phone Number',
+                                                      'Birth Date',
                                                       style: TextStyle(
                                                           fontSize: 15,
                                                           fontWeight:
@@ -4970,7 +4970,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         ),
                                                         Row(
                                                           children: [
-                                                            const SizedBox(width: 2),
+                                                            const SizedBox(
+                                                                width: 2),
                                                             Text(
                                                               'N/A',
                                                               style: TextStyle(
@@ -4981,7 +4982,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                     blueColor,
                                                               ),
                                                             ),
-                                                            const SizedBox(width: 2),
+                                                            const SizedBox(
+                                                                width: 2),
                                                           ],
                                                         ),
                                                         const SizedBox(
@@ -5812,7 +5814,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         ),
                                                         Row(
                                                           children: [
-                                                            const SizedBox(width: 2),
+                                                            const SizedBox(
+                                                                width: 2),
                                                             Text(
                                                               'N/A',
                                                               style: TextStyle(
@@ -5823,7 +5826,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                     blueColor,
                                                               ),
                                                             ),
-                                                            const SizedBox(width: 2),
+                                                            const SizedBox(
+                                                                width: 2),
                                                           ],
                                                         ),
                                                         const SizedBox(
@@ -5852,7 +5856,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         ),
                                                         Row(
                                                           children: [
-                                                            const SizedBox(width: 2),
+                                                            const SizedBox(
+                                                                width: 2),
                                                             Text(
                                                               'N/A',
                                                               style: TextStyle(
@@ -5863,7 +5868,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                     blueColor,
                                                               ),
                                                             ),
-                                                            const SizedBox(width: 2),
+                                                            const SizedBox(
+                                                                width: 2),
                                                           ],
                                                         ),
                                                         const SizedBox(
@@ -5892,7 +5898,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         ),
                                                         Row(
                                                           children: [
-                                                            const SizedBox(width: 2),
+                                                            const SizedBox(
+                                                                width: 2),
                                                             Text(
                                                               'N/A',
                                                               style: TextStyle(
@@ -5903,7 +5910,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                     blueColor,
                                                               ),
                                                             ),
-                                                            const SizedBox(width: 2),
+                                                            const SizedBox(
+                                                                width: 2),
                                                           ],
                                                         ),
                                                         const SizedBox(
@@ -5932,7 +5940,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         ),
                                                         Row(
                                                           children: [
-                                                            const SizedBox(width: 2),
+                                                            const SizedBox(
+                                                                width: 2),
                                                             Text(
                                                               'N/A',
                                                               style: TextStyle(
@@ -5943,7 +5952,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                     blueColor,
                                                               ),
                                                             ),
-                                                            const SizedBox(width: 2),
+                                                            const SizedBox(
+                                                                width: 2),
                                                           ],
                                                         ),
                                                         const SizedBox(
@@ -6787,7 +6797,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                         ),
                                                         Row(
                                                           children: [
-                                                            const SizedBox(width: 2),
+                                                            const SizedBox(
+                                                                width: 2),
                                                             Text(
                                                               'N/A',
                                                               style: TextStyle(
@@ -6798,7 +6809,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                     blueColor,
                                                               ),
                                                             ),
-                                                            const SizedBox(width: 2),
+                                                            const SizedBox(
+                                                                width: 2),
                                                           ],
                                                         ),
                                                         const SizedBox(

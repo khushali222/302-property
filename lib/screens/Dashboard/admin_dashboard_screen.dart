@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:three_zero_two_property/screens/Dashboard/RentPastDueReport.dart';
@@ -81,7 +82,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
   // Helper function to format count as two digits with leading zero if needed
   String _formatCount(int count) {
     if (count >= 0 && count < 10) {
-      return count.toString().padLeft(2, '0');
+      return count.toString().padLeft(2, '');
     }
     return count.toString();
   }
@@ -107,7 +108,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
               childAspectRatio: 2.2,
               children: [
                 _dashboardCard(
-                  FontAwesomeIcons.building,
+                  "assets/icons/Group 1.svg",
                   _formatCount(widget.countList[0]),
                   'Properties  ->',
                   () {
@@ -118,7 +119,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                   },
                 ),
                 _dashboardCard(
-                  FontAwesomeIcons.user,
+                  "assets/icons/Frame.svg",
                   _formatCount(widget.countList[1]),
                   'Tenants  ->',
                   () {
@@ -129,7 +130,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                   },
                 ),
                 _dashboardCard(
-                  FontAwesomeIcons.fileLines,
+                  "assets/icons/Vector.svg",
                   _formatCount(widget.countList[2]),
                   'Applicants  ->',
                   () {
@@ -140,7 +141,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                   },
                 ),
                 _dashboardCard(
-                  FontAwesomeIcons.truck,
+                  "assets/icons/Vector (1).svg",
                   _formatCount(widget.countList[3]),
                   'Vendors  ->',
                   () {
@@ -151,7 +152,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                   },
                 ),
                 _dashboardCard(
-                  FontAwesomeIcons.screwdriverWrench,
+                  "assets/icons/Frame (1).svg",
                   _formatCount(widget.countList[4]),
                   'Work Orders ->',
                   () {
@@ -238,7 +239,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
     {"month": "Sep", "rentals": 8, "leases": 9, "occupiedPercentage": 102.5},
   ];
   Widget _dashboardCard(
-      IconData icon, String number, String label, VoidCallback onTap) {
+      String icon, String number, String label, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -255,7 +256,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
           children: [
             CircleAvatar(
               backgroundColor: Colors.blue[50],
-              child: Icon(icon, color: blueColor),
+              child: SvgPicture.asset(icon, color: blueColor),
             ),
             SizedBox(width: 12),
             Column(

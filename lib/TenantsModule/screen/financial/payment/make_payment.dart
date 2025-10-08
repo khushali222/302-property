@@ -196,7 +196,6 @@ class _MakePaymentState extends State<MakePayment> {
         });
       }
       setState(() {
-
         tenants = fetchedTenants;
         // leaseid = tenants[0]['tenant_id'];
         // print('leaseid $leaseid');
@@ -205,7 +204,8 @@ class _MakePaymentState extends State<MakePayment> {
         isLoading = false;
         if (fetchedTenants.isNotEmpty) {
           leaseid = fetchedTenants[0]['tenant_id'];
-          selectedTenantRent = double.tryParse(fetchedTenants[0]['rent'] ?? '0.0') ?? 0.0;
+          selectedTenantRent =
+              double.tryParse(fetchedTenants[0]['rent'] ?? '0.0') ?? 0.0;
 
           if (fetchedTenants.length == 1) {
             selectedTenantId = leaseid;
@@ -763,7 +763,7 @@ class _MakePaymentState extends State<MakePayment> {
       Uri.parse('$Api_url/api/creditcard/getCreditCards/$tenantId'),
       headers: {"id": "CRM $id", "authorization": "CRM $token"},
     );
-     print("cards ${response.body}");
+    print("cards ${response.body}");
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
       customervaultid = jsonResponse['customer_vault_id'];
@@ -783,24 +783,20 @@ class _MakePaymentState extends State<MakePayment> {
         //    print('Billing ID: ${cardDetail['billing_id']}');
       }
 
-
-      CustomerData? customerData =
-      await postBillingCustomerVault(customervaultid.toString(),cardDetailsList);
+      CustomerData? customerData = await postBillingCustomerVault(
+          customervaultid.toString(), cardDetailsList);
       if (customerData != null) {
         print("Debit card is Accespted $debitCardAccepted");
         print("Credit card is Accespted $creditCardAccepted");
         setState(() {
           cardDetails = customerData.billing;
         });
-        if(cardDetails.length == 1)
-        {
-          if(debitCardAccepted && creditCardAccepted)
-            {
-              selectedcardindex = 0;
+        if (cardDetails.length == 1) {
+          if (debitCardAccepted && creditCardAccepted) {
+            selectedcardindex = 0;
 
-              fetchSurcharge();
-            }
-
+            fetchSurcharge();
+          }
         }
       }
     } else if (response.statusCode == 404) {
@@ -837,7 +833,8 @@ class _MakePaymentState extends State<MakePayment> {
     }
   }
 
-  Future<CustomerData?> postBillingCustomerVault(String customerVaultId,List<dynamic> cardDetailsList) async {
+  Future<CustomerData?> postBillingCustomerVault(
+      String customerVaultId, List<dynamic> cardDetailsList) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
     String? adminId = prefs.getString("adminId");
@@ -872,7 +869,8 @@ class _MakePaymentState extends State<MakePayment> {
         print('CC Bin: ${billing.ccBin}');
       });
       Set<String> cardBillingIds = cardDetailsList
-          .map((card) => card['billing_id'].toString()) // Ensure conversion to string
+          .map((card) =>
+              card['billing_id'].toString()) // Ensure conversion to string
           .toSet();
 
       // Filter customerData.billing to only include matching billing IDs
@@ -1273,23 +1271,21 @@ class _MakePaymentState extends State<MakePayment> {
                                 firstDate: DateTime.now(),
                                 lastDate: DateTime(2101),
                                 locale: const Locale('en', 'US'),
-                                builder:
-                                    (BuildContext context, Widget? child) {
+                                builder: (BuildContext context, Widget? child) {
                                   return Theme(
                                     data: ThemeData.light().copyWith(
                                       colorScheme: const ColorScheme.light(
                                         primary: Color.fromRGBO(21, 43, 83,
                                             1), // header background color
-                                        onPrimary: Colors
-                                            .white, // header text color
-                                        onSurface: Color.fromRGBO(21, 43,
-                                            83, 1), // body text color
+                                        onPrimary:
+                                            Colors.white, // header text color
+                                        onSurface: Color.fromRGBO(
+                                            21, 43, 83, 1), // body text color
                                       ),
                                       textButtonTheme: TextButtonThemeData(
                                         style: TextButton.styleFrom(
                                           foregroundColor: Colors.white,
-                                          backgroundColor:
-                                          const Color.fromRGBO(
+                                          backgroundColor: const Color.fromRGBO(
                                               21,
                                               43,
                                               83,
@@ -1303,7 +1299,7 @@ class _MakePaymentState extends State<MakePayment> {
                               );
                               if (pickedDate != null) {
                                 bool isfuture =
-                                pickedDate.isAfter(DateTime.now());
+                                    pickedDate.isAfter(DateTime.now());
                                 String formattedDate =
                                     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                                 setState(() {
@@ -1460,12 +1456,16 @@ class _MakePaymentState extends State<MakePayment> {
                                                               'abc check ${isCardAccepted}');
                                                           return TableRow(
                                                             decoration: BoxDecoration(
-                                                                color: isExpired? Colors.redAccent.shade100 :Color
-                                                                    .fromRGBO(
-                                                                        240,
-                                                                        243,
-                                                                        248,
-                                                                        1),
+                                                                color: isExpired
+                                                                    ? Colors
+                                                                        .redAccent
+                                                                        .shade100
+                                                                    : Color
+                                                                        .fromRGBO(
+                                                                            240,
+                                                                            243,
+                                                                            248,
+                                                                            1),
                                                                 borderRadius:
                                                                     BorderRadius
                                                                         .circular(
@@ -1522,7 +1522,12 @@ class _MakePaymentState extends State<MakePayment> {
                                                                     //         },
                                                                     //       ),
                                                                     isExpired
-                                                                        ?IconButton(icon:Icon(Icons.close),onPressed: (){},)
+                                                                        ? IconButton(
+                                                                            icon:
+                                                                                Icon(Icons.close),
+                                                                            onPressed:
+                                                                                () {},
+                                                                          )
                                                                         : Checkbox(
                                                                             activeColor:
                                                                                 blueColor,
@@ -2111,9 +2116,9 @@ class _MakePaymentState extends State<MakePayment> {
                                     // Validate if the input amount exceeds the total amount
                                     if (inputAmount >
                                         lease_data!["total_due_amount"]) {
-                                      amountController.text =
-                                          lease_data!["total_due_amount"]
-                                              .toString();
+                                      // amountController.text =
+                                      //     lease_data!["total_due_amount"]
+                                      //         .toString();
                                       inputAmount =
                                           double.parse(amountController.text);
                                       /* amountController.selection = TextSelection.fromPosition(
@@ -2312,7 +2317,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   ];
                                   print('abc entries ${manualEntries}');
                                   print('abc id ${selectedTenantId!}');
-print('start date ${_startDate.text}');
+                                  print('start date ${_startDate.text}');
                                   await PaymentService()
                                       .makePaymentforcard(
                                     entries: manualEntries,

@@ -3,6 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:three_zero_two_property/Model/All_categories_model.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/applience/Add_applience.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 
@@ -13,6 +14,7 @@ import '../../../../model/properties.dart';
 import '../../../../model/unitsummery_propeties.dart';
 import '../../../../provider/dateProvider.dart';
 import '../../../../repository/appliance_details_service.dart';
+import '../../../../repository/fetch_allcategories.dart';
 import '../summery_page.dart';
 import 'AddMaintenanceHistoryDialog.dart';
 import 'AddNoteDialog.dart';
@@ -54,10 +56,35 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
     });
   }
 
+  bool _isLoadingCategories = false;
+
   @override
   void initState() {
     super.initState();
+    _loadDropdownCategories();
     _loadApplianceData();
+  }
+
+  List<allcategories_model> _dropdownCategories = [];
+  allcategories_model? _selectedDropdownCategory;
+  Future<void> _loadDropdownCategories() async {
+    setState(() {
+      _isLoadingCategories = true;
+    });
+    try {
+      final cats = await FetchAllcategories().fetchAllCategories();
+      print('Fetched categories in AddWorkOrderForMobile: ' + cats.toString());
+      setState(() {
+        _dropdownCategories = cats;
+        _isLoadingCategories = false;
+      });
+    } catch (e) {
+      print('Error fetching categories in AddWorkOrderForMobile: ' +
+          e.toString());
+      setState(() {
+        _isLoadingCategories = false;
+      });
+    }
   }
 
   Future<void> _loadApplianceData() async {
@@ -73,6 +100,9 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
 
         setState(() {
           _liveAppliance = appliance;
+          _selectedDropdownCategory = _dropdownCategories.firstWhere(
+            (cat) => cat.categoryId == appliance?.categoryId,
+          );
           _isLoading = false;
         });
       } catch (e) {
@@ -320,7 +350,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                                   'Name',
                                   appliance.applianceName ?? '',
                                   'Category',
-                                  appliance.categoryName ?? ''),
+                                  _selectedDropdownCategory?.name ?? ''),
                               _buildDetailRowPair('Type', appliance.type ?? '',
                                   'Status', appliance.status ?? '',
                                   valueColor2:
@@ -736,8 +766,8 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                     size: 18,
                   ),
                   SizedBox(width: 8),
-                  Text(dateProvider.formatCurrentDate('${date}')
-                    ,
+                  Text(
+                    dateProvider.formatCurrentDate('${date}'),
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,

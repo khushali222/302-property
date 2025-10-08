@@ -333,7 +333,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
     });
   }
 
-  final List<String> items = ['Residential', "Commercial", "All"];
+  final List<String> items = ["All", "Commercial", "Residential"];
   String? selectedValue;
   String searchvalue = "";
   ConnectivityResult? _connectivityResult;

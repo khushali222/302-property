@@ -83,14 +83,38 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
 
       // Convert API date format to user's preferred display format
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
-      effective.text = fetchedDetails.effectiveDate != null
-          ? dateProvider.formatCurrentDate(fetchedDetails.effectiveDate!
-              .substring(0, 10)) // Extract YYYY-MM-DD
-          : "";
-      expiration.text = fetchedDetails.expirationDate != null
-          ? dateProvider.formatCurrentDate(fetchedDetails.expirationDate!
-              .substring(0, 10)) // Extract YYYY-MM-DD
-          : "";
+
+      // Set effective date
+      if (fetchedDetails.effectiveDate != null) {
+        effectiveDate =
+            DateTime.parse(fetchedDetails.effectiveDate!.substring(0, 10));
+        effective.text = dateProvider.formatCurrentDate(fetchedDetails
+            .effectiveDate!
+            .substring(0, 10)); // Extract YYYY-MM-DD
+      } else {
+        effective.text = "";
+      }
+
+      // Set expiration date
+      if (fetchedDetails.expirationDate != null) {
+        DateTime parsedExpirationDate =
+            DateTime.parse(fetchedDetails.expirationDate!.substring(0, 10));
+
+        // Validate that expiration date is after effective date
+        if (effectiveDate != null &&
+            parsedExpirationDate.isAfter(effectiveDate!)) {
+          expirationDate = parsedExpirationDate;
+          expiration.text = dateProvider.formatCurrentDate(fetchedDetails
+              .expirationDate!
+              .substring(0, 10)); // Extract YYYY-MM-DD
+        } else {
+          // Clear invalid expiration date
+          expirationDate = null;
+          expiration.text = "";
+        }
+      } else {
+        expiration.text = "";
+      }
       liablity.text = fetchedDetails.liabilityCoverage != null
           ? fetchedDetails.liabilityCoverage.toString()
           : "0";
@@ -210,15 +234,32 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
         // Display format: Use provider's format for user display
         String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
         effective.text = dateProvider.formatCurrentDate(apiFormatDate);
+
+        // Clear expiration date if it's now invalid (before or equal to effective date)
+        if (expirationDate != null && !expirationDate!.isAfter(selectedDate)) {
+          expirationDate = null;
+          expiration.clear();
+        }
       });
     }
   }
 
   Future<void> _selectDateexpiration(BuildContext context) async {
+    // Calculate the minimum allowed date (effective date + 1 day)
+    DateTime minDate = effectiveDate != null
+        ? effectiveDate!.add(Duration(days: 1))
+        : DateTime.now().add(Duration(days: 1));
+
+    // Set initial date to the minimum allowed date if no expiration date is set or if current expiration date is invalid
+    DateTime initialDate = (expirationDate != null &&
+            expirationDate!.isAfter(effectiveDate ?? DateTime.now()))
+        ? expirationDate!
+        : minDate;
+
     DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate: expirationDate ?? DateTime.now(),
-      firstDate: effectiveDate ?? DateTime.now(),
+      initialDate: initialDate,
+      firstDate: minDate,
       // firstDate: DateTime(1900),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
@@ -242,14 +283,27 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
     );
 
     if (selectedDate != null) {
-      setState(() {
-        expirationDate = selectedDate;
-        // Get dateProvider to format the date according to user's preference
-        final dateProvider = Provider.of<DateProvider>(context, listen: false);
-        // Display format: Use provider's format for user display
-        String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
-        expiration.text = dateProvider.formatCurrentDate(apiFormatDate);
-      });
+      // Validate that the selected date is after the effective date
+      DateTime effectiveDateForValidation = effectiveDate ?? DateTime.now();
+      if (selectedDate.isAfter(effectiveDateForValidation)) {
+        setState(() {
+          expirationDate = selectedDate;
+          // Get dateProvider to format the date according to user's preference
+          final dateProvider =
+              Provider.of<DateProvider>(context, listen: false);
+          // Display format: Use provider's format for user display
+          String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+          expiration.text = dateProvider.formatCurrentDate(apiFormatDate);
+        });
+      } else {
+        // Show error message if invalid date is selected
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Expiration date must be after the effective date'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -478,7 +532,7 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
                               controller: effective,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'please enter the subject';
+                                  return 'please enter the effective date';
                                 }
                                 return null;
                               },
@@ -510,7 +564,7 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
                               controller: expiration,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'please enter the subject';
+                                  return 'please enter the expiration date';
                                 }
                                 return null;
                               },
@@ -536,7 +590,7 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
                               controller: liablity,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'please enter the subject';
+                                  return 'please enter the liability coverage';
                                 }
                                 return null;
                               },

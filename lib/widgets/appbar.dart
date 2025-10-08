@@ -44,11 +44,11 @@ class widget_302 {
             if (constraints.maxWidth < 350) {
               return Row(
                 children: [
-                  Image.asset(
-                    'assets/images/applogo.png',
-                    height: 40,
-                    width: 40,
-                  ),
+                  // Image.asset(
+                  //   'assets/images/applogo.png',
+                  //   height: 40,
+                  //   width: 40,
+                  // ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: FutureBuilder<String>(
@@ -74,11 +74,11 @@ class widget_302 {
             } else {
               return Row(
                 children: [
-                  Image.asset(
-                    'assets/images/logo.png',
-                    width: 200,
-                    fit: BoxFit.fill,
-                  ),
+                  // Image.asset(
+                  //   'assets/images/logo.png',
+                  //   width: 200,
+                  //   fit: BoxFit.fill,
+                  // ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: FutureBuilder<String>(
@@ -185,13 +185,7 @@ class widget_302 {
                   ),
                 );
               } else {
-                return Center(
-                  child: FaIcon(
-                    FontAwesomeIcons.bell,
-                    size: 20,
-                    color: blueColor,
-                  ),
-                );
+                return Container();
               }
             },
           ),
