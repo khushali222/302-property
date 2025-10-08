@@ -96,7 +96,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Main Dashboard',
+            const Text('Dashboard',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
             const SizedBox(height: 16),
             GridView.count(
