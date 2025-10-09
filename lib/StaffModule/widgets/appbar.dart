@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/StaffModule/screen/change_password.dart';
@@ -200,9 +201,10 @@ class widget_302_Staff {
                           ],
                         ),
                         onTap: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => Profile_screen()));
-
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Profile_screen()));
                         },
                       ),
                       PopupMenuItem(
@@ -274,14 +276,39 @@ class widget_302_Staff {
                         ),
                         onTap: () async {
                           SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
+                              await SharedPreferences.getInstance();
                           prefs.clear();
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => Login_Screen()),
-                                  (route) => false);
+                              (route) => false);
                         },
+                      ),
+                      PopupMenuItem(
+                        height: 10,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            FutureBuilder<PackageInfo>(
+                              future: PackageInfo.fromPlatform(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return Text(
+                                    "v${snapshot.data!.version}",
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  );
+                                }
+                                return Container();
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ));

@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:three_zero_two_property/widgets/custom_switch.dart';
 
 import '../../constant/constant.dart';
 import '../../provider/dateProvider.dart';
@@ -52,7 +53,7 @@ class _Profile_screenState extends State<Profile_screen> {
   bool showRegenerateVerification = false;
   TextEditingController disableVerificationController = TextEditingController();
   TextEditingController regenerateVerificationController =
-  TextEditingController();
+      TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -430,10 +431,11 @@ class _Profile_screenState extends State<Profile_screen> {
           "id": "CRM $id",
           "Content-Type": "application/json",
         },
-        body: jsonEncode(
-            {"code": disableVerificationController.text, "user_id": id,"user_type"
-                :
-            "tenant"}),
+        body: jsonEncode({
+          "code": disableVerificationController.text,
+          "user_id": id,
+          "user_type": "tenant"
+        }),
       );
 
       print('Disable 2FA response: ${response.body}');
@@ -486,7 +488,7 @@ class _Profile_screenState extends State<Profile_screen> {
           "Content-Type": "application/json",
         },
         body:
-        jsonEncode({"tenant_id": id, "method": email2FA ? "email" : "sms"}),
+            jsonEncode({"tenant_id": id, "method": email2FA ? "email" : "sms"}),
       );
 
       print('Send regenerate backup codes code response: ${response.body}');
@@ -538,12 +540,7 @@ class _Profile_screenState extends State<Profile_screen> {
           "id": "CRM $id",
           "Content-Type": "application/json",
         },
-        body: jsonEncode({
-
-
-          "user_id": id,
-          "user_type": "tenant"
-        }),
+        body: jsonEncode({"user_id": id, "user_type": "tenant"}),
       );
 
       print('Regenerate backup codes response: ${response.body}');
@@ -628,7 +625,6 @@ class _Profile_screenState extends State<Profile_screen> {
                 // Download button
                 Row(
                   children: [
-
                     // Text(
                     //   'Your Backup Codes (${codes.length} remaining)',
                     //   style: const TextStyle(
@@ -750,8 +746,7 @@ class _Profile_screenState extends State<Profile_screen> {
       // Create the content for the text file
       String content = '';
 
-      content +=
-      '';
+      content += '';
 
       for (int i = 0; i < codes.length; i++) {
         content += '${i + 1}. ${codes[i]['code']}\n';
@@ -807,1374 +802,1376 @@ class _Profile_screenState extends State<Profile_screen> {
       ),
       body: _connectivityResult != ConnectivityResult.none
           ? _isLoading
-          ? Center(
-        child: SpinKitSpinningLines(
-          color: blueColor,
-          size: 50.0,
-        ),
-      )
-          : _hasError
-          ? Center(
-        child: Text('Error: $_errorMessage'),
-      )
-          : SingleChildScrollView(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            if (constraints.maxWidth > 500) {
-              // Horizontal layout for tablet screens
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(height: 30),
-                    titleBar(
-                        title: 'Personal Details',
-                        width: MediaQuery.of(context).size.width *
-                            0.90),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal:
-                          MediaQuery.of(context).size.width *
-                              0.04,
-                          vertical: 10),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Table(
-                          border: TableBorder.all(),
-                          columnWidths: const {
-                            0: FlexColumnWidth(2),
-                            1: FlexColumnWidth(2),
-                            2: FlexColumnWidth(3),
-                          },
-                          children: [
-                            TableRow(
-                              children: [
-                                TableCell(
-                                    child: Padding(
-                                        padding:
-                                        EdgeInsets.all(8.0),
-                                        child: Text(
-                                          'Name',
-                                          style: TextStyle(
-                                              fontWeight:
-                                              FontWeight.bold,
-                                              fontSize: 20,
-                                              color: blueColor),
-                                        ))),
-                                TableCell(
-                                    child: Padding(
-                                        padding:
-                                        EdgeInsets.all(8.0),
-                                        child: Text(
-                                            'Phone Number',
-                                            style: TextStyle(
-                                                fontWeight:
-                                                FontWeight
-                                                    .bold,
-                                                fontSize: 20,
-                                                color:
-                                                blueColor)))),
-                                TableCell(
-                                    child: Padding(
-                                        padding:
-                                        EdgeInsets.all(8.0),
-                                        child: Text('Email',
-                                            style: TextStyle(
-                                                fontWeight:
-                                                FontWeight
-                                                    .bold,
-                                                fontSize: 20,
-                                                color:
-                                                blueColor)))),
-                              ],
-                            ),
-                            TableRow(
-                              children: [
-                                TableCell(
-                                    child: Padding(
-                                        padding:
-                                        EdgeInsets.all(8.0),
-                                        child: Text(
-                                            "${profiledata['tenant_firstName']} ${profiledata['tenant_lastName']}",
-                                            style: TextStyle(
-                                                fontWeight:
-                                                FontWeight
-                                                    .normal,
-                                                fontSize: 20,
-                                                color:
-                                                greyColor)))),
-                                TableCell(
-                                    child: Padding(
-                                        padding:
-                                        EdgeInsets.all(8.0),
-                                        child: Text(
-                                            profiledata[
-                                            'tenant_phoneNumber'],
-                                            style: TextStyle(
-                                                fontWeight:
-                                                FontWeight
-                                                    .normal,
-                                                fontSize: 20,
-                                                color:
-                                                greyColor)))),
-                                TableCell(
-                                    child: Padding(
-                                        padding:
-                                        EdgeInsets.all(8.0),
-                                        child: Text(
-                                            profiledata[
-                                            'tenant_email'],
-                                            style: TextStyle(
-                                                fontWeight:
-                                                FontWeight
-                                                    .normal,
-                                                fontSize: 20,
-                                                color:
-                                                greyColor)))),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 30),
-                    titleBar(
-                        title: 'Lease Details',
-                        width: MediaQuery.of(context).size.width *
-                            0.90),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal:
-                          MediaQuery.of(context).size.width *
-                              0.04,
-                          vertical: 10),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Table(
-                          border: TableBorder.all(),
-                          children: [
-                            TableRow(
-                              children: [
-                                TableCell(
-                                  child: Padding(
-                                      padding:
-                                      EdgeInsets.all(8.0),
-                                      child: Text('Lease Type',
-                                          style: TextStyle(
-                                              fontWeight:
-                                              FontWeight.bold,
-                                              fontSize: 20,
-                                              color: blueColor))),
-                                ),
-                                TableCell(
-                                    child: Padding(
-                                        padding:
-                                        EdgeInsets.all(8.0),
-                                        child: Text('Property',
-                                            style: TextStyle(
-                                                fontWeight:
-                                                FontWeight
-                                                    .bold,
-                                                fontSize: 20,
-                                                color:
-                                                blueColor)))),
-                                TableCell(
-                                    child: Padding(
-                                        padding:
-                                        EdgeInsets.all(8.0),
-                                        child: Text('Start Date',
-                                            style: TextStyle(
-                                                fontWeight:
-                                                FontWeight
-                                                    .bold,
-                                                fontSize: 20,
-                                                color:
-                                                blueColor)))),
-                                TableCell(
-                                    child: Padding(
-                                        padding:
-                                        EdgeInsets.all(8.0),
-                                        child: Text('End Date',
-                                            style: TextStyle(
-                                                fontWeight:
-                                                FontWeight
-                                                    .bold,
-                                                fontSize: 20,
-                                                color:
-                                                blueColor)))),
-                                TableCell(
-                                    child: Padding(
-                                        padding:
-                                        EdgeInsets.all(8.0),
-                                        child: Text('Rent Cycle',
-                                            style: TextStyle(
-                                                fontWeight:
-                                                FontWeight
-                                                    .bold,
-                                                fontSize: 20,
-                                                color:
-                                                blueColor)))),
-                                TableCell(
-                                    child: Padding(
-                                        padding:
-                                        EdgeInsets.all(8.0),
-                                        child: Text('Rent Amount',
-                                            style: TextStyle(
-                                                fontWeight:
-                                                FontWeight
-                                                    .bold,
-                                                fontSize: 20,
-                                                color:
-                                                blueColor)))),
-                                TableCell(
-                                    child: Padding(
-                                        padding:
-                                        EdgeInsets.all(8.0),
-                                        child: Text(
-                                            'Next Due Date',
-                                            style: TextStyle(
-                                                fontWeight:
-                                                FontWeight
-                                                    .bold,
-                                                fontSize: 20,
-                                                color:
-                                                blueColor)))),
-                              ],
-                            ),
-                            TableRow(
-                              children: [
-                                TableCell(
-                                    child: Padding(
-                                        padding:
-                                        EdgeInsets.all(8.0),
-                                        child: Text(
-                                            "${profiledata['leaseData']['lease_type']}",
-                                            style: TextStyle(
-                                                fontWeight:
-                                                FontWeight
-                                                    .normal,
-                                                fontSize: 20,
-                                                color:
-                                                greyColor)))),
-                                TableCell(
-                                    child: Padding(
-                                        padding:
-                                        EdgeInsets.all(8.0),
-                                        child: Text(
-                                            profiledata[
-                                            'leaseData']
-                                            ['rental_adress'],
-                                            style: TextStyle(
-                                                fontWeight:
-                                                FontWeight
-                                                    .normal,
-                                                fontSize: 20,
-                                                color:
-                                                greyColor)))),
-                                TableCell(
-                                    child: Padding(
-                                        padding:
-                                        EdgeInsets.all(8.0),
-                                        child: Text(
-                                            dateProvider.formatCurrentDate(
-                                                profiledata[
-                                                'leaseData']
-                                                [
-                                                'start_date']),
-                                            style: TextStyle(
-                                                fontWeight:
-                                                FontWeight
-                                                    .normal,
-                                                fontSize: 20,
-                                                color:
-                                                greyColor)))),
-                                TableCell(
-                                    child: Padding(
-                                        padding: EdgeInsets.all(
-                                            8.0),
-                                        child: Text(
-                                            dateProvider
-                                                .formatCurrentDate(
-                                                profiledata[
-                                                'leaseData']
-                                                [
-                                                'end_date']),
-                                            style: TextStyle(
-                                                fontWeight:
-                                                FontWeight
-                                                    .normal,
-                                                fontSize: 20,
-                                                color:
-                                                greyColor)))),
-                                TableCell(
-                                    child: Padding(
-                                        padding:
-                                        EdgeInsets.all(8.0),
-                                        child: Text(
-                                            profiledata[
-                                            'leaseData']
-                                            ['rent_cycle'],
-                                            style: TextStyle(
-                                                fontWeight:
-                                                FontWeight
-                                                    .normal,
-                                                fontSize: 20,
-                                                color:
-                                                greyColor)))),
-                                TableCell(
-                                    child: Padding(
-                                        padding:
-                                        EdgeInsets.all(8.0),
-                                        child: Text(
-                                            profiledata['leaseData']
-                                            ['amount']
-                                                .toString(),
-                                            style: TextStyle(
-                                                fontWeight:
-                                                FontWeight
-                                                    .normal,
-                                                fontSize: 20,
-                                                color:
-                                                greyColor)))),
-                                TableCell(
-                                    child: Padding(
-                                        padding:
-                                        EdgeInsets.all(8.0),
-                                        child: Text(
-                                            profiledata[
-                                            'leaseData']
-                                            ['date'],
-                                            style: TextStyle(
-                                                fontWeight:
-                                                FontWeight
-                                                    .normal,
-                                                fontSize: 20,
-                                                color:
-                                                greyColor)))),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            } else {
-              // Vertical layout for phone screens
-              return Container(
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 20,
-                    ),
-                    titleBar(
-                      title: 'Personal Details',
-                      width: MediaQuery.of(context).size.width *
-                          0.91,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0),
-                      child: Card(
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border:
-                              Border.all(color: blueColor),
-                              borderRadius:
-                              BorderRadius.circular(6)),
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            children: [
-                              buildWidget('Name',
-                                  "${profiledata['tenant_firstName']}${profiledata['tenant_lastName']}"),
-                              buildWidget(
-                                  'Phone Number',
-                                  profiledata[
-                                  'tenant_phoneNumber'] ??
-                                      ""),
-                              buildWidget(
-                                  'Email',
-                                  profiledata['tenant_email'] ??
-                                      ""),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    if (leaseData.isNotEmpty) ...[
-                      titleBar(
-                        title: 'Lease Details',
-                        width: MediaQuery.of(context).size.width *
-                            0.91,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      // Padding(
-                      //   padding: const EdgeInsets.symmetric(
-                      //       horizontal: 20.0),
-                      //   child: Card(
-                      //     elevation: 0,
-                      //     shape: RoundedRectangleBorder(
-                      //       borderRadius:
-                      //           BorderRadius.circular(6),
-                      //     ),
-                      //     child: Container(
-                      //       decoration: BoxDecoration(
-                      //           border:
-                      //               Border.all(color: blueColor),
-                      //           borderRadius:
-                      //               BorderRadius.circular(6)),
-                      //       padding: const EdgeInsets.all(16.0),
-                      //       child: Column(
-                      //         children: [
-                      //           buildWidget('Lease Type',
-                      //               "${profiledata['leaseData']['lease_type']}"),
-                      //           buildWidget(
-                      //               'Property',
-                      //               profiledata['leaseData']
-                      //                       ['rental_adress'] ??
-                      //                   "N/A"),
-                      //           buildWidget(
-                      //               'Start Date',
-                      //               formatDate4(profiledata[
-                      //                           'leaseData']
-                      //                       ['start_date']) ??
-                      //                   "N/A"),
-                      //           buildWidget(
-                      //               'End Date',
-                      //               formatDate4(profiledata[
-                      //                           'leaseData']
-                      //                       ['end_date']) ??
-                      //                   "N/A"),
-                      //           buildWidget(
-                      //               'Rent Cycle',
-                      //               profiledata['leaseData']
-                      //                       ['rent_cycle'] ??
-                      //                   "N/A"),
-                      //           buildWidget(
-                      //               'Rent Amount',
-                      //               profiledata['leaseData']
-                      //                       ['amount']
-                      //                   .toString()),
-                      //           buildWidget(
-                      //               'Next Due Date',
-                      //               formatDate4(profiledata[
-                      //                           'leaseData']
-                      //                       ['date']) ??
-                      //                   "N/A"),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-
-                      buildLeaseTable(leaseData),
-                    ],
-                    SizedBox(
-                      height: 20,
-                    ),
-                    // 2FA Section
-                    titleBar(
-                      title: 'Two-Factor Authentication (2FA)',
-                      width: MediaQuery.of(context).size.width *
-                          0.91,
-                    ),
-                    const SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0),
-                      child: Card(
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: blueColor),
-                            borderRadius:
-                            BorderRadius.circular(6),
-                          ),
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment:
-                            CrossAxisAlignment.start,
-                            children: [
-                              Row(
+              ? Center(
+                  child: SpinKitSpinningLines(
+                    color: blueColor,
+                    size: 50.0,
+                  ),
+                )
+              : _hasError
+                  ? Center(
+                      child: Text('Error: $_errorMessage'),
+                    )
+                  : SingleChildScrollView(
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          if (constraints.maxWidth > 500) {
+                            // Horizontal layout for tablet screens
+                            return SingleChildScrollView(
+                              child: Column(
                                 children: [
-                                  const Text(
-                                    "Two-Factor Authentication (2FA) :",
-                                    style: TextStyle(
-                                      color: Color(0xFF8A95A8),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
+                                  SizedBox(height: 30),
+                                  titleBar(
+                                      title: 'Personal Details',
+                                      width: MediaQuery.of(context).size.width *
+                                          0.90),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal:
+                                            MediaQuery.of(context).size.width *
+                                                0.04,
+                                        vertical: 10),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Table(
+                                        border: TableBorder.all(),
+                                        columnWidths: const {
+                                          0: FlexColumnWidth(2),
+                                          1: FlexColumnWidth(2),
+                                          2: FlexColumnWidth(3),
+                                        },
+                                        children: [
+                                          TableRow(
+                                            children: [
+                                              TableCell(
+                                                  child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
+                                                      child: Text(
+                                                        'Name',
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 20,
+                                                            color: blueColor),
+                                                      ))),
+                                              TableCell(
+                                                  child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
+                                                      child: Text(
+                                                          'Phone Number',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 20,
+                                                              color:
+                                                                  blueColor)))),
+                                              TableCell(
+                                                  child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
+                                                      child: Text('Email',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 20,
+                                                              color:
+                                                                  blueColor)))),
+                                            ],
+                                          ),
+                                          TableRow(
+                                            children: [
+                                              TableCell(
+                                                  child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
+                                                      child: Text(
+                                                          "${profiledata['tenant_firstName']} ${profiledata['tenant_lastName']}",
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                              fontSize: 20,
+                                                              color:
+                                                                  greyColor)))),
+                                              TableCell(
+                                                  child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
+                                                      child: Text(
+                                                          profiledata[
+                                                              'tenant_phoneNumber'],
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                              fontSize: 20,
+                                                              color:
+                                                                  greyColor)))),
+                                              TableCell(
+                                                  child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
+                                                      child: Text(
+                                                          profiledata[
+                                                              'tenant_email'],
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                              fontSize: 20,
+                                                              color:
+                                                                  greyColor)))),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                  const SizedBox(width: 10),
-                                  Switch(
-                                    activeColor: blueColor,
-                                    value: enble2FA,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        if (value) {
-                                          show2FASetup = true;
-                                          showVerificationInput =
-                                          false;
-                                          selected2FAMethod = '';
-                                        } else {
-                                          enble2FA = false;
-                                          show2FASetup = false;
-                                          showVerificationInput =
-                                          false;
-                                          selected2FAMethod = '';
-                                          sms2FA = false;
-                                          email2FA = false;
-                                        }
-                                      });
-                                    },
+                                  SizedBox(height: 30),
+                                  titleBar(
+                                      title: 'Lease Details',
+                                      width: MediaQuery.of(context).size.width *
+                                          0.90),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal:
+                                            MediaQuery.of(context).size.width *
+                                                0.04,
+                                        vertical: 10),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Table(
+                                        border: TableBorder.all(),
+                                        children: [
+                                          TableRow(
+                                            children: [
+                                              TableCell(
+                                                child: Padding(
+                                                    padding:
+                                                        EdgeInsets.all(8.0),
+                                                    child: Text('Lease Type',
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 20,
+                                                            color: blueColor))),
+                                              ),
+                                              TableCell(
+                                                  child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
+                                                      child: Text('Property',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 20,
+                                                              color:
+                                                                  blueColor)))),
+                                              TableCell(
+                                                  child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
+                                                      child: Text('Start Date',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 20,
+                                                              color:
+                                                                  blueColor)))),
+                                              TableCell(
+                                                  child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
+                                                      child: Text('End Date',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 20,
+                                                              color:
+                                                                  blueColor)))),
+                                              TableCell(
+                                                  child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
+                                                      child: Text('Rent Cycle',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 20,
+                                                              color:
+                                                                  blueColor)))),
+                                              TableCell(
+                                                  child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
+                                                      child: Text('Rent Amount',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 20,
+                                                              color:
+                                                                  blueColor)))),
+                                              TableCell(
+                                                  child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
+                                                      child: Text(
+                                                          'Next Due Date',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 20,
+                                                              color:
+                                                                  blueColor)))),
+                                            ],
+                                          ),
+                                          TableRow(
+                                            children: [
+                                              TableCell(
+                                                  child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
+                                                      child: Text(
+                                                          "${profiledata['leaseData']['lease_type']}",
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                              fontSize: 20,
+                                                              color:
+                                                                  greyColor)))),
+                                              TableCell(
+                                                  child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
+                                                      child: Text(
+                                                          profiledata[
+                                                                  'leaseData']
+                                                              ['rental_adress'],
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                              fontSize: 20,
+                                                              color:
+                                                                  greyColor)))),
+                                              TableCell(
+                                                  child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
+                                                      child: Text(
+                                                          dateProvider.formatCurrentDate(
+                                                              profiledata[
+                                                                      'leaseData']
+                                                                  [
+                                                                  'start_date']),
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                              fontSize: 20,
+                                                              color:
+                                                                  greyColor)))),
+                                              TableCell(
+                                                  child: Padding(
+                                                      padding: EdgeInsets.all(
+                                                          8.0),
+                                                      child: Text(
+                                                          dateProvider
+                                                              .formatCurrentDate(
+                                                                  profiledata[
+                                                                          'leaseData']
+                                                                      [
+                                                                      'end_date']),
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                              fontSize: 20,
+                                                              color:
+                                                                  greyColor)))),
+                                              TableCell(
+                                                  child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
+                                                      child: Text(
+                                                          profiledata[
+                                                                  'leaseData']
+                                                              ['rent_cycle'],
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                              fontSize: 20,
+                                                              color:
+                                                                  greyColor)))),
+                                              TableCell(
+                                                  child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
+                                                      child: Text(
+                                                          profiledata['leaseData']
+                                                                  ['amount']
+                                                              .toString(),
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                              fontSize: 20,
+                                                              color:
+                                                                  greyColor)))),
+                                              TableCell(
+                                                  child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8.0),
+                                                      child: Text(
+                                                          profiledata[
+                                                                  'leaseData']
+                                                              ['date'],
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                              fontSize: 20,
+                                                              color:
+                                                                  greyColor)))),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
+                            );
+                          } else {
+                            // Vertical layout for phone screens
+                            return Container(
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 10),
+                              decoration: BoxDecoration(
+                                //   color: Colors.white,
+                                border: Border.all(color: Colors.grey.shade300),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // titleBar(
+                                  //   title: 'Personal Details',
+                                  //   width: MediaQuery.of(context).size.width *
+                                  //       0.91,
+                                  // ),
 
-                              // Show different content based on 2FA state
-                              if (!enble2FA && !show2FASetup)
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16.0),
-                                  child: Text(
-                                    "Turn on the toggle above to enable Two-Factor Authentication for enhanced security.",
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-
-                              // 2FA Setup Flow
-                              if (show2FASetup &&
-                                  !showVerificationInput)
-                                Padding(
-                                  padding:
-                                  const EdgeInsets.symmetric(
-                                      horizontal: 16.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        "Choose your preferred 2FA method:",
-                                        style: TextStyle(
-                                          color: Colors.black87,
-                                          fontSize: 16,
-                                          fontWeight:
-                                          FontWeight.w500,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 16),
-
-                                      // SMS Radio Button
-                                      Row(
-                                        children: [
-                                          Radio<String>(
-                                            value: 'sms',
-                                            groupValue:
-                                            selected2FAMethod,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                selected2FAMethod =
-                                                value!;
-                                              });
-                                            },
-                                            activeColor:
-                                            blueColor,
-                                          ),
-                                          const SizedBox(
-                                              width: 8),
-                                          Expanded(
-                                            child: Text(
-                                              "SMS (${profiledata['tenant_phoneNumber']})",
-                                              style:
-                                              const TextStyle(
-                                                fontSize: 16,
-                                                color: Colors
-                                                    .black87,
-                                              ),
-                                            ),
+                                  // Single White Card with Profile and 2FA - matching image exactly
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 3.0),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(12),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.1),
+                                            spreadRadius: 1,
+                                            blurRadius: 10,
+                                            offset: Offset(0, 2),
                                           ),
                                         ],
                                       ),
-
-                                      // Email Radio Button
-                                      Row(
-                                        children: [
-                                          Radio<String>(
-                                            value: 'email',
-                                            groupValue:
-                                            selected2FAMethod,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                selected2FAMethod =
-                                                value!;
-                                              });
-                                            },
-                                            activeColor:
-                                            blueColor,
-                                          ),
-                                          const SizedBox(
-                                              width: 8),
-                                          Expanded(
-                                            child: Text(
-                                              "Email (${profiledata['tenant_email']})",
-                                              style:
-                                              const TextStyle(
-                                                fontSize: 16,
-                                                color: Colors
-                                                    .black87,
-                                              ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: Column(
+                                          children: [
+                                            // Avatar and Name Section
+                                            ProfileCard(
+                                              profiledata: {
+                                                'tenant_firstName':
+                                                    '${profiledata['tenant_firstName']}',
+                                                'tenant_lastName':
+                                                    '${profiledata['tenant_lastName']}',
+                                                'tenant_phoneNumber':
+                                                    '${profiledata['tenant_phoneNumber']}',
+                                                'tenant_email':
+                                                    '${profiledata['tenant_email']}',
+                                              },
                                             ),
-                                          ),
-                                        ],
-                                      ),
-
-                                      const SizedBox(height: 20),
-
-                                      // Enable 2FA Button
-                                      SizedBox(
-                                        width: double.infinity,
-                                        height: 48,
-                                        child: ElevatedButton(
-                                          onPressed: selected2FAMethod
-                                              .isNotEmpty
-                                              ? () =>
-                                              _initiate2FASetup()
-                                              : null,
-                                          style: ElevatedButton
-                                              .styleFrom(
-                                            backgroundColor:
-                                            selected2FAMethod
-                                                .isNotEmpty
-                                                ? blueColor
-                                                : Colors.grey,
-                                            foregroundColor:
-                                            Colors.white,
-                                            shape:
-                                            RoundedRectangleBorder(
-                                              borderRadius:
-                                              BorderRadius
-                                                  .circular(
-                                                  8),
+                                            SizedBox(height: 20),
+                                            // Divider
+                                            Container(
+                                              height: 1,
+                                              color: Colors.grey[300],
                                             ),
-                                          ),
-                                          child: const Text(
-                                            "Enable 2FA",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight:
-                                              FontWeight.w600,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                              // Verification Code Input
-                              if (showVerificationInput)
-                                Padding(
-                                  padding:
-                                  const EdgeInsets.symmetric(
-                                      horizontal: 16.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Enter verification code sent to your ${selected2FAMethod == 'email' ? 'email' : 'phone'}:",
-                                        style: const TextStyle(
-                                          color: Colors.black87,
-                                          fontSize: 16,
-                                          fontWeight:
-                                          FontWeight.w500,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 16),
-
-                                      // Verification Code Input Field
-                                      TextField(
-                                        controller:
-                                        verificationCodeController,
-                                        keyboardType:
-                                        TextInputType.number,
-                                        maxLength: 6,
-                                        decoration:
-                                        InputDecoration(
-                                          hintText:
-                                          "Enter 6-digit code",
-                                          border:
-                                          OutlineInputBorder(
-                                            borderRadius:
-                                            BorderRadius
-                                                .circular(8),
-                                            borderSide:
-                                            const BorderSide(
-                                                color: Colors
-                                                    .grey),
-                                          ),
-                                          focusedBorder:
-                                          OutlineInputBorder(
-                                            borderRadius:
-                                            BorderRadius
-                                                .circular(8),
-                                            borderSide:
-                                            BorderSide(
-                                                color:
-                                                blueColor,
-                                                width: 2),
-                                          ),
-                                          counterText: "",
-                                        ),
-                                      ),
-
-                                      const SizedBox(height: 20),
-
-                                      // Verify & Enable Button
-                                      SizedBox(
-                                        width: double.infinity,
-                                        height: 48,
-                                        child: ElevatedButton(
-                                          onPressed: isVerifyingCode
-                                              ? null
-                                              : () =>
-                                              _verifyAndEnable2FA(),
-                                          style: ElevatedButton
-                                              .styleFrom(
-                                            backgroundColor:
-                                            blueColor,
-                                            foregroundColor:
-                                            Colors.white,
-                                            shape:
-                                            RoundedRectangleBorder(
-                                              borderRadius:
-                                              BorderRadius
-                                                  .circular(
-                                                  8),
-                                            ),
-                                          ),
-                                          child: isVerifyingCode
-                                              ? const SizedBox(
-                                            width: 20,
-                                            height: 20,
-                                            child:
-                                            CircularProgressIndicator(
-                                              color: Colors
-                                                  .white,
-                                              strokeWidth:
-                                              2,
-                                            ),
-                                          )
-                                              : const Text(
-                                            "Verify & Enable",
-                                            style:
-                                            TextStyle(
-                                              fontSize: 16,
-                                              fontWeight:
-                                              FontWeight
-                                                  .w600,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-
-                                      const SizedBox(height: 12),
-
-                                      // Cancel Button
-                                      SizedBox(
-                                        width: double.infinity,
-                                        height: 48,
-                                        child: OutlinedButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              show2FASetup =
-                                              false;
-                                              showVerificationInput =
-                                              false;
-                                              selected2FAMethod =
-                                              '';
-                                              verificationCodeController
-                                                  .clear();
-                                            });
-                                          },
-                                          style: OutlinedButton
-                                              .styleFrom(
-                                            side:
-                                            const BorderSide(
-                                                color: Colors
-                                                    .grey),
-                                            shape:
-                                            RoundedRectangleBorder(
-                                              borderRadius:
-                                              BorderRadius
-                                                  .circular(
-                                                  8),
-                                            ),
-                                          ),
-                                          child: const Text(
-                                            "Cancel",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight:
-                                              FontWeight.w600,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                              // 2FA Enabled Status
-                              if (enble2FA && !show2FASetup)
-                                Padding(
-                                  padding:
-                                  const EdgeInsets.symmetric(
-                                      horizontal: 16.0),
-                                  child: Text(
-                                    email2FA
-                                        ? "✓ 2FA is enabled via Email"
-                                        : sms2FA
-                                        ? "✓ 2FA is enabled via SMS"
-                                        : "✓ 2FA is enabled",
-                                    style: const TextStyle(
-                                      color: Colors.green,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-
-                              const SizedBox(height: 20),
-
-                              // Disable 2FA Verification Input
-                              if (showDisableVerification)
-                                Padding(
-                                  padding:
-                                  const EdgeInsets.symmetric(
-                                      horizontal: 16.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        "Enter verification code to disable 2FA:",
-                                        style: TextStyle(
-                                          color: Colors.black87,
-                                          fontSize: 16,
-                                          fontWeight:
-                                          FontWeight.w500,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 16),
-
-                                      // Verification Code Input Field
-                                      TextField(
-                                        controller:
-                                        disableVerificationController,
-                                        keyboardType:
-                                        TextInputType.number,
-                                        maxLength: 6,
-                                        decoration:
-                                        InputDecoration(
-                                          hintText:
-                                          "Enter 6-digit code",
-                                          border:
-                                          OutlineInputBorder(
-                                            borderRadius:
-                                            BorderRadius
-                                                .circular(8),
-                                            borderSide:
-                                            const BorderSide(
-                                                color: Colors
-                                                    .grey),
-                                          ),
-                                          focusedBorder:
-                                          OutlineInputBorder(
-                                            borderRadius:
-                                            BorderRadius
-                                                .circular(8),
-                                            borderSide:
-                                            const BorderSide(
-                                                color: Colors
-                                                    .red,
-                                                width: 2),
-                                          ),
-                                          counterText: "",
-                                        ),
-                                      ),
-
-                                      const SizedBox(height: 20),
-
-                                      // Disable 2FA Button
-                                      SizedBox(
-                                        width: double.infinity,
-                                        height: 48,
-                                        child: ElevatedButton(
-                                          onPressed: isVerifyingCode
-                                              ? null
-                                              : () =>
-                                              _disable2FAWithVerification(),
-                                          style: ElevatedButton
-                                              .styleFrom(
-                                            backgroundColor:
-                                            Colors.red,
-                                            foregroundColor:
-                                            Colors.white,
-                                            shape:
-                                            RoundedRectangleBorder(
-                                              borderRadius:
-                                              BorderRadius
-                                                  .circular(
-                                                  8),
-                                            ),
-                                          ),
-                                          child: isVerifyingCode
-                                              ? const SizedBox(
-                                            width: 20,
-                                            height: 20,
-                                            child:
-                                            CircularProgressIndicator(
-                                              color: Colors
-                                                  .white,
-                                              strokeWidth:
-                                              2,
-                                            ),
-                                          )
-                                              : const Text(
-                                            "Disable 2FA",
-                                            style:
-                                            TextStyle(
-                                              fontSize: 16,
-                                              fontWeight:
-                                              FontWeight
-                                                  .w600,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-
-                                      const SizedBox(height: 12),
-
-                                      // Cancel Button
-                                      SizedBox(
-                                        width: double.infinity,
-                                        height: 48,
-                                        child: OutlinedButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              showDisableVerification =
-                                              false;
-                                              disableVerificationController
-                                                  .clear();
-                                            });
-                                          },
-                                          style: OutlinedButton
-                                              .styleFrom(
-                                            side:
-                                            const BorderSide(
-                                                color: Colors
-                                                    .grey),
-                                            shape:
-                                            RoundedRectangleBorder(
-                                              borderRadius:
-                                              BorderRadius
-                                                  .circular(
-                                                  8),
-                                            ),
-                                          ),
-                                          child: const Text(
-                                            "Cancel",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight:
-                                              FontWeight.w600,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                              // Regenerate Backup Codes Verification Input
-                              if (showRegenerateVerification)
-                                Padding(
-                                  padding:
-                                  const EdgeInsets.symmetric(
-                                      horizontal: 16.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        "Enter verification code to regenerate backup codes:",
-                                        style: TextStyle(
-                                          color: Colors.black87,
-                                          fontSize: 16,
-                                          fontWeight:
-                                          FontWeight.w500,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 16),
-
-                                      // Verification Code Input Field
-                                      TextField(
-                                        controller:
-                                        regenerateVerificationController,
-                                        keyboardType:
-                                        TextInputType.number,
-                                        maxLength: 6,
-                                        decoration:
-                                        InputDecoration(
-                                          hintText:
-                                          "Enter 6-digit code",
-                                          border:
-                                          OutlineInputBorder(
-                                            borderRadius:
-                                            BorderRadius
-                                                .circular(8),
-                                            borderSide:
-                                            const BorderSide(
-                                                color: Colors
-                                                    .grey),
-                                          ),
-                                          focusedBorder:
-                                          OutlineInputBorder(
-                                            borderRadius:
-                                            BorderRadius
-                                                .circular(8),
-                                            borderSide:
-                                            BorderSide(
-                                                color:
-                                                blueColor,
-                                                width: 2),
-                                          ),
-                                          counterText: "",
-                                        ),
-                                      ),
-
-                                      const SizedBox(height: 20),
-
-                                      // Regenerate Backup Codes Button
-                                      SizedBox(
-                                        width: double.infinity,
-                                        height: 48,
-                                        child: ElevatedButton(
-                                          onPressed: isVerifyingCode
-                                              ? null
-                                              : () =>
-                                              _regenerateBackupCodesWithVerification(),
-                                          style: ElevatedButton
-                                              .styleFrom(
-                                            backgroundColor:
-                                            blueColor,
-                                            foregroundColor:
-                                            Colors.white,
-                                            shape:
-                                            RoundedRectangleBorder(
-                                              borderRadius:
-                                              BorderRadius
-                                                  .circular(
-                                                  8),
-                                            ),
-                                          ),
-                                          child: isVerifyingCode
-                                              ? const SizedBox(
-                                            width: 20,
-                                            height: 20,
-                                            child:
-                                            CircularProgressIndicator(
-                                              color: Colors
-                                                  .white,
-                                              strokeWidth:
-                                              2,
-                                            ),
-                                          )
-                                              : backupCode
-                                              ? Text(
-                                            "Regenerate Backup Codes",
-                                            style:
-                                            TextStyle(
-                                              fontSize:
-                                              16,
-                                              fontWeight:
-                                              FontWeight
-                                                  .w600,
-                                            ),
-                                          )
-                                              : Text(
-                                            "Backup Codes",
-                                            style:
-                                            TextStyle(
-                                              fontSize:
-                                              16,
-                                              fontWeight:
-                                              FontWeight
-                                                  .w600,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-
-                                      const SizedBox(height: 12),
-
-                                      // Cancel Button
-                                      SizedBox(
-                                        width: double.infinity,
-                                        height: 48,
-                                        child: OutlinedButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              showRegenerateVerification =
-                                              false;
-                                              regenerateVerificationController
-                                                  .clear();
-                                            });
-                                          },
-                                          style: OutlinedButton
-                                              .styleFrom(
-                                            side:
-                                            const BorderSide(
-                                                color: Colors
-                                                    .grey),
-                                            shape:
-                                            RoundedRectangleBorder(
-                                              borderRadius:
-                                              BorderRadius
-                                                  .circular(
-                                                  8),
-                                            ),
-                                          ),
-                                          child: const Text(
-                                            "Cancel",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight:
-                                              FontWeight.w600,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                              // 2FA Action Buttons
-                              if (enble2FA &&
-                                  !showDisableVerification &&
-                                  !showRegenerateVerification)
-                                Padding(
-                                  padding:
-                                  const EdgeInsets.symmetric(
-                                      horizontal: 16.0,
-                                      vertical: 8),
-                                  child: Row(
-                                    children: [
-                                      // Disable 2FA Button
-                                      Expanded(
-                                        flex: 1,
-                                        child: SizedBox(
-                                          height: 60,
-                                          child: ElevatedButton(
-                                            onPressed: () {
-                                              _sendDisable2FACode();
-                                            },
-                                            style: ElevatedButton
-                                                .styleFrom(
-                                              backgroundColor:
-                                              Colors.red
-                                                  .shade50,
-                                              foregroundColor:
-                                              Colors.red
-                                                  .shade700,
-                                              side: BorderSide(
-                                                  color: Colors
-                                                      .red
-                                                      .shade300,
-                                                  width: 1.5),
-                                              elevation: 2,
-                                              shadowColor: Colors
-                                                  .red.shade100,
-                                              padding:
-                                              const EdgeInsets
-                                                  .symmetric(
-                                                  horizontal:
-                                                  16),
-                                              shape:
-                                              RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius
-                                                    .circular(
-                                                    8),
-                                              ),
-                                            ),
-                                            child: Row(
+                                            SizedBox(height: 20),
+                                            // 2FA Section - integrated in same card
+                                            Row(
                                               mainAxisAlignment:
-                                              MainAxisAlignment
-                                                  .center,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
-                                                const Icon(
-                                                    Icons
-                                                        .security,
-                                                    size: 18),
-                                                const SizedBox(
-                                                    width: 8),
-                                                const Flexible(
-                                                  child: Text(
-                                                    "Disable 2FA",
-                                                    style:
-                                                    TextStyle(
-                                                      fontSize:
-                                                      14,
+                                                Text(
+                                                  "Two-Factor Authentication (2FA)",
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color: Colors.grey[800],
+                                                  ),
+                                                ),
+                                                CustomSwitch(
+                                                  initialValue: enble2FA,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      if (value) {
+                                                        show2FASetup = true;
+                                                        showVerificationInput =
+                                                            false;
+                                                        selected2FAMethod = '';
+                                                      } else {
+                                                        enble2FA = false;
+                                                        show2FASetup = false;
+                                                        showVerificationInput =
+                                                            false;
+                                                        selected2FAMethod = '';
+                                                        sms2FA = false;
+                                                        email2FA = false;
+                                                      }
+                                                    });
+                                                  },
+                                                ),
+                                                // Switch(
+                                                //   activeColor: blueColor,
+                                                //   value: enble2FA,
+                                                //   onChanged: (value) {
+                                                //     setState(() {
+                                                //       if (value) {
+                                                //         show2FASetup = true;
+                                                //         showVerificationInput =
+                                                //             false;
+                                                //         selected2FAMethod = '';
+                                                //       } else {
+                                                //         enble2FA = false;
+                                                //         show2FASetup = false;
+                                                //         showVerificationInput =
+                                                //             false;
+                                                //         selected2FAMethod = '';
+                                                //         sms2FA = false;
+                                                //         email2FA = false;
+                                                //       }
+                                                //     });
+                                                //   },
+                                                // ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 12),
+
+                                            // Show different content based on 2FA state
+                                            if (!enble2FA && !show2FASetup)
+                                              Text(
+                                                "Turn on the toggle above to enable Two-Factor Authentication for enhanced security.",
+                                                style: TextStyle(
+                                                  color: Colors.grey[600],
+                                                  fontSize: 12,
+                                                  height: 1.4,
+                                                ),
+                                              ),
+
+                                            // 2FA Setup Flow - integrated in same card
+                                            if (show2FASetup &&
+                                                !showVerificationInput)
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "Choose your preferred 2FA method:",
+                                                    style: TextStyle(
+                                                      color: Colors.grey[800],
+                                                      fontSize: 16,
                                                       fontWeight:
-                                                      FontWeight
-                                                          .w600,
+                                                          FontWeight.w500,
                                                     ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      // Regenerate Backup Codes Button
-                                      Expanded(
-                                        flex: 1,
-                                        child: SizedBox(
-                                          height: 60,
-                                          child: ElevatedButton(
-                                            onPressed: () {
-                                              _regenerateBackupCodesWithVerification();
-                                            },
-                                            style: ElevatedButton
-                                                .styleFrom(
-                                              backgroundColor:
-                                              blueColor
-                                                  .withOpacity(
-                                                  0.1),
-                                              foregroundColor:
-                                              blueColor,
-                                              side: BorderSide(
-                                                  color: blueColor
-                                                      .withOpacity(
-                                                      0.3),
-                                                  width: 1.5),
-                                              elevation: 2,
-                                              shadowColor:
-                                              blueColor
-                                                  .withOpacity(
-                                                  0.1),
-                                              padding:
-                                              const EdgeInsets
-                                                  .symmetric(
-                                                  horizontal:
-                                                  16),
-                                              shape:
-                                              RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius
-                                                    .circular(
-                                                    8),
+                                                  SizedBox(height: 16),
+
+                                                  // SMS Radio Button
+                                                  _buildOptionTile(
+                                                    label:
+                                                        "SMS (${profiledata['tenant_phoneNumber']})",
+                                                    value: 'sms',
+                                                  ),
+                                                  //  const SizedBox(height: 12),
+
+                                                  // Email Option
+                                                  _buildOptionTile(
+                                                    label:
+                                                        "Email (${profiledata['tenant_email']})",
+                                                    value: 'email',
+                                                  ),
+                                                  const SizedBox(height: 12),
+
+                                                  // Enable 2FA Button
+                                                  SizedBox(
+                                                    width: double.infinity,
+                                                    height: 48,
+                                                    child: ElevatedButton(
+                                                      onPressed: selected2FAMethod
+                                                              .isNotEmpty
+                                                          ? () =>
+                                                              _initiate2FASetup()
+                                                          : null,
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        backgroundColor:
+                                                            selected2FAMethod
+                                                                    .isNotEmpty
+                                                                ? blueColor
+                                                                : Colors.grey,
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                        ),
+                                                      ),
+                                                      child: Text(
+                                                        "Enable 2FA",
+                                                        style: TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment
-                                                  .center,
-                                              children: [
-                                                const Icon(
-                                                    Icons.refresh,
-                                                    size: 18),
-                                                const SizedBox(
-                                                    width: 8),
-                                                Flexible(
-                                                  child:
-                                                  !backupCode
-                                                      ? Text(
-                                                    "Backup Codes",
-                                                    style:
-                                                    TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight: FontWeight.w600,
+
+                                            // Verification Code Input
+                                            if (showVerificationInput)
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16.0),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "Enter verification code sent to your ${selected2FAMethod == 'email' ? 'email' : 'phone'}:",
+                                                      style: const TextStyle(
+                                                        color: Colors.black87,
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
                                                     ),
-                                                    textAlign:
-                                                    TextAlign.center,
-                                                  )
-                                                      : Text(
-                                                    "Regenerate Backup Codes",
-                                                    style:
-                                                    TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight: FontWeight.w600,
+                                                    const SizedBox(height: 16),
+
+                                                    // Verification Code Input Field
+                                                    TextField(
+                                                      controller:
+                                                          verificationCodeController,
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                      maxLength: 6,
+                                                      decoration:
+                                                          InputDecoration(
+                                                        hintText:
+                                                            "Enter 6-digit code",
+                                                        border:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                          borderSide:
+                                                              const BorderSide(
+                                                                  color: Colors
+                                                                      .grey),
+                                                        ),
+                                                        focusedBorder:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                          borderSide:
+                                                              BorderSide(
+                                                                  color:
+                                                                      blueColor,
+                                                                  width: 2),
+                                                        ),
+                                                        counterText: "",
+                                                      ),
                                                     ),
-                                                    textAlign:
-                                                    TextAlign.center,
+
+                                                    const SizedBox(height: 20),
+
+                                                    // Verify & Enable Button
+                                                    SizedBox(
+                                                      width: double.infinity,
+                                                      height: 48,
+                                                      child: ElevatedButton(
+                                                        onPressed: isVerifyingCode
+                                                            ? null
+                                                            : () =>
+                                                                _verifyAndEnable2FA(),
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                          backgroundColor:
+                                                              blueColor,
+                                                          foregroundColor:
+                                                              Colors.white,
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                          ),
+                                                        ),
+                                                        child: isVerifyingCode
+                                                            ? const SizedBox(
+                                                                width: 20,
+                                                                height: 20,
+                                                                child:
+                                                                    CircularProgressIndicator(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  strokeWidth:
+                                                                      2,
+                                                                ),
+                                                              )
+                                                            : const Text(
+                                                                "Verify & Enable",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 16,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                ),
+                                                              ),
+                                                      ),
+                                                    ),
+
+                                                    const SizedBox(height: 12),
+
+                                                    // Cancel Button
+                                                    SizedBox(
+                                                      width: double.infinity,
+                                                      height: 48,
+                                                      child: OutlinedButton(
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            show2FASetup =
+                                                                false;
+                                                            showVerificationInput =
+                                                                false;
+                                                            selected2FAMethod =
+                                                                '';
+                                                            verificationCodeController
+                                                                .clear();
+                                                          });
+                                                        },
+                                                        style: OutlinedButton
+                                                            .styleFrom(
+                                                          side:
+                                                              const BorderSide(
+                                                                  color: Colors
+                                                                      .grey),
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                          ),
+                                                        ),
+                                                        child: const Text(
+                                                          "Cancel",
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: Colors.grey,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+
+                                            // 2FA Enabled Status
+                                            if (enble2FA && !show2FASetup)
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16.0),
+                                                child: Text(
+                                                  email2FA
+                                                      ? "✓ 2FA is enabled via Email"
+                                                      : sms2FA
+                                                          ? "✓ 2FA is enabled via SMS"
+                                                          : "✓ 2FA is enabled",
+                                                  style: const TextStyle(
+                                                    color: Colors.green,
+                                                    fontSize: 16,
                                                   ),
                                                 ),
-                                              ],
-                                            ),
-                                          ),
+                                              ),
+
+                                            const SizedBox(height: 20),
+
+                                            // Disable 2FA Verification Input
+                                            if (showDisableVerification)
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16.0),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    const Text(
+                                                      "Enter verification code to disable 2FA:",
+                                                      style: TextStyle(
+                                                        color: Colors.black87,
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 16),
+
+                                                    // Verification Code Input Field
+                                                    TextField(
+                                                      controller:
+                                                          disableVerificationController,
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                      maxLength: 6,
+                                                      decoration:
+                                                          InputDecoration(
+                                                        hintText:
+                                                            "Enter 6-digit code",
+                                                        border:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                          borderSide:
+                                                              const BorderSide(
+                                                                  color: Colors
+                                                                      .grey),
+                                                        ),
+                                                        focusedBorder:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                          borderSide:
+                                                              const BorderSide(
+                                                                  color: Colors
+                                                                      .red,
+                                                                  width: 2),
+                                                        ),
+                                                        counterText: "",
+                                                      ),
+                                                    ),
+
+                                                    const SizedBox(height: 20),
+
+                                                    // Disable 2FA Button
+                                                    SizedBox(
+                                                      width: double.infinity,
+                                                      height: 48,
+                                                      child: ElevatedButton(
+                                                        onPressed: isVerifyingCode
+                                                            ? null
+                                                            : () =>
+                                                                _disable2FAWithVerification(),
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                          backgroundColor:
+                                                              Colors.red,
+                                                          foregroundColor:
+                                                              Colors.white,
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                          ),
+                                                        ),
+                                                        child: isVerifyingCode
+                                                            ? const SizedBox(
+                                                                width: 20,
+                                                                height: 20,
+                                                                child:
+                                                                    CircularProgressIndicator(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  strokeWidth:
+                                                                      2,
+                                                                ),
+                                                              )
+                                                            : const Text(
+                                                                "Disable 2FA",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 16,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                ),
+                                                              ),
+                                                      ),
+                                                    ),
+
+                                                    const SizedBox(height: 12),
+
+                                                    // Cancel Button
+                                                    SizedBox(
+                                                      width: double.infinity,
+                                                      height: 48,
+                                                      child: OutlinedButton(
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            showDisableVerification =
+                                                                false;
+                                                            disableVerificationController
+                                                                .clear();
+                                                          });
+                                                        },
+                                                        style: OutlinedButton
+                                                            .styleFrom(
+                                                          side:
+                                                              const BorderSide(
+                                                                  color: Colors
+                                                                      .grey),
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                          ),
+                                                        ),
+                                                        child: const Text(
+                                                          "Cancel",
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: Colors.grey,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+
+                                            // Regenerate Backup Codes Verification Input
+                                            if (showRegenerateVerification)
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16.0),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    const Text(
+                                                      "Enter verification code to regenerate backup codes:",
+                                                      style: TextStyle(
+                                                        color: Colors.black87,
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 16),
+
+                                                    // Verification Code Input Field
+                                                    TextField(
+                                                      controller:
+                                                          regenerateVerificationController,
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                      maxLength: 6,
+                                                      decoration:
+                                                          InputDecoration(
+                                                        hintText:
+                                                            "Enter 6-digit code",
+                                                        border:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                          borderSide:
+                                                              const BorderSide(
+                                                                  color: Colors
+                                                                      .grey),
+                                                        ),
+                                                        focusedBorder:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                          borderSide:
+                                                              BorderSide(
+                                                                  color:
+                                                                      blueColor,
+                                                                  width: 2),
+                                                        ),
+                                                        counterText: "",
+                                                      ),
+                                                    ),
+
+                                                    const SizedBox(height: 20),
+
+                                                    // Regenerate Backup Codes Button
+                                                    SizedBox(
+                                                      width: double.infinity,
+                                                      height: 48,
+                                                      child: ElevatedButton(
+                                                        onPressed: isVerifyingCode
+                                                            ? null
+                                                            : () =>
+                                                                _regenerateBackupCodesWithVerification(),
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                          backgroundColor:
+                                                              blueColor,
+                                                          foregroundColor:
+                                                              Colors.white,
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                          ),
+                                                        ),
+                                                        child: isVerifyingCode
+                                                            ? const SizedBox(
+                                                                width: 20,
+                                                                height: 20,
+                                                                child:
+                                                                    CircularProgressIndicator(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  strokeWidth:
+                                                                      2,
+                                                                ),
+                                                              )
+                                                            : backupCode
+                                                                ? Text(
+                                                                    "Regenerate Backup Codes",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          16,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                    ),
+                                                                  )
+                                                                : Text(
+                                                                    "Backup Codes",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          16,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                    ),
+                                                                  ),
+                                                      ),
+                                                    ),
+
+                                                    const SizedBox(height: 12),
+
+                                                    // Cancel Button
+                                                    SizedBox(
+                                                      width: double.infinity,
+                                                      height: 48,
+                                                      child: OutlinedButton(
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            showRegenerateVerification =
+                                                                false;
+                                                            regenerateVerificationController
+                                                                .clear();
+                                                          });
+                                                        },
+                                                        style: OutlinedButton
+                                                            .styleFrom(
+                                                          side:
+                                                              const BorderSide(
+                                                                  color: Colors
+                                                                      .grey),
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                          ),
+                                                        ),
+                                                        child: const Text(
+                                                          "Cancel",
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: Colors.grey,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+
+                                            // 2FA Action Buttons
+                                            if (enble2FA &&
+                                                !showDisableVerification &&
+                                                !showRegenerateVerification)
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16.0,
+                                                        vertical: 8),
+                                                child: Row(
+                                                  children: [
+                                                    // Disable 2FA Button
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: SizedBox(
+                                                        height: 60,
+                                                        child: ElevatedButton(
+                                                          onPressed: () {
+                                                            _sendDisable2FACode();
+                                                          },
+                                                          style: ElevatedButton
+                                                              .styleFrom(
+                                                            backgroundColor:
+                                                                Colors.red
+                                                                    .shade50,
+                                                            foregroundColor:
+                                                                Colors.red
+                                                                    .shade700,
+                                                            side: BorderSide(
+                                                                color: Colors
+                                                                    .red
+                                                                    .shade300,
+                                                                width: 1.5),
+                                                            elevation: 2,
+                                                            shadowColor: Colors
+                                                                .red.shade100,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        16),
+                                                            shape:
+                                                                RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                            ),
+                                                          ),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              const Icon(
+                                                                  Icons
+                                                                      .security,
+                                                                  size: 18),
+                                                              const SizedBox(
+                                                                  width: 8),
+                                                              const Flexible(
+                                                                child: Text(
+                                                                  "Disable 2FA",
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 12),
+                                                    // Regenerate Backup Codes Button
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: SizedBox(
+                                                        height: 60,
+                                                        child: ElevatedButton(
+                                                          onPressed: () {
+                                                            _regenerateBackupCodesWithVerification();
+                                                          },
+                                                          style: ElevatedButton
+                                                              .styleFrom(
+                                                            backgroundColor:
+                                                                blueColor
+                                                                    .withOpacity(
+                                                                        0.1),
+                                                            foregroundColor:
+                                                                blueColor,
+                                                            side: BorderSide(
+                                                                color: blueColor
+                                                                    .withOpacity(
+                                                                        0.3),
+                                                                width: 1.5),
+                                                            elevation: 2,
+                                                            shadowColor:
+                                                                blueColor
+                                                                    .withOpacity(
+                                                                        0.1),
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        16),
+                                                            shape:
+                                                                RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                            ),
+                                                          ),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              const Icon(
+                                                                  Icons.refresh,
+                                                                  size: 18),
+                                                              const SizedBox(
+                                                                  width: 8),
+                                                              Flexible(
+                                                                child:
+                                                                    !backupCode
+                                                                        ? Text(
+                                                                            "Backup Codes",
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontSize: 12,
+                                                                              fontWeight: FontWeight.w600,
+                                                                            ),
+                                                                            textAlign:
+                                                                                TextAlign.center,
+                                                                          )
+                                                                        : Text(
+                                                                            "Regenerate Backup Codes",
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontSize: 12,
+                                                                              fontWeight: FontWeight.w600,
+                                                                            ),
+                                                                            textAlign:
+                                                                                TextAlign.center,
+                                                                          ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                          ],
                                         ),
                                       ),
-                                    ],
+                                    ),
                                   ),
-                                ),
-                            ],
-                          ),
-                        ),
+                                  SizedBox(height: 20),
+                                  if (leaseData.isNotEmpty) ...[
+                                    // Modern Lease Details Section
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Lease Details',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor,
+                                            ),
+                                          ),
+                                          SizedBox(height: 16),
+                                        ],
+                                      ),
+                                    ),
+                                    // Padding(
+                                    //   padding: const EdgeInsets.symmetric(
+                                    //       horizontal: 20.0),
+                                    //   child: Card(
+                                    //     elevation: 0,
+                                    //     shape: RoundedRectangleBorder(
+                                    //       borderRadius:
+                                    //           BorderRadius.circular(6),
+                                    //     ),
+                                    //     child: Container(
+                                    //       decoration: BoxDecoration(
+                                    //           border:
+                                    //               Border.all(color: blueColor),
+                                    //           borderRadius:
+                                    //               BorderRadius.circular(6)),
+                                    //       padding: const EdgeInsets.all(16.0),
+                                    //       child: Column(
+                                    //         children: [
+                                    //           buildWidget('Lease Type',
+                                    //               "${profiledata['leaseData']['lease_type']}"),
+                                    //           buildWidget(
+                                    //               'Property',
+                                    //               profiledata['leaseData']
+                                    //                       ['rental_adress'] ??
+                                    //                   "N/A"),
+                                    //           buildWidget(
+                                    //               'Start Date',
+                                    //               formatDate4(profiledata[
+                                    //                           'leaseData']
+                                    //                       ['start_date']) ??
+                                    //                   "N/A"),
+                                    //           buildWidget(
+                                    //               'End Date',
+                                    //               formatDate4(profiledata[
+                                    //                           'leaseData']
+                                    //                       ['end_date']) ??
+                                    //                   "N/A"),
+                                    //           buildWidget(
+                                    //               'Rent Cycle',
+                                    //               profiledata['leaseData']
+                                    //                       ['rent_cycle'] ??
+                                    //                   "N/A"),
+                                    //           buildWidget(
+                                    //               'Rent Amount',
+                                    //               profiledata['leaseData']
+                                    //                       ['amount']
+                                    //                   .toString()),
+                                    //           buildWidget(
+                                    //               'Next Due Date',
+                                    //               formatDate4(profiledata[
+                                    //                           'leaseData']
+                                    //                       ['date']) ??
+                                    //                   "N/A"),
+                                    //         ],
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    // ),
+
+                                    buildLeaseTable(leaseData),
+                                  ],
+                                ],
+                              ),
+                            );
+                          }
+                        },
                       ),
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                  ],
-                ),
-              );
-            }
-          },
-        ),
-      )
+                    )
           : SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Lottie.asset(
+                    'assets/no_internet.json',
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.fill,
+                  ),
+                  Text(
+                    'No Internet',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'Check your internet connection',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+            ),
+    );
+  }
+
+  Widget _buildOptionTile({required String label, required String value}) {
+    final bool isSelected = selected2FAMethod == value;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() => selected2FAMethod = value);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        // padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          // color: Colors.grey[50],
+          borderRadius: BorderRadius.circular(8),
+          // border: Border.all(
+          //   color: isSelected ? blueColor : Colors.grey[300]!,
+          //   width: isSelected ? 2 : 1,
+          // ),
+        ),
+        child: Row(
           children: [
-            Lottie.asset(
-              'assets/no_internet.json',
-              width: 200,
-              height: 200,
-              fit: BoxFit.fill,
+            Radio<String>(
+              value: value,
+              groupValue: selected2FAMethod,
+              onChanged: (val) => setState(() => selected2FAMethod = val!),
+              activeColor: blueColor,
             ),
-            Text(
-              'No Internet',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Check your internet connection',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[800],
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
           ],
         ),
@@ -2192,22 +2189,39 @@ class _Profile_screenState extends State<Profile_screen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Table Header
+          // Modern Table Header - matching the image design
           Container(
-            padding: const EdgeInsets.all(8.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             decoration: BoxDecoration(
-              color: blueColor,
+              color: Color(0xFFF7F9FC),
+              border: Border.all(color: Color(0xFFDBE0E5)),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                    child: tableHeaderCell(
-                      "Lease Type",
-                    )),
-                Expanded(child: tableHeaderCell("   Property")),
-                Expanded(child: tableHeaderCell("    Start Date")),
+                  flex: 2,
+                  child: Text(
+                    "Property",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Text(
+                    "Lease Type",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -2220,152 +2234,139 @@ class _Profile_screenState extends State<Profile_screen> {
 
               //return CustomExpansionTile(data: Data, index: index);
               return Container(
+                margin: EdgeInsets.only(bottom: 4),
                 decoration: BoxDecoration(
-                  color: index % 2 != 0
-                      ? Colors.white
-                      : blueColor.withOpacity(0.09),
-                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: Colors.grey[300]!),
                 ),
-                // decoration: BoxDecoration(
-                //   border: Border.all(color: blueColor),
-                // ),
                 child: Column(
                   children: <Widget>[
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Padding(
-                        padding: const EdgeInsets.all(2.0),
+                    // Main lease item - more compact design
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          if (expandedIndex == index) {
+                            expandedIndex = null;
+                          } else {
+                            expandedIndex = index;
+                          }
+                        });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10.0, vertical: 12.0),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  if (expandedIndex == index) {
-                                    expandedIndex = null;
-                                  } else {
-                                    expandedIndex = index;
-                                  }
-                                });
-                              },
-                              child: Container(
-                                margin:
-                                const EdgeInsets.only(left: 5, right: 5),
-                                padding: !isExpanded
-                                    ? const EdgeInsets.only(bottom: 10)
-                                    : const EdgeInsets.only(top: 10),
-                                child: FaIcon(
-                                  isExpanded
-                                      ? FontAwesomeIcons.sortUp
-                                      : FontAwesomeIcons.sortDown,
-                                  size: 20,
-                                  color: blueColor,
-                                ),
-                              ),
-                            ),
+                          children: [
+                            // Property address with dropdown icon
                             Expanded(
                               flex: 2,
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    if (expandedIndex == index) {
-                                      expandedIndex = null;
-                                    } else {
-                                      expandedIndex = index;
-                                    }
-                                  });
-                                },
-                                child: Text(
-                                  '${lease['lease_type']}',
-                                  style: TextStyle(
-                                    color: blueColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    isExpanded
+                                        ? Icons.keyboard_arrow_up
+                                        : Icons.keyboard_arrow_down,
+                                    color: Colors.grey[500],
+                                    size: 18,
                                   ),
-                                ),
+                                  Expanded(
+                                    child: Text(
+                                      '${lease['rental_adress']}',
+                                      style: TextStyle(
+                                        color: Colors.grey[800],
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            SizedBox(
-                                width: MediaQuery.of(context).size.width * .04),
+                            SizedBox(width: 16),
+                            // Lease type
                             Expanded(
-                              flex: 2,
+                              flex: 1,
                               child: Text(
-                                '${lease['rental_adress']}',
+                                '${lease['lease_type']}',
                                 style: TextStyle(
-                                  color: blueColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 13,
+                                  color: Colors.grey[700],
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12,
                                 ),
                               ),
                             ),
-                            SizedBox(
-                                width: MediaQuery.of(context).size.width * .06),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                '${dateProvider.formatCurrentDate(lease['start_date'])}',
-                                style: TextStyle(
-                                  color: blueColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ),
-                            // SizedBox(
-                            //     width: MediaQuery.of(context).size.width * .01),
                           ],
                         ),
                       ),
                     ),
                     if (isExpanded)
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                        margin: const EdgeInsets.only(bottom: 2),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  FaIcon(
-                                    isExpanded
-                                        ? FontAwesomeIcons.sortUp
-                                        : FontAwesomeIcons.sortDown,
-                                    size: 30,
-                                    color: Colors.transparent,
-                                  ),
-                                  Expanded(
-                                    child: Table(
-                                      columnWidths: {
-                                        0: FlexColumnWidth(), // Distribute columns equally
-                                        1: FlexColumnWidth(),
-                                        // 0: FixedColumnWidth(150.0), // Adjust width as needed
-                                        // 1: FlexColumnWidth(),
-                                      },
-                                      children: [
-                                        buildTableRow(
-                                            "End Date",
-                                            dateProvider.formatCurrentDate(
-                                                lease['end_date'])),
-                                        buildTableRow(
-                                            "Rent Cycle", lease['rent_cycle']),
-                                        buildTableRow("Rent Amount",
-                                            lease['amount'].toString()),
-                                        buildTableRow(
-                                            "Next Due Date",
-                                            dateProvider.formatCurrentDate(
-                                                lease['date'])),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 10),
-                            ],
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[50],
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(8),
+                            bottomRight: Radius.circular(8),
                           ),
+                        ),
+                        child: Column(
+                          children: [
+                            // Lease details in a modern grid layout
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildDetailItem(
+                                    "Start Date",
+                                    dateProvider
+                                        .formatCurrentDate(lease['start_date']),
+                                  ),
+                                ),
+                                SizedBox(width: 16),
+                                Expanded(
+                                  child: _buildDetailItem(
+                                    "End Date",
+                                    dateProvider
+                                        .formatCurrentDate(lease['end_date']),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildDetailItem(
+                                    "Rent Cycle",
+                                    lease['rent_cycle'],
+                                  ),
+                                ),
+                                SizedBox(width: 16),
+                                Expanded(
+                                  child: _buildDetailItem(
+                                    "Rent Amount",
+                                    "\$${lease['amount']}",
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildDetailItem(
+                                    "Next Due Date",
+                                    dateProvider
+                                        .formatCurrentDate(lease['date']),
+                                  ),
+                                ),
+                                SizedBox(width: 16),
+                                Expanded(
+                                  child: Container(), // Empty for alignment
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                     //SizedBox(height: 13,),
@@ -2413,6 +2414,31 @@ class _Profile_screenState extends State<Profile_screen> {
     );
   }
 
+  Widget _buildDetailItem(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[600],
+          ),
+        ),
+        SizedBox(height: 4),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey[800],
+          ),
+        ),
+      ],
+    );
+  }
+
   buildWidget(String label, String value) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -2436,7 +2462,7 @@ class _Profile_screenState extends State<Profile_screen> {
                   const BoxShadow(
                     color: Colors.black26,
                     offset:
-                    Offset(1.0, 1.0), // Shadow offset to the bottom right
+                        Offset(1.0, 1.0), // Shadow offset to the bottom right
                     blurRadius: 8.0, // How much to blur the shadow
                     spreadRadius: 0.0, // How much the shadow should spread
                   ),
@@ -2471,6 +2497,117 @@ class _Profile_screenState extends State<Profile_screen> {
           height: 10,
         ),
       ],
+    );
+  }
+}
+
+class ProfileCard extends StatelessWidget {
+  final Map<String, String> profiledata;
+  final Color blueColor;
+
+  const ProfileCard({
+    Key? key,
+    required this.profiledata,
+    this.blueColor = const Color(0xFF0A2E5D),
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final String firstName = profiledata['tenant_firstName'] ?? '';
+    final String lastName = profiledata['tenant_lastName'] ?? '';
+    final String initials =
+        '${firstName.isNotEmpty ? firstName[0].toUpperCase() : ''}'
+        '${lastName.isNotEmpty ? lastName[0].toUpperCase() : ''}';
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Avatar
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: blueColor,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    initials,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Text(
+                "$firstName $lastName",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[900],
+                ),
+              ),
+
+              // Name and Contact Info
+            ],
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Name
+
+              const SizedBox(height: 10),
+
+              // Phone
+              Row(
+                children: [
+                  const SizedBox(width: 10),
+                  Icon(Icons.phone_outlined, size: 20, color: Colors.grey[700]),
+                  const SizedBox(width: 8),
+                  Text(
+                    profiledata['tenant_phoneNumber'] ?? '',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey[800],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+
+              // Email
+              Row(
+                children: [
+                  const SizedBox(width: 10),
+                  Icon(Icons.email_outlined, size: 20, color: Colors.grey[700]),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      profiledata['tenant_email'] ?? '',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.grey[800],
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

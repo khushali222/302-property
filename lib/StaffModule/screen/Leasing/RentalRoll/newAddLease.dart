@@ -4575,7 +4575,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                       children: [
                         const SizedBox(height: 2),
                         Text(
-                          'Add Recurring content',
+                          'Add Recurring Charge',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -5333,7 +5333,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
               children: [
                 const SizedBox(height: 2),
                 Text(
-                  'Add Recurring content',
+                  'Add Recurring Charge',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

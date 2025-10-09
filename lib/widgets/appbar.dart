@@ -11,6 +11,7 @@ import '../constant/constant.dart';
 import '../provider/notification_provider.dart';
 import '../screens/notifications/notifications.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:package_info_plus/package_info_plus.dart';
 
 class widget_302 {
   static App_Bar({
@@ -331,6 +332,31 @@ class widget_302 {
                                   builder: (context) => const Login_Screen()),
                               (route) => false);
                         },
+                      ),
+                      PopupMenuItem(
+                        height: 10,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            FutureBuilder<PackageInfo>(
+                              future: PackageInfo.fromPlatform(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return Text(
+                                    "v${snapshot.data!.version}",
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  );
+                                }
+                                return Container();
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

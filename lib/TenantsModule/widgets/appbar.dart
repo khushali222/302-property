@@ -2,6 +2,7 @@ import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/screens/Profile/Profile_screen.dart';
@@ -273,6 +274,31 @@ class widget_302 {
                                   builder: (context) => const Login_Screen()),
                               (route) => false);
                         },
+                      ),
+                      PopupMenuItem(
+                        height: 10,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            FutureBuilder<PackageInfo>(
+                              future: PackageInfo.fromPlatform(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return Text(
+                                    "v${snapshot.data!.version}",
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  );
+                                }
+                                return Container();
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ));

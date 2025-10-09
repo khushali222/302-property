@@ -4,21 +4,19 @@ import 'dart:core';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 import '../Model/tenants.dart';
 import '../constant/constant.dart';
-import 'package:http/http.dart' as http;
 import 'package:http/http.dart' as http;
 
 class TenantsRepository {
   final String apiUrl = '${Api_url}/api//tenant/tenants';
 
-  Future<List<Tenant>> fetchTenants() async {
+  Future<Map<String, List<Tenant>>> fetchTenants() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     final response = await http.get(
-      Uri.parse('${Api_url}/api/tenant/tenants/$id'),
+      Uri.parse('${Api_url}/api/tenant/tenants/v2/$id'),
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
@@ -30,17 +28,53 @@ class TenantsRepository {
       // Decode the JSON response
       final jsonResponse = json.decode(response.body);
 
-      // Access the 'data' object and then the 'tenants' list
-      if (jsonResponse['data'] != null && jsonResponse['data']['tenants'] != null) {
-        List tenantsJson = jsonResponse['data']['tenants']; // Access the tenants list
-        return tenantsJson.map((data) => Tenant.fromJson(data)).toList(); // Map to Tenant objects
+      // Access the 'data' object
+      if (jsonResponse['data'] != null) {
+        Map<String, List<Tenant>> categorizedTenants = {
+          'currentTenants': [],
+          'formerTenants': [],
+          'currentApplicants': [],
+        };
+
+        // Add currentTenants if they exist
+        if (jsonResponse['data']['currentTenants'] != null) {
+          List currentTenantsJson = jsonResponse['data']['currentTenants'];
+          categorizedTenants['currentTenants'] =
+              currentTenantsJson.map((data) => Tenant.fromJson(data)).toList();
+        }
+
+        // Add formerTenants if they exist
+        if (jsonResponse['data']['formerTenants'] != null) {
+          List formerTenantsJson = jsonResponse['data']['formerTenants'];
+          categorizedTenants['formerTenants'] =
+              formerTenantsJson.map((data) => Tenant.fromJson(data)).toList();
+        }
+
+        // Add currentApplicants if they exist
+        if (jsonResponse['data']['currentApplicants'] != null) {
+          List currentApplicantsJson =
+              jsonResponse['data']['currentApplicants'];
+          categorizedTenants['currentApplicants'] = currentApplicantsJson
+              .map((data) => Tenant.fromJson(data))
+              .toList();
+        }
+
+        return categorizedTenants;
       } else {
-        print('No tenants found in the response.');
-        return [];
+        print('No data found in the response.');
+        return {
+          'currentTenants': [],
+          'formerTenants': [],
+          'currentApplicants': [],
+        };
       }
     } else {
       print('Failed to fetch tenants: ${response.body}');
-      return [];
+      return {
+        'currentTenants': [],
+        'formerTenants': [],
+        'currentApplicants': [],
+      };
     }
   }
 
@@ -325,12 +359,11 @@ class TenantsRepository {
     }
   }
 
-  Future<Map<String, dynamic>> deleteTenant({
-    required String tenantId,
-    required String companyName,
-    required String tenantEmail,
-    String? reason
-  }) async {
+  Future<Map<String, dynamic>> deleteTenant(
+      {required String tenantId,
+      required String companyName,
+      required String tenantEmail,
+      String? reason}) async {
     try {
       final Uri uri = Uri.parse('$Api_url/api/tenant/tenant/$tenantId')
           .replace(queryParameters: {
@@ -340,15 +373,13 @@ class TenantsRepository {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
-      final http.Response response = await http.delete(
-          uri,
+      final http.Response response = await http.delete(uri,
           headers: <String, String>{
             "authorization": "CRM $token",
             "id": "CRM $id",
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: jsonEncode({"reason":reason})
-      );
+          body: jsonEncode({"reason": reason}));
 
       var responseData = json.decode(response.body);
       print(response.body);
