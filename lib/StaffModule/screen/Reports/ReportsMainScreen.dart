@@ -46,15 +46,16 @@ class _ReportsMainScreenState extends State<ReportsMainScreen> {
       backgroundColor: Colors.white,
       drawer:CustomDrawerStaff(currentpage: "Reports",dropdown: false,),
       appBar: widget_302_Staff.App_Bar(context: context),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth > 500) {
-            return WideScreenLayout();
-          } else {
-            return NarrowScreenLayout();
-          }
-        },
-      ),
+      body: NarrowScreenLayout(),
+      // LayoutBuilder(
+      //   builder: (context, constraints) {
+      //     if (constraints.maxWidth > 500) {
+      //       return WideScreenLayout();
+      //     } else {
+      //       return NarrowScreenLayout();
+      //     }
+      //   },
+      // ),
     );
   }
 }
@@ -524,24 +525,16 @@ class ReportCard extends StatelessWidget {
                   topRight: Radius.circular(12.0),
                 ),
               ),
-              // padding: EdgeInsets.all(17.0),
-              // child: Text(
-              //   title,
-              //   style: TextStyle(
-              //     fontSize: 14,
-              //     fontWeight: FontWeight.bold,
-              //     color: Colors.white,
-              //   ),
-              //   textAlign: TextAlign.center,
-              // ),
-              child: Row(
+              child:
+              Row(
                 children: [
                   SizedBox(width: 5,),
                   Expanded(
                     child: Text(
                       title,
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: MediaQuery.of(context).size.width < 500
+                            ? 14 : 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -553,11 +546,12 @@ class ReportCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 16.0,top: 16,right: 10),
+              padding: const EdgeInsets.only(left: 16.0,top: 16,right: 10,bottom: 6),
               child: Text(
                 description,
                 style: TextStyle(
-                  fontSize: 13,
+                  fontSize: MediaQuery.of(context).size.width < 500
+                      ? 13 :15,
                   fontWeight: FontWeight.w500,
                   color: blueColor,
                 ),

@@ -1992,13 +1992,20 @@ class _RentersInsurancesState extends State<RentersInsurances> {
               child: Column(
                 children: [
                   const SizedBox(height: 16),
-                  titleBar(
-                    title: 'Rent Roll Report',
-                    width: MediaQuery.of(context).size.width * .91,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+                      child: titleBar(
+                        width: double.infinity,
+                        title: "Rent Roll Report",
+                      ),
+                    ),
                   ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    const SizedBox(height: 16),
-                  if (MediaQuery.of(context).size.width < 500)
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   const SizedBox(height: 16),
+                  // if (MediaQuery.of(context).size.width < 500)
                     FutureBuilder<rentrollreportmodel>(
                       future: _futureRentersInsurance,
                       builder: (context, snapshot) {
@@ -2209,7 +2216,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                             fontWeight: FontWeight.bold,
                                             color: blueColor,
                                             fontSize: 16),
-                                      )
+                                      ),
                                     ],
                                   ),
                                 ),

@@ -431,7 +431,7 @@ class DashboardMobileSimple extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Main Dashboard',
+            Text(' Dashboard',
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,

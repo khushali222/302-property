@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -69,7 +70,6 @@ class _Profile_screenState extends State<Profile_screen> {
     });
     checkInternet();
     _fetchProfile();
-
   }
 
   ConnectivityResult? _connectivityResult;
@@ -294,8 +294,13 @@ class _Profile_screenState extends State<Profile_screen> {
   }
 
   // Verify code and enable 2FA
+// i want to add a toast message if the verification code is invalid  and if verification code is sent successfully and  if
   void _verifyAndEnable2FA() async {
     if (verificationCodeController.text.length != 6) {
+      Fluttertoast.showToast(
+        msg: 'Please enter a valid 6-digit code',
+        backgroundColor: Colors.orange,
+      );
       return;
     }
 
@@ -345,20 +350,36 @@ class _Profile_screenState extends State<Profile_screen> {
             selected2FAMethod = '';
             verificationCodeController.clear();
           });
+          Fluttertoast.showToast(
+            msg: '${jsonData["message"]}',
+            backgroundColor: Colors.green,
+          );
         } else {
           setState(() {
             isVerifyingCode = false;
           });
+          Fluttertoast.showToast(
+            msg: jsonData["message"] ?? 'Failed to send verification code',
+            backgroundColor: Colors.red,
+          );
         }
       } else {
         setState(() {
           isVerifyingCode = false;
         });
+        Fluttertoast.showToast(
+          msg: 'Failed to send verification code',
+          backgroundColor: Colors.red,
+        );
       }
     } catch (e) {
       setState(() {
         isVerifyingCode = false;
       });
+      Fluttertoast.showToast(
+        msg: 'Error: ${e.toString()}',
+        backgroundColor: Colors.red,
+      );
     }
   }
 
@@ -396,20 +417,37 @@ class _Profile_screenState extends State<Profile_screen> {
             showDisableVerification = true;
             isVerifyingCode = false;
           });
+          Fluttertoast.showToast(
+            msg:
+            'Verification code sent to your ${email2FA ? "email" : "phone"}',
+            backgroundColor: Colors.green,
+          );
         } else {
           setState(() {
             isVerifyingCode = false;
           });
+          Fluttertoast.showToast(
+            msg: jsonData["message"] ?? 'Failed to send verification code',
+            backgroundColor: Colors.red,
+          );
         }
       } else {
         setState(() {
           isVerifyingCode = false;
         });
+        Fluttertoast.showToast(
+          msg: 'Failed to send verification code',
+          backgroundColor: Colors.red,
+        );
       }
     } catch (e) {
       setState(() {
         isVerifyingCode = false;
       });
+      Fluttertoast.showToast(
+        msg: 'Error: ${e.toString()}',
+        backgroundColor: Colors.red,
+      );
     }
   }
 
@@ -435,10 +473,11 @@ class _Profile_screenState extends State<Profile_screen> {
           "id": "CRM $id",
           "Content-Type": "application/json",
         },
-        body: jsonEncode(
-            {"code": disableVerificationController.text, "user_id": id,"user_type"
-                :
-            "staff"}),
+        body: jsonEncode({
+          "code": disableVerificationController.text,
+          "user_id": id,
+          "user_type": "staff"
+        }),
       );
 
       print('Disable 2FA response: ${response.body}');
@@ -459,15 +498,31 @@ class _Profile_screenState extends State<Profile_screen> {
             isVerifyingCode = false;
           });
         }
+        Fluttertoast.showToast(
+          msg: '${jsonData["message"]}',
+          backgroundColor: Colors.green,
+        );
       } else {
         setState(() {
           isVerifyingCode = false;
         });
+        Fluttertoast.showToast(
+          msg: 'Invalid or expired verification code',
+          backgroundColor: Colors.red,
+        );
+        Fluttertoast.showToast(
+          msg: 'Failed to send verification code',
+          backgroundColor: Colors.red,
+        );
       }
     } catch (e) {
       setState(() {
         isVerifyingCode = false;
       });
+      Fluttertoast.showToast(
+        msg: 'Error: ${e.toString()}',
+        backgroundColor: Colors.red,
+      );
     }
   }
 
@@ -503,20 +558,36 @@ class _Profile_screenState extends State<Profile_screen> {
             showRegenerateVerification = true;
             isVerifyingCode = false;
           });
+          Fluttertoast.showToast(
+            msg: '${jsonData["message"]}',
+            backgroundColor: Colors.green,
+          );
         } else {
           setState(() {
             isVerifyingCode = false;
           });
+          Fluttertoast.showToast(
+            msg: jsonData["message"] ?? 'Failed to send verification code',
+            backgroundColor: Colors.red,
+          );
         }
       } else {
         setState(() {
           isVerifyingCode = false;
         });
+        Fluttertoast.showToast(
+          msg: 'Failed to send verification code',
+          backgroundColor: Colors.red,
+        );
       }
     } catch (e) {
       setState(() {
         isVerifyingCode = false;
       });
+      Fluttertoast.showToast(
+        msg: 'Error: ${e.toString()}',
+        backgroundColor: Colors.red,
+      );
     }
   }
 
@@ -566,11 +637,19 @@ class _Profile_screenState extends State<Profile_screen> {
         setState(() {
           isVerifyingCode = false;
         });
+        Fluttertoast.showToast(
+          msg: 'Failed to send verification code',
+          backgroundColor: Colors.red,
+        );
       }
     } catch (e) {
       setState(() {
         isVerifyingCode = false;
       });
+      Fluttertoast.showToast(
+        msg: 'Error: ${e.toString()}',
+        backgroundColor: Colors.red,
+      );
     }
   }
 
@@ -729,24 +808,39 @@ class _Profile_screenState extends State<Profile_screen> {
   }
 
   // Download backup codes to file
-  void _downloadBackupCodes() async {
+  Future<void> _downloadBackupCodes() async {
     try {
+      // Request storage permission
+      final status = await Permission.storage.request();
+
       // Create the content for the text file
       String content = '';
-
-      content += '';
-
       for (int i = 0; i < codes.length; i++) {
         content += '${i + 1}. ${codes[i]['code']}\n';
       }
 
-      // Get the temporary directory
-      final directory = await getTemporaryDirectory();
+      // Get the Downloads directory
+      Directory directory;
+      if (Platform.isAndroid) {
+        directory = Directory('/storage/emulated/0/Download');
+        if (!await directory.exists()) {
+          await directory.create(recursive: true);
+        }
+      } else {
+        directory = await getApplicationDocumentsDirectory();
+      }
+
+      // Create the file
       final file = File(
           '${directory.path}/backup_codes_${DateTime.now().millisecondsSinceEpoch}.txt');
-
-      // Write the content to the file
       await file.writeAsString(content);
+
+      // Show success toast
+      Fluttertoast.showToast(
+        msg: 'Backup codes saved to Downloads!',
+        backgroundColor: Colors.green,
+        toastLength: Toast.LENGTH_SHORT,
+      );
 
       // Share the file
       await Share.shareXFiles(
@@ -754,15 +848,11 @@ class _Profile_screenState extends State<Profile_screen> {
         text: 'Backup Codes for Cloud Rental Manager',
         subject: 'Backup Codes - Cloud Rental Manager',
       );
-
-      Fluttertoast.showToast(
-        msg: 'Backup codes file created and ready to share!',
-        backgroundColor: Colors.green,
-      );
     } catch (e) {
       Fluttertoast.showToast(
         msg: 'Error generating backup codes file: $e',
         backgroundColor: Colors.red,
+        toastLength: Toast.LENGTH_SHORT,
       );
     }
   }

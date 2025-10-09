@@ -482,11 +482,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
 
         // Mortgage Details
         _mortgageNumberController.text = mortgageData['mortgage_no'] ?? '';
-        _loanAmountController.text =
-            mortgageData['loan_amount'].toString() ?? '';
+        _loanAmountController.text = mortgageData['loan_amount'].toString();
         print(mortgageData['interest_rate']);
-        _interestRateController.text =
-            mortgageData['interest_rate'].toString() ?? '';
+        _interestRateController.text = mortgageData['interest_rate'].toString();
 
         // Format dates properly for display using DateProvider
         if (mortgageData['start_date'] != null &&
@@ -495,7 +493,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
             _startDate = DateTime.parse(mortgageData['start_date']);
             // Use DateProvider to format according to user's preference
             final dateProvider =
-                Provider.of<DateProvider>(context, listen: false);
+            Provider.of<DateProvider>(context, listen: false);
             String apiFormatDate = DateFormat('yyyy-MM-dd').format(_startDate!);
             _startDateController.text =
                 dateProvider.formatCurrentDate(apiFormatDate);
@@ -512,7 +510,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
             _endDate = DateTime.parse(mortgageData['end_date']);
             // Use DateProvider to format according to user's preference
             final dateProvider =
-                Provider.of<DateProvider>(context, listen: false);
+            Provider.of<DateProvider>(context, listen: false);
             String apiFormatDate = DateFormat('yyyy-MM-dd').format(_endDate!);
             _endDateController.text =
                 dateProvider.formatCurrentDate(apiFormatDate);
@@ -524,13 +522,20 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         }
 
         // mortgageData['status'] first letter make a so that.. because active is not match with Active
-        _statusController.text =
-            mortgageData['status'].toString().toUpperCase().substring(0, 1) +
-                mortgageData['status'].toString().substring(1);
+        print("mortgageData['status'] ${mortgageData['status']}");
+        // if mortgageData['status'] is I/flutter ( 4495): mortgageData['status'] paid_off then make it Paid Off detecct the "_" and make the first letter uppercase
+        final status = mortgageData['status'].toString();
+        final formattedStatus = status
+            .split('_') // split into ['paid', 'off']
+            .map((word) =>
+        word[0].toUpperCase() + word.substring(1)) // capitalize each
+            .join(' '); // join back with space
+
+        _statusController.text = formattedStatus;
 
         //_statusController.text = mortgageData['status'] ?? '';
         _remainingBalanceController.text =
-            mortgageData['remaining_balance'].toString() ?? '';
+            mortgageData['remaining_balance'].toString();
 
         // Format payment dates properly for display using DateProvider
         if (mortgageData['last_payment_date'] != null &&
@@ -540,9 +545,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                 DateTime.parse(mortgageData['last_payment_date']);
             // Use DateProvider to format according to user's preference
             final dateProvider =
-                Provider.of<DateProvider>(context, listen: false);
+            Provider.of<DateProvider>(context, listen: false);
             String apiFormatDate =
-                DateFormat('yyyy-MM-dd').format(_lastPaymentDate!);
+            DateFormat('yyyy-MM-dd').format(_lastPaymentDate!);
             _lastPaymentDateController.text =
                 dateProvider.formatCurrentDate(apiFormatDate);
           } catch (e) {
@@ -559,9 +564,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                 DateTime.parse(mortgageData['next_payment_date']);
             // Use DateProvider to format according to user's preference
             final dateProvider =
-                Provider.of<DateProvider>(context, listen: false);
+            Provider.of<DateProvider>(context, listen: false);
             String apiFormatDate =
-                DateFormat('yyyy-MM-dd').format(_nextPaymentDate!);
+            DateFormat('yyyy-MM-dd').format(_nextPaymentDate!);
             _nextPaymentDateController.text =
                 dateProvider.formatCurrentDate(apiFormatDate);
           } catch (e) {
@@ -593,7 +598,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
             print(_propertyOptions);
             // Find the property in _propertyOptions by rental_id
             final property = _propertyOptions.firstWhere(
-              (p) => p['rental_id'] == propertyId,
+                  (p) => p['rental_id'] == propertyId,
               orElse: () => <String, dynamic>{},
             );
             if (property.isNotEmpty) {
