@@ -6,8 +6,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -340,12 +342,20 @@ class _Profile_screenState extends State<Profile_screen> {
             selected2FAMethod = '';
             verificationCodeController.clear();
           });
+          Fluttertoast.showToast(
+            msg: '${jsonData["message"]}',
+            backgroundColor: Colors.green,
+          );
         } else {
           setState(() {
             isVerifyingCode = false;
           });
         }
       } else {
+        Fluttertoast.showToast(
+          msg: 'Invalid or expired verification code',
+          backgroundColor: Colors.red,
+        );
         setState(() {
           isVerifyingCode = false;
         });
@@ -396,6 +406,10 @@ class _Profile_screenState extends State<Profile_screen> {
             isVerifyingCode = false;
           });
         }
+        Fluttertoast.showToast(
+          msg: '${jsonData["message"]}',
+          backgroundColor: Colors.green,
+        );
       } else {
         setState(() {
           isVerifyingCode = false;
@@ -430,10 +444,11 @@ class _Profile_screenState extends State<Profile_screen> {
           "id": "CRM $id",
           "Content-Type": "application/json",
         },
-        body: jsonEncode(
-            {"code": disableVerificationController.text, "user_id": id,"user_type"
-                :
-            "tenant"}),
+        body: jsonEncode({
+          "code": disableVerificationController.text,
+          "user_id": id,
+          "user_type": "tenant"
+        }),
       );
 
       print('Disable 2FA response: ${response.body}');
@@ -454,7 +469,15 @@ class _Profile_screenState extends State<Profile_screen> {
             isVerifyingCode = false;
           });
         }
+        Fluttertoast.showToast(
+          msg: '${jsonData["message"]}',
+          backgroundColor: Colors.green,
+        );
       } else {
+        Fluttertoast.showToast(
+          msg: 'Invalid or expired verification code',
+          backgroundColor: Colors.red,
+        );
         setState(() {
           isVerifyingCode = false;
         });
@@ -538,12 +561,7 @@ class _Profile_screenState extends State<Profile_screen> {
           "id": "CRM $id",
           "Content-Type": "application/json",
         },
-        body: jsonEncode({
-
-
-          "user_id": id,
-          "user_type": "tenant"
-        }),
+        body: jsonEncode({"user_id": id, "user_type": "tenant"}),
       );
 
       print('Regenerate backup codes response: ${response.body}');
@@ -628,7 +646,6 @@ class _Profile_screenState extends State<Profile_screen> {
                 // Download button
                 Row(
                   children: [
-
                     // Text(
                     //   'Your Backup Codes (${codes.length} remaining)',
                     //   style: const TextStyle(
@@ -745,45 +762,46 @@ class _Profile_screenState extends State<Profile_screen> {
   }
 
   // Download backup codes to file
-  void _downloadBackupCodes() async {
+  Future<void> _downloadBackupCodes() async {
     try {
+      // Request storage permission
+      final status = await Permission.storage.request();
+
       // Create the content for the text file
       String content = '';
-
-      content +=
-      '';
-
       for (int i = 0; i < codes.length; i++) {
         content += '${i + 1}. ${codes[i]['code']}\n';
       }
 
-      // Get the temporary directory
-      final directory = await getTemporaryDirectory();
+      // Get the Downloads directory
+      Directory? directory;
+      if (Platform.isAndroid) {
+        directory = Directory('/storage/emulated/0/Download');
+      } else {
+        directory = await getApplicationDocumentsDirectory();
+      }
+
+      // Create file in the Downloads folder
       final file = File(
           '${directory.path}/backup_codes_${DateTime.now().millisecondsSinceEpoch}.txt');
-
-      // Write the content to the file
       await file.writeAsString(content);
 
-      // Share the file
+      // Show success toast
+      Fluttertoast.showToast(
+        msg: 'Backup codes saved to Downloads!',
+        toastLength: Toast.LENGTH_SHORT,
+      );
+
+      // Optional: Share the file
       await Share.shareXFiles(
         [XFile(file.path)],
         text: 'Backup Codes for Cloud Rental Manager',
         subject: 'Backup Codes - Cloud Rental Manager',
       );
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Backup codes file created and ready to share!'),
-          duration: Duration(seconds: 3),
-        ),
-      );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error generating backup codes file: $e'),
-          duration: const Duration(seconds: 3),
-        ),
+      Fluttertoast.showToast(
+        msg: 'Error generating backup codes file: $e',
+        toastLength: Toast.LENGTH_SHORT,
       );
     }
   }
