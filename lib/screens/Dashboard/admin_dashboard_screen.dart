@@ -102,7 +102,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                 double titleFontSize = screenWidth < 600
                     ? 18
                     : (screenWidth < 900 ? 22 : (screenWidth < 1200 ? 26 : 30));
-                return Text('Main Dashboard',
+                return Text(' Dashboard',
                     style: TextStyle(
                         fontWeight: FontWeight.bold, fontSize: titleFontSize));
               },

@@ -170,16 +170,16 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               height: MediaQuery.of(context).size.height * 0.02,
             ),
             // Welcome
-            Center(
-              child: Text(
-                "Welcome to 302 Rentals",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: MediaQuery.of(context).size.width * 0.05,
-                ),
-              ),
-            ),
+            // Center(
+            //   child: Text(
+            //     "Welcome to 302 Rentals",
+            //     style: TextStyle(
+            //       color: Colors.black,
+            //       fontWeight: FontWeight.bold,
+            //       fontSize: MediaQuery.of(context).size.width * 0.05,
+            //     ),
+            //   ),
+            // ),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.01,
             ),
@@ -202,7 +202,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 ),
                 Expanded(
                   child: Text(
-                    "Enter your email address below, and we'll sent you the link to reset your password",
+                    "Enter your email address below, and we'll send you the link to reset your password.",
                     style: TextStyle(
                         color: Colors.black38,
                         fontSize:

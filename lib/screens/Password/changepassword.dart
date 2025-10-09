@@ -102,16 +102,16 @@ class _ChangepasswordState extends State<Changepassword> {
                 height: MediaQuery.of(context).size.height * 0.02,
               ),
               // Welcome
-              Center(
-                child: Text(
-                  "Welcome to 302 Rentals",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: MediaQuery.of(context).size.width * 0.05,
-                  ),
-                ),
-              ),
+              // Center(
+              //   child: Text(
+              //     "Welcome to 302 Rentals",
+              //     style: TextStyle(
+              //       color: Colors.black,
+              //       fontWeight: FontWeight.bold,
+              //       fontSize: MediaQuery.of(context).size.width * 0.05,
+              //     ),
+              //   ),
+              // ),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.01,
               ),

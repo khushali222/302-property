@@ -122,26 +122,26 @@ class _otp_verifyState extends State<otp_verify> {
                 height: MediaQuery.of(context).size.height * 0.05,
                 width: MediaQuery.of(context).size.width * 0.9,
               ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.03,
-              ),
-              // Welcome
-              Center(
-                child: Text(
-                  "Welcome to 302 Rentals",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: MediaQuery.of(context).size.width * 0.05,
-                  ),
-                ),
-              ),
+              // SizedBox(
+              //   height: MediaQuery.of(context).size.height * 0.03,
+              // ),
+              // // Welcome
+              // Center(
+              //   child: Text(
+              //     "Welcome to 302 Rentals",
+              //     style: TextStyle(
+              //       color: Colors.black,
+              //       fontWeight: FontWeight.bold,
+              //       fontSize: MediaQuery.of(context).size.width * 0.05,
+              //     ),
+              //   ),
+              // ),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.04,
               ),
               Center(
                 child: Text(
-                  " Otp Verification",
+                  " OTP Verification",
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: MediaQuery.of(context).size.width * 0.048),
@@ -181,7 +181,7 @@ class _otp_verifyState extends State<otp_verify> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Don't Recive Otp? ",
+                    "Didn't receive the OTP ? ",
                     style: TextStyle(
                         color: Color(0xFF152B51),
                         fontSize: MediaQuery.of(context).size.width * 0.04),
@@ -192,7 +192,7 @@ class _otp_verifyState extends State<otp_verify> {
                     },
                     child: Container(
                       child: Text(
-                        "Resend Otp",
+                        " Resend OTP",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color:  Color(0xFF152B51),
