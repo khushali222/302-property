@@ -4408,15 +4408,17 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
     );
   }
 }
-
 String determineStatus(String? startDate, String? endDate) {
-  if (startDate == null || endDate == null) return 'UNKNOWN';
+  if (startDate == null ||
+      endDate == null ||
+      startDate.isEmpty ||
+      endDate.isEmpty) return 'UNKNOWN';
 
   DateTime start = DateFormat('yyyy-MM-dd').parse(startDate);
   DateTime end = DateFormat('yyyy-MM-dd').parse(endDate);
   // Set today to start of day to ensure accurate comparison
   DateTime today =
-      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
   // Set end to end of day (23:59:59) to keep lease active through the end date
   DateTime endOfDay = DateTime(end.year, end.month, end.day, 23, 59, 59);
 
@@ -4428,3 +4430,22 @@ String determineStatus(String? startDate, String? endDate) {
     return 'ACTIVE';
   }
 }
+// String determineStatus(String? startDate, String? endDate) {
+//   if (startDate == null || endDate == null) return 'UNKNOWN';
+//
+//   DateTime start = DateFormat('yyyy-MM-dd').parse(startDate);
+//   DateTime end = DateFormat('yyyy-MM-dd').parse(endDate);
+//   // Set today to start of day to ensure accurate comparison
+//   DateTime today =
+//       DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+//   // Set end to end of day (23:59:59) to keep lease active through the end date
+//   DateTime endOfDay = DateTime(end.year, end.month, end.day, 23, 59, 59);
+//
+//   if (today.isBefore(start)) {
+//     return 'FUTURE';
+//   } else if (today.isAfter(endOfDay)) {
+//     return 'PAST';
+//   } else {
+//     return 'ACTIVE';
+//   }
+// }

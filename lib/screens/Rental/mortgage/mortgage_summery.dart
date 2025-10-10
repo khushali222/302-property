@@ -182,11 +182,16 @@ class _MortgageSummaryState extends State<MortgageSummary> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
             Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: titleBar(
-                width: MediaQuery.of(context).size.width * .90,
-                title: 'Mortgage Summary',
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0, vertical: 8.0),
+              child: Padding(
+                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+                child: titleBar(
+                  width: double.infinity,
+                  title: 'Mortgage Summary',
+                ),
               ),
             ),
             Padding(
