@@ -90,6 +90,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
       },
     );
     if (response.statusCode == 200) {
+      re
       final jsonResponse = json.decode(response.body);
       final tenantResponse = TenantResponse.fromJson(jsonResponse);
       // Collect all lease data from all tenant data

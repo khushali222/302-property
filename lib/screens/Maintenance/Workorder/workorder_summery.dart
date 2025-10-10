@@ -13,9 +13,11 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:camera/camera.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
+import '../../../widgets/camera_capture_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -27,7 +29,7 @@ import 'package:three_zero_two_property/repository/workorder.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newModel.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:video_player/video_player.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:video_thumbnail/video_thumbnail.dart' as video_thumbnail;
 // import 'package:three_zero_two_property/repository/properties_summery.dart';
 import '../../../model/summery_workorder.dart';
 import '../../../widgets/VideoPlayerWidget.dart';
@@ -156,8 +158,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
   File? _image;
   bool isLoading = false;
   List<File> _images = [];
+  List<File> videofiles = [];
   String? _uploadedFileName;
   List<String> _uploadedFileNames = [];
+  List<bool> isvideo = [];
   Future<String?> uploadImage(File imageFile) async {
     print(imageFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
@@ -182,26 +186,275 @@ class _Workorder_summeryState extends State<Workorder_summery>
     }
   }
 
-  Future<void> _pickImage() async {
+  // Show image source selection dialog
+  Future<void> _showImageSourceDialog(
+      void Function(void Function()) parentSetState) async {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Title
+                    Text(
+                      'Select Media From',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Options Row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        // Gallery Option
+                        _buildSourceOption(
+                          icon: Icons.photo_library,
+                          label: 'Gallery',
+                          onTap: () async {
+                            Navigator.of(context).pop();
+                            await _pickImageFromSource(ImageSource.gallery, () {
+                              parentSetState(() {});
+                            });
+                          },
+                        ),
+
+                        const SizedBox(width: 20),
+
+                        // Camera Option
+                        _buildSourceOption(
+                          icon: Icons.camera_alt,
+                          label: 'Camera',
+                          onTap: () async {
+                            Navigator.of(context).pop();
+                            await _openCameraInterface(() {
+                              parentSetState(() {});
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // Build individual source option
+  Widget _buildSourceOption({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 100,
+        height: 100,
+        decoration: BoxDecoration(
+          color: Colors.grey[50],
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey[200]!, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: blueColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                color: blueColor,
+                size: 28,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Pick image from specific source
+  Future<void> _pickImageFromSource(ImageSource source,
+      [VoidCallback? onImageAdded]) async {
+    print('pickImageFromSource');
+    print(source);
     final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await _picker.pickMedia();
+
     if (image != null) {
-      setState(() {
-        _image = File(image.path);
-        _images.add(File(image.path));
-      });
-      _uploadImage(File(image.path));
+      final File file = File(image.path);
+      bool isVideo = image.path.endsWith('.mp4') || image.path.endsWith('.mov');
+      if (isVideo) {
+        String? thumbnailPath = await _generateVideoThumbnail(image.path);
+        if (thumbnailPath != null) {
+          setState(() {
+            _images.add(File(thumbnailPath));
+            isvideo.add(true);
+            videofiles.add(file);
+          });
+        }
+      } else {
+        setState(() {
+          _images.add(file);
+          isvideo.add(false);
+          videofiles.add(file);
+        });
+        print('Image added to _images list. Total images: ${_images.length}');
+      }
+      await _uploadImage(file);
+      // Force dialog to refresh if it's open
+      setState(() {});
+      // Call callback to refresh dialog if provided
+      onImageAdded?.call();
     }
+  }
+
+  // Open unified camera interface for both photos and videos
+  Future<void> _openCameraInterface([VoidCallback? onImageAdded]) async {
+    try {
+      // Get available cameras
+      final cameras = await availableCameras();
+      if (cameras.isEmpty) {
+        _showErrorDialog('No cameras found on this device');
+        return;
+      }
+
+      // Use the first available camera (usually back camera)
+      final camera = cameras.first;
+
+      // Navigate to camera screen
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CameraCaptureScreen(
+            camera: camera,
+            onImageCaptured: (File imageFile) async {
+              // Handle captured image
+              print('Camera captured image: ${imageFile.path}');
+              setState(() {
+                _images.add(imageFile);
+                isvideo.add(false);
+                videofiles.add(imageFile);
+              });
+              print(
+                  'Camera image added to _images list. Total images: ${_images.length}');
+              await _uploadImage(imageFile);
+              // Force dialog to refresh if it's open
+              setState(() {});
+              // Call callback to refresh dialog if provided
+              onImageAdded?.call();
+            },
+            onVideoCaptured: (File videoFile) async {
+              // Handle captured video
+              String? thumbnailPath =
+                  await _generateVideoThumbnail(videoFile.path);
+              if (thumbnailPath != null) {
+                setState(() {
+                  _images.add(File(thumbnailPath));
+                  isvideo.add(true);
+                  videofiles.add(videoFile);
+                });
+                print(
+                    'Video thumbnail added to _images list. Total images: ${_images.length}');
+              }
+              await _uploadImage(videoFile);
+              // Force dialog to refresh if it's open
+              setState(() {});
+              // Call callback to refresh dialog if provided
+              onImageAdded?.call();
+            },
+          ),
+        ),
+      );
+    } catch (e) {
+      _showErrorDialog('Failed to open camera: $e');
+    }
+  }
+
+  // Show error dialog
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<String?> _generateVideoThumbnail(String videoPath) async {
+    final String? thumbPath =
+        await video_thumbnail.VideoThumbnail.thumbnailFile(
+      video: videoPath,
+      thumbnailPath: (await getTemporaryDirectory()).path,
+      imageFormat: video_thumbnail.ImageFormat.PNG,
+      maxHeight: 80,
+      quality: 50,
+    );
+    return thumbPath;
   }
 
   Future<void> _uploadImage(File imageFile) async {
     try {
+      print('Starting image upload...');
       String? fileName = await uploadImage(imageFile);
+      print('Image uploaded successfully: $fileName');
       setState(() {
         _uploadedFileNames.add(fileName!);
         _uploadedFileName = fileName;
         _imageUrls.add(fileName!);
       });
+      print('UI updated with uploaded image. Total images: ${_images.length}');
     } catch (e) {
       print('Image upload failed: $e');
     }
@@ -474,7 +727,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
       children: [
         isHeader
             ? TableRow(
-                decoration: const BoxDecoration(color: Color.fromRGBO(21, 43, 83, 1)),
+                decoration:
+                    const BoxDecoration(color: Color.fromRGBO(21, 43, 83, 1)),
                 children: titles
                     .map(
                       (item) => Padding(
@@ -871,7 +1125,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                           ),
                                           child: Material(
                                             color: Colors.white,
-                                            borderRadius: const BorderRadius.vertical(
+                                            borderRadius:
+                                                const BorderRadius.vertical(
                                               top: Radius.circular(10),
                                             ),
                                             child: Center(
@@ -924,7 +1179,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                         ),
                                                   leading: Container(
                                                     padding:
-                                                        const EdgeInsets.only(top: 3),
+                                                        const EdgeInsets.only(
+                                                            top: 3),
                                                     child: const Icon(
                                                       Icons.person,
                                                       size: 30,
@@ -965,7 +1221,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                         ),
                                                   leading: Container(
                                                     padding:
-                                                        const EdgeInsets.only(top: 3),
+                                                        const EdgeInsets.only(
+                                                            top: 3),
                                                     child: const Icon(
                                                       Icons.person,
                                                       size: 30,
@@ -1014,7 +1271,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                           ),
                                           child: Material(
                                             color: Colors.white,
-                                            borderRadius: const BorderRadius.vertical(
+                                            borderRadius:
+                                                const BorderRadius.vertical(
                                               top: Radius.circular(10),
                                             ),
                                             child: Center(
@@ -1066,8 +1324,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                               color: blueColor),
                                                         ),
                                               leading: Container(
-                                                padding:
-                                                    const EdgeInsets.only(top: 3),
+                                                padding: const EdgeInsets.only(
+                                                    top: 3),
                                                 child: const Icon(
                                                   Icons.person,
                                                   size: 30,
@@ -3374,8 +3632,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                   width: 150,
                                                   height: 150,
                                                   // color: Colors.blue,
-                                                  margin:
-                                                      const EdgeInsets.only(right: 8),
+                                                  margin: const EdgeInsets.only(
+                                                      right: 8),
                                                   child: ClipRRect(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -3419,11 +3677,11 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                                 size: 30.0,
                                                               ),
                                                             ),
-                                                            errorWidget:
-                                                                (context, url,
-                                                                        error) =>
-                                                                    const Icon(Icons
-                                                                        .error),
+                                                            errorWidget: (context,
+                                                                    url,
+                                                                    error) =>
+                                                                const Icon(Icons
+                                                                    .error),
                                                           ),
                                                   ),
                                                 ),
@@ -3466,8 +3724,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   summery.workOrderImages!.isEmpty)
                                 const Center(
                                   child: Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 8),
+                                    padding: EdgeInsets.symmetric(vertical: 8),
                                     child: Text(
                                       "No Images Provided",
                                       style: TextStyle(
@@ -4251,8 +4508,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                             DropdownButtonHideUnderline(
                                               child: DropdownButtonFormField2<
                                                   String>(
-                                                decoration: const InputDecoration(
-                                                    border: InputBorder.none),
+                                                decoration:
+                                                    const InputDecoration(
+                                                        border:
+                                                            InputBorder.none),
                                                 isExpanded: true,
                                                 hint: const Row(
                                                   children: [
@@ -4371,8 +4630,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                             ),
                                             if (assignedError != null)
                                               Padding(
-                                                padding:
-                                                    const EdgeInsets.only(top: 4),
+                                                padding: const EdgeInsets.only(
+                                                    top: 4),
                                                 child: Text(
                                                   assignedError!,
                                                   style: const TextStyle(
@@ -4453,13 +4712,16 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       },
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: const EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 16),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 16),
                                         hintText: "dd-mm-yyyy",
                                         hintStyle:
                                             TextStyle(color: Colors.grey[400]),
-                                        suffixIcon: const Icon(Icons.calendar_today,
-                                            size: 20, color: Colors.grey),
+                                        suffixIcon: const Icon(
+                                            Icons.calendar_today,
+                                            size: 20,
+                                            color: Colors.grey),
                                       ),
                                     ),
                                   ),
@@ -4625,8 +4887,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       controller: message,
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
-                                        contentPadding: const EdgeInsets.symmetric(
-                                            horizontal: 12, vertical: 16),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 12, vertical: 16),
                                         hintText: "Some description here",
                                         hintStyle: TextStyle(
                                             color: Colors.grey[400],
@@ -4644,9 +4907,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                         if (_images.isEmpty)
                           GestureDetector(
                             onTap: () {
-                              _pickImage().then((_) {
-                                setState(() {});
-                              });
+                              _showImageSourceDialog(setState);
                             },
                             child: Container(
                               width: double.infinity,
@@ -4713,9 +4974,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   children: [
                                     GestureDetector(
                                         onTap: () {
-                                          _pickImage().then((_) {
-                                            setState(() {});
-                                          });
+                                          _showImageSourceDialog(setState);
                                         },
                                         child: Container(
                                             height: 20,
@@ -4738,8 +4997,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
                                   child: Padding(
-                                    padding:
-                                        const EdgeInsets.only(top: 10, right: 10),
+                                    padding: const EdgeInsets.only(
+                                        top: 10, right: 10),
                                     child: Wrap(
                                       alignment: WrapAlignment.start,
                                       crossAxisAlignment:
@@ -4752,7 +5011,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                           clipBehavior: Clip.none, //
                                           children: [
                                             Padding(
-                                              padding: const EdgeInsets.all(4.0),
+                                              padding:
+                                                  const EdgeInsets.all(4.0),
                                               child: Container(
                                                 width: 80,
                                                 height: 80,
@@ -4785,7 +5045,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                 child: Container(
                                                   width: 18,
                                                   height: 18,
-                                                  decoration: const BoxDecoration(
+                                                  decoration:
+                                                      const BoxDecoration(
                                                     color: Colors.white,
                                                     shape: BoxShape.circle,
                                                     boxShadow: [
@@ -4821,7 +5082,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               child: TextButton(
                                 onPressed: () => Navigator.of(context).pop(),
                                 style: TextButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                     side: BorderSide(color: blueColor),
@@ -4922,7 +5184,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: blueColor,
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
