@@ -90,7 +90,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
       },
     );
     if (response.statusCode == 200) {
-      re
+      print(response.body);
       final jsonResponse = json.decode(response.body);
       final tenantResponse = TenantResponse.fromJson(jsonResponse);
       // Collect all lease data from all tenant data
@@ -1451,7 +1451,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                const Text('Relation With Tenant',
+                                                const Text(
+                                                    'Relation With Tenant',
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
@@ -1763,8 +1764,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                 entry.value;
                                                             //return CustomExpansionTile(data: Propertytype, index: index);
                                                             return Container(
-                                                              margin: const EdgeInsets
-                                                                  .symmetric(
+                                                              margin:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
                                                                       vertical:
                                                                           5),
                                                               decoration:
@@ -2501,8 +2503,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                               entry.value;
                                                           //return CustomExpansionTile(data: Propertytype, index: index);
                                                           return Container(
-                                                            margin: const EdgeInsets
-                                                                .symmetric(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .symmetric(
                                                                     vertical:
                                                                         5),
                                                             decoration:

@@ -1156,6 +1156,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                     title: 'Convenience Fee Override',
                     width: MediaQuery.of(context).size.width * .91,
                   ),
+
                   if (MediaQuery.of(context).size.width > 500)
                     const SizedBox(height: 16),
                   if (MediaQuery.of(context).size.width < 500)
