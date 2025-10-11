@@ -437,8 +437,8 @@ class _FinancialTableState extends State<FinancialTable> {
       child: GestureDetector(
         onTap: getField != null
             ? () {
-                _sort(getField, columnIndex, !_sortAscending);
-              }
+          _sort(getField, columnIndex, !_sortAscending);
+        }
             : null,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -614,10 +614,10 @@ class _FinancialTableState extends State<FinancialTable> {
           onPressed: _currentPage == 0
               ? null
               : () {
-                  setState(() {
-                    _currentPage--;
-                  });
-                },
+            setState(() {
+              _currentPage--;
+            });
+          },
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
@@ -630,15 +630,15 @@ class _FinancialTableState extends State<FinancialTable> {
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
                 : Color.fromRGBO(
-                    21, 43, 83, 1), // Change color based on availability
+                21, 43, 83, 1), // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
               : () {
-                  setState(() {
-                    _currentPage++;
-                  });
-                },
+            setState(() {
+              _currentPage++;
+            });
+          },
         ),
       ],
     );
@@ -650,10 +650,10 @@ class _FinancialTableState extends State<FinancialTable> {
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
     bool isFreePlan = Provider.of<checkPlanPurchaseProiver>(context)
-            .checkplanpurchaseModel
-            ?.data
-            ?.planDetail
-            ?.planName ==
+        .checkplanpurchaseModel
+        ?.data
+        ?.planDetail
+        ?.planName ==
         'Free Plan';
     final permissionProvider = Provider.of<PermissionProvider>(context);
     final permissions = permissionProvider.permissions;
@@ -671,155 +671,155 @@ class _FinancialTableState extends State<FinancialTable> {
       ),
       body: _connectivityResult != ConnectivityResult.none
           ? SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 20,
-                  ),
-                  //add propertytype
+        child: Column(
+          children: [
+            SizedBox(
+              height: 20,
+            ),
+            //add propertytype
 
-                  if (!isFreePlan && permissions!.financialAdd)
-                    Padding(
-                      padding: (MediaQuery.of(context).size.width > 500)
-                          ? EdgeInsets.symmetric(
-                              horizontal:
-                                  MediaQuery.of(context).size.width * 0.045)
-                          : EdgeInsets.only(left: 13, right: 13),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          GestureDetector(
-                            onTap: () async {
-                              final result = await Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) => AddCard()));
-                              if (result == true) {
-                                setState(() {
-                                  futureFinancial = TenantFinancialRepository()
-                                      .fetchTenantFinancial();
-                                });
-                              }
-                            },
-                            child: Container(
-                              height: (MediaQuery.of(context).size.width < 500)
-                                  ? 40
-                                  : MediaQuery.of(context).size.width * 0.065,
-                              // height:  MediaQuery.of(context).size.width * 0.07,
-                              // height:  40,
-                              width: (MediaQuery.of(context).size.width > 500)
-                                  ? MediaQuery.of(context).size.width * 0.2
-                                  : MediaQuery.of(context).size.width * 0.4,
-                              decoration: BoxDecoration(
-                                color: blueColor,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Add Card",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            (MediaQuery.of(context).size.width >
-                                                    500)
-                                                ? MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.028
-                                                : MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.034,
-                                      ),
-                                    ),
-                                  ],
+            if (!isFreePlan && permissions!.financialAdd)
+              Padding(
+                padding: (MediaQuery.of(context).size.width > 500)
+                    ? EdgeInsets.symmetric(
+                    horizontal:
+                    MediaQuery.of(context).size.width * 0.045)
+                    : EdgeInsets.only(left: 13, right: 13),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        final result = await Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => AddCard()));
+                        if (result == true) {
+                          setState(() {
+                            futureFinancial = TenantFinancialRepository()
+                                .fetchTenantFinancial();
+                          });
+                        }
+                      },
+                      child: Container(
+                        height: (MediaQuery.of(context).size.width < 500)
+                            ? 40
+                            : MediaQuery.of(context).size.width * 0.065,
+                        // height:  MediaQuery.of(context).size.width * 0.07,
+                        // height:  40,
+                        width: (MediaQuery.of(context).size.width > 500)
+                            ? MediaQuery.of(context).size.width * 0.2
+                            : MediaQuery.of(context).size.width * 0.4,
+                        decoration: BoxDecoration(
+                          color: blueColor,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Add Card",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize:
+                                  (MediaQuery.of(context).size.width >
+                                      500)
+                                      ? MediaQuery.of(context)
+                                      .size
+                                      .width *
+                                      0.028
+                                      : MediaQuery.of(context)
+                                      .size
+                                      .width *
+                                      0.034,
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                          if (MediaQuery.of(context).size.width < 500)
-                            SizedBox(width: 6),
-                          if (MediaQuery.of(context).size.width > 500)
-                            SizedBox(width: 22),
-                          GestureDetector(
-                            onTap: () async {
-                              SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-                              String? id = prefs.getString("tenant_id");
-                              String? admin_id = prefs.getString("adminId");
-                              final result = await Navigator.of(context)
-                                  .push(MaterialPageRoute(
-                                      builder: (context) => MakePayment(
-                                            leaseId: '',
-                                            tenantId: id!,
-                                          )));
-                              if (result == true) {
-                                setState(() {
-                                  futureFinancial = TenantFinancialRepository()
-                                      .fetchTenantFinancial();
-                                });
-                              }
-                            },
-                            child: Container(
-                              height: (MediaQuery.of(context).size.width < 500)
-                                  ? 40
-                                  : MediaQuery.of(context).size.width * 0.065,
-                              // height:  MediaQuery.of(context).size.width * 0.07,
-                              // height:  40,
-                              width: (MediaQuery.of(context).size.width > 500)
-                                  ? MediaQuery.of(context).size.width * 0.3
-                                  : MediaQuery.of(context).size.width * 0.4,
-                              decoration: BoxDecoration(
-                                color: blueColor,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Make Payment",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            (MediaQuery.of(context).size.width >
-                                                    500)
-                                                ? MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.028
-                                                : MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.034,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
-                  SizedBox(height: 10),
-
-                  // Header Section with Title
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
-                    child: titleBar(
-                      width: double.infinity,
-                      title: 'Ledger',
+                    if (MediaQuery.of(context).size.width < 500)
+                      SizedBox(width: 6),
+                    if (MediaQuery.of(context).size.width > 500)
+                      SizedBox(width: 22),
+                    GestureDetector(
+                      onTap: () async {
+                        SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                        String? id = prefs.getString("tenant_id");
+                        String? admin_id = prefs.getString("adminId");
+                        final result = await Navigator.of(context)
+                            .push(MaterialPageRoute(
+                            builder: (context) => MakePayment(
+                              leaseId: '',
+                              tenantId: id!,
+                            )));
+                        if (result == true) {
+                          setState(() {
+                            futureFinancial = TenantFinancialRepository()
+                                .fetchTenantFinancial();
+                          });
+                        }
+                      },
+                      child: Container(
+                        height: (MediaQuery.of(context).size.width < 500)
+                            ? 40
+                            : MediaQuery.of(context).size.width * 0.065,
+                        // height:  MediaQuery.of(context).size.width * 0.07,
+                        // height:  40,
+                        width: (MediaQuery.of(context).size.width > 500)
+                            ? MediaQuery.of(context).size.width * 0.3
+                            : MediaQuery.of(context).size.width * 0.4,
+                        decoration: BoxDecoration(
+                          color: blueColor,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Make Payment",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize:
+                                  (MediaQuery.of(context).size.width >
+                                      500)
+                                      ? MediaQuery.of(context)
+                                      .size
+                                      .width *
+                                      0.028
+                                      : MediaQuery.of(context)
+                                      .size
+                                      .width *
+                                      0.034,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  // SizedBox(height: 10),
-                  //search
-                  /*   Padding(
+                  ],
+                ),
+              ),
+            SizedBox(height: 10),
+
+            // Header Section with Title
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0, vertical: 8.0),
+              child: titleBar(
+                width: double.infinity,
+                title: 'Ledger',
+              ),
+            ),
+            // SizedBox(height: 10),
+            //search
+            /*   Padding(
               padding: const EdgeInsets.only(left: 13, right: 13),
               child: Row(
                 children: [
@@ -964,385 +964,385 @@ class _FinancialTableState extends State<FinancialTable> {
                 ],
               ),
             ),*/
-                  if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(height: 25),
-                  if (MediaQuery.of(context).size.width < 500)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: FutureBuilder<List<Data>>(
-                        future: futureFinancial,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Container(
-                              margin: const EdgeInsets.only(top: 20.0),
-                              child: ColabShimmerLoadingWidget(),
-                            );
-                          } else if (!snapshot.hasData ||
-                              snapshot.data!.isEmpty) {
-                            return Container(
-                              height: MediaQuery.of(context).size.height * .5,
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/images/no_data.jpg",
-                                      height: 200,
-                                      width: 200,
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "No Data Available",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor,
-                                          fontSize: 16),
-                                    )
-                                  ],
-                                ),
+            if (MediaQuery.of(context).size.width > 500)
+              SizedBox(height: 25),
+            if (MediaQuery.of(context).size.width < 500)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: FutureBuilder<List<Data>>(
+                  future: futureFinancial,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return Container(
+                        margin: const EdgeInsets.only(top: 20.0),
+                        child: ColabShimmerLoadingWidget(),
+                      );
+                    } else if (!snapshot.hasData ||
+                        snapshot.data!.isEmpty) {
+                      return Container(
+                        height: MediaQuery.of(context).size.height * .5,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                "assets/images/no_data.jpg",
+                                height: 200,
+                                width: 200,
                               ),
-                            );
-                          } else {
-                            var data = snapshot.data!;
-                            if (selectedValue == null && searchvalue!.isEmpty) {
-                              data = snapshot.data!;
-                            } else if (selectedValue == "All") {
-                              data = snapshot.data!;
-                            } else if (searchvalue!.isNotEmpty) {
-                              data = snapshot.data!
-                                  .where((property) =>
-                                      property.entry!.first.account!
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue!.toLowerCase()) ||
-                                      property.type!
-                                          .toLowerCase()
-                                          .contains(searchvalue!.toLowerCase()))
-                                  .toList();
-                            } else {
-                              data = snapshot.data!
-                                  .where((property) =>
-                                      property.type == selectedValue)
-                                  .toList();
-                            }
-                            if (data.length == 0) {
-                              return Column(
-                                children: [
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Center(
-                                    child: Text("No data found."),
-                                  ),
-                                ],
-                              );
-                            }
-                            //sortData(data);
-                            //  print(data);
-                            //   print(snapshot.data!.first.totalBalance);
-                            final totalPages =
-                                (data.length / itemsPerPage).ceil();
-                            final currentPageData = data
-                                .skip(currentPage * itemsPerPage)
-                                .take(itemsPerPage)
-                                .toList();
-                            return SingleChildScrollView(
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                "No Data Available",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                    fontSize: 16),
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    } else {
+                      var data = snapshot.data!;
+                      if (selectedValue == null && searchvalue!.isEmpty) {
+                        data = snapshot.data!;
+                      } else if (selectedValue == "All") {
+                        data = snapshot.data!;
+                      } else if (searchvalue!.isNotEmpty) {
+                        data = snapshot.data!
+                            .where((property) =>
+                        property.entry!.first.account!
+                            .toLowerCase()
+                            .contains(
+                            searchvalue!.toLowerCase()) ||
+                            property.type!
+                                .toLowerCase()
+                                .contains(searchvalue!.toLowerCase()))
+                            .toList();
+                      } else {
+                        data = snapshot.data!
+                            .where((property) =>
+                        property.type == selectedValue)
+                            .toList();
+                      }
+                      if (data.length == 0) {
+                        return Column(
+                          children: [
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Center(
+                              child: Text("No data found."),
+                            ),
+                          ],
+                        );
+                      }
+                      //sortData(data);
+                      //  print(data);
+                      //   print(snapshot.data!.first.totalBalance);
+                      final totalPages =
+                      (data.length / itemsPerPage).ceil();
+                      final currentPageData = data
+                          .skip(currentPage * itemsPerPage)
+                          .take(itemsPerPage)
+                          .toList();
+                      return SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            SizedBox(height: 10),
+                            _buildHeaders(),
+                            SizedBox(height: 10),
+                            Container(
                               child: Column(
-                                children: [
-                                  SizedBox(height: 10),
-                                  _buildHeaders(),
-                                  SizedBox(height: 10),
-                                  Container(
-                                    child: Column(
-                                      children: currentPageData
-                                          .asMap()
-                                          .entries
-                                          .map((entry) {
-                                        int index = entry.key;
-                                        bool isExpanded =
-                                            expandedIndex == index;
-                                        Data Tenant_financial = entry.value;
-                                        String accounts = "";
-                                        Tenant_financial.entry!
-                                            .forEach((entry) {
-                                          accounts += entry.account! + " , ";
-                                        });
-                                        accounts = accounts.substring(
-                                            0, accounts.length - 2);
-                                        print(accounts);
+                                children: currentPageData
+                                    .asMap()
+                                    .entries
+                                    .map((entry) {
+                                  int index = entry.key;
+                                  bool isExpanded =
+                                      expandedIndex == index;
+                                  Data Tenant_financial = entry.value;
+                                  String accounts = "";
+                                  Tenant_financial.entry!
+                                      .forEach((entry) {
+                                    accounts += entry.account! + " , ";
+                                  });
+                                  accounts = accounts.substring(
+                                      0, accounts.length - 2);
+                                  print(accounts);
 
-                                        //print(Tenant_financial.totalBalance);
-                                        //return CustomExpansionTile(data: Propertytype, index: index);
-                                        return Container(
-                                          margin:
-                                              EdgeInsets.symmetric(vertical: 6),
-                                          decoration: BoxDecoration(
-                                            color: index % 2 != 0
-                                                ? Color(0xFFF4F8FF)
-                                                : Colors.white,
-                                            border: Border.all(
-                                                color: Color(0xFFDBE0E5)),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: Column(
-                                            children: <Widget>[
-                                              ListTile(
-                                                contentPadding: EdgeInsets.zero,
-                                                title: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(2.0),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: <Widget>[
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          // setState(() {
-                                                          //    isExpanded = !isExpanded;
-                                                          // //  expandedIndex = !expandedIndex;
-                                                          //
-                                                          // });
-                                                          // setState(() {
-                                                          //   if (isExpanded) {
-                                                          //     expandedIndex = null;
-                                                          //     isExpanded = !isExpanded;
-                                                          //   } else {
-                                                          //     expandedIndex = index;
-                                                          //   }
-                                                          // });
-                                                          setState(() {
-                                                            if (expandedIndex ==
-                                                                index) {
-                                                              expandedIndex =
-                                                                  null;
-                                                            } else {
-                                                              expandedIndex =
-                                                                  index;
-                                                            }
-                                                          });
-                                                        },
-                                                        child: Container(
-                                                          margin:
-                                                              EdgeInsets.only(
-                                                                  left: 5,
-                                                                  right: 5),
-                                                          padding: !isExpanded
-                                                              ? EdgeInsets.only(
-                                                                  bottom: 10)
-                                                              : EdgeInsets.only(
-                                                                  top: 10),
-                                                          child: FaIcon(
-                                                            isExpanded
-                                                                ? FontAwesomeIcons
-                                                                    .sortUp
-                                                                : FontAwesomeIcons
-                                                                    .sortDown,
-                                                            size: 20,
-                                                            color: blueColor,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Expanded(
-                                                        flex: 2,
-                                                        child: Text(
-                                                          '${Tenant_financial.type}',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 14,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .03),
-                                                      Expanded(
-                                                        flex: 2,
-                                                        child: Text(
-                                                          Tenant_financial
-                                                                      .balance! <
-                                                                  0
-                                                              ? '-\$${Tenant_financial.balance!.abs().toStringAsFixed(2)}'
-                                                              : '\$${Tenant_financial.balance!.toStringAsFixed(2)}',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 14,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .08),
-                                                      Expanded(
-                                                        flex: 2,
-                                                        child: Text(
-                                                          // '${widget.data.createdAt}',
-                                                          //'${formatDate4(Tenant_financial.entry?.first.date ?? "")}' ,
-                                                          Tenant_financial
-                                                                      .entry
-                                                                      ?.first
-                                                                      .date
-                                                                      ?.isNotEmpty ==
-                                                                  true
-                                                              ? dateProvider
-                                                                  .formatCurrentDate(
-                                                                      '${Tenant_financial.entry?.first.date}')
-                                                              : 'N/A',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 14,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .02),
-                                                    ],
+                                  //print(Tenant_financial.totalBalance);
+                                  //return CustomExpansionTile(data: Propertytype, index: index);
+                                  return Container(
+                                    margin:
+                                    EdgeInsets.symmetric(vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: index % 2 != 0
+                                          ? Color(0xFFF4F8FF)
+                                          : Colors.white,
+                                      border: Border.all(
+                                          color: Color(0xFFDBE0E5)),
+                                      borderRadius:
+                                      BorderRadius.circular(10),
+                                    ),
+                                    child: Column(
+                                      children: <Widget>[
+                                        ListTile(
+                                          contentPadding: EdgeInsets.zero,
+                                          title: Padding(
+                                            padding:
+                                            const EdgeInsets.all(2.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment
+                                                  .center,
+                                              children: <Widget>[
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    // setState(() {
+                                                    //    isExpanded = !isExpanded;
+                                                    // //  expandedIndex = !expandedIndex;
+                                                    //
+                                                    // });
+                                                    // setState(() {
+                                                    //   if (isExpanded) {
+                                                    //     expandedIndex = null;
+                                                    //     isExpanded = !isExpanded;
+                                                    //   } else {
+                                                    //     expandedIndex = index;
+                                                    //   }
+                                                    // });
+                                                    setState(() {
+                                                      if (expandedIndex ==
+                                                          index) {
+                                                        expandedIndex =
+                                                        null;
+                                                      } else {
+                                                        expandedIndex =
+                                                            index;
+                                                      }
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    margin:
+                                                    EdgeInsets.only(
+                                                        left: 5,
+                                                        right: 5),
+                                                    padding: !isExpanded
+                                                        ? EdgeInsets.only(
+                                                        bottom: 10)
+                                                        : EdgeInsets.only(
+                                                        top: 10),
+                                                    child: FaIcon(
+                                                      isExpanded
+                                                          ? FontAwesomeIcons
+                                                          .sortUp
+                                                          : FontAwesomeIcons
+                                                          .sortDown,
+                                                      size: 20,
+                                                      color: blueColor,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              if (isExpanded)
-                                                Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 8.0),
-                                                  margin: EdgeInsets.only(
-                                                      bottom: 20),
-                                                  child: SingleChildScrollView(
-                                                    child: Column(
-                                                      children: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            FaIcon(
-                                                              isExpanded
-                                                                  ? FontAwesomeIcons
-                                                                      .sortUp
-                                                                  : FontAwesomeIcons
-                                                                      .sortDown,
-                                                              size: 30,
-                                                              color: Colors
-                                                                  .transparent,
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Text(
+                                                    '${Tenant_financial.type}',
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                    width: MediaQuery.of(
+                                                        context)
+                                                        .size
+                                                        .width *
+                                                        .03),
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Text(
+                                                    Tenant_financial
+                                                        .balance! <
+                                                        0
+                                                        ? '-\$${Tenant_financial.balance!.abs().toStringAsFixed(2)}'
+                                                        : '\$${Tenant_financial.balance!.toStringAsFixed(2)}',
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                    width: MediaQuery.of(
+                                                        context)
+                                                        .size
+                                                        .width *
+                                                        .08),
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Text(
+                                                    // '${widget.data.createdAt}',
+                                                    //'${formatDate4(Tenant_financial.entry?.first.date ?? "")}' ,
+                                                    Tenant_financial
+                                                        .entry
+                                                        ?.first
+                                                        .date
+                                                        ?.isNotEmpty ==
+                                                        true
+                                                        ? dateProvider
+                                                        .formatCurrentDate(
+                                                        '${Tenant_financial.entry?.first.date}')
+                                                        : 'N/A',
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                    width: MediaQuery.of(
+                                                        context)
+                                                        .size
+                                                        .width *
+                                                        .02),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        if (isExpanded)
+                                          Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            margin: EdgeInsets.only(
+                                                bottom: 20),
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .start,
+                                                    children: [
+                                                      FaIcon(
+                                                        isExpanded
+                                                            ? FontAwesomeIcons
+                                                            .sortUp
+                                                            : FontAwesomeIcons
+                                                            .sortDown,
+                                                        size: 30,
+                                                        color: Colors
+                                                            .transparent,
+                                                      ),
+                                                      Expanded(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                          children: <Widget>[
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                    'Tenant : ',
+                                                                    style: TextStyle(
+                                                                        fontWeight: FontWeight.bold,
+                                                                        color: blueColor), // Bold and black
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text:
+                                                                    ' ${Tenant_financial.tenantData != null ? '${Tenant_financial.tenantData?.tenantFirstName} ${Tenant_financial.tenantData?.tenantLastName}' : 'N/A'}',
+                                                                    style: TextStyle(
+                                                                        fontWeight: FontWeight.w700,
+                                                                        color: grey), // Light and grey
+                                                                  ),
+                                                                ],
+                                                              ),
                                                             ),
-                                                            Expanded(
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: <Widget>[
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                        TextSpan(
-                                                                          text:
-                                                                              'Tenant : ',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: blueColor), // Bold and black
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text:
-                                                                              ' ${Tenant_financial.tenantData != null ? '${Tenant_financial.tenantData?.tenantFirstName} ${Tenant_financial.tenantData?.tenantLastName}' : 'N/A'}',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w700,
-                                                                              color: grey), // Light and grey
-                                                                        ),
-                                                                      ],
-                                                                    ),
+                                                            SizedBox(
+                                                              height: 5,
+                                                            ),
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                    'Transaction : ',
+                                                                    style: TextStyle(
+                                                                        fontWeight: FontWeight.bold,
+                                                                        color: blueColor), // Bold and black
                                                                   ),
-                                                                  SizedBox(
-                                                                    height: 5,
+                                                                  TextSpan(
+                                                                    text:
+                                                                    '${Tenant_financial.type == 'Payment' ? 'Manual ${Tenant_financial.type} ${Tenant_financial.response} For ${Tenant_financial.paymentType}' : '${accounts}'}',
+                                                                    style: TextStyle(
+                                                                        fontWeight: FontWeight.w700,
+                                                                        color: grey), // Light and grey
                                                                   ),
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                        TextSpan(
-                                                                          text:
-                                                                              'Transaction : ',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: blueColor), // Bold and black
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text:
-                                                                              '${Tenant_financial.type == 'Payment' ? 'Manual ${Tenant_financial.type} ${Tenant_financial.response} For ${Tenant_financial.paymentType}' : '${accounts}'}',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w700,
-                                                                              color: grey), // Light and grey
-                                                                        ),
-                                                                      ],
-                                                                    ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 5,
+                                                            ),
+                                                            Text.rich(
+                                                              TextSpan(
+                                                                children: [
+                                                                  TextSpan(
+                                                                    text:
+                                                                    'Account : ',
+                                                                    style: TextStyle(
+                                                                        fontWeight: FontWeight.bold,
+                                                                        color: blueColor), // Bold and black
                                                                   ),
-                                                                  SizedBox(
-                                                                    height: 5,
+                                                                  TextSpan(
+                                                                    text:
+                                                                    '${accounts}',
+                                                                    style: TextStyle(
+                                                                        fontWeight: FontWeight.w700,
+                                                                        color: grey), // Light and grey
                                                                   ),
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                        TextSpan(
-                                                                          text:
-                                                                              'Account : ',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: blueColor), // Bold and black
-                                                                        ),
-                                                                        TextSpan(
-                                                                          text:
-                                                                              '${accounts}',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w700,
-                                                                              color: grey), // Light and grey
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                  Row(
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 5,
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                Text.rich(
+                                                                  TextSpan(
                                                                     children: [
-                                                                      Text.rich(
-                                                                        TextSpan(
-                                                                          children: [
-                                                                            TextSpan(
-                                                                              text: 'Amount : ',
-                                                                              style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
-                                                                            ),
-                                                                            TextSpan(
-                                                                              text: Tenant_financial.type == 'Refund' || Tenant_financial.type == 'Charge' ? '\$${Tenant_financial.totalAmount!.abs().toStringAsFixed(2)}' : ' - \$${Tenant_financial.totalAmount!.abs().toStringAsFixed(2)}',
-                                                                              style: TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
-                                                                            ),
-                                                                          ],
-                                                                        ),
+                                                                      TextSpan(
+                                                                        text: 'Amount : ',
+                                                                        style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
                                                                       ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            25,
+                                                                      TextSpan(
+                                                                        text: Tenant_financial.type == 'Refund' || Tenant_financial.type == 'Charge' ? '\$${Tenant_financial.totalAmount!.abs().toStringAsFixed(2)}' : ' - \$${Tenant_financial.totalAmount!.abs().toStringAsFixed(2)}',
+                                                                        style: TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
                                                                       ),
-                                                                      /*  Text.rich(
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  width:
+                                                                  25,
+                                                                ),
+                                                                /*  Text.rich(
                                                                   TextSpan(
                                                                     children: [
                                                                       TextSpan(
@@ -1366,12 +1366,12 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                     ],
                                                                   ),
                                                                 ),*/
-                                                                    ],
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                  /* Text.rich(
+                                                              ],
+                                                            ),
+                                                            SizedBox(
+                                                              height: 5,
+                                                            ),
+                                                            /* Text.rich(
                                                               TextSpan(
                                                                 children: [
                                                                   TextSpan(
@@ -1395,73 +1395,73 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                 ],
                                                               ),
                                                             ),*/
-                                                                  SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                ],
-                                                              ),
+                                                            SizedBox(
+                                                              height: 5,
                                                             ),
-                                                            // SizedBox(width: 5),
-                                                            // Expanded(
-                                                            //   child: Column(
-                                                            //     crossAxisAlignment:
-                                                            //     CrossAxisAlignment.start,
-                                                            //     children: <Widget>[
-                                                            //       Text.rich(
-                                                            //         TextSpan(
-                                                            //           children: [
-                                                            //             TextSpan(
-                                                            //               text:
-                                                            //               'Increase: ',
-                                                            //               style: TextStyle(
-                                                            //                   fontWeight:
-                                                            //                   FontWeight
-                                                            //                       .bold,
-                                                            //                   color:
-                                                            //                   blueColor), // Bold and black
-                                                            //             ),
-                                                            //             TextSpan(
-                                                            //               text: '',
-                                                            //               style: TextStyle(
-                                                            //                   fontWeight:
-                                                            //                   FontWeight
-                                                            //                       .w700,
-                                                            //                   color: Colors
-                                                            //                       .grey), // Light and grey
-                                                            //             ),
-                                                            //           ],
-                                                            //         ),
-                                                            //       ),
-                                                            //       Text.rich(
-                                                            //         TextSpan(
-                                                            //           children: [
-                                                            //             TextSpan(
-                                                            //               text:
-                                                            //               'Balance : ',
-                                                            //               style: TextStyle(
-                                                            //                   fontWeight:
-                                                            //                   FontWeight
-                                                            //                       .bold,
-                                                            //                   color:
-                                                            //                   blueColor), // Bold and black
-                                                            //             ),
-                                                            //             TextSpan(
-                                                            //               text: '${Tenant_financial.balance}',
-                                                            //               style: TextStyle(
-                                                            //                   fontWeight:
-                                                            //                   FontWeight
-                                                            //                       .w700,
-                                                            //                   color: Colors
-                                                            //                       .grey), // Light and grey
-                                                            //             ),
-                                                            //           ],
-                                                            //         ),
-                                                            //       ),
-                                                            //
-                                                            //     ],
-                                                            //   ),
-                                                            // ),
-                                                            /*Container(
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      // SizedBox(width: 5),
+                                                      // Expanded(
+                                                      //   child: Column(
+                                                      //     crossAxisAlignment:
+                                                      //     CrossAxisAlignment.start,
+                                                      //     children: <Widget>[
+                                                      //       Text.rich(
+                                                      //         TextSpan(
+                                                      //           children: [
+                                                      //             TextSpan(
+                                                      //               text:
+                                                      //               'Increase: ',
+                                                      //               style: TextStyle(
+                                                      //                   fontWeight:
+                                                      //                   FontWeight
+                                                      //                       .bold,
+                                                      //                   color:
+                                                      //                   blueColor), // Bold and black
+                                                      //             ),
+                                                      //             TextSpan(
+                                                      //               text: '',
+                                                      //               style: TextStyle(
+                                                      //                   fontWeight:
+                                                      //                   FontWeight
+                                                      //                       .w700,
+                                                      //                   color: Colors
+                                                      //                       .grey), // Light and grey
+                                                      //             ),
+                                                      //           ],
+                                                      //         ),
+                                                      //       ),
+                                                      //       Text.rich(
+                                                      //         TextSpan(
+                                                      //           children: [
+                                                      //             TextSpan(
+                                                      //               text:
+                                                      //               'Balance : ',
+                                                      //               style: TextStyle(
+                                                      //                   fontWeight:
+                                                      //                   FontWeight
+                                                      //                       .bold,
+                                                      //                   color:
+                                                      //                   blueColor), // Bold and black
+                                                      //             ),
+                                                      //             TextSpan(
+                                                      //               text: '${Tenant_financial.balance}',
+                                                      //               style: TextStyle(
+                                                      //                   fontWeight:
+                                                      //                   FontWeight
+                                                      //                       .w700,
+                                                      //                   color: Colors
+                                                      //                       .grey), // Light and grey
+                                                      //             ),
+                                                      //           ],
+                                                      //         ),
+                                                      //       ),
+                                                      //
+                                                      //     ],
+                                                      //   ),
+                                                      // ),
+                                                      /*Container(
                                                         width: 40,
                                                         child: Column(
                                                           children: [
@@ -1517,422 +1517,697 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           ],
                                                         ),
                                                       ),*/
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              //SizedBox(height: 13,),
-                                            ],
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ),
-                                  SizedBox(height: 20),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          // Text('Rows per page:'),
-                                          SizedBox(width: 10),
-                                          Material(
-                                            elevation: 3,
-                                            child: Container(
-                                              height: 40,
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 12.0),
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Colors.grey),
-                                              ),
-                                              child:
-                                                  DropdownButtonHideUnderline(
-                                                child: DropdownButton<int>(
-                                                  value: itemsPerPage,
-                                                  items: itemsPerPageOptions
-                                                      .map((int value) {
-                                                    return DropdownMenuItem<
-                                                        int>(
-                                                      value: value,
-                                                      child: Text(
-                                                          value.toString()),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: data.length >
-                                                          itemsPerPageOptions
-                                                              .first // Condition to check if dropdown should be enabled
-                                                      ? (newValue) {
-                                                          setState(() {
-                                                            itemsPerPage =
-                                                                newValue!;
-                                                            currentPage =
-                                                                0; // Reset to first page when items per page change
-                                                          });
-                                                        }
-                                                      : null,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons
-                                                  .circleChevronLeft,
-                                              color: currentPage == 0
-                                                  ? Colors.grey
-                                                  : blueColor,
-                                            ),
-                                            onPressed: currentPage == 0
-                                                ? null
-                                                : () {
-                                                    setState(() {
-                                                      currentPage--;
-                                                    });
-                                                  },
-                                          ),
-                                          // IconButton(
-                                          //   icon: Icon(Icons.arrow_back),
-                                          //   onPressed: currentPage > 0
-                                          //       ? () {
-                                          //     setState(() {
-                                          //       currentPage--;
-                                          //     });
-                                          //   }
-                                          //       : null,
-                                          // ),
-                                          Text(
-                                              'Page ${currentPage + 1} of $totalPages'),
-                                          // IconButton(
-                                          //   icon: Icon(Icons.arrow_forward),
-                                          //   onPressed: currentPage < totalPages - 1
-                                          //       ? () {
-                                          //     setState(() {
-                                          //       currentPage++;
-                                          //     });
-                                          //   }
-                                          //       : null,
-                                          // ),
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons
-                                                  .circleChevronRight,
-                                              color:
-                                                  currentPage < totalPages - 1
-                                                      ? blueColor
-                                                      : Colors.grey,
-                                            ),
-                                            onPressed:
-                                                currentPage < totalPages - 1
-                                                    ? () {
-                                                        setState(() {
-                                                          currentPage++;
-                                                        });
-                                                      }
-                                                    : null,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-                        },
-                      ),
-                    ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    FutureBuilder<List<Data>>(
-                      future: futureFinancial,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(
-                            child: SpinKitFadingCircle(
-                              color: Colors.black,
-                              size: 55.0,
-                            ),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
-                          return Container(
-                            height: MediaQuery.of(context).size.height * .5,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    "assets/images/no_data.jpg",
-                                    height: 200,
-                                    width: 200,
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    "No Data Available",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor,
-                                        fontSize: 16),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        } else {
-                          //  _tableData = snapshot.data!;
-                          //var data = snapshot.data!;
-                          _tableData = snapshot.data!;
-                          if (selectedValue == null && searchvalue.isEmpty) {
-                            _tableData = snapshot.data!;
-                          } else if (selectedValue == "All") {
-                            _tableData = snapshot.data!;
-                          } else if (searchvalue.isNotEmpty) {
-                            _tableData = snapshot.data!
-                                .where((property) =>
-                                    property.entry!.first.account!
-                                        .toLowerCase()
-                                        .contains(searchvalue.toLowerCase()) ||
-                                    property.type!
-                                        .toLowerCase()
-                                        .contains(searchvalue.toLowerCase()))
-                                .toList();
-                          } else {
-                            _tableData = snapshot.data!
-                                .where((property) =>
-                                    property.entry!.first.date == selectedValue)
-                                .toList();
-                          }
-                          String formattedText =
-                              'Manual ${snapshot.data!.first.type} ${snapshot.data!.first.response} For ${snapshot.data!.first.paymentType}';
-                          String increase =
-                              snapshot.data?.first.type == 'Refund'
-                                  ? '${snapshot.data?.first.totalAmount}'
-                                  : 'N/A';
-                          String decrease =
-                              snapshot.data?.first.type != 'Refund'
-                                  ? '${snapshot.data?.first.totalAmount}'
-                                  : 'N/A';
-
-                          totalrecords = _tableData.length;
-                          return SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                Container(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0, vertical: 5),
-                                    child: Column(
-                                      children: [
-                                        SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          child: Container(
-                                            padding: const EdgeInsets.only(
-                                                left: 22, right: 22),
-                                            // width: MediaQuery.of(context).size.width *
-                                            //     .91,
-                                            child: Table(
-                                              defaultColumnWidth:
-                                                  IntrinsicColumnWidth(),
-                                              children: [
-                                                TableRow(
-                                                  decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        // color: blueColor
-                                                        ),
-                                                  ),
-                                                  children: [
-                                                    _buildHeader(
-                                                        'Date',
-                                                        0,
-                                                        (tenant) => tenant
-                                                            .entry!
-                                                            .first
-                                                            .date!),
-                                                    _buildHeader(
-                                                        'Type',
-                                                        1,
-                                                        (tenant) =>
-                                                            tenant.type!),
-                                                    _buildHeader(
-                                                        'Account',
-                                                        2,
-                                                        (tenant) => tenant
-                                                            .entry!
-                                                            .first
-                                                            .account!),
-                                                    _buildHeader(
-                                                        'Transaction',
-                                                        3,
-                                                        (tenant) => tenant
-                                                            .entry!
-                                                            .first
-                                                            .account!),
-                                                    _buildHeader(
-                                                        'Increase',
-                                                        4,
-                                                        (tenant) => tenant
-                                                            .entry!
-                                                            .first
-                                                            .account!),
-                                                    _buildHeader(
-                                                        'Decrease',
-                                                        5,
-                                                        (tenant) => tenant
-                                                            .entry!
-                                                            .first
-                                                            .account!),
-                                                    _buildHeader(
-                                                        'Balance',
-                                                        6,
-                                                        (tenant) => tenant
-                                                            .entry!
-                                                            .first
-                                                            .account!),
-                                                    _buildHeader(
-                                                        'Actions', 7, null),
-                                                  ],
-                                                ),
-                                                TableRow(
-                                                  decoration: BoxDecoration(
-                                                    border: Border.symmetric(
-                                                        horizontal:
-                                                            BorderSide.none),
-                                                  ),
-                                                  children: List.generate(
-                                                      8,
-                                                      (index) => TableCell(
-                                                          child: Container(
-                                                              height: 20))),
-                                                ),
-                                                for (var i = 0;
-                                                    i < _pagedData.length;
-                                                    i++)
-                                                  TableRow(
-                                                    decoration: BoxDecoration(
-                                                      border: Border(
-                                                        left: BorderSide(
-                                                            color: blueColor),
-                                                        right: BorderSide(
-                                                            color: blueColor),
-                                                        top: BorderSide(
-                                                            color: blueColor),
-                                                        bottom: i ==
-                                                                _pagedData
-                                                                        .length -
-                                                                    1
-                                                            ? BorderSide(
-                                                                color:
-                                                                    blueColor)
-                                                            : BorderSide.none,
-                                                      ),
-                                                    ),
-                                                    children: [
-                                                      // Text(
-                                                      //     '${_pagedData[i].propertyType!}'),
-                                                      // Text(
-                                                      //     '${_pagedData[i].propertysubType!}'),
-                                                      // Text(
-                                                      //     '${formatDate(_pagedData[i].createdAt!)}'),
-                                                      // Text(
-                                                      //     '${formatDate(_pagedData[i].updatedAt!)}'),
-                                                      _buildDataCell(
-                                                          _pagedData[i]
-                                                              .entry!
-                                                              .first
-                                                              .date!),
-                                                      _buildDataCell(
-                                                        _pagedData[i].type!,
-                                                      ),
-                                                      _buildDataCell(
-                                                        _pagedData[i]
-                                                            .entry!
-                                                            .first
-                                                            .account!,
-                                                      ),
-                                                      _buildDataCell(
-                                                        'Manual ${_pagedData[i].type} ${_pagedData[i].response} For ${_pagedData[i].paymentType}',
-                                                      ),
-                                                      _buildDataCell(
-                                                        _pagedData[i].type !=
-                                                                'Refund'
-                                                            ? '${_pagedData[i].totalAmount}'
-                                                            : 'N/A',
-                                                      ),
-                                                      _buildDataCell(
-                                                        _pagedData[i].type ==
-                                                                'Refund'
-                                                            ? '${_pagedData[i].totalAmount}'
-                                                            : 'N/A',
-                                                      ),
-                                                      _buildDataCell(
-                                                        _pagedData[i].balance !=
-                                                                null
-                                                            ? _pagedData[i]
-                                                                .balance!
-                                                                .abs()
-                                                                .toString()
-                                                            : 'N/A', // Handle null value
-                                                      ),
-                                                      _buildActionsCell(
-                                                          _pagedData[i]),
                                                     ],
                                                   ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        //SizedBox(height: 13,),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Row(
+                                  children: [
+                                    // Text('Rows per page:'),
+                                    SizedBox(width: 10),
+                                    Material(
+                                      elevation: 3,
+                                      child: Container(
+                                        height: 40,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 12.0),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: Colors.grey),
+                                        ),
+                                        child:
+                                        DropdownButtonHideUnderline(
+                                          child: DropdownButton<int>(
+                                            value: itemsPerPage,
+                                            items: itemsPerPageOptions
+                                                .map((int value) {
+                                              return DropdownMenuItem<
+                                                  int>(
+                                                value: value,
+                                                child: Text(
+                                                    value.toString()),
+                                              );
+                                            }).toList(),
+                                            onChanged: data.length >
+                                                itemsPerPageOptions
+                                                    .first // Condition to check if dropdown should be enabled
+                                                ? (newValue) {
+                                              setState(() {
+                                                itemsPerPage =
+                                                newValue!;
+                                                currentPage =
+                                                0; // Reset to first page when items per page change
+                                              });
+                                            }
+                                                : null,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      icon: FaIcon(
+                                        FontAwesomeIcons
+                                            .circleChevronLeft,
+                                        color: currentPage == 0
+                                            ? Colors.grey
+                                            : blueColor,
+                                      ),
+                                      onPressed: currentPage == 0
+                                          ? null
+                                          : () {
+                                        setState(() {
+                                          currentPage--;
+                                        });
+                                      },
+                                    ),
+                                    // IconButton(
+                                    //   icon: Icon(Icons.arrow_back),
+                                    //   onPressed: currentPage > 0
+                                    //       ? () {
+                                    //     setState(() {
+                                    //       currentPage--;
+                                    //     });
+                                    //   }
+                                    //       : null,
+                                    // ),
+                                    Text(
+                                        'Page ${currentPage + 1} of $totalPages'),
+                                    // IconButton(
+                                    //   icon: Icon(Icons.arrow_forward),
+                                    //   onPressed: currentPage < totalPages - 1
+                                    //       ? () {
+                                    //     setState(() {
+                                    //       currentPage++;
+                                    //     });
+                                    //   }
+                                    //       : null,
+                                    // ),
+                                    IconButton(
+                                      icon: FaIcon(
+                                        FontAwesomeIcons
+                                            .circleChevronRight,
+                                        color:
+                                        currentPage < totalPages - 1
+                                            ? blueColor
+                                            : Colors.grey,
+                                      ),
+                                      onPressed:
+                                      currentPage < totalPages - 1
+                                          ? () {
+                                        setState(() {
+                                          currentPage++;
+                                        });
+                                      }
+                                          : null,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
+            if (MediaQuery.of(context).size.width > 500)
+              FutureBuilder<List<Data>>(
+                future: futureFinancial,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return Center(
+                      child: SpinKitFadingCircle(
+                        color: Colors.black,
+                        size: 55.0,
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Center(
+                        child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData ||
+                      snapshot.data!.isEmpty) {
+                    return Container(
+                      height: MediaQuery.of(context).size.height * .5,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/images/no_data.jpg",
+                              height: 200,
+                              width: 200,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              "No Data Available",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                  fontSize: 16),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  } else {
+                    //  _tableData = snapshot.data!;
+                    //var data = snapshot.data!;
+                    _tableData = snapshot.data!;
+                    if (selectedValue == null && searchvalue.isEmpty) {
+                      _tableData = snapshot.data!;
+                    } else if (selectedValue == "All") {
+                      _tableData = snapshot.data!;
+                    } else if (searchvalue.isNotEmpty) {
+                      _tableData = snapshot.data!
+                          .where((property) =>
+                      property.entry!.first.account!
+                          .toLowerCase()
+                          .contains(searchvalue.toLowerCase()) ||
+                          property.type!
+                              .toLowerCase()
+                              .contains(searchvalue.toLowerCase()))
+                          .toList();
+                    } else {
+                      _tableData = snapshot.data!
+                          .where((property) =>
+                      property.entry!.first.date == selectedValue)
+                          .toList();
+                    }
+                    String formattedText =
+                        'Manual ${snapshot.data!.first.type} ${snapshot.data!.first.response} For ${snapshot.data!.first.paymentType}';
+                    String increase =
+                    snapshot.data?.first.type == 'Refund'
+                        ? '${snapshot.data?.first.totalAmount}'
+                        : 'N/A';
+                    String decrease =
+                    snapshot.data?.first.type != 'Refund'
+                        ? '${snapshot.data?.first.totalAmount}'
+                        : 'N/A';
+
+                    totalrecords = _tableData.length;
+                    return SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Container(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20.0, vertical: 5),
+                              child: Column(
+                                children: [
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Container(
+                                      padding:
+                                      const EdgeInsets.only(left: 2),
+                                      width: MediaQuery.of(context)
+                                          .size
+                                          .width *
+                                          0.91,
+                                      child: Column(
+                                        children: [
+                                          // Header Row with Mobile-like Styling
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: Color(0xFFF4F8FF),
+                                              borderRadius:
+                                              BorderRadius.circular(
+                                                  10),
+                                              border: Border.all(
+                                                  color:
+                                                  Color(0xFFDBE0E5)),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Container(
+                                                    padding: EdgeInsets
+                                                        .symmetric(
+                                                        horizontal:
+                                                        16,
+                                                        vertical: 20),
+                                                    child: Text(
+                                                      'Date',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        fontSize: 15,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Container(
+                                                    padding: EdgeInsets
+                                                        .symmetric(
+                                                        horizontal:
+                                                        16,
+                                                        vertical: 20),
+                                                    child: Text(
+                                                      'Type',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        fontSize: 15,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Container(
+                                                    padding: EdgeInsets
+                                                        .symmetric(
+                                                        horizontal:
+                                                        16,
+                                                        vertical: 20),
+                                                    child: Text(
+                                                      'Account',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        fontSize: 15,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Container(
+                                                    padding: EdgeInsets
+                                                        .symmetric(
+                                                        horizontal:
+                                                        16,
+                                                        vertical: 20),
+                                                    child: Text(
+                                                      'Transaction',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        fontSize: 15,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Container(
+                                                    padding: EdgeInsets
+                                                        .symmetric(
+                                                        horizontal:
+                                                        16,
+                                                        vertical: 20),
+                                                    child: Text(
+                                                      'Increase',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        fontSize: 15,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Container(
+                                                    padding: EdgeInsets
+                                                        .symmetric(
+                                                        horizontal:
+                                                        16,
+                                                        vertical: 20),
+                                                    child: Text(
+                                                      'Decrease',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        fontSize: 15,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Container(
+                                                    padding: EdgeInsets
+                                                        .symmetric(
+                                                        horizontal:
+                                                        16,
+                                                        vertical: 20),
+                                                    child: Text(
+                                                      'Balance',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        fontSize: 15,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
                                               ],
                                             ),
                                           ),
-                                        ),
-                                        SizedBox(height: 25),
-                                        _buildPaginationControls(),
-                                      ],
+
+                                          SizedBox(
+                                              height:
+                                              10), // Space between header and first data row
+                                          // Data Rows with Mobile-like Styling
+                                          for (var i = 0;
+                                          i < _pagedData.length;
+                                          i++)
+                                            Column(
+                                              children: [
+                                                Container(
+                                                  decoration:
+                                                  BoxDecoration(
+                                                    color: i % 2 != 0
+                                                        ? Color(
+                                                        0xFFF4F8FF)
+                                                        : Colors.white,
+                                                    border: Border.all(
+                                                        color: Color(
+                                                            0xFFDBE0E5)),
+                                                    borderRadius:
+                                                    BorderRadius
+                                                        .circular(10),
+                                                  ),
+                                                  child: Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: Container(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                              horizontal:
+                                                              16,
+                                                              vertical:
+                                                              20),
+                                                          child: Text(
+                                                            _pagedData[i]
+                                                                .entry!
+                                                                .first
+                                                                .date!,
+                                                            style:
+                                                            TextStyle(
+                                                              color:
+                                                              blueColor,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              fontSize:
+                                                              13,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        child: Container(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                              horizontal:
+                                                              16,
+                                                              vertical:
+                                                              20),
+                                                          child: Text(
+                                                            _pagedData[i]
+                                                                .type!,
+                                                            style:
+                                                            TextStyle(
+                                                              color:
+                                                              blueColor,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              fontSize:
+                                                              13,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        child: Container(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                              horizontal:
+                                                              16,
+                                                              vertical:
+                                                              20),
+                                                          child: Text(
+                                                            _pagedData[i]
+                                                                .entry!
+                                                                .first
+                                                                .account!,
+                                                            style:
+                                                            TextStyle(
+                                                              color:
+                                                              blueColor,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              fontSize:
+                                                              13,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        child: Container(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                              horizontal:
+                                                              16,
+                                                              vertical:
+                                                              20),
+                                                          child: Text(
+                                                            'Manual ${_pagedData[i].type} ${_pagedData[i].response} For ${_pagedData[i].paymentType}',
+                                                            style:
+                                                            TextStyle(
+                                                              color:
+                                                              blueColor,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              fontSize:
+                                                              13,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        child: Container(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                              horizontal:
+                                                              16,
+                                                              vertical:
+                                                              20),
+                                                          child: Text(
+                                                            _pagedData[i]
+                                                                .type !=
+                                                                'Refund'
+                                                                ? '${_pagedData[i].totalAmount}'
+                                                                : 'N/A',
+                                                            style:
+                                                            TextStyle(
+                                                              color:
+                                                              blueColor,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              fontSize:
+                                                              13,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        child: Container(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                              horizontal:
+                                                              16,
+                                                              vertical:
+                                                              20),
+                                                          child: Text(
+                                                            _pagedData[i]
+                                                                .type ==
+                                                                'Refund'
+                                                                ? '${_pagedData[i].totalAmount}'
+                                                                : 'N/A',
+                                                            style:
+                                                            TextStyle(
+                                                              color:
+                                                              blueColor,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              fontSize:
+                                                              13,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        child: Container(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                              horizontal:
+                                                              16,
+                                                              vertical:
+                                                              20),
+                                                          child: Text(
+                                                            _pagedData[i]
+                                                                .balance !=
+                                                                null
+                                                                ? _pagedData[
+                                                            i]
+                                                                .balance!
+                                                                .abs()
+                                                                .toString()
+                                                                : 'N/A',
+                                                            style:
+                                                            TextStyle(
+                                                              color:
+                                                              blueColor,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              fontSize:
+                                                              13,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      // Expanded(
+                                                      //   child: Container(
+                                                      //     padding: EdgeInsets
+                                                      //         .symmetric(
+                                                      //             horizontal:
+                                                      //                 16,
+                                                      //             vertical:
+                                                      //                 20),
+                                                      //     child: Row(
+                                                      //       children: [
+                                                      //         GestureDetector(
+                                                      //           onTap:
+                                                      //               () {
+                                                      //             handleEdit(
+                                                      //                 _pagedData[i]);
+                                                      //           },
+                                                      //           child:
+                                                      //               FaIcon(
+                                                      //             FontAwesomeIcons
+                                                      //                 .edit,
+                                                      //             size:
+                                                      //                 20,
+                                                      //             color:
+                                                      //                 blueColor,
+                                                      //           ),
+                                                      //         ),
+                                                      //         SizedBox(
+                                                      //             width:
+                                                      //                 15),
+                                                      //         GestureDetector(
+                                                      //           onTap:
+                                                      //               () {
+                                                      //             handleDelete(
+                                                      //                 _pagedData[i]);
+                                                      //           },
+                                                      //           child:
+                                                      //               FaIcon(
+                                                      //             FontAwesomeIcons
+                                                      //                 .trashCan,
+                                                      //             size:
+                                                      //                 20,
+                                                      //             color:
+                                                      //                 blueColor,
+                                                      //           ),
+                                                      //         ),
+                                                      //       ],
+                                                      //     ),
+                                                      //   ),
+                                                      // ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                if (i <
+                                                    _pagedData.length - 1)
+                                                  SizedBox(
+                                                      height:
+                                                      10), // Space between data rows
+                                              ],
+                                            ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(height: 25),
-                              ],
+                                  SizedBox(height: 25),
+                                  _buildPaginationControls(),
+                                ],
+                              ),
                             ),
-                          );
-                        }
-                      },
-                    ),
-                ],
+                          ),
+                          SizedBox(height: 25),
+                        ],
+                      ),
+                    );
+                  }
+                },
               ),
-            )
+          ],
+        ),
+      )
           : SizedBox(
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Lottie.asset(
-                    'assets/no_internet.json',
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.fill,
-                  ),
-                  Text(
-                    'No Internet',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'Check your internet connection',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/no_internet.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.fill,
             ),
+            Text(
+              'No Internet',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Check your internet connection',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

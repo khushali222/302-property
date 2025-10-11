@@ -1,11 +1,9 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../constant/constant.dart';
@@ -13,11 +11,11 @@ import '../../../widgets/titleBar.dart';
 import '../../model/sumery_model.dart';
 import '../../widgets/appbar.dart';
 import '../../widgets/custom_drawer.dart';
-import '../../widgets/drawer_tiles.dart';
 import 'package:http/http.dart' as http;
+
 class summery_page extends StatefulWidget {
-  String? lease_id;
-   summery_page({super.key,this.lease_id});
+  final String? lease_id;
+  summery_page({super.key, this.lease_id});
 
   @override
   State<summery_page> createState() => _summery_pageState();
@@ -25,43 +23,38 @@ class summery_page extends StatefulWidget {
 
 class _summery_pageState extends State<summery_page> {
   bool _isLoading = false;
-//  bool _isLoading = false;
   bool _hasError = false;
   String _errorMessage = '';
-  summery_property? profiledata ;
+  summery_property? profiledata;
 
   Future<void> fetchProfile() async {
-
     try {
-    setState(() {
-      _isLoading = true;
-    });
-    //  String? token = prefs.getString('token');
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("tenant_id");
-    String? admin_id = prefs.getString("adminId");
-    String? token = prefs.getString('token');
-    final String apiUrl = "${Api_url}/api/leases/lease_summary/${widget.lease_id}";
-    final response = await http.get(Uri.parse('$apiUrl'), headers: {"authorization" : "CRM $token","id":"CRM $id",},);
-    print('hello$apiUrl');
-  //  log(response.body);
-    final response_Data = jsonDecode(response.body);
-    if (response_Data["statusCode"] == 200) {
-      print("hello");
       setState(() {
-        profiledata = summery_property.fromJson(jsonDecode(response.body)["data"]);
-        print(profiledata!.rentalAdress);
-        _isLoading = false;
+        _isLoading = true;
       });
-      // return profile.fromJson(jsonDecode(response.body)["data"]);
-    } else {
-
-      setState(() {
-        _isLoading = false;
-      });
-      throw Exception('Failed to load profile');
-
-    }
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("tenant_id");
+      String? token = prefs.getString('token');
+      final String apiUrl =
+          "${Api_url}/api/leases/lease_summary/${widget.lease_id}";
+      final response = await http.get(Uri.parse('$apiUrl'),
+          headers: {"authorization": "CRM $token", "id": "CRM $id"});
+      print('hello$apiUrl');
+      final response_Data = jsonDecode(response.body);
+      if (response_Data["statusCode"] == 200) {
+        print("hello");
+        setState(() {
+          profiledata =
+              summery_property.fromJson(jsonDecode(response.body)["data"]);
+          print(profiledata!.rentalAdress);
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+        throw Exception('Failed to load profile');
+      }
     } catch (e) {
       setState(() {
         _hasError = true;
@@ -70,13 +63,12 @@ class _summery_pageState extends State<summery_page> {
       });
     }
   }
-  ConnectivityResult? _connectivityResult ;
+
+  ConnectivityResult? _connectivityResult;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
         print(result);
@@ -87,30 +79,29 @@ class _summery_pageState extends State<summery_page> {
     fetchProfile();
   }
 
-
-  void checkInternet()async{
-
+  void checkInternet() async {
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
     setState(() {
       _connectivityResult = connectiondata;
     });
-
   }
+
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: key,
-      appBar: widget_302.App_Bar(context: context,onDrawerIconPressed: () {
-       key.currentState!.openDrawer();
-      },),
+      appBar: widget_302.App_Bar(
+          context: context,
+          onDrawerIconPressed: () {
+            key.currentState!.openDrawer();
+          }),
       backgroundColor: Colors.white,
-      drawer:  CustomDrawer(currentpage: 'Properties',),
-      body:
-      _connectivityResult !=ConnectivityResult.none ?
-
-      _isLoading
+      drawer: CustomDrawer(currentpage: 'Properties'),
+      body: _connectivityResult != ConnectivityResult.none
+          ? _isLoading
           ? Center(
         child: SpinKitFadingCircle(
           color: Colors.black,
@@ -121,510 +112,77 @@ class _summery_pageState extends State<summery_page> {
           ? Center(
         child: Text('Error: $_errorMessage'),
       )
-          :LayoutBuilder(
-          builder: (context, constraints) {
-
-            if (constraints.maxWidth > 600){
-              return SingleChildScrollView(
+          : LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth > 600) {
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
                 child: Column(
                   children: [
-                    SizedBox(height: 20,),
+                    SizedBox(height: 20),
                     titleBar(
-                      width: MediaQuery.of(context).size.width * .91,
+                      width:
+                      MediaQuery.of(context).size.width * 0.9,
                       title: 'Property Details',
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Card(
+                    SizedBox(height: 30),
 
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(color: blueColor),
-                              borderRadius: BorderRadius.circular(6)
-                          ),
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Property Details",
-                                style: TextStyle(
-                                    color: blueColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 23),
-                              ),
-                              SizedBox(height: 10),
-                              Table(
-                                border: TableBorder.all(),
-                                columnWidths: const {
-                                  0: FlexColumnWidth(3),
-                                  1: FlexColumnWidth(3),
-                                  2: FlexColumnWidth(2),
-                                  3: FlexColumnWidth(2),
-                                  4: FlexColumnWidth(2),
-                                },
-                                children: [
-                                  TableRow(
-                                    children: [
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Property Details',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:blueColor),))),
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Address',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:blueColor),))),
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('City',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:blueColor),))),
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Country',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:blueColor)))),
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Post Code',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:blueColor)))),
+                    // Property Details Section
+                    _buildPropertyDetailsCard(),
+                    SizedBox(height: 20),
 
-                                    ],
-                                  ),
-                                  TableRow(
-                                    children: [
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text("${profiledata!.propertysubType!} ",style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text( profiledata!.rentalAdress!,style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text(profiledata!.rentalCity!,style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text(profiledata!.rentalCountry!,style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text( profiledata!.rentalPostcode!,style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                    ],
-                                  ),
+                    // Rental Owner Details Section
+                    _buildRentalOwnerCard(),
+                    SizedBox(height: 20),
 
-                                ],
-                              ),
-                             /* Table(
-                                border: TableBorder.all(color: blueColor),
-                                columnWidths: {
-                                  0: FlexColumnWidth(1),
-                                  1: FlexColumnWidth(2),
-                                },
-                                children: [
-                                  _buildTableRow('Property Details', profiledata!.propertysubType!),
-                                  _buildTableRow('Address', profiledata!.rentalAdress!),
-                                  _buildTableRow('City', profiledata!.rentalCity!),
-                                  _buildTableRow('Country', profiledata!.rentalCountry!),
-                                  _buildTableRow('Post Code', profiledata!.rentalPostcode!),
-                                ],
-                              ),*/
-                              SizedBox(height: 10,),
-                              Image.network("$image_url${profiledata! .rentalImage}",height: 150,width: 300,),
+                    // Staff Details Section
+                    _buildStaffDetailsCard(),
+                    SizedBox(height: 20),
 
-
-                            ],
-                          ),
-                        ),
-                      ),
-                    ), SizedBox(height: 10,),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Card(
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(color: blueColor),
-                              borderRadius: BorderRadius.circular(6)
-                          ),
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Rental Owner Details",
-                                style: TextStyle(
-                                    color: blueColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 23),
-                              ),
-                              SizedBox(height: 10,),
-                              Table(
-                                border: TableBorder.all(color: blueColor),
-                                columnWidths: const {
-                                  0: FlexColumnWidth(3),
-                                  1: FlexColumnWidth(2),
-                                  2: FlexColumnWidth(3),
-                                  3: FlexColumnWidth(2),
-                                //  4: FlexColumnWidth(2),
-                                },
-                                children: [
-                                  TableRow(
-                                    children: [
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Contact Name',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:blueColor),))),
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Company Name',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:blueColor),))),
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Email',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:blueColor),))),
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Phone No',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:blueColor)))),
-                                     // TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Post Code',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:blueColor)))),
-
-                                    ],
-                                  ),
-                                  TableRow(
-                                    children: [
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text("${profiledata!.rentalOwnerName} ",style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text( profiledata!.rentalOwnerCompanyName!,style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text( profiledata!.rentalOwnerPrimaryEmail!,style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text(profiledata!.rentalOwnerPhoneNumber!,style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                    //  TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text( profiledata!.rentalPostcode!,style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                    ],
-                                  ),
-
-                                ],
-                              ),
-                            /*  Table(
-                                border: TableBorder.all(color: blueColor),
-                                columnWidths: {
-                                  0: FlexColumnWidth(1),
-                                  1: FlexColumnWidth(2),
-                                },
-                                children: [
-                                  _buildTableRow('Contact Name', profiledata!.rentalOwnerName!),
-                                  _buildTableRow('Company Name', profiledata!.rentalOwnerCompanyName!),
-                                  _buildTableRow('Email', profiledata!.rentalOwnerPrimaryEmail!),
-                                  _buildTableRow('Phone No', profiledata!.rentalOwnerPhoneNumber!),
-                                ],
-                              ),*/
-                            ],
-                          ),
-                        ),
-                      ),
-                    ), SizedBox(height: 10,),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Card(
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(color: blueColor),
-                              borderRadius: BorderRadius.circular(6)
-                          ),
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Staff Details",
-                                style: TextStyle(
-                                    color: blueColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 23),
-                              ),
-                              SizedBox(height: 10,),
-                              Table(
-                                border: TableBorder.all(color: blueColor),
-                                columnWidths: const {
-                                  0: FlexColumnWidth(3),
-                                  1: FlexColumnWidth(2),
-                                  2: FlexColumnWidth(3),
-                                  3: FlexColumnWidth(2),
-                                  //  4: FlexColumnWidth(2),
-                                },
-                                children: [
-                                  TableRow(
-                                    children: [
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Staff Member',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:blueColor),))),
-                                     // TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Company Name',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:blueColor),))),
-                                   //   TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Email',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:blueColor),))),
-                                 //     TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Phone No',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:blueColor)))),
-                                      // TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Post Code',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:blueColor)))),
-
-                                    ],
-                                  ),
-                                  TableRow(
-                                    children: [
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text("${ profiledata!.staffmember_name} ",style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                    //  TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text( profiledata!.rentalOwnerCompanyName!,style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                    //  TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text( profiledata!.rentalOwnerPrimaryEmail!,style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                    //  TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text(profiledata!.rentalOwnerPhoneNumber!,style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                      //  TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text( profiledata!.rentalPostcode!,style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                    ],
-                                  ),
-
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 10,),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Card(
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(color: blueColor),
-                              borderRadius: BorderRadius.circular(6)
-                          ),
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Unit Details",
-                                style: TextStyle(
-                                    color: blueColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 23),
-                              ),
-                              SizedBox(height: 10,),
-
-                              Table(
-                                border: TableBorder.all(color: blueColor),
-                                columnWidths: const {
-                                  0: FlexColumnWidth(2),
-                                  1: FlexColumnWidth(3),
-                                  2: FlexColumnWidth(3),
-                                  3: FlexColumnWidth(2),
-                                    4: FlexColumnWidth(2),
-                                },
-                                children: [
-                                  TableRow(
-                                    children: [
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Unit',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:blueColor),))),
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Unit Address',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:blueColor),))),
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Bed',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:blueColor),))),
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Bath',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:blueColor)))),
-                                       TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text('Square Fit',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:blueColor)))),
-
-                                    ],
-                                  ),
-                                  TableRow(
-                                    children: [
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text("${profiledata!.rentalUnit!} ",style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text( profiledata!.rentalUnitAdress!,style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text( profiledata!.rental_bed!,style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                      TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text(profiledata!.rental_bath!,style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                       TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text( profiledata!.rentalSqft!,style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20,color:greyColor)))),
-                                    ],
-                                  ),
-
-                                ],
-                              ),
-                              /*Table(
-                                border: TableBorder.all(),
-                                columnWidths: {
-                                  0: FlexColumnWidth(1),
-                                  1: FlexColumnWidth(2),
-                                },
-                                children: [
-                                  _buildTableRow('Unit', profiledata!.rentalUnit!),
-                                  _buildTableRow('Unit Address', profiledata!.rentalUnitAdress!),
-                                  _buildTableRow('Bed', profiledata!.rental_bed!),
-                                  _buildTableRow('Bath', profiledata!.rental_bath!),
-                                  _buildTableRow('Square Fit', profiledata!.rentalSqft!),
-                                ],
-                              ),*/
-
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20,)
+                    // Unit Details Section
+                    _buildUnitDetailsCard(),
+                    SizedBox(height: 30),
                   ],
                 ),
-              );
-            }
-              return SingleChildScrollView(
-                      child: Column(
-              children: [
-                SizedBox(height: 20,),
-                titleBar(
-                  width: MediaQuery.of(context).size.width * .91,
-                  title: 'Property Details',
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Card(
+              ),
+            );
+          }
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  SizedBox(height: 20),
+                  titleBar(
+                    width:
+                    MediaQuery.of(context).size.width * 0.9,
+                    title: 'Property Details',
+                  ),
+                  SizedBox(height: 20),
 
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: blueColor),
-                          borderRadius: BorderRadius.circular(6)
-                      ),
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Property Details",
-                            style: TextStyle(
-                                color: blueColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16),
-                          ),
-                          SizedBox(height: 10,),
-                          Table(
-                            border: TableBorder.all(color: blueColor),
-                            columnWidths: {
-                              0: FlexColumnWidth(1),
-                              1: FlexColumnWidth(2),
-                            },
-                            children: [
-                              _buildTableRow('Property Details', profiledata!.propertysubType!),
-                              _buildTableRow('Address', profiledata!.rentalAdress!),
-                              _buildTableRow('City', profiledata!.rentalCity!),
-                              _buildTableRow('Country', profiledata!.rentalCountry!),
-                              _buildTableRow('Post Code', profiledata!.rentalPostcode!),
-                            ],
-                          ),
-                          SizedBox(height: 10,),
-                          Image.network("$image_url${profiledata!.rentalImage}")
-                        ],
-                      ),
-                    ),
-                  ),
-                ), SizedBox(height: 10,),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Card(
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: blueColor),
-                          borderRadius: BorderRadius.circular(6)
-                      ),
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Rental Owner Details",
-                            style: TextStyle(
-                                color: blueColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16),
-                          ),
-                          SizedBox(height: 10,),
-                          Table(
-                            border: TableBorder.all(color: blueColor),
-                            columnWidths: {
-                              0: FlexColumnWidth(1),
-                              1: FlexColumnWidth(2),
-                            },
-                            children: [
-                              _buildTableRow('Contact Name', profiledata!.rentalOwnerName!),
-                              _buildTableRow('Company Name', profiledata!.rentalOwnerCompanyName!),
-                              _buildTableRow('Email', profiledata!.rentalOwnerPrimaryEmail!),
-                              _buildTableRow('Phone No', profiledata!.rentalOwnerPhoneNumber!),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ), SizedBox(height: 10,),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Card(
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: blueColor),
-                          borderRadius: BorderRadius.circular(6)
-                      ),
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Staff Details",
-                            style: TextStyle(
-                                color: blueColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16),
-                          ),
-                          SizedBox(height: 10,),
-                          Table(
+                  // Property Details Section
+                  _buildMobilePropertyDetailsCard(),
+                  SizedBox(height: 16),
 
-                            border: TableBorder.all(),
-                            columnWidths: {
-                              0: FlexColumnWidth(1),
-                              1: FlexColumnWidth(2),
-                            },
-                            children: [
-                              _buildTableRow('Staff Member', profiledata!.staffmember_name!),
+                  // Rental Owner Details Section
+                  _buildMobileRentalOwnerCard(),
+                  SizedBox(height: 16),
 
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10,),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Card(
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: blueColor),
-                          borderRadius: BorderRadius.circular(6)
-                      ),
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Unit Details",
-                            style: TextStyle(
-                                color: blueColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16),
-                          ),
-                          SizedBox(height: 10,),
-                          Table(
-                            border: TableBorder.all(),
-                            columnWidths: {
-                              0: FlexColumnWidth(1),
-                              1: FlexColumnWidth(2),
-                            },
-                            children: [
-                              _buildTableRow('Unit', profiledata!.rentalUnit!),
-                              _buildTableRow('Unit Address', profiledata!.rentalUnitAdress!),
-                              _buildTableRow('Bed', profiledata!.rental_bed!),
-                              _buildTableRow('Bath', profiledata!.rental_bath!),
-                              _buildTableRow('Square Fit', profiledata!.rentalSqft!),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-                      ),
-                    );
-            }
-          ):SizedBox(
+                  // Staff Details Section
+                  _buildMobileStaffDetailsCard(),
+                  SizedBox(height: 16),
+
+                  // Unit Details Section
+                  _buildMobileUnitDetailsCard(),
+                  SizedBox(height: 20),
+                ],
+              ),
+            ),
+          );
+        },
+      )
+          : SizedBox(
         width: double.infinity,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -638,37 +196,580 @@ class _summery_pageState extends State<summery_page> {
             ),
             Text(
               'No Internet',
-              style: TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Text(
               'Check your internet connection',
-              style: TextStyle(
-                  fontSize: 16, fontWeight: FontWeight.w500),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
           ],
         ),
       ),
     );
   }
-  TableRow _buildTableRow(String label, String value) {
-    return TableRow(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            label,
-            style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),
+
+  // Helper methods for tablet layout
+  Widget _buildPropertyDetailsCard() {
+    if (profiledata == null) return SizedBox.shrink();
+
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: blueColor.withOpacity(0.2)),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Property Details",
+              style: TextStyle(
+                color: blueColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+              ),
+            ),
+            SizedBox(height: 20),
+            // Property Details Grid
+            Row(
+              children: [
+                Expanded(
+                  child: _buildInfoCard(
+                    'Property Type',
+                    profiledata!.propertysubType!,
+                    Icons.home,
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: _buildInfoCard(
+                    'Address',
+                    profiledata!.rentalAdress!,
+                    Icons.location_on,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildInfoCard(
+                    'City',
+                    profiledata!.rentalCity!,
+                    Icons.location_city,
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: _buildInfoCard(
+                    'Country',
+                    profiledata!.rentalCountry!,
+                    Icons.public,
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: _buildInfoCard(
+                    'Post Code',
+                    profiledata!.rentalPostcode!,
+                    Icons.mail,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            // Property Image
+            Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  "$image_url${profiledata!.rentalImage}",
+                  height: 200,
+                  width: 400,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRentalOwnerCard() {
+    if (profiledata == null) return SizedBox.shrink();
+
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: blueColor.withOpacity(0.2)),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Rental Owner Details",
+              style: TextStyle(
+                color: blueColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+              ),
+            ),
+            SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildInfoCard(
+                    'Contact Name',
+                    profiledata!.rentalOwnerName!,
+                    Icons.person,
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: _buildInfoCard(
+                    'Company Name',
+                    profiledata!.rentalOwnerCompanyName!,
+                    Icons.business,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildInfoCard(
+                    'Email',
+                    profiledata!.rentalOwnerPrimaryEmail!,
+                    Icons.email,
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: _buildInfoCard(
+                    'Phone Number',
+                    profiledata!.rentalOwnerPhoneNumber!,
+                    Icons.phone,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStaffDetailsCard() {
+    if (profiledata == null) return SizedBox.shrink();
+
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: blueColor.withOpacity(0.2)),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Staff Details",
+              style: TextStyle(
+                color: blueColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+              ),
+            ),
+            SizedBox(height: 20),
+            _buildInfoCard(
+              'Staff Member',
+              profiledata!.staffmember_name!,
+              Icons.person_outline,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUnitDetailsCard() {
+    if (profiledata == null) return SizedBox.shrink();
+
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: blueColor.withOpacity(0.2)),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Unit Details",
+              style: TextStyle(
+                color: blueColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+              ),
+            ),
+            SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildInfoCard(
+                    'Unit',
+                    profiledata!.rentalUnit!,
+                    Icons.home_work,
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: _buildInfoCard(
+                    'Unit Address',
+                    profiledata!.rentalUnitAdress!,
+                    Icons.location_on,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildInfoCard(
+                    'Bedrooms',
+                    profiledata!.rental_bed!,
+                    Icons.bed,
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: _buildInfoCard(
+                    'Bathrooms',
+                    profiledata!.rental_bath!,
+                    Icons.bathtub,
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: _buildInfoCard(
+                    'Square Feet',
+                    profiledata!.rentalSqft!,
+                    Icons.square_foot,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoCard(String label, String value, IconData icon) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: blueColor.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: blueColor.withOpacity(0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: blueColor, size: 20),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    color: blueColor,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                  overflow: TextOverflow.visible,
+                ),
+              ),
+            ],
           ),
+          SizedBox(height: 8),
+          Text(
+            value,
+            style: TextStyle(
+              color: Colors.black87,
+              fontWeight: FontWeight.w500,
+              fontSize: 16,
+            ),
+            overflow: TextOverflow.visible,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Mobile helper methods
+  Widget _buildMobilePropertyDetailsCard() {
+    if (profiledata == null) return SizedBox.shrink();
+
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: blueColor.withOpacity(0.2)),
+          borderRadius: BorderRadius.circular(12),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(value),
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.home, color: blueColor, size: 24),
+                SizedBox(width: 12),
+                Text(
+                  "Property Details",
+                  style: TextStyle(
+                    color: blueColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            _buildMobileInfoRow(
+                'Property Type', profiledata!.propertysubType!, Icons.home),
+            _buildMobileInfoRow(
+                'Address', profiledata!.rentalAdress!, Icons.location_on),
+            _buildMobileInfoRow(
+                'City', profiledata!.rentalCity!, Icons.location_city),
+            _buildMobileInfoRow(
+                'Country', profiledata!.rentalCountry!, Icons.public),
+            _buildMobileInfoRow(
+                'Post Code', profiledata!.rentalPostcode!, Icons.mail),
+            SizedBox(height: 20),
+            // Property Image
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                "$image_url${profiledata!.rentalImage}",
+                width: double.infinity,
+                height: 200,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
+    );
+  }
+
+  Widget _buildMobileRentalOwnerCard() {
+    if (profiledata == null) return SizedBox.shrink();
+
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: blueColor.withOpacity(0.2)),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.business, color: blueColor, size: 24),
+                SizedBox(width: 12),
+                Text(
+                  "Rental Owner Details",
+                  style: TextStyle(
+                    color: blueColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            _buildMobileInfoRow(
+                'Contact Name', profiledata!.rentalOwnerName!, Icons.person),
+            _buildMobileInfoRow('Company Name',
+                profiledata!.rentalOwnerCompanyName!, Icons.business),
+            _buildMobileInfoRow(
+                'Email', profiledata!.rentalOwnerPrimaryEmail!, Icons.email),
+            _buildMobileInfoRow('Phone Number',
+                profiledata!.rentalOwnerPhoneNumber!, Icons.phone),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMobileStaffDetailsCard() {
+    if (profiledata == null) return SizedBox.shrink();
+
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: blueColor.withOpacity(0.2)),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.person_outline, color: blueColor, size: 24),
+                SizedBox(width: 12),
+                Text(
+                  "Staff Details",
+                  style: TextStyle(
+                    color: blueColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            _buildMobileInfoRow('Staff Member', profiledata!.staffmember_name!,
+                Icons.person_outline),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMobileUnitDetailsCard() {
+    if (profiledata == null) return SizedBox.shrink();
+
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: blueColor.withOpacity(0.2)),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.home_work, color: blueColor, size: 24),
+                SizedBox(width: 12),
+                Text(
+                  "Unit Details",
+                  style: TextStyle(
+                    color: blueColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            _buildMobileInfoRow(
+                'Unit', profiledata!.rentalUnit!, Icons.home_work),
+            _buildMobileInfoRow('Unit Address', profiledata!.rentalUnitAdress!,
+                Icons.location_on),
+            _buildMobileInfoRow(
+                'Bedrooms', profiledata!.rental_bed!, Icons.bed),
+            _buildMobileInfoRow(
+                'Bathrooms', profiledata!.rental_bath!, Icons.bathtub),
+            _buildMobileInfoRow(
+                'Square Feet', profiledata!.rentalSqft!, Icons.square_foot),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMobileInfoRow(String label, String value, IconData icon) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: blueColor.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: blueColor.withOpacity(0.1)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: blueColor, size: 20),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: blueColor,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  value,
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                  ),
+                  overflow: TextOverflow.visible,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
+
 class InfoRow extends StatelessWidget {
   final String label;
   final String value;
@@ -694,7 +795,6 @@ class InfoRow extends StatelessWidget {
             child: Text(
               value,
               style: TextStyle(color: Colors.grey[700]),
-              //overflow: TextOverflow.,
             ),
           ),
         ],

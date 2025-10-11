@@ -776,7 +776,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                 ),
                                 child: Center(
                                   child: Text(
-                                    "Send Email",
+                                    " Send\n Email",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
