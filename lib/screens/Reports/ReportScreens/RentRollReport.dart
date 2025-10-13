@@ -660,7 +660,9 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     final image = pw.MemoryImage(
       (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
     );
-    final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    final currentDate =
+        dateProvider.formatCurrentDate(DateTime.now().toString());
 
     final headers = [
       {'title': 'Unit', 'flex': 1},
@@ -905,15 +907,26 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                             .join(", "),
                         style: const pw.TextStyle(fontSize: 7),
                       )),
-                  pw.Text(leasedata.leaseStart ?? '',
+                  pw.Text(
+                      leasedata.leaseStart != null
+                          ? dateProvider
+                              .formatCurrentDate(leasedata.leaseStart!)
+                          : '',
                       style: const pw.TextStyle(fontSize: 7)),
-                  pw.Text(leasedata.leaseEnd ?? '',
+                  pw.Text(
+                      leasedata.leaseEnd != null
+                          ? dateProvider.formatCurrentDate(leasedata.leaseEnd!)
+                          : '',
                       style: const pw.TextStyle(fontSize: 7)),
                   pw.Text(leasedata.unit?.bedBath ?? '---',
                       style: const pw.TextStyle(fontSize: 7)),
                   pw.Text(leasedata.rentCycle ?? '',
                       style: const pw.TextStyle(fontSize: 7)),
-                  pw.Text(leasedata.leaseStart ?? '',
+                  pw.Text(
+                      leasedata.leaseStart != null
+                          ? dateProvider
+                              .formatCurrentDate(leasedata.leaseStart!)
+                          : '',
                       style: const pw.TextStyle(fontSize: 7)),
                   pw.Align(
                     alignment: pw.Alignment.centerRight,
@@ -1315,7 +1328,9 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     sheet.name = 'Rent Roll Report';
 
     // Set the current date
-    final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    final currentDate =
+        dateProvider.formatCurrentDate(DateTime.now().toString());
 
     // Add header information
 
@@ -1369,13 +1384,19 @@ class _RentersInsurancesState extends State<RentersInsurances> {
         sheet.getRangeByIndex(rowIndex, 2).setText(lease.tenants!
             .map((t) => "${t.tenantFirstName ?? ''} ${t.tenantLastName ?? ''}")
             .join(", "));
-        sheet.getRangeByIndex(rowIndex, 3).setText(lease.leaseStart ?? '');
-        sheet.getRangeByIndex(rowIndex, 4).setText(lease.leaseEnd ?? '');
+        sheet.getRangeByIndex(rowIndex, 3).setText(lease.leaseStart != null
+            ? dateProvider.formatCurrentDate(lease.leaseStart!)
+            : '');
+        sheet.getRangeByIndex(rowIndex, 4).setText(lease.leaseEnd != null
+            ? dateProvider.formatCurrentDate(lease.leaseEnd!)
+            : '');
         sheet
             .getRangeByIndex(rowIndex, 5)
             .setText(lease.unit?.bedBath ?? '---');
         sheet.getRangeByIndex(rowIndex, 6).setText(lease.rentCycle ?? '');
-        sheet.getRangeByIndex(rowIndex, 7).setText(lease.leaseStart ?? '');
+        sheet.getRangeByIndex(rowIndex, 7).setText(lease.leaseStart != null
+            ? dateProvider.formatCurrentDate(lease.leaseStart!)
+            : '');
         sheet.getRangeByIndex(rowIndex, 8).setNumber(lease.rentAmount ?? 0.0);
         sheet.getRangeByIndex(rowIndex, 9).setNumber(lease.chargeAmount ?? 0.0);
         sheet
@@ -1700,8 +1721,10 @@ class _RentersInsurancesState extends State<RentersInsurances> {
   }
 
   Future<void> generateRentersInsuranceCSV(rentrollreportmodel data) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final StringBuffer csvBuffer = StringBuffer();
-    final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
+    final currentDate =
+        dateProvider.formatCurrentDate(DateTime.now().toString());
 
     // Add headers
     final headers = [
@@ -1738,11 +1761,17 @@ class _RentersInsurancesState extends State<RentersInsurances> {
               .map(
                   (t) => "${t.tenantFirstName ?? ''} ${t.tenantLastName ?? ''}")
               .join(", "),
-          lease.leaseStart ?? '',
-          lease.leaseEnd ?? '',
+          lease.leaseStart != null
+              ? dateProvider.formatCurrentDate(lease.leaseStart!)
+              : '',
+          lease.leaseEnd != null
+              ? dateProvider.formatCurrentDate(lease.leaseEnd!)
+              : '',
           lease.unit?.bedBath ?? '---',
           lease.rentCycle ?? '',
-          lease.leaseStart ?? '',
+          lease.leaseStart != null
+              ? dateProvider.formatCurrentDate(lease.leaseStart!)
+              : '',
           lease.rentAmount?.toStringAsFixed(2) ?? '0.00',
           lease.chargeAmount?.toStringAsFixed(2) ?? '0.00',
           lease.creditAmount?.toStringAsFixed(2) ?? '0.00',
@@ -1996,7 +2025,11 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16.0, vertical: 8.0),
                     child: Padding(
-                      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+                      padding: EdgeInsets.only(
+                          left:
+                              MediaQuery.of(context).size.width > 500 ? 12 : 0,
+                          right:
+                              MediaQuery.of(context).size.width > 500 ? 12 : 0),
                       child: titleBar(
                         width: double.infinity,
                         title: "Rent Roll Report",
@@ -2006,541 +2039,521 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                   // if (MediaQuery.of(context).size.width > 500)
                   //   const SizedBox(height: 16),
                   // if (MediaQuery.of(context).size.width < 500)
-                    FutureBuilder<rentrollreportmodel>(
-                      future: _futureRentersInsurance,
-                      builder: (context, snapshot) {
-                        if (isLoading) {
-                          return Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: ColabShimmerLoadingWidget(),
-                          );
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.rentals!.isEmpty) {
-                          return Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 8),
-                                child: Row(
-                                  children: [
-                                    // Dropdown for Rental Owners
-                                    Expanded(
-                                      child: DropdownButtonHideUnderline(
-                                        child: Material(
-                                          elevation: 3,
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          child: DropdownButton2<String>(
-                                            isExpanded: true,
-                                            hint: const Row(
-                                              children: [
-                                                SizedBox(width: 4),
-                                                Expanded(
-                                                  child: Text(
-                                                    'Select Rental Owners',
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors.black,
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            items: rentalowners
-                                                .map((owner) =>
-                                                    DropdownMenuItem<String>(
-                                                      value: owner[
-                                                          'rentalowner_id'],
-                                                      child: Text(
-                                                        owner[
-                                                            'rentalOwner_name']!,
-                                                        style: const TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.black,
-                                                        ),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      ),
-                                                    ))
-                                                .toList(),
-                                            value: selectedOwner,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                selectedOwner = value;
-                                              });
-                                            },
-                                            buttonStyleData: ButtonStyleData(
-                                              height: 45,
-                                              width: double.infinity,
-                                              padding: const EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                border: Border.all(
-                                                  color:
-                                                      const Color(0xFF8A95A8),
-                                                ),
-                                                color: Colors.white,
-                                              ),
-                                              elevation: 0,
-                                            ),
-                                            dropdownStyleData:
-                                                DropdownStyleData(
-                                              maxHeight: 250,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.8,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(14),
-                                              ),
-                                              offset: const Offset(-20, 0),
-                                              scrollbarTheme:
-                                                  ScrollbarThemeData(
-                                                radius:
-                                                    const Radius.circular(40),
-                                                thickness:
-                                                    MaterialStateProperty.all(
-                                                        6),
-                                                thumbVisibility:
-                                                    MaterialStateProperty.all(
-                                                        true),
-                                              ),
-                                            ),
-                                            menuItemStyleData:
-                                                const MenuItemStyleData(
-                                              height: 50,
-                                              padding: EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-
-                                    // Run Report Button
-                                    Container(
-                                      height: 45,
-                                      width: 45,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Colors.grey.shade300),
-                                        borderRadius: BorderRadius.circular(0),
-                                        color: Colors.white,
-                                      ),
-                                      child: IconButton(
-                                        icon: const FaIcon(
-                                            FontAwesomeIcons.circlePlay),
-                                        onPressed: () {
-                                          setState(() {
-                                            _futureRentersInsurance =
-                                                fetchRentersInsuranceData(
-                                                    id: selectedOwner);
-                                          });
-                                          print("Run Report");
-                                        },
-                                        tooltip: "Run Report",
-                                      ),
-                                    ),
-                                    //const SizedBox(width: 8),
-
-                                    // Download Button with Dropdown
-                                    Container(
-                                      height: 45,
-                                      width: 75,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Colors.grey.shade300),
-                                        borderRadius: BorderRadius.circular(0),
-                                        color: Colors.white,
-                                      ),
-                                      child: PopupMenuButton<String>(
-                                        offset: const Offset(5, 50),
-                                        onSelected: handleDownload,
-                                        icon: const Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            FaIcon(FontAwesomeIcons
-                                                .download), // Your download icon
-                                            SizedBox(
-                                                width:
-                                                    5), // Adds spacing between the icons
-                                            Icon(Icons
-                                                .arrow_drop_down), // The dropdown arrow icon
-                                          ],
-                                        ),
-                                        tooltip: "Download",
-                                        itemBuilder: (BuildContext context) {
-                                          return downloadOptions
-                                              .map((String option) {
-                                            return PopupMenuItem<String>(
-                                              value: option,
-                                              onTap: () async {
-                                                if (snapshot.hasData)
-                                                  generateRentersInsuranceExcel(
-                                                      snapshot.data!);
-                                              },
-                                              child:
-                                                  Text("Download as $option"),
-                                            );
-                                          }).toList();
-                                        },
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                height: MediaQuery.of(context).size.height * .5,
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/no_data.jpg",
-                                        height: 200,
-                                        width: 200,
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Text(
-                                        "No Data Available",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: blueColor,
-                                            fontSize: 16),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        }
-
-                        var data = snapshot.data!.rentals!;
-
-                        // Pagination logic
-                        final totalPages = (data.length / itemsPerPage).ceil();
-                        final currentPageData = data
-                            .skip(currentPage * itemsPerPage)
-                            .take(itemsPerPage)
-                            .toList();
-
-                        return SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              // Search & Export Section
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 8),
-                                child: Row(
-                                  children: [
-                                    // Dropdown for Rental Owners
-                                    Expanded(
-                                      child: DropdownButtonHideUnderline(
-                                        child: Material(
-                                          elevation: 3,
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          child: DropdownButton2<String>(
-                                            isExpanded: true,
-                                            hint: const Row(
-                                              children: [
-                                                SizedBox(width: 4),
-                                                Expanded(
-                                                  child: Text(
-                                                    'Select Rental Owners',
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors.black,
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            items: rentalowners
-                                                .map((owner) =>
-                                                    DropdownMenuItem<String>(
-                                                      value: owner[
-                                                          'rentalowner_id'],
-                                                      child: Text(
-                                                        owner[
-                                                            'rentalOwner_name']!,
-                                                        style: const TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.black,
-                                                        ),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      ),
-                                                    ))
-                                                .toList(),
-                                            value: selectedOwner,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                selectedOwner = value;
-                                              });
-                                            },
-                                            buttonStyleData: ButtonStyleData(
-                                              height: 45,
-                                              width: double.infinity,
-                                              padding: const EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                border: Border.all(
-                                                  color:
-                                                      const Color(0xFF8A95A8),
-                                                ),
-                                                color: Colors.white,
-                                              ),
-                                              elevation: 0,
-                                            ),
-                                            dropdownStyleData:
-                                                DropdownStyleData(
-                                              maxHeight: 250,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.8,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(14),
-                                              ),
-                                              offset: const Offset(-20, 0),
-                                              scrollbarTheme:
-                                                  ScrollbarThemeData(
-                                                radius:
-                                                    const Radius.circular(40),
-                                                thickness:
-                                                    MaterialStateProperty.all(
-                                                        6),
-                                                thumbVisibility:
-                                                    MaterialStateProperty.all(
-                                                        true),
-                                              ),
-                                            ),
-                                            menuItemStyleData:
-                                                const MenuItemStyleData(
-                                              height: 50,
-                                              padding: EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-
-                                    // Run Report Button
-                                    Container(
-                                      height: 45,
-                                      width: 45,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Colors.grey.shade300),
-                                        borderRadius: BorderRadius.circular(0),
-                                        color: Colors.white,
-                                      ),
-                                      child: IconButton(
-                                        icon: const FaIcon(
-                                            FontAwesomeIcons.circlePlay),
-                                        onPressed: () {
-                                          setState(() {
-                                            _futureRentersInsurance =
-                                                fetchRentersInsuranceData(
-                                                    id: selectedOwner);
-                                          });
-                                          print("Run Report");
-                                        },
-                                        tooltip: "Run Report",
-                                      ),
-                                    ),
-                                    //const SizedBox(width: 8),
-
-                                    // Download Button with Dropdown
-                                    Container(
-                                      height: 45,
-                                      width: 75,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Colors.grey.shade300),
-                                        borderRadius: BorderRadius.circular(0),
-                                        color: Colors.white,
-                                      ),
-                                      child: PopupMenuButton<String>(
-                                        offset: const Offset(5, 50),
-                                        onSelected: handleDownload,
-                                        icon: const Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            FaIcon(FontAwesomeIcons
-                                                .download), // Your download icon
-                                            SizedBox(
-                                                width:
-                                                    5), // Adds spacing between the icons
-                                            Icon(Icons
-                                                .arrow_drop_down), // The dropdown arrow icon
-                                          ],
-                                        ),
-                                        tooltip: "Download",
-                                        itemBuilder: (BuildContext context) {
-                                          return downloadOptions
-                                              .map((String option) {
-                                            return PopupMenuItem<String>(
-                                              value: option,
-                                              onTap: () async {
-                                                if (option == "PDF")
-                                                  generaterentersInsurancePdf(
-                                                      snapshot.data!);
-                                                if (option == "Excel")
-                                                  generateRentersInsuranceExcel(
-                                                      snapshot.data!);
-                                                if (option == "CSV")
-                                                  generateRentersInsuranceCSV(
-                                                      snapshot.data!);
-                                              },
-                                              child:
-                                                  Text("Download as $option"),
-                                            );
-                                          }).toList();
-                                        },
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 15),
-                                padding: const EdgeInsets.all(2),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFE0E0E0),
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: Row(
-                                  children: [
-                                    _buildTabButton("Details", 0),
-                                    _buildTabButton("Summary", 1),
-                                  ],
-                                ),
-                              ),
-                              if (_selectedIndex == 0)
-                                DetailScreen(currentPageData),
-                              if (_selectedIndex == 1)
-                                SummeryScreen(snapshot.data!),
-
-                              // Pagination controls for Details tab
-                              if (_selectedIndex == 0 &&
-                                  data.length > itemsPerPage)
-                                Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          const SizedBox(width: 10),
-                                          Material(
-                                            elevation: 3,
-                                            child: Container(
-                                              height: 40,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 12.0),
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Colors.grey),
-                                              ),
-                                              child:
-                                                  DropdownButtonHideUnderline(
-                                                child: DropdownButton<int>(
-                                                  value: itemsPerPage,
-                                                  items: itemsPerPageOptions
-                                                      .map((int value) {
-                                                    return DropdownMenuItem<
-                                                        int>(
-                                                      value: value,
-                                                      child: Text(
-                                                          value.toString()),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: (newValue) {
-                                                    setState(() {
-                                                      itemsPerPage = newValue!;
-                                                      currentPage =
-                                                          0; // Reset to first page when items per page change
-                                                    });
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons
-                                                  .circleChevronLeft,
-                                              color: currentPage == 0
-                                                  ? Colors.grey
-                                                  : blueColor,
-                                            ),
-                                            onPressed: currentPage == 0
-                                                ? null
-                                                : () {
-                                                    setState(() {
-                                                      currentPage--;
-                                                    });
-                                                  },
-                                          ),
-                                          Text(
-                                              'Page ${currentPage + 1} of $totalPages'),
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons
-                                                  .circleChevronRight,
-                                              color:
-                                                  currentPage < totalPages - 1
-                                                      ? blueColor
-                                                      : Colors.grey,
-                                            ),
-                                            onPressed:
-                                                currentPage < totalPages - 1
-                                                    ? () {
-                                                        setState(() {
-                                                          currentPage++;
-                                                        });
-                                                      }
-                                                    : null,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              // Custom Tab Bar
-                            ],
-                          ),
+                  FutureBuilder<rentrollreportmodel>(
+                    future: _futureRentersInsurance,
+                    builder: (context, snapshot) {
+                      if (isLoading) {
+                        return Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: ColabShimmerLoadingWidget(),
                         );
-                      },
-                    ),
+                      } else if (!snapshot.hasData ||
+                          snapshot.data!.rentals!.isEmpty) {
+                        return Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              child: Row(
+                                children: [
+                                  // Dropdown for Rental Owners
+                                  Expanded(
+                                    child: DropdownButtonHideUnderline(
+                                      child: Material(
+                                        elevation: 3,
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: DropdownButton2<String>(
+                                          isExpanded: true,
+                                          hint: const Row(
+                                            children: [
+                                              SizedBox(width: 4),
+                                              Expanded(
+                                                child: Text(
+                                                  'Select Rental Owners',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.black,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          items: rentalowners
+                                              .map((owner) =>
+                                                  DropdownMenuItem<String>(
+                                                    value:
+                                                        owner['rentalowner_id'],
+                                                    child: Text(
+                                                      owner[
+                                                          'rentalOwner_name']!,
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.black,
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ))
+                                              .toList(),
+                                          value: selectedOwner,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              selectedOwner = value;
+                                            });
+                                          },
+                                          buttonStyleData: ButtonStyleData(
+                                            height: 45,
+                                            width: double.infinity,
+                                            padding: const EdgeInsets.only(
+                                                left: 14, right: 14),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                color: const Color(0xFF8A95A8),
+                                              ),
+                                              color: Colors.white,
+                                            ),
+                                            elevation: 0,
+                                          ),
+                                          dropdownStyleData: DropdownStyleData(
+                                            maxHeight: 250,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.8,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(14),
+                                            ),
+                                            offset: const Offset(-20, 0),
+                                            scrollbarTheme: ScrollbarThemeData(
+                                              radius: const Radius.circular(40),
+                                              thickness:
+                                                  MaterialStateProperty.all(6),
+                                              thumbVisibility:
+                                                  MaterialStateProperty.all(
+                                                      true),
+                                            ),
+                                          ),
+                                          menuItemStyleData:
+                                              const MenuItemStyleData(
+                                            height: 50,
+                                            padding: EdgeInsets.only(
+                                                left: 14, right: 14),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+
+                                  // Run Report Button
+                                  Container(
+                                    height: 45,
+                                    width: 45,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.grey.shade300),
+                                      borderRadius: BorderRadius.circular(0),
+                                      color: Colors.white,
+                                    ),
+                                    child: IconButton(
+                                      icon: const FaIcon(
+                                          FontAwesomeIcons.circlePlay),
+                                      onPressed: () {
+                                        setState(() {
+                                          _futureRentersInsurance =
+                                              fetchRentersInsuranceData(
+                                                  id: selectedOwner);
+                                        });
+                                        print("Run Report");
+                                      },
+                                      tooltip: "Run Report",
+                                    ),
+                                  ),
+                                  //const SizedBox(width: 8),
+
+                                  // Download Button with Dropdown
+                                  Container(
+                                    height: 45,
+                                    width: 75,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.grey.shade300),
+                                      borderRadius: BorderRadius.circular(0),
+                                      color: Colors.white,
+                                    ),
+                                    child: PopupMenuButton<String>(
+                                      offset: const Offset(5, 50),
+                                      onSelected: handleDownload,
+                                      icon: const Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          FaIcon(FontAwesomeIcons
+                                              .download), // Your download icon
+                                          SizedBox(
+                                              width:
+                                                  5), // Adds spacing between the icons
+                                          Icon(Icons
+                                              .arrow_drop_down), // The dropdown arrow icon
+                                        ],
+                                      ),
+                                      tooltip: "Download",
+                                      itemBuilder: (BuildContext context) {
+                                        return downloadOptions
+                                            .map((String option) {
+                                          return PopupMenuItem<String>(
+                                            value: option,
+                                            onTap: () async {
+                                              if (snapshot.hasData)
+                                                generateRentersInsuranceExcel(
+                                                    snapshot.data!);
+                                            },
+                                            child: Text("Download as $option"),
+                                          );
+                                        }).toList();
+                                      },
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Container(
+                              height: MediaQuery.of(context).size.height * .5,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/no_data.jpg",
+                                      height: 200,
+                                      width: 200,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      "No Data Available",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                          fontSize: 16),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+
+                      var data = snapshot.data!.rentals!;
+
+                      // Pagination logic
+                      final totalPages = (data.length / itemsPerPage).ceil();
+                      final currentPageData = data
+                          .skip(currentPage * itemsPerPage)
+                          .take(itemsPerPage)
+                          .toList();
+
+                      return SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            // Search & Export Section
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              child: Row(
+                                children: [
+                                  // Dropdown for Rental Owners
+                                  Expanded(
+                                    child: DropdownButtonHideUnderline(
+                                      child: Material(
+                                        elevation: 3,
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: DropdownButton2<String>(
+                                          isExpanded: true,
+                                          hint: const Row(
+                                            children: [
+                                              SizedBox(width: 4),
+                                              Expanded(
+                                                child: Text(
+                                                  'Select Rental Owners',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.black,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          items: rentalowners
+                                              .map((owner) =>
+                                                  DropdownMenuItem<String>(
+                                                    value:
+                                                        owner['rentalowner_id'],
+                                                    child: Text(
+                                                      owner[
+                                                          'rentalOwner_name']!,
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.black,
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ))
+                                              .toList(),
+                                          value: selectedOwner,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              selectedOwner = value;
+                                            });
+                                          },
+                                          buttonStyleData: ButtonStyleData(
+                                            height: 45,
+                                            width: double.infinity,
+                                            padding: const EdgeInsets.only(
+                                                left: 14, right: 14),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                color: const Color(0xFF8A95A8),
+                                              ),
+                                              color: Colors.white,
+                                            ),
+                                            elevation: 0,
+                                          ),
+                                          dropdownStyleData: DropdownStyleData(
+                                            maxHeight: 250,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.8,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(14),
+                                            ),
+                                            offset: const Offset(-20, 0),
+                                            scrollbarTheme: ScrollbarThemeData(
+                                              radius: const Radius.circular(40),
+                                              thickness:
+                                                  MaterialStateProperty.all(6),
+                                              thumbVisibility:
+                                                  MaterialStateProperty.all(
+                                                      true),
+                                            ),
+                                          ),
+                                          menuItemStyleData:
+                                              const MenuItemStyleData(
+                                            height: 50,
+                                            padding: EdgeInsets.only(
+                                                left: 14, right: 14),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+
+                                  // Run Report Button
+                                  Container(
+                                    height: 45,
+                                    width: 45,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.grey.shade300),
+                                      borderRadius: BorderRadius.circular(0),
+                                      color: Colors.white,
+                                    ),
+                                    child: IconButton(
+                                      icon: const FaIcon(
+                                          FontAwesomeIcons.circlePlay),
+                                      onPressed: () {
+                                        setState(() {
+                                          _futureRentersInsurance =
+                                              fetchRentersInsuranceData(
+                                                  id: selectedOwner);
+                                        });
+                                        print("Run Report");
+                                      },
+                                      tooltip: "Run Report",
+                                    ),
+                                  ),
+                                  //const SizedBox(width: 8),
+
+                                  // Download Button with Dropdown
+                                  Container(
+                                    height: 45,
+                                    width: 75,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.grey.shade300),
+                                      borderRadius: BorderRadius.circular(0),
+                                      color: Colors.white,
+                                    ),
+                                    child: PopupMenuButton<String>(
+                                      offset: const Offset(5, 50),
+                                      onSelected: handleDownload,
+                                      icon: const Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          FaIcon(FontAwesomeIcons
+                                              .download), // Your download icon
+                                          SizedBox(
+                                              width:
+                                                  5), // Adds spacing between the icons
+                                          Icon(Icons
+                                              .arrow_drop_down), // The dropdown arrow icon
+                                        ],
+                                      ),
+                                      tooltip: "Download",
+                                      itemBuilder: (BuildContext context) {
+                                        return downloadOptions
+                                            .map((String option) {
+                                          return PopupMenuItem<String>(
+                                            value: option,
+                                            onTap: () async {
+                                              if (option == "PDF")
+                                                generaterentersInsurancePdf(
+                                                    snapshot.data!);
+                                              if (option == "Excel")
+                                                generateRentersInsuranceExcel(
+                                                    snapshot.data!);
+                                              if (option == "CSV")
+                                                generateRentersInsuranceCSV(
+                                                    snapshot.data!);
+                                            },
+                                            child: Text("Download as $option"),
+                                          );
+                                        }).toList();
+                                      },
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 15),
+                              padding: const EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE0E0E0),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Row(
+                                children: [
+                                  _buildTabButton("Details", 0),
+                                  _buildTabButton("Summary", 1),
+                                ],
+                              ),
+                            ),
+                            if (_selectedIndex == 0)
+                              DetailScreen(currentPageData),
+                            if (_selectedIndex == 1)
+                              SummeryScreen(snapshot.data!),
+
+                            // Pagination controls for Details tab
+                            if (_selectedIndex == 0 &&
+                                data.length > itemsPerPage)
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const SizedBox(width: 10),
+                                        Material(
+                                          elevation: 3,
+                                          child: Container(
+                                            height: 40,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.grey),
+                                            ),
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<int>(
+                                                value: itemsPerPage,
+                                                items: itemsPerPageOptions
+                                                    .map((int value) {
+                                                  return DropdownMenuItem<int>(
+                                                    value: value,
+                                                    child:
+                                                        Text(value.toString()),
+                                                  );
+                                                }).toList(),
+                                                onChanged: (newValue) {
+                                                  setState(() {
+                                                    itemsPerPage = newValue!;
+                                                    currentPage =
+                                                        0; // Reset to first page when items per page change
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronLeft,
+                                            color: currentPage == 0
+                                                ? Colors.grey
+                                                : blueColor,
+                                          ),
+                                          onPressed: currentPage == 0
+                                              ? null
+                                              : () {
+                                                  setState(() {
+                                                    currentPage--;
+                                                  });
+                                                },
+                                        ),
+                                        Text(
+                                            'Page ${currentPage + 1} of $totalPages'),
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronRight,
+                                            color: currentPage < totalPages - 1
+                                                ? blueColor
+                                                : Colors.grey,
+                                          ),
+                                          onPressed:
+                                              currentPage < totalPages - 1
+                                                  ? () {
+                                                      setState(() {
+                                                        currentPage++;
+                                                      });
+                                                    }
+                                                  : null,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              )
+                            // Custom Tab Bar
+                          ],
+                        ),
+                      );
+                    },
+                  ),
 
                   //   FutureBuilder<List<RentersInsuranceData>>(
                   //     future: _futureRentersInsurance,
@@ -2834,7 +2847,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                                 )),
                                                 Expanded(
                                                     child: Text(
-                                                  "${lease.leaseStart ?? '-'}",
+                                                  "${lease.leaseStart != null ? Provider.of<DateProvider>(context, listen: false).formatCurrentDate(lease.leaseStart!) : '-'}",
                                                   style: TextStyle(
                                                     color: blueColor,
                                                     fontWeight: FontWeight.bold,
@@ -2843,7 +2856,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                                 )),
                                                 Expanded(
                                                     child: Text(
-                                                  "${lease.leaseEnd ?? '-'}",
+                                                  "${lease.leaseEnd != null ? Provider.of<DateProvider>(context, listen: false).formatCurrentDate(lease.leaseEnd!) : '-'}",
                                                   style: TextStyle(
                                                     color: blueColor,
                                                     fontWeight: FontWeight.bold,
@@ -2870,7 +2883,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                                     buildTableRows(
                                                       'Rent start',
                                                       getDisplayValue(
-                                                          "${lease.leaseStart}"),
+                                                          "${lease.leaseStart != null ? Provider.of<DateProvider>(context, listen: false).formatCurrentDate(lease.leaseStart!) : '-'}"),
                                                       'Rent Cycle',
                                                       getDisplayValue(
                                                           lease.rentCycle),

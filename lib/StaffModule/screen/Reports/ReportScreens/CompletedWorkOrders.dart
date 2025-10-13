@@ -12,6 +12,7 @@ import 'package:three_zero_two_property/Model/CompletedWorkOrdersModel.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
 import '../../../repository/CompletedWorkData.dart';
 import '../../../repository/GetAdminAddressPdf.dart';
@@ -459,6 +460,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
 
   Future<void> generateWorkOrderPdf(
       List<CompletedWorkData> workOrderData) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final GetAddressAdminPdfService service = GetAddressAdminPdfService();
     profile? profileData;
 
@@ -473,7 +475,8 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
     final image = pw.MemoryImage(
       (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
     );
-    final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
+    final currentDate =
+        dateProvider.formatCurrentDate(DateTime.now().toString());
 
     pdf.addPage(
       pw.MultiPage(
@@ -560,7 +563,9 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
             ],
             data: workOrderData.map((workOrder) {
               return [
-                formatDate(workOrder.date ?? ''),
+                workOrder.date != null
+                    ? dateProvider.formatCurrentDate(workOrder.date!)
+                    : '',
                 workOrder.rentalAddress ?? '',
                 workOrder.workSubject ?? '',
                 workOrder.workPerformed ?? '',
@@ -600,6 +605,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
 
   Future<void> generateWorkOrderExcel(
       List<CompletedWorkData> workOrderData) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final syncXlsx.Workbook workbook = syncXlsx.Workbook();
     final syncXlsx.Worksheet sheet = workbook.worksheets[0];
 
@@ -631,8 +637,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
       String formattedDate;
       try {
         formattedDate = workOrder.date != null
-            ? DateFormat('yyyy-MM-dd')
-                .format(DateFormat('yyyy-MM-dd').parse(workOrder.date!))
+            ? dateProvider.formatCurrentDate(workOrder.date!)
             : 'Invalid Date';
       } catch (e) {
         formattedDate = 'Invalid Date';
@@ -674,13 +679,16 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
 
   Future<void> generateWorkOrderCsv(
       List<CompletedWorkData> workOrderData) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     List<List<dynamic>> rows = [
       ['Date', 'Address', 'Work', 'Performed']
     ];
 
     for (var workOrder in workOrderData) {
       rows.add([
-        workOrder.date ?? '',
+        workOrder.date != null
+            ? dateProvider.formatCurrentDate(workOrder.date!)
+            : '',
         workOrder.rentalAddress ?? '',
         workOrder.workSubject ?? '',
         workOrder.workPerformed ?? '',
@@ -715,6 +723,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: widget_302_Staff.App_Bar(context: context),
@@ -1116,7 +1125,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                                                     ),
                                                     Expanded(
                                                       child: Text(
-                                                        '   ${workOrder.date == null || workOrder.date!.isEmpty ? '-- - - -- ----' : formatDate(workOrder.date!)} ',
+                                                        '   ${workOrder.date == null || workOrder.date!.isEmpty ? '-- - - -- ----' : dateProvider.formatCurrentDate(workOrder.date!)} ',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:

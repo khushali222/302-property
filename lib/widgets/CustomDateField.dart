@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../constant/constant.dart';
+import '../provider/dateProvider.dart';
 
 class CustomDateField extends StatefulWidget {
   final String hintText;
@@ -9,7 +11,7 @@ class CustomDateField extends StatefulWidget {
   final void Function(DateTime?)? onDateSelected;
   final IconData? prefixIcon;
   final bool readOnly;
-  final  void Function(dynamic)? onChanged;
+  final void Function(dynamic)? onChanged;
 
   CustomDateField({
     Key? key,
@@ -36,8 +38,8 @@ class CustomDateFieldState extends State<CustomDateField> {
       context: context,
       initialDate: _selectedDate ?? DateTime.now(),
       firstDate: DateTime(2000),
-     // lastDate:  DateTime.now(),
-       lastDate: DateTime(2101),
+      // lastDate:  DateTime.now(),
+      lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
@@ -56,8 +58,9 @@ class CustomDateFieldState extends State<CustomDateField> {
     if (picked != null) {
       setState(() {
         _selectedDate = picked;
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
         widget.controller?.text =
-            _selectedDate!.toLocal().toString().split(' ')[0];
+            dateProvider.formatCurrentDate(_selectedDate!.toString());
         _errorMessage = widget.validator != null
             ? widget.validator!(widget.controller?.text)
             : null;
