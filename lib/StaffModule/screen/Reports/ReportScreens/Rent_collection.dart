@@ -2137,244 +2137,244 @@ class _Rent_collectionState extends State<Rent_collection> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                // Search and Filter Controls
-                                if (_selectedIndex ==
-                                    1) // Show filters only for Details tab
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 8),
-                                    child: Column(
-                                      children: [
-                                        // Search Bar
-                                        Container(
-                                          height: 45,
-                                          child: TextField(
-                                            onChanged: (value) {
-                                              setState(() {
-                                                searchvalue = value;
-                                              });
-                                            },
-                                            decoration: InputDecoration(
-                                              hintText:
-                                                  'Search by address or company...',
-                                              prefixIcon:
-                                                  const Icon(Icons.search),
-                                              border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              contentPadding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 12),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        // Filter Row - Responsive Layout
-                                        LayoutBuilder(
-                                          builder: (context, constraints) {
-                                            if (constraints.maxWidth < 600) {
-                                              // Stack filters vertically on small screens
-                                              return Column(
-                                                children: [
-                                                  DropdownButtonFormField<
-                                                      String>(
-                                                    value: selectedRentalOwner,
-                                                    decoration: InputDecoration(
-                                                      labelText: 'Rental Owner',
-                                                      border:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                      ),
-                                                      contentPadding:
-                                                          const EdgeInsets
-                                                              .symmetric(
-                                                              horizontal: 12,
-                                                              vertical: 8),
-                                                    ),
-                                                    items: rentalOwners
-                                                        .map((owner) {
-                                                      return DropdownMenuItem(
-                                                        value: owner,
-                                                        child: Text(
-                                                          owner,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                      );
-                                                    }).toList(),
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        selectedRentalOwner =
-                                                            value;
-                                                      });
-                                                    },
-                                                  ),
-                                                  const SizedBox(height: 10),
-                                                  DropdownButtonFormField<
-                                                      String>(
-                                                    value:
-                                                        selectedBalanceFilter,
-                                                    decoration: InputDecoration(
-                                                      labelText:
-                                                          'Balance Filter',
-                                                      border:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                      ),
-                                                      contentPadding:
-                                                          const EdgeInsets
-                                                              .symmetric(
-                                                              horizontal: 12,
-                                                              vertical: 8),
-                                                    ),
-                                                    items: balanceFilters
-                                                        .map((filter) {
-                                                      return DropdownMenuItem(
-                                                        value: filter,
-                                                        child: Text(
-                                                          filter,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                      );
-                                                    }).toList(),
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        selectedBalanceFilter =
-                                                            value;
-                                                      });
-                                                    },
-                                                  ),
-                                                ],
-                                              );
-                                            } else {
-                                              // Keep horizontal layout for larger screens
-                                              return Row(
-                                                children: [
-                                                  Expanded(
-                                                    child:
-                                                        DropdownButtonFormField<
-                                                            String>(
-                                                      value:
-                                                          selectedRentalOwner,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        labelText:
-                                                            'Rental Owner',
-                                                        border:
-                                                            OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                        ),
-                                                        contentPadding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal: 12,
-                                                                vertical: 8),
-                                                      ),
-                                                      items: rentalOwners
-                                                          .map((owner) {
-                                                        return DropdownMenuItem(
-                                                          value: owner,
-                                                          child: Text(
-                                                            owner,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                          ),
-                                                        );
-                                                      }).toList(),
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          selectedRentalOwner =
-                                                              value;
-                                                        });
-                                                      },
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 10),
-                                                  Expanded(
-                                                    child:
-                                                        DropdownButtonFormField<
-                                                            String>(
-                                                      value:
-                                                          selectedBalanceFilter,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        labelText:
-                                                            'Balance Filter',
-                                                        border:
-                                                            OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                        ),
-                                                        contentPadding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal: 12,
-                                                                vertical: 8),
-                                                      ),
-                                                      items: balanceFilters
-                                                          .map((filter) {
-                                                        return DropdownMenuItem(
-                                                          value: filter,
-                                                          child: Text(
-                                                            filter,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                          ),
-                                                        );
-                                                      }).toList(),
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          selectedBalanceFilter =
-                                                              value;
-                                                        });
-                                                      },
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            }
-                                          },
-                                        ),
-                                        const SizedBox(height: 8),
-                                        // Clear Filters Button
-                                        Row(
-                                          children: [
-                                            const Spacer(),
-                                            TextButton.icon(
-                                              onPressed: () {
-                                                setState(() {
-                                                  searchvalue = '';
-                                                  selectedRentalOwner = 'All';
-                                                  selectedBalanceFilter = 'All';
-                                                  currentPage = 0;
-                                                });
-                                              },
-                                              icon: const Icon(Icons.clear,
-                                                  size: 16),
-                                              label:
-                                                  const Text('Clear Filters'),
-                                              style: TextButton.styleFrom(
-                                                foregroundColor:
-                                                    Colors.grey[600],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                // // Search and Filter Controls
+                                // if (_selectedIndex ==
+                                //     1) // Show filters only for Details tab
+                                //   Padding(
+                                //     padding: const EdgeInsets.symmetric(
+                                //         horizontal: 16, vertical: 8),
+                                //     child: Column(
+                                //       children: [
+                                //         // Search Bar
+                                //         Container(
+                                //           height: 45,
+                                //           child: TextField(
+                                //             onChanged: (value) {
+                                //               setState(() {
+                                //                 searchvalue = value;
+                                //               });
+                                //             },
+                                //             decoration: InputDecoration(
+                                //               hintText:
+                                //                   'Search by address or company...',
+                                //               prefixIcon:
+                                //                   const Icon(Icons.search),
+                                //               border: OutlineInputBorder(
+                                //                 borderRadius:
+                                //                     BorderRadius.circular(8),
+                                //               ),
+                                //               contentPadding:
+                                //                   const EdgeInsets.symmetric(
+                                //                       horizontal: 16,
+                                //                       vertical: 12),
+                                //             ),
+                                //           ),
+                                //         ),
+                                //         const SizedBox(height: 8),
+                                //         // Filter Row - Responsive Layout
+                                //         LayoutBuilder(
+                                //           builder: (context, constraints) {
+                                //             if (constraints.maxWidth < 600) {
+                                //               // Stack filters vertically on small screens
+                                //               return Column(
+                                //                 children: [
+                                //                   DropdownButtonFormField<
+                                //                       String>(
+                                //                     value: selectedRentalOwner,
+                                //                     decoration: InputDecoration(
+                                //                       labelText: 'Rental Owner',
+                                //                       border:
+                                //                           OutlineInputBorder(
+                                //                         borderRadius:
+                                //                             BorderRadius
+                                //                                 .circular(8),
+                                //                       ),
+                                //                       contentPadding:
+                                //                           const EdgeInsets
+                                //                               .symmetric(
+                                //                               horizontal: 12,
+                                //                               vertical: 8),
+                                //                     ),
+                                //                     items: rentalOwners
+                                //                         .map((owner) {
+                                //                       return DropdownMenuItem(
+                                //                         value: owner,
+                                //                         child: Text(
+                                //                           owner,
+                                //                           overflow: TextOverflow
+                                //                               .ellipsis,
+                                //                         ),
+                                //                       );
+                                //                     }).toList(),
+                                //                     onChanged: (value) {
+                                //                       setState(() {
+                                //                         selectedRentalOwner =
+                                //                             value;
+                                //                       });
+                                //                     },
+                                //                   ),
+                                //                   const SizedBox(height: 10),
+                                //                   DropdownButtonFormField<
+                                //                       String>(
+                                //                     value:
+                                //                         selectedBalanceFilter,
+                                //                     decoration: InputDecoration(
+                                //                       labelText:
+                                //                           'Balance Filter',
+                                //                       border:
+                                //                           OutlineInputBorder(
+                                //                         borderRadius:
+                                //                             BorderRadius
+                                //                                 .circular(8),
+                                //                       ),
+                                //                       contentPadding:
+                                //                           const EdgeInsets
+                                //                               .symmetric(
+                                //                               horizontal: 12,
+                                //                               vertical: 8),
+                                //                     ),
+                                //                     items: balanceFilters
+                                //                         .map((filter) {
+                                //                       return DropdownMenuItem(
+                                //                         value: filter,
+                                //                         child: Text(
+                                //                           filter,
+                                //                           overflow: TextOverflow
+                                //                               .ellipsis,
+                                //                         ),
+                                //                       );
+                                //                     }).toList(),
+                                //                     onChanged: (value) {
+                                //                       setState(() {
+                                //                         selectedBalanceFilter =
+                                //                             value;
+                                //                       });
+                                //                     },
+                                //                   ),
+                                //                 ],
+                                //               );
+                                //             } else {
+                                //               // Keep horizontal layout for larger screens
+                                //               return Row(
+                                //                 children: [
+                                //                   Expanded(
+                                //                     child:
+                                //                         DropdownButtonFormField<
+                                //                             String>(
+                                //                       value:
+                                //                           selectedRentalOwner,
+                                //                       decoration:
+                                //                           InputDecoration(
+                                //                         labelText:
+                                //                             'Rental Owner',
+                                //                         border:
+                                //                             OutlineInputBorder(
+                                //                           borderRadius:
+                                //                               BorderRadius
+                                //                                   .circular(8),
+                                //                         ),
+                                //                         contentPadding:
+                                //                             const EdgeInsets
+                                //                                 .symmetric(
+                                //                                 horizontal: 12,
+                                //                                 vertical: 8),
+                                //                       ),
+                                //                       items: rentalOwners
+                                //                           .map((owner) {
+                                //                         return DropdownMenuItem(
+                                //                           value: owner,
+                                //                           child: Text(
+                                //                             owner,
+                                //                             overflow:
+                                //                                 TextOverflow
+                                //                                     .ellipsis,
+                                //                           ),
+                                //                         );
+                                //                       }).toList(),
+                                //                       onChanged: (value) {
+                                //                         setState(() {
+                                //                           selectedRentalOwner =
+                                //                               value;
+                                //                         });
+                                //                       },
+                                //                     ),
+                                //                   ),
+                                //                   const SizedBox(width: 10),
+                                //                   Expanded(
+                                //                     child:
+                                //                         DropdownButtonFormField<
+                                //                             String>(
+                                //                       value:
+                                //                           selectedBalanceFilter,
+                                //                       decoration:
+                                //                           InputDecoration(
+                                //                         labelText:
+                                //                             'Balance Filter',
+                                //                         border:
+                                //                             OutlineInputBorder(
+                                //                           borderRadius:
+                                //                               BorderRadius
+                                //                                   .circular(8),
+                                //                         ),
+                                //                         contentPadding:
+                                //                             const EdgeInsets
+                                //                                 .symmetric(
+                                //                                 horizontal: 12,
+                                //                                 vertical: 8),
+                                //                       ),
+                                //                       items: balanceFilters
+                                //                           .map((filter) {
+                                //                         return DropdownMenuItem(
+                                //                           value: filter,
+                                //                           child: Text(
+                                //                             filter,
+                                //                             overflow:
+                                //                                 TextOverflow
+                                //                                     .ellipsis,
+                                //                           ),
+                                //                         );
+                                //                       }).toList(),
+                                //                       onChanged: (value) {
+                                //                         setState(() {
+                                //                           selectedBalanceFilter =
+                                //                               value;
+                                //                         });
+                                //                       },
+                                //                     ),
+                                //                   ),
+                                //                 ],
+                                //               );
+                                //             }
+                                //           },
+                                //         ),
+                                //         const SizedBox(height: 8),
+                                //         // Clear Filters Button
+                                //         Row(
+                                //           children: [
+                                //             const Spacer(),
+                                //             TextButton.icon(
+                                //               onPressed: () {
+                                //                 setState(() {
+                                //                   searchvalue = '';
+                                //                   selectedRentalOwner = 'All';
+                                //                   selectedBalanceFilter = 'All';
+                                //                   currentPage = 0;
+                                //                 });
+                                //               },
+                                //               icon: const Icon(Icons.clear,
+                                //                   size: 16),
+                                //               label:
+                                //                   const Text('Clear Filters'),
+                                //               style: TextButton.styleFrom(
+                                //                 foregroundColor:
+                                //                     Colors.grey[600],
+                                //               ),
+                                //             ),
+                                //           ],
+                                //         ),
+                                //       ],
+                                //     ),
+                                //   ),
                                 // Tab Row
                                 Padding(
                                   padding: const EdgeInsets.symmetric(

@@ -1861,418 +1861,418 @@ class _Rent_collectionState extends State<Rent_collection> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                // Search and Filter Controls
-                                if (_selectedIndex ==
-                                    1) // Show filters only for Details tab
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 8),
-                                    child: Column(
-                                      children: [
-                                        // Search Bar
-                                        Container(
-                                          height: 45,
-                                          child: TextField(
-                                            onChanged: (value) {
-                                              setState(() {
-                                                searchvalue = value;
-                                              });
-                                            },
-                                            decoration: InputDecoration(
-                                              hintText:
-                                                  'Search by address or company...',
-                                              prefixIcon:
-                                                  const Icon(Icons.search),
-                                              border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              contentPadding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 12),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        // Filter Row - Responsive Layout
-                                        LayoutBuilder(
-                                          builder: (context, constraints) {
-                                            if (constraints.maxWidth < 600) {
-                                              // Stack filters vertically on small screens
-                                              return Column(
-                                                children: [
-                                                  DropdownButtonHideUnderline(
-                                                    child: Material(
-                                                      elevation: 3,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                      child: DropdownButton2<
-                                                          String>(
-                                                        isExpanded: true,
-                                                        hint: const Row(
-                                                          children: [
-                                                            SizedBox(
-                                                              width: 4,
-                                                            ),
-                                                            Expanded(
-                                                              child: Text(
-                                                                'Rental Owner',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 14,
-                                                                  color: Color(
-                                                                      0xFF8A95A8),
-                                                                ),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        items: rentalOwners
-                                                            .map((String
-                                                                    item) =>
-                                                                DropdownMenuItem<
-                                                                    String>(
-                                                                  value: item,
-                                                                  child: Text(
-                                                                    item,
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      fontSize:
-                                                                          14,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Colors
-                                                                          .black,
-                                                                    ),
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                  ),
-                                                                ))
-                                                            .toList(),
-                                                        value:
-                                                            selectedRentalOwner,
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            selectedRentalOwner =
-                                                                value;
-                                                          });
-                                                        },
-                                                        buttonStyleData:
-                                                            ButtonStyleData(
-                                                          height: 45,
-                                                          width:
-                                                              double.infinity,
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 14,
-                                                                  right: 14),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8),
-                                                            border: Border.all(
-                                                              color: const Color(
-                                                                  0xFF8A95A8),
-                                                            ),
-                                                            color: Colors.white,
-                                                          ),
-                                                          elevation: 0,
-                                                        ),
-                                                        dropdownStyleData:
-                                                            DropdownStyleData(
-                                                          maxHeight: 250,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        14),
-                                                          ),
-                                                          offset: const Offset(
-                                                              -20, 0),
-                                                          scrollbarTheme:
-                                                              ScrollbarThemeData(
-                                                            radius: const Radius
-                                                                .circular(40),
-                                                            thickness:
-                                                                MaterialStateProperty
-                                                                    .all(6),
-                                                            thumbVisibility:
-                                                                MaterialStateProperty
-                                                                    .all(true),
-                                                          ),
-                                                        ),
-                                                        menuItemStyleData:
-                                                            const MenuItemStyleData(
-                                                          height: 40,
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  left: 14,
-                                                                  right: 14),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 10),
-                                                  DropdownButtonFormField<
-                                                      String>(
-                                                    value:
-                                                        selectedBalanceFilter,
-                                                    decoration: InputDecoration(
-                                                      labelText:
-                                                          'Balance Filter',
-                                                      border:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                      ),
-                                                      contentPadding:
-                                                          const EdgeInsets
-                                                              .symmetric(
-                                                              horizontal: 12,
-                                                              vertical: 8),
-                                                    ),
-                                                    items: balanceFilters
-                                                        .map((filter) {
-                                                      return DropdownMenuItem(
-                                                        value: filter,
-                                                        child: Text(
-                                                          filter,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                      );
-                                                    }).toList(),
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        selectedBalanceFilter =
-                                                            value;
-                                                      });
-                                                    },
-                                                  ),
-                                                ],
-                                              );
-                                            } else {
-                                              // Keep horizontal layout for larger screens
-                                              return Row(
-                                                children: [
-                                                  Expanded(
-                                                    child:
-                                                        DropdownButtonHideUnderline(
-                                                      child: Material(
-                                                        elevation: 3,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                        child: DropdownButton2<
-                                                            String>(
-                                                          isExpanded: true,
-                                                          hint: const Row(
-                                                            children: [
-                                                              SizedBox(
-                                                                width: 4,
-                                                              ),
-                                                              Expanded(
-                                                                child: Text(
-                                                                  'Rental Owner',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        14,
-                                                                    color: Color(
-                                                                        0xFF8A95A8),
-                                                                  ),
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          items: rentalOwners
-                                                              .map((String
-                                                                      item) =>
-                                                                  DropdownMenuItem<
-                                                                      String>(
-                                                                    value: item,
-                                                                    child: Text(
-                                                                      item,
-                                                                      style:
-                                                                          const TextStyle(
-                                                                        fontSize:
-                                                                            14,
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
-                                                                        color: Colors
-                                                                            .black,
-                                                                      ),
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                    ),
-                                                                  ))
-                                                              .toList(),
-                                                          value:
-                                                              selectedRentalOwner,
-                                                          onChanged: (value) {
-                                                            setState(() {
-                                                              selectedRentalOwner =
-                                                                  value;
-                                                            });
-                                                          },
-                                                          buttonStyleData:
-                                                              ButtonStyleData(
-                                                            height: 45,
-                                                            width:
-                                                                double.infinity,
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    left: 14,
-                                                                    right: 14),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8),
-                                                              border:
-                                                                  Border.all(
-                                                                color: const Color(
-                                                                    0xFF8A95A8),
-                                                              ),
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                            elevation: 0,
-                                                          ),
-                                                          dropdownStyleData:
-                                                              DropdownStyleData(
-                                                            maxHeight: 250,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          14),
-                                                            ),
-                                                            offset:
-                                                                const Offset(
-                                                                    -20, 0),
-                                                            scrollbarTheme:
-                                                                ScrollbarThemeData(
-                                                              radius:
-                                                                  const Radius
-                                                                      .circular(
-                                                                      40),
-                                                              thickness:
-                                                                  MaterialStateProperty
-                                                                      .all(6),
-                                                              thumbVisibility:
-                                                                  MaterialStateProperty
-                                                                      .all(
-                                                                          true),
-                                                            ),
-                                                          ),
-                                                          menuItemStyleData:
-                                                              const MenuItemStyleData(
-                                                            height: 40,
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    left: 14,
-                                                                    right: 14),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 10),
-                                                  Expanded(
-                                                    child:
-                                                        DropdownButtonFormField<
-                                                            String>(
-                                                      value:
-                                                          selectedBalanceFilter,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        labelText:
-                                                            'Balance Filter',
-                                                        border:
-                                                            OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                        ),
-                                                        contentPadding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal: 12,
-                                                                vertical: 8),
-                                                      ),
-                                                      items: balanceFilters
-                                                          .map((filter) {
-                                                        return DropdownMenuItem(
-                                                          value: filter,
-                                                          child: Text(
-                                                            filter,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                          ),
-                                                        );
-                                                      }).toList(),
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          selectedBalanceFilter =
-                                                              value;
-                                                        });
-                                                      },
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            }
-                                          },
-                                        ),
-                                        const SizedBox(height: 8),
-                                        // Clear Filters Button
-                                        Row(
-                                          children: [
-                                            const Spacer(),
-                                            TextButton.icon(
-                                              onPressed: () {
-                                                setState(() {
-                                                  searchvalue = '';
-                                                  selectedRentalOwner = 'All';
-                                                  selectedBalanceFilter = 'All';
-                                                  currentPage = 0;
-                                                });
-                                              },
-                                              icon: const Icon(Icons.clear,
-                                                  size: 16),
-                                              label:
-                                                  const Text('Clear Filters'),
-                                              style: TextButton.styleFrom(
-                                                foregroundColor:
-                                                    Colors.grey[600],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                // // Search and Filter Controls
+                                // if (_selectedIndex ==
+                                //     1) // Show filters only for Details tab
+                                //   Padding(
+                                //     padding: const EdgeInsets.symmetric(
+                                //         horizontal: 16, vertical: 8),
+                                //     child: Column(
+                                //       children: [
+                                //         // Search Bar
+                                //         Container(
+                                //           height: 45,
+                                //           child: TextField(
+                                //             onChanged: (value) {
+                                //               setState(() {
+                                //                 searchvalue = value;
+                                //               });
+                                //             },
+                                //             decoration: InputDecoration(
+                                //               hintText:
+                                //                   'Search by address or company...',
+                                //               prefixIcon:
+                                //                   const Icon(Icons.search),
+                                //               border: OutlineInputBorder(
+                                //                 borderRadius:
+                                //                     BorderRadius.circular(8),
+                                //               ),
+                                //               contentPadding:
+                                //                   const EdgeInsets.symmetric(
+                                //                       horizontal: 16,
+                                //                       vertical: 12),
+                                //             ),
+                                //           ),
+                                //         ),
+                                //         const SizedBox(height: 8),
+                                //         // Filter Row - Responsive Layout
+                                //         LayoutBuilder(
+                                //           builder: (context, constraints) {
+                                //             if (constraints.maxWidth < 600) {
+                                //               // Stack filters vertically on small screens
+                                //               return Column(
+                                //                 children: [
+                                //                   DropdownButtonHideUnderline(
+                                //                     child: Material(
+                                //                       elevation: 3,
+                                //                       borderRadius:
+                                //                           BorderRadius.circular(
+                                //                               8),
+                                //                       child: DropdownButton2<
+                                //                           String>(
+                                //                         isExpanded: true,
+                                //                         hint: const Row(
+                                //                           children: [
+                                //                             SizedBox(
+                                //                               width: 4,
+                                //                             ),
+                                //                             Expanded(
+                                //                               child: Text(
+                                //                                 'Rental Owner',
+                                //                                 style:
+                                //                                     TextStyle(
+                                //                                   fontSize: 14,
+                                //                                   color: Color(
+                                //                                       0xFF8A95A8),
+                                //                                 ),
+                                //                                 overflow:
+                                //                                     TextOverflow
+                                //                                         .ellipsis,
+                                //                               ),
+                                //                             ),
+                                //                           ],
+                                //                         ),
+                                //                         items: rentalOwners
+                                //                             .map((String
+                                //                                     item) =>
+                                //                                 DropdownMenuItem<
+                                //                                     String>(
+                                //                                   value: item,
+                                //                                   child: Text(
+                                //                                     item,
+                                //                                     style:
+                                //                                         const TextStyle(
+                                //                                       fontSize:
+                                //                                           14,
+                                //                                       fontWeight:
+                                //                                           FontWeight
+                                //                                               .bold,
+                                //                                       color: Colors
+                                //                                           .black,
+                                //                                     ),
+                                //                                     overflow:
+                                //                                         TextOverflow
+                                //                                             .ellipsis,
+                                //                                   ),
+                                //                                 ))
+                                //                             .toList(),
+                                //                         value:
+                                //                             selectedRentalOwner,
+                                //                         onChanged: (value) {
+                                //                           setState(() {
+                                //                             selectedRentalOwner =
+                                //                                 value;
+                                //                           });
+                                //                         },
+                                //                         buttonStyleData:
+                                //                             ButtonStyleData(
+                                //                           height: 45,
+                                //                           width:
+                                //                               double.infinity,
+                                //                           padding:
+                                //                               const EdgeInsets
+                                //                                   .only(
+                                //                                   left: 14,
+                                //                                   right: 14),
+                                //                           decoration:
+                                //                               BoxDecoration(
+                                //                             borderRadius:
+                                //                                 BorderRadius
+                                //                                     .circular(
+                                //                                         8),
+                                //                             border: Border.all(
+                                //                               color: const Color(
+                                //                                   0xFF8A95A8),
+                                //                             ),
+                                //                             color: Colors.white,
+                                //                           ),
+                                //                           elevation: 0,
+                                //                         ),
+                                //                         dropdownStyleData:
+                                //                             DropdownStyleData(
+                                //                           maxHeight: 250,
+                                //                           decoration:
+                                //                               BoxDecoration(
+                                //                             borderRadius:
+                                //                                 BorderRadius
+                                //                                     .circular(
+                                //                                         14),
+                                //                           ),
+                                //                           offset: const Offset(
+                                //                               -20, 0),
+                                //                           scrollbarTheme:
+                                //                               ScrollbarThemeData(
+                                //                             radius: const Radius
+                                //                                 .circular(40),
+                                //                             thickness:
+                                //                                 MaterialStateProperty
+                                //                                     .all(6),
+                                //                             thumbVisibility:
+                                //                                 MaterialStateProperty
+                                //                                     .all(true),
+                                //                           ),
+                                //                         ),
+                                //                         menuItemStyleData:
+                                //                             const MenuItemStyleData(
+                                //                           height: 40,
+                                //                           padding:
+                                //                               EdgeInsets.only(
+                                //                                   left: 14,
+                                //                                   right: 14),
+                                //                         ),
+                                //                       ),
+                                //                     ),
+                                //                   ),
+                                //                   const SizedBox(height: 10),
+                                //                   DropdownButtonFormField<
+                                //                       String>(
+                                //                     value:
+                                //                         selectedBalanceFilter,
+                                //                     decoration: InputDecoration(
+                                //                       labelText:
+                                //                           'Balance Filter',
+                                //                       border:
+                                //                           OutlineInputBorder(
+                                //                         borderRadius:
+                                //                             BorderRadius
+                                //                                 .circular(8),
+                                //                       ),
+                                //                       contentPadding:
+                                //                           const EdgeInsets
+                                //                               .symmetric(
+                                //                               horizontal: 12,
+                                //                               vertical: 8),
+                                //                     ),
+                                //                     items: balanceFilters
+                                //                         .map((filter) {
+                                //                       return DropdownMenuItem(
+                                //                         value: filter,
+                                //                         child: Text(
+                                //                           filter,
+                                //                           overflow: TextOverflow
+                                //                               .ellipsis,
+                                //                         ),
+                                //                       );
+                                //                     }).toList(),
+                                //                     onChanged: (value) {
+                                //                       setState(() {
+                                //                         selectedBalanceFilter =
+                                //                             value;
+                                //                       });
+                                //                     },
+                                //                   ),
+                                //                 ],
+                                //               );
+                                //             } else {
+                                //               // Keep horizontal layout for larger screens
+                                //               return Row(
+                                //                 children: [
+                                //                   Expanded(
+                                //                     child:
+                                //                         DropdownButtonHideUnderline(
+                                //                       child: Material(
+                                //                         elevation: 3,
+                                //                         borderRadius:
+                                //                             BorderRadius
+                                //                                 .circular(8),
+                                //                         child: DropdownButton2<
+                                //                             String>(
+                                //                           isExpanded: true,
+                                //                           hint: const Row(
+                                //                             children: [
+                                //                               SizedBox(
+                                //                                 width: 4,
+                                //                               ),
+                                //                               Expanded(
+                                //                                 child: Text(
+                                //                                   'Rental Owner',
+                                //                                   style:
+                                //                                       TextStyle(
+                                //                                     fontSize:
+                                //                                         14,
+                                //                                     color: Color(
+                                //                                         0xFF8A95A8),
+                                //                                   ),
+                                //                                   overflow:
+                                //                                       TextOverflow
+                                //                                           .ellipsis,
+                                //                                 ),
+                                //                               ),
+                                //                             ],
+                                //                           ),
+                                //                           items: rentalOwners
+                                //                               .map((String
+                                //                                       item) =>
+                                //                                   DropdownMenuItem<
+                                //                                       String>(
+                                //                                     value: item,
+                                //                                     child: Text(
+                                //                                       item,
+                                //                                       style:
+                                //                                           const TextStyle(
+                                //                                         fontSize:
+                                //                                             14,
+                                //                                         fontWeight:
+                                //                                             FontWeight.bold,
+                                //                                         color: Colors
+                                //                                             .black,
+                                //                                       ),
+                                //                                       overflow:
+                                //                                           TextOverflow
+                                //                                               .ellipsis,
+                                //                                     ),
+                                //                                   ))
+                                //                               .toList(),
+                                //                           value:
+                                //                               selectedRentalOwner,
+                                //                           onChanged: (value) {
+                                //                             setState(() {
+                                //                               selectedRentalOwner =
+                                //                                   value;
+                                //                             });
+                                //                           },
+                                //                           buttonStyleData:
+                                //                               ButtonStyleData(
+                                //                             height: 45,
+                                //                             width:
+                                //                                 double.infinity,
+                                //                             padding:
+                                //                                 const EdgeInsets
+                                //                                     .only(
+                                //                                     left: 14,
+                                //                                     right: 14),
+                                //                             decoration:
+                                //                                 BoxDecoration(
+                                //                               borderRadius:
+                                //                                   BorderRadius
+                                //                                       .circular(
+                                //                                           8),
+                                //                               border:
+                                //                                   Border.all(
+                                //                                 color: const Color(
+                                //                                     0xFF8A95A8),
+                                //                               ),
+                                //                               color:
+                                //                                   Colors.white,
+                                //                             ),
+                                //                             elevation: 0,
+                                //                           ),
+                                //                           dropdownStyleData:
+                                //                               DropdownStyleData(
+                                //                             maxHeight: 250,
+                                //                             decoration:
+                                //                                 BoxDecoration(
+                                //                               borderRadius:
+                                //                                   BorderRadius
+                                //                                       .circular(
+                                //                                           14),
+                                //                             ),
+                                //                             offset:
+                                //                                 const Offset(
+                                //                                     -20, 0),
+                                //                             scrollbarTheme:
+                                //                                 ScrollbarThemeData(
+                                //                               radius:
+                                //                                   const Radius
+                                //                                       .circular(
+                                //                                       40),
+                                //                               thickness:
+                                //                                   MaterialStateProperty
+                                //                                       .all(6),
+                                //                               thumbVisibility:
+                                //                                   MaterialStateProperty
+                                //                                       .all(
+                                //                                           true),
+                                //                             ),
+                                //                           ),
+                                //                           menuItemStyleData:
+                                //                               const MenuItemStyleData(
+                                //                             height: 40,
+                                //                             padding:
+                                //                                 EdgeInsets.only(
+                                //                                     left: 14,
+                                //                                     right: 14),
+                                //                           ),
+                                //                         ),
+                                //                       ),
+                                //                     ),
+                                //                   ),
+                                //                   const SizedBox(width: 10),
+                                //                   Expanded(
+                                //                     child:
+                                //                         DropdownButtonFormField<
+                                //                             String>(
+                                //                       value:
+                                //                           selectedBalanceFilter,
+                                //                       decoration:
+                                //                           InputDecoration(
+                                //                         labelText:
+                                //                             'Balance Filter',
+                                //                         border:
+                                //                             OutlineInputBorder(
+                                //                           borderRadius:
+                                //                               BorderRadius
+                                //                                   .circular(8),
+                                //                         ),
+                                //                         contentPadding:
+                                //                             const EdgeInsets
+                                //                                 .symmetric(
+                                //                                 horizontal: 12,
+                                //                                 vertical: 8),
+                                //                       ),
+                                //                       items: balanceFilters
+                                //                           .map((filter) {
+                                //                         return DropdownMenuItem(
+                                //                           value: filter,
+                                //                           child: Text(
+                                //                             filter,
+                                //                             overflow:
+                                //                                 TextOverflow
+                                //                                     .ellipsis,
+                                //                           ),
+                                //                         );
+                                //                       }).toList(),
+                                //                       onChanged: (value) {
+                                //                         setState(() {
+                                //                           selectedBalanceFilter =
+                                //                               value;
+                                //                         });
+                                //                       },
+                                //                     ),
+                                //                   ),
+                                //                 ],
+                                //               );
+                                //             }
+                                //           },
+                                //         ),
+                                //         const SizedBox(height: 8),
+                                //         // Clear Filters Button
+                                //         Row(
+                                //           children: [
+                                //             const Spacer(),
+                                //             TextButton.icon(
+                                //               onPressed: () {
+                                //                 setState(() {
+                                //                   searchvalue = '';
+                                //                   selectedRentalOwner = 'All';
+                                //                   selectedBalanceFilter = 'All';
+                                //                   currentPage = 0;
+                                //                 });
+                                //               },
+                                //               icon: const Icon(Icons.clear,
+                                //                   size: 16),
+                                //               label:
+                                //                   const Text('Clear Filters'),
+                                //               style: TextButton.styleFrom(
+                                //                 foregroundColor:
+                                //                     Colors.grey[600],
+                                //               ),
+                                //             ),
+                                //           ],
+                                //         ),
+                                //       ],
+                                //     ),
+                                //   ),
                                 // Tab Row
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
