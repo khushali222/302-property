@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'navigation_helper.dart';
 
-import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.dart';
 import 'package:three_zero_two_property/screens/Leasing/upcoming_renewal/upcoming_renewal.dart';
-import 'package:three_zero_two_property/screens/Reports/ReportsMainScreen.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportsMainScreen.dart';
 
 import '../screens/Communications/E-mail Logs/email_log_table.dart';
@@ -15,17 +14,11 @@ import '../screens/Leasing/RentalRoll/lease_table.dart';
 import '../screens/Leasing/Scheduled_Payments/Scheduled_Payments_table.dart';
 import '../screens/Leasing/scheduled_charges/ScheduledCharge.dart';
 import '../screens/Maintenance/Vendor/Vendor_table.dart';
-import '../screens/Maintenance/Workorder/Add_workorder.dart';
 import '../screens/Maintenance/Workorder/Workorder_table.dart';
 import '../screens/Rental/Properties/Properties_table.dart';
-import '../screens/Rental/Rentalowner/Add_RentalOwners.dart';
 import '../screens/Rental/Tenants/Tenants_table.dart';
-import '../screens/Rental/Properties/add_new_property.dart';
-import '../screens/Rental/Tenants/add_tenants.dart';
 import '../screens/Rental/mortgage/mortgageTable.dart';
-import '../screens/Staff_Member/Add_staffmember.dart';
 import '../screens/Dashboard/dashboard_one.dart';
-import '../screens/Rental/Properties/properties.dart';
 import '../screens/Property_Type/Property_type_table.dart';
 
 import '../screens/Rental/Rentalowner/Rentalowner_table.dart';
@@ -48,17 +41,29 @@ Widget buildListTile(
     child: ListTile(
       onTap: () {
         if (title == "Dashboard" && active != true) {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Dashboard()));
+          NavigationHelper.navigateWithValidationBuilder(
+            context,
+                (context) => Dashboard(),
+            "Dashboard",
+          );
         } else if (title == "Staff" && active != true) {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => StaffTable()));
+          NavigationHelper.navigateWithValidationBuilder(
+            context,
+                (context) => StaffTable(),
+            "Staff",
+          );
         } else if (title == "Reports" && active != true) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ReportsMainScreen()));
+          NavigationHelper.navigateWithValidationBuilder(
+            context,
+                (context) => ReportsMainScreen(),
+            "Reports",
+          );
         } else if (title == "Settings") {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => TabBarExample()));
+          NavigationHelper.navigateWithValidationBuilder(
+            context,
+                (context) => TabBarExample(),
+            "Settings",
+          );
         }
       },
       leading: leadingIcon,
@@ -74,7 +79,6 @@ Widget buildListTile(
 }
 
 void navigateToOption(BuildContext context, String option, bool isActive) {
-  int index = 0;
   Map<String, WidgetBuilder> routes = {
     "Properties": (context) => PropertiesTable(),
     "Rental Owner": (context) => Rentalowner_table(),
@@ -87,20 +91,20 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "E-mail Logs": (context) => Email_log_tablee(),
     "Send E-mail": (context) => Send_Email_table(),
     "Applicants": (context) => Applicants_table(),
-    "Vendor": (context) => Vendor_table(),
     "Upcoming Renewal": (context) => Upcomingrenewal(),
     "Scheduled Payment": (context) => Scheduled_Payments_table(),
     "Scheduled Charges": (context) => ScheduledChargeTable(),
-    "Mortgage":(context)=> MortgageTable()
+    "Mortgage": (context) => MortgageTable()
     // "Work Order": (context) => Cardpayment(leaseId: '',),
   };
 
-  // if (isActive != true) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: routes[option]!),
-  );
-  // }
+  if (routes.containsKey(option)) {
+    NavigationHelper.navigateWithValidationBuilder(
+      context,
+      routes[option]!,
+      option,
+    );
+  }
 }
 
 Widget buildDropdownListTile(

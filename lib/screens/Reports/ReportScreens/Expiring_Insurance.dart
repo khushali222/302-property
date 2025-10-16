@@ -271,7 +271,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                     lease.expirationDate != null
                         ? dateProvider.formatCurrentDate(lease.expirationDate!)
                         : '',
-                    formatCurrency(lease.liabilityCoverage),
+                    formatCurrency(lease.liabilityCoverage.toDouble()),
                     lease.tenantDetails != null
                         ? lease.tenantDetails
                             ?.map((tenant) =>
@@ -364,7 +364,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
           : "");
       sheet
           .getRangeByIndex(2 + i, 6)
-          .setText('\$${lease.liabilityCoverage.toString()}');
+          .setText(formatCurrency(lease.liabilityCoverage.toDouble()));
       String? tenantNames = lease.tenantDetails != null
           ? lease.tenantDetails
               ?.map((tenant) =>
@@ -456,7 +456,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
         lease.expirationDate != null
             ? dateProvider.formatCurrentDate(lease.expirationDate!)
             : '',
-        '\$${lease.liabilityCoverage ?? 0.0}',
+        formatCurrency(lease.liabilityCoverage.toDouble()),
         lease.tenantDetails != null
             ? lease.tenantDetails
                 ?.map((tenant) =>
