@@ -104,10 +104,10 @@ class _Lease_tableState extends State<Lease_table> {
       String bDays = b.remainingDays ?? "---";
 
       // Debug logging
-      print(
-          "DEBUG: Sorting - Lease A: ${a.rentalAddress}, remainingDays: '$aDays'");
-      print(
-          "DEBUG: Sorting - Lease B: ${b.rentalAddress}, remainingDays: '$bDays'");
+      // print(
+      //     "DEBUG: Sorting - Lease A: ${a.rentalAddress}, remainingDays: '$aDays'");
+      // print(
+      //     "DEBUG: Sorting - Lease B: ${b.rentalAddress}, remainingDays: '$bDays'");
 
       // If both are "---", they are equal
       if (aDays == "---" && bDays == "---") return 0;
@@ -664,7 +664,9 @@ class _Lease_tableState extends State<Lease_table> {
                     child: Row(
                       children: [
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 13,),
+                          SizedBox(
+                            width: 13,
+                          ),
                         Expanded(
                           flex: 3,
                           child: Padding(
@@ -915,910 +917,900 @@ class _Lease_tableState extends State<Lease_table> {
                   // if (MediaQuery.of(context).size.width > 500)
                   //   const SizedBox(height: 25),
                   // if (MediaQuery.of(context).size.width < 500)
-                    Padding(
-                      // padding: const EdgeInsets.all(10.0),
-                      padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width < 500 ? 11 : 28),
-                      child: FutureBuilder<List<Lease1>>(
-                        future: futureLease,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return ColabShimmerLoadingWidget();
-                          } else if (snapshot.hasError) {
-                            return Center(
-                                child: Text('Error: ${snapshot.error}'));
-                          } else if (!snapshot.hasData ||
-                              snapshot.data!.isEmpty) {
-                            return Container(
-                              height: MediaQuery.of(context).size.height * .5,
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/images/no_data.jpg",
-                                      height: 200,
-                                      width: 200,
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "No Data Available",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor,
-                                          fontSize: 16),
-                                    )
-                                  ],
-                                ),
+                  Padding(
+                    // padding: const EdgeInsets.all(10.0),
+                    padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.width < 500 ? 11 : 28),
+                    child: FutureBuilder<List<Lease1>>(
+                      future: futureLease,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return ColabShimmerLoadingWidget();
+                        } else if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return Container(
+                            height: MediaQuery.of(context).size.height * .5,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "No Data Available",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
+                                  )
+                                ],
                               ),
-                            );
-                          } else {
-                            var data = snapshot.data!;
+                            ),
+                          );
+                        } else {
+                          var data = snapshot.data!;
 
-                            // Debug logging to see raw data
-                            print("DEBUG: Raw lease data from API:");
-                            for (int i = 0; i < data.length && i < 3; i++) {
-                              print(
-                                  "DEBUG: Lease $i - Address: ${data[i].rentalAddress}, remainingDays: '${data[i].remainingDays}'");
-                            }
+                          // Debug logging to see raw data
+                          print("DEBUG: Raw lease data from API:");
+                          for (int i = 0; i < data.length && i < 3; i++) {
+                            print(
+                                "DEBUG: Lease $i - Address: ${data[i].rentalAddress}, remainingDays: '${data[i].remainingDays}'");
+                          }
 
 // Apply the search filter first
-                            if (searchValue != null &&
-                                searchValue.isNotEmpty &&
-                                searchValue != "All") {
-                              data = data.where((lease) {
-                                final searchLower = searchValue.toLowerCase();
-                                return (lease.rentalAddress
-                                            ?.toLowerCase()
-                                            .contains(searchLower) ??
-                                        false) ||
-                                    (lease.tenantNames
-                                            ?.toLowerCase()
-                                            .contains(searchLower) ??
-                                        false) ||
-                                    (lease.rentCycle
-                                            ?.toLowerCase()
-                                            .contains(searchLower) ??
-                                        false) ||
-                                    (lease.startDate
-                                            ?.toLowerCase()
-                                            .contains(searchLower) ??
-                                        false) ||
-                                    (lease.endDate
-                                            ?.toLowerCase()
-                                            .contains(searchLower) ??
-                                        false) ||
-                                    (lease.amount != null
-                                        ? lease.amount!
-                                            .toStringAsFixed(2)
-                                            .toLowerCase()
-                                            .contains(searchLower)
-                                        : false) ||
-                                    (lease.remainingDays
-                                            ?.toLowerCase()
-                                            .contains(searchLower) ??
-                                        false) ||
-                                    (lease.rentDueDate
-                                            ?.toLowerCase()
-                                            .contains(searchLower) ??
-                                        false) ||
-                                    (lease.totalBalance != null
-                                        ? lease.totalBalance!
-                                            .toStringAsFixed(2)
-                                            .toLowerCase()
-                                            .contains(searchLower)
-                                        : false);
-                              }).toList();
-                            }
+                          if (searchValue != null &&
+                              searchValue.isNotEmpty &&
+                              searchValue != "All") {
+                            data = data.where((lease) {
+                              final searchLower = searchValue.toLowerCase();
+                              return (lease.rentalAddress
+                                          ?.toLowerCase()
+                                          .contains(searchLower) ??
+                                      false) ||
+                                  (lease.tenantNames
+                                          ?.toLowerCase()
+                                          .contains(searchLower) ??
+                                      false) ||
+                                  (lease.rentCycle
+                                          ?.toLowerCase()
+                                          .contains(searchLower) ??
+                                      false) ||
+                                  (lease.startDate
+                                          ?.toLowerCase()
+                                          .contains(searchLower) ??
+                                      false) ||
+                                  (lease.endDate
+                                          ?.toLowerCase()
+                                          .contains(searchLower) ??
+                                      false) ||
+                                  (lease.amount != null
+                                      ? lease.amount!
+                                          .toStringAsFixed(2)
+                                          .toLowerCase()
+                                          .contains(searchLower)
+                                      : false) ||
+                                  (lease.remainingDays
+                                          ?.toLowerCase()
+                                          .contains(searchLower) ??
+                                      false) ||
+                                  (lease.rentDueDate
+                                          ?.toLowerCase()
+                                          .contains(searchLower) ??
+                                      false) ||
+                                  (lease.totalBalance != null
+                                      ? lease.totalBalance!
+                                          .toStringAsFixed(2)
+                                          .toLowerCase()
+                                          .contains(searchLower)
+                                      : false);
+                            }).toList();
+                          }
 
 // Apply the status filter next
-                            if (selectedStatus == "Active") {
-                              data = data.where((lease) {
-                                DateTime now = DateTime.now();
-                                DateTime? startDate;
-                                try {
-                                  startDate = DateTime.parse(lease.startDate!);
-                                } catch (e) {
-                                  return false;
-                                }
+                          if (selectedStatus == "Active") {
+                            data = data.where((lease) {
+                              DateTime now = DateTime.now();
+                              DateTime? startDate;
+                              try {
+                                startDate = DateTime.parse(lease.startDate!);
+                              } catch (e) {
+                                return false;
+                              }
 
-                                // For "at will" or null end date, only check start date
-                                if (lease.endDate == null ||
-                                    lease.endDate!.toLowerCase() == "at will") {
-                                  return startDate.isBefore(now) ||
-                                      startDate.isAtSameMomentAs(now);
-                                }
+                              // For "at will" or null end date, only check start date
+                              if (lease.endDate == null ||
+                                  lease.endDate!.toLowerCase() == "at will") {
+                                return startDate.isBefore(now) ||
+                                    startDate.isAtSameMomentAs(now);
+                              }
 
-                                // For regular end dates, check both start and end dates
-                                DateTime? endDate;
-                                try {
-                                  endDate = DateTime.parse(lease.endDate!);
-                                } catch (e) {
-                                  return false;
-                                }
-                                return (startDate.isBefore(now) ||
-                                        startDate.isAtSameMomentAs(now)) &&
-                                    (endDate.isAfter(now) ||
-                                        endDate.isAtSameMomentAs(now));
-                              }).toList();
-                            } else if (selectedStatus == "Expired") {
-                              data = data.where((lease) {
-                                // At will leases can't expire
-                                if (lease.endDate == null ||
-                                    lease.endDate!.toLowerCase() == "at will") {
-                                  return false;
-                                }
-                                DateTime now = DateTime.now();
-                                DateTime? endDate;
-                                try {
-                                  endDate = DateTime.parse(lease.endDate!);
-                                } catch (e) {
-                                  return false;
-                                }
-                                return endDate.isBefore(now);
-                              }).toList();
-                            } else if (selectedStatus == "All") {
-                              // No additional filtering needed
-                              data = data;
-                            }
-                            //  }
-                            // Remove data.reversed.toList() to let sortData handle the ordering
-                            // data = data.reversed.toList();
+                              // For regular end dates, check both start and end dates
+                              DateTime? endDate;
+                              try {
+                                endDate = DateTime.parse(lease.endDate!);
+                              } catch (e) {
+                                return false;
+                              }
+                              return (startDate.isBefore(now) ||
+                                      startDate.isAtSameMomentAs(now)) &&
+                                  (endDate.isAfter(now) ||
+                                      endDate.isAtSameMomentAs(now));
+                            }).toList();
+                          } else if (selectedStatus == "Expired") {
+                            data = data.where((lease) {
+                              // At will leases can't expire
+                              if (lease.endDate == null ||
+                                  lease.endDate!.toLowerCase() == "at will") {
+                                return false;
+                              }
+                              DateTime now = DateTime.now();
+                              DateTime? endDate;
+                              try {
+                                endDate = DateTime.parse(lease.endDate!);
+                              } catch (e) {
+                                return false;
+                              }
+                              return endDate.isBefore(now);
+                            }).toList();
+                          } else if (selectedStatus == "All") {
+                            // No additional filtering needed
+                            data = data;
+                          }
+                          //  }
+                          // Remove data.reversed.toList() to let sortData handle the ordering
+                          // data = data.reversed.toList();
 
-                            sortData(data);
-                            final totalPages =
-                                (data.length / itemsPerPage).ceil();
-                            final currentPageData = data
-                                .skip(currentPage * itemsPerPage)
-                                .take(itemsPerPage)
-                                .toList();
+                          sortData(data);
+                          final totalPages =
+                              (data.length / itemsPerPage).ceil();
+                          final currentPageData = data
+                              .skip(currentPage * itemsPerPage)
+                              .take(itemsPerPage)
+                              .toList();
 
-                            return SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  const SizedBox(height: 10),
-                                  _buildHeaders(),
-                                  const SizedBox(height: 10),
-                                  Container(
-                                    child: Column(
-                                      children: currentPageData
-                                          .asMap()
-                                          .entries
-                                          .map((entry) {
-                                        int index = entry.key;
-                                        bool isExpanded =
-                                            expandedIndex == index;
-                                        Lease1 lease = entry.value;
-                                        final balance =
-                                            lease.totalBalance ?? 0.0;
-                                        final isNegative = balance < 0;
-                                        final formattedBalance =
-                                            "${isNegative ? '-' : ''}\$${balance.abs().toStringAsFixed(2)}";
-                                        //return CustomExpansionTile(data: Propertytype, index: index);
-                                        return Container(
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 6),
-                                          decoration: BoxDecoration(
-                                            color: index % 2 != 0
-                                                ? const Color(0xFFF4F8FF)
-                                                : Colors.white,
-                                            border: Border.all(
-                                                color: const Color(0xFFDBE0E5)),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: Column(
-                                            children: <Widget>[
-                                              ListTile(
-                                                contentPadding: EdgeInsets.zero,
-                                                title: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(2.0),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: <Widget>[
-                                                      InkWell(
-                                                        onTap: () {
-                                                          setState(() {
-                                                            if (expandedIndex ==
-                                                                index) {
-                                                              expandedIndex =
-                                                                  null;
-                                                            } else {
-                                                              expandedIndex =
-                                                                  index;
-                                                            }
-                                                          });
-                                                        },
-                                                        child: Container(
-                                                          margin:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 5,
-                                                                  right: 5),
-                                                          padding: !isExpanded
-                                                              ? const EdgeInsets
-                                                                  .only(
-                                                                  bottom: 10)
-                                                              : const EdgeInsets
-                                                                  .only(
-                                                                  top: 10),
-                                                          child: FaIcon(
+                          return SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 10),
+                                _buildHeaders(),
+                                const SizedBox(height: 10),
+                                Container(
+                                  child: Column(
+                                    children: currentPageData
+                                        .asMap()
+                                        .entries
+                                        .map((entry) {
+                                      int index = entry.key;
+                                      bool isExpanded = expandedIndex == index;
+                                      Lease1 lease = entry.value;
+                                      final balance = lease.totalBalance ?? 0.0;
+                                      final isNegative = balance < 0;
+                                      final formattedBalance =
+                                          "${isNegative ? '-' : ''}\$${balance.abs().toStringAsFixed(2)}";
+                                      //return CustomExpansionTile(data: Propertytype, index: index);
+                                      return Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 6),
+                                        decoration: BoxDecoration(
+                                          color: index % 2 != 0
+                                              ? const Color(0xFFF4F8FF)
+                                              : Colors.white,
+                                          border: Border.all(
+                                              color: const Color(0xFFDBE0E5)),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Column(
+                                          children: <Widget>[
+                                            ListTile(
+                                              contentPadding: EdgeInsets.zero,
+                                              title: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(2.0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    InkWell(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          if (expandedIndex ==
+                                                              index) {
+                                                            expandedIndex =
+                                                                null;
+                                                          } else {
+                                                            expandedIndex =
+                                                                index;
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        margin: const EdgeInsets
+                                                            .only(
+                                                            left: 5, right: 5),
+                                                        padding: !isExpanded
+                                                            ? const EdgeInsets
+                                                                .only(
+                                                                bottom: 10)
+                                                            : const EdgeInsets
+                                                                .only(top: 10),
+                                                        child: FaIcon(
+                                                          isExpanded
+                                                              ? FontAwesomeIcons
+                                                                  .sortUp
+                                                              : FontAwesomeIcons
+                                                                  .sortDown,
+                                                          size: 20,
+                                                          color: blueColor,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex:
+                                                          4, // Larger size for the first field
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 8.0),
+                                                        child: InkWell(
+                                                          onTap: () {
+                                                            setState(() {
+                                                              if (expandedIndex ==
+                                                                  index) {
+                                                                expandedIndex =
+                                                                    null;
+                                                              } else {
+                                                                expandedIndex =
+                                                                    index;
+                                                              }
+                                                            });
+                                                          },
+                                                          child: Text.rich(
+                                                            TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                      '${lease.rentalAddress}',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color:
+                                                                        blueColor,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize:
+                                                                        13,
+                                                                  ),
+                                                                ),
+                                                                if (lease
+                                                                        .tenantNames
+                                                                        ?.isNotEmpty ??
+                                                                    false)
+                                                                  TextSpan(
+                                                                    text:
+                                                                        "\n${lease.tenantNames}",
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      color: Colors
+                                                                          .lightBlue, // Light blue color for tenant names
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          11,
+                                                                    ),
+                                                                  ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .02),
+                                                    Expanded(
+                                                      flex:
+                                                          2, // Smaller size for the second field
+                                                      child: Text(
+                                                        lease.rentCycle!,
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .03),
+                                                    Expanded(
+                                                      flex:
+                                                          2, // Smaller size for the third field
+                                                      child: Text(
+                                                        dateProvider
+                                                            .formatCurrentDate(
+                                                                '${lease.endDate}'),
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .02),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            if (isExpanded)
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 2.0),
+                                                margin: const EdgeInsets.only(
+                                                    bottom: 2),
+                                                child: SingleChildScrollView(
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          FaIcon(
                                                             isExpanded
                                                                 ? FontAwesomeIcons
                                                                     .sortUp
                                                                 : FontAwesomeIcons
                                                                     .sortDown,
-                                                            size: 20,
-                                                            color: blueColor,
+                                                            size: 40,
+                                                            color: Colors
+                                                                .transparent,
                                                           ),
-                                                        ),
-                                                      ),
-                                                      Expanded(
-                                                        flex:
-                                                            4, // Larger size for the first field
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 8.0),
-                                                          child: InkWell(
-                                                            onTap: () {
-                                                              setState(() {
-                                                                if (expandedIndex ==
-                                                                    index) {
-                                                                  expandedIndex =
-                                                                      null;
-                                                                } else {
-                                                                  expandedIndex =
-                                                                      index;
-                                                                }
-                                                              });
-                                                            },
-                                                            child: Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                        '${lease.rentalAddress}',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      color:
-                                                                          blueColor,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      fontSize:
-                                                                          13,
-                                                                    ),
-                                                                  ),
-                                                                  if (lease
-                                                                          .tenantNames
-                                                                          ?.isNotEmpty ??
-                                                                      false)
-                                                                    TextSpan(
-                                                                      text:
-                                                                          "\n${lease.tenantNames}",
-                                                                      style:
-                                                                          const TextStyle(
-                                                                        color: Colors
-                                                                            .lightBlue, // Light blue color for tenant names
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
-                                                                        fontSize:
-                                                                            11,
-                                                                      ),
-                                                                    ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .02),
-                                                      Expanded(
-                                                        flex:
-                                                            2, // Smaller size for the second field
-                                                        child: Text(
-                                                          lease.rentCycle!,
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 12,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .03),
-                                                      Expanded(
-                                                        flex:
-                                                            2, // Smaller size for the third field
-                                                        child: Text(
-                                                          dateProvider
-                                                              .formatCurrentDate(
-                                                                  '${lease.endDate}'),
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 12,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .02),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              if (isExpanded)
-                                                Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 2.0),
-                                                  margin: const EdgeInsets.only(
-                                                      bottom: 2),
-                                                  child: SingleChildScrollView(
-                                                    child: Column(
-                                                      children: [
-                                                        Row(
-                                                          children: [
-                                                            FaIcon(
-                                                              isExpanded
-                                                                  ? FontAwesomeIcons
-                                                                      .sortUp
-                                                                  : FontAwesomeIcons
-                                                                      .sortDown,
-                                                              size: 40,
-                                                              color: Colors
-                                                                  .transparent,
-                                                            ),
-                                                            Expanded(
-                                                              child: Table(
-                                                                columnWidths: {
-                                                                  0: const FlexColumnWidth(), // Distribute columns equally
-                                                                  1: const FlexColumnWidth(),
-                                                                  // 0: FixedColumnWidth(150.0), // Adjust width as needed
-                                                                  // 1: FlexColumnWidth(),
-                                                                },
-                                                                children: [
-                                                                  _buildTableRow(
-                                                                    'Current Balance:',
+                                                          Expanded(
+                                                            child: Table(
+                                                              columnWidths: {
+                                                                0: const FlexColumnWidth(), // Distribute columns equally
+                                                                1: const FlexColumnWidth(),
+                                                                // 0: FixedColumnWidth(150.0), // Adjust width as needed
+                                                                // 1: FlexColumnWidth(),
+                                                              },
+                                                              children: [
+                                                                _buildTableRow(
+                                                                  'Current Balance:',
+                                                                  _getDisplayValue(
+                                                                      "${formattedBalance}"),
+                                                                  'Rent :',
+                                                                  _getDisplayValue(
+                                                                      "\$${lease.amount!.toStringAsFixed(2).toString()}"),
+                                                                ),
+                                                                _buildTableRow(
+                                                                    'Remaining Days:',
                                                                     _getDisplayValue(
-                                                                        "${formattedBalance}"),
-                                                                    'Rent :',
-                                                                    _getDisplayValue(
-                                                                        "\$${lease.amount!.toStringAsFixed(2).toString()}"),
-                                                                  ),
-                                                                  _buildTableRow(
-                                                                      'Remaining Days:',
-                                                                      _getDisplayValue(
-                                                                          lease
-                                                                              .remainingDays),
-                                                                      '',
-                                                                      ''),
+                                                                        lease
+                                                                            .remainingDays),
+                                                                    '',
+                                                                    ''),
 //_buildTableRow('Current Balance:', _getDisplayValue("${formattedBalance}"), '', '')
-                                                                ],
-                                                              ),
+                                                              ],
                                                             ),
-                                                            const SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            // Column(
-                                                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                            //   children: [
-                                                            //     IconButton(
-                                                            //       icon: FaIcon(
-                                                            //         FontAwesomeIcons.edit,
-                                                            //         size: 20,
-                                                            //         color:blueColor,
-                                                            //       ),
-                                                            //       onPressed: () async {
-                                                            //         Provider.of<SelectedCosignersProvider>(
-                                                            //                                   context,
-                                                            //                                   listen:
-                                                            //                                       false)
-                                                            //                               .clearCosigner();
-                                                            //                           Provider.of<SelectedTenantsProvider>(
-                                                            //                                   context,
-                                                            //                                   listen:
-                                                            //                                       false)
-                                                            //                               .clearTenant();
-                                                            //                           // handleEdit(Propertytype);
-                                                            //                           var check = await Navigator.push(
-                                                            //                               context,
-                                                            //                               MaterialPageRoute(
-                                                            //                                   builder: (context) => Edit_lease(
-                                                            //                                         lease: lease,
-                                                            //                                         leaseId: lease.leaseId!,
-                                                            //                                       )));
-                                                            //                           if (check ==
-                                                            //                               true) {
-                                                            //                             setState(() {
-                                                            //                               futureLease = LeaseRepository().fetchLease("");
-                                                            //                               //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                                                            //                             });
-                                                            //                           }
-                                                            //       },
-                                                            //     ),
-                                                            //     IconButton(
-                                                            //       icon: FaIcon(
-                                                            //         FontAwesomeIcons.trashCan,
-                                                            //         size: 20,
-                                                            //         color:blueColor,
-                                                            //       ),
-                                                            //       onPressed: () {
-                                                            //         _attemptDeleteLease(context,lease);
-                                                            //         //               //handleDelete(Propertytype);
-                                                            //       },
-                                                            //     ),
-                                                            //   ],
-                                                            // ),
-                                                          ],
-                                                        ),
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          // Column(
+                                                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          //   children: [
+                                                          //     IconButton(
+                                                          //       icon: FaIcon(
+                                                          //         FontAwesomeIcons.edit,
+                                                          //         size: 20,
+                                                          //         color:blueColor,
+                                                          //       ),
+                                                          //       onPressed: () async {
+                                                          //         Provider.of<SelectedCosignersProvider>(
+                                                          //                                   context,
+                                                          //                                   listen:
+                                                          //                                       false)
+                                                          //                               .clearCosigner();
+                                                          //                           Provider.of<SelectedTenantsProvider>(
+                                                          //                                   context,
+                                                          //                                   listen:
+                                                          //                                       false)
+                                                          //                               .clearTenant();
+                                                          //                           // handleEdit(Propertytype);
+                                                          //                           var check = await Navigator.push(
+                                                          //                               context,
+                                                          //                               MaterialPageRoute(
+                                                          //                                   builder: (context) => Edit_lease(
+                                                          //                                         lease: lease,
+                                                          //                                         leaseId: lease.leaseId!,
+                                                          //                                       )));
+                                                          //                           if (check ==
+                                                          //                               true) {
+                                                          //                             setState(() {
+                                                          //                               futureLease = LeaseRepository().fetchLease("");
+                                                          //                               //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                                                          //                             });
+                                                          //                           }
+                                                          //       },
+                                                          //     ),
+                                                          //     IconButton(
+                                                          //       icon: FaIcon(
+                                                          //         FontAwesomeIcons.trashCan,
+                                                          //         size: 20,
+                                                          //         color:blueColor,
+                                                          //       ),
+                                                          //       onPressed: () {
+                                                          //         _attemptDeleteLease(context,lease);
+                                                          //         //               //handleDelete(Propertytype);
+                                                          //       },
+                                                          //     ),
+                                                          //   ],
+                                                          // ),
+                                                        ],
+                                                      ),
 
-                                                        // Row(
-                                                        //   //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        //   children: [
-                                                        //
-                                                        //     SizedBox(
-                                                        //       width: 5,
-                                                        //     ),
-                                                        //     Expanded(
-                                                        //       child:
-                                                        //           GestureDetector(
-                                                        //         onTap:
-                                                        //             () async {
-                                                        //           Provider.of<SelectedCosignersProvider>(
-                                                        //                   context,
-                                                        //                   listen:
-                                                        //                       false)
-                                                        //               .clearCosigner();
-                                                        //           Provider.of<SelectedTenantsProvider>(
-                                                        //                   context,
-                                                        //                   listen:
-                                                        //                       false)
-                                                        //               .clearTenant();
-                                                        //           // handleEdit(Propertytype);
-                                                        //           var check = await Navigator.push(
-                                                        //               context,
-                                                        //               MaterialPageRoute(
-                                                        //                   builder: (context) => Edit_lease(
-                                                        //                         lease: lease,
-                                                        //                         leaseId: lease.leaseId!,
-                                                        //                       )));
-                                                        //           if (check ==
-                                                        //               true) {
-                                                        //             setState(
-                                                        //                 () {
-                                                        //               futureLease =
-                                                        //                   LeaseRepository()
-                                                        //                       .fetchLease("");
-                                                        //               //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                                                        //             });
-                                                        //           }
-                                                        //         },
-                                                        //         child:
-                                                        //             Container(
-                                                        //           height: 40,
-                                                        //           decoration:
-                                                        //               BoxDecoration(
-                                                        //             border: Border.all(
-                                                        //                 color: Colors
-                                                        //                     .green,
-                                                        //                 width:
-                                                        //                     1.5),
-                                                        //             borderRadius:
-                                                        //                 BorderRadius
-                                                        //                     .circular(8),
-                                                        //           ), // color:Colors.grey[100],
-                                                        //           child: Row(
-                                                        //             mainAxisAlignment:
-                                                        //                 MainAxisAlignment
-                                                        //                     .center,
-                                                        //             crossAxisAlignment:
-                                                        //                 CrossAxisAlignment
-                                                        //                     .center,
-                                                        //             children: [
-                                                        //               FaIcon(
-                                                        //                 FontAwesomeIcons
-                                                        //                     .edit,
-                                                        //                 size:
-                                                        //                     15,
-                                                        //                 color: Colors
-                                                        //                     .green,
-                                                        //               ),
-                                                        //               SizedBox(
-                                                        //                 width:
-                                                        //                     10,
-                                                        //               ),
-                                                        //               Text(
-                                                        //                 "Edit",
-                                                        //                 style: TextStyle(
-                                                        //                     color:
-                                                        //                         Colors.green,
-                                                        //                     fontWeight: FontWeight.bold),
-                                                        //               ),
-                                                        //             ],
-                                                        //           ),
-                                                        //         ),
-                                                        //       ),
-                                                        //     ),
-                                                        //     SizedBox(
-                                                        //       width: 5,
-                                                        //     ),
-                                                        //     Expanded(
-                                                        //       child:
-                                                        //           GestureDetector(
-                                                        //         onTap: () {
-                                                        //           _attemptDeleteLease(
-                                                        //               context,
-                                                        //               lease);
-                                                        //         },
-                                                        //         child:
-                                                        //             Container(
-                                                        //           height: 40,
-                                                        //           decoration:
-                                                        //               BoxDecoration(
-                                                        //             border: Border.all(
-                                                        //                 color: Colors
-                                                        //                     .red,
-                                                        //                 width:
-                                                        //                     1.5),
-                                                        //             borderRadius:
-                                                        //                 BorderRadius
-                                                        //                     .circular(8),
-                                                        //           ),
-                                                        //           child: Row(
-                                                        //             mainAxisAlignment:
-                                                        //                 MainAxisAlignment
-                                                        //                     .center,
-                                                        //             crossAxisAlignment:
-                                                        //                 CrossAxisAlignment
-                                                        //                     .center,
-                                                        //             children: [
-                                                        //               FaIcon(
-                                                        //                 FontAwesomeIcons
-                                                        //                     .trashCan,
-                                                        //                 size:
-                                                        //                     15,
-                                                        //                 color: Colors
-                                                        //                     .red,
-                                                        //               ),
-                                                        //               SizedBox(
-                                                        //                 width:
-                                                        //                     10,
-                                                        //               ),
-                                                        //               Text(
-                                                        //                 "Delete",
-                                                        //                 style: TextStyle(
-                                                        //                     color:
-                                                        //                         Colors.red,
-                                                        //                     fontWeight: FontWeight.bold),
-                                                        //               )
-                                                        //             ],
-                                                        //           ),
-                                                        //         ),
-                                                        //       ),
-                                                        //     ),
-                                                        //   ],
-                                                        // ),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .end,
-                                                          children: [
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                _attemptDeleteLease(
-                                                                    context,
-                                                                    lease);
-                                                              },
-                                                              child: Container(
-                                                                height: 35,
-                                                                width: 35,
-                                                                decoration: BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                                8),
-                                                                    color: Colors
-                                                                        .red
-                                                                        .shade50),
-                                                                child:
-                                                                    const Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .trashCan,
-                                                                      size: 15,
-                                                                      color: Colors
-                                                                          .red,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            GestureDetector(
-                                                              onTap: () async {
-                                                                Provider.of<SelectedCosignersProvider>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
-                                                                    .clearCosigner();
-                                                                Provider.of<SelectedTenantsProvider>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
-                                                                    .clearTenant();
-                                                                // handleEdit(Propertytype);
-                                                                var check = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => Edit_lease(
-                                                                              lease: lease,
-                                                                              leaseId: lease.leaseId!,
-                                                                            )));
-                                                                if (check ==
-                                                                    true) {
-                                                                  setState(() {
-                                                                    futureLease =
-                                                                        LeaseRepository()
-                                                                            .fetchLease("");
-                                                                    //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                                                                  });
-                                                                }
-                                                              },
-                                                              child: Container(
-                                                                height: 35,
-                                                                width: 35,
-                                                                decoration: BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                                8),
-                                                                    color: Colors
-                                                                        .green
-                                                                        .shade50), // color:Colors.grey[100],
-                                                                child:
-                                                                    const Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .edit,
-                                                                      size: 15,
-                                                                      color: Colors
-                                                                          .green,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) =>
-                                                                            SummeryPageLease(
-                                                                              leaseId: lease.leaseId!,
-                                                                              enddate: lease.endDate,
-                                                                            )));
-                                                              },
-                                                              child: Container(
-                                                                height: 35,
-                                                                width: 35,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: Colors
-                                                                      .grey
-                                                                      .shade200,
+                                                      // Row(
+                                                      //   //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      //   children: [
+                                                      //
+                                                      //     SizedBox(
+                                                      //       width: 5,
+                                                      //     ),
+                                                      //     Expanded(
+                                                      //       child:
+                                                      //           GestureDetector(
+                                                      //         onTap:
+                                                      //             () async {
+                                                      //           Provider.of<SelectedCosignersProvider>(
+                                                      //                   context,
+                                                      //                   listen:
+                                                      //                       false)
+                                                      //               .clearCosigner();
+                                                      //           Provider.of<SelectedTenantsProvider>(
+                                                      //                   context,
+                                                      //                   listen:
+                                                      //                       false)
+                                                      //               .clearTenant();
+                                                      //           // handleEdit(Propertytype);
+                                                      //           var check = await Navigator.push(
+                                                      //               context,
+                                                      //               MaterialPageRoute(
+                                                      //                   builder: (context) => Edit_lease(
+                                                      //                         lease: lease,
+                                                      //                         leaseId: lease.leaseId!,
+                                                      //                       )));
+                                                      //           if (check ==
+                                                      //               true) {
+                                                      //             setState(
+                                                      //                 () {
+                                                      //               futureLease =
+                                                      //                   LeaseRepository()
+                                                      //                       .fetchLease("");
+                                                      //               //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                                                      //             });
+                                                      //           }
+                                                      //         },
+                                                      //         child:
+                                                      //             Container(
+                                                      //           height: 40,
+                                                      //           decoration:
+                                                      //               BoxDecoration(
+                                                      //             border: Border.all(
+                                                      //                 color: Colors
+                                                      //                     .green,
+                                                      //                 width:
+                                                      //                     1.5),
+                                                      //             borderRadius:
+                                                      //                 BorderRadius
+                                                      //                     .circular(8),
+                                                      //           ), // color:Colors.grey[100],
+                                                      //           child: Row(
+                                                      //             mainAxisAlignment:
+                                                      //                 MainAxisAlignment
+                                                      //                     .center,
+                                                      //             crossAxisAlignment:
+                                                      //                 CrossAxisAlignment
+                                                      //                     .center,
+                                                      //             children: [
+                                                      //               FaIcon(
+                                                      //                 FontAwesomeIcons
+                                                      //                     .edit,
+                                                      //                 size:
+                                                      //                     15,
+                                                      //                 color: Colors
+                                                      //                     .green,
+                                                      //               ),
+                                                      //               SizedBox(
+                                                      //                 width:
+                                                      //                     10,
+                                                      //               ),
+                                                      //               Text(
+                                                      //                 "Edit",
+                                                      //                 style: TextStyle(
+                                                      //                     color:
+                                                      //                         Colors.green,
+                                                      //                     fontWeight: FontWeight.bold),
+                                                      //               ),
+                                                      //             ],
+                                                      //           ),
+                                                      //         ),
+                                                      //       ),
+                                                      //     ),
+                                                      //     SizedBox(
+                                                      //       width: 5,
+                                                      //     ),
+                                                      //     Expanded(
+                                                      //       child:
+                                                      //           GestureDetector(
+                                                      //         onTap: () {
+                                                      //           _attemptDeleteLease(
+                                                      //               context,
+                                                      //               lease);
+                                                      //         },
+                                                      //         child:
+                                                      //             Container(
+                                                      //           height: 40,
+                                                      //           decoration:
+                                                      //               BoxDecoration(
+                                                      //             border: Border.all(
+                                                      //                 color: Colors
+                                                      //                     .red,
+                                                      //                 width:
+                                                      //                     1.5),
+                                                      //             borderRadius:
+                                                      //                 BorderRadius
+                                                      //                     .circular(8),
+                                                      //           ),
+                                                      //           child: Row(
+                                                      //             mainAxisAlignment:
+                                                      //                 MainAxisAlignment
+                                                      //                     .center,
+                                                      //             crossAxisAlignment:
+                                                      //                 CrossAxisAlignment
+                                                      //                     .center,
+                                                      //             children: [
+                                                      //               FaIcon(
+                                                      //                 FontAwesomeIcons
+                                                      //                     .trashCan,
+                                                      //                 size:
+                                                      //                     15,
+                                                      //                 color: Colors
+                                                      //                     .red,
+                                                      //               ),
+                                                      //               SizedBox(
+                                                      //                 width:
+                                                      //                     10,
+                                                      //               ),
+                                                      //               Text(
+                                                      //                 "Delete",
+                                                      //                 style: TextStyle(
+                                                      //                     color:
+                                                      //                         Colors.red,
+                                                      //                     fontWeight: FontWeight.bold),
+                                                      //               )
+                                                      //             ],
+                                                      //           ),
+                                                      //         ),
+                                                      //       ),
+                                                      //     ),
+                                                      //   ],
+                                                      // ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              _attemptDeleteLease(
+                                                                  context,
+                                                                  lease);
+                                                            },
+                                                            child: Container(
+                                                              height: 35,
+                                                              width: 35,
+                                                              decoration: BoxDecoration(
                                                                   borderRadius:
                                                                       BorderRadius
                                                                           .circular(
                                                                               8),
-                                                                ),
-                                                                child:
-                                                                    const Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .eye,
-                                                                      size: 15,
-                                                                      color: Colors
-                                                                          .black,
-                                                                    ),
-                                                                    SizedBox(
-                                                                        width:
-                                                                            2),
-                                                                  ],
-                                                                ),
+                                                                  color: Colors
+                                                                      .red
+                                                                      .shade50),
+                                                              child: const Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .trashCan,
+                                                                    size: 15,
+                                                                    color: Colors
+                                                                        .red,
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
-                                                            const SizedBox(
-                                                              width: 15,
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          GestureDetector(
+                                                            onTap: () async {
+                                                              Provider.of<SelectedCosignersProvider>(
+                                                                      context,
+                                                                      listen:
+                                                                          false)
+                                                                  .clearCosigner();
+                                                              Provider.of<SelectedTenantsProvider>(
+                                                                      context,
+                                                                      listen:
+                                                                          false)
+                                                                  .clearTenant();
+                                                              // handleEdit(Propertytype);
+                                                              var check = await Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) => Edit_lease(
+                                                                            lease:
+                                                                                lease,
+                                                                            leaseId:
+                                                                                lease.leaseId!,
+                                                                          )));
+                                                              if (check ==
+                                                                  true) {
+                                                                setState(() {
+                                                                  futureLease =
+                                                                      LeaseRepository()
+                                                                          .fetchLease(
+                                                                              "");
+                                                                  //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+                                                                });
+                                                              }
+                                                            },
+                                                            child: Container(
+                                                              height: 35,
+                                                              width: 35,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                  color: Colors
+                                                                      .green
+                                                                      .shade50), // color:Colors.grey[100],
+                                                              child: const Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .edit,
+                                                                    size: 15,
+                                                                    color: Colors
+                                                                        .green,
+                                                                  ),
+                                                                ],
+                                                              ),
                                                             ),
-                                                          ],
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 15,
-                                                        ),
-                                                      ],
-                                                    ),
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) =>
+                                                                          SummeryPageLease(
+                                                                            leaseId:
+                                                                                lease.leaseId!,
+                                                                            enddate:
+                                                                                lease.endDate,
+                                                                          )));
+                                                            },
+                                                            child: Container(
+                                                              height: 35,
+                                                              width: 35,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .grey
+                                                                    .shade200,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8),
+                                                              ),
+                                                              child: const Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .eye,
+                                                                    size: 15,
+                                                                    color: Colors
+                                                                        .black,
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width: 2),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 15,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 15,
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                              //SizedBox(height: 13,),
-                                            ],
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
+                                              ),
+                                            //SizedBox(height: 13,),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList(),
                                   ),
-                                  const SizedBox(height: 20),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          // Text('Rows per page:'),
-                                          const SizedBox(width: 10),
-                                          Material(
-                                            elevation: 3,
-                                            child: Container(
-                                              height: 40,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 12.0),
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Colors.grey),
-                                              ),
-                                              child:
-                                                  DropdownButtonHideUnderline(
-                                                child: DropdownButton<int>(
-                                                  value: itemsPerPage,
-                                                  items: itemsPerPageOptions
-                                                      .map((int value) {
-                                                    return DropdownMenuItem<
-                                                        int>(
-                                                      value: value,
-                                                      child: Text(
-                                                          value.toString()),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: data.length >
-                                                          itemsPerPageOptions
-                                                              .first // Condition to check if dropdown should be enabled
-                                                      ? (newValue) {
-                                                          setState(() {
-                                                            itemsPerPage =
-                                                                newValue!;
-                                                            currentPage =
-                                                                0; // Reset to first page when items per page change
-                                                          });
-                                                        }
-                                                      : null,
-                                                ),
-                                              ),
+                                ),
+                                const SizedBox(height: 20),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        // Text('Rows per page:'),
+                                        const SizedBox(width: 10),
+                                        Material(
+                                          elevation: 3,
+                                          child: Container(
+                                            height: 40,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.grey),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons
-                                                  .circleChevronLeft,
-                                              color: currentPage == 0
-                                                  ? Colors.grey
-                                                  : blueColor,
-                                            ),
-                                            onPressed: currentPage == 0
-                                                ? null
-                                                : () {
-                                                    setState(() {
-                                                      currentPage--;
-                                                    });
-                                                  },
-                                          ),
-                                          // IconButton(
-                                          //   icon: Icon(Icons.arrow_back),
-                                          //   onPressed: currentPage > 0
-                                          //       ? () {
-                                          //     setState(() {
-                                          //       currentPage--;
-                                          //     });
-                                          //   }
-                                          //       : null,
-                                          // ),
-                                          Text(
-                                              'Page ${currentPage + 1} of $totalPages'),
-                                          // IconButton(
-                                          //   icon: Icon(Icons.arrow_forward),
-                                          //   onPressed: currentPage < totalPages - 1
-                                          //       ? () {
-                                          //     setState(() {
-                                          //       currentPage++;
-                                          //     });
-                                          //   }
-                                          //       : null,
-                                          // ),
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons
-                                                  .circleChevronRight,
-                                              color:
-                                                  currentPage < totalPages - 1
-                                                      ? blueColor
-                                                      : Colors.grey,
-                                            ),
-                                            onPressed:
-                                                currentPage < totalPages - 1
-                                                    ? () {
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<int>(
+                                                value: itemsPerPage,
+                                                items: itemsPerPageOptions
+                                                    .map((int value) {
+                                                  return DropdownMenuItem<int>(
+                                                    value: value,
+                                                    child:
+                                                        Text(value.toString()),
+                                                  );
+                                                }).toList(),
+                                                onChanged: data.length >
+                                                        itemsPerPageOptions
+                                                            .first // Condition to check if dropdown should be enabled
+                                                    ? (newValue) {
                                                         setState(() {
-                                                          currentPage++;
+                                                          itemsPerPage =
+                                                              newValue!;
+                                                          currentPage =
+                                                              0; // Reset to first page when items per page change
                                                         });
                                                       }
                                                     : null,
+                                              ),
+                                            ),
                                           ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-                        },
-                      ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronLeft,
+                                            color: currentPage == 0
+                                                ? Colors.grey
+                                                : blueColor,
+                                          ),
+                                          onPressed: currentPage == 0
+                                              ? null
+                                              : () {
+                                                  setState(() {
+                                                    currentPage--;
+                                                  });
+                                                },
+                                        ),
+                                        // IconButton(
+                                        //   icon: Icon(Icons.arrow_back),
+                                        //   onPressed: currentPage > 0
+                                        //       ? () {
+                                        //     setState(() {
+                                        //       currentPage--;
+                                        //     });
+                                        //   }
+                                        //       : null,
+                                        // ),
+                                        Text(
+                                            'Page ${currentPage + 1} of $totalPages'),
+                                        // IconButton(
+                                        //   icon: Icon(Icons.arrow_forward),
+                                        //   onPressed: currentPage < totalPages - 1
+                                        //       ? () {
+                                        //     setState(() {
+                                        //       currentPage++;
+                                        //     });
+                                        //   }
+                                        //       : null,
+                                        // ),
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronRight,
+                                            color: currentPage < totalPages - 1
+                                                ? blueColor
+                                                : Colors.grey,
+                                          ),
+                                          onPressed:
+                                              currentPage < totalPages - 1
+                                                  ? () {
+                                                      setState(() {
+                                                        currentPage++;
+                                                      });
+                                                    }
+                                                  : null,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      },
                     ),
+                  ),
                   // if (MediaQuery.of(context).size.width > 500)
                   //   FutureBuilder<List<Lease1>>(
                   //     future: futureLease,

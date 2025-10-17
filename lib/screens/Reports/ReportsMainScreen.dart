@@ -23,6 +23,11 @@ import 'ReportScreens/RentRollReport.dart';
 import 'ReportScreens/Rent_collection.dart';
 import 'ReportScreens/dailytransaction.dart';
 import 'ReportScreens/rentalownerreport.dart';
+import 'ReportScreens/ReopenWorkorder.dart';
+import 'ReportScreens/PropertyInsuranceSummary.dart';
+import 'ReportScreens/LivePropertyReport.dart';
+import 'ReportScreens/PropertyTaxReport.dart';
+
 class ReportsMainScreen extends StatefulWidget {
   @override
   State<ReportsMainScreen> createState() => _ReportsMainScreenState();
@@ -33,7 +38,10 @@ class _ReportsMainScreenState extends State<ReportsMainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      drawer:CustomDrawer(currentpage: "Reports",dropdown: false,),
+      drawer: CustomDrawer(
+        currentpage: "Reports",
+        dropdown: false,
+      ),
       appBar: widget_302.App_Bar(context: context),
       body: NarrowScreenLayout(),
       // LayoutBuilder(
@@ -443,7 +451,9 @@ class NarrowScreenLayout extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 10,),
+            SizedBox(
+              height: 10,
+            ),
             titleBar(
               title: 'Reports',
               width: MediaQuery.of(context).size.width * .98,
@@ -485,33 +495,36 @@ class ReportCard extends StatelessWidget {
                   topRight: Radius.circular(12.0),
                 ),
               ),
-              child:
-              Row(
+              child: Row(
                 children: [
-                  SizedBox(width: 5,),
+                  SizedBox(
+                    width: 5,
+                  ),
                   Expanded(
                     child: Text(
                       title,
                       style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.width < 500
-                            ? 14 : 16,
+                        fontSize:
+                            MediaQuery.of(context).size.width < 500 ? 14 : 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  SizedBox(width: 5,),
+                  SizedBox(
+                    width: 5,
+                  ),
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 16.0,top: 16,right: 10,bottom: 6),
+              padding: const EdgeInsets.only(
+                  left: 16.0, top: 16, right: 10, bottom: 6),
               child: Text(
                 description,
                 style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width < 500
-                      ? 13 :15,
+                  fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 15,
                   fontWeight: FontWeight.w500,
                   color: blueColor,
                 ),
@@ -544,7 +557,8 @@ List<ReportCardModel> reportCards = [
   ),
   ReportCardModel(
     title: "Expiring Insurance",
-    description: "Report of Renter's Insurance expiring within the selected time period",
+    description:
+        "Report of Renter's Insurance expiring within the selected time period",
     destination: ExpiringInsurance(),
   ),
   ReportCardModel(
@@ -589,12 +603,12 @@ List<ReportCardModel> reportCards = [
     destination: PaymentExceptionReports(),
   ),
   ReportCardModel(
-    title:"Recurring Payments Configuration",
+    title: "Recurring Payments Configuration",
     description: "Report shows all leases recurring payments configured",
     destination: Recurring_Payments_Configuration_Report(),
   ),
   ReportCardModel(
-    title:"Convenience Fee Override",
+    title: "Convenience Fee Override",
     description: "Report shows all leases with convenience fee override",
     destination: ConvenienceFeeReports(),
   ),
@@ -604,37 +618,41 @@ List<ReportCardModel> reportCards = [
     destination: RentersInsurances(),
   ),
 ];
+
 class ReportScreen extends StatelessWidget {
   const ReportScreen({super.key});
 
-  Widget sectionTitle(String title, String svgPath,String subtitle) {
-    return
-      Column(
-        children: [
-          ListTile(
-
-            visualDensity: const VisualDensity(vertical: -4), // Reduce vertical spacing
-            contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-            leading:  Container(
-              margin: EdgeInsets.only(left: 10,top: 5),
-              child: SvgPicture.asset(
-                svgPath,
-                width: 25,
-                height: 25,
-                // colorFilter: const ColorFilter.mode(Colors.indigo, BlendMode.srcIn),
-              ),
+  Widget sectionTitle(String title, String svgPath, String subtitle) {
+    return Column(
+      children: [
+        ListTile(
+          visualDensity:
+              const VisualDensity(vertical: -4), // Reduce vertical spacing
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+          leading: Container(
+            margin: EdgeInsets.only(left: 10, top: 5),
+            child: SvgPicture.asset(
+              svgPath,
+              width: 25,
+              height: 25,
+              // colorFilter: const ColorFilter.mode(Colors.indigo, BlendMode.srcIn),
             ),
-            title:Text(
-              title,
-              style:  TextStyle(fontSize: 14,color: blueColor, fontWeight: FontWeight.bold),
-            ) ,
-            subtitle:   Text(subtitle, style:  TextStyle(color: Colors.grey.shade500,fontWeight: FontWeight.w200, fontSize: 11)),
           ),
-          Divider()
-        ],
-      );
-
-
+          title: Text(
+            title,
+            style: TextStyle(
+                fontSize: 14, color: blueColor, fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text(subtitle,
+              style: TextStyle(
+                  color: Colors.grey.shade500,
+                  fontWeight: FontWeight.w200,
+                  fontSize: 11)),
+        ),
+        Divider()
+      ],
+    );
   }
 
   Widget reportItem(String title, String subtitle, VoidCallback onTap) {
@@ -645,9 +663,12 @@ class ReportScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: const TextStyle(fontWeight: FontWeight.w500,fontSize: 14)),
+            Text(title,
+                style:
+                    const TextStyle(fontWeight: FontWeight.w500, fontSize: 14)),
             const SizedBox(height: 2),
-            Text(subtitle, style: const TextStyle(color: Colors.grey, fontSize: 10)),
+            Text(subtitle,
+                style: const TextStyle(color: Colors.grey, fontSize: 10)),
             const Divider(height: 16),
           ],
         ),
@@ -655,7 +676,8 @@ class ReportScreen extends StatelessWidget {
     );
   }
 
-  Widget reportSection(String svgIconPath, String title, List<Map<String, dynamic>> items,String subtitle,BuildContext context) {
+  Widget reportSection(String svgIconPath, String title,
+      List<Map<String, dynamic>> items, String subtitle, BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -667,17 +689,23 @@ class ReportScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          sectionTitle(title, svgIconPath,subtitle),
+          sectionTitle(title, svgIconPath, subtitle),
           const SizedBox(height: 5),
-          ...items.map((item) => reportItem(item['title']!, item['subtitle']!,() {
-            // Handle navigation based on title or a new field like `route`
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => item["navigate"],
-              ),
-            );
-          },)).toList(),
+          ...items
+              .map((item) => reportItem(
+                    item['title']!,
+                    item['subtitle']!,
+                    () {
+                      // Handle navigation based on title or a new field like `route`
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => item["navigate"],
+                        ),
+                      );
+                    },
+                  ))
+              .toList(),
         ],
       ),
     );
@@ -686,39 +714,158 @@ class ReportScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: 10,),
-            reportSection('assets/images/entypo_bar-graph.svg', 'Financial Reports', [
-              {'title': 'Rent Collection Report', 'subtitle': 'Rent collection due by property',"navigate":Rent_collection()},
-              {'title': 'Daily Transaction Report', 'subtitle': 'Listing of all transaction summarized by day',"navigate":DailyTransactions()},
-              {'title': 'Rental Owner Report', 'subtitle': 'Listing of all transaction summarized by day owner',"navigate":RentalOwnerReports()},
-              {'title': 'Account Totals Report', 'subtitle': 'Listing of all transactions summarized by account and rental owner',"navigate":AccountTotalsReports()},
-              {'title': 'Payment Exception Report', 'subtitle': 'Transaction list not assigned to a tenant',"navigate":PaymentExceptionReports()},
-              {'title': 'Recurring Payments Configuration', 'subtitle': 'All configured recurring payments by lease',"navigate":Recurring_Payments_Configuration_Report()},
-              {'title': 'Rent Roll Report', 'subtitle': 'Rent balance due by property and tenants',"navigate":RentersInsurances()},
-            ],"Track payments, transactions, and owner accounts.",context),
-            SizedBox(height: 10,),
-            reportSection('assets/images/mingcute_clipboard-fill.svg', 'Maintenance & Work Orders', [
-              {'title': 'Open Work Orders', 'subtitle': 'Work order not yet in complete state',"navigate":OpenWorkOrders()},
-              {'title': 'Completed Work Orders', 'subtitle': 'All completed work orders',"navigate":CompletedWorkOrders()},
-              //{'title': 'Home System Report', 'subtitle': 'Home system report',"navigate":HomeSystemReportScreen()},
-            ],"Fix it fast, document it all",context),
-            SizedBox(height: 10,),
-            reportSection('assets/images/solar_shield-up-bold.svg', 'Insurance', [
-              {'title': 'Renter’s Insurance', 'subtitle': 'Detailed listing of all renter’s insurance policies',"navigate":RentersInsurance()},
-              {'title': 'Expiring Insurance', 'subtitle': 'Renter’s insurance policies expiring within the selected time period',"navigate":ExpiringInsurance()},
-            ],"Coverage at a glance",context),
-            SizedBox(height: 10,),
-            reportSection('assets/images/fontisto_person.svg', 'Lease & Tenant Management', [
-              {'title': 'Expiring Leases', 'subtitle': 'List of all leases that will end during a specified timeframe',"navigate":ExpiringLeases()},
-              {'title': 'Delinquent Tenants', 'subtitle': 'Tenants with an outstanding ledger balance as of a specified date',"navigate":DelinquentTenants()},
-              {'title': 'Convenience Fee Override', 'subtitle': 'All leases with tenant that have convenience fee override',"navigate":ConvenienceFeeReports()},
-            ],"Active leases and tenant solutions.",context),
-            SizedBox(height: 10,),
-          ],
-        ),
-
+      child: Column(
+        children: [
+          SizedBox(
+            height: 10,
+          ),
+          reportSection(
+              'assets/images/entypo_bar-graph.svg',
+              'Financial Reports',
+              [
+                {
+                  'title': 'Rent Collection Report',
+                  'subtitle': 'Rent collection due by property',
+                  "navigate": Rent_collection()
+                },
+                {
+                  'title': 'Daily Transaction Report',
+                  'subtitle': 'Listing of all transaction summarized by day',
+                  "navigate": DailyTransactions()
+                },
+                {
+                  'title': 'Rental Owner Report',
+                  'subtitle':
+                      'Listing of all transaction summarized by day owner',
+                  "navigate": RentalOwnerReports()
+                },
+                {
+                  'title': 'Account Totals Report',
+                  'subtitle':
+                      'Listing of all transactions summarized by account and rental owner',
+                  "navigate": AccountTotalsReports()
+                },
+                {
+                  'title': 'Payment Exception Report',
+                  'subtitle': 'Transaction list not assigned to a tenant',
+                  "navigate": PaymentExceptionReports()
+                },
+                {
+                  'title': 'Recurring Payments Configuration',
+                  'subtitle': 'All configured recurring payments by lease',
+                  "navigate": Recurring_Payments_Configuration_Report()
+                },
+                {
+                  'title': 'Rent Roll Report',
+                  'subtitle': 'Rent balance due by property and tenants',
+                  "navigate": RentersInsurances()
+                },
+              ],
+              "Track payments, transactions, and owner accounts.",
+              context),
+          SizedBox(
+            height: 10,
+          ),
+          reportSection(
+              'assets/images/mingcute_clipboard-fill.svg',
+              'Maintenance & Work Orders',
+              [
+                {
+                  'title': 'Open Work Orders',
+                  'subtitle': 'Work order not yet in complete state',
+                  "navigate": OpenWorkOrders()
+                },
+                {
+                  'title': 'Completed Work Orders',
+                  'subtitle': 'All completed work orders',
+                  "navigate": CompletedWorkOrders()
+                },
+                {
+                  'title': 'Reopen Work Orders',
+                  'subtitle': 'Work orders on hold with future reopen dates',
+                  "navigate": ReopenWorkorder()
+                },
+                {
+                  'title': 'Home System Report',
+                  'subtitle': 'Home system report',
+                  "navigate": HomeSystemReportScreen()
+                },
+              ],
+              "Fix it fast, document it all",
+              context),
+          SizedBox(
+            height: 10,
+          ),
+          reportSection(
+              'assets/images/solar_shield-up-bold.svg',
+              'Insurance',
+              [
+                {
+                  'title': 'Renter’s Insurance',
+                  'subtitle':
+                      'Detailed listing of all renter’s insurance policies',
+                  "navigate": RentersInsurance()
+                },
+                {
+                  'title': 'Expiring Insurance',
+                  'subtitle':
+                      'Renter\'s insurance policies expiring within the selected time period',
+                  "navigate": ExpiringInsurance()
+                },
+                {
+                  'title': 'Property Insurance Summary',
+                  'subtitle':
+                      'Comprehensive summary of all property insurance policies',
+                  "navigate": PropertyInsuranceSummary()
+                },
+                {
+                  'title': 'Live Property Report',
+                  'subtitle':
+                      'Comprehensive overview of all properties with financial details',
+                  "navigate": LivePropertyReport()
+                },
+                {
+                  'title': 'Property Tax Report',
+                  'subtitle':
+                      'Detailed tax information and payment status for all properties',
+                  "navigate": PropertyTaxReport()
+                },
+              ],
+              "Coverage at a glance",
+              context),
+          SizedBox(
+            height: 10,
+          ),
+          reportSection(
+              'assets/images/fontisto_person.svg',
+              'Lease & Tenant Management',
+              [
+                {
+                  'title': 'Expiring Leases',
+                  'subtitle':
+                      'List of all leases that will end during a specified timeframe',
+                  "navigate": ExpiringLeases()
+                },
+                {
+                  'title': 'Delinquent Tenants',
+                  'subtitle':
+                      'Tenants with an outstanding ledger balance as of a specified date',
+                  "navigate": DelinquentTenants()
+                },
+                {
+                  'title': 'Convenience Fee Override',
+                  'subtitle':
+                      'All leases with tenant that have convenience fee override',
+                  "navigate": ConvenienceFeeReports()
+                },
+              ],
+              "Active leases and tenant solutions.",
+              context),
+          SizedBox(
+            height: 10,
+          ),
+        ],
+      ),
     );
   }
 }
