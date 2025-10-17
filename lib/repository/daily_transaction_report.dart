@@ -77,16 +77,19 @@ class DailyTransactionReportData {
   double grandTotal; // Added grandTotal field
   List<DailyTransactionReport> data;
 
-  DailyTransactionReportData({required this.statusCode, required this.grandTotal, required this.data});
+  DailyTransactionReportData(
+      {required this.statusCode, required this.grandTotal, required this.data});
 
   factory DailyTransactionReportData.fromJson(Map<String, dynamic> json) {
     return DailyTransactionReportData(
       statusCode: json['statusCode'],
       grandTotal: (json['grandTotal'] as num).toDouble(), // Parsing grandTotal
-      data: List<DailyTransactionReport>.from(json['data'].map((x) => DailyTransactionReport.fromJson(x))),
+      data: List<DailyTransactionReport>.from(
+          json['data'].map((x) => DailyTransactionReport.fromJson(x))),
     );
   }
 }
+
 class DailyTransactionReport {
   final String? date;
   final double? subtotal;
@@ -316,10 +319,7 @@ class UnitData {
   }
 }
 
-
-
 class DailyTrasactionReport {
-
   final String baseUrl = '$Api_url/api/payment/todayspayment';
 
   Future<DailyTransactionReportData> fetchDailyTransactions(
@@ -335,7 +335,9 @@ class DailyTrasactionReport {
     if (chargetype != null) {
       url = '$url&selectedChargeType=$chargetype';
     }
-    print(url);
+    print("API URL: $url");
+    print("selectedStartDate: '$selectedStartDate'");
+    print("selectedEndDate: '$selectedEndDate'");
 
     try {
       final response = await http.get(
@@ -364,8 +366,8 @@ class DailyTrasactionReport {
     }
   }
 }
-class DailyTrasactionReportStaff {
 
+class DailyTrasactionReportStaff {
   final String baseUrl = '$Api_url/api/payment/todayspayment';
 
   Future<DailyTransactionReportData> fetchDailyTransactionsstaff(

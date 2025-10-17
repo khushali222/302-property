@@ -101,9 +101,21 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
       toDate.text = dateProvider.formatCurrentDate(todayApiFormat);
     }
 
-    // Convert display dates to API format
-    String apiFromDate = _convertToApiFormat(fromDate.text);
-    String apiToDate = _convertToApiFormat(toDate.text);
+    // Use stored API format dates if available, otherwise convert display dates
+    String apiFromDate;
+    String apiToDate;
+
+    if (_apiFromDate != null && _apiToDate != null) {
+      // Use stored API format dates
+      apiFromDate = _apiFromDate!;
+      apiToDate = _apiToDate!;
+      print('Using stored API dates (Staff): $apiFromDate to $apiToDate');
+    } else {
+      // Fallback: convert display dates to API format
+      apiFromDate = _convertToApiFormat(fromDate.text);
+      apiToDate = _convertToApiFormat(toDate.text);
+      print('Converted display dates (Staff): $apiFromDate to $apiToDate');
+    }
 
     // Get status parameter
     String? statusParam = statusType == 'All Statuses' ? null : statusType;
@@ -118,6 +130,13 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
     print('Status Type: $statusType');
     print('==============================');
 
+    // Test formatDate function directly
+    print('=== FORMATDATE TEST ===');
+    print(
+        'Testing formatDate with fromDate.text: ${formatDate(fromDate.text)}');
+    print('Testing formatDate with toDate.text: ${formatDate(toDate.text)}');
+    print('========================');
+
     // Fetch data with filters
     _fetchOpenWorkOrders(
       fromDate: apiFromDate,
@@ -127,14 +146,10 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
   }
 
   String _convertToApiFormat(String displayDate) {
-    try {
-      // Assuming displayDate is in MM/dd/yyyy format, convert to yyyy-MM-dd
-      final date = DateFormat('MM/dd/yyyy').parse(displayDate);
-      return DateFormat('yyyy-MM-dd').format(date);
-    } catch (e) {
-      // If parsing fails, return the original string
-      return displayDate;
-    }
+    print("_convertToApiFormat called with: '$displayDate'");
+    String result = formatDate(displayDate);
+    print("_convertToApiFormat returning: '$result'");
+    return result;
   }
 
   // Date picker methods
@@ -244,6 +259,10 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
   String? statusType;
   bool customdate = false;
   DateTime? _selectedDate;
+
+  // Store API format dates separately
+  String? _apiFromDate;
+  String? _apiToDate;
 
   List<WorkOrderReportData> get _pagedData {
     int startIndex = _currentPage * _rowsPerPage;
@@ -959,6 +978,12 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                             String todayApiFormat =
                                                 DateFormat('yyyy-MM-dd')
                                                     .format(DateTime.now());
+
+                                            // Store API format dates
+                                            _apiFromDate = todayApiFormat;
+                                            _apiToDate = todayApiFormat;
+
+                                            // Set display format dates
                                             fromDate.text =
                                                 dateProvider.formatCurrentDate(
                                                     todayApiFormat);
@@ -983,6 +1008,12 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                                         days: DateTime
                                                                 .daysPerWeek -
                                                             now.weekday)));
+
+                                            // Store API format dates
+                                            _apiFromDate = weekStartApiFormat;
+                                            _apiToDate = weekEndApiFormat;
+
+                                            // Set display format dates
                                             fromDate.text =
                                                 dateProvider.formatCurrentDate(
                                                     weekStartApiFormat);
@@ -1004,6 +1035,12 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                                 DateFormat('yyyy-MM-dd').format(
                                                     DateTime(now.year,
                                                         now.month + 1, 0));
+
+                                            // Store API format dates
+                                            _apiFromDate = monthStartApiFormat;
+                                            _apiToDate = monthEndApiFormat;
+
+                                            // Set display format dates
                                             fromDate.text =
                                                 dateProvider.formatCurrentDate(
                                                     monthStartApiFormat);
@@ -1023,12 +1060,32 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                             String yearEndApiFormat =
                                                 DateFormat('yyyy-MM-dd').format(
                                                     DateTime(now.year, 12, 31));
+
+                                            // Store API format dates
+                                            _apiFromDate = yearStartApiFormat;
+                                            _apiToDate = yearEndApiFormat;
+
+                                            // Set display format dates
                                             fromDate.text =
                                                 dateProvider.formatCurrentDate(
                                                     yearStartApiFormat);
                                             toDate.text =
                                                 dateProvider.formatCurrentDate(
                                                     yearEndApiFormat);
+
+                                            // Debug: Print the generated dates
+                                            print(
+                                                '=== DATE RANGE SELECTION DEBUG (STAFF) ===');
+                                            print(
+                                                'Year Start API Format: $yearStartApiFormat');
+                                            print(
+                                                'Year End API Format: $yearEndApiFormat');
+                                            print(
+                                                'From Date Display: ${fromDate.text}');
+                                            print(
+                                                'To Date Display: ${toDate.text}');
+                                            print(
+                                                '==========================================');
                                           } else if (value == "Custom") {
                                             customdate = true;
                                           }
@@ -1038,6 +1095,19 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                             fromDate.text = "";
                                             toDate.text = "";
                                           }
+
+                                          // Auto-fetch data only for "Today" selection
+                                          if (value == "Today") {
+                                            _fetchOpenWorkOrders(
+                                              fromDate: _apiFromDate!,
+                                              toDate: _apiToDate!,
+                                              status:
+                                                  statusType == 'All Statuses'
+                                                      ? null
+                                                      : statusType,
+                                            );
+                                          }
+                                          // For other date ranges, user must click "Run Report" button
                                         });
                                       },
                                       buttonStyleData: ButtonStyleData(
@@ -1079,7 +1149,6 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                   ),
                                 ),
                               ),
-
                             ],
                           ),
                         ),
@@ -1117,8 +1186,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                           : null,
                                       readOnly: true,
                                       style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black),
+                                          fontSize: 14, color: Colors.black),
                                       textInputAction: TextInputAction.next,
                                       textAlignVertical:
                                           TextAlignVertical.center,
@@ -1157,8 +1225,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                     child: TextFormField(
                                       controller: toDate,
                                       style: TextStyle(
-                                          fontSize: 14,
-                                          color:Colors.black),
+                                          fontSize: 14, color: Colors.black),
                                       onTap: customdate
                                           ? () {
                                               _endDate(context);
@@ -1241,7 +1308,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                             left: 14, right: 14),
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                          BorderRadius.circular(10),
+                                              BorderRadius.circular(10),
                                           border: Border.all(
                                               color: Color(0xFF8A95A8)),
                                           color: Colors.white,
@@ -1253,19 +1320,19 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                         width: 200,
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                          BorderRadius.circular(14),
+                                              BorderRadius.circular(14),
                                         ),
                                         offset: const Offset(-20, 0),
                                         scrollbarTheme: ScrollbarThemeData(
                                           radius: const Radius.circular(40),
                                           thickness:
-                                          MaterialStateProperty.all(6),
+                                              MaterialStateProperty.all(6),
                                           thumbVisibility:
-                                          MaterialStateProperty.all(true),
+                                              MaterialStateProperty.all(true),
                                         ),
                                       ),
                                       menuItemStyleData:
-                                      const MenuItemStyleData(
+                                          const MenuItemStyleData(
                                         height: 40,
                                         padding: EdgeInsets.only(
                                             left: 14, right: 14),
@@ -1279,8 +1346,8 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: blueColor,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 9),
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 9),
                                   ),
                                   onPressed: () {
                                     _runReport();
@@ -1295,7 +1362,6 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                   ),
                                 ),
                               ),
-
                             ],
                           ),
                         ),

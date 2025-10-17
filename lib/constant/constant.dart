@@ -61,12 +61,23 @@ String image_upload_url = "https://staging.cloudrentalmanager.com";
 //   return DateFormat('dd-MM-yyyy').format(parsedDate);
 // }
 formatDate(String dateTime) {
-  //print(dateTime);
+  print("formatDate input: '$dateTime'");
+
+  // If already in correct format, return as is
+  if (RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(dateTime.trim())) {
+    print("formatDate output (already correct): '$dateTime'");
+    return dateTime;
+  }
+
   List<String> dateFormats = [
     'yyyy-MM-dd',
     'yyyy-M-d',
+    'yyyy-MMM-dd', // e.g. 2025-Jan-01
+    'yyyy-MMM-d', // e.g. 2025-Jan-1
     'dd-MM-yyyy',
     'd-M-yyyy',
+    'd-MMM-yyyy', // e.g. 1-Jan-2025
+    'dd-MMM-yyyy', // e.g. 01-Jan-2025
     'M/d/yyyy',
     'MM/dd/yyyy',
     'M/d/yyyy, h:mm:ss a',
@@ -80,22 +91,24 @@ formatDate(String dateTime) {
   DateTime? parsedDate;
 
   for (String format in dateFormats) {
-    //  print(dateTime);
     try {
       parsedDate = DateFormat(format).parse(dateTime);
-      //  print(parsedDate);
+      print("formatDate parsed with format '$format': $parsedDate");
       break;
     } catch (e) {
+      print("formatDate failed to parse '$dateTime' with format '$format': $e");
       continue;
     }
   }
 
   if (parsedDate == null) {
+    print("formatDate failed to parse: '$dateTime'");
     return dateTime;
-    //  throw FormatException("Date format not recognized: $dateTime");
   }
-  // print(parsedDate);
-  return DateFormat('yyyy-MM-dd').format(parsedDate);
+
+  String result = DateFormat('yyyy-MM-dd').format(parsedDate);
+  print("formatDate output: '$result'");
+  return result;
 }
 
 String formatDate4(String dateTime) {

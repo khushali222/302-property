@@ -130,9 +130,13 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
     }
 
     if (currentFromDate.isNotEmpty && currentToDate.isNotEmpty) {
+      // Convert display dates to API format (yyyy-MM-dd)
+      String apiFromDate = formatDate(currentFromDate);
+      String apiToDate = formatDate(currentToDate);
+
       _futureReport = ExpiringInsuranceTableService().fetchExpiringInsurnce(
-        startDate: currentFromDate,
-        endDate: currentToDate,
+        startDate: apiFromDate,
+        endDate: apiToDate,
       );
 
       // Update the last selected dates
@@ -143,9 +147,13 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
       //   SnackBar(content: Text('Please select both From and To dates.')),
       // );
       // return;
+      // Convert display dates to API format (yyyy-MM-dd)
+      String apiFromDate = formatDate(currentFromDate);
+      String apiToDate = formatDate(currentToDate);
+
       _futureReport = ExpiringInsuranceTableService().fetchExpiringInsurnce(
-        startDate: currentFromDate,
-        endDate: currentToDate,
+        startDate: apiFromDate,
+        endDate: apiToDate,
       );
       lastFromDate = currentFromDate;
       lastToDate = currentToDate;
@@ -1371,11 +1379,11 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                                   final data =
                                                       await ExpiringInsuranceTableService()
                                                           .fetchExpiringInsurnce(
-                                                    startDate:
+                                                    startDate: formatDate(
                                                         _fromDateController
-                                                            .text,
-                                                    endDate:
-                                                        _toDateController.text,
+                                                            .text),
+                                                    endDate: formatDate(
+                                                        _toDateController.text),
                                                   );
 
                                                   await generatePdf(data);
@@ -1397,11 +1405,11 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                                   final data =
                                                       await ExpiringInsuranceTableService()
                                                           .fetchExpiringInsurnce(
-                                                    startDate:
+                                                    startDate: formatDate(
                                                         _fromDateController
-                                                            .text,
-                                                    endDate:
-                                                        _toDateController.text,
+                                                            .text),
+                                                    endDate: formatDate(
+                                                        _toDateController.text),
                                                   );
 
                                                   await generateExcel(data);
@@ -1422,11 +1430,11 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                                   final data =
                                                       await ExpiringInsuranceTableService()
                                                           .fetchExpiringInsurnce(
-                                                    startDate:
+                                                    startDate: formatDate(
                                                         _fromDateController
-                                                            .text,
-                                                    endDate:
-                                                        _toDateController.text,
+                                                            .text),
+                                                    endDate: formatDate(
+                                                        _toDateController.text),
                                                   );
 
                                                   await generateCsv(data);
@@ -1825,8 +1833,10 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                         final data =
                                             await ExpiringInsuranceTableService()
                                                 .fetchExpiringInsurnce(
-                                          startDate: _fromDateController.text,
-                                          endDate: _toDateController.text,
+                                          startDate: formatDate(
+                                              _fromDateController.text),
+                                          endDate: formatDate(
+                                              _toDateController.text),
                                         );
 
                                         await generatePdf(data);
@@ -1846,8 +1856,10 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                         final data =
                                             await ExpiringInsuranceTableService()
                                                 .fetchExpiringInsurnce(
-                                          startDate: _fromDateController.text,
-                                          endDate: _toDateController.text,
+                                          startDate: formatDate(
+                                              _fromDateController.text),
+                                          endDate: formatDate(
+                                              _toDateController.text),
                                         );
 
                                         await generateExcel(data);
@@ -1866,8 +1878,10 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                         final data =
                                             await ExpiringInsuranceTableService()
                                                 .fetchExpiringInsurnce(
-                                          startDate: _fromDateController.text,
-                                          endDate: _toDateController.text,
+                                          startDate: formatDate(
+                                              _fromDateController.text),
+                                          endDate: formatDate(
+                                              _toDateController.text),
                                         );
 
                                         await generateCsv(data);
