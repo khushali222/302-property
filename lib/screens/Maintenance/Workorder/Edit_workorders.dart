@@ -828,7 +828,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     DateTime? selectedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
+      firstDate: DateTime.now(), // Due date cannot be earlier than today
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(
@@ -3582,7 +3582,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
     DateTime? selectedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
+      firstDate: DateTime.now(), // Due date cannot be earlier than today
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(
