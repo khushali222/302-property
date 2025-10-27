@@ -129,67 +129,63 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Staff Member Name *",
-                                      style: TextStyle(
-                                        color: Color(0xFF101828),
-                                        fontWeight: FontWeight.bold,
+                              Text(
+                                "Staff Member Name *",
+                                style: TextStyle(
+                                  color: Color(0xFF101828),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 14
+                                          : 20,
+                                ),
+                              ),
+                              SizedBox(height: 2),
+                              Material(
+                                //elevation: 4,
+                                borderRadius: BorderRadius.circular(10),
+                                child: Container(
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: Color(0xFFCED4DA),
+                                    ),
+                                  ),
+                                  child: TextField(
+                                    onChanged: (value) {
+                                      setState(() => nameerror = false);
+                                    },
+                                    controller: name,
+                                    cursorColor: blueColor,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(RegExp(
+                                          r"[a-zA-Z\s]")), // only letters + spaces
+                                    ],
+                                    decoration: InputDecoration(
+                                      hintText: "Enter staff member name",
+                                      hintStyle: TextStyle(
                                         fontSize:
                                             MediaQuery.of(context).size.width <
                                                     500
-                                                ? 14
-                                                : 20,
+                                                ? 13
+                                                : 18,
+                                        color: Color(0xFFA1A8B0),
                                       ),
+                                      border: InputBorder.none,
+                                      contentPadding: EdgeInsets.all(12),
                                     ),
-                                    SizedBox(height: 2),
-                                    Material(
-                                      //elevation: 4,
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Container(
-                                        height: 50,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          border: Border.all(
-                                            color: Color(0xFFCED4DA),
-                                          ),
-                                        ),
-                                        child: TextField(
-                                          onChanged: (value) {
-                                            setState(() => nameerror = false);
-                                          },
-                                          controller: name,
-                                          cursorColor: blueColor,
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z\s]")), // only letters + spaces
-                                          ],
-                                          decoration: InputDecoration(
-                                            hintText: "Enter staff member name",
-                                            hintStyle: TextStyle(
-                                              fontSize: MediaQuery.of(context)
-                                                          .size
-                                                          .width <
-                                                      500
-                                                  ? 15
-                                                  : 20,
-                                              color: Color(0xFFA1A8B0),
-                                            ),
-                                            border: InputBorder.none,
-                                            contentPadding: EdgeInsets.all(12),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ),
-                              SizedBox(width: 8),
+                            ],
+                          ),
+                          SizedBox(height: 8),
+                          Row(
+                            children: [
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -206,7 +202,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                                       .width <
                                                   500
                                               ? 14
-                                              : 20,
+                                              : 18,
                                         ),
                                       ),
                                     ),
@@ -237,8 +233,8 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                                           .size
                                                           .width <
                                                       500
-                                                  ? 15
-                                                  : 20,
+                                                  ? 13
+                                                  : 18,
                                               color: Color(0xFFA1A8B0),
                                             ),
                                             border: InputBorder.none,
@@ -309,73 +305,63 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Phone Number *",
-                                      style: TextStyle(
-                                        color: Color(0xFF101828),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 15
-                                                : 20,
-                                      ),
-                                    ),
-                                    Material(
-                                      //elevation: 4,
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Container(
-                                        height: 50,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          border: Border.all(
-                                            color: Color(0xFFCED4DA),
-                                          ),
-                                        ),
-                                        child: TextField(
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter
-                                                .digitsOnly,
-                                            LengthLimitingTextInputFormatter(
-                                                10),
-                                            PhoneNumberFormatter(),
-                                          ],
-                                          focusNode: _nodeText1,
-                                          onChanged: (value) {
-                                            setState(
-                                                () => phonenumbererror = false);
-                                          },
-                                          controller: phonenumber,
-                                          keyboardType: TextInputType.number,
-                                          cursorColor: blueColor,
-                                          decoration: InputDecoration(
-                                            hintText: "Enter phone number",
-                                            hintStyle: TextStyle(
-                                              fontSize: MediaQuery.of(context)
-                                                          .size
-                                                          .width <
-                                                      500
-                                                  ? 15
-                                                  : 20,
-                                              color: Color(0xFFA1A8B0),
-                                            ),
-                                            border: InputBorder.none,
-                                            contentPadding: EdgeInsets.all(12),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                          Text(
+                            "Phone Number *",
+                            style: TextStyle(
+                              color: Color(0xFF101828),
+                              fontWeight: FontWeight.bold,
+                              fontSize: MediaQuery.of(context).size.width < 500
+                                  ? 13
+                                  : 20,
+                            ),
+                          ),
+                          Material(
+                            //elevation: 4,
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Color(0xFFCED4DA),
                                 ),
                               ),
-                              SizedBox(width: 8),
+                              child: TextField(
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
+                                  PhoneNumberFormatter(),
+                                ],
+                                focusNode: _nodeText1,
+                                onChanged: (value) {
+                                  setState(() => phonenumbererror = false);
+                                },
+                                controller: phonenumber,
+                                keyboardType: TextInputType.number,
+                                cursorColor: blueColor,
+                                decoration: InputDecoration(
+                                  hintText: "Enter phone number",
+                                  hintStyle: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 13
+                                            : 18,
+                                    color: Color(0xFFA1A8B0),
+                                  ),
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(12),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -388,7 +374,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                         fontSize:
                                             MediaQuery.of(context).size.width <
                                                     500
-                                                ? 15
+                                                ? 13
                                                 : 20,
                                       ),
                                     ),
@@ -419,8 +405,8 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                                           .size
                                                           .width <
                                                       500
-                                                  ? 15
-                                                  : 20,
+                                                  ? 13
+                                                  : 18,
                                               color: Color(0xFFA1A8B0),
                                             ),
                                             border: InputBorder.none,
@@ -484,85 +470,76 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                         ],
                       ),
                       SizedBox(
-                        height: 12,
+                        height: 8,
                       ),
                       //password and confirm pass
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Password *",
-                                      style: TextStyle(
-                                        color: Color(0xFF101828),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 15
-                                                : 20,
-                                      ),
+                          Text(
+                            "Password *",
+                            style: TextStyle(
+                              color: Color(0xFF101828),
+                              fontWeight: FontWeight.bold,
+                              fontSize: MediaQuery.of(context).size.width < 500
+                                  ? 13
+                                  : 18,
+                            ),
+                          ),
+                          SizedBox(height: 2),
+                          Material(
+                            //  elevation: 4,
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: Color(0xFFCED4DA)),
+                              ),
+                              child: TextField(
+                                onChanged: (value) {
+                                  setState(() => passworderror = false);
+                                },
+                                controller: password,
+                                cursorColor: blueColor,
+                                obscureText: obsecure,
+                                decoration: InputDecoration(
+                                  hintText: "Enter password",
+                                  hintStyle: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 13
+                                            : 18,
+                                    color: Color(0xFFA1A8B0),
+                                  ),
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(12),
+                                  suffixIcon: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        obsecure = !obsecure;
+                                      });
+                                    },
+                                    child: Icon(
+                                      obsecure
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                      color: Color(0xFF444444),
+                                      size: 20,
                                     ),
-                                    SizedBox(height: 2),
-                                    Material(
-                                      //  elevation: 4,
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Container(
-                                        height: 50,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          border: Border.all(
-                                              color: Color(0xFFCED4DA)),
-                                        ),
-                                        child: TextField(
-                                          onChanged: (value) {
-                                            setState(
-                                                () => passworderror = false);
-                                          },
-                                          controller: password,
-                                          cursorColor: blueColor,
-                                          obscureText: obsecure,
-                                          decoration: InputDecoration(
-                                            hintText: "Enter password",
-                                            hintStyle: TextStyle(
-                                              fontSize: MediaQuery.of(context)
-                                                          .size
-                                                          .width <
-                                                      500
-                                                  ? 15
-                                                  : 20,
-                                              color: Color(0xFFA1A8B0),
-                                            ),
-                                            border: InputBorder.none,
-                                            contentPadding: EdgeInsets.all(12),
-                                            suffixIcon: GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  obsecure = !obsecure;
-                                                });
-                                              },
-                                              child: Icon(
-                                                obsecure
-                                                    ? Icons.visibility
-                                                    : Icons.visibility_off,
-                                                color: Color(0xFF444444),
-                                                size: 20,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ),
-                              SizedBox(width: 8),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -575,8 +552,8 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                         fontSize:
                                             MediaQuery.of(context).size.width <
                                                     500
-                                                ? 15
-                                                : 20,
+                                                ? 13
+                                                : 18,
                                       ),
                                     ),
                                     SizedBox(height: 2),
@@ -607,8 +584,8 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                                           .size
                                                           .width <
                                                       500
-                                                  ? 15
-                                                  : 20,
+                                                  ? 13
+                                                  : 18,
                                               color: Color(0xFFA1A8B0),
                                             ),
                                             border: InputBorder.none,
@@ -728,7 +705,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                                       .size
                                                       .width <
                                                   500
-                                              ? 15
+                                              ? 13
                                               : 18),
                                     ),
                                   ),
@@ -744,7 +721,8 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 if (name.text.trim().isEmpty) {
                                   setState(() {
                                     nameerror = true;
-                                    namemessage = "Please enter Staff Member Name";
+                                    namemessage =
+                                        "Please enter Staff Member Name";
                                   });
                                 } else {
                                   setState(() {
@@ -756,7 +734,8 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 if (designation.text.trim().isEmpty) {
                                   setState(() {
                                     designationerror = true;
-                                    designationmessage = "Please enter Designation";
+                                    designationmessage =
+                                        "Please enter Designation";
                                   });
                                 } else {
                                   setState(() {
@@ -769,7 +748,8 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 if (formattedPhoneNumber.isEmpty) {
                                   setState(() {
                                     phonenumbererror = true;
-                                    phonenumbermessage = "Please enter Phone Number";
+                                    phonenumbermessage =
+                                        "Please enter Phone Number";
                                   });
                                 } else if (formattedPhoneNumber.length != 10) {
                                   setState(() {
@@ -843,7 +823,8 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                 if (conpassword.text.trim().isEmpty) {
                                   setState(() {
                                     conpassworderror = true;
-                                    conpasswordmessage = "Must be same as password";
+                                    conpasswordmessage =
+                                        "Must be same as password";
                                   });
                                 } else if (conpassword.text != password.text) {
                                   setState(() {
@@ -925,7 +906,7 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                             size: 25.0,
                                           )
                                         : Text(
-                                            "Add Staff Member",
+                                            "Add Staff ",
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold,
@@ -933,8 +914,8 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                                                             .size
                                                             .width <
                                                         500
-                                                    ? 15
-                                                    : 18),
+                                                    ? 13
+                                                    : 16),
                                           ),
                                   ),
                                 ),
@@ -957,4 +938,3 @@ class _Add_staffmemberState extends State<Add_staffmember> {
     );
   }
 }
-

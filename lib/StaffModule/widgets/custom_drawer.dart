@@ -78,18 +78,6 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                 widget.currentpage == "Dashboard",
               ),
 
-              /*buildListTile(
-                context,
-                FaIcon(
-                  FontAwesomeIcons.userClock,
-                  size: 20,
-                  color: widget.currentpage == "Add Staff Member"
-                      ? Colors.white
-                      : blueColor,
-                ),
-                "Staff Member",
-                widget.currentpage == "Add Staff Member",
-              ),*/
               // Only show Rentals section if staff has any rental-related permissions
               if (permissions != null &&
                   (permissions.propertyView == true ||

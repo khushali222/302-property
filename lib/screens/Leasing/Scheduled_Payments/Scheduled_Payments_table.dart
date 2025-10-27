@@ -59,6 +59,24 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
   bool ascending1 = false;
   bool ascending2 = false;
   bool ascending3 = false;
+
+  void sortData(List<Scheduled_Payment> data) {
+    // Apply user-selected sorting only if explicitly chosen
+    if (sorting1 && !sorting2 && !sorting3) {
+      data.sort((a, b) => ascending1
+          ? a.rentalAddress!.compareTo(b.rentalAddress!)
+          : b.rentalAddress!.compareTo(a.rentalAddress!));
+    } else if (sorting2 && !sorting1 && !sorting3) {
+      data.sort((a, b) => ascending2
+          ? (a.tenant?.tenantName ?? '').compareTo(b.tenant?.tenantName ?? '')
+          : (b.tenant?.tenantName ?? '').compareTo(a.tenant?.tenantName ?? ''));
+    } else if (sorting3 && !sorting1 && !sorting2) {
+      data.sort((a, b) => ascending3
+          ? (a.totalAmount ?? 0).compareTo(b.totalAmount ?? 0)
+          : (b.totalAmount ?? 0).compareTo(a.totalAmount ?? 0));
+    }
+  }
+
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
@@ -115,25 +133,24 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                         : Text("Property",
                             style: TextStyle(
                                 color: blueColor, fontWeight: FontWeight.bold)),
-                    // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
-                    // ascending1
-                    //     ? Padding(
-                    //         padding: const EdgeInsets.only(top: 7, left: 2),
-                    //         child: FaIcon(
-                    //           FontAwesomeIcons.sortUp,
-                    //           size: 20,
-                    //           color: Colors.white,
-                    //         ),
-                    //       )
-                    //     : Padding(
-                    //         padding: const EdgeInsets.only(bottom: 7, left: 2),
-                    //         child: FaIcon(
-                    //           FontAwesomeIcons.sortDown,
-                    //           size: 20,
-                    //           color: Colors.white,
-                    //         ),
-                    //       ),
+                    ascending1
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -163,10 +180,27 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                 },
                 child: Row(
                   children: [
-                    Text("    Tenant",
+                    Text(" Tenant",
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 5),
+                    ascending2
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -201,6 +235,23 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 5),
+                    ascending3
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -584,7 +635,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "Scheduled Payment",
+        currentpage: "Scheduled Payments",
         dropdown: true,
       ),
       body: _connectivityResult != ConnectivityResult.none
@@ -602,17 +653,24 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16.0, vertical: 8.0),
                     child: Padding(
-                      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+                      padding: EdgeInsets.only(
+                          left:
+                              MediaQuery.of(context).size.width > 500 ? 12 : 0,
+                          right:
+                              MediaQuery.of(context).size.width > 500 ? 12 : 0),
                       child: titleBar(
                         width: double.infinity,
-                        title: 'Scheduled Payment',
+                        title: 'Scheduled Payments',
                       ),
                     ),
                   ),
                   const SizedBox(height: 10),
                   //search
                   Padding(
-                    padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 25 : 14, right:MediaQuery.of(context).size.width > 500? 26 : 20),
+                    padding: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width > 500 ? 25 : 14,
+                        right:
+                            MediaQuery.of(context).size.width > 500 ? 26 : 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -731,111 +789,107 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                   // if (MediaQuery.of(context).size.width > 500)
                   //   const SizedBox(height: 25),
                   // if (MediaQuery.of(context).size.width < 500)
-                    Padding(
-                      padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width < 500 ? 11 : 28),
-                      child: FutureBuilder<List<Scheduled_Payment>>(
-                        future: futurescheduledpayment,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return ColabShimmerLoadingWidget();
-                          } else if (snapshot.hasError) {
+                  Padding(
+                    padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.width < 500 ? 11 : 28),
+                    child: FutureBuilder<List<Scheduled_Payment>>(
+                      future: futurescheduledpayment,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return ColabShimmerLoadingWidget();
+                        } else if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return Container(
+                            height: MediaQuery.of(context).size.height * .5,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "No Data Available",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        } else {
+                          var data = snapshot.data!;
+                          if (selectedValue == null && searchvalue.isEmpty) {
+                            data = snapshot.data!;
+                          } else if (selectedValue == "All") {
+                            data = snapshot.data!;
+                          } else if (searchvalue.isNotEmpty) {
+                            data = snapshot.data!
+                                .where((applicant) =>
+                                    applicant.rentalAddress!
+                                        .toLowerCase()
+                                        .contains(searchvalue.toLowerCase()) ||
+                                    applicant.rentalAddress!
+                                        .toString()
+                                        .toLowerCase()
+                                        .contains(searchvalue.toLowerCase()) ||
+                                    applicant.tenant!.tenantName
+                                        .toString()
+                                        .toLowerCase()
+                                        .contains(searchvalue.toLowerCase()) ||
+                                    applicant.totalAmount
+                                        .toString()
+                                        .toLowerCase()
+                                        .contains(searchvalue.toLowerCase()) ||
+                                    applicant.date
+                                        .toString()
+                                        .toLowerCase()
+                                        .contains(searchvalue.toLowerCase()))
+                                .toList();
+                          } else {
+                            data = snapshot.data!
+                                .where((applicant) =>
+                                    applicant.rentalAddress == selectedValue)
+                                .toList();
+                          }
+                          if (data.isEmpty) {
                             return Center(
-                                child: Text('Error: ${snapshot.error}'));
-                          } else if (!snapshot.hasData ||
-                              snapshot.data!.isEmpty) {
-                            return Container(
-                              height: MediaQuery.of(context).size.height * .5,
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/images/no_data.jpg",
-                                      height: 200,
-                                      width: 200,
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "No Data Available",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor,
-                                          fontSize: 16),
-                                    )
-                                  ],
-                                ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "No Data Available",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
+                                  )
+                                ],
                               ),
                             );
-                          } else {
-                            var data = snapshot.data!;
-                            if (selectedValue == null && searchvalue.isEmpty) {
-                              data = snapshot.data!;
-                            } else if (selectedValue == "All") {
-                              data = snapshot.data!;
-                            } else if (searchvalue.isNotEmpty) {
-                              data = snapshot.data!
-                                  .where((applicant) =>
-                                      applicant.rentalAddress!
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue.toLowerCase()) ||
-                                      applicant.rentalAddress!
-                                          .toString()
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue.toLowerCase()) ||
-                                      applicant.tenant!.tenantName
-                                          .toString()
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue.toLowerCase()) ||
-                                      applicant.totalAmount
-                                          .toString()
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue.toLowerCase()) ||
-                                      applicant.date
-                                          .toString()
-                                          .toLowerCase()
-                                          .contains(searchvalue.toLowerCase()))
-                                  .toList();
-                            } else {
-                              data = snapshot.data!
-                                  .where((applicant) =>
-                                      applicant.rentalAddress == selectedValue)
-                                  .toList();
-                            }
-                            if (data.isEmpty) {
-                              return Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/images/no_data.jpg",
-                                      height: 200,
-                                      width: 200,
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "No Data Available",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor,
-                                          fontSize: 16),
-                                    )
-                                  ],
-                                ),
-                              );
-                            }
-                            /* if (selectedValue == null && searchvalue!.isEmpty) {
+                          }
+                          /* if (selectedValue == null && searchvalue!.isEmpty) {
                         data = snapshot.data!;
                       } else if (selectedValue == "All") {
                         data = snapshot.data!;
@@ -855,40 +909,49 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                         property.propertyType == selectedValue)
                             .toList();
                       }*/
-                            //sortData(data);
-                            final totalPages =
-                                (data.length / itemsPerPage).ceil();
-                            final currentPageData = data
-                                .skip(currentPage * itemsPerPage)
-                                .take(itemsPerPage)
-                                .toList();
-                            print("lease id ${snapshot.data?.first.leaseId}");
-                            return SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  const SizedBox(height: 10),
-                                  _buildHeaders(),
-                                  const SizedBox(height: 10),
-                                  Container(
-                                    // decoration: BoxDecoration(
-                                    //     border: Border.all(
-                                    //         color: Color.fromRGBO(
-                                    //             152, 162, 179, .5))),
-                                    // decoration: BoxDecoration(
-                                    //     border: Border.all(color: blueColor)),
-                                    child: Column(
-                                      children: currentPageData
-                                          .asMap()
-                                          .entries
-                                          .map((entry) {
-                                        int index = entry.key;
-                                        bool isExpanded =
-                                            expandedIndex == index;
-                                        Scheduled_Payment Propertytype =
-                                            entry.value;
+                          sortData(data);
+                          final totalPages =
+                              (data.length / itemsPerPage).ceil();
+                          final currentPageData = data
+                              .skip(currentPage * itemsPerPage)
+                              .take(itemsPerPage)
+                              .toList();
+                          print("lease id ${snapshot.data?.first.leaseId}");
+                          return SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 10),
+                                _buildHeaders(),
+                                const SizedBox(height: 10),
+                                Container(
+                                  // decoration: BoxDecoration(
+                                  //     border: Border.all(
+                                  //         color: Color.fromRGBO(
+                                  //             152, 162, 179, .5))),
+                                  // decoration: BoxDecoration(
+                                  //     border: Border.all(color: blueColor)),
+                                  child: Column(
+                                    children: currentPageData
+                                        .asMap()
+                                        .entries
+                                        .map((entry) {
+                                      int index = entry.key;
+                                      bool isExpanded = expandedIndex == index;
+                                      Scheduled_Payment Propertytype =
+                                          entry.value;
 
-                                        //return CustomExpansionTile(data: Propertytype, index: index);
-                                        return Container(
+                                      //return CustomExpansionTile(data: Propertytype, index: index);
+                                      return InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            if (expandedIndex == index) {
+                                              expandedIndex = null;
+                                            } else {
+                                              expandedIndex = index;
+                                            }
+                                          });
+                                        },
+                                        child: Container(
                                           margin: const EdgeInsets.symmetric(
                                               vertical: 6),
                                           decoration: BoxDecoration(
@@ -1243,129 +1306,124 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                               //SizedBox(height: 13,),
                                             ],
                                           ),
-                                        );
-                                      }).toList(),
-                                    ),
+                                        ),
+                                      );
+                                    }).toList(),
                                   ),
-                                  const SizedBox(height: 20),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          // Text('Rows per page:'),
-                                          const SizedBox(width: 10),
-                                          Material(
-                                            elevation: 3,
-                                            child: Container(
-                                              height: 40,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 12.0),
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Colors.grey),
-                                              ),
-                                              child:
-                                                  DropdownButtonHideUnderline(
-                                                child: DropdownButton<int>(
-                                                  value: itemsPerPage,
-                                                  items: itemsPerPageOptions
-                                                      .map((int value) {
-                                                    return DropdownMenuItem<
-                                                        int>(
-                                                      value: value,
-                                                      child: Text(
-                                                          value.toString()),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: data.length >
-                                                          itemsPerPageOptions
-                                                              .first // Condition to check if dropdown should be enabled
-                                                      ? (newValue) {
-                                                          setState(() {
-                                                            itemsPerPage =
-                                                                newValue!;
-                                                            currentPage =
-                                                                0; // Reset to first page when items per page change
-                                                          });
-                                                        }
-                                                      : null,
-                                                ),
-                                              ),
+                                ),
+                                const SizedBox(height: 20),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        // Text('Rows per page:'),
+                                        const SizedBox(width: 10),
+                                        Material(
+                                          elevation: 3,
+                                          child: Container(
+                                            height: 40,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.grey),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons
-                                                  .circleChevronLeft,
-                                              color: currentPage == 0
-                                                  ? Colors.grey
-                                                  : blueColor,
-                                            ),
-                                            onPressed: currentPage == 0
-                                                ? null
-                                                : () {
-                                                    setState(() {
-                                                      currentPage--;
-                                                    });
-                                                  },
-                                          ),
-                                          // IconButton(
-                                          //   icon: Icon(Icons.arrow_back),
-                                          //   onPressed: currentPage > 0
-                                          //       ? () {
-                                          //     setState(() {
-                                          //       currentPage--;
-                                          //     });
-                                          //   }
-                                          //       : null,
-                                          // ),
-                                          Text(
-                                              'Page ${currentPage + 1} of $totalPages'),
-                                          // IconButton(
-                                          //   icon: Icon(Icons.arrow_forward),
-                                          //   onPressed: currentPage < totalPages - 1
-                                          //       ? () {
-                                          //     setState(() {
-                                          //       currentPage++;
-                                          //     });
-                                          //   }
-                                          //       : null,
-                                          // ),
-                                          IconButton(
-                                            icon: FaIcon(
-                                              FontAwesomeIcons
-                                                  .circleChevronRight,
-                                              color:
-                                                  currentPage < totalPages - 1
-                                                      ? blueColor
-                                                      : Colors.grey,
-                                            ),
-                                            onPressed:
-                                                currentPage < totalPages - 1
-                                                    ? () {
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<int>(
+                                                value: itemsPerPage,
+                                                items: itemsPerPageOptions
+                                                    .map((int value) {
+                                                  return DropdownMenuItem<int>(
+                                                    value: value,
+                                                    child:
+                                                        Text(value.toString()),
+                                                  );
+                                                }).toList(),
+                                                onChanged: data.length >
+                                                        itemsPerPageOptions
+                                                            .first // Condition to check if dropdown should be enabled
+                                                    ? (newValue) {
                                                         setState(() {
-                                                          currentPage++;
+                                                          itemsPerPage =
+                                                              newValue!;
+                                                          currentPage =
+                                                              0; // Reset to first page when items per page change
                                                         });
                                                       }
                                                     : null,
+                                              ),
+                                            ),
                                           ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-                        },
-                      ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronLeft,
+                                            color: currentPage == 0
+                                                ? Colors.grey
+                                                : blueColor,
+                                          ),
+                                          onPressed: currentPage == 0
+                                              ? null
+                                              : () {
+                                                  setState(() {
+                                                    currentPage--;
+                                                  });
+                                                },
+                                        ),
+                                        // IconButton(
+                                        //   icon: Icon(Icons.arrow_back),
+                                        //   onPressed: currentPage > 0
+                                        //       ? () {
+                                        //     setState(() {
+                                        //       currentPage--;
+                                        //     });
+                                        //   }
+                                        //       : null,
+                                        // ),
+                                        Text(
+                                            'Page ${currentPage + 1} of $totalPages'),
+                                        // IconButton(
+                                        //   icon: Icon(Icons.arrow_forward),
+                                        //   onPressed: currentPage < totalPages - 1
+                                        //       ? () {
+                                        //     setState(() {
+                                        //       currentPage++;
+                                        //     });
+                                        //   }
+                                        //       : null,
+                                        // ),
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronRight,
+                                            color: currentPage < totalPages - 1
+                                                ? blueColor
+                                                : Colors.grey,
+                                          ),
+                                          onPressed:
+                                              currentPage < totalPages - 1
+                                                  ? () {
+                                                      setState(() {
+                                                        currentPage++;
+                                                      });
+                                                    }
+                                                  : null,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      },
                     ),
+                  ),
                   /* if (MediaQuery.of(context).size.width > 500)
               FutureBuilder<List<propertytype>>(
                 future: futurePropertyTypes,

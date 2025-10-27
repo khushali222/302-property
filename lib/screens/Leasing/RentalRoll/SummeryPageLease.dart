@@ -202,361 +202,338 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       ),
       body: _connectivityResult != ConnectivityResult.none
           ? SingleChildScrollView(
-        child: FutureBuilder<LeaseSummary>(
-            future: futureLeaseSummary,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Padding(
-                  padding: const EdgeInsets.only(top: 300),
-                  child: SpinKitSpinningLines(
-                    color: blueColor,
-                    size: 55.0,
-                  ),
-                );
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else if (!snapshot.hasData || snapshot.data == null) {
-                return const Center(child: Text('No data found.'));
-              } else {
-                var lease = snapshot.data!;
-                return Column(
-                  children: <Widget>[
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      children: [
-                        if (MediaQuery.of(context).size.width < 500)
-                          const SizedBox(
-                            width: 18,
-                          ),
-                        if (MediaQuery.of(context).size.width > 500)
-                          const SizedBox(
-                            width: 25,
-                          ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width > 500
-                              ? 200
-                              : 250,
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 1),
-                            child: Text(
-                              '${snapshot.data?.data?.rentalAddress}',
-                              maxLines: 5, // Set maximum number of lines
-                              overflow: TextOverflow
-                                  .ellipsis, // Handle overflow with ellipsis
-                              style: TextStyle(
-                                  fontSize:
-                                  MediaQuery.of(context).size.width <
-                                      500
-                                      ? 13
-                                      : 18,
-                                  color: blueColor,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
+              child: FutureBuilder<LeaseSummary>(
+                  future: futureLeaseSummary,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 300),
+                        child: SpinKitSpinningLines(
+                          color: blueColor,
+                          size: 55.0,
                         ),
-                        // Text('${snapshot.data!.data!.rentalAddress}',
-                        //     style: TextStyle(
-                        //         color: blueColor,
-                        //         fontWeight: FontWeight.bold,
-                        //       fontSize:   MediaQuery.of(context).size.width < 500 ? 15 :18)),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Padding(
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 18.0),
-                      child: Row(
-                        children: [
-                          Text(
-                            '${determineStatus(snapshot.data?.data?.startDate, snapshot.data?.data?.endDate)} ${snapshot.data?.data?.renewLeases != null && snapshot.data!.data!.renewLeases!.isNotEmpty ? " - Renewed" : ""}',
-                            style: TextStyle(
-                              color: _getStatusColor(determineStatus(
-                                  snapshot.data?.data?.startDate,
-                                  snapshot.data?.data?.endDate)),
-                              fontWeight: FontWeight.bold,
-                              fontSize:
-                              MediaQuery.of(context).size.width < 500
-                                  ? 13
-                                  : 16,
-                            ),
-                          ),
-                          const Spacer(),
-                          GestureDetector(
-                            onTap: () async {
-                              // Provider.of<SelectedTenantsProvider>(context,
-                              //     listen: false)
-                              //     .clearTenant();
-                              // Provider.of<SelectedCosignersProvider>(context,
-                              //     listen: false)
-                              //     .clearCosigner();
-                              // Provider.of<SelectedApplicantProvider>(context,
-                              //     listen: false)
-                              //     .clearApplicant();
-                              final result = await Navigator.of(context)
-                                  .push(MaterialPageRoute(
-                                  builder: (context) => send_email(
-                                    lease: snapshot
-                                        .data!.data!.tenantId!,
-                                    leaseID: snapshot
-                                        .data!.data!.leaseId!,
-                                  )));
-                            },
-                            child: Container(
-                              height: (MediaQuery.of(context).size.width <
-                                  500)
-                                  ? 35
-                                  : MediaQuery.of(context).size.width *
-                                  0.063,
-                              width: 100,
-                              decoration: BoxDecoration(
-                                color: blueColor,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Send Mail",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: MediaQuery.of(context)
-                                        .size
-                                        .width <
-                                        500
-                                        ? 14
-                                        : 22,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data == null) {
+                      return const Center(child: Text('No data found.'));
+                    } else {
+                      var lease = snapshot.data!;
+                      return Column(
+                        children: <Widget>[
                           const SizedBox(
-                            width: 10,
+                            height: 20,
                           ),
-                          GestureDetector(
-                            onTap: () async {
-                              // Provider.of<SelectedTenantsProvider>(context,
-                              //     listen: false)
-                              //     .clearTenant();
-                              // Provider.of<SelectedCosignersProvider>(context,
-                              //     listen: false)
-                              //     .clearCosigner();
-                              // Provider.of<SelectedApplicantProvider>(context,
-                              //     listen: false)
-                              //     .clearApplicant();
-                              final result = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Edit_lease(
-                                        //lease: lease,
-                                        leaseId: snapshot
-                                            .data!.data!.leaseId!,
-                                      )));
-                              ;
-                            },
-                            child: Container(
-                              height: (MediaQuery.of(context).size.width <
-                                  500)
-                                  ? 35
-                                  : MediaQuery.of(context).size.width *
-                                  0.063,
-                              width: 60,
-                              decoration: BoxDecoration(
-                                color: blueColor,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Edit",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: MediaQuery.of(context)
-                                        .size
-                                        .width <
-                                        500
-                                        ? 14
-                                        : 22,
+                          Row(
+                            children: [
+                              if (MediaQuery.of(context).size.width < 500)
+                                const SizedBox(
+                                  width: 18,
+                                ),
+                              if (MediaQuery.of(context).size.width > 500)
+                                const SizedBox(
+                                  width: 25,
+                                ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width > 500
+                                    ? 200
+                                    : 250,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 1),
+                                  child: Text(
+                                    '${snapshot.data?.data?.rentalAddress}',
+                                    maxLines: 5, // Set maximum number of lines
+                                    overflow: TextOverflow
+                                        .ellipsis, // Handle overflow with ellipsis
+                                    style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 13
+                                                : 18,
+                                        color: blueColor,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    /* GestureDetector(
-                            onTap: () async {
-                              // Provider.of<SelectedTenantsProvider>(context,
-                              //     listen: false)
-                              //     .clearTenant();
-                              // Provider.of<SelectedCosignersProvider>(context,
-                              //     listen: false)
-                              //     .clearCosigner();
-                              // Provider.of<SelectedApplicantProvider>(context,
-                              //     listen: false)
-                              //     .clearApplicant();
-                              final result = await Navigator.of(context)
-                                  .push(MaterialPageRoute(
-                                  builder: (context) => send_email(
-                                     lease: snapshot.data!.data!.tenantId!
-                                  )));
 
-                            },
-                            child: Container(
-                              height: (MediaQuery.of(context).size.width < 500)
-                                  ? 35
-                                  : MediaQuery.of(context).size.width * 0.063,
-                              width: (MediaQuery.of(context).size.width < 500)
-                                  ? MediaQuery.of(context).size.width * 0.35
-                                  : MediaQuery.of(context).size.width * 0.2,
-                              decoration: BoxDecoration(
-                                color: blueColor,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "+ Send Mail",
+                              // Container(
+                              //   width: 30,
+                              //   height: 30,
+                              //   decoration: BoxDecoration(
+                              //     color: Color(0xFFe9e9e9),
+                              //     borderRadius: BorderRadius.circular(5),
+                              //   ),
+                              //   child: PopupMenuButton(
+                              //     onSelected: (value) async {
+                              //       if (value == 'Edit') {
+                              //         final result = await Navigator.of(context)
+                              //             .push(MaterialPageRoute(
+                              //                 builder: (context) => Edit_lease(
+                              //                       leaseId: snapshot
+                              //                           .data!.data!.leaseId!,
+                              //                     )));
+                              //       }
+                              //       if (value == 'Send Mail') {
+                              //         final result = await Navigator.of(context)
+                              //             .push(MaterialPageRoute(
+                              //                 builder: (context) => send_email(
+                              //                       lease: snapshot
+                              //                           .data!.data!.tenantId!,
+                              //                       leaseID: snapshot
+                              //                           .data!.data!.leaseId!,
+                              //                     )));
+                              //       }
+                              //     },
+                              //     // horizontal three dot icon
+                              //     icon: Icon(Icons.more_horiz),
+                              //     itemBuilder: (context) => [
+                              //       PopupMenuItem(
+                              //         value: 'Edit',
+                              //         child: Text('Edit'),
+                              //       ),
+                              //       PopupMenuItem(
+                              //         value: 'Send Mail',
+                              //         child: Text('Send Mail'),
+                              //       ),
+                              //     ],
+                              //   ),
+                              // )
+                              // Text('${snapshot.data!.data!.rentalAddress}',
+                              //     style: TextStyle(
+                              //         color: blueColor,
+                              //         fontWeight: FontWeight.bold,
+                              //       fontSize:   MediaQuery.of(context).size.width < 500 ? 15 :18)),
+                            ],
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 18.0),
+                            child: Row(
+                              children: [
+                                Text(
+                                  '${determineStatus(snapshot.data?.data?.startDate, snapshot.data?.data?.endDate)} ${snapshot.data?.data?.renewLeases != null && snapshot.data!.data!.renewLeases!.isNotEmpty ? " - Renewed" : ""}',
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: _getStatusColor(determineStatus(
+                                        snapshot.data?.data?.startDate,
+                                        snapshot.data?.data?.endDate)),
                                     fontWeight: FontWeight.bold,
                                     fontSize:
-                                    MediaQuery.of(context).size.width < 500
-                                        ? 14
-                                        : 22,
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 13
+                                            : 16,
                                   ),
                                 ),
-                              ),
-                            ),
-                          ),*/
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      height: 60,
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 5, horizontal: 15),
-                      child: Stack(
-                        children: [
-                          // Scrollable Tab Bar
-                          Positioned.fill(
-                            child: SingleChildScrollView(
-                              controller: _scrollController,
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: List.generate(tabTitles.length,
-                                        (index) {
-                                      bool isSelected =
-                                          _selectedIndex == index;
-
-                                      return GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            _selectedIndex = index;
-                                          });
-                                        },
-                                        child: Container(
-                                          margin: const EdgeInsets.symmetric(
-                                              horizontal: 6),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 20, vertical: 10),
-                                          decoration: BoxDecoration(
-                                            // gradient: isSelected
-                                            //     ? LinearGradient(
-                                            //   colors: [Color(0xFF0F172A), Color(0xFF3B82F6)],
-                                            //   begin: Alignment.centerLeft,
-                                            //   end: Alignment.centerRight,
-                                            // )
-                                            //     : null,
-                                            color: isSelected
-                                                ? blueColor
-                                                : const Color(
-                                                0xFFE5E7EB), // light gray
-                                            borderRadius:
-                                            BorderRadius.circular(30),
-                                          ),
-                                          child: Text(
-                                            tabTitles[index],
-                                            style: TextStyle(
-                                              color: isSelected
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
+                                const Spacer(),
+                                GestureDetector(
+                                  onTap: () async {},
+                                  child: Container(
+                                    height: (MediaQuery.of(context).size.width <
+                                            500)
+                                        ? 35
+                                        : MediaQuery.of(context).size.width *
+                                            0.063,
+                                    width: 100,
+                                    decoration: BoxDecoration(
+                                      color: blueColor,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Send Mail",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 14
+                                              : 22,
                                         ),
-                                      );
-                                    }),
-                              ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                GestureDetector(
+                                  onTap: () async {
+                                    // Provider.of<SelectedTenantsProvider>(context,
+                                    //     listen: false)
+                                    //     .clearTenant();
+                                    // Provider.of<SelectedCosignersProvider>(context,
+                                    //     listen: false)
+                                    //     .clearCosigner();
+                                    // Provider.of<SelectedApplicantProvider>(context,
+                                    //     listen: false)
+                                    //     .clearApplicant();
+                                    final result = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Edit_lease(
+                                                  //lease: lease,
+                                                  leaseId: snapshot
+                                                      .data!.data!.leaseId!,
+                                                )));
+                                  },
+                                  child: Container(
+                                    height: (MediaQuery.of(context).size.width <
+                                            500)
+                                        ? 35
+                                        : MediaQuery.of(context).size.width *
+                                            0.063,
+                                    width: 60,
+                                    decoration: BoxDecoration(
+                                      color: blueColor,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Edit",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width <
+                                                  500
+                                              ? 14
+                                              : 22,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            height: 60,
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 15),
+                            child: Stack(
+                              children: [
+                                // Scrollable Tab Bar
+                                Positioned.fill(
+                                  child: SingleChildScrollView(
+                                    controller: _scrollController,
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: List.generate(tabTitles.length,
+                                          (index) {
+                                        bool isSelected =
+                                            _selectedIndex == index;
 
-                          // Left Arrow Overlay
-                          if (_showLeftArrow)
-                            Positioned(
-                              left: 0,
-                              top: 0,
-                              bottom: 0,
-                              child: Container(
-                                child: GestureDetector(
-                                  onTap: _scrollLeft,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(2),
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color:
-                                      Color.fromRGBO(16, 24, 40, 0.8),
-                                      //border: Border.all(color: blueColor),
+                                        return GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              _selectedIndex = index;
+                                            });
+                                          },
+                                          child: Container(
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 6),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 20, vertical: 10),
+                                            decoration: BoxDecoration(
+                                              // gradient: isSelected
+                                              //     ? LinearGradient(
+                                              //   colors: [Color(0xFF0F172A), Color(0xFF3B82F6)],
+                                              //   begin: Alignment.centerLeft,
+                                              //   end: Alignment.centerRight,
+                                              // )
+                                              //     : null,
+                                              color: isSelected
+                                                  ? blueColor
+                                                  : const Color(
+                                                      0xFFE5E7EB), // light gray
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                            ),
+                                            child: Text(
+                                              tabTitles[index],
+                                              style: TextStyle(
+                                                color: isSelected
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }),
                                     ),
+                                  ),
+                                ),
+
+                                // Left Arrow Overlay
+                                if (_showLeftArrow)
+                                  Positioned(
+                                    left: 0,
+                                    top: 0,
+                                    bottom: 0,
                                     child: Container(
-                                        margin: const EdgeInsets.only(
-                                            left: 5),
-                                        child: const Icon(
-                                            Icons.arrow_back_ios,
-                                            size: 14,
-                                            color: Colors.white)),
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                          // Right Arrow Overlay
-                          if (_showRightArrow)
-                            Positioned(
-                              right: 0,
-                              top: 0,
-                              bottom: 0,
-                              child: GestureDetector(
-                                onTap: _scrollRight,
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.transparent,
-                                  ),
-                                  child: Container(
-                                    padding: const EdgeInsets.all(4),
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color:
-                                      Color.fromRGBO(16, 24, 40, 0.8),
-                                      //  border: Border.all(color: blueColor),
+                                      child: GestureDetector(
+                                        onTap: _scrollLeft,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(2),
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color:
+                                                Color.fromRGBO(16, 24, 40, 0.8),
+                                            //border: Border.all(color: blueColor),
+                                          ),
+                                          child: Container(
+                                              margin: const EdgeInsets.only(
+                                                  left: 5),
+                                              child: const Icon(
+                                                  Icons.arrow_back_ios,
+                                                  size: 14,
+                                                  color: Colors.white)),
+                                        ),
+                                      ),
                                     ),
-                                    child: const Icon(
-                                        Icons.arrow_forward_ios,
-                                        size: 14,
-                                        color: Colors.white),
                                   ),
-                                ),
-                              ),
+
+                                // Right Arrow Overlay
+                                if (_showRightArrow)
+                                  Positioned(
+                                    right: 0,
+                                    top: 0,
+                                    bottom: 0,
+                                    child: GestureDetector(
+                                      onTap: _scrollRight,
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        decoration: const BoxDecoration(
+                                          color: Colors.transparent,
+                                        ),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(4),
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color:
+                                                Color.fromRGBO(16, 24, 40, 0.8),
+                                            //  border: Border.all(color: blueColor),
+                                          ),
+                                          child: const Icon(
+                                              Icons.arrow_forward_ios,
+                                              size: 14,
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
-                        ],
-                      ),
-                    ),
-                    _buildTabContent(snapshot.data!, context),
-                    /*  Expanded(
+                          ),
+                          _buildTabContent(snapshot.data!, context),
+                          /*  Expanded(
                           child: TabBarView(
                             controller: _tabController,
                             children: [
@@ -583,28 +560,28 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
             }),
       )
           : SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Lottie.asset(
-              'assets/no_internet.json',
-              width: 200,
-              height: 200,
-              fit: BoxFit.fill,
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Lottie.asset(
+                    'assets/no_internet.json',
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.fill,
+                  ),
+                  const Text(
+                    'No Internet',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const Text(
+                    'Check your internet connection',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
             ),
-            const Text(
-              'No Internet',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const Text(
-              'Check your internet connection',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -1553,8 +1530,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                             child: Container(
                                                               height: 50,
                                                               margin:
-                                                              const EdgeInsets
-                                                                  .all(5),
+                                                                  const EdgeInsets
+                                                                      .all(5),
                                                               decoration:
                                                               BoxDecoration(
                                                                 color:
@@ -1565,7 +1542,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                     10),
                                                               ),
                                                               child:
-                                                              const Center(
+                                                                  const Center(
                                                                 child: Text(
                                                                   'Make Payment',
                                                                   style:
@@ -1601,8 +1578,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                             child: Container(
                                                               height: 50,
                                                               margin:
-                                                              const EdgeInsets
-                                                                  .all(5),
+                                                                  const EdgeInsets
+                                                                      .all(5),
                                                               decoration:
                                                               BoxDecoration(
                                                                 color: Colors
@@ -1618,8 +1595,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                               child: Center(
                                                                 child: Text(
                                                                   textAlign:
-                                                                  TextAlign
-                                                                      .center,
+                                                                      TextAlign
+                                                                          .center,
                                                                   'Configure Recurring',
                                                                   style:
                                                                   TextStyle(
@@ -1659,8 +1636,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                             child: Container(
                                                               height: 50,
                                                               margin:
-                                                              const EdgeInsets
-                                                                  .all(5),
+                                                                  const EdgeInsets
+                                                                      .all(5),
                                                               decoration:
                                                               BoxDecoration(
                                                                 color: Colors
@@ -1676,8 +1653,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                               child: Center(
                                                                 child: Text(
                                                                   textAlign:
-                                                                  TextAlign
-                                                                      .center,
+                                                                      TextAlign
+                                                                          .center,
                                                                   'Scheduled Charges',
                                                                   style:
                                                                   TextStyle(
@@ -1699,12 +1676,18 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                           GestureDetector(
                                                             onTap: () {
                                                               // Add your navigation here
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder: (context) => Scheduled_Payments_table(),
+                                                                ),
+                                                              );
                                                             },
                                                             child: Container(
                                                               height: 50,
                                                               margin:
-                                                              const EdgeInsets
-                                                                  .all(5),
+                                                                  const EdgeInsets
+                                                                      .all(5),
                                                               decoration:
                                                               BoxDecoration(
                                                                 color: Colors
@@ -1720,8 +1703,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                               child: Center(
                                                                 child: Text(
                                                                   textAlign:
-                                                                  TextAlign
-                                                                      .center,
+                                                                      TextAlign
+                                                                          .center,
                                                                   'Scheduled Payments',
                                                                   style:
                                                                   TextStyle(
@@ -2513,7 +2496,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                  '${formatCurrency(snapshot.data!.data!.amount!.toDouble())}',
+                                                                      '${formatCurrency(snapshot.data!.data!.amount!.toDouble())}',
                                                                   style: const TextStyle(
                                                                       fontWeight:
                                                                       FontWeight
@@ -3292,7 +3275,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                         ),
                                                                         TextSpan(
                                                                           text:
-                                                                          '${formatCurrency(lease.amount!)}',
+                                                                              '${formatCurrency(lease.amount!)}',
                                                                           style: const TextStyle(
                                                                               fontWeight: FontWeight.w700,
                                                                               color: Colors.grey),
@@ -3353,256 +3336,256 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
 
               return isTablet
                   ? SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 35,
-                    right: 35,
-                    top: 30,
-                  ),
-                  child: Wrap(
-                    alignment: WrapAlignment.start,
-                    spacing: MediaQuery.of(context).size.width * 0.03,
-                    runSpacing: MediaQuery.of(context).size.width * 0.035,
-                    children: List.generate(
-                      snapshot.data!.length,
-                          (index) => Material(
-                        elevation: 3,
-                        borderRadius: BorderRadius.circular(10),
-                        child: Container(
-                          height: 245,
-                          width: MediaQuery.of(context).size.width * .44,
-                          decoration: BoxDecoration(
-                            color:
-                            Colors.white, // Change as per your need
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: blueColor,
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              children: [
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    const SizedBox(width: 15),
-                                    Container(
-                                      height: 35,
-                                      width: 35,
-                                      decoration: BoxDecoration(
-                                        color: blueColor,
-                                        border:
-                                        Border.all(color: blueColor),
-                                        borderRadius:
-                                        BorderRadius.circular(5),
-                                      ),
-                                      child: const Center(
-                                        child: FaIcon(
-                                          FontAwesomeIcons.user,
-                                          size: 17,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 20),
-                                    Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        const SizedBox(height: 4),
-                                        Row(
-                                          children: [
-                                            const SizedBox(width: 2),
-                                            Container(
-                                              width: 130,
-                                              child: Text(
-                                                '${snapshot.data![index].tenantFirstName} ${snapshot.data![index].tenantLastName}',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight:
-                                                  FontWeight.bold,
-                                                  color: blueColor,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Row(
-                                          children: [
-                                            //const SizedBox(width: 2),
-                                            // Text(
-                                            //   snapshot.data!.data!.rentalAddress!,
-                                            //   style: const TextStyle(
-                                            //     fontSize: 15,
-                                            //     color: Color(0xFF8A95A8),
-                                            //   ),
-                                            // ),
-                                            SizedBox(
-                                              width: 140,
-                                              child: Text(
-                                                '${snapshot.data![index].rentalAddress}',
-                                                maxLines:
-                                                4, // Set maximum number of lines
-                                                overflow: TextOverflow
-                                                    .ellipsis, // Handle overflow with ellipsis
-                                                style: TextStyle(
-                                                  fontSize: 15,
-                                                  color: blueColor,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    const Spacer(),
-                                    InkWell(
-                                      onTap: () {
-                                        showDialog(
-                                          context: context,
-                                          builder:
-                                              (BuildContext context) {
-                                            bool isChecked =
-                                            false; // Moved isChecked inside the StatefulBuilder
-                                            return StatefulBuilder(
-                                              builder: (BuildContext
-                                              context,
-                                                  StateSetter setState) {
-                                                return Dialog(
-                                                  backgroundColor:
-                                                  Colors.white,
-                                                  surfaceTintColor:
-                                                  Colors.white,
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                      BorderRadius
-                                                          .circular(
-                                                          10.0)),
-                                                  child: Padding(
-                                                    padding:
-                                                    const EdgeInsets
-                                                        .only(
-                                                        left: 16,
-                                                        right: 16,
-                                                        top: 10,
-                                                        bottom: 10),
-                                                    child: Container(
-                                                      // width: MediaQuery.of(context).size.width - 10,
-                                                        width: 900,
-                                                        child: buildMoveout(
-                                                            snapshot.data![
-                                                            index])),
-                                                  ),
-                                                );
-                                              },
-                                            );
-                                          },
-                                        );
-                                      },
-                                      child: Row(
+                      scrollDirection: Axis.vertical,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          left: 35,
+                          right: 35,
+                          top: 30,
+                        ),
+                        child: Wrap(
+                          alignment: WrapAlignment.start,
+                          spacing: MediaQuery.of(context).size.width * 0.03,
+                          runSpacing: MediaQuery.of(context).size.width * 0.035,
+                          children: List.generate(
+                            snapshot.data!.length,
+                            (index) => Material(
+                              elevation: 3,
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                height: 245,
+                                width: MediaQuery.of(context).size.width * .44,
+                                decoration: BoxDecoration(
+                                  color:
+                                      Colors.white, // Change as per your need
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: blueColor,
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: [
+                                      const SizedBox(height: 10),
+                                      Row(
                                         children: [
-                                          FaIcon(
-                                            FontAwesomeIcons
-                                                .rightFromBracket,
-                                            size: 17,
-                                            color: blueColor,
-                                          ),
-                                          const SizedBox(width: 5),
-                                          Text(
-                                            "Move out",
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
+                                          const SizedBox(width: 15),
+                                          Container(
+                                            height: 35,
+                                            width: 35,
+                                            decoration: BoxDecoration(
                                               color: blueColor,
+                                              border:
+                                                  Border.all(color: blueColor),
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                            ),
+                                            child: const Center(
+                                              child: FaIcon(
+                                                FontAwesomeIcons.user,
+                                                size: 17,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 20),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const SizedBox(height: 4),
+                                              Row(
+                                                children: [
+                                                  const SizedBox(width: 2),
+                                                  Container(
+                                                    width: 130,
+                                                    child: Text(
+                                                      '${snapshot.data![index].tenantFirstName} ${snapshot.data![index].tenantLastName}',
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: blueColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Row(
+                                                children: [
+                                                  //const SizedBox(width: 2),
+                                                  // Text(
+                                                  //   snapshot.data!.data!.rentalAddress!,
+                                                  //   style: const TextStyle(
+                                                  //     fontSize: 15,
+                                                  //     color: Color(0xFF8A95A8),
+                                                  //   ),
+                                                  // ),
+                                                  SizedBox(
+                                                    width: 140,
+                                                    child: Text(
+                                                      '${snapshot.data![index].rentalAddress}',
+                                                      maxLines:
+                                                          4, // Set maximum number of lines
+                                                      overflow: TextOverflow
+                                                          .ellipsis, // Handle overflow with ellipsis
+                                                      style: TextStyle(
+                                                        fontSize: 15,
+                                                        color: blueColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                          const Spacer(),
+                                          InkWell(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  bool isChecked =
+                                                      false; // Moved isChecked inside the StatefulBuilder
+                                                  return StatefulBuilder(
+                                                    builder: (BuildContext
+                                                            context,
+                                                        StateSetter setState) {
+                                                      return Dialog(
+                                                        backgroundColor:
+                                                            Colors.white,
+                                                        surfaceTintColor:
+                                                            Colors.white,
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10.0)),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  left: 16,
+                                                                  right: 16,
+                                                                  top: 10,
+                                                                  bottom: 10),
+                                                          child: Container(
+                                                              // width: MediaQuery.of(context).size.width - 10,
+                                                              width: 900,
+                                                              child: buildMoveout(
+                                                                  snapshot.data![
+                                                                      index])),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: Row(
+                                              children: [
+                                                FaIcon(
+                                                  FontAwesomeIcons
+                                                      .rightFromBracket,
+                                                  size: 17,
+                                                  color: blueColor,
+                                                ),
+                                                const SizedBox(width: 5),
+                                                Text(
+                                                  "Move out",
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: blueColor,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 15),
-                                Row(
-                                  children: [
-                                    const SizedBox(width: 65),
-                                    Text(
-                                      '${dateProvider.formatCurrentDate('${snapshot.data![index].startDate}')} to',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        color: blueColor,
-                                        fontWeight: FontWeight.w500,
+                                      const SizedBox(height: 15),
+                                      Row(
+                                        children: [
+                                          const SizedBox(width: 65),
+                                          Text(
+                                            '${dateProvider.formatCurrentDate('${snapshot.data![index].startDate}')} to',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              color: blueColor,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    const SizedBox(width: 65),
-                                    Text(
-                                      '${dateProvider.formatCurrentDate('${snapshot.data![index].endDate}')}',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        color: blueColor,
-                                        fontWeight: FontWeight.w500,
+                                      Row(
+                                        children: [
+                                          const SizedBox(width: 65),
+                                          Text(
+                                            '${dateProvider.formatCurrentDate('${snapshot.data![index].endDate}')}',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              color: blueColor,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    const SizedBox(width: 65),
-                                    FaIcon(
-                                      FontAwesomeIcons.phone,
-                                      size: 18,
-                                      color: blueColor,
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      formatPhoneNumber(
-                                          '${snapshot.data![index].tenantPhoneNumber}'),
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        color: blueColor,
-                                        fontWeight: FontWeight.w500,
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        children: [
+                                          const SizedBox(width: 65),
+                                          FaIcon(
+                                            FontAwesomeIcons.phone,
+                                            size: 18,
+                                            color: blueColor,
+                                          ),
+                                          const SizedBox(width: 5),
+                                          Text(
+                                            formatPhoneNumber(
+                                                '${snapshot.data![index].tenantPhoneNumber}'),
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color: blueColor,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    const SizedBox(width: 65),
-                                    FaIcon(
-                                      FontAwesomeIcons.solidEnvelope,
-                                      size: 18,
-                                      color: blueColor,
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Expanded(
-                                      child: Text(
-                                        '${snapshot.data![index].tenantEmail}',
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          color: blueColor,
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        children: [
+                                          const SizedBox(width: 65),
+                                          FaIcon(
+                                            FontAwesomeIcons.solidEnvelope,
+                                            size: 18,
+                                            color: blueColor,
+                                          ),
+                                          const SizedBox(width: 5),
+                                          Expanded(
+                                            child: Text(
+                                              '${snapshot.data![index].tenantEmail}',
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                color: blueColor,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
-              )
+                    )
                   : SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Column(
@@ -3625,454 +3608,454 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                   1;
                         }
 
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                            left: 20,
-                            right: 20,
-                            top: 20,
-                          ),
-                          child: Material(
-                            elevation: 3,
-                            borderRadius: BorderRadius.circular(10),
-                            child: Container(
-                              //height: 240,
-                              //  width: MediaQuery.of(context).size.width * .44,
-                              decoration: BoxDecoration(
-                                color: Colors
-                                    .white, // Change as per your need
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: blueColor,
+                              return Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 20,
+                                  right: 20,
+                                  top: 20,
                                 ),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  children: [
-                                    const SizedBox(height: 5),
-                                    Row(
-                                      children: [
-                                        const SizedBox(width: 10),
-                                        Container(
-                                          height: 35,
-                                          width: 35,
-                                          decoration: BoxDecoration(
-                                            color: blueColor,
-                                            border: Border.all(
-                                                color: blueColor),
-                                            borderRadius:
-                                            BorderRadius.circular(5),
-                                          ),
-                                          child: const Center(
-                                            child: FaIcon(
-                                              FontAwesomeIcons.user,
-                                              size: 16,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 20),
-                                        Column(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: [
-                                            const SizedBox(height: 6),
-                                            Row(
-                                              children: [
-                                                const SizedBox(width: 2),
-                                                Container(
-                                                  width: 150,
-                                                  child: Text(
-                                                    '${snapshot.data![index].tenantFirstName} ${snapshot.data![index].tenantLastName}',
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      color: blueColor,
-                                                    ),
+                                child: Material(
+                                  elevation: 3,
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Container(
+                                    //height: 240,
+                                    //  width: MediaQuery.of(context).size.width * .44,
+                                    decoration: BoxDecoration(
+                                      color: Colors
+                                          .white, // Change as per your need
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: blueColor,
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        children: [
+                                          const SizedBox(height: 5),
+                                          Row(
+                                            children: [
+                                              const SizedBox(width: 10),
+                                              Container(
+                                                height: 35,
+                                                width: 35,
+                                                decoration: BoxDecoration(
+                                                  color: blueColor,
+                                                  border: Border.all(
+                                                      color: blueColor),
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                ),
+                                                child: const Center(
+                                                  child: FaIcon(
+                                                    FontAwesomeIcons.user,
+                                                    size: 16,
+                                                    color: Colors.white,
                                                   ),
                                                 ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Row(
-                                              children: [
-                                                const SizedBox(width: 2),
-                                                SizedBox(
-                                                  width: MediaQuery.of(
-                                                      context)
-                                                      .size
-                                                      .width >
-                                                      500
-                                                      ? 200
-                                                      : 150,
-                                                  child: Text(
-                                                    '${snapshot.data![index].rentalAddress}',
-                                                    maxLines:
-                                                    4, // Set maximum number of lines
-                                                    overflow: TextOverflow
-                                                        .ellipsis, // Handle overflow with ellipsis
-                                                    style: TextStyle(
-                                                      fontSize: MediaQuery.of(
-                                                          context)
-                                                          .size
-                                                          .width <
-                                                          500
-                                                          ? 13
-                                                          : 18,
-                                                      color: blueColor,
-                                                    ),
-                                                  ),
-                                                ),
-                                                // Text(
-                                                //   snapshot.data!.data!.rentalAddress!,
-                                                //   style: const TextStyle(
-                                                //     fontSize: 15,
-                                                //     color: Color(0xFF8A95A8),
-                                                //   ),
-                                                // ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                        const Spacer(),
-                                        if (snapshot.data![index]
-                                            .moveoutDate ==
-                                            "")
-                                          InkWell(
-                                            onTap: () async {
-                                              // showDialog(
-                                              //   context: context,
-                                              //   builder: (BuildContext
-                                              //       context) {
-                                              //     bool isChecked =
-                                              //         false; // Moved isChecked inside the StatefulBuilder
-                                              //     return StatefulBuilder(
-                                              //       builder: (BuildContext
-                                              //               context,
-                                              //           StateSetter
-                                              //               setState) {
-                                              //         return Dialog(
-                                              //           backgroundColor:
-                                              //               Colors.white,
-                                              //           surfaceTintColor:
-                                              //               Colors.white,
-                                              //           shape: RoundedRectangleBorder(
-                                              //               borderRadius:
-                                              //                   BorderRadius
-                                              //                       .circular(
-                                              //                           10.0)),
-                                              //           child: Padding(
-                                              //             padding:
-                                              //                 const EdgeInsets
-                                              //                     .only(
-                                              //                     left:
-                                              //                         16,
-                                              //                     right:
-                                              //                         16,
-                                              //                     top: 10,
-                                              //                     bottom:
-                                              //                         10),
-                                              //             child:
-                                              //                 Container(
-                                              //                     // width: MediaQuery.of(context).size.width - 10,
-                                              //                     width:
-                                              //                         900,
-                                              //                     child: buildMoveout(
-                                              //                         snapshot.data![
-                                              //                             index],
-                                              //                         tenants:
-                                              //                             snapshot.data)),
-                                              //           ),
-                                              //         );
-                                              //       },
-                                              //     );
-                                              //   },
-                                              // );
-                                              final result =
-                                              await Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      MoveoutScreen(
-                                                        tenant: snapshot
-                                                            .data![index],
-                                                        leaseId:
-                                                        widget.leaseId,
-                                                        tenants: leasetenant,
-                                                        enddate:
-                                                        widget.enddate ??
-                                                            "",
-                                                        moveOutDate:
-                                                        moveOutDate ?? "",
+                                              ),
+                                              const SizedBox(width: 20),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const SizedBox(height: 6),
+                                                  Row(
+                                                    children: [
+                                                      const SizedBox(width: 2),
+                                                      Container(
+                                                        width: 150,
+                                                        child: Text(
+                                                          '${snapshot.data![index].tenantFirstName} ${snapshot.data![index].tenantLastName}',
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: blueColor,
+                                                          ),
+                                                        ),
                                                       ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Row(
+                                                    children: [
+                                                      const SizedBox(width: 2),
+                                                      SizedBox(
+                                                        width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width >
+                                                                500
+                                                            ? 200
+                                                            : 150,
+                                                        child: Text(
+                                                          '${snapshot.data![index].rentalAddress}',
+                                                          maxLines:
+                                                              4, // Set maximum number of lines
+                                                          overflow: TextOverflow
+                                                              .ellipsis, // Handle overflow with ellipsis
+                                                          style: TextStyle(
+                                                            fontSize: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width <
+                                                                    500
+                                                                ? 13
+                                                                : 18,
+                                                            color: blueColor,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      // Text(
+                                                      //   snapshot.data!.data!.rentalAddress!,
+                                                      //   style: const TextStyle(
+                                                      //     fontSize: 15,
+                                                      //     color: Color(0xFF8A95A8),
+                                                      //   ),
+                                                      // ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              const Spacer(),
+                                              if (snapshot.data![index]
+                                                      .moveoutDate ==
+                                                  "")
+                                                InkWell(
+                                                  onTap: () async {
+                                                    // showDialog(
+                                                    //   context: context,
+                                                    //   builder: (BuildContext
+                                                    //       context) {
+                                                    //     bool isChecked =
+                                                    //         false; // Moved isChecked inside the StatefulBuilder
+                                                    //     return StatefulBuilder(
+                                                    //       builder: (BuildContext
+                                                    //               context,
+                                                    //           StateSetter
+                                                    //               setState) {
+                                                    //         return Dialog(
+                                                    //           backgroundColor:
+                                                    //               Colors.white,
+                                                    //           surfaceTintColor:
+                                                    //               Colors.white,
+                                                    //           shape: RoundedRectangleBorder(
+                                                    //               borderRadius:
+                                                    //                   BorderRadius
+                                                    //                       .circular(
+                                                    //                           10.0)),
+                                                    //           child: Padding(
+                                                    //             padding:
+                                                    //                 const EdgeInsets
+                                                    //                     .only(
+                                                    //                     left:
+                                                    //                         16,
+                                                    //                     right:
+                                                    //                         16,
+                                                    //                     top: 10,
+                                                    //                     bottom:
+                                                    //                         10),
+                                                    //             child:
+                                                    //                 Container(
+                                                    //                     // width: MediaQuery.of(context).size.width - 10,
+                                                    //                     width:
+                                                    //                         900,
+                                                    //                     child: buildMoveout(
+                                                    //                         snapshot.data![
+                                                    //                             index],
+                                                    //                         tenants:
+                                                    //                             snapshot.data)),
+                                                    //           ),
+                                                    //         );
+                                                    //       },
+                                                    //     );
+                                                    //   },
+                                                    // );
+                                                    final result =
+                                                        await Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            MoveoutScreen(
+                                                          tenant: snapshot
+                                                              .data![index],
+                                                          leaseId:
+                                                              widget.leaseId,
+                                                          tenants: leasetenant,
+                                                          enddate:
+                                                              widget.enddate ??
+                                                                  "",
+                                                          moveOutDate:
+                                                              moveOutDate ?? "",
+                                                        ),
+                                                      ),
+                                                    );
+                                                    if (result == true) {
+                                                      setState(() {
+                                                        futureLeasetenant =
+                                                            LeaseRepository
+                                                                .fetchLeaseTenants(
+                                                                    widget
+                                                                        .leaseId);
+                                                      });
+                                                    }
+                                                  },
+                                                  child: Row(
+                                                    children: [
+                                                      FaIcon(
+                                                        FontAwesomeIcons
+                                                            .rightFromBracket,
+                                                        size: 17,
+                                                        color: blueColor,
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      Text(
+                                                        "Move out",
+                                                        style: TextStyle(
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: blueColor,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                              );
-                                              if (result == true) {
-                                                setState(() {
-                                                  futureLeasetenant =
-                                                      LeaseRepository
-                                                          .fetchLeaseTenants(
-                                                          widget
-                                                              .leaseId);
-                                                });
-                                              }
-                                            },
-                                            child: Row(
-                                              children: [
-                                                FaIcon(
-                                                  FontAwesomeIcons
-                                                      .rightFromBracket,
-                                                  size: 17,
+                                              //   if(isMovedOut || status == 'Expired')
+                                              if (snapshot.data![index]
+                                                      .moveoutDate !=
+                                                  "")
+                                                InkWell(
+                                                  onTap: () async {
+                                                    String? tenantId = snapshot
+                                                                .data?[index]
+                                                                .tenantId !=
+                                                            null
+                                                        ? snapshot.data![index]
+                                                            .tenantId
+                                                        : null;
+                                                    SharedPreferences prefs =
+                                                        await SharedPreferences
+                                                            .getInstance();
+                                                    String? id = prefs
+                                                        .getString("adminId");
+                                                    LeaseMoveoutRepository()
+                                                        .addMoveInTenant(
+                                                      adminId: id!,
+                                                      tenantId: tenantId,
+                                                      leaseId: snapshot
+                                                          .data![index].leaseId,
+                                                    )
+                                                        .then((value) {
+                                                      setState(() {
+                                                        futureLeasetenant =
+                                                            LeaseRepository
+                                                                .fetchLeaseTenants(
+                                                                    widget
+                                                                        .leaseId);
+                                                        isLoading = false;
+                                                        // isMovedOut = true;
+                                                      });
+
+                                                      Navigator.pop(
+                                                          context, true);
+                                                    }).catchError((e) {
+                                                      setState(() {
+                                                        isLoading = false;
+                                                      });
+                                                    });
+                                                  },
+                                                  child: Row(
+                                                    children: [
+                                                      FaIcon(
+                                                        FontAwesomeIcons
+                                                            .circleArrowLeft,
+                                                        size: 17,
+                                                        color: blueColor,
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      Text(
+                                                        "Move In",
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: blueColor,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              // if(MediaQuery.of(context).size.width < 350)
+                                              //   SizedBox(width: 5),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 15),
+                                          Row(
+                                            children: [
+                                              const SizedBox(width: 65),
+                                              Text(
+                                                ' ${dateProvider.formatCurrentDate('${snapshot.data![index].startDate}')} to',
+                                                style: TextStyle(
+                                                  fontSize: 15,
                                                   color: blueColor,
+                                                  fontWeight: FontWeight.w500,
                                                 ),
-                                                const SizedBox(width: 5),
-                                                Text(
-                                                  "Move out",
+                                              ),
+                                              Text(
+                                                ' ${dateProvider.formatCurrentDate('${snapshot.data![index].endDate}')}',
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: blueColor,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Row(
+                                            children: [
+                                              const SizedBox(width: 65),
+                                              FaIcon(
+                                                FontAwesomeIcons.phone,
+                                                size: 15,
+                                                color: blueColor,
+                                              ),
+                                              const SizedBox(width: 5),
+                                              Text(
+                                                formatPhoneNumber(
+                                                    '${snapshot.data![index].tenantPhoneNumber}'),
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: blueColor,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Row(
+                                            children: [
+                                              const SizedBox(width: 65),
+                                              FaIcon(
+                                                FontAwesomeIcons.solidEnvelope,
+                                                size: 15,
+                                                color: blueColor,
+                                              ),
+                                              const SizedBox(width: 5),
+                                              Expanded(
+                                                child: Text(
+                                                  '${snapshot.data![index].tenantEmail}',
+                                                  maxLines:
+                                                      3, // Set maximum number of lines
+                                                  overflow: TextOverflow
+                                                      .ellipsis, // Handle overflow with ellipsis
                                                   style: TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight:
-                                                    FontWeight.w500,
+                                                      fontSize: 15,
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                ),
+                                              ),
+
+                                              // Text(
+                                              //   '${snapshot.data!.data!.tenantData![index].tenantEmail}',
+                                              //   style: const TextStyle(
+                                              //     fontSize: 15,
+                                              //     color: blueColor,
+                                              //     fontWeight: FontWeight.w500,
+                                              //   ),
+                                              // ),
+                                            ],
+                                          ),
+                                          if (snapshot
+                                                  .data![index].moveoutDate !=
+                                              "")
+                                            const SizedBox(height: 15),
+                                          if (snapshot
+                                                  .data![index].moveoutDate !=
+                                              "")
+                                            Row(
+                                              children: [
+                                                const SizedBox(width: 65),
+                                                Text(
+                                                  'Notice Date : ',
+                                                  maxLines:
+                                                      3, // Set maximum number of lines
+                                                  overflow: TextOverflow
+                                                      .ellipsis, // Handle overflow with ellipsis
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                const SizedBox(
+                                                  width: 5,
+                                                ),
+                                                Text(
+                                                  formatDate(
+                                                      '${snapshot.data![index].moveoutNoticeGivenDate}'),
+                                                  style: TextStyle(
+                                                    fontSize: 15,
                                                     color: blueColor,
+                                                    fontWeight: FontWeight.w500,
                                                   ),
                                                 ),
                                               ],
                                             ),
-                                          ),
-                                        //   if(isMovedOut || status == 'Expired')
-                                        if (snapshot.data![index]
-                                            .moveoutDate !=
-                                            "")
-                                          InkWell(
-                                            onTap: () async {
-                                              String? tenantId = snapshot
-                                                  .data?[index]
-                                                  .tenantId !=
-                                                  null
-                                                  ? snapshot.data![index]
-                                                  .tenantId
-                                                  : null;
-                                              SharedPreferences prefs =
-                                              await SharedPreferences
-                                                  .getInstance();
-                                              String? id = prefs
-                                                  .getString("adminId");
-                                              LeaseMoveoutRepository()
-                                                  .addMoveInTenant(
-                                                adminId: id!,
-                                                tenantId: tenantId,
-                                                leaseId: snapshot
-                                                    .data![index].leaseId,
-                                              )
-                                                  .then((value) {
-                                                setState(() {
-                                                  futureLeasetenant =
-                                                      LeaseRepository
-                                                          .fetchLeaseTenants(
-                                                          widget
-                                                              .leaseId);
-                                                  isLoading = false;
-                                                  // isMovedOut = true;
-                                                });
-
-                                                Navigator.pop(
-                                                    context, true);
-                                              }).catchError((e) {
-                                                setState(() {
-                                                  isLoading = false;
-                                                });
-                                              });
-                                            },
-                                            child: Row(
+                                          if (snapshot
+                                                  .data![index].moveoutDate !=
+                                              "")
+                                            const SizedBox(height: 15),
+                                          if (snapshot
+                                                  .data![index].moveoutDate !=
+                                              "")
+                                            Row(
                                               children: [
-                                                FaIcon(
-                                                  FontAwesomeIcons
-                                                      .circleArrowLeft,
-                                                  size: 17,
-                                                  color: blueColor,
-                                                ),
-                                                const SizedBox(width: 5),
+                                                const SizedBox(width: 65),
                                                 Text(
-                                                  "Move In",
+                                                  'Move out : ',
+                                                  maxLines:
+                                                      3, // Set maximum number of lines
+                                                  overflow: TextOverflow
+                                                      .ellipsis, // Handle overflow with ellipsis
                                                   style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                    FontWeight.w500,
+                                                      fontSize: 15,
+                                                      color: blueColor,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                const SizedBox(
+                                                  width: 5,
+                                                ),
+                                                Text(
+                                                  formatDate(
+                                                      '${snapshot.data![index].moveoutDate}'),
+                                                  style: TextStyle(
+                                                    fontSize: 15,
                                                     color: blueColor,
+                                                    fontWeight: FontWeight.w500,
                                                   ),
                                                 ),
                                               ],
                                             ),
-                                          ),
-                                        // if(MediaQuery.of(context).size.width < 350)
-                                        //   SizedBox(width: 5),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 15),
-                                    Row(
-                                      children: [
-                                        const SizedBox(width: 65),
-                                        Text(
-                                          ' ${dateProvider.formatCurrentDate('${snapshot.data![index].startDate}')} to',
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            color: blueColor,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                        Text(
-                                          ' ${dateProvider.formatCurrentDate('${snapshot.data![index].endDate}')}',
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            color: blueColor,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        const SizedBox(width: 65),
-                                        FaIcon(
-                                          FontAwesomeIcons.phone,
-                                          size: 15,
-                                          color: blueColor,
-                                        ),
-                                        const SizedBox(width: 5),
-                                        Text(
-                                          formatPhoneNumber(
-                                              '${snapshot.data![index].tenantPhoneNumber}'),
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            color: blueColor,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        const SizedBox(width: 65),
-                                        FaIcon(
-                                          FontAwesomeIcons.solidEnvelope,
-                                          size: 15,
-                                          color: blueColor,
-                                        ),
-                                        const SizedBox(width: 5),
-                                        Expanded(
-                                          child: Text(
-                                            '${snapshot.data![index].tenantEmail}',
-                                            maxLines:
-                                            3, // Set maximum number of lines
-                                            overflow: TextOverflow
-                                                .ellipsis, // Handle overflow with ellipsis
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                color: blueColor,
-                                                fontWeight:
-                                                FontWeight.w500),
-                                          ),
-                                        ),
-
-                                        // Text(
-                                        //   '${snapshot.data!.data!.tenantData![index].tenantEmail}',
-                                        //   style: const TextStyle(
-                                        //     fontSize: 15,
-                                        //     color: blueColor,
-                                        //     fontWeight: FontWeight.w500,
-                                        //   ),
-                                        // ),
-                                      ],
-                                    ),
-                                    if (snapshot
-                                        .data![index].moveoutDate !=
-                                        "")
-                                      const SizedBox(height: 15),
-                                    if (snapshot
-                                        .data![index].moveoutDate !=
-                                        "")
-                                      Row(
-                                        children: [
-                                          const SizedBox(width: 65),
-                                          Text(
-                                            'Notice Date : ',
-                                            maxLines:
-                                            3, // Set maximum number of lines
-                                            overflow: TextOverflow
-                                                .ellipsis, // Handle overflow with ellipsis
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                color: blueColor,
-                                                fontWeight:
-                                                FontWeight.bold),
-                                          ),
-                                          const SizedBox(
-                                            width: 5,
-                                          ),
-                                          Text(
-                                            formatDate(
-                                                '${snapshot.data![index].moveoutNoticeGivenDate}'),
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              color: blueColor,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
+                                          const SizedBox(height: 8),
                                         ],
                                       ),
-                                    if (snapshot
-                                        .data![index].moveoutDate !=
-                                        "")
-                                      const SizedBox(height: 15),
-                                    if (snapshot
-                                        .data![index].moveoutDate !=
-                                        "")
-                                      Row(
-                                        children: [
-                                          const SizedBox(width: 65),
-                                          Text(
-                                            'Move out : ',
-                                            maxLines:
-                                            3, // Set maximum number of lines
-                                            overflow: TextOverflow
-                                                .ellipsis, // Handle overflow with ellipsis
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                color: blueColor,
-                                                fontWeight:
-                                                FontWeight.bold),
-                                          ),
-                                          const SizedBox(
-                                            width: 5,
-                                          ),
-                                          Text(
-                                            formatDate(
-                                                '${snapshot.data![index].moveoutDate}'),
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              color: blueColor,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    const SizedBox(height: 8),
-                                  ],
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
+                              );
+                            }),
                           ),
-                        );
-                      }),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                  ],
-                ),
-              );
+                          const SizedBox(
+                            height: 20,
+                          ),
+                        ],
+                      ),
+                    );
             }
           },
         );
@@ -4430,7 +4413,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                       decoration: BoxDecoration(
                         color: blueColor,
                         borderRadius:
-                        const BorderRadius.all(Radius.circular(5)),
+                            const BorderRadius.all(Radius.circular(5)),
                       ),
                       child: Center(
                           child: Text(

@@ -1182,20 +1182,19 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                       style: TextStyle(
                                                           fontSize: 12),
                                                     ),
-
-                                                    const SizedBox(height: 8),
-                                                    Text('Created:',
+                                                    SizedBox(height: 8),
+                                                    Text('Due Date:',
                                                         style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
-                                                            FontWeight.bold,
+                                                                FontWeight.bold,
                                                             fontSize: 13)),
-                                                    const SizedBox(height: 2),
+                                                    SizedBox(height: 2),
                                                     Text(
                                                       dateProvider.formatCurrentDate(
-                                                          '${workOrder.workOrderData?.createdAt}') ??
+                                                              '${workOrder.workOrderData?.date}') ??
                                                           "-",
-                                                      style: const TextStyle(
+                                                      style: TextStyle(
                                                           fontSize: 12),
                                                     ),
                                                   ],
@@ -1226,19 +1225,19 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                       style: TextStyle(
                                                           fontSize: 12),
                                                     ),
-                                                    const SizedBox(height: 8),
-                                                    Text('Due Date:',
+                                                    SizedBox(height: 8),
+                                                    Text('Created:',
                                                         style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
-                                                            FontWeight.bold,
+                                                                FontWeight.bold,
                                                             fontSize: 13)),
-                                                    const SizedBox(height: 2),
+                                                    SizedBox(height: 2),
                                                     Text(
                                                       dateProvider.formatCurrentDate(
-                                                          '${workOrder.workOrderData?.date}') ??
+                                                              '${workOrder.workOrderData?.createdAt}') ??
                                                           "-",
-                                                      style: const TextStyle(
+                                                      style: TextStyle(
                                                           fontSize: 12),
                                                     ),
                                                   ],
