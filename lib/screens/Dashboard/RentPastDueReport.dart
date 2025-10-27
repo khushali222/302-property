@@ -541,7 +541,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 mainAxisAlignment: pw.MainAxisAlignment.center,
                 children: [
                   pw.Text(
-                    'Rent Past Due Report',
+                    '${widget.title} Report',
                     style: pw.TextStyle(
                       fontSize: 18,
                       fontWeight: pw.FontWeight.bold,
@@ -644,9 +644,23 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
       ),
     );
 
-    await Printing.layoutPdf(
-      onLayout: (PdfPageFormat format) async => pdf.save(),
-    );
+    // ✅ Platform-based print handling
+    if (Platform.isIOS) {
+      // iOS: share instead of direct print (AirPrint forces Letter)
+      await Printing.sharePdf(
+        bytes: await pdf.save(),
+        filename: 'RentPastDueReport_A4.pdf',
+      );
+    } else {
+      // Android, macOS, Web — direct print
+      await Printing.layoutPdf(
+        name: 'RentPastDueReport',
+        format: PdfPageFormat.a4.landscape,
+        dynamicLayout: false,
+        usePrinterSettings: false,
+        onLayout: (_) async => pdf.save(),
+      );
+    }
   }
 
   List<List<dynamic>> _generateTableData(List<Transaction> rentalOwnerReports) {
@@ -1538,6 +1552,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                         ),
                       ],
                     ),
+                    SizedBox(height: 5),
                     Row(
                       children: [
                         Expanded(

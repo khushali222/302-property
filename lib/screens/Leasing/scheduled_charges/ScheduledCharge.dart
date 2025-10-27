@@ -118,8 +118,12 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Date ", style: TextStyle(color: blueColor, fontWeight: FontWeight.bold))
-                        : Text("Date", style: TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
+                        ? Text("Date ",
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold))
+                        : Text("Date",
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     // ascending1
@@ -168,7 +172,9 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                 },
                 child: Row(
                   children: [
-                    Text("     Account", style: TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
+                    Text("     Account",
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -200,7 +206,9 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                 },
                 child: Row(
                   children: [
-                    Text("     Amount", style: TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
+                    Text("     Amount",
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
                   ],
                 ),
@@ -917,26 +925,22 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                   SizedBox(
                     height: 20,
                   ),
-                  //add propertytype
+                  // Header Section with Title
                   Padding(
-                    padding: const EdgeInsets.only(left: 0, right: 0),
-                    child: Row(
-                      //mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: titleBar(
-                            width: MediaQuery.of(context).size.width * .92,
-                            title: 'Scheduled Charges',
-                          ),
-                        ),
-                      ],
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+                      child: titleBar(
+                        width: double.infinity,
+                        title: 'Scheduled Charges',
+                      ),
                     ),
                   ),
                   SizedBox(height: 10),
                   //search
                   Padding(
-                    padding: const EdgeInsets.only(left: 15, right: 20),
+                    padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 25 : 15, right:MediaQuery.of(context).size.width > 500? 26 : 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -1052,11 +1056,12 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                       ],
                     ),
                   ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(height: 25),
-                  if (MediaQuery.of(context).size.width < 500)
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   SizedBox(height: 25),
+                  // if (MediaQuery.of(context).size.width < 500)
                     Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width < 500 ? 11 : 28),
                       child: FutureBuilder<List<ScheduledCharges>>(
                         future: futurescheduledpayment,
                         builder: (context, snapshot) {
@@ -1178,7 +1183,8 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                             print("data ${data.length}");
                             return SingleChildScrollView(
                               child: Padding(
-                                padding: const EdgeInsets.only(left: 5,right: 5),
+                                padding:
+                                    const EdgeInsets.only(left: 5, right: 5),
                                 child: Column(
                                   children: [
                                     SizedBox(height: 10),
@@ -1198,8 +1204,8 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
 
                                           //return CustomExpansionTile(data: Propertytype, index: index);
                                           return Container(
-                                            margin:
-                                            EdgeInsets.symmetric(vertical: 6),
+                                            margin: EdgeInsets.symmetric(
+                                                vertical: 6),
                                             decoration: BoxDecoration(
                                               color: index % 2 != 0
                                                   ? Color(0xFFF4F8FF)
@@ -1207,7 +1213,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                               border: Border.all(
                                                   color: Color(0xFFDBE0E5)),
                                               borderRadius:
-                                              BorderRadius.circular(10),
+                                                  BorderRadius.circular(10),
                                             ),
                                             child: Column(children: <Widget>[
                                               ListTile(
@@ -1219,7 +1225,8 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                     mainAxisAlignment:
                                                         MainAxisAlignment.start,
                                                     crossAxisAlignment:
-                                                        CrossAxisAlignment.center,
+                                                        CrossAxisAlignment
+                                                            .center,
                                                     children: <Widget>[
                                                       InkWell(
                                                         onTap: () {
@@ -1248,8 +1255,10 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                           });
                                                         },
                                                         child: Container(
-                                                          margin: EdgeInsets.only(
-                                                              left: 5, right: 5),
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  left: 5,
+                                                                  right: 5),
                                                           padding: !isExpanded
                                                               ? EdgeInsets.only(
                                                                   bottom: 10)
@@ -1281,12 +1290,15 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                               }
                                                             });
                                                           },
-                                                          child: Text(dateProvider.formatCurrentDate('${Propertytype.actionDate}')
-                                                            ,
+                                                          child: Text(
+                                                            dateProvider
+                                                                .formatCurrentDate(
+                                                                    '${Propertytype.actionDate}'),
                                                             style: TextStyle(
                                                               color: blueColor,
                                                               fontWeight:
-                                                                  FontWeight.bold,
+                                                                  FontWeight
+                                                                      .bold,
                                                               fontSize: 13,
                                                             ),
                                                           ),
@@ -1329,7 +1341,8 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                             style: TextStyle(
                                                               color: blueColor,
                                                               fontWeight:
-                                                                  FontWeight.bold,
+                                                                  FontWeight
+                                                                      .bold,
                                                               fontSize: 13,
                                                             ),
                                                           ),
@@ -1349,12 +1362,13 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                 Container(
                                                   padding: EdgeInsets.symmetric(
                                                       horizontal: 2.0),
-                                                  margin:
-                                                      EdgeInsets.only(bottom: 2),
+                                                  margin: EdgeInsets.only(
+                                                      bottom: 2),
                                                   child: SingleChildScrollView(
                                                     child: Column(
                                                       mainAxisAlignment:
-                                                          MainAxisAlignment.start,
+                                                          MainAxisAlignment
+                                                              .start,
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment
                                                               .start,
@@ -1497,14 +1511,16 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                         Row(
                                                           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
-                                                            if (widget.leaseID ==
+                                                            if (widget
+                                                                    .leaseID ==
                                                                 null)
                                                               Expanded(
                                                                 child:
                                                                     GestureDetector(
                                                                   onTap:
                                                                       () async {
-                                                                    setState(() {
+                                                                    setState(
+                                                                        () {
                                                                       dateController
                                                                               .text =
                                                                           Propertytype
@@ -1559,8 +1575,8 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                                           width:
                                                                               1.5),
                                                                       borderRadius:
-                                                                          BorderRadius
-                                                                              .circular(8),
+                                                                          BorderRadius.circular(
+                                                                              8),
                                                                     ), // color:Colors.grey[100],
                                                                     child: Row(
                                                                       mainAxisAlignment:
@@ -1575,8 +1591,8 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                                               .edit,
                                                                           size:
                                                                               15,
-                                                                          color: Colors
-                                                                              .green,
+                                                                          color:
+                                                                              Colors.green,
                                                                         ),
                                                                         SizedBox(
                                                                           width:
@@ -1585,8 +1601,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                                         Text(
                                                                           "Edit",
                                                                           style: TextStyle(
-                                                                              color:
-                                                                                  Colors.green,
+                                                                              color: Colors.green,
                                                                               fontWeight: FontWeight.bold),
                                                                         ),
                                                                       ],
@@ -1594,7 +1609,8 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                                   ),
                                                                 ),
                                                               ),
-                                                            if (widget.leaseID ==
+                                                            if (widget
+                                                                    .leaseID ==
                                                                 null)
                                                               SizedBox(
                                                                 width: 5,
@@ -1602,14 +1618,16 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                             Expanded(
                                                               child:
                                                                   GestureDetector(
-                                                                onTap: () async {
+                                                                onTap:
+                                                                    () async {
                                                                   _showAlert(
                                                                       context,
                                                                       Propertytype
                                                                           .taskId!,
                                                                       Propertytype);
                                                                 },
-                                                                child: Container(
+                                                                child:
+                                                                    Container(
                                                                   height: 40,
                                                                   decoration:
                                                                       BoxDecoration(
@@ -1620,8 +1638,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                                             1.5),
                                                                     borderRadius:
                                                                         BorderRadius
-                                                                            .circular(
-                                                                                8),
+                                                                            .circular(8),
                                                                   ), // color:Colors.grey[100],
                                                                   child: Row(
                                                                     mainAxisAlignment:
@@ -1634,20 +1651,21 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                                       FaIcon(
                                                                         FontAwesomeIcons
                                                                             .trashCan,
-                                                                        size: 15,
+                                                                        size:
+                                                                            15,
                                                                         color: Colors
                                                                             .red,
                                                                       ),
                                                                       SizedBox(
-                                                                        width: 10,
+                                                                        width:
+                                                                            10,
                                                                       ),
                                                                       Text(
                                                                         "Delete",
                                                                         style: TextStyle(
-                                                                            color: Colors
-                                                                                .red,
-                                                                            fontWeight:
-                                                                                FontWeight.bold),
+                                                                            color:
+                                                                                Colors.red,
+                                                                            fontWeight: FontWeight.bold),
                                                                       ),
                                                                     ],
                                                                   ),

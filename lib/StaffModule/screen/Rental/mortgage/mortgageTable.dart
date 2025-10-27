@@ -13,6 +13,8 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class MortgageTable extends StatefulWidget {
   const MortgageTable({Key? key}) : super(key: key);
@@ -253,38 +255,47 @@ class _MortgageTableState extends State<MortgageTable> {
   }
 
   void _deleteMortgage(String id) {
-    showDialog(
+    Alert(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Delete Mortgage'),
-          content: const Text('Are you sure you want to delete this mortgage?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  _mortgages.removeWhere((mortgage) => mortgage['_id'] == id);
-                  _filteredMortgages
-                      .removeWhere((mortgage) => mortgage['_id'] == id);
-                });
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Mortgage deleted successfully'),
-                    backgroundColor: Colors.green,
-                  ),
-                );
-              },
-              child: const Text('Delete', style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        );
-      },
-    );
+      type: AlertType.warning,
+      title: "Are you sure?",
+      desc: "Once deleted, you will not be able to recover this Mortgage!",
+      style: const AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: const Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            setState(() {
+              _mortgages.removeWhere((mortgage) => mortgage['_id'] == id);
+              _filteredMortgages
+                  .removeWhere((mortgage) => mortgage['_id'] == id);
+            });
+            Navigator.pop(context);
+            Fluttertoast.showToast(msg: "Mortgage deleted successfully");
+          },
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
+        ),
+      ],
+    ).show();
   }
 
   void _editMortgage(Map<String, dynamic> mortgage) {
@@ -451,44 +462,53 @@ class _MortgageTableState extends State<MortgageTable> {
           const SizedBox(height: 20),
           // Header Section with Title and Add Button
           Padding(
-            padding: const EdgeInsets.all(0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: titleBar(
-                    width: MediaQuery.of(context).size.width * .64,
-                    title: 'Mortgage',
+                if (MediaQuery.of(context).size.width > 500)
+                  SizedBox(width: 13,),
+                Expanded(
+                  flex: 3,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: titleBar(
+                      width: double.infinity,
+                      title: 'Mortgage',
+                    ),
                   ),
                 ),
-                //  const SizedBox(width: 16),
-                GestureDetector(
-                  onTap: _openAddMortgageForm,
-                  child: Container(
-                    height: (MediaQuery.of(context).size.width < 500)
-                        ? 50
-                        : MediaQuery.of(context).size.width * 0.063,
-                    width: (MediaQuery.of(context).size.width < 500)
-                        ? MediaQuery.of(context).size.width * 0.23
-                        : MediaQuery.of(context).size.width * 0.2,
-                    decoration: BoxDecoration(
-                      color: blueColor,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "+ Add",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 16 : 22,
+                Flexible(
+                  flex: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: GestureDetector(
+                      onTap: _openAddMortgageForm,
+                      child: Container(
+                        height:
+                            (MediaQuery.of(context).size.width < 768) ? 50 : 60,
+                        decoration: BoxDecoration(
+                          color: blueColor,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "+ Add",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 20),
+                if (MediaQuery.of(context).size.width < 500)
+                  SizedBox(width: 3),
+                if (MediaQuery.of(context).size.width > 500)
+                  SizedBox(width: 18),
               ],
             ),
           ),
@@ -496,10 +516,12 @@ class _MortgageTableState extends State<MortgageTable> {
 
           // Search and Filter Section
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 11),
+            padding: const EdgeInsets.only(left: 11, right: 11),
             child: Row(
               children: [
-                const SizedBox(width: 10),
+                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 2),
+                if (MediaQuery.of(context).size.width > 500)
+                  SizedBox(width: 20),
                 Material(
                   elevation: 0,
                   borderRadius: BorderRadius.circular(8),
@@ -533,7 +555,7 @@ class _MortgageTableState extends State<MortgageTable> {
               ],
             ),
           ),
-          const SizedBox(height: 25),
+          // const SizedBox(height: 25),
 
           // Content Section
           Expanded(
@@ -575,7 +597,8 @@ class _MortgageTableState extends State<MortgageTable> {
                         ),
                       )
                     : SingleChildScrollView(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        padding: EdgeInsets.all(
+                            MediaQuery.of(context).size.width < 500 ? 10 : 28),
                         child: Column(
                           children: [
                             _buildHeaders(),

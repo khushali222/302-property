@@ -5,20 +5,18 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/TenantsModule/screen/financial/payment/make_payment.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/work_order/workorder_table.dart';
+import 'package:three_zero_two_property/TenantsModule/widgets/appbar.dart';
 import 'package:three_zero_two_property/TenantsModule/widgets/custom_drawer.dart';
 import '../../provider/dateProvider.dart';
 import '../repository/permission_provider.dart';
-import '../widgets/pie_chart.dart';
-import '../widgets/appbar.dart';
 import 'package:http/http.dart' as http;
 import '../../constant/constant.dart';
 import 'financial/financial_table.dart';
@@ -41,6 +39,7 @@ class DashboardData {
     "assets/images/tenants/duedate.svg",
     "assets/images/tenants/leaseicon.svg",
   ];
+
   List<IconData> icons = [
     // "assets/images/Properti-icon.svg",
     Icons.event_note_rounded,
@@ -89,6 +88,8 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
   String firstname = '';
   String lastname = '';
   bool loading = false;
+  String lease_id = '';
+  String tenantId = '';
   String rentCycle = 'Monthly'; // Default value
   Future<void> fetchDatacount() async {
     /*setState(() {
@@ -97,7 +98,6 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("tenant_id");
-      String? admin_id = prefs.getString("adminId");
       String? token = prefs.getString('token');
 
       final response = await http
@@ -126,8 +126,11 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
           rentCycle = jsonData["data"]['rentCycle'] ??
               'Monthly'; // Store rent cycle from API
           print("rent cycle $rentCycle");
+          lease_id = jsonData["data"]['lease_id'];
+          tenantId = id;
           loading = false;
         });
+        fetchUpcomingPayments(jsonData["data"]['lease_id']);
       } else {
         throw Exception('Failed to load data');
       }
@@ -149,7 +152,6 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("tenant_id");
-      String? admin_id = prefs.getString("adminId");
       String? token = prefs.getString('token');
       print(id);
       print(token);
@@ -193,6 +195,10 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
   double lastMonthRentPaid = 0.0;
   double totalRentPastDue = 0.0;
 
+  // Dynamic data for upcoming payments and recent transactions
+  List<dynamic> upcomingPayments = [];
+  List<dynamic> recentTransactions = [];
+
   Future<void> fetchData() async {
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -230,6 +236,60 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
     }
   }
 
+  Future<void> fetchUpcomingPayments(String lease_id) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("tenant_id");
+      String? token = prefs.getString('token');
+
+      final response = await http.get(
+          Uri.parse('${Api_url}/api/tenant/upcoming-tenant-payment/$lease_id'),
+          headers: {
+            "authorization": "CRM $token",
+            "id": "CRM $id",
+            "Content-Type": "application/json"
+          });
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        if (jsonData["statusCode"] == 200) {
+          setState(() {
+            upcomingPayments = jsonData["data"] ?? [];
+          });
+        }
+      }
+    } catch (e) {
+      print('Error fetching upcoming payments: $e');
+    }
+  }
+
+  Future<void> fetchRecentTransactions() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("tenant_id");
+      String? token = prefs.getString('token');
+
+      final response = await http.get(
+          Uri.parse('${Api_url}/api/tenant/tenant-recent-payments/$id'),
+          headers: {
+            "authorization": "CRM $token",
+            "id": "CRM $id",
+            "Content-Type": "application/json"
+          });
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        if (jsonData["statusCode"] == 200) {
+          setState(() {
+            recentTransactions = jsonData["data"] ?? [];
+          });
+        }
+      }
+    } catch (e) {
+      print('Error fetching recent transactions: $e');
+    }
+  }
+
   Future<bool> _showExitPopup(BuildContext context) async {
     bool exitConfirmed = false;
 
@@ -240,12 +300,12 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
       desc: "Do you want to exit the app?",
       style: AlertStyle(
         backgroundColor: Colors.white,
-        titleStyle: TextStyle(
+        titleStyle: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
           color: Colors.black,
         ),
-        descStyle: TextStyle(
+        descStyle: const TextStyle(
           fontSize: 16,
           color: Colors.black54,
         ),
@@ -254,13 +314,13 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
         overlayColor: Colors.black.withOpacity(0.5),
         alertBorder: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
-          side: BorderSide(color: Colors.blue, width: 2),
+          side: const BorderSide(color: Colors.blue, width: 2),
         ),
-        alertPadding: EdgeInsets.all(16.0),
+        alertPadding: const EdgeInsets.all(16.0),
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "No",
             style: TextStyle(
               color: Colors.white,
@@ -275,7 +335,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
           radius: BorderRadius.circular(8.0),
         ),
         DialogButton(
-          child: Text(
+          child: const Text(
             "Yes",
             style: TextStyle(
               color: Colors.white,
@@ -326,6 +386,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
     fetchData();
     _loadName();
     fetchDatafinancial();
+    fetchRecentTransactions();
   }
 
   void checkInternet() async {
@@ -347,1757 +408,581 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
   var appBarHeight = AppBar().preferredSize.height;
   @override
   Widget build(BuildContext context) {
-    final dateProvider = Provider.of<DateProvider>(context);
     final permissionProvider = Provider.of<PermissionProvider>(context);
     final permissions = permissionProvider.permissions;
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
     return WillPopScope(
       onWillPop: () async {
         return await _showExitPopup(context);
       },
       child: Scaffold(
         key: key,
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFFF5F5F5), // Light gray background
         drawer: CustomDrawer(
           currentpage: 'Dashboard',
         ),
         appBar: widget_302.App_Bar(
-          context: context,
-          onDrawerIconPressed: () {
-            print("calling appbar");
-            key.currentState!.openDrawer();
-            // Scaffold.of(context).openDrawer();
-          },
-        ),
+            context: context,
+            onDrawerIconPressed: () {
+              key.currentState!.openDrawer();
+            }),
         body: _connectivityResult != ConnectivityResult.none
-            ? Center(
-                child: loading
-                    ? const SpinKitFadingCircle(
-                        color: Colors.black,
-                        size: 50.0,
-                      )
-                    : ListView(
-                        children: [
-                          // Material(
-                          //   elevation: 3,
-                          //   child: Divider(
-                          //     height: 1,
-                          //     color: Colors.transparent,
-                          //   ),
-                          // ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          LayoutBuilder(
-                            builder: (BuildContext context,
-                                BoxConstraints constraints) {
-                              return Row(
-                                children: [
-                                  SizedBox(width: width * 0.05),
-                                  Container(
-                                    color: Color.fromRGBO(2, 121, 210, 1),
-                                    margin: EdgeInsets.only(
-                                      top: MediaQuery.of(context).size.height *
-                                          0.012,
-                                    ),
-                                    width: 3,
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.012 +
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.04 +
-                                              3 +
-                                              16,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.012),
-                                      Row(
-                                        children: [
-                                          SizedBox(width: width * 0.05),
-                                          SizedBox(
-                                            width: 300,
-                                            child: Text(
-                                              "Hello $firstname $lastname, Welcome back",
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: MediaQuery.of(context)
-                                                            .size
-                                                            .width >
-                                                        500
-                                                    ? MediaQuery.of(context)
-                                                            .size
-                                                            .width *
-                                                        0.03
-                                                    : MediaQuery.of(context)
-                                                            .size
-                                                            .width *
-                                                        0.04,
-                                              ),
-                                              maxLines:
-                                                  2, // Allows wrapping into two lines
-                                              overflow: TextOverflow
-                                                  .visible, // Ensures the text wraps naturally
-                                              softWrap:
-                                                  true, // Enables line wrapping
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+            ? loading
+            ? const Center(
+          child: SpinKitFadingCircle(
+            color: Colors.black,
+            size: 50.0,
+          ),
+        )
+            : SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Welcome message
 
-                                      //   SizedBox(height: 3),
-                                      // My Dashboard
-                                      Row(
-                                        children: [
-                                          SizedBox(width: width * 0.05),
-                                          Text(
-                                            "My Dashboard",
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                          //welcome
+              const SizedBox(height: 10),
 
-                          LayoutBuilder(
-                            builder: (context, constraints) {
-                              if (constraints.maxWidth > 600) {
-                                // Tablet layout - horizontal
-                                return Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 35, right: 80, top: 20),
-                                  child: Wrap(
-                                    alignment: WrapAlignment.start,
-                                    spacing: MediaQuery.of(context).size.width *
-                                        0.02,
-                                    runSpacing:
-                                        MediaQuery.of(context).size.width *
-                                            0.02,
-                                    children: List.generate(
-                                      5,
-                                      (index) => InkWell(
-                                        onTap: () {
-                                          if (dashboardData.titles[index] ==
-                                                  "Work Orders" &&
-                                              permissions!.workorderView) {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        WorkOrderTable()));
-                                          }
-                                          if (dashboardData.titles[index] ==
-                                                  "Balance" &&
-                                              permissions!.financialView) {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        FinancialTable()));
-                                          }
-                                        },
-                                        child: SizedBox(
-                                          width:
-                                              160, // Ensure SizedBox has defined width
-                                          height:
-                                              160, // Ensure SizedBox has defined height
-                                          child: Material(
-                                            elevation: 3,
-                                            borderRadius:
-                                                BorderRadius.circular(1),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color:
-                                                    dashboardData.colorc[index],
-                                                borderRadius:
-                                                    BorderRadius.circular(1),
-                                              ),
-                                              child: Column(
-                                                children: [
-                                                  const SizedBox(height: 10),
-                                                  Row(
-                                                    children: [
-                                                      const SizedBox(width: 10),
-                                                      Material(
-                                                        elevation: 5,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(20),
-                                                        child: Container(
-                                                          height: 40,
-                                                          width: 40,
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(10),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: dashboardData
-                                                                .colors[index],
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20),
-                                                          ),
-                                                          child:
-                                                              SvgPicture.asset(
-                                                            "${dashboardData.icons[index]}",
-                                                            fit: BoxFit.cover,
-                                                            height: 27,
-                                                            width: 27,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(height: 10),
-                                                  Row(
-                                                    children: [
-                                                      const SizedBox(width: 10),
-                                                      Text(
-                                                        countList[index]
-                                                            .toString(),
-                                                        style: const TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 22,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(height: 10),
-                                                  Row(
-                                                    children: [
-                                                      const SizedBox(width: 10),
-                                                      Text(
-                                                        index == 2
-                                                            ? "${rentCycle} Rent"
-                                                            : dashboardData
-                                                                .titles[index],
-                                                        style: const TextStyle(
-                                                          color: Colors.white,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 18,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                // Phone layout - vertical
-                                return Column(
-                                  children: [
-                                    SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.width *
-                                                0.07),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 15, right: 15),
-                                      child: GridView.builder(
-                                        itemCount: 5,
-                                        gridDelegate:
-                                            SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount:
-                                              2, // Number of items per row
-                                          crossAxisSpacing:
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.06,
-                                          mainAxisSpacing:
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.06,
-                                          childAspectRatio:
-                                              1.9, // Adjust as needed for your design
-                                        ),
-                                        itemBuilder: (context, index) {
-                                          return InkWell(
-                                            onTap: () {
-                                              print("calling");
-                                              if (dashboardData.titles[index] ==
-                                                      "Work Orders" &&
-                                                  permissions!.workorderView) {
-                                                Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            WorkOrderTable()));
-                                              }
-                                              if (dashboardData.titles[index] ==
-                                                      "Balance" &&
-                                                  permissions!.financialView) {
-                                                Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            FinancialTable()));
-                                              }
-                                            },
-                                            child: Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .5,
-                                              height: 90,
-                                              decoration: BoxDecoration(
-                                                  color: dashboardData
-                                                      .colorc[index],
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              child: Stack(
-                                                clipBehavior: Clip.none,
-                                                children: [
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 0.0,
-                                                        horizontal: 0),
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Divider(
-                                                          color: Color.fromRGBO(
-                                                              219, 237, 244, 1),
-                                                          thickness: 2,
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 8.0),
-                                                          child: Row(
-                                                            children: [
-                                                              Text(
-                                                                " ${index == 2 ? "${rentCycle} Rent" : dashboardData.titles[index]}",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        14,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .normal,
-                                                                    color: Colors
-                                                                        .white),
-                                                              ),
-                                                              SizedBox(
-                                                                width: 10,
-                                                              ),
-                                                              if (index == 0 ||
-                                                                  index == 1)
-                                                                Icon(
-                                                                  Icons
-                                                                      .arrow_forward,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          219,
-                                                                          237,
-                                                                          244,
-                                                                          1),
-                                                                )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Positioned(
-                                                    left: 10,
-                                                    top: -15,
-                                                    child: Material(
-                                                      elevation: 6,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      child: Container(
-                                                        height: 40,
-                                                        width: 40,
-                                                        decoration: BoxDecoration(
-                                                            border: Border.all(
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        91,
-                                                                        134,
-                                                                        213,
-                                                                        1)),
-                                                            color: Colors.white,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10)),
-                                                        child: Center(
-                                                          child:
-                                                              SvgPicture.asset(
-                                                            "${dashboardData.ico[index]}",
-                                                            fit: BoxFit.contain,
-                                                            height: 23,
-                                                            width: 23,
-                                                            color: dashboardData
-                                                                .colorc[index],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Positioned(
-                                                    right:
-                                                        index == 3 || index == 4
-                                                            ? 10
-                                                            : 10,
-                                                    top: 10,
-                                                    child: Text(
-                                                        "${countList[index].toString()}",
-                                                        style: TextStyle(
-                                                            fontSize: index ==
-                                                                        3 ||
-                                                                    index == 4
-                                                                ? 14
-                                                                : 16,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color:
-                                                                Color.fromRGBO(
-                                                                    219,
-                                                                    237,
-                                                                    244,
-                                                                    1))),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        shrinkWrap:
-                                            true, // If you want the GridView to take only the space it needs
-                                        physics:
-                                            const NeverScrollableScrollPhysics(), // If you don't want it to scroll
-                                      ),
-                                    )
-                                  ],
-                                );
-                              }
-                            },
-                          ),
+              // Main information cards
+              _buildInfoCards(context, permissions),
 
-                          /*  SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: width * 0.1,
-                    ),
-                    Material(
-                      elevation: 3,
-                      borderRadius: BorderRadius.circular(10),
-                      child: Stack(
-                        children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width * .37,
-                            // height: 50,
-                            height: height * 0.071,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Column(
-                              children: [
-                                Stack(
-                                  children: [
-                                    Container(
-                                      height: height * 0.03,
-                                      decoration: BoxDecoration(
-                                          color: blueColor,
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(10),
-                                            topRight: Radius.circular(10),
-                                          )),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        SizedBox(
-                                          height: 20,
-                                        ),
-                                        Text(
-                                          "Due rent for the month",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize:
-                                              MediaQuery.of(context).size.width *
-                                                  0.024,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      height: 25,
-                                    ),
-                                    // Text(
-                                    //   // "1200",
-                                    //   // nextMonthCharge.toString(),
-                                    //   '\$${nextMonthCharge.toStringAsFixed(2)}',
-                                    //  //   nextMonthCharge.toStringAsFixed(2),
-                                    //   style: TextStyle(
-                                    //       color: Colors.blue,
-                                    //       fontSize:
-                                    //       MediaQuery.of(context).size.width *
-                                    //           0.034),
-                                    // ),
-                                    Text(
-                                      nextMonthCharge != 0 ? '\$${nextMonthCharge.toStringAsFixed(2)}' : '0',
-                                      style: TextStyle(
-                                        color: Colors.blue,
-                                        fontSize: MediaQuery.of(context).size.width * 0.034,
-                                      ),
-                                    ),
+              const SizedBox(height: 20),
 
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.06,
-                    ),
-                    Material(
-                      elevation: 3,
-                      borderRadius: BorderRadius.circular(10),
-                      child: Stack(
-                        children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width * .37,
-                            height: height * 0.071,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Column(
-                              children: [
-                                Stack(
-                                  children: [
-                                    Container(
-                                      height: height * 0.03,
-                                      decoration: BoxDecoration(
-                                          color: blueColor,
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(10),
-                                            topRight: Radius.circular(10),
-                                          )),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        SizedBox(
-                                          height: 20,
-                                        ),
-                                        Text(
-                                          "Total collected amount",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              // fontSize: 9,
-                                              fontSize:
-                                              MediaQuery.of(context).size.width *
-                                                  0.024,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      height: 25,
-                                    ),
-                                    // Text(
-                                    //   // "2500",
-                                    //   //   countList[1].toString(),
-                                    //   '\$${totalCollectedAmount.toString()}',
-                                    //   style: TextStyle(
-                                    //       color: Colors.blue,
-                                    //       fontSize:
-                                    //       MediaQuery.of(context).size.width *
-                                    //           0.034),
-                                    // ),
-                                    Text(
-                                      totalCollectedAmount != 0 ? '\$${totalCollectedAmount.toString()}' : '0',
-                                      style: TextStyle(
-                                        color: Colors.blue,
-                                        fontSize: MediaQuery.of(context).size.width * 0.034,
-                                      ),
-                                    ),
+              // Recent Transactions
+              _buildRecentTransactions(),
 
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      width: width * 0.1,
-                    ),
-                  ],
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: width * 0.1,
-                    ),
-                    Material(
-                      elevation: 3,
-                      borderRadius: BorderRadius.circular(10),
-                      child: Stack(
-                        children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width * .37,
-                            // height: 50,
-                            height: height * 0.071,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Column(
-                              children: [
-                                Stack(
-                                  children: [
-                                    Container(
-                                      // height:
-                                      //    20,
-                                      height: height * 0.03,
-                                      decoration: BoxDecoration(
-                                          color: blueColor,
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(10),
-                                            topRight: Radius.circular(10),
-                                          )),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        SizedBox(
-                                          height: 20,
-                                        ),
-                                        Text(
-                                          "Total past due amount",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize:
-                                              MediaQuery.of(context).size.width *
-                                                  0.024,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      height: 25,
-                                    ),
-                                    // Text(
-                                    //   // "1000",
-                                    //   "\$${pastDueAmount.toStringAsFixed(2).toString()}",
-                                    //   //  pastDueAmount.toStringAsFixed(2),
-                                    //   style: TextStyle(
-                                    //       color: Colors.blue,
-                                    //       fontSize:
-                                    //       MediaQuery.of(context).size.width *
-                                    //           0.034),
-                                    // ),
-                                    Text(
-                                      pastDueAmount != 0 ? '\$${pastDueAmount.toStringAsFixed(2)}' : '0',
-                                      style: TextStyle(
-                                        color: Colors.blue,
-                                        fontSize: MediaQuery.of(context).size.width * 0.034,
-                                      ),
-                                    ),
+              const SizedBox(height: 20),
 
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.06,
-                    ),
-                    Material(
-                      elevation: 3,
-                      borderRadius: BorderRadius.circular(10),
-                      child: Stack(
-                        children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width * .37,
-                            // height:50,
-                            height: height * 0.071,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Column(
-                              children: [
-                                Stack(
-                                  children: [
-                                    Container(
-                                      // height:
-                                      //     20,
-                                      height: height * 0.03,
-                                      decoration: BoxDecoration(
-                                          color: blueColor,
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(10),
-                                            topRight: Radius.circular(10),
-                                          )),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        SizedBox(
-                                          height: 20,
-                                        ),
-                                        Text(
-                                          "Last month collected amount",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              // fontSize: 9,
-                                              fontSize:
-                                              MediaQuery.of(context).size.width *
-                                                  0.022,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      height: 25,
-                                    ),
-                                    // Text(
-                                    //   // "1800",
-                                    //  "\$${ lastMonthCollectedAmount.toString()}",
-                                    //   // amountList[3].toString(),
-                                    //   style: TextStyle(
-                                    //       color: Colors.blue,
-                                    //       fontSize:
-                                    //       MediaQuery.of(context).size.width *
-                                    //           0.034),
-                                    // ),
-                                    Text(
-                                      lastMonthCollectedAmount != 0 ? '\$${lastMonthCollectedAmount.toString()}' : '0',
-                                      style: TextStyle(
-                                        color: Colors.blue,
-                                        fontSize: MediaQuery.of(context).size.width * 0.034,
-                                      ),
-                                    ),
-
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      width: width * 0.1,
-                    ),
-                  ],
-
-                ),*/
-                          // LayoutBuilder(builder: (context, BoxConstraints) {
-                          //   if (BoxConstraints.maxWidth > 500) {
-                          //     return Container();
-                          //   } else {
-                          //     return Container();
-                          //   }
-                          // }),
-
-                          LayoutBuilder(
-                            builder: (context, constraints) {
-                              if (constraints.maxWidth > 600) {
-                                // Tablet layout - horizontal
-                                return Padding(
-                                  padding: const EdgeInsets.only(left: 15),
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(height: 20),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Column(
-                                              children: [
-                                                Container(
-                                                  height: 150,
-                                                  margin: EdgeInsets.symmetric(
-                                                      horizontal: width *
-                                                          .025), // Adjusted for equal spacing
-                                                  decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  7)),
-                                                      border: Border.all(
-                                                          color: blueColor)),
-                                                  child: Material(
-                                                    //   elevation: 3,
-                                                    borderRadius:
-                                                        const BorderRadius.all(
-                                                            Radius.circular(5)),
-                                                    child: Column(
-                                                      children: [
-                                                        Expanded(
-                                                          flex: 3,
-                                                          child: Container(
-                                                            decoration:
-                                                                const BoxDecoration(
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      50,
-                                                                      75,
-                                                                      119,
-                                                                      1),
-                                                              borderRadius:
-                                                                  BorderRadius.vertical(
-                                                                      top: Radius
-                                                                          .circular(
-                                                                              6)),
-                                                            ),
-                                                            child: const Center(
-                                                              child: Text(
-                                                                "New Work Order",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize:
-                                                                        14,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                          flex: 7,
-                                                          child: Container(
-                                                            decoration:
-                                                                const BoxDecoration(
-                                                              color:
-                                                                  Colors.white,
-                                                              borderRadius: BorderRadius.vertical(
-                                                                  bottom: Radius
-                                                                      .circular(
-                                                                          15)),
-                                                            ),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(8.0),
-                                                              child: Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      const Text(
-                                                                        "Total: ",
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontSize:
-                                                                              16,
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                          color: Color.fromRGBO(
-                                                                              90,
-                                                                              134,
-                                                                              213,
-                                                                              1),
-                                                                        ),
-                                                                      ),
-                                                                      Text(
-                                                                        "${newworkorder}",
-                                                                        style: const TextStyle(
-                                                                            fontSize:
-                                                                                16,
-                                                                            color: Color.fromRGBO(
-                                                                                90,
-                                                                                134,
-                                                                                213,
-                                                                                1),
-                                                                            fontWeight:
-                                                                                FontWeight.bold),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                  InkWell(
-                                                                    onTap: () {
-                                                                      if (permissions!
-                                                                          .workorderView)
-                                                                        Navigator.of(context).push(MaterialPageRoute(
-                                                                            builder: (context) =>
-                                                                                WorkOrderTable()));
-                                                                    },
-                                                                    child:
-                                                                        Container(
-                                                                      margin: EdgeInsets.symmetric(
-                                                                          vertical:
-                                                                              12),
-                                                                      width:
-                                                                          100,
-                                                                      height:
-                                                                          30,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color:
-                                                                            blueColor,
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(5),
-                                                                      ),
-                                                                      child:
-                                                                          const Center(
-                                                                        child:
-                                                                            Text(
-                                                                          "View All",
-                                                                          style:
-                                                                              TextStyle(color: Colors.white),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 20),
-                                                Container(
-                                                  height: 150,
-                                                  margin: EdgeInsets.symmetric(
-                                                      horizontal: width *
-                                                          .025), // Adjusted for equal spacing
-                                                  decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  7)),
-                                                      border: Border.all(
-                                                          color: Color.fromRGBO(
-                                                              91,
-                                                              134,
-                                                              213,
-                                                              1))),
-                                                  child: Material(
-                                                    //  elevation: 3,
-                                                    borderRadius:
-                                                        const BorderRadius.all(
-                                                            Radius.circular(7)),
-                                                    child: Column(
-                                                      children: [
-                                                        Expanded(
-                                                          flex: 3,
-                                                          child: Container(
-                                                            decoration:
-                                                                const BoxDecoration(
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      91,
-                                                                      134,
-                                                                      213,
-                                                                      1),
-                                                              borderRadius:
-                                                                  BorderRadius.vertical(
-                                                                      top: Radius
-                                                                          .circular(
-                                                                              6)),
-                                                            ),
-                                                            child: const Center(
-                                                              child: Text(
-                                                                "Overdue Work Order",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize:
-                                                                        14,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                          flex: 7,
-                                                          child: Container(
-                                                            decoration:
-                                                                const BoxDecoration(
-                                                              color:
-                                                                  Colors.white,
-                                                              borderRadius: BorderRadius.vertical(
-                                                                  bottom: Radius
-                                                                      .circular(
-                                                                          15)),
-                                                            ),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(8.0),
-                                                              child: Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      const Text(
-                                                                        "Total: ",
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontSize:
-                                                                              16,
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                          color: Color.fromRGBO(
-                                                                              90,
-                                                                              134,
-                                                                              213,
-                                                                              1),
-                                                                        ),
-                                                                      ),
-                                                                      Text(
-                                                                        "${overdueworkorder}",
-                                                                        style: const TextStyle(
-                                                                            fontSize:
-                                                                                16,
-                                                                            color: Color.fromRGBO(
-                                                                                90,
-                                                                                134,
-                                                                                213,
-                                                                                1),
-                                                                            fontWeight:
-                                                                                FontWeight.bold),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                  InkWell(
-                                                                    onTap: () {
-                                                                      if (permissions!
-                                                                          .workorderView)
-                                                                        Navigator.of(context).push(MaterialPageRoute(
-                                                                            builder: (context) =>
-                                                                                WorkOrderTable()));
-                                                                    },
-                                                                    child:
-                                                                        Container(
-                                                                      margin: EdgeInsets.symmetric(
-                                                                          vertical:
-                                                                              12),
-                                                                      width:
-                                                                          100,
-                                                                      height:
-                                                                          30,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: Color.fromRGBO(
-                                                                            91,
-                                                                            134,
-                                                                            213,
-                                                                            1),
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(5),
-                                                                      ),
-                                                                      child:
-                                                                          const Center(
-                                                                        child:
-                                                                            Text(
-                                                                          "View All",
-                                                                          style:
-                                                                              TextStyle(color: Colors.white),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: PieCharts(
-                                              dataMap: {
-                                                "New Work Orders":
-                                                    newworkorder.toDouble(),
-                                                "Overdue Work Orders":
-                                                    overdueworkorder.toDouble()
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 10),
-                                    ],
-                                  ),
-                                );
-                              } else {
-                                // Phone layout - vertical
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 5.0),
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(height: 20),
-                                      /* Row(
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    height: 150,
-                                    margin: EdgeInsets.symmetric(horizontal: width * .025), // Adjusted for equal spacing
-                                    decoration:  BoxDecoration(
-                                      borderRadius: BorderRadius.all(Radius.circular(7)),
-                                      border: Border.all(color: blueColor )
-                                    ),
-                                    child: Material(
-                                   //   elevation: 3,
-                                      borderRadius: const BorderRadius.all(Radius.circular(5)),
-                                      child: Column(
-                                        children: [
-                                          Expanded(
-                                            flex: 3,
-                                            child: Container(
-                                              decoration: const BoxDecoration(
-                                                color: Color.fromRGBO(50, 75, 119, 1),
-                                                borderRadius: BorderRadius.vertical(top: Radius.circular(6)),
-                                              ),
-                                              child: const Center(
-                                                child: Text(
-                                                  "New Work Order",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.bold),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 7,
-                                            child: Container(
-                                              decoration: const BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                      children: [
-                                                        const Text(
-                                                          "Total: ",
-                                                          style: TextStyle(
-                                                              fontSize: 16,
-                                                              fontWeight: FontWeight.bold,
-                                                            color: Color.fromRGBO(90, 134, 213, 1),),
-                                                        ),
-                                                        Text(
-                                                          "${newworkorder}",
-                                                          style: const TextStyle(
-                                                              fontSize: 16,
-                                                              color: Color.fromRGBO(90, 134, 213, 1),
-                                                              fontWeight: FontWeight.bold),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    InkWell(
-                                                      onTap: () {
-                                                        if(permissions!.workorderView)
-                                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => WorkOrderTable()));
-                                                      },
-                                                      child: Container(
-                                                        margin: EdgeInsets.symmetric(vertical: 12),
-                                                        width: 100,
-                                                        height: 30,
-                                                        decoration: BoxDecoration(
-                                                          color: blueColor,
-                                                          borderRadius: BorderRadius.circular(5),
-                                                        ),
-                                                        child: const Center(
-                                                          child: Text(
-                                                            "View All",
-                                                            style: TextStyle(color: Colors.white),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    height: 150,
-                                    margin: EdgeInsets.symmetric(horizontal: width * .025), // Adjusted for equal spacing
-                                    decoration:  BoxDecoration(
-                                       borderRadius: BorderRadius.all(Radius.circular(7)),
-                                        border: Border.all(color: Color.fromRGBO(91, 134, 213, 1) )
-                                    ),
-                                    child: Material(
-                                    //  elevation: 3,
-                                      borderRadius: const BorderRadius.all(Radius.circular(7)),
-                                      child: Column(
-                                        children: [
-                                          Expanded(
-                                            flex: 3,
-                                            child: Container(
-                                              decoration: const BoxDecoration(
-                                                color: Color.fromRGBO(91, 134, 213, 1),
-                                                borderRadius: BorderRadius.vertical(top: Radius.circular(6)),
-                                              ),
-                                              child: const Center(
-                                                child: Text(
-                                                  "Overdue Work Order",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.bold),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 7,
-                                            child: Container(
-                                              decoration: const BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                      children: [
-                                                        const Text(
-                                                          "Total: ",
-                                                          style: TextStyle(
-                                                              fontSize: 16,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Color.fromRGBO(90, 134, 213, 1),),
-                                                        ),
-                                                        Text(
-                                                          "${overdueworkorder}",
-                                                          style: const TextStyle(
-                                                              fontSize: 16,
-                                                              color: Color.fromRGBO(90, 134, 213, 1),
-                                                              fontWeight: FontWeight.bold),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    InkWell(
-                                                      onTap: () {
-                                                        if(permissions!.workorderView)
-                                                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => WorkOrderTable()));
-                                                      },
-                                                      child: Container(
-                                                        margin: EdgeInsets.symmetric(vertical: 12),
-                                                        width: 100,
-                                                        height: 30,
-                                                        decoration: BoxDecoration(
-                                                          color: Color.fromRGBO(91, 134, 213, 1),
-                                                          borderRadius: BorderRadius.circular(5),
-                                                        ),
-                                                        child: const Center(
-                                                          child: Text(
-                                                            "View All",
-                                                            style: TextStyle(color: Colors.white),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),*/
-
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .91,
-                                        height: 130,
-                                        decoration: BoxDecoration(
-                                            color: blueColor,
-                                            borderRadius:
-                                                BorderRadius.circular(6)),
-                                        child: Stack(
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 10.0,
-                                                      horizontal: 13),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    "New Work Orders",
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.normal,
-                                                        color: Colors.white),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Text(
-                                                    "Total : ${newworkorder}",
-                                                    style: TextStyle(
-                                                        fontSize: 18,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Color.fromRGBO(
-                                                            226, 240, 245, 1)),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  InkWell(
-                                                    onTap: () {
-                                                      if (permissions!
-                                                          .workorderView)
-                                                        Navigator.of(context).push(
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        WorkOrderTable(
-                                                                          filter:
-                                                                              "New",
-                                                                        )));
-                                                    },
-                                                    child: Container(
-                                                      height: 30,
-                                                      width: 100,
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.white,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      10)),
-                                                      child: Center(
-                                                          child: Text(
-                                                              "View All",
-                                                              style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color:
-                                                                      blueColor))),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                            Positioned(
-                                              right: 20,
-                                              bottom: 20,
-                                              child: FaIcon(
-                                                FontAwesomeIcons.fileInvoice,
-                                                size: 60,
-                                                color: Color.fromRGBO(
-                                                    219, 237, 244, 1),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .91,
-                                        height: 130,
-                                        decoration: BoxDecoration(
-                                            color:
-                                                Color.fromRGBO(91, 134, 213, 1),
-                                            borderRadius:
-                                                BorderRadius.circular(6)),
-                                        child: Stack(
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 10.0,
-                                                      horizontal: 13),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    "Overdue Work Orders",
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.normal,
-                                                        color: Colors.white),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Text(
-                                                    "Total : ${overdueworkorder}",
-                                                    style: TextStyle(
-                                                        fontSize: 18,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Color.fromRGBO(
-                                                            226, 240, 245, 1)),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  InkWell(
-                                                    onTap: () {
-                                                      if (permissions!
-                                                          .workorderView)
-                                                        Navigator.of(context).push(
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        WorkOrderTable(
-                                                                          filter:
-                                                                              "Over Due",
-                                                                        )));
-                                                    },
-                                                    child: Container(
-                                                      height: 30,
-                                                      width: 100,
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.white,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      10)),
-                                                      child: Center(
-                                                          child: Text(
-                                                              "View All",
-                                                              style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          91,
-                                                                          134,
-                                                                          213,
-                                                                          1)))),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                            Positioned(
-                                              right: 20,
-                                              bottom: 20,
-                                              child: FaIcon(
-                                                FontAwesomeIcons.hourglassEnd,
-                                                size: 60,
-                                                color: Color.fromRGBO(
-                                                    219, 237, 244, 1),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(height: 30),
-                                      if (newworkorder != 0 ||
-                                          overdueworkorder != 0)
-                                        PieCharts(
-                                          dataMap: {
-                                            "New Work Orders":
-                                                newworkorder.toDouble(),
-                                            "Overdue Work Orders":
-                                                overdueworkorder.toDouble()
-                                          },
-                                        ),
-                                      const SizedBox(height: 10),
-                                    ],
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-
-                          // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-                          // PieCharts(),
-                          // SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-                          // Barchart()
-                          const SizedBox(
-                            height: 20,
-                          ),
-
-                          /* Container(
-                  height: 180,
-                  margin: EdgeInsets.symmetric(horizontal:
-                     width * 0.05,
-                  ),
-
-                  child: Material(
-                    color: Colors.white,
-      borderRadius:  BorderRadius.all(Radius.circular(15)),
-                  //  color: Colors.white,
-                    elevation: 5,
-                    child: Container(
-
-                      child: DonutChart(
-                        newWorkOrders: newworkorder,
-                        overdueWorkOrders: overdueworkorder,
-                      ),
-                    ),
-                  ),
-                ),*/
-                          /*  LayoutBuilder(
-                  builder:
-                      (BuildContext context, BoxConstraints constraints) {
-                    // Check if the device width is less than 600 (considered as phone screen)
-                    if (constraints.maxWidth < 500) {
-                      // Phone layout
-                      return Column(
-                        children: [
-                          Padding(
-                            padding:
-                            const EdgeInsets.only(left: 10, right: 10),
-                            child: PieCharts(dataMap: {
-                              "Properties": countList[0].toDouble(),
-
-                              "Work Orders": countList[1].toDouble(),
-                            }),
-                          ), // Vertical layout for phone
-                          SizedBox(
-                              height: MediaQuery.of(context).size.height *
-                                  0.015),
-                          Padding(
-                            padding:
-                            const EdgeInsets.only(left: 0, right: 8),
-                            child: Barchart(),
-                          ),
-                        ],
-                      );
-                    } else {
-                      // Tablet layout
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                          top: 35,
-                        ),
-                        child: Row(
-                          children: [
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            PieCharts(dataMap: {
-                              "Properties": countList[0].toDouble(),
-
-                              "Work Orders": countList[2].toDouble(),
-                            }),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Barchart(),
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                ),*/
-                        ],
-                      ))
-            : SizedBox(
-                width: double.infinity,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Lottie.asset(
-                      'assets/no_internet.json',
-                      width: 200,
-                      height: 200,
-                      fit: BoxFit.fill,
-                    ),
-                    Text(
-                      'No Internet',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      'Check your internet connection',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
-                  ],
-                ),
-              ),
+              // Scheduled and Recurring Payments
+              _buildScheduledPayments(),
+            ],
+          ),
+        )
+            : _buildNoInternetView(),
       ),
     );
   }
 
-/* Widget buildListTile(BuildContext context,Widget leadingIcon, String title,bool active) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-          color: active?blueColor:Colors.transparent,
-          borderRadius: BorderRadius.circular(10)
-      ),
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: ListTile(
+  Widget _buildInfoCards(BuildContext context, dynamic permissions) {
+    return Column(
+      children: [
+        // Monthly Rent Card
+        _buildInfoCard(
+          icon: Icons.account_balance_wallet,
+          iconColor: const Color(0xFF8B4513),
+          title: "Monthly Rent",
+          leftLabel: "Rent Amount",
+          leftValue: "\$${countList[2]}",
+          rightLabel: "Next Due Date",
+          rightValue: countList[3].toString(),
+          onTap: () {},
+        ),
 
-        leading: leadingIcon,
-        title: Text(title,style: TextStyle(
-            color: active?Colors.white:Colors.black
-        ),),
-      ),
+        const SizedBox(height: 16),
+
+        // Lease Card
+        _buildInfoCard(
+          icon: Icons.description,
+          iconColor: const Color(0xFF4CAF50),
+          title: "Lease",
+          leftLabel: "Start Date",
+          leftValue: "12/26/2024",
+          rightLabel: "End Date",
+          rightValue: countList[4].toString(),
+          onTap: () {},
+        ),
+
+        const SizedBox(height: 16),
+
+        // Balance Card
+        _buildInfoCard(
+          icon: Icons.account_balance,
+          iconColor: const Color(0xFF2196F3),
+          title: "Balance",
+          leftLabel: "Remaining Balance",
+          leftValue: countList[1].toString(),
+          rightLabel: "",
+          rightValue: "",
+          onTap: () {
+            if (permissions!.financialView) {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => FinancialTable()),
+              );
+            }
+          },
+        ),
+
+        const SizedBox(height: 16),
+
+        // Work Orders Card
+        _buildInfoCard(
+          icon: Icons.assignment,
+          iconColor: const Color(0xFF2196F3),
+          title: "Work Orders",
+          leftLabel: "Open Work Orders",
+          leftValue: countList[0].toString(),
+          rightLabel: "",
+          rightValue: "",
+          onTap: () {
+            if (permissions!.workorderView) {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => WorkOrderTable()),
+              );
+            }
+          },
+        ),
+      ],
     );
-  }*/
-/* Widget buildDropdownListTile(
-      BuildContext context,Widget leadingIcon, String title, List<String> subTopics) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20),
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: ExpansionTile(
-        leading: leadingIcon,
-        title: Text(title),
-        children: subTopics.map((subTopic) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ListTile(
-              title: Text(subTopic),
-              onTap: () {
-                // Handle sub-topic selection
-                Navigator.pop(
-                    context); // Close drawer after selecting a sub-topic
-              },
+  }
+
+  Widget _buildInfoCard({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String leftLabel,
+    required String leftValue,
+    required String rightLabel,
+    required String rightValue,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
             ),
-          );
-        }).toList(),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: iconColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(icon, color: iconColor, size: 24),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                const Icon(Icons.keyboard_arrow_right, color: Colors.grey),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                if (leftLabel.isNotEmpty)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        leftLabel,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        leftValue,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                if (rightLabel.isNotEmpty)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        rightLabel,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        rightValue,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
-  }*/
+  }
+
+  Widget _buildRecentTransactions() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Recent Transactions",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => FinancialTable()));
+                },
+                child: const Text(
+                  "See All",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (recentTransactions.isEmpty)
+            const Center(
+              child: Text(
+                "No recent transactions found",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
+              ),
+            )
+          else
+            ...recentTransactions
+                .take(3)
+                .map(
+                  (transaction) => Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8F9FA),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF2196F3).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.payment,
+                        color: Color(0xFF2196F3),
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            transaction['tenant_name'] ?? 'Unknown',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            "${transaction['payment_type'] ?? 'Payment'} - ${transaction['date'] ?? ''}",
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          if (transaction['responseText'] != null)
+                            Text(
+                              transaction['responseText'],
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: transaction['state'] == 'settling'
+                                    ? Colors.orange
+                                    : Colors.green,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      "\$${(transaction['total_amount'] ?? 0).toStringAsFixed(2)}",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+                .toList(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildScheduledPayments() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Scheduled and Recurring Payments",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => MakePayment(
+                            leaseId: lease_id, tenantId: tenantId)));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4CAF50),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text(
+                    "Schedule a Payment",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.autorenew, color: Color(0xFF2196F3)),
+                  label: const Text(
+                    "Setup Autopay",
+                    style: TextStyle(
+                      color: Color(0xFF2196F3),
+                      fontSize: 16,
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    side: const BorderSide(color: Color(0xFF2196F3)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (upcomingPayments.isEmpty)
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8F9FA),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Center(
+                child: Text(
+                  "No upcoming payments scheduled",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+            )
+          else
+            ...upcomingPayments
+                .map(
+                  (payment) => Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8F9FA),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF2196F3).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.home,
+                        color: Color(0xFF2196F3),
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            payment['tenant_name'] ?? 'Unknown',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            "Due Date - ${payment['date'] ?? ''}",
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF9C27B0).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            payment['payment_type'] ?? 'Payment',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFF9C27B0),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          "\$${((payment['amount']?[0] ?? 0) / 100).toStringAsFixed(2)}",
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            )
+                .toList(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNoInternetView() {
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Lottie.asset(
+            'assets/no_internet.json',
+            width: 200,
+            height: 200,
+            fit: BoxFit.fill,
+          ),
+          const Text(
+            'No Internet',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const Text(
+            'Check your internet connection',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+    );
+  }
 }

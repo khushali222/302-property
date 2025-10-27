@@ -648,76 +648,16 @@ class _ActivityTableState extends State<ActivityTable> {
               height: 20,
             ),
             //add Activity_model
-            Padding(
-              padding: const EdgeInsets.only(left: 2, right: 0),
-              child: Row(
-                //mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: titleBar(
-                      width: MediaQuery.of(context).size.width * .92,
-                      title: 'Activity',
-                    ),
-                  ),
-                 /* GestureDetector(
-                    onTap: () async {
-                      // final result = await Navigator.of(context).push(
-                      //     MaterialPageRoute(
-                      //         builder: (context) => Add_property()));
-                      // if (result == true) {
-                      //   setState(() {
-                      //     futurePropertyTypes =
-                      //         PropertyTypeRepository().fetchPropertyTypes();
-                      //   });
-                      // }
-                    },
-                    child: Container(
-                      height: (MediaQuery.of(context).size.width < 500)
-                          ? 50
-                          : MediaQuery.of(context).size.width * 0.062,
 
-                      // height:  MediaQuery.of(context).size.width * 0.07,
-                      // height:  40,
-                      width: (MediaQuery.of(context).size.width < 500)
-                          ? MediaQuery.of(context).size.width * 0.25
-                          : MediaQuery.of(context).size.width * 0.25,
-                      decoration: BoxDecoration(
-                        color: blueColor,
-                        borderRadius: BorderRadius.circular(5),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey,
-                            offset: Offset(0.0, 4.0),
-                            blurRadius: 6.0,
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "+ Add",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 16
-                                    : 20,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (MediaQuery.of(context).size.width < 500)
-                    SizedBox(width: 6),
-                  if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 22),*/
-                ],
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0, vertical: 8.0),
+              child: Padding(
+                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+                child: titleBar(
+                  width: double.infinity,
+                  title: 'Activity',
+                ),
               ),
             ),
             // SizedBox(height: 10),

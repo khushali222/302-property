@@ -172,6 +172,12 @@ class _Rent_collectionState extends State<Rent_collection> {
           }
         }
         rentalOwners = ownerSet.toList();
+        // Sort rental owners alphabetically, keeping 'All' at the beginning
+        rentalOwners.sort((a, b) {
+          if (a == 'All') return -1;
+          if (b == 'All') return 1;
+          return a.toLowerCase().compareTo(b.toLowerCase());
+        });
       });
       return data;
     } catch (e) {
@@ -185,7 +191,8 @@ class _Rent_collectionState extends State<Rent_collection> {
   }
 
   Future<void> generateDelinquentTenantsPdf(
-      List<Rentcollection_model> delinquentTenantsData) async {
+      List<Rentcollection_model> delinquentTenantsData,
+      DateProvider dateProvider) async {
     final GetAddressAdminPdfService service = GetAddressAdminPdfService();
     profile? profileData;
 
@@ -210,9 +217,10 @@ class _Rent_collectionState extends State<Rent_collection> {
     );
 
     final summaryTableData = _generateSummaryTableData(delinquentTenantsData);
-    final detailsTableData = _generateDetailsTableData(delinquentTenantsData);
+    final detailsTableData =
+        _generateDetailsTableData(delinquentTenantsData, dateProvider);
     final delinquentLeasesTableData =
-        _generateDelinquentLeasesTableData(delinquentTenantsData);
+        _generateDelinquentLeasesTableData(delinquentTenantsData, dateProvider);
     if (summaryTableData.isNotEmpty) {
       pdf.addPage(
         pw.MultiPage(
@@ -224,7 +232,7 @@ class _Rent_collectionState extends State<Rent_collection> {
               margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
               child: pw.Text(
                 'Page ${context.pageNumber} of ${context.pagesCount}',
-                style: pw.TextStyle(color: PdfColors.grey),
+                style: const pw.TextStyle(color: PdfColors.grey),
               ),
             );
           },
@@ -347,7 +355,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                     fontWeight: pw.FontWeight.bold, color: PdfColors.white),
                 headerDecoration:
                     pw.BoxDecoration(color: PdfColor.fromHex("#5A86D5")),
-                cellStyle: pw.TextStyle(fontSize: 13),
+                cellStyle: const pw.TextStyle(fontSize: 13),
                 cellAlignment: pw.Alignment.centerLeft,
                 border: null,
               ),
@@ -368,7 +376,7 @@ class _Rent_collectionState extends State<Rent_collection> {
               margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
               child: pw.Text(
                 'Page ${context.pageNumber} of ${context.pagesCount}',
-                style: pw.TextStyle(color: PdfColors.grey),
+                style: const pw.TextStyle(color: PdfColors.grey),
               ),
             );
           },
@@ -400,24 +408,25 @@ class _Rent_collectionState extends State<Rent_collection> {
                   'Auto-Pay',
                   'Notes',
                 ],
-                data: _generateDetailsTableData(delinquentTenantsData),
+                data: _generateDetailsTableData(
+                    delinquentTenantsData, dateProvider),
                 headerStyle: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold, color: PdfColors.white),
                 headerDecoration:
                     pw.BoxDecoration(color: PdfColor.fromHex("#5A86D5")),
-                cellStyle: pw.TextStyle(fontSize: 13),
+                cellStyle: const pw.TextStyle(fontSize: 13),
                 cellAlignment: pw.Alignment.centerLeft,
                 headerAlignment: pw.Alignment.centerLeft,
                 border: null,
                 columnWidths: {
-                  0: pw.FlexColumnWidth(2.0), // Street (Wider)
-                  1: pw.FlexColumnWidth(2.0), // City, State, Zip (Wider)
-                  2: pw.FlexColumnWidth(1.5), // Entity (Normal)
-                  3: pw.FlexColumnWidth(1.5), // Move-in Date (Normal)
-                  4: pw.FlexColumnWidth(1.0), // Monthly Rent (Normal)
-                  5: pw.FlexColumnWidth(1.0), // Balance (Normal)
-                  6: pw.FlexColumnWidth(1.5), // Auto-Pay (Normal)
-                  7: pw.FlexColumnWidth(1.5), // Notes (Normal)
+                  0: const pw.FlexColumnWidth(2.0), // Street (Wider)
+                  1: const pw.FlexColumnWidth(2.0), // City, State, Zip (Wider)
+                  2: const pw.FlexColumnWidth(1.5), // Entity (Normal)
+                  3: const pw.FlexColumnWidth(1.5), // Move-in Date (Normal)
+                  4: const pw.FlexColumnWidth(1.0), // Monthly Rent (Normal)
+                  5: const pw.FlexColumnWidth(1.0), // Balance (Normal)
+                  6: const pw.FlexColumnWidth(1.5), // Auto-Pay (Normal)
+                  7: const pw.FlexColumnWidth(1.5), // Notes (Normal)
                 },
               ),
             ];
@@ -438,7 +447,7 @@ class _Rent_collectionState extends State<Rent_collection> {
               margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
               child: pw.Text(
                 'Page ${context.pageNumber} of ${context.pagesCount}',
-                style: pw.TextStyle(color: PdfColors.grey),
+                style: const pw.TextStyle(color: PdfColors.grey),
               ),
             );
           },
@@ -472,23 +481,24 @@ class _Rent_collectionState extends State<Rent_collection> {
                   'Notes',
                 ],
                 headerAlignment: pw.Alignment.centerLeft,
-                data: _generateDelinquentLeasesTableData(delinquentTenantsData),
+                data: _generateDelinquentLeasesTableData(
+                    delinquentTenantsData, dateProvider),
                 headerStyle: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold, color: PdfColors.white),
                 headerDecoration:
                     pw.BoxDecoration(color: PdfColor.fromHex("#5A86D5")),
-                cellStyle: pw.TextStyle(fontSize: 13),
+                cellStyle: const pw.TextStyle(fontSize: 13),
                 cellAlignment: pw.Alignment.centerLeft,
                 border: null,
                 columnWidths: {
-                  0: pw.FlexColumnWidth(2.0), // Street (Wider)
-                  1: pw.FlexColumnWidth(2.0), // City, State, Zip (Wider)
-                  2: pw.FlexColumnWidth(1.5), // Entity (Normal)
-                  3: pw.FlexColumnWidth(1.5), // Move-in Date (Normal)
-                  4: pw.FlexColumnWidth(1.0), // Monthly Rent (Normal)
-                  5: pw.FlexColumnWidth(1.0), // Balance (Normal)
-                  6: pw.FlexColumnWidth(1.5), // Auto-Pay (Normal)
-                  7: pw.FlexColumnWidth(1.5), // Notes (Normal)
+                  0: const pw.FlexColumnWidth(2.0), // Street (Wider)
+                  1: const pw.FlexColumnWidth(2.0), // City, State, Zip (Wider)
+                  2: const pw.FlexColumnWidth(1.5), // Entity (Normal)
+                  3: const pw.FlexColumnWidth(1.5), // Move-in Date (Normal)
+                  4: const pw.FlexColumnWidth(1.0), // Monthly Rent (Normal)
+                  5: const pw.FlexColumnWidth(1.0), // Balance (Normal)
+                  6: const pw.FlexColumnWidth(1.5), // Auto-Pay (Normal)
+                  7: const pw.FlexColumnWidth(1.5), // Notes (Normal)
                 },
               ),
             ];
@@ -515,13 +525,11 @@ class _Rent_collectionState extends State<Rent_collection> {
           ),
           pw.Align(
             alignment: pw.Alignment.centerRight,
-            child: pw.Text(
-                "\$${property.totalCharged?.toStringAsFixed(2)}" ?? 'N/A'),
+            child: pw.Text(formatCurrency(property.totalCharged) ?? 'N/A'),
           ),
           pw.Align(
             alignment: pw.Alignment.centerRight,
-            child: pw.Text(
-                "\$${property.totalPending?.toStringAsFixed(2)}" ?? 'N/A'),
+            child: pw.Text(formatCurrency(property.totalPending) ?? 'N/A'),
           ),
           pw.Align(
             alignment: pw.Alignment.centerRight,
@@ -542,16 +550,14 @@ class _Rent_collectionState extends State<Rent_collection> {
         pw.Align(
           alignment: pw.Alignment.centerRight,
           child: pw.Text(
-            "\$${owner.totalSummary?.totalCharged?.toStringAsFixed(2)}" ??
-                'N/A',
+            formatCurrency(owner.totalSummary?.totalCharged) ?? 'N/A',
             style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
           ),
         ),
         pw.Align(
           alignment: pw.Alignment.centerRight,
           child: pw.Text(
-            "\$${owner.totalSummary?.totalPending?.toStringAsFixed(2)}" ??
-                'N/A',
+            formatCurrency(owner.totalSummary?.totalPending) ?? 'N/A',
             style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
           ),
         ),
@@ -569,7 +575,8 @@ class _Rent_collectionState extends State<Rent_collection> {
   }
 
   List<List<String>> _generateDetailsTableData(
-      List<Rentcollection_model> rentalOwnerReports) {
+      List<Rentcollection_model> rentalOwnerReports,
+      DateProvider dateProvider) {
     final List<List<String>> tableData = [];
 
     for (var owner in rentalOwnerReports) {
@@ -580,7 +587,9 @@ class _Rent_collectionState extends State<Rent_collection> {
             detail.recurringCards!.isNotEmpty) {
           autoPay = detail.recurringCards!.map((card) {
             final tenantName = card.tenantName ?? 'N/A';
-            final date = card.date ?? 'N/A'; // Use your real date field
+            final date = card.date != null
+                ? dateProvider.formatCurrentDate(card.date!)
+                : 'N/A';
             return '$tenantName - $date';
           }).join('\n');
         } else {
@@ -592,7 +601,9 @@ class _Rent_collectionState extends State<Rent_collection> {
         if (detail.notes != null && detail.notes!.isNotEmpty) {
           notes = detail.notes!
               .map((note) {
-                final date = note.date ?? 'N/A'; // Use your real date field
+                final date = note.date != null
+                    ? dateProvider.formatCurrentDate(note.date!)
+                    : 'N/A';
                 final content = note.content ?? '';
                 return '$date: $content';
               })
@@ -609,9 +620,11 @@ class _Rent_collectionState extends State<Rent_collection> {
               '${detail.rentalData?.rentalState ?? 'N/A'}, '
               '${detail.rentalData?.rentalPostcode ?? 'N/A'}',
           detail.rentalOwnerData?.rentalOwnerCompanyName ?? 'N/A',
-          detail.leaseData?.startDate ?? 'N/A',
-          "\$${detail.leaseData?.leaseAmount?.toString()}" ?? 'N/A',
-          "\$${detail.leaseData?.balance?.toString()}" ?? 'N/A',
+          detail.leaseData?.startDate != null
+              ? dateProvider.formatCurrentDate(detail.leaseData!.startDate!)
+              : 'N/A',
+          formatCurrency(detail.leaseData?.leaseAmount) ?? 'N/A',
+          formatCurrency(detail.leaseData?.balance) ?? 'N/A',
           autoPay,
           notes,
         ]);
@@ -622,7 +635,8 @@ class _Rent_collectionState extends State<Rent_collection> {
   }
 
   List<List<dynamic>> _generateDelinquentLeasesTableData(
-      List<Rentcollection_model> rentalOwnerReports) {
+      List<Rentcollection_model> rentalOwnerReports,
+      DateProvider dateProvider) {
     final List<List<dynamic>> tableData = [];
 
     for (var owner in rentalOwnerReports) {
@@ -637,7 +651,9 @@ class _Rent_collectionState extends State<Rent_collection> {
               detail.recurringCards!.isNotEmpty) {
             autoPay = detail.recurringCards!.map((card) {
               final tenantName = card.tenantName ?? 'N/A';
-              final date = card.date ?? 'N/A';
+              final date = card.date != null
+                  ? dateProvider.formatCurrentDate(card.date!)
+                  : 'N/A';
               return '$date : $tenantName';
             }).join('\n');
           } else {
@@ -648,7 +664,9 @@ class _Rent_collectionState extends State<Rent_collection> {
           if (detail.notes != null && detail.notes!.isNotEmpty) {
             notes = detail.notes!
                 .map((note) {
-                  final date = note.date ?? 'N/A';
+                  final date = note.date != null
+                      ? dateProvider.formatCurrentDate(note.date!)
+                      : 'N/A';
                   final content = note.content ?? '';
                   return '$date: $content';
                 })
@@ -664,9 +682,11 @@ class _Rent_collectionState extends State<Rent_collection> {
                 '${detail.rentalData?.rentalState ?? 'N/A'}, '
                 '${detail.rentalData?.rentalPostcode ?? 'N/A'}',
             detail.rentalOwnerData?.rentalOwnerCompanyName ?? 'N/A',
-            detail.leaseData?.startDate ?? 'N/A',
-            '\$${detail.leaseData?.leaseAmount?.toStringAsFixed(2) ?? '0.00'}',
-            '\$${balance.toStringAsFixed(2)}',
+            detail.leaseData?.startDate != null
+                ? dateProvider.formatCurrentDate(detail.leaseData!.startDate!)
+                : 'N/A',
+            formatCurrency(detail.leaseData?.leaseAmount) ?? 'N/A',
+            formatCurrency(balance),
             autoPay,
             notes,
           ]);
@@ -684,7 +704,7 @@ class _Rent_collectionState extends State<Rent_collection> {
           pw.Text('', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
           pw.Text('', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
           pw.Text(
-            '\$${owner.deadBeatsSummary?.totalBalance?.toStringAsFixed(2) ?? 'N/A'}',
+            formatCurrency(owner.deadBeatsSummary?.totalBalance) ?? 'N/A',
             style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
           ),
           pw.Text('', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
@@ -706,8 +726,8 @@ class _Rent_collectionState extends State<Rent_collection> {
       for (var property in owner.summary!) {
         tableData.add([
           property.rentalOwnerCompany ?? 'N/A',
-          "\$${property.totalCharged?.toStringAsFixed(2)}" ?? 'N/A',
-          "\$${property.totalPending?.toStringAsFixed(2)}" ?? 'N/A',
+          formatCurrency(property.totalCharged) ?? 'N/A',
+          formatCurrency(property.totalPending) ?? 'N/A',
           property.collectedPercentage?.toString() ?? 'N/A',
         ]);
       }
@@ -715,8 +735,8 @@ class _Rent_collectionState extends State<Rent_collection> {
       // Add Overall row
       tableData.add([
         'Overall',
-        "\$${owner.totalSummary?.totalCharged?.toStringAsFixed(2)}" ?? 'N/A',
-        "\$${owner.totalSummary?.totalPending?.toStringAsFixed(2)}" ?? 'N/A',
+        formatCurrency(owner.totalSummary?.totalCharged) ?? 'N/A',
+        formatCurrency(owner.totalSummary?.totalPending) ?? 'N/A',
         owner.totalSummary?.averageCollectedPercentage?.toString() ?? 'N/A',
       ]);
     }
@@ -725,7 +745,8 @@ class _Rent_collectionState extends State<Rent_collection> {
   }
 
   List<List<dynamic>> _generateDetailsTableDataExcel(
-      List<Rentcollection_model> rentalOwnerReports) {
+      List<Rentcollection_model> rentalOwnerReports,
+      DateProvider dateProvider) {
     final List<List<dynamic>> tableData = [];
 
     for (var owner in rentalOwnerReports) {
@@ -765,9 +786,11 @@ class _Rent_collectionState extends State<Rent_collection> {
               '${detail.rentalData?.rentalState ?? 'N/A'}, '
               '${detail.rentalData?.rentalPostcode ?? 'N/A'}',
           detail.rentalOwnerData?.rentalOwnerCompanyName ?? 'N/A',
-          detail.leaseData?.startDate ?? 'N/A',
-          "\$${detail.leaseData?.leaseAmount?.toString()}" ?? 'N/A',
-          "\$${detail.leaseData?.balance?.toString()}" ?? 'N/A',
+          detail.leaseData?.startDate != null
+              ? dateProvider.formatCurrentDate(detail.leaseData!.startDate!)
+              : 'N/A',
+          formatCurrency(detail.leaseData?.leaseAmount) ?? 'N/A',
+          formatCurrency(detail.leaseData?.balance) ?? 'N/A',
           autoPay,
           notes,
         ]);
@@ -778,7 +801,8 @@ class _Rent_collectionState extends State<Rent_collection> {
   }
 
   List<List<dynamic>> _generateDelinquentLeasesTableDataExcel(
-      List<Rentcollection_model> rentalOwnerReports) {
+      List<Rentcollection_model> rentalOwnerReports,
+      DateProvider dateProvider) {
     final List<List<dynamic>> tableData = [];
 
     for (var owner in rentalOwnerReports) {
@@ -793,7 +817,9 @@ class _Rent_collectionState extends State<Rent_collection> {
               detail.recurringCards!.isNotEmpty) {
             autoPay = detail.recurringCards!.map((card) {
               final tenantName = card.tenantName ?? 'N/A';
-              final date = card.date ?? 'N/A';
+              final date = card.date != null
+                  ? dateProvider.formatCurrentDate(card.date!)
+                  : 'N/A';
               return '$date : $tenantName';
             }).join('\n');
           } else {
@@ -804,7 +830,9 @@ class _Rent_collectionState extends State<Rent_collection> {
           if (detail.notes != null && detail.notes!.isNotEmpty) {
             notes = detail.notes!
                 .map((note) {
-                  final date = note.date ?? 'N/A';
+                  final date = note.date != null
+                      ? dateProvider.formatCurrentDate(note.date!)
+                      : 'N/A';
                   final content = note.content ?? '';
                   return '$date: $content';
                 })
@@ -820,9 +848,11 @@ class _Rent_collectionState extends State<Rent_collection> {
                 '${detail.rentalData?.rentalState ?? 'N/A'}'
                 '${detail.rentalData?.rentalPostcode ?? 'N/A'}',
             detail.rentalOwnerData?.rentalOwnerCompanyName ?? 'N/A',
-            detail.leaseData?.startDate ?? 'N/A',
-            '\$${detail.leaseData?.leaseAmount?.toStringAsFixed(2) ?? '0.00'}',
-            '\$${balance.toStringAsFixed(2)}',
+            detail.leaseData?.startDate != null
+                ? dateProvider.formatCurrentDate(detail.leaseData!.startDate!)
+                : 'N/A',
+            formatCurrency(detail.leaseData?.leaseAmount) ?? 'N/A',
+            formatCurrency(balance),
             autoPay,
             notes,
           ]);
@@ -836,7 +866,7 @@ class _Rent_collectionState extends State<Rent_collection> {
           '',
           '',
           '',
-          '\$${owner.deadBeatsSummary?.totalBalance?.toStringAsFixed(2) ?? 'N/A'}',
+          formatCurrency(owner.deadBeatsSummary?.totalBalance) ?? 'N/A',
           '',
           '',
         ]);
@@ -849,7 +879,8 @@ class _Rent_collectionState extends State<Rent_collection> {
   }
 
   Future<void> generateDelinquentTenantsExcel(
-      List<Rentcollection_model> delinquentTenantsData) async {
+      List<Rentcollection_model> delinquentTenantsData,
+      DateProvider dateProvider) async {
     setState(() {
       istenantDataLoading = true;
     });
@@ -915,7 +946,7 @@ class _Rent_collectionState extends State<Rent_collection> {
     rowIndex++;
 
     final detailsTableData =
-        _generateDetailsTableDataExcel(delinquentTenantsData);
+        _generateDetailsTableDataExcel(delinquentTenantsData, dateProvider);
     for (int i = 0; i < detailsTableData.length; i++) {
       for (int j = 0; j < detailsTableData[i].length; j++) {
         mainSheet
@@ -949,8 +980,8 @@ class _Rent_collectionState extends State<Rent_collection> {
     delinquentHeaderRange.cellStyle.backColor = '#5A86D5';
     rowIndex++;
 
-    final delinquentLeasesTableData =
-        _generateDelinquentLeasesTableDataExcel(delinquentTenantsData);
+    final delinquentLeasesTableData = _generateDelinquentLeasesTableDataExcel(
+        delinquentTenantsData, dateProvider);
     for (int i = 0; i < delinquentLeasesTableData.length; i++) {
       for (int j = 0; j < delinquentLeasesTableData[i].length; j++) {
         mainSheet
@@ -991,7 +1022,8 @@ class _Rent_collectionState extends State<Rent_collection> {
   }
 
   Future<void> generateDelinquentTenantsCSV(
-      List<Rentcollection_model> delinquentTenantsData) async {
+      List<Rentcollection_model> delinquentTenantsData,
+      DateProvider dateProvider) async {
     setState(() {
       istenantDataLoading = true;
     });
@@ -1014,7 +1046,7 @@ class _Rent_collectionState extends State<Rent_collection> {
     csvBuffer.writeln(
         'Street,City State Zip,Entity,Move-in Date,Monthly Rent,Balance,Auto-Pay,Notes');
     final detailsTableData =
-        _generateDetailsTableDataExcel(delinquentTenantsData);
+        _generateDetailsTableDataExcel(delinquentTenantsData, dateProvider);
     for (var row in detailsTableData) {
       csvBuffer.writeln(row.join(','));
     }
@@ -1024,8 +1056,8 @@ class _Rent_collectionState extends State<Rent_collection> {
     csvBuffer.writeln('Delinquent Leases');
     csvBuffer.writeln(
         'Street,City State Zip,Entity,Move-in Date,Monthly Rent,Balance,Auto-Pay,Notes');
-    final delinquentLeasesTableData =
-        _generateDelinquentLeasesTableDataExcel(delinquentTenantsData);
+    final delinquentLeasesTableData = _generateDelinquentLeasesTableDataExcel(
+        delinquentTenantsData, dateProvider);
     for (var row in delinquentLeasesTableData) {
       csvBuffer.writeln(row.join(','));
     }
@@ -1195,7 +1227,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                     // Sorting logic here
                   });
                 },
-                child: Row(
+                child: const Row(
                   children: [
                     Text("Total Outstanding",
                         style: TextStyle(color: Colors.white)),
@@ -1343,7 +1375,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                     // Sorting logic here
                   });
                 },
-                child: Row(
+                child: const Row(
                   children: [
                     Text("        Entity",
                         style: TextStyle(color: Colors.white)),
@@ -1376,7 +1408,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                 },
                 child: Row(
                   children: [
-                    Text(" Balance", style: TextStyle(color: Colors.white)),
+                    const Text(" Balance",
+                        style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
                     ascending3
                         ? const Padding(
@@ -1488,616 +1521,793 @@ class _Rent_collectionState extends State<Rent_collection> {
               child: Column(
                 children: [
                   const SizedBox(height: 16),
-                  titleBar(
-                    title: 'Rent Collection Report',
-                    width: MediaQuery.of(context).size.width * .91,
+                  // titleBar(
+                  //   title: 'Rent Collection Report',
+                  //   width: MediaQuery.of(context).size.width * .91,
+                  // ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          left:
+                              MediaQuery.of(context).size.width > 500 ? 12 : 0,
+                          right:
+                              MediaQuery.of(context).size.width > 500 ? 12 : 0),
+                      child: titleBar(
+                        width: double.infinity,
+                        title: "Rent Collection Report",
+                      ),
+                    ),
                   ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    const SizedBox(height: 16),
-                  if (MediaQuery.of(context).size.width < 500)
-                    Column(
-                      children: [
-                        SizedBox(height: 10),
-                        // Always show filters
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: [
-                                // Month Dropdown
-                                Container(
-                                  width: 130,
-                                  child: DropdownButtonHideUnderline(
-                                    child: Material(
-                                      elevation: 0,
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: DropdownButton2<String>(
-                                        isExpanded: true,
-                                        hint: const Text(
-                                          'Month',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Color(0xFF8A95A8),
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   const SizedBox(height: 16),
+                  // if (MediaQuery.of(context).size.width < 500)
+                  Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      // Always show filters
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              // Month Dropdown
+                              Container(
+                                width: 130,
+                                child: DropdownButtonHideUnderline(
+                                  child: Material(
+                                    elevation: 0,
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: DropdownButton2<String>(
+                                      isExpanded: true,
+                                      hint: const Text(
+                                        'Month',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Color(0xFF8A95A8),
                                         ),
-                                        items: months.map((String month) {
-                                          return DropdownMenuItem<String>(
-                                            value: month,
-                                            child: Text(
-                                              month,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.black,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          );
-                                        }).toList(),
-                                        value: selectedMonth.isNotEmpty
-                                            ? selectedMonth
-                                            : null,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            selectedMonth = value!;
-                                          });
-                                        },
-                                        buttonStyleData: ButtonStyleData(
-                                          height: 45,
-                                          width: double.infinity,
-                                          padding: const EdgeInsets.only(
-                                              left: 14, right: 14),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            border: Border.all(
-                                              color: const Color(0xFF8A95A8),
-                                            ),
-                                            color: Colors.white,
-                                          ),
-                                          elevation: 0,
-                                        ),
-                                        dropdownStyleData: DropdownStyleData(
-                                          maxHeight: 250,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(14),
-                                          ),
-                                          offset: const Offset(0, 0),
-                                          scrollbarTheme: ScrollbarThemeData(
-                                            radius: const Radius.circular(20),
-                                            thickness:
-                                                MaterialStateProperty.all(6),
-                                            thumbVisibility:
-                                                MaterialStateProperty.all(true),
-                                          ),
-                                        ),
-                                        menuItemStyleData:
-                                            const MenuItemStyleData(
-                                          height: 40,
-                                          padding: EdgeInsets.only(
-                                              left: 14, right: 14),
-                                        ),
+                                        overflow: TextOverflow.ellipsis,
                                       ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                // Year Dropdown
-                                Container(
-                                  width: 100,
-                                  child: DropdownButtonHideUnderline(
-                                    child: Material(
-                                      elevation: 0,
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: DropdownButton2<String>(
-                                        isExpanded: true,
-                                        hint: const Text(
-                                          'Year',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Color(0xFF8A95A8),
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        items: years.map((String year) {
-                                          return DropdownMenuItem<String>(
-                                            value: year,
-                                            child: Text(
-                                              year,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.black,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
+                                      items: months.map((String month) {
+                                        return DropdownMenuItem<String>(
+                                          value: month,
+                                          child: Text(
+                                            month,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black,
                                             ),
-                                          );
-                                        }).toList(),
-                                        value: selectedYear.isNotEmpty
-                                            ? selectedYear
-                                            : null,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            selectedYear = value!;
-                                          });
-                                        },
-                                        buttonStyleData: ButtonStyleData(
-                                          height: 45,
-                                          width: double.infinity,
-                                          padding: const EdgeInsets.only(
-                                              left: 14, right: 14),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            border: Border.all(
-                                              color: const Color(0xFF8A95A8),
-                                            ),
-                                            color: Colors.white,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                          elevation: 0,
-                                        ),
-                                        dropdownStyleData: DropdownStyleData(
-                                          maxHeight: 250,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(14),
-                                          ),
-                                          offset: const Offset(0, 0),
-                                          scrollbarTheme: ScrollbarThemeData(
-                                            radius: const Radius.circular(20),
-                                            thickness:
-                                                MaterialStateProperty.all(6),
-                                            thumbVisibility:
-                                                MaterialStateProperty.all(true),
-                                          ),
-                                        ),
-                                        menuItemStyleData:
-                                            const MenuItemStyleData(
-                                          height: 40,
-                                          padding: EdgeInsets.only(
-                                              left: 14, right: 14),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                // Run Report Button
-                                Container(
-                                  height: 45,
-                                  width: 45,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color:
-                                            Color.fromRGBO(206, 212, 218, 1)),
-                                    borderRadius: BorderRadius.circular(0),
-                                    color: Colors.white,
-                                  ),
-                                  child: IconButton(
-                                    icon: FaIcon(FontAwesomeIcons.circlePlay,
-                                        size: 18),
-                                    onPressed: () {
-                                      setState(() {
-                                        isLoading = true;
-                                        int monthNumber =
-                                            months.indexOf(selectedMonth) + 1;
-                                        _futureRentcollection =
-                                            fetchDelinquentTenantsData(
-                                          monthNumber.toString(),
-                                          selectedYear,
                                         );
-                                      });
-                                      print("Run Report");
-                                    },
-                                    tooltip: "Run Report",
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                // Download Button
-                                Container(
-                                  height: 45,
-                                  width: 60,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color:
-                                            Color.fromRGBO(206, 212, 218, 1)),
-                                    borderRadius: BorderRadius.circular(0),
-                                    color: Colors.white,
-                                  ),
-                                  child: FutureBuilder<Rentcollection_model>(
-                                    future: _futureRentcollection,
-                                    builder: (context, snapshot) {
-                                      return PopupMenuButton<String>(
-                                        offset: Offset(0, 45),
-                                        onSelected: handleDownload,
-                                        icon: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            FaIcon(FontAwesomeIcons.download,
-                                                size: 16),
-                                            SizedBox(width: 2),
-                                            Icon(Icons.arrow_drop_down,
-                                                size: 16),
-                                          ],
+                                      }).toList(),
+                                      value: selectedMonth.isNotEmpty
+                                          ? selectedMonth
+                                          : null,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedMonth = value!;
+                                        });
+                                      },
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 45,
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.only(
+                                            left: 14, right: 14),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          border: Border.all(
+                                            color: const Color(0xFF8A95A8),
+                                          ),
+                                          color: Colors.white,
                                         ),
-                                        tooltip: "Download",
-                                        itemBuilder: (BuildContext context) {
-                                          if (!snapshot.hasData ||
-                                              snapshot.data!.summary!.isEmpty) {
-                                            return <PopupMenuEntry<String>>[];
-                                          }
-                                          return downloadOptions
-                                              .map((String option) {
-                                            return PopupMenuItem<String>(
-                                              value: option,
-                                              onTap: () async {
-                                                if (option == "PDF")
-                                                  generateDelinquentTenantsPdf(
-                                                      [snapshot.data!]);
-                                                if (option == "Excel")
-                                                  generateDelinquentTenantsExcel(
-                                                      [snapshot.data!]);
-                                                if (option == "CSV")
-                                                  generateDelinquentTenantsCSV(
-                                                      [snapshot.data!]);
-                                              },
-                                              child:
-                                                  Text("Download as $option"),
-                                            );
-                                          }).toList();
-                                        },
-                                      );
-                                    },
+                                        elevation: 0,
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        maxHeight: 250,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(14),
+                                        ),
+                                        offset: const Offset(0, 0),
+                                        scrollbarTheme: ScrollbarThemeData(
+                                          radius: const Radius.circular(20),
+                                          thickness:
+                                              MaterialStateProperty.all(6),
+                                          thumbVisibility:
+                                              MaterialStateProperty.all(true),
+                                        ),
+                                      ),
+                                      menuItemStyleData:
+                                          const MenuItemStyleData(
+                                        height: 40,
+                                        padding: EdgeInsets.only(
+                                            left: 14, right: 14),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                              const SizedBox(width: 8),
+                              // Year Dropdown
+                              Container(
+                                width: 100,
+                                child: DropdownButtonHideUnderline(
+                                  child: Material(
+                                    elevation: 0,
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: DropdownButton2<String>(
+                                      isExpanded: true,
+                                      hint: const Text(
+                                        'Year',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Color(0xFF8A95A8),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      items: years.map((String year) {
+                                        return DropdownMenuItem<String>(
+                                          value: year,
+                                          child: Text(
+                                            year,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        );
+                                      }).toList(),
+                                      value: selectedYear.isNotEmpty
+                                          ? selectedYear
+                                          : null,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedYear = value!;
+                                        });
+                                      },
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 45,
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.only(
+                                            left: 14, right: 14),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          border: Border.all(
+                                            color: const Color(0xFF8A95A8),
+                                          ),
+                                          color: Colors.white,
+                                        ),
+                                        elevation: 0,
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        maxHeight: 250,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(14),
+                                        ),
+                                        offset: const Offset(0, 0),
+                                        scrollbarTheme: ScrollbarThemeData(
+                                          radius: const Radius.circular(20),
+                                          thickness:
+                                              MaterialStateProperty.all(6),
+                                          thumbVisibility:
+                                              MaterialStateProperty.all(true),
+                                        ),
+                                      ),
+                                      menuItemStyleData:
+                                          const MenuItemStyleData(
+                                        height: 40,
+                                        padding: EdgeInsets.only(
+                                            left: 14, right: 14),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              // Run Report Button
+                              Container(
+                                height: 45,
+                                width: 45,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: const Color.fromRGBO(
+                                          206, 212, 218, 1)),
+                                  borderRadius: BorderRadius.circular(0),
+                                  color: Colors.white,
+                                ),
+                                child: IconButton(
+                                  icon: const FaIcon(
+                                      FontAwesomeIcons.circlePlay,
+                                      size: 18),
+                                  onPressed: () {
+                                    setState(() {
+                                      isLoading = true;
+                                      int monthNumber =
+                                          months.indexOf(selectedMonth) + 1;
+                                      _futureRentcollection =
+                                          fetchDelinquentTenantsData(
+                                        monthNumber.toString(),
+                                        selectedYear,
+                                      );
+                                    });
+                                    print("Run Report");
+                                  },
+                                  tooltip: "Run Report",
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              // Download Button
+                              Container(
+                                height: 45,
+                                width: 60,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: const Color.fromRGBO(
+                                          206, 212, 218, 1)),
+                                  borderRadius: BorderRadius.circular(0),
+                                  color: Colors.white,
+                                ),
+                                child: FutureBuilder<Rentcollection_model>(
+                                  future: _futureRentcollection,
+                                  builder: (context, snapshot) {
+                                    return PopupMenuButton<String>(
+                                      offset: const Offset(0, 45),
+                                      onSelected: handleDownload,
+                                      icon: const Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          FaIcon(FontAwesomeIcons.download,
+                                              size: 16),
+                                          SizedBox(width: 2),
+                                          Icon(Icons.arrow_drop_down, size: 16),
+                                        ],
+                                      ),
+                                      tooltip: "Download",
+                                      itemBuilder: (BuildContext context) {
+                                        if (!snapshot.hasData ||
+                                            snapshot.data!.summary!.isEmpty) {
+                                          return <PopupMenuEntry<String>>[];
+                                        }
+                                        return downloadOptions
+                                            .map((String option) {
+                                          return PopupMenuItem<String>(
+                                            value: option,
+                                            onTap: () async {
+                                              if (option == "PDF")
+                                                generateDelinquentTenantsPdf(
+                                                    [snapshot.data!],
+                                                    dateProvider);
+                                              if (option == "Excel")
+                                                generateDelinquentTenantsExcel(
+                                                    [snapshot.data!],
+                                                    dateProvider);
+                                              if (option == "CSV")
+                                                generateDelinquentTenantsCSV(
+                                                    [snapshot.data!],
+                                                    dateProvider);
+                                            },
+                                            child: Text("Download as $option"),
+                                          );
+                                        }).toList();
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        SizedBox(height: 10),
-                        // Content based on state
-                        FutureBuilder<Rentcollection_model>(
-                          future: _futureRentcollection,
-                          builder: (context, snapshot) {
-                            if (isLoading) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0),
-                                child: ColabShimmerLoadingWidget(),
-                              );
-                            } else if (!snapshot.hasData ||
-                                snapshot.data!.summary!.isEmpty) {
-                              return Container(
-                                height: MediaQuery.of(context).size.height * .5,
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/no_data.jpg",
-                                        height: 200,
-                                        width: 200,
-                                      ),
-                                      SizedBox(height: 10),
-                                      Text(
-                                        "No Data Available",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: blueColor,
-                                            fontSize: 16),
-                                      ),
-                                      SizedBox(height: 10),
-                                      Text(
-                                        "Try selecting a different month or year",
-                                        style: TextStyle(
-                                            color: Colors.grey, fontSize: 14),
-                                      ),
-                                    ],
-                                  ),
+                      ),
+                      const SizedBox(height: 10),
+                      // Content based on state
+                      FutureBuilder<Rentcollection_model>(
+                        future: _futureRentcollection,
+                        builder: (context, snapshot) {
+                          if (isLoading) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: ColabShimmerLoadingWidget(),
+                            );
+                          } else if (!snapshot.hasData ||
+                              snapshot.data!.summary!.isEmpty) {
+                            return Container(
+                              height: MediaQuery.of(context).size.height * .5,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/no_data.jpg",
+                                      height: 200,
+                                      width: 200,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      "No Data Available",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                          fontSize: 16),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    const Text(
+                                      "Try selecting a different month or year",
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 14),
+                                    ),
+                                  ],
                                 ),
-                              );
-                            }
-
-                            var data = snapshot.data!.summary!;
-                            var dataall = snapshot.data!;
-                            // final currentPageData = data;
-                            var dataa = snapshot.data!.leases!;
-                            var totaldata = snapshot.data;
-                            var delinquentdata = snapshot.data?.deadBeats;
-
-                            return SingleChildScrollView(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  // Search and Filter Controls
-                                  if (_selectedIndex ==
-                                      1) // Show filters only for Details tab
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 8),
-                                      child: Column(
-                                        children: [
-                                          // Search Bar
-                                          Container(
-                                            height: 45,
-                                            child: TextField(
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  searchvalue = value;
-                                                });
-                                              },
-                                              decoration: InputDecoration(
-                                                hintText:
-                                                    'Search by address or company...',
-                                                prefixIcon: Icon(Icons.search),
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 12),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(height: 8),
-                                          // Filter Row - Responsive Layout
-                                          LayoutBuilder(
-                                            builder: (context, constraints) {
-                                              if (constraints.maxWidth < 600) {
-                                                // Stack filters vertically on small screens
-                                                return Column(
-                                                  children: [
-                                                    DropdownButtonFormField<
-                                                        String>(
-                                                      value:
-                                                          selectedRentalOwner,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        labelText:
-                                                            'Rental Owner',
-                                                        border:
-                                                            OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                        ),
-                                                        contentPadding:
-                                                            EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        12,
-                                                                    vertical:
-                                                                        8),
-                                                      ),
-                                                      items: rentalOwners
-                                                          .map((owner) {
-                                                        return DropdownMenuItem(
-                                                          value: owner,
-                                                          child: Text(
-                                                            owner,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                          ),
-                                                        );
-                                                      }).toList(),
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          selectedRentalOwner =
-                                                              value;
-                                                        });
-                                                      },
-                                                    ),
-                                                    SizedBox(height: 10),
-                                                    DropdownButtonFormField<
-                                                        String>(
-                                                      value:
-                                                          selectedBalanceFilter,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        labelText:
-                                                            'Balance Filter',
-                                                        border:
-                                                            OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                        ),
-                                                        contentPadding:
-                                                            EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        12,
-                                                                    vertical:
-                                                                        8),
-                                                      ),
-                                                      items: balanceFilters
-                                                          .map((filter) {
-                                                        return DropdownMenuItem(
-                                                          value: filter,
-                                                          child: Text(
-                                                            filter,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                          ),
-                                                        );
-                                                      }).toList(),
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          selectedBalanceFilter =
-                                                              value;
-                                                        });
-                                                      },
-                                                    ),
-                                                  ],
-                                                );
-                                              } else {
-                                                // Keep horizontal layout for larger screens
-                                                return Row(
-                                                  children: [
-                                                    Expanded(
-                                                      child:
-                                                          DropdownButtonFormField<
-                                                              String>(
-                                                        value:
-                                                            selectedRentalOwner,
-                                                        decoration:
-                                                            InputDecoration(
-                                                          labelText:
-                                                              'Rental Owner',
-                                                          border:
-                                                              OutlineInputBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8),
-                                                          ),
-                                                          contentPadding:
-                                                              EdgeInsets
-                                                                  .symmetric(
-                                                                      horizontal:
-                                                                          12,
-                                                                      vertical:
-                                                                          8),
-                                                        ),
-                                                        items: rentalOwners
-                                                            .map((owner) {
-                                                          return DropdownMenuItem(
-                                                            value: owner,
-                                                            child: Text(
-                                                              owner,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            ),
-                                                          );
-                                                        }).toList(),
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            selectedRentalOwner =
-                                                                value;
-                                                          });
-                                                        },
-                                                      ),
-                                                    ),
-                                                    SizedBox(width: 10),
-                                                    Expanded(
-                                                      child:
-                                                          DropdownButtonFormField<
-                                                              String>(
-                                                        value:
-                                                            selectedBalanceFilter,
-                                                        decoration:
-                                                            InputDecoration(
-                                                          labelText:
-                                                              'Balance Filter',
-                                                          border:
-                                                              OutlineInputBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8),
-                                                          ),
-                                                          contentPadding:
-                                                              EdgeInsets
-                                                                  .symmetric(
-                                                                      horizontal:
-                                                                          12,
-                                                                      vertical:
-                                                                          8),
-                                                        ),
-                                                        items: balanceFilters
-                                                            .map((filter) {
-                                                          return DropdownMenuItem(
-                                                            value: filter,
-                                                            child: Text(
-                                                              filter,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            ),
-                                                          );
-                                                        }).toList(),
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            selectedBalanceFilter =
-                                                                value;
-                                                          });
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ],
-                                                );
-                                              }
-                                            },
-                                          ),
-                                          SizedBox(height: 8),
-                                          // Clear Filters Button
-                                          Row(
-                                            children: [
-                                              Spacer(),
-                                              TextButton.icon(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    searchvalue = '';
-                                                    selectedRentalOwner = 'All';
-                                                    selectedBalanceFilter =
-                                                        'All';
-                                                    currentPage = 0;
-                                                  });
-                                                },
-                                                icon:
-                                                    Icon(Icons.clear, size: 16),
-                                                label: Text('Clear Filters'),
-                                                style: TextButton.styleFrom(
-                                                  foregroundColor:
-                                                      Colors.grey[600],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  // Tab Row
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16),
-                                    child: Container(
-                                      padding: const EdgeInsets.all(2),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFFE0E0E0),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          _buildTabButton("Summary", 0),
-                                          _buildTabButton("Details", 1),
-                                          _buildTabButton(
-                                              "   Delinquent\n       Lease", 2),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  // Conditional Screens
-                                  if (_selectedIndex == 0)
-                                    SummeryScreen(data, totaldata!),
-                                  if (_selectedIndex == 1) DetailScreen(dataa),
-                                  if (_selectedIndex == 2)
-                                    DelinquentLease(
-                                        delinquentdata!, totaldata!),
-                                ],
                               ),
                             );
-                          },
-                        ),
-                      ],
-                    ),
+                          }
+
+                          var data = snapshot.data!.summary!;
+                          var dataall = snapshot.data!;
+                          // final currentPageData = data;
+                          var dataa = snapshot.data!.leases!;
+                          var totaldata = snapshot.data;
+                          var delinquentdata = snapshot.data?.deadBeats;
+
+                          return SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                // // Search and Filter Controls
+                                // if (_selectedIndex ==
+                                //     1) // Show filters only for Details tab
+                                //   Padding(
+                                //     padding: const EdgeInsets.symmetric(
+                                //         horizontal: 16, vertical: 8),
+                                //     child: Column(
+                                //       children: [
+                                //         // Search Bar
+                                //         Container(
+                                //           height: 45,
+                                //           child: TextField(
+                                //             onChanged: (value) {
+                                //               setState(() {
+                                //                 searchvalue = value;
+                                //               });
+                                //             },
+                                //             decoration: InputDecoration(
+                                //               hintText:
+                                //                   'Search by address or company...',
+                                //               prefixIcon:
+                                //                   const Icon(Icons.search),
+                                //               border: OutlineInputBorder(
+                                //                 borderRadius:
+                                //                     BorderRadius.circular(8),
+                                //               ),
+                                //               contentPadding:
+                                //                   const EdgeInsets.symmetric(
+                                //                       horizontal: 16,
+                                //                       vertical: 12),
+                                //             ),
+                                //           ),
+                                //         ),
+                                //         const SizedBox(height: 8),
+                                //         // Filter Row - Responsive Layout
+                                //         LayoutBuilder(
+                                //           builder: (context, constraints) {
+                                //             if (constraints.maxWidth < 600) {
+                                //               // Stack filters vertically on small screens
+                                //               return Column(
+                                //                 children: [
+                                //                   DropdownButtonHideUnderline(
+                                //                     child: Material(
+                                //                       elevation: 3,
+                                //                       borderRadius:
+                                //                           BorderRadius.circular(
+                                //                               8),
+                                //                       child: DropdownButton2<
+                                //                           String>(
+                                //                         isExpanded: true,
+                                //                         hint: const Row(
+                                //                           children: [
+                                //                             SizedBox(
+                                //                               width: 4,
+                                //                             ),
+                                //                             Expanded(
+                                //                               child: Text(
+                                //                                 'Rental Owner',
+                                //                                 style:
+                                //                                     TextStyle(
+                                //                                   fontSize: 14,
+                                //                                   color: Color(
+                                //                                       0xFF8A95A8),
+                                //                                 ),
+                                //                                 overflow:
+                                //                                     TextOverflow
+                                //                                         .ellipsis,
+                                //                               ),
+                                //                             ),
+                                //                           ],
+                                //                         ),
+                                //                         items: rentalOwners
+                                //                             .map((String
+                                //                                     item) =>
+                                //                                 DropdownMenuItem<
+                                //                                     String>(
+                                //                                   value: item,
+                                //                                   child: Text(
+                                //                                     item,
+                                //                                     style:
+                                //                                         const TextStyle(
+                                //                                       fontSize:
+                                //                                           14,
+                                //                                       fontWeight:
+                                //                                           FontWeight
+                                //                                               .bold,
+                                //                                       color: Colors
+                                //                                           .black,
+                                //                                     ),
+                                //                                     overflow:
+                                //                                         TextOverflow
+                                //                                             .ellipsis,
+                                //                                   ),
+                                //                                 ))
+                                //                             .toList(),
+                                //                         value:
+                                //                             selectedRentalOwner,
+                                //                         onChanged: (value) {
+                                //                           setState(() {
+                                //                             selectedRentalOwner =
+                                //                                 value;
+                                //                           });
+                                //                         },
+                                //                         buttonStyleData:
+                                //                             ButtonStyleData(
+                                //                           height: 45,
+                                //                           width:
+                                //                               double.infinity,
+                                //                           padding:
+                                //                               const EdgeInsets
+                                //                                   .only(
+                                //                                   left: 14,
+                                //                                   right: 14),
+                                //                           decoration:
+                                //                               BoxDecoration(
+                                //                             borderRadius:
+                                //                                 BorderRadius
+                                //                                     .circular(
+                                //                                         8),
+                                //                             border: Border.all(
+                                //                               color: const Color(
+                                //                                   0xFF8A95A8),
+                                //                             ),
+                                //                             color: Colors.white,
+                                //                           ),
+                                //                           elevation: 0,
+                                //                         ),
+                                //                         dropdownStyleData:
+                                //                             DropdownStyleData(
+                                //                           maxHeight: 250,
+                                //                           decoration:
+                                //                               BoxDecoration(
+                                //                             borderRadius:
+                                //                                 BorderRadius
+                                //                                     .circular(
+                                //                                         14),
+                                //                           ),
+                                //                           offset: const Offset(
+                                //                               -20, 0),
+                                //                           scrollbarTheme:
+                                //                               ScrollbarThemeData(
+                                //                             radius: const Radius
+                                //                                 .circular(40),
+                                //                             thickness:
+                                //                                 MaterialStateProperty
+                                //                                     .all(6),
+                                //                             thumbVisibility:
+                                //                                 MaterialStateProperty
+                                //                                     .all(true),
+                                //                           ),
+                                //                         ),
+                                //                         menuItemStyleData:
+                                //                             const MenuItemStyleData(
+                                //                           height: 40,
+                                //                           padding:
+                                //                               EdgeInsets.only(
+                                //                                   left: 14,
+                                //                                   right: 14),
+                                //                         ),
+                                //                       ),
+                                //                     ),
+                                //                   ),
+                                //                   const SizedBox(height: 10),
+                                //                   DropdownButtonFormField<
+                                //                       String>(
+                                //                     value:
+                                //                         selectedBalanceFilter,
+                                //                     decoration: InputDecoration(
+                                //                       labelText:
+                                //                           'Balance Filter',
+                                //                       border:
+                                //                           OutlineInputBorder(
+                                //                         borderRadius:
+                                //                             BorderRadius
+                                //                                 .circular(8),
+                                //                       ),
+                                //                       contentPadding:
+                                //                           const EdgeInsets
+                                //                               .symmetric(
+                                //                               horizontal: 12,
+                                //                               vertical: 8),
+                                //                     ),
+                                //                     items: balanceFilters
+                                //                         .map((filter) {
+                                //                       return DropdownMenuItem(
+                                //                         value: filter,
+                                //                         child: Text(
+                                //                           filter,
+                                //                           overflow: TextOverflow
+                                //                               .ellipsis,
+                                //                         ),
+                                //                       );
+                                //                     }).toList(),
+                                //                     onChanged: (value) {
+                                //                       setState(() {
+                                //                         selectedBalanceFilter =
+                                //                             value;
+                                //                       });
+                                //                     },
+                                //                   ),
+                                //                 ],
+                                //               );
+                                //             } else {
+                                //               // Keep horizontal layout for larger screens
+                                //               return Row(
+                                //                 children: [
+                                //                   Expanded(
+                                //                     child:
+                                //                         DropdownButtonHideUnderline(
+                                //                       child: Material(
+                                //                         elevation: 3,
+                                //                         borderRadius:
+                                //                             BorderRadius
+                                //                                 .circular(8),
+                                //                         child: DropdownButton2<
+                                //                             String>(
+                                //                           isExpanded: true,
+                                //                           hint: const Row(
+                                //                             children: [
+                                //                               SizedBox(
+                                //                                 width: 4,
+                                //                               ),
+                                //                               Expanded(
+                                //                                 child: Text(
+                                //                                   'Rental Owner',
+                                //                                   style:
+                                //                                       TextStyle(
+                                //                                     fontSize:
+                                //                                         14,
+                                //                                     color: Color(
+                                //                                         0xFF8A95A8),
+                                //                                   ),
+                                //                                   overflow:
+                                //                                       TextOverflow
+                                //                                           .ellipsis,
+                                //                                 ),
+                                //                               ),
+                                //                             ],
+                                //                           ),
+                                //                           items: rentalOwners
+                                //                               .map((String
+                                //                                       item) =>
+                                //                                   DropdownMenuItem<
+                                //                                       String>(
+                                //                                     value: item,
+                                //                                     child: Text(
+                                //                                       item,
+                                //                                       style:
+                                //                                           const TextStyle(
+                                //                                         fontSize:
+                                //                                             14,
+                                //                                         fontWeight:
+                                //                                             FontWeight.bold,
+                                //                                         color: Colors
+                                //                                             .black,
+                                //                                       ),
+                                //                                       overflow:
+                                //                                           TextOverflow
+                                //                                               .ellipsis,
+                                //                                     ),
+                                //                                   ))
+                                //                               .toList(),
+                                //                           value:
+                                //                               selectedRentalOwner,
+                                //                           onChanged: (value) {
+                                //                             setState(() {
+                                //                               selectedRentalOwner =
+                                //                                   value;
+                                //                             });
+                                //                           },
+                                //                           buttonStyleData:
+                                //                               ButtonStyleData(
+                                //                             height: 45,
+                                //                             width:
+                                //                                 double.infinity,
+                                //                             padding:
+                                //                                 const EdgeInsets
+                                //                                     .only(
+                                //                                     left: 14,
+                                //                                     right: 14),
+                                //                             decoration:
+                                //                                 BoxDecoration(
+                                //                               borderRadius:
+                                //                                   BorderRadius
+                                //                                       .circular(
+                                //                                           8),
+                                //                               border:
+                                //                                   Border.all(
+                                //                                 color: const Color(
+                                //                                     0xFF8A95A8),
+                                //                               ),
+                                //                               color:
+                                //                                   Colors.white,
+                                //                             ),
+                                //                             elevation: 0,
+                                //                           ),
+                                //                           dropdownStyleData:
+                                //                               DropdownStyleData(
+                                //                             maxHeight: 250,
+                                //                             decoration:
+                                //                                 BoxDecoration(
+                                //                               borderRadius:
+                                //                                   BorderRadius
+                                //                                       .circular(
+                                //                                           14),
+                                //                             ),
+                                //                             offset:
+                                //                                 const Offset(
+                                //                                     -20, 0),
+                                //                             scrollbarTheme:
+                                //                                 ScrollbarThemeData(
+                                //                               radius:
+                                //                                   const Radius
+                                //                                       .circular(
+                                //                                       40),
+                                //                               thickness:
+                                //                                   MaterialStateProperty
+                                //                                       .all(6),
+                                //                               thumbVisibility:
+                                //                                   MaterialStateProperty
+                                //                                       .all(
+                                //                                           true),
+                                //                             ),
+                                //                           ),
+                                //                           menuItemStyleData:
+                                //                               const MenuItemStyleData(
+                                //                             height: 40,
+                                //                             padding:
+                                //                                 EdgeInsets.only(
+                                //                                     left: 14,
+                                //                                     right: 14),
+                                //                           ),
+                                //                         ),
+                                //                       ),
+                                //                     ),
+                                //                   ),
+                                //                   const SizedBox(width: 10),
+                                //                   Expanded(
+                                //                     child:
+                                //                         DropdownButtonFormField<
+                                //                             String>(
+                                //                       value:
+                                //                           selectedBalanceFilter,
+                                //                       decoration:
+                                //                           InputDecoration(
+                                //                         labelText:
+                                //                             'Balance Filter',
+                                //                         border:
+                                //                             OutlineInputBorder(
+                                //                           borderRadius:
+                                //                               BorderRadius
+                                //                                   .circular(8),
+                                //                         ),
+                                //                         contentPadding:
+                                //                             const EdgeInsets
+                                //                                 .symmetric(
+                                //                                 horizontal: 12,
+                                //                                 vertical: 8),
+                                //                       ),
+                                //                       items: balanceFilters
+                                //                           .map((filter) {
+                                //                         return DropdownMenuItem(
+                                //                           value: filter,
+                                //                           child: Text(
+                                //                             filter,
+                                //                             overflow:
+                                //                                 TextOverflow
+                                //                                     .ellipsis,
+                                //                           ),
+                                //                         );
+                                //                       }).toList(),
+                                //                       onChanged: (value) {
+                                //                         setState(() {
+                                //                           selectedBalanceFilter =
+                                //                               value;
+                                //                         });
+                                //                       },
+                                //                     ),
+                                //                   ),
+                                //                 ],
+                                //               );
+                                //             }
+                                //           },
+                                //         ),
+                                //         const SizedBox(height: 8),
+                                //         // Clear Filters Button
+                                //         Row(
+                                //           children: [
+                                //             const Spacer(),
+                                //             TextButton.icon(
+                                //               onPressed: () {
+                                //                 setState(() {
+                                //                   searchvalue = '';
+                                //                   selectedRentalOwner = 'All';
+                                //                   selectedBalanceFilter = 'All';
+                                //                   currentPage = 0;
+                                //                 });
+                                //               },
+                                //               icon: const Icon(Icons.clear,
+                                //                   size: 16),
+                                //               label:
+                                //                   const Text('Clear Filters'),
+                                //               style: TextButton.styleFrom(
+                                //                 foregroundColor:
+                                //                     Colors.grey[600],
+                                //               ),
+                                //             ),
+                                //           ],
+                                //         ),
+                                //       ],
+                                //     ),
+                                //   ),
+                                // Tab Row
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFE0E0E0),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        _buildTabButton("Summary", 0),
+                                        _buildTabButton("Details", 1),
+                                        _buildTabButton(
+                                            "   Delinquent\n       Lease", 2),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                // Conditional Screens
+                                if (_selectedIndex == 0)
+                                  SummeryScreen(data, totaldata!),
+                                if (_selectedIndex == 1)
+                                  DetailScreen(dataa, dateProvider),
+                                if (_selectedIndex == 2)
+                                  DelinquentLease(delinquentdata!, totaldata!,
+                                      dateProvider),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ],
               ),
             )
@@ -2113,11 +2323,11 @@ class _Rent_collectionState extends State<Rent_collection> {
                     height: 200,
                     fit: BoxFit.fill,
                   ),
-                  Text(
+                  const Text(
                     'No Internet',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     'Check your internet connection',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
@@ -2168,7 +2378,7 @@ class _Rent_collectionState extends State<Rent_collection> {
       children: [
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2177,7 +2387,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 4.0), // Space between label and value
+                const SizedBox(height: 4.0), // Space between label and value
                 Text(
                   leftValue,
                   style: TextStyle(color: grey),
@@ -2188,7 +2398,7 @@ class _Rent_collectionState extends State<Rent_collection> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2197,7 +2407,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 4.0), // Space between label and value
+                const SizedBox(height: 4.0), // Space between label and value
                 Text(
                   centerValue,
                   style: TextStyle(color: grey),
@@ -2208,7 +2418,7 @@ class _Rent_collectionState extends State<Rent_collection> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2217,7 +2427,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 4.0), // Space between label and value
+                const SizedBox(height: 4.0), // Space between label and value
                 Text(
                   rightValue,
                   style: TextStyle(color: grey),
@@ -2257,7 +2467,8 @@ class _Rent_collectionState extends State<Rent_collection> {
             const SizedBox(height: 20),
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                border:
+                    Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
               ),
               child: Column(
                 children: [
@@ -2271,7 +2482,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                             ? Colors.white
                             : blueColor.withOpacity(0.09),
                         border: Border.all(
-                            color: Color.fromRGBO(152, 162, 179, .5)),
+                            color: const Color.fromRGBO(152, 162, 179, .5)),
                       ),
                       child: Column(
                         children: <Widget>[
@@ -2309,7 +2520,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: 8),
+                                  const SizedBox(width: 8),
                                   Expanded(
                                     child: Text(
                                       '${item.rentalOwnerName ?? '-'} (${item.rentalOwnerCompany ?? '-'})',
@@ -2322,12 +2533,12 @@ class _Rent_collectionState extends State<Rent_collection> {
                                       maxLines: 1,
                                     ),
                                   ),
-                                  SizedBox(width: 8),
+                                  const SizedBox(width: 8),
                                   Expanded(
                                     child: Align(
                                       alignment: Alignment.centerRight,
                                       child: Text(
-                                        ' \$${item.totalPending!.toStringAsFixed(2) ?? '-'}',
+                                        ' ${formatCurrency(item.totalPending)}',
                                         style: TextStyle(
                                           color: blueColor,
                                           fontWeight: FontWeight.bold,
@@ -2336,7 +2547,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: 25),
+                                  const SizedBox(width: 25),
                                 ],
                               ),
                             ),
@@ -2348,7 +2559,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                   children: [
                                     Row(
                                       children: [
-                                        SizedBox(width: 25),
+                                        const SizedBox(width: 25),
                                         Expanded(
                                           child: Column(
                                             mainAxisAlignment:
@@ -2364,11 +2575,12 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                   fontSize: 14,
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 4,
                                               ),
                                               Text(
-                                                '\$${item.totalCharged ?? '-'}',
+                                                formatCurrency(
+                                                    item.totalCharged),
                                                 style: TextStyle(
                                                   color: grey,
                                                   fontWeight: FontWeight.bold,
@@ -2378,7 +2590,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                             ],
                                           ),
                                         ),
-                                        SizedBox(width: 8),
+                                        const SizedBox(width: 8),
                                         Expanded(
                                           child: Column(
                                             mainAxisAlignment:
@@ -2394,7 +2606,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                   fontSize: 14,
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 4,
                                               ),
                                               Text(
@@ -2408,10 +2620,10 @@ class _Rent_collectionState extends State<Rent_collection> {
                                             ],
                                           ),
                                         ),
-                                        SizedBox(width: 8),
+                                        const SizedBox(width: 8),
                                       ],
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 15,
                                     ),
                                   ],
@@ -2425,8 +2637,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                       color: (sortedData.length % 2 == 0)
                           ? blueColor.withOpacity(0.09)
                           : Colors.white,
-                      border:
-                          Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                      border: Border.all(
+                          color: const Color.fromRGBO(152, 162, 179, .5)),
                     ),
                     child: Column(
                       children: <Widget>[
@@ -2465,7 +2677,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 8),
+                                const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
                                     'Overall',
@@ -2476,12 +2688,13 @@ class _Rent_collectionState extends State<Rent_collection> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 8),
+                                const SizedBox(width: 8),
                                 Expanded(
                                   child: Align(
                                     alignment: Alignment.centerRight,
                                     child: Text(
-                                      '\$${data.totalSummary?.totalPending!.toStringAsFixed(2) ?? '-'}',
+                                      formatCurrency(
+                                          data.totalSummary?.totalPending),
                                       style: TextStyle(
                                         color: blueColor,
                                         fontWeight: FontWeight.bold,
@@ -2490,7 +2703,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 25),
+                                const SizedBox(width: 25),
                               ],
                             ),
                           ),
@@ -2502,7 +2715,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                 children: [
                                   Row(
                                     children: [
-                                      SizedBox(width: 25),
+                                      const SizedBox(width: 25),
                                       Expanded(
                                         child: Column(
                                           mainAxisAlignment:
@@ -2518,11 +2731,12 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                 fontSize: 14,
                                               ),
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               height: 4,
                                             ),
                                             Text(
-                                              '\$${data.totalSummary?.totalCharged ?? '-'}',
+                                              formatCurrency(data
+                                                  .totalSummary?.totalCharged),
                                               style: TextStyle(
                                                 color: grey,
                                                 fontWeight: FontWeight.bold,
@@ -2532,7 +2746,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                           ],
                                         ),
                                       ),
-                                      SizedBox(width: 8),
+                                      const SizedBox(width: 8),
                                       Expanded(
                                         child: Column(
                                           mainAxisAlignment:
@@ -2548,7 +2762,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                 fontSize: 14,
                                               ),
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               height: 4,
                                             ),
                                             Text(
@@ -2562,10 +2776,10 @@ class _Rent_collectionState extends State<Rent_collection> {
                                           ],
                                         ),
                                       ),
-                                      SizedBox(width: 8),
+                                      const SizedBox(width: 8),
                                     ],
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 15,
                                   ),
                                 ],
@@ -2582,7 +2796,7 @@ class _Rent_collectionState extends State<Rent_collection> {
     );
   }
 
-  DetailScreen(List<Leases> currentPageData) {
+  DetailScreen(List<Leases> currentPageData, DateProvider dateProvider) {
     // Apply filters first
     List<Leases> filteredData = currentPageData.where((lease) {
       // Search filter
@@ -2648,7 +2862,8 @@ class _Rent_collectionState extends State<Rent_collection> {
             const SizedBox(height: 20),
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                border:
+                    Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
               ),
               child: Column(
                 children: [
@@ -2669,7 +2884,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                   style: TextStyle(
                                       color: Colors.grey[600], fontSize: 12),
                                 ),
-                                SizedBox(height: 8),
+                                const SizedBox(height: 8),
                                 Row(
                                   children: [
                                     Text('Items per page: ',
@@ -2753,7 +2968,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                           children: [
                             Icon(Icons.filter_alt_off,
                                 size: 60, color: Colors.grey[400]),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Text(
                               "No Results Found",
                               style: TextStyle(
@@ -2761,8 +2976,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                   color: blueColor,
                                   fontSize: 16),
                             ),
-                            SizedBox(height: 5),
-                            Text(
+                            const SizedBox(height: 5),
+                            const Text(
                               "Try adjusting your filters",
                               style:
                                   TextStyle(color: Colors.grey, fontSize: 14),
@@ -2781,7 +2996,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                             ? Colors.white
                             : blueColor.withOpacity(0.09),
                         border: Border.all(
-                            color: Color.fromRGBO(152, 162, 179, .5)),
+                            color: const Color.fromRGBO(152, 162, 179, .5)),
                       ),
                       child: Column(
                         children: <Widget>[
@@ -2871,7 +3086,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         flex: isSmallScreen ? 2 : 2,
                                         child: Text(
                                           item.leaseData?.balance != null
-                                              ? '\$${item.leaseData!.balance!.toStringAsFixed(2)}'
+                                              ? formatCurrency(
+                                                  item.leaseData!.balance)
                                               : '-',
                                           style: TextStyle(
                                             color: blueColor,
@@ -2919,9 +3135,15 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                       fontSize: 14,
                                                     ),
                                                   ),
-                                                  SizedBox(height: 4),
+                                                  const SizedBox(height: 4),
                                                   Text(
-                                                    '${item.leaseData?.startDate ?? 'N/A'}',
+                                                    item.leaseData?.startDate !=
+                                                            null
+                                                        ? dateProvider
+                                                            .formatCurrentDate(
+                                                                item.leaseData!
+                                                                    .startDate!)
+                                                        : 'N/A',
                                                     style: TextStyle(
                                                       color: grey,
                                                       fontSize: 14,
@@ -2929,7 +3151,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                   ),
                                                 ],
                                               ),
-                                              SizedBox(height: 12),
+                                              const SizedBox(height: 12),
                                               Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
@@ -2943,9 +3165,11 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                       fontSize: 14,
                                                     ),
                                                   ),
-                                                  SizedBox(height: 4),
+                                                  const SizedBox(height: 4),
                                                   Text(
-                                                    '\$${item.leaseData?.leaseAmount ?? 'N/A'}',
+                                                    formatCurrency(item
+                                                        .leaseData
+                                                        ?.leaseAmount),
                                                     style: TextStyle(
                                                       color: grey,
                                                       fontSize: 14,
@@ -2960,7 +3184,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         // Keep horizontal layout for larger screens
                                         return Row(
                                           children: [
-                                            SizedBox(width: 25),
+                                            const SizedBox(width: 25),
                                             Expanded(
                                               child: Column(
                                                 crossAxisAlignment:
@@ -2975,9 +3199,15 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                       fontSize: 14,
                                                     ),
                                                   ),
-                                                  SizedBox(height: 4),
+                                                  const SizedBox(height: 4),
                                                   Text(
-                                                    '${item.leaseData?.startDate ?? 'N/A'}',
+                                                    item.leaseData?.startDate !=
+                                                            null
+                                                        ? dateProvider
+                                                            .formatCurrentDate(
+                                                                item.leaseData!
+                                                                    .startDate!)
+                                                        : 'N/A',
                                                     style: TextStyle(
                                                       color: grey,
                                                       fontSize: 14,
@@ -2986,7 +3216,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                 ],
                                               ),
                                             ),
-                                            SizedBox(width: 20),
+                                            const SizedBox(width: 20),
                                             Expanded(
                                               child: Column(
                                                 crossAxisAlignment:
@@ -3001,9 +3231,11 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                       fontSize: 14,
                                                     ),
                                                   ),
-                                                  SizedBox(height: 4),
+                                                  const SizedBox(height: 4),
                                                   Text(
-                                                    '\$${item.leaseData?.leaseAmount ?? 'N/A'}',
+                                                    formatCurrency(item
+                                                        .leaseData
+                                                        ?.leaseAmount),
                                                     style: TextStyle(
                                                       color: grey,
                                                       fontSize: 14,
@@ -3012,7 +3244,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                 ],
                                               ),
                                             ),
-                                            SizedBox(width: 20),
+                                            const SizedBox(width: 20),
                                           ],
                                         );
                                       }
@@ -3022,12 +3254,12 @@ class _Rent_collectionState extends State<Rent_collection> {
                                       color: Colors.grey.withOpacity(0.3),
                                       thickness:
                                           1), // Add divider between sections
-                                  SizedBox(height: 8),
+                                  const SizedBox(height: 8),
 
                                   // Balance Row
                                   Row(
                                     children: [
-                                      SizedBox(width: 25),
+                                      const SizedBox(width: 25),
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
@@ -3041,14 +3273,14 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                 fontSize: 14,
                                               ),
                                             ),
-                                            SizedBox(height: 4),
+                                            const SizedBox(height: 4),
                                             Text(
                                               (item.notes?.isNotEmpty == true &&
                                                       item.notes?.first.date !=
                                                           null &&
                                                       item.notes!.first.date!
                                                           .isNotEmpty)
-                                                  ? '${item.notes!.first.date!}\n${item.notes!.first.content ?? '-'}'
+                                                  ? '${dateProvider.formatCurrentDate(item.notes!.first.date!)}\n${item.notes!.first.content ?? '-'}'
                                                   : '-',
                                               style: TextStyle(
                                                 color: blueColor,
@@ -3059,13 +3291,13 @@ class _Rent_collectionState extends State<Rent_collection> {
                                           ],
                                         ),
                                       ),
-                                      SizedBox(width: 20),
+                                      const SizedBox(width: 20),
                                     ],
                                   ),
                                   Divider(
                                       color: Colors.grey.withOpacity(0.3),
                                       thickness: 1),
-                                  SizedBox(height: 8),
+                                  const SizedBox(height: 8),
 
                                   // Auto-Pay Section - Responsive
                                   Padding(
@@ -3083,7 +3315,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                             fontSize: 14,
                                           ),
                                         ),
-                                        SizedBox(height: 8),
+                                        const SizedBox(height: 8),
                                         // Display recurring cards if available
                                         if (item.recurringCards != null &&
                                             item.recurringCards!.isNotEmpty)
@@ -3105,7 +3337,11 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                               .start,
                                                       children: [
                                                         Text(
-                                                          '${card.date ?? '-'}',
+                                                          card.date != null
+                                                              ? dateProvider
+                                                                  .formatCurrentDate(
+                                                                      card.date!)
+                                                              : '-',
                                                           style: TextStyle(
                                                             color: grey,
                                                             fontWeight:
@@ -3113,7 +3349,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                             fontSize: 14,
                                                           ),
                                                         ),
-                                                        SizedBox(height: 2),
+                                                        const SizedBox(
+                                                            height: 2),
                                                         Text(
                                                           '${card.tenantName ?? '-'}',
                                                           style: TextStyle(
@@ -3128,7 +3365,11 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                     return Row(
                                                       children: [
                                                         Text(
-                                                          '${card.date ?? '-'}',
+                                                          card.date != null
+                                                              ? dateProvider
+                                                                  .formatCurrentDate(
+                                                                      card.date!)
+                                                              : '-',
                                                           style: TextStyle(
                                                             color: grey,
                                                             fontWeight:
@@ -3136,7 +3377,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                             fontSize: 14,
                                                           ),
                                                         ),
-                                                        SizedBox(width: 15),
+                                                        const SizedBox(
+                                                            width: 15),
                                                         Expanded(
                                                           child: Text(
                                                             '${card.tenantName ?? '-'}',
@@ -3169,7 +3411,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                       ],
                                     ),
                                   ),
-                                  SizedBox(height: 15),
+                                  const SizedBox(height: 15),
                                 ],
                               ),
                             ),
@@ -3198,7 +3440,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                             });
                                           }
                                         : null,
-                                    icon: Icon(Icons.chevron_left),
+                                    icon: const Icon(Icons.chevron_left),
                                   ),
                                   // Page info
                                   Container(
@@ -3231,7 +3473,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                 });
                                               }
                                             : null,
-                                    icon: Icon(Icons.chevron_right),
+                                    icon: const Icon(Icons.chevron_right),
                                   ),
                                 ],
                               ),
@@ -3243,14 +3485,15 @@ class _Rent_collectionState extends State<Rent_collection> {
                 ],
               ),
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
           ],
         ),
       ),
     );
   }
 
-  DelinquentLease(List<DeadBeats> currentPageData, Rentcollection_model data) {
+  DelinquentLease(List<DeadBeats> currentPageData, Rentcollection_model data,
+      DateProvider dateProvider) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -3261,7 +3504,8 @@ class _Rent_collectionState extends State<Rent_collection> {
             if (currentPageData.isNotEmpty)
               Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                  border: Border.all(
+                      color: const Color.fromRGBO(152, 162, 179, .5)),
                 ),
                 child: Column(
                   children: [
@@ -3275,7 +3519,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                               ? Colors.white
                               : blueColor.withOpacity(0.09),
                           border: Border.all(
-                              color: Color.fromRGBO(152, 162, 179, .5)),
+                              color: const Color.fromRGBO(152, 162, 179, .5)),
                         ),
                         child: Column(
                           children: <Widget>[
@@ -3313,7 +3557,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 3,
                                     ),
                                     Expanded(
@@ -3361,7 +3605,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                       flex: 2,
                                       child: Text(
                                         item.leaseData?.balance != null
-                                            ? '${item.leaseData!.balance}'
+                                            ? formatCurrency(
+                                                item.leaseData!.balance)
                                             : '-',
                                         style: TextStyle(
                                           color: blueColor,
@@ -3370,7 +3615,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 5,
                                     ),
                                     // SizedBox(width: 8),
@@ -3385,7 +3630,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                     // Move-in Date and Monthly Rent Row
                                     Row(
                                       children: [
-                                        SizedBox(width: 25),
+                                        const SizedBox(width: 25),
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
@@ -3399,9 +3644,15 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                   fontSize: 14,
                                                 ),
                                               ),
-                                              SizedBox(height: 4),
+                                              const SizedBox(height: 4),
                                               Text(
-                                                '${item.leaseData?.startDate ?? '-'}',
+                                                item.leaseData?.startDate !=
+                                                        null
+                                                    ? dateProvider
+                                                        .formatCurrentDate(item
+                                                            .leaseData!
+                                                            .startDate!)
+                                                    : '-',
                                                 style: TextStyle(
                                                   color: grey,
                                                   fontSize: 14,
@@ -3410,7 +3661,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                             ],
                                           ),
                                         ),
-                                        SizedBox(width: 20),
+                                        const SizedBox(width: 20),
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
@@ -3424,9 +3675,10 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                   fontSize: 14,
                                                 ),
                                               ),
-                                              SizedBox(height: 4),
+                                              const SizedBox(height: 4),
                                               Text(
-                                                '\$${item.leaseData?.leaseAmount ?? '-'}',
+                                                formatCurrency(item
+                                                    .leaseData?.leaseAmount),
                                                 style: TextStyle(
                                                   color: grey,
                                                   fontSize: 14,
@@ -3435,19 +3687,19 @@ class _Rent_collectionState extends State<Rent_collection> {
                                             ],
                                           ),
                                         ),
-                                        SizedBox(width: 20),
+                                        const SizedBox(width: 20),
                                       ],
                                     ),
                                     Divider(
                                         color: Colors.grey.withOpacity(0.3),
                                         thickness:
                                             1), // Add divider between sections
-                                    SizedBox(height: 8),
+                                    const SizedBox(height: 8),
 
                                     // Balance Row
                                     Row(
                                       children: [
-                                        SizedBox(width: 25),
+                                        const SizedBox(width: 25),
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
@@ -3461,9 +3713,10 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                   fontSize: 14,
                                                 ),
                                               ),
-                                              SizedBox(height: 4),
+                                              const SizedBox(height: 4),
                                               Text(
-                                                '\$${item.leaseData?.balance ?? '-'}',
+                                                formatCurrency(
+                                                    item.leaseData?.balance),
                                                 style: TextStyle(
                                                   color: grey,
                                                   fontSize: 14,
@@ -3472,11 +3725,11 @@ class _Rent_collectionState extends State<Rent_collection> {
                                             ],
                                           ),
                                         ),
-                                        SizedBox(width: 20),
+                                        const SizedBox(width: 20),
                                       ],
                                     ),
 
-                                    SizedBox(height: 15),
+                                    const SizedBox(height: 15),
                                   ],
                                 ),
                               ),
@@ -3492,7 +3745,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                               ? blueColor.withOpacity(0.09)
                               : Colors.white,
                           border: Border.all(
-                              color: Color.fromRGBO(152, 162, 179, .5)),
+                              color: const Color.fromRGBO(152, 162, 179, .5)),
                         ),
                         child: Column(
                           children: <Widget>[
@@ -3533,7 +3786,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(width: 8),
+                                    const SizedBox(width: 8),
                                     Expanded(
                                       child: Text(
                                         'Overall',
@@ -3544,11 +3797,12 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         ),
                                       ),
                                     ),
-                                    Spacer(),
-                                    SizedBox(width: 30),
+                                    const Spacer(),
+                                    const SizedBox(width: 30),
                                     Expanded(
                                       child: Text(
-                                        '\$${data.deadBeatsSummary?.totalBalance ?? '-'}',
+                                        formatCurrency(data
+                                            .deadBeatsSummary?.totalBalance),
                                         style: TextStyle(
                                           color: blueColor,
                                           fontWeight: FontWeight.bold,
@@ -3579,7 +3833,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                         height: 200,
                         width: 200,
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Text(
                         "No Data Available",
                         style: TextStyle(

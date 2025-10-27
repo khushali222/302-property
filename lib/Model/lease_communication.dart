@@ -7,10 +7,10 @@ class lease_communications {
 
   lease_communications(
       {this.statusCode,
-        this.emails,
-        this.totalEmails,
-        this.currentPage,
-        this.totalPages});
+      this.emails,
+      this.totalEmails,
+      this.currentPage,
+      this.totalPages});
 
   lease_communications.fromJson(Map<String, dynamic> json) {
     statusCode = json['statusCode'];
@@ -59,22 +59,22 @@ class Emails {
 
   Emails(
       {this.sId,
-        this.emailId,
-        this.adminId,
-        this.tenantId,
-        this.leaseId,
-        this.rentalAddress,
-        this.from,
-        this.to,
-        this.accepted,
-        this.rejected,
-        this.subject,
-        this.body,
-        this.sendByAdmin,
-        this.isDelete,
-        this.opens,
-        this.createdAt,
-        this.updatedAt});
+      this.emailId,
+      this.adminId,
+      this.tenantId,
+      this.leaseId,
+      this.rentalAddress,
+      this.from,
+      this.to,
+      this.accepted,
+      this.rejected,
+      this.subject,
+      this.body,
+      this.sendByAdmin,
+      this.isDelete,
+      this.opens,
+      this.createdAt,
+      this.updatedAt});
 
   Emails.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
@@ -84,8 +84,26 @@ class Emails {
     leaseId = json['lease_id'];
     rentalAddress = json['rentalAddress'];
     from = json['from'];
-    to = json['to'].cast<String>();
-    accepted = json['accepted'].cast<String>();
+    print('DEBUG: Model parsing - json[to]: ${json['to']}');
+    print('DEBUG: Model parsing - json[to] type: ${json['to'].runtimeType}');
+    if (json['to'] != null) {
+      print('DEBUG: Model parsing - json[to] is not null, processing...');
+      to = json['to']
+          .map<String?>((v) => v?.toString())
+          .where((v) => v != null)
+          .cast<String>()
+          .toList();
+      print('DEBUG: Model parsing - final to: $to');
+    } else {
+      print('DEBUG: Model parsing - json[to] is null');
+    }
+    if (json['accepted'] != null) {
+      accepted = json['accepted']
+          .map<String?>((v) => v?.toString())
+          .where((v) => v != null)
+          .cast<String>()
+          .toList();
+    }
     if (json['rejected'] != null) {
       rejected = [];
       json['rejected'].forEach((v) {

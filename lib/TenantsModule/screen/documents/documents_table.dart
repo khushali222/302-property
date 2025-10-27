@@ -77,10 +77,11 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
         backgroundColor: Colors.white,
       ),
       buttons: [
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -169,15 +170,16 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                             padding: const EdgeInsets.only(left: 20.0),
                             child: Text(
                               "Insurance \nCompany ",
-                              style:
-                                  TextStyle( color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14),
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14),
                               textAlign: TextAlign.center,
                             ),
                           )
                         : Text("     Insurance Company",
-                            style: TextStyle( color: blueColor,
+                            style: TextStyle(
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14),
                             textAlign: TextAlign.center),
@@ -232,7 +234,8 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                     Padding(
                       padding: const EdgeInsets.only(left: 15.0),
                       child: Text("Policy Id",
-                          style: TextStyle( color: blueColor,
+                          style: TextStyle(
+                              color: blueColor,
                               fontWeight: FontWeight.bold,
                               fontSize: 14)),
                     ),
@@ -286,7 +289,8 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                   children: [
                     Text(
                       "Expiration\nDate",
-                      style: TextStyle( color: blueColor,
+                      style: TextStyle(
+                          color: blueColor,
                           fontWeight: FontWeight.bold,
                           fontSize: 14),
                       textAlign: TextAlign.center,
@@ -382,10 +386,11 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
         backgroundColor: Colors.white,
       ),
       buttons: [
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -731,130 +736,102 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                   ),
                   //add propertytype
 
+                  // Header Section with Title and Add Button
                   Padding(
-                    padding: const EdgeInsets.only(left: 0, right: 0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
                     child: Row(
-                      // mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        titleBar(
-                          width: permissions!.documentsAdd
-                              ? MediaQuery.of(context).size.width * .65
-                              : MediaQuery.of(context).size.width * .93,
-                          title: 'Insurance',
+                        Expanded(
+                          flex: permissions!.documentsAdd ? 3 : 1,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: titleBar(
+                              width: double.infinity,
+                              title: 'Insurance',
+                            ),
+                          ),
                         ),
                         if (permissions!.documentsAdd)
-                          GestureDetector(
-                            onTap: () async {
-                              // Check if there are existing insurance entries
-                              final existingInsurances =
-                                  await futurePropertyTypes
-                                      .catchError((_) => []);
+                          Flexible(
+                            flex: 1,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  // Check if there are existing insurance entries
+                                  final existingInsurances =
+                                      await futurePropertyTypes
+                                          .catchError((_) => []);
 
-                              // Filter to find active insurance
-                              final activeInsurances = existingInsurances.where(
-                                (insurance) => insurance.status == 'ACTIVE',
-                              );
-
-                              final Insurance_data? activeInsurance =
-                                  activeInsurances.isNotEmpty
-                                      ? activeInsurances.first
-                                      : null;
-
-                              if (activeInsurance != null) {
-                                // Show alert with active policy ID
-                                _showAddInsuranceAlert(context, () async {
-                                  final result =
-                                      await Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (context) => add_insurance()),
+                                  // Filter to find active insurance
+                                  final activeInsurances =
+                                      existingInsurances.where(
+                                    (insurance) => insurance.status == 'ACTIVE',
                                   );
-                                  if (result == true) {
-                                    setState(() {
-                                      futurePropertyTypes =
-                                          InsuranceRepository()
-                                              .fetchInsurancesProperties();
-                                    });
-                                  }
-                                }, activeInsurance);
-                              } else {
-                                // Navigate directly to add_insurance if no active insurance
-                                final result = await Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) => add_insurance()),
-                                );
-                                if (result == true) {
-                                  setState(() {
-                                    futurePropertyTypes = InsuranceRepository()
-                                        .fetchInsurancesProperties();
-                                  });
-                                }
-                              }
-                            },
 
-                            // onTap: () async {
-                            //   // Check if there are existing insurance entries
-                            //   final existingInsurances = await futurePropertyTypes.catchError((_) => []);
-                            //
-                            //   // If there's more than one existing insurance, show an alert
-                            //   if (existingInsurances.isNotEmpty) {
-                            //     _showAddInsuranceAlert(context, () async {
-                            //       final result = await Navigator.of(context).push(
-                            //         MaterialPageRoute(builder: (context) => add_insurance()),
-                            //       );
-                            //       if (result == true) {
-                            //         setState(() {
-                            //           futurePropertyTypes = InsuranceRepository().fetchInsurancesProperties();
-                            //         });
-                            //       }
-                            //     },existingInsurances[0]);
-                            //   } else {
-                            //     // Navigate to add_insurance directly if no existing insurance
-                            //     final result = await Navigator.of(context).push(
-                            //       MaterialPageRoute(builder: (context) => add_insurance()),
-                            //     );
-                            //     if (result == true) {
-                            //       setState(() {
-                            //         futurePropertyTypes = InsuranceRepository().fetchInsurancesProperties();
-                            //       });
-                            //     }
-                            //   }
-                            // },
-                            child: Container(
-                              height: (MediaQuery.of(context).size.width < 500)
-                                  ? 50
-                                  : MediaQuery.of(context).size.width * 0.055,
-                              width: (MediaQuery.of(context).size.width < 500)
-                                  ? MediaQuery.of(context).size.width * 0.25
-                                  : MediaQuery.of(context).size.width * 0.3,
-                              decoration: BoxDecoration(
-                                color: blueColor,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
+                                  final Insurance_data? activeInsurance =
+                                      activeInsurances.isNotEmpty
+                                          ? activeInsurances.first
+                                          : null;
+
+                                  if (activeInsurance != null) {
+                                    // Show alert with active policy ID
+                                    _showAddInsuranceAlert(context, () async {
+                                      final result =
+                                          await Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                add_insurance()),
+                                      );
+                                      if (result == true) {
+                                        setState(() {
+                                          futurePropertyTypes =
+                                              InsuranceRepository()
+                                                  .fetchInsurancesProperties();
+                                        });
+                                      }
+                                    }, activeInsurance);
+                                  } else {
+                                    // Navigate directly to add_insurance if no active insurance
+                                    final result =
+                                        await Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              add_insurance()),
+                                    );
+                                    if (result == true) {
+                                      setState(() {
+                                        futurePropertyTypes =
+                                            InsuranceRepository()
+                                                .fetchInsurancesProperties();
+                                      });
+                                    }
+                                  }
+                                },
+                                child: Container(
+                                  height:
+                                      (MediaQuery.of(context).size.width < 768)
+                                          ? 50
+                                          : 60,
+                                  decoration: BoxDecoration(
+                                    color: blueColor,
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Center(
+                                    child: Text(
                                       "+ Add",
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            (MediaQuery.of(context).size.width <
-                                                    500)
-                                                ? 16
-                                                : 20,
+                                        fontSize: 16,
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: permissions!.documentsAdd ? 6 : 0),
-                        if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 22),
                       ],
                     ),
                   ),
@@ -1104,7 +1081,6 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                   _buildHeaders(),
                                   SizedBox(height: 10),
                                   Container(
-
                                     child: Column(
                                       children: currentPageData
                                           .asMap()
@@ -1118,7 +1094,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
                                           margin:
-                                          EdgeInsets.symmetric(vertical: 6),
+                                              EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
                                                 ? Color(0xFFF4F8FF)
@@ -1126,7 +1102,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                             border: Border.all(
                                                 color: Color(0xFFDBE0E5)),
                                             borderRadius:
-                                            BorderRadius.circular(10),
+                                                BorderRadius.circular(10),
                                           ),
                                           child: Column(
                                             children: <Widget>[
@@ -1757,7 +1733,6 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                                         ),
                                                   ),
                                                   children: [
-
                                                     _buildHeader(
                                                         'Insurance Company',
                                                         0,
@@ -1820,7 +1795,6 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                                       ),
                                                     ),
                                                     children: [
-
                                                       // Text(
                                                       //     '${_pagedData[i].propertyType!}'),
                                                       // Text(

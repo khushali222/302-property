@@ -14,7 +14,6 @@ import '../../constant/constant.dart';
 
 // Add your StaffModule table screens here
 
-
 class DashboardMobileSimple extends StatelessWidget {
   final int propertyCount;
   final int tenantCount;
@@ -83,7 +82,7 @@ class DashboardMobileSimple extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cardTextStyle =
-    TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: blueColor);
+        TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: blueColor);
     final subTextStyle = TextStyle(
         color: Color.fromRGBO(16, 24, 40, 0.7),
         fontWeight: FontWeight.bold,
@@ -124,7 +123,8 @@ class DashboardMobileSimple extends StatelessWidget {
                   ],
                 ),
                 const Spacer(),
-                const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                const Icon(Icons.arrow_forward_ios,
+                    size: 16, color: Colors.grey),
               ],
             ),
           ),
@@ -207,7 +207,8 @@ class DashboardMobileSimple extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8)),
                       height: 30,
                       width: 30,
-                      child: Icon(Icons.calendar_month_outlined, color: blueColor),
+                      child:
+                          Icon(Icons.calendar_month_outlined, color: blueColor),
                     ),
                   ],
                 ),
@@ -390,7 +391,10 @@ class DashboardMobileSimple extends StatelessWidget {
                         radius: 7, backgroundColor: blueColor.withOpacity(.9)),
                     const SizedBox(width: 6),
                     Text('New Work Orders',
-                        style: subTextStyle.copyWith(fontSize: MediaQuery.of(context).size.width < 400 ? 13 : 16)),
+                        style: subTextStyle.copyWith(
+                            fontSize: MediaQuery.of(context).size.width < 400
+                                ? 13
+                                : 16)),
                   ],
                 ),
                 Row(
@@ -400,11 +404,16 @@ class DashboardMobileSimple extends StatelessWidget {
                         backgroundColor: Color.fromRGBO(90, 134, 213, 1)),
                     const SizedBox(width: 6),
                     Text('Overdue Work Orders',
-                        style: subTextStyle.copyWith(fontSize: MediaQuery.of(context).size.width < 400 ? 13 : 16)),
+                        style: subTextStyle.copyWith(
+                            fontSize: MediaQuery.of(context).size.width < 400
+                                ? 13
+                                : 16)),
                   ],
                 ),
                 Text('Total Work orders : $totalWorkOrders',
-                    style: subTextStyle.copyWith(fontSize: MediaQuery.of(context).size.width < 400 ? 14 : 16)),
+                    style: subTextStyle.copyWith(
+                        fontSize:
+                            MediaQuery.of(context).size.width < 400 ? 14 : 16)),
               ],
             ),
           ],
@@ -422,30 +431,41 @@ class DashboardMobileSimple extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Main Dashboard',
+            Text(' Dashboard',
                 style: TextStyle(
-                    fontSize: 20, fontWeight: FontWeight.bold, color: blueColor)),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: blueColor)),
             const SizedBox(height: 16),
             Builder(
               builder: (context) {
                 final List<Widget> cards = [];
-                if (permissions?.propertyView == true) {
+
+                // Show cards based on permissions, but if no permissions are set, show all cards
+                bool showAllCards = permissions == null ||
+                    (permissions.propertyView != true &&
+                        permissions.tenantView != true &&
+                        permissions.applicantView != true &&
+                        permissions.vendorView != true &&
+                        permissions.workorderView != true);
+
+                if (showAllCards || permissions?.propertyView == true) {
                   cards.add(dashboardCard(
                       Icons.home, propertyCount.toString(), 'Properties'));
                 }
-                if (permissions?.tenantView == true) {
+                if (showAllCards || permissions?.tenantView == true) {
                   cards.add(dashboardCard(
                       Icons.people, tenantCount.toString(), 'Tenants'));
                 }
-                if (permissions?.applicantView == true) {
+                if (showAllCards || permissions?.applicantView == true) {
                   cards.add(dashboardCard(Icons.assignment_ind,
                       applicantCount.toString(), 'Applicants'));
                 }
-                if (permissions?.vendorView == true) {
+                if (showAllCards || permissions?.vendorView == true) {
                   cards.add(dashboardCard(
                       Icons.store, vendorCount.toString(), 'Vendors'));
                 }
-                if (permissions?.workorderView == true) {
+                if (showAllCards || permissions?.workorderView == true) {
                   cards.add(dashboardCard(
                       Icons.work, workOrderCount.toString(), 'Work Orders'));
                 }
@@ -571,7 +591,7 @@ class _ExpandablePaymentCardState extends State<ExpandablePaymentCard> {
   @override
   Widget build(BuildContext context) {
     final cardTextStyle =
-    TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: blueColor);
+        TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: blueColor);
     final subTextStyle = TextStyle(
         color: Colors.grey[700], fontWeight: FontWeight.bold, fontSize: 14);
 
@@ -593,90 +613,90 @@ class _ExpandablePaymentCardState extends State<ExpandablePaymentCard> {
         ),
         child: expanded
             ? Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  expanded ? Icons.expand_less : Icons.expand_more,
-                  color: blueColor,
-                ),
-                const SizedBox(width: 8),
-                Text(widget.name, style: cardTextStyle),
-                const Spacer(),
-                Text('${widget.amount}', style: cardTextStyle),
-              ],
-            ),
-            Divider(thickness: 2),
-            const SizedBox(height: 4),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Rental Address',
-                    style: subTextStyle.copyWith(
-                        color: blueColor, fontWeight: FontWeight.bold)),
-                Text('Action',
-                    style: subTextStyle.copyWith(
-                        color: blueColor, fontWeight: FontWeight.bold)),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(widget.address, style: subTextStyle),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(8),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        expanded ? Icons.expand_less : Icons.expand_more,
+                        color: blueColor,
                       ),
-                      height: 30,
-                      width: 30,
-                      child: Icon(Icons.check, color: blueColor),
-                    ),
-                    SizedBox(width: 10),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(8),
+                      const SizedBox(width: 8),
+                      Text(widget.name, style: cardTextStyle),
+                      const Spacer(),
+                      Text('${widget.amount}', style: cardTextStyle),
+                    ],
+                  ),
+                  Divider(thickness: 2),
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Rental Address',
+                          style: subTextStyle.copyWith(
+                              color: blueColor, fontWeight: FontWeight.bold)),
+                      Text('Action',
+                          style: subTextStyle.copyWith(
+                              color: blueColor, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(widget.address, style: subTextStyle),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            height: 30,
+                            width: 30,
+                            child: Icon(Icons.check, color: blueColor),
+                          ),
+                          SizedBox(width: 10),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            height: 30,
+                            width: 30,
+                            child: Icon(Icons.recycling_outlined,
+                                color: blueColor),
+                          ),
+                          SizedBox(width: 10),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            height: 30,
+                            width: 30,
+                            child: Icon(Icons.calendar_month_outlined,
+                                color: blueColor),
+                          ),
+                        ],
                       ),
-                      height: 30,
-                      width: 30,
-                      child: Icon(Icons.recycling_outlined,
-                          color: blueColor),
-                    ),
-                    SizedBox(width: 10),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      height: 30,
-                      width: 30,
-                      child: Icon(Icons.calendar_month_outlined,
-                          color: blueColor),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-          ],
-        )
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                ],
+              )
             : Row(
-          children: [
-            Icon(
-              expanded ? Icons.expand_less : Icons.expand_more,
-              color: blueColor,
-            ),
-            const SizedBox(width: 8),
-            Text(widget.name, style: cardTextStyle),
-            const Spacer(),
-            Text('${widget.amount}', style: cardTextStyle),
-          ],
-        ),
+                children: [
+                  Icon(
+                    expanded ? Icons.expand_less : Icons.expand_more,
+                    color: blueColor,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(widget.name, style: cardTextStyle),
+                  const Spacer(),
+                  Text('${widget.amount}', style: cardTextStyle),
+                ],
+              ),
       ),
     );
   }

@@ -34,9 +34,9 @@ class _TextFieldUsageExamplesState extends State<TextFieldUsageExamples> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('CustomTextField Usage Examples')),
+      appBar: AppBar(title: const Text('CustomTextField Usage Examples')),
       body: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: ListView(
           children: [
             // Basic text field with label and required indicator
@@ -53,7 +53,7 @@ class _TextFieldUsageExamplesState extends State<TextFieldUsageExamples> {
                 });
               },
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Email field with validation
             CustomTextField(
@@ -70,7 +70,7 @@ class _TextFieldUsageExamplesState extends State<TextFieldUsageExamples> {
                 });
               },
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Phone number field with formatter
             CustomTextField(
@@ -92,7 +92,7 @@ class _TextFieldUsageExamplesState extends State<TextFieldUsageExamples> {
                 });
               },
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Date field
             CustomDateTextField(
@@ -104,7 +104,7 @@ class _TextFieldUsageExamplesState extends State<TextFieldUsageExamples> {
               isRequired: true,
               onTap: () => _selectDate(context),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Multi-line text field (for addresses, comments, etc.)
             CustomTextField(
@@ -114,7 +114,7 @@ class _TextFieldUsageExamplesState extends State<TextFieldUsageExamples> {
               maxLines: 3,
               height: 80,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Password field
             CustomTextField(
@@ -124,24 +124,24 @@ class _TextFieldUsageExamplesState extends State<TextFieldUsageExamples> {
               isRequired: true,
               // You can add obscureText functionality by extending the widget
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Field without label (inline style)
             CustomTextField(
               controller: TextEditingController(),
               hintText: "Search...",
               showLabel: false,
-              suffixIcon: Icon(Icons.search),
+              suffixIcon: const Icon(Icons.search),
               borderRadius: BorderRadius.circular(25),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Numeric field with specific formatting
             CustomTextField(
               controller: TextEditingController(),
               hintText: "0.00",
               labelText: "Amount",
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
               prefixText: "\$ ",
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),

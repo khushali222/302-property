@@ -100,7 +100,7 @@ class _Staff_tableState extends State<Staff_table> {
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this property!",
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       buttons: [
@@ -118,7 +118,7 @@ class _Staff_tableState extends State<Staff_table> {
           ),
         ),
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -193,14 +193,14 @@ class _Staff_tableState extends State<Staff_table> {
       type: AlertType.warning,
       title: "Plan Limitation",
       desc: "The limit for adding staffmember according to the plan has been reached.",
-      style: AlertStyle(
+      style: const AlertStyle(
           backgroundColor: Color.fromRGBO(255, 255, 255, 1),
           descStyle: TextStyle(fontSize: 14)
         //  overlayColor: Colors.black.withOpacity(.8)
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "OK",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -294,7 +294,7 @@ class _Staff_tableState extends State<Staff_table> {
         SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               Padding(
                 padding: const EdgeInsets.only(left: 13, right: 13),
                 child: Row(
@@ -304,7 +304,7 @@ class _Staff_tableState extends State<Staff_table> {
                       onTap: () async {
                         final result = await Navigator.of(context).push(
                             MaterialPageRoute(
-                                builder: (context) => Add_staffmember()));
+                                builder: (context) => const Add_staffmember()));
                         if (result == true) {
                           setState(() {
                             futureStaffmembers = StaffMemberRepository().fetchStaffmembers();
@@ -337,18 +337,18 @@ class _Staff_tableState extends State<Staff_table> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                   ],
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(5.0),
                   child: Container(
                     height: 50.0,
-                    padding: EdgeInsets.only(top: 8, left: 10),
+                    padding: const EdgeInsets.only(top: 8, left: 10),
                     width: MediaQuery.of(context).size.width * .91,
                     margin: const EdgeInsets.only(
                         bottom: 6.0), //Same as `blurRadius` i guess
@@ -356,14 +356,14 @@ class _Staff_tableState extends State<Staff_table> {
                       borderRadius: BorderRadius.circular(5.0),
                       color: blueColor,
                       boxShadow: [
-                        BoxShadow(
+                        const BoxShadow(
                           color: Colors.grey,
                           offset: Offset(0.0, 1.0), //(x,y)
                           blurRadius: 6.0,
                         ),
                       ],
                     ),
-                    child: Text('Staff Member',
+                    child: const Text('Staff Member',
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -372,13 +372,13 @@ class _Staff_tableState extends State<Staff_table> {
                   ),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               //search
               Padding(
                 padding: const EdgeInsets.only(left: 2, right: 2),
                 child: Row(
                   children: [
-                    SizedBox(width: 13),
+                    const SizedBox(width: 13),
                     Material(
                       elevation: 3,
                       borderRadius: BorderRadius.circular(2),
@@ -389,7 +389,7 @@ class _Staff_tableState extends State<Staff_table> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(2),
                             // border: Border.all(color: Colors.grey),
-                            border: Border.all(color: Color(0xFF8A95A8))),
+                            border: Border.all(color: const Color(0xFF8A95A8))),
                         child: Stack(
                           children: [
                             Positioned.fill(
@@ -407,7 +407,7 @@ class _Staff_tableState extends State<Staff_table> {
                                 },
                                 cursorColor:
                                 blueColor,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   border: InputBorder.none,
                                   hintText: "Search here...",
                                   hintStyle: TextStyle(
@@ -422,30 +422,30 @@ class _Staff_tableState extends State<Staff_table> {
                         ),
                       ),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     Row(
                       children: [
                         Text(
                           'Added : ${rentalCount.toString()}',
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF8A95A8),
                               fontSize: 13),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 5,
                         ),
                         //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
                         Text(
                           'Total: ${staffCountLimit.toString()}',
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF8A95A8),
                               fontSize: 13),
                         ),
                       ],
                     ),
-                    SizedBox(width: 20),
+                    const SizedBox(width: 20),
                   ],
                 ),
               ),
@@ -456,7 +456,7 @@ class _Staff_tableState extends State<Staff_table> {
                   future: futureStaffmembers,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -468,7 +468,7 @@ class _Staff_tableState extends State<Staff_table> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
-                              SizedBox(height: 10,),
+                              const SizedBox(height: 10,),
                               Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
                             ],
                           ),
@@ -502,9 +502,9 @@ class _Staff_tableState extends State<Staff_table> {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             _buildHeader(),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             Container(
                               decoration:
                               BoxDecoration(border: Border.all(color: blueColor)),
@@ -546,10 +546,10 @@ class _Staff_tableState extends State<Staff_table> {
                                               });
                                             },
                                             child: Container(
-                                              margin: EdgeInsets.only(left: 5),
+                                              margin: const EdgeInsets.only(left: 5),
                                               padding: !isExpanded
-                                                  ? EdgeInsets.only(bottom: 10)
-                                                  : EdgeInsets.only(top: 10),
+                                                  ? const EdgeInsets.only(bottom: 10)
+                                                  : const EdgeInsets.only(top: 10),
                                               child: FaIcon(
                                                 isExpanded
                                                     ? FontAwesomeIcons.sortUp
@@ -619,8 +619,8 @@ class _Staff_tableState extends State<Staff_table> {
                                         if (isExpanded)
                                           Container(
                                             padding:
-                                            EdgeInsets.symmetric(horizontal: 8.0),
-                                            margin: EdgeInsets.only(bottom: 20),
+                                            const EdgeInsets.symmetric(horizontal: 8.0),
+                                            margin: const EdgeInsets.only(bottom: 20),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
@@ -655,7 +655,7 @@ class _Staff_tableState extends State<Staff_table> {
                                                                   ),
                                                                   TextSpan(
                                                                     text: '${staffmembers.staffmemberEmail}',
-                                                                    style: TextStyle(
+                                                                    style: const TextStyle(
                                                                         fontWeight:
                                                                         FontWeight
                                                                             .w700,
@@ -681,7 +681,7 @@ class _Staff_tableState extends State<Staff_table> {
                                                                   ),
                                                                   TextSpan(
                                                                     text: formatDate('${staffmembers.updatedAt}'),
-                                                                    style: TextStyle(
+                                                                    style: const TextStyle(
                                                                         fontWeight:
                                                                         FontWeight
                                                                             .w700,
@@ -695,7 +695,7 @@ class _Staff_tableState extends State<Staff_table> {
                                                           ],
                                                         ),
                                                       ),
-                                                      SizedBox(width: 7),
+                                                      const SizedBox(width: 7),
                                                       Expanded(
                                                         child: Column(
                                                           crossAxisAlignment:
@@ -716,7 +716,7 @@ class _Staff_tableState extends State<Staff_table> {
                                                                   ),
                                                                   TextSpan(
                                                                     text: formatDate('${staffmembers.createdAt}'),
-                                                                    style: TextStyle(
+                                                                    style: const TextStyle(
                                                                         fontWeight:
                                                                         FontWeight
                                                                             .w700,
@@ -735,7 +735,7 @@ class _Staff_tableState extends State<Staff_table> {
                                                         child: Column(
                                                           children: [
                                                             IconButton(
-                                                              icon: FaIcon(
+                                                              icon: const FaIcon(
                                                                 FontAwesomeIcons.edit,
                                                                 size: 20,
                                                                 color: Color.fromRGBO(
@@ -755,7 +755,7 @@ class _Staff_tableState extends State<Staff_table> {
                                                               },
                                                             ),
                                                             IconButton(
-                                                              icon: FaIcon(
+                                                              icon: const FaIcon(
                                                                 FontAwesomeIcons
                                                                     .trashCan,
                                                                 size: 20,
@@ -786,19 +786,19 @@ class _Staff_tableState extends State<Staff_table> {
                                 }).toList(),
                               ),
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Row(
                                   children: [
                                     // Text('Rows per page:'),
-                                    SizedBox(width: 10),
+                                    const SizedBox(width: 10),
                                     Material(
                                       elevation: 3,
                                       child: Container(
                                         height: 40,
-                                        padding: EdgeInsets.symmetric(horizontal: 12.0),
+                                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
                                         decoration: BoxDecoration(
                                           border: Border.all(color: Colors.grey),
                                         ),
@@ -900,7 +900,7 @@ class _Staff_tableState extends State<Staff_table> {
     return Container(
       decoration: BoxDecoration(
         color: blueColor,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(13),
           topRight: Radius.circular(13),
         ),
@@ -908,7 +908,7 @@ class _Staff_tableState extends State<Staff_table> {
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         leading: Container(
-          child: Icon(
+          child: const Icon(
             Icons.expand_less,
             color: Colors.transparent,
           ),
@@ -941,23 +941,23 @@ class _Staff_tableState extends State<Staff_table> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Name",
+                        ? const Text("Name",
                         style: TextStyle(color: Colors.white))
-                        : Text("Name",
+                        : const Text("Name",
                         style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
+                    const SizedBox(width: 3),
                     ascending1
-                        ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                      padding: EdgeInsets.only(top: 7, left: 2),
                       child: FaIcon(
                         FontAwesomeIcons.sortUp,
                         size: 20,
                         color: Colors.white,
                       ),
                     )
-                        : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                      padding: EdgeInsets.only(bottom: 7, left: 2),
                       child: FaIcon(
                         FontAwesomeIcons.sortDown,
                         size: 20,
@@ -992,19 +992,19 @@ class _Staff_tableState extends State<Staff_table> {
                 },
                 child: Row(
                   children: [
-                    Text("Designation", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                    const Text("Designation", style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 5),
                     ascending2
-                        ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                      padding: EdgeInsets.only(top: 7, left: 2),
                       child: FaIcon(
                         FontAwesomeIcons.sortUp,
                         size: 20,
                         color: Colors.white,
                       ),
                     )
-                        : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                      padding: EdgeInsets.only(bottom: 7, left: 2),
                       child: FaIcon(
                         FontAwesomeIcons.sortDown,
                         size: 20,
@@ -1040,19 +1040,19 @@ class _Staff_tableState extends State<Staff_table> {
                 },
                 child: Row(
                   children: [
-                    Text("   Contact", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                    const Text("   Contact", style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 5),
                     ascending3
-                        ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
+                        ? const Padding(
+                      padding: EdgeInsets.only(top: 7, left: 2),
                       child: FaIcon(
                         FontAwesomeIcons.sortUp,
                         size: 20,
                         color: Colors.white,
                       ),
                     )
-                        : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
+                        : const Padding(
+                      padding: EdgeInsets.only(bottom: 7, left: 2),
                       child: FaIcon(
                         FontAwesomeIcons.sortDown,
                         size: 20,

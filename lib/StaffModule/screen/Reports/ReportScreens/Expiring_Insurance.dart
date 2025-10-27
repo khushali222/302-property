@@ -79,9 +79,11 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
       oneMonthLater = DateTime(oneMonthLater.year, oneMonthLater.month, 0);
     }
 
-    // Format date strings
-    String todayStr = today.toString().substring(0, 10);
-    String oneMonthLaterStr = oneMonthLater.toString().substring(0, 10);
+    // Format date strings using DateProvider
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    String todayStr = dateProvider.formatCurrentDate(today.toString());
+    String oneMonthLaterStr =
+        dateProvider.formatCurrentDate(oneMonthLater.toString());
 
     // Set default values to text controllers
     _fromDateController.text = todayStr;
@@ -129,9 +131,13 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
     }
 
     if (currentFromDate.isNotEmpty && currentToDate.isNotEmpty) {
+      // Convert display dates to API format (yyyy-MM-dd)
+      String apiFromDate = formatDate(currentFromDate);
+      String apiToDate = formatDate(currentToDate);
+
       _futureReport = ExpiringInsuranceTableService().fetchExpiringInsurnce(
-        startDate: currentFromDate,
-        endDate: currentToDate,
+        startDate: apiFromDate,
+        endDate: apiToDate,
       );
 
       // Update the last selected dates
@@ -142,9 +148,13 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
       //   SnackBar(content: Text('Please select both From and To dates.')),
       // );
       // return;
+      // Convert display dates to API format (yyyy-MM-dd)
+      String apiFromDate = formatDate(currentFromDate);
+      String apiToDate = formatDate(currentToDate);
+
       _futureReport = ExpiringInsuranceTableService().fetchExpiringInsurnce(
-        startDate: currentFromDate,
-        endDate: currentToDate,
+        startDate: apiFromDate,
+        endDate: apiToDate,
       );
       lastFromDate = currentFromDate;
       lastToDate = currentToDate;
@@ -163,6 +173,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
   }
 
   Future<void> generatePdf(List<RentersInsuranceData> leaseData) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final GetAddressAdminPdfService service = GetAddressAdminPdfService();
     profile? profileData;
 
@@ -177,11 +188,12 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
     final image = pw.MemoryImage(
       (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
     );
-    final currentDate = DateFormat('MMMM dd, yyyy').format(DateTime.now());
+    final currentDate =
+        dateProvider.formatCurrentDate(DateTime.now().toString());
 
     pdf.addPage(
       pw.Page(
-        margin: pw.EdgeInsets.all(30), // Adjust margin as needed
+        margin: const pw.EdgeInsets.all(30), // Adjust margin as needed
         build: (pw.Context context) {
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -262,9 +274,13 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                   return [
                     lease.insuranceCompany ?? '',
                     lease.policyId ?? '',
-                    formatDate(lease.effectiveDate ?? ''),
-                    formatDate(lease.expirationDate ?? ''),
-                    '\$${lease.liabilityCoverage?.toString() ?? ''}',
+                    lease.effectiveDate != null
+                        ? dateProvider.formatCurrentDate(lease.effectiveDate!)
+                        : '',
+                    lease.expirationDate != null
+                        ? dateProvider.formatCurrentDate(lease.expirationDate!)
+                        : '',
+                    formatCurrency(lease.liabilityCoverage.toDouble()),
                     lease.tenantDetails != null
                         ? lease.tenantDetails
                             ?.map((tenant) =>
@@ -274,7 +290,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                   ];
                 }).toList(),
                 border: pw.TableBorder.all(
-                  color: PdfColor.fromInt(0xFFBDBDBD), // Gray[400] color
+                  color: const PdfColor.fromInt(0xFFBDBDBD), // Gray[400] color
                   width: 1,
                 ),
                 cellAlignment: pw.Alignment.centerLeft,
@@ -286,17 +302,17 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                     fontSize: 12,
                     color: PdfColors.white),
                 headerAlignment: pw.Alignment.centerLeft,
-                cellStyle: pw.TextStyle(
+                cellStyle: const pw.TextStyle(
                   fontSize: 10,
                 ),
                 cellHeight: 30,
                 columnWidths: {
-                  0: pw.FlexColumnWidth(1.5), // Property
-                  1: pw.FlexColumnWidth(0.7), // Unit
-                  2: pw.FixedColumnWidth(90), // Tenant (fixed width)
-                  3: pw.FlexColumnWidth(1), // Rent
-                  4: pw.FlexColumnWidth(1.1), // Non-rent
-                  5: pw.FlexColumnWidth(1.2), // Lease Start
+                  0: const pw.FlexColumnWidth(1.5), // Property
+                  1: const pw.FlexColumnWidth(0.7), // Unit
+                  2: const pw.FixedColumnWidth(90), // Tenant (fixed width)
+                  3: const pw.FlexColumnWidth(1), // Rent
+                  4: const pw.FlexColumnWidth(1.1), // Non-rent
+                  5: const pw.FlexColumnWidth(1.2), // Lease Start
                 },
               ),
             ],
@@ -311,6 +327,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
   }
 
   Future<void> generateExcel(List<RentersInsuranceData> leaseData) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     // Create a new Excel document.
     final syncXlsx.Workbook workbook = syncXlsx.Workbook();
     final syncXlsx.Worksheet sheet = workbook.worksheets[0];
@@ -348,15 +365,15 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
       sheet.getRangeByIndex(2 + i, 2).setText(lease.policyId ?? '');
       sheet.getRangeByIndex(2 + i, 3).setText(
           formatPhoneNumberedit(lease.insuranceCompanyPhoneNumber ?? ''));
-      sheet
-          .getRangeByIndex(2 + i, 4)
-          .setText(lease.effectiveDate?.substring(0, 10) ?? "");
-      sheet
-          .getRangeByIndex(2 + i, 5)
-          .setText(lease.expirationDate?.substring(0, 10) ?? "");
+      sheet.getRangeByIndex(2 + i, 4).setText(lease.effectiveDate != null
+          ? dateProvider.formatCurrentDate(lease.effectiveDate!)
+          : "");
+      sheet.getRangeByIndex(2 + i, 5).setText(lease.expirationDate != null
+          ? dateProvider.formatCurrentDate(lease.expirationDate!)
+          : "");
       sheet
           .getRangeByIndex(2 + i, 6)
-          .setText('\$${lease.liabilityCoverage.toString()}');
+          .setText(formatCurrency(lease.liabilityCoverage.toDouble()));
       String? tenantNames = lease.tenantDetails != null
           ? lease.tenantDetails
               ?.map((tenant) =>
@@ -419,6 +436,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
   }
 
   Future<void> generateCsv(List<RentersInsuranceData> leaseData) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     // Request storage permissions
     await requestPermissions();
 
@@ -441,9 +459,13 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
         lease.insuranceCompany ?? '',
         lease.policyId ?? '',
         formatPhoneNumberedit(lease.insuranceCompanyPhoneNumber ?? ''),
-        lease.effectiveDate?.substring(0, 10) ?? '',
-        lease.expirationDate?.substring(0, 10) ?? '',
-        '\$${lease.liabilityCoverage ?? 0.0}',
+        lease.effectiveDate != null
+            ? dateProvider.formatCurrentDate(lease.effectiveDate!)
+            : '',
+        lease.expirationDate != null
+            ? dateProvider.formatCurrentDate(lease.expirationDate!)
+            : '',
+        formatCurrency(lease.liabilityCoverage.toDouble()),
         lease.tenantDetails != null
             ? lease.tenantDetails
                 ?.map((tenant) =>
@@ -538,7 +560,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
     return Container(
       decoration: BoxDecoration(
         color: blueColor,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(13),
           topRight: Radius.circular(13),
         ),
@@ -555,7 +577,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -585,9 +607,9 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("  Insurance\n  Company",
+                        ? const Text("  Insurance\n  Company",
                             style: TextStyle(color: Colors.white))
-                        : Text("  Insurance\n  Company",
+                        : const Text("  Insurance\n  Company",
                             style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     // SizedBox(width: 3),
@@ -634,7 +656,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                     // Sorting logic here
                   });
                 },
-                child: Row(
+                child: const Row(
                   children: [
                     Text("     Effective\n       Date",
                         style: TextStyle(color: Colors.white)),
@@ -683,7 +705,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                     // Sorting logic here
                   });
                 },
-                child: Row(
+                child: const Row(
                   children: [
                     Text("      Expiration\n          Date",
                         style: TextStyle(color: Colors.white, fontSize: 15)),
@@ -884,14 +906,14 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 16,
                   ),
                   titleBar(
                     title: 'Expiring Insurance',
                     width: MediaQuery.of(context).size.width * .91,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Padding(
@@ -911,14 +933,14 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                               color: Colors.grey[600],
                                               fontSize: 15,
                                               fontWeight: FontWeight.w600)),
-                                      SizedBox(height: 5),
+                                      const SizedBox(height: 5),
                                       CustomDateField(
                                           hintText: 'yyyy-mm-dd',
                                           controller: _fromDateController),
                                     ],
                                   ),
                                 ),
-                                SizedBox(width: 40),
+                                const SizedBox(width: 40),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
@@ -929,7 +951,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                               color: Colors.grey[600],
                                               fontSize: 15,
                                               fontWeight: FontWeight.w600)),
-                                      SizedBox(height: 5),
+                                      const SizedBox(height: 5),
                                       CustomDateField(
                                           hintText: 'yyyy-mm-dd',
                                           controller: _toDateController),
@@ -986,7 +1008,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                                     fontSize: 15,
                                                     fontWeight:
                                                         FontWeight.w600)),
-                                            SizedBox(height: 5),
+                                            const SizedBox(height: 5),
                                             CustomDateField(
                                               hintText: 'dd-mm-yyyy',
                                               controller: _fromDateController,
@@ -997,7 +1019,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 16,
                                     ),
                                     Expanded(
@@ -1012,7 +1034,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                                     fontSize: 15,
                                                     fontWeight:
                                                         FontWeight.w600)),
-                                            SizedBox(height: 5),
+                                            const SizedBox(height: 5),
                                             CustomDateField(
                                               hintText: 'dd-mm-yyyy',
                                               controller: _toDateController,
@@ -1215,7 +1237,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                       height: 200,
                                       width: 200,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     Text(
@@ -1358,11 +1380,11 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                                   final data =
                                                       await ExpiringInsuranceTableService()
                                                           .fetchExpiringInsurnce(
-                                                    startDate:
+                                                    startDate: formatDate(
                                                         _fromDateController
-                                                            .text,
-                                                    endDate:
-                                                        _toDateController.text,
+                                                            .text),
+                                                    endDate: formatDate(
+                                                        _toDateController.text),
                                                   );
 
                                                   await generatePdf(data);
@@ -1384,11 +1406,11 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                                   final data =
                                                       await ExpiringInsuranceTableService()
                                                           .fetchExpiringInsurnce(
-                                                    startDate:
+                                                    startDate: formatDate(
                                                         _fromDateController
-                                                            .text,
-                                                    endDate:
-                                                        _toDateController.text,
+                                                            .text),
+                                                    endDate: formatDate(
+                                                        _toDateController.text),
                                                   );
 
                                                   await generateExcel(data);
@@ -1409,11 +1431,11 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                                   final data =
                                                       await ExpiringInsuranceTableService()
                                                           .fetchExpiringInsurnce(
-                                                    startDate:
+                                                    startDate: formatDate(
                                                         _fromDateController
-                                                            .text,
-                                                    endDate:
-                                                        _toDateController.text,
+                                                            .text),
+                                                    endDate: formatDate(
+                                                        _toDateController.text),
                                                   );
 
                                                   await generateCsv(data);
@@ -1444,7 +1466,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                                 child: Text('CSV'),
                                               ),
                                             ],
-                                            child: Row(
+                                            child: const Row(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 Text('Export'),
@@ -1457,13 +1479,13 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 20),
+                                const SizedBox(height: 20),
                                 _buildHeaders(),
-                                SizedBox(height: 20),
+                                const SizedBox(height: 20),
                                 Container(
                                   decoration: BoxDecoration(
                                       border: Border.all(
-                                          color: Color.fromRGBO(
+                                          color: const Color.fromRGBO(
                                               152, 162, 179, .5))),
                                   // decoration: BoxDecoration(
                                   //     border: Border.all(color: blueColor)),
@@ -1482,7 +1504,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                               ? Colors.white
                                               : blueColor.withOpacity(0.09),
                                           border: Border.all(
-                                              color: Color.fromRGBO(
+                                              color: const Color.fromRGBO(
                                                   152, 162, 179, .5)),
                                         ),
                                         // decoration: BoxDecoration(
@@ -1515,13 +1537,14 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                                         });
                                                       },
                                                       child: Container(
-                                                        margin: EdgeInsets.only(
-                                                            left: 5),
+                                                        margin: const EdgeInsets
+                                                            .only(left: 5),
                                                         padding: !isExpanded
-                                                            ? EdgeInsets.only(
+                                                            ? const EdgeInsets
+                                                                .only(
                                                                 bottom: 10)
-                                                            : EdgeInsets.only(
-                                                                top: 10),
+                                                            : const EdgeInsets
+                                                                .only(top: 10),
                                                         child: FaIcon(
                                                           isExpanded
                                                               ? FontAwesomeIcons
@@ -1533,7 +1556,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                                         ),
                                                       ),
                                                     ),
-                                                    SizedBox(width: 3),
+                                                    const SizedBox(width: 3),
                                                     Expanded(
                                                       flex: 4,
                                                       child: Text(
@@ -1546,7 +1569,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                                         ),
                                                       ),
                                                     ),
-                                                    SizedBox(width: 10),
+                                                    const SizedBox(width: 10),
                                                     Expanded(
                                                       flex: 3,
                                                       child: Text(
@@ -1565,7 +1588,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                                         ),
                                                       ),
                                                     ),
-                                                    SizedBox(width: 25),
+                                                    const SizedBox(width: 25),
                                                     Expanded(
                                                       flex: 3,
                                                       child: Text(
@@ -1590,10 +1613,11 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                             ),
                                             if (isExpanded)
                                               Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 8.0),
-                                                margin:
-                                                    EdgeInsets.only(bottom: 20),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8.0),
+                                                margin: const EdgeInsets.only(
+                                                    bottom: 20),
                                                 child: SingleChildScrollView(
                                                   child: Column(
                                                     children: [
@@ -1647,7 +1671,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                                           ),
                                                           Container(
                                                             width: 40,
-                                                            child: Column(
+                                                            child: const Column(
                                                               children: [],
                                                             ),
                                                           ),
@@ -1663,18 +1687,18 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                     }).toList(),
                                   ),
                                 ),
-                                SizedBox(height: 20),
+                                const SizedBox(height: 20),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Row(
                                       children: [
-                                        SizedBox(width: 10),
+                                        const SizedBox(width: 10),
                                         Material(
                                           elevation: 3,
                                           child: Container(
                                             height: 40,
-                                            padding: EdgeInsets.symmetric(
+                                            padding: const EdgeInsets.symmetric(
                                                 horizontal: 12.0),
                                             decoration: BoxDecoration(
                                               border: Border.all(
@@ -1750,7 +1774,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                       ),
                     ),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(
+                    const SizedBox(
                       height: 8,
                     ),
                   if (MediaQuery.of(context).size.width > 500)
@@ -1812,8 +1836,10 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                         final data =
                                             await ExpiringInsuranceTableService()
                                                 .fetchExpiringInsurnce(
-                                          startDate: _fromDateController.text,
-                                          endDate: _toDateController.text,
+                                          startDate: formatDate(
+                                              _fromDateController.text),
+                                          endDate: formatDate(
+                                              _toDateController.text),
                                         );
 
                                         await generatePdf(data);
@@ -1833,8 +1859,10 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                         final data =
                                             await ExpiringInsuranceTableService()
                                                 .fetchExpiringInsurnce(
-                                          startDate: _fromDateController.text,
-                                          endDate: _toDateController.text,
+                                          startDate: formatDate(
+                                              _fromDateController.text),
+                                          endDate: formatDate(
+                                              _toDateController.text),
                                         );
 
                                         await generateExcel(data);
@@ -1853,8 +1881,10 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                         final data =
                                             await ExpiringInsuranceTableService()
                                                 .fetchExpiringInsurnce(
-                                          startDate: _fromDateController.text,
-                                          endDate: _toDateController.text,
+                                          startDate: formatDate(
+                                              _fromDateController.text),
+                                          endDate: formatDate(
+                                              _toDateController.text),
                                         );
 
                                         await generateCsv(data);
@@ -1884,7 +1914,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                       child: Text('CSV'),
                                     ),
                                   ],
-                                  child: Row(
+                                  child: const Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text('Export'),
@@ -1897,7 +1927,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                           ),
                         )),
                   if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(
+                    const SizedBox(
                       height: 18,
                     ),
                   if (MediaQuery.of(context).size.width > 500)
@@ -1924,7 +1954,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                     height: 200,
                                     width: 200,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 10,
                                   ),
                                   Text(
@@ -1996,12 +2026,13 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                             child: Column(
                               children: [
                                 Table(
-                                  defaultColumnWidth: IntrinsicColumnWidth(),
+                                  defaultColumnWidth:
+                                      const IntrinsicColumnWidth(),
                                   columnWidths: {
-                                    0: FlexColumnWidth(),
-                                    1: FlexColumnWidth(),
-                                    2: FlexColumnWidth(),
-                                    3: FlexColumnWidth(),
+                                    0: const FlexColumnWidth(),
+                                    1: const FlexColumnWidth(),
+                                    2: const FlexColumnWidth(),
+                                    3: const FlexColumnWidth(),
                                   },
                                   children: [
                                     TableRow(
@@ -2032,7 +2063,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                       ],
                                     ),
                                     TableRow(
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         border: Border.symmetric(
                                             horizontal: BorderSide.none),
                                       ),
@@ -2067,9 +2098,9 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                       ),
                                   ],
                                 ),
-                                SizedBox(height: 25),
+                                const SizedBox(height: 25),
                                 _buildPaginationControls(),
-                                SizedBox(height: 25),
+                                const SizedBox(height: 25),
                               ],
                             ),
                           ),
@@ -2091,11 +2122,11 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                     height: 200,
                     fit: BoxFit.fill,
                   ),
-                  Text(
+                  const Text(
                     'No Internet',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     'Check your internet connection',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),

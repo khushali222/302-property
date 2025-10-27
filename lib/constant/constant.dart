@@ -9,13 +9,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:zxcvbn/zxcvbn.dart';
 
-String image_url =
-    "https://staging.cloudrentalmanager.com/api/images/get-file/";
+String image_url = "https://staging.cloudrentalmanager.com/api/images/get-file/";
 //String image_url = "http://192.168.182.128:4000/api/images/get-file/";
 //String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
 
 //String Api_url = "http://192.168.39.1:4000";
-//String Api_url = "http://192.168.1.17:4000";
+// String Api_url = "http://192.168.1.36:4000";
 
 //String Api_url = "https://saas.cloudrentalmanager.com";
 String Api_url = "https://staging.cloudrentalmanager.com";
@@ -23,44 +22,94 @@ String Api_url = "https://staging.cloudrentalmanager.com";
 //String image_upload_url = "https://saas.cloudrentalmanager.com";
 String image_upload_url = "https://staging.cloudrentalmanager.com";
 
-formatDate(String dateTime) {
-  //print(dateTime);
-  List<String> dateFormats = [
-    'yyyy-MM-dd',
-    'yyyy-M-d',
-    'dd-MM-yyyy',
-    'd-M-yyyy',
-    'M/d/yyyy',
-    'MM/dd/yyyy',
-    'M/d/yyyy, h:mm:ss a',
-    'M/d/yyyy, h:mm a' // 05032024 (no separators)
-  ];
-
-  DateTime? parsedDate;
-
-  for (String format in dateFormats) {
-    //  print(dateTime);
-    try {
-      parsedDate = DateFormat(format).parse(dateTime);
-      //  print(parsedDate);
-      break;
-    } catch (e) {
-      continue;
-    }
-  }
-
-  if (parsedDate == null) {
-    return dateTime;
-    //  throw FormatException("Date format not recognized: $dateTime");
-  }
-  // print(parsedDate);
-  return DateFormat('yyyy-MM-dd').format(parsedDate);
-}
+// formatDate(String dateTime) {
+//   //print(dateTime);
+//   List<String> dateFormats = [
+//     'yyyy-MM-dd',
+//     'yyyy-M-d',
+//     'dd-MM-yyyy',
+//     'd-M-yyyy',
+//     'M/d/yyyy',
+//     'MM/dd/yyyy',
+//     'M/d/yyyy, h:mm:ss a',
+//     'M/d/yyyy, h:mm a' // 05032024 (no separators)
+//   ];
+//
+//   DateTime? parsedDate;
+//
+//   for (String format in dateFormats) {
+//     //  print(dateTime);
+//     try {
+//       parsedDate = DateFormat(format).parse(dateTime);
+//       //  print(parsedDate);
+//       break;
+//     } catch (e) {
+//       continue;
+//     }
+//   }
+//
+//   if (parsedDate == null) {
+//     return dateTime;
+//     //  throw FormatException("Date format not recognized: $dateTime");
+//   }
+//   // print(parsedDate);
+//   return DateFormat('yyyy-MM-dd').format(parsedDate);
+// }
 
 // String formatDate4(String dateTime) {
 //   DateTime parsedDate = DateFormat('yyyy-MM-dd').parse(dateTime);0
 //   return DateFormat('dd-MM-yyyy').format(parsedDate);
 // }
+formatDate(String dateTime) {
+  print("formatDate input: '$dateTime'");
+
+  // If already in correct format, return as is
+  if (RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(dateTime.trim())) {
+    print("formatDate output (already correct): '$dateTime'");
+    return dateTime;
+  }
+
+  List<String> dateFormats = [
+    'yyyy-MM-dd',
+    'yyyy-M-d',
+    'yyyy-MMM-dd', // e.g. 2025-Jan-01
+    'yyyy-MMM-d', // e.g. 2025-Jan-1
+    'dd-MM-yyyy',
+    'd-M-yyyy',
+    'd-MMM-yyyy', // e.g. 1-Jan-2025
+    'dd-MMM-yyyy', // e.g. 01-Jan-2025
+    'M/d/yyyy',
+    'MM/dd/yyyy',
+    'M/d/yyyy, h:mm:ss a',
+    'M/d/yyyy, h:mm a',
+    'dd/MMMM/yyyy', // e.g. 01/August/2032
+    'd/MMMM/yyyy', // e.g. 1/August/2032
+    'dd/MMM/yyyy', // e.g. 01/Aug/2032
+    'd/MMM/yyyy', // e.g. 1/Aug/2032
+  ];
+
+  DateTime? parsedDate;
+
+  for (String format in dateFormats) {
+    try {
+      parsedDate = DateFormat(format).parse(dateTime);
+      print("formatDate parsed with format '$format': $parsedDate");
+      break;
+    } catch (e) {
+      print("formatDate failed to parse '$dateTime' with format '$format': $e");
+      continue;
+    }
+  }
+
+  if (parsedDate == null) {
+    print("formatDate failed to parse: '$dateTime'");
+    return dateTime;
+  }
+
+  String result = DateFormat('yyyy-MM-dd').format(parsedDate);
+  print("formatDate output: '$result'");
+  return result;
+}
 
 String formatDate4(String dateTime) {
   if (dateTime.isEmpty) {
@@ -93,11 +142,96 @@ String reverseFormatDate(String formattedDate) {
   }
 
   try {
-    print(formattedDate);
-    // Try parsing the date
-    DateTime dateTime = DateFormat('dd-MM-yyyy').parse(formattedDate);
-    // Return the formatted date in 'yyyy-MM-dd' format
-    return DateFormat('yyyy-MM-dd').format(dateTime);
+    print("reverseFormatDate input: '$formattedDate'");
+    print("Input length: ${formattedDate.length}");
+    print("Input bytes: ${formattedDate.codeUnits}");
+
+    // Clean the input string - remove any extra whitespace
+    String cleanDate = formattedDate.trim();
+
+    // If the date is already in yyyy-MM-dd format, return it as is
+    if (RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(cleanDate)) {
+      print("Date is already in yyyy-MM-dd format, returning as is");
+      return cleanDate;
+    }
+
+    // Special handling for yyyy-MM-dd format that might have extra characters
+    if (RegExp(r'^\d{4}-\d{2}-\d{2}').hasMatch(cleanDate)) {
+      print("Date appears to be in yyyy-MM-dd format with extra characters");
+      String extractedDate = cleanDate.substring(0, 10);
+      print("Extracted date: $extractedDate");
+      return extractedDate;
+    }
+
+    // List of possible date formats that DateProvider might return
+    // Prioritize dd-MM-yyyy format first since it's the most common UI format
+    List<String> dateFormats = [
+      'dd-MM-yyyy',
+      'd-M-yyyy',
+      'yyyy-MM-dd',
+      'yyyy-M-d',
+      'MM/dd/yyyy',
+      'M/d/yyyy',
+      'MM-dd-yyyy',
+      'M-d-yyyy',
+      'dd/MM/yyyy',
+      'd/M/yyyy'
+    ];
+
+    DateTime? parsedDate;
+
+    // Try to parse the date using different formats
+    for (String format in dateFormats) {
+      try {
+        parsedDate = DateFormat(format).parse(cleanDate);
+        print("Successfully parsed with format: $format");
+        print("Parsed date: $parsedDate");
+        break;
+      } catch (e) {
+        print("Failed to parse with format $format: $e");
+        continue;
+      }
+    }
+
+    // If parsing failed, try manual parsing for common formats
+    if (parsedDate == null) {
+      print("Trying manual parsing...");
+      if (RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(cleanDate)) {
+        // yyyy-MM-dd format
+        List<String> parts = cleanDate.split('-');
+        if (parts.length == 3) {
+          int year = int.tryParse(parts[0]) ?? 0;
+          int month = int.tryParse(parts[1]) ?? 0;
+          int day = int.tryParse(parts[2]) ?? 0;
+          if (year > 0 && month > 0 && month <= 12 && day > 0 && day <= 31) {
+            parsedDate = DateTime(year, month, day);
+            print("Manually parsed date: $parsedDate");
+          }
+        }
+      } else if (RegExp(r'^\d{2}-\d{2}-\d{4}$').hasMatch(cleanDate)) {
+        // dd-MM-yyyy format
+        List<String> parts = cleanDate.split('-');
+        if (parts.length == 3) {
+          int day = int.tryParse(parts[0]) ?? 0;
+          int month = int.tryParse(parts[1]) ?? 0;
+          int year = int.tryParse(parts[2]) ?? 0;
+          if (year > 0 && month > 0 && month <= 12 && day > 0 && day <= 31) {
+            parsedDate = DateTime(year, month, day);
+            print("Manually parsed date: $parsedDate");
+          }
+        }
+      }
+    }
+
+    if (parsedDate == null) {
+      print("Could not parse date: $formattedDate");
+      return ""; // Return empty string if parsing fails
+    }
+
+    // Return the formatted date in 'yyyy-MM-dd' format for API
+    String result = DateFormat('yyyy-MM-dd').format(parsedDate);
+    print("reverseFormatDate output: $result");
+    return result;
   } catch (e) {
     print("Error while formatting date: $e");
     return ""; // Return an empty string if there is an error
@@ -159,6 +293,19 @@ TableRow buildTableRow(
 String getDisplayValue(String? value) {
   // Return 'N/A' if the value is null or empty, otherwise return the value
   return (value == null || value.trim().isEmpty) ? 'N/A' : value;
+}
+
+// Common currency formatting function for US-centric format
+String formatCurrency(double? amount) {
+  if (amount == null) return '\$0.00';
+
+  final formatter = NumberFormat.currency(
+    locale: 'en_US',
+    symbol: '\$',
+    decimalDigits: 2,
+  );
+
+  return formatter.format(amount);
 }
 //Color grey = Color.fromRGBO(21, 43, 83, .5);
 //Color grey = Color.fromRGBO(21, 43, 83, .5);

@@ -383,7 +383,7 @@ class _EditTenantsState extends State<EditTenants> {
         dropdown: true,
       ),
       body: isInitialLoading
-          ? Center(
+          ? const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -413,14 +413,14 @@ class _EditTenantsState extends State<EditTenants> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             height: 25,
                           ),
                           titleBar(
                             width: MediaQuery.of(context).size.width * .91,
                             title: 'Edit Tenant',
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 25,
                           ),
                           Padding(
@@ -433,7 +433,7 @@ class _EditTenantsState extends State<EditTenants> {
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
                                   border: Border.all(
-                                    color: Color.fromRGBO(21, 43, 103, 1),
+                                    color: const Color.fromRGBO(21, 43, 103, 1),
                                   )),
                               child: Padding(
                                   padding: const EdgeInsets.all(16.0),
@@ -448,13 +448,13 @@ class _EditTenantsState extends State<EditTenants> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Text('First Name *',
+                                                const Text('First Name *',
                                                     style: TextStyle(
                                                         fontSize: 13,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         color: Colors.grey)),
-                                                SizedBox(height: 10),
+                                                const SizedBox(height: 10),
                                                 CustomTextField(
                                                   keyboardType:
                                                       TextInputType.text,
@@ -471,19 +471,19 @@ class _EditTenantsState extends State<EditTenants> {
                                               ],
                                             ),
                                           ),
-                                          SizedBox(width: 20),
+                                          const SizedBox(width: 20),
                                           Expanded(
                                             child: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Text('Last Name *',
+                                                const Text('Last Name *',
                                                     style: TextStyle(
                                                         fontSize: 13,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         color: Colors.grey)),
-                                                SizedBox(height: 10),
+                                                const SizedBox(height: 10),
                                                 CustomTextField(
                                                   keyboardType:
                                                       TextInputType.text,
@@ -502,7 +502,7 @@ class _EditTenantsState extends State<EditTenants> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 20),
+                                      const SizedBox(height: 20),
                                       Row(
                                         children: [
                                           Expanded(
@@ -510,13 +510,13 @@ class _EditTenantsState extends State<EditTenants> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Text('Phone Number *',
+                                                const Text('Phone Number *',
                                                     style: TextStyle(
                                                         fontSize: 13,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         color: Colors.grey)),
-                                                SizedBox(height: 10),
+                                                const SizedBox(height: 10),
                                                 CustomTextField(
                                                   keyboardType:
                                                       TextInputType.number,
@@ -546,19 +546,19 @@ class _EditTenantsState extends State<EditTenants> {
                                               ],
                                             ),
                                           ),
-                                          SizedBox(width: 20),
+                                          const SizedBox(width: 20),
                                           Expanded(
                                             child: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Text('Work Number',
+                                                const Text('Work Number',
                                                     style: TextStyle(
                                                         fontSize: 13,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         color: Colors.grey)),
-                                                SizedBox(height: 10),
+                                                const SizedBox(height: 10),
                                                 CustomTextField(
                                                   keyboardType:
                                                       TextInputType.number,
@@ -583,7 +583,7 @@ class _EditTenantsState extends State<EditTenants> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 20),
+                                      const SizedBox(height: 20),
                                       Row(
                                         children: [
                                           Expanded(
@@ -591,13 +591,13 @@ class _EditTenantsState extends State<EditTenants> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Text('Email *',
+                                                const Text('Email *',
                                                     style: TextStyle(
                                                         fontSize: 13,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         color: Colors.grey)),
-                                                SizedBox(height: 10),
+                                                const SizedBox(height: 10),
                                                 CustomTextField(
                                                   keyboardType: TextInputType
                                                       .emailAddress,
@@ -615,19 +615,19 @@ class _EditTenantsState extends State<EditTenants> {
                                               ],
                                             ),
                                           ),
-                                          SizedBox(width: 20),
+                                          const SizedBox(width: 20),
                                           Expanded(
                                             child: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Text('Alternative Email',
+                                                const Text('Alternative Email',
                                                     style: TextStyle(
                                                         fontSize: 13,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         color: Colors.grey)),
-                                                SizedBox(height: 10),
+                                                const SizedBox(height: 10),
                                                 CustomTextField(
                                                   keyboardType: TextInputType
                                                       .emailAddress,
@@ -642,7 +642,7 @@ class _EditTenantsState extends State<EditTenants> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 20),
+                                      const SizedBox(height: 20),
                                       Row(
                                         children: [
                                           Expanded(
@@ -650,13 +650,13 @@ class _EditTenantsState extends State<EditTenants> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Text('Password *',
+                                                const Text('Password *',
                                                     style: TextStyle(
                                                         fontSize: 13,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         color: Colors.grey)),
-                                                SizedBox(height: 10),
+                                                const SizedBox(height: 10),
                                                 /*  CustomTextField(
                                           keyboardType: TextInputType.emailAddress,
                                           hintText: 'Enter alternative email',
@@ -681,7 +681,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                         },
                                                       ),
                                                     ),
-                                                    SizedBox(width: 10),
+                                                    const SizedBox(width: 10),
                                                     InkWell(
                                                       onTap: () {
                                                         setState(() {
@@ -706,7 +706,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                             BoxDecoration(
                                                           color: Colors.white,
                                                           boxShadow: [
-                                                            BoxShadow(
+                                                            const BoxShadow(
                                                               color: Colors
                                                                   .black26,
                                                               offset: Offset(
@@ -731,7 +731,7 @@ class _EditTenantsState extends State<EditTenants> {
                                               ],
                                             ),
                                           ),
-                                          SizedBox(width: 20),
+                                          const SizedBox(width: 20),
                                           Expanded(
                                             child: Visibility(
                                               visible: false,
@@ -739,13 +739,13 @@ class _EditTenantsState extends State<EditTenants> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text('Alternative Email',
+                                                  const Text('Alternative Email',
                                                       style: TextStyle(
                                                           fontSize: 13,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           color: Colors.grey)),
-                                                  SizedBox(height: 10),
+                                                  const SizedBox(height: 10),
                                                   CustomTextField(
                                                     keyboardType: TextInputType
                                                         .emailAddress,
@@ -761,12 +761,12 @@ class _EditTenantsState extends State<EditTenants> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 10),
+                                      const SizedBox(height: 10),
                                     ],
                                   )),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 15,
                           ),
                           Padding(
@@ -779,7 +779,7 @@ class _EditTenantsState extends State<EditTenants> {
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
                                   border: Border.all(
-                                    color: Color.fromRGBO(21, 43, 103, 1),
+                                    color: const Color.fromRGBO(21, 43, 103, 1),
                                   )),
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
@@ -791,7 +791,7 @@ class _EditTenantsState extends State<EditTenants> {
                                             fontSize: 16,
                                             fontWeight: FontWeight.w400,
                                             color: blueColor)),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 15,
                                     ),
                                     Row(
@@ -801,22 +801,22 @@ class _EditTenantsState extends State<EditTenants> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text('Date of Birth',
+                                              const Text('Date of Birth',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: Colors.grey)),
-                                              SizedBox(height: 10),
+                                              const SizedBox(height: 10),
                                               Container(
                                                 height: 50,
-                                                padding: EdgeInsets.symmetric(
+                                                padding: const EdgeInsets.symmetric(
                                                     horizontal: 12.0,
                                                     vertical: 0),
                                                 decoration: BoxDecoration(
                                                     color: Colors.white,
                                                     boxShadow: [
-                                                      BoxShadow(
+                                                      const BoxShadow(
                                                         color: Colors.black26,
                                                         offset:
                                                             Offset(1.2, 1.2),
@@ -831,21 +831,21 @@ class _EditTenantsState extends State<EditTenants> {
                                                         BorderRadius.circular(
                                                             6.0)),
                                                 child: TextFormField(
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                     color: Color(0xFF8898aa),
                                                     fontSize: 16.0,
                                                     fontWeight: FontWeight.w400,
                                                   ),
                                                   controller: _dateController,
                                                   decoration: InputDecoration(
-                                                    hintStyle: TextStyle(
+                                                    hintStyle: const TextStyle(
                                                         fontSize: 13,
                                                         color:
                                                             Color(0xFFb0b6c3)),
                                                     border: InputBorder.none,
                                                     hintText: 'Select Date',
                                                     suffixIcon: IconButton(
-                                                      icon: Icon(
+                                                      icon: const Icon(
                                                           Icons.calendar_today),
                                                       onPressed: () {
                                                         _selectDate(context);
@@ -861,19 +861,19 @@ class _EditTenantsState extends State<EditTenants> {
                                             ],
                                           ),
                                         ),
-                                        SizedBox(width: 10),
+                                        const SizedBox(width: 10),
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text('TaxPayer ID',
+                                              const Text('TaxPayer ID',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: Colors.grey)),
-                                              SizedBox(height: 10),
+                                              const SizedBox(height: 10),
                                               CustomTextField(
                                                 keyboardType:
                                                     TextInputType.text,
@@ -886,25 +886,25 @@ class _EditTenantsState extends State<EditTenants> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
-                                    Text('Comments',
+                                    const Text('Comments',
                                         style: TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.grey)),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     Container(
                                       height: 90,
-                                      padding: EdgeInsets.symmetric(
+                                      padding: const EdgeInsets.symmetric(
                                           horizontal: 12.0, vertical: 0),
                                       decoration: BoxDecoration(
                                           color: Colors.white,
                                           boxShadow: [
-                                            BoxShadow(
+                                            const BoxShadow(
                                               color: Colors.black26,
                                               offset: Offset(1.2,
                                                   1.2), // Shadow offset to the bottom right
@@ -922,7 +922,7 @@ class _EditTenantsState extends State<EditTenants> {
                                           keyboardType: TextInputType.text,
                                           controller: comments,
                                           maxLines: 5,
-                                          decoration: InputDecoration(
+                                          decoration: const InputDecoration(
                                             border: InputBorder.none,
                                             hintStyle: TextStyle(
                                                 fontSize: 13,
@@ -930,7 +930,7 @@ class _EditTenantsState extends State<EditTenants> {
                                             hintText: 'Enter the comment',
                                           )),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                   ],
@@ -938,7 +938,7 @@ class _EditTenantsState extends State<EditTenants> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                           Padding(
@@ -951,7 +951,7 @@ class _EditTenantsState extends State<EditTenants> {
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
                                   border: Border.all(
-                                    color: Color.fromRGBO(21, 43, 103, 1),
+                                    color: const Color.fromRGBO(21, 43, 103, 1),
                                   )),
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
@@ -963,7 +963,7 @@ class _EditTenantsState extends State<EditTenants> {
                                             fontSize: 16,
                                             fontWeight: FontWeight.w400,
                                             color: blueColor)),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 15,
                                     ),
                                     Row(
@@ -973,13 +973,13 @@ class _EditTenantsState extends State<EditTenants> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text('Contact Name',
+                                              const Text('Contact Name',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: Colors.grey)),
-                                              SizedBox(height: 10),
+                                              const SizedBox(height: 10),
                                               CustomTextField(
                                                 keyboardType:
                                                     TextInputType.text,
@@ -990,19 +990,19 @@ class _EditTenantsState extends State<EditTenants> {
                                             ],
                                           ),
                                         ),
-                                        SizedBox(width: 10),
+                                        const SizedBox(width: 10),
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text('Relationship to Tenant',
+                                              const Text('Relationship to Tenant',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: Colors.grey)),
-                                              SizedBox(height: 10),
+                                              const SizedBox(height: 10),
                                               CustomTextField(
                                                 keyboardType:
                                                     TextInputType.text,
@@ -1016,7 +1016,7 @@ class _EditTenantsState extends State<EditTenants> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(height: 10),
+                                    const SizedBox(height: 10),
                                     Row(
                                       children: [
                                         Expanded(
@@ -1024,13 +1024,13 @@ class _EditTenantsState extends State<EditTenants> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text('E-Mail',
+                                              const Text('E-Mail',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: Colors.grey)),
-                                              SizedBox(height: 10),
+                                              const SizedBox(height: 10),
                                               CustomTextField(
                                                 keyboardType:
                                                     TextInputType.emailAddress,
@@ -1042,19 +1042,19 @@ class _EditTenantsState extends State<EditTenants> {
                                             ],
                                           ),
                                         ),
-                                        SizedBox(width: 10),
+                                        const SizedBox(width: 10),
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text('Phone Number',
+                                              const Text('Phone Number',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: Colors.grey)),
-                                              SizedBox(height: 10),
+                                              const SizedBox(height: 10),
                                               CustomTextField(
                                                 keyboardType:
                                                     TextInputType.number,
@@ -1084,7 +1084,7 @@ class _EditTenantsState extends State<EditTenants> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                           Padding(
@@ -1097,19 +1097,19 @@ class _EditTenantsState extends State<EditTenants> {
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
                                   border: Border.all(
-                                    color: Color.fromRGBO(21, 43, 103, 1),
+                                    color: const Color.fromRGBO(21, 43, 103, 1),
                                   )),
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Override Debit Card Fee',
+                                    const Text('Override Debit Card Fee',
                                         style: TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.grey)),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     Row(
@@ -1126,7 +1126,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                 }
                                               });
                                             }),
-                                        Text('Enable Debit Card Fee',
+                                        const Text('Enable Debit Card Fee',
                                             style: TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.bold,
@@ -1140,7 +1140,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                 BorderRadius.circular(8.0),
                                             child: Container(
                                               height: 50,
-                                              padding: EdgeInsets.symmetric(
+                                              padding: const EdgeInsets.symmetric(
                                                   horizontal: 16.0,
                                                   vertical: 0),
                                               decoration: BoxDecoration(
@@ -1151,17 +1151,17 @@ class _EditTenantsState extends State<EditTenants> {
                                                   BoxShadow(
                                                     color: Colors.black
                                                         .withOpacity(0.2),
-                                                    offset: Offset(4, 4),
+                                                    offset: const Offset(4, 4),
                                                     blurRadius: 3,
                                                   ),
                                                 ],
                                               ),
                                               child: TextField(
-                                                keyboardType: TextInputType
+                                                keyboardType: const TextInputType
                                                     .numberWithOptions(
                                                         decimal: true),
                                                 decoration: InputDecoration(
-                                                  hintStyle: TextStyle(
+                                                  hintStyle: const TextStyle(
                                                       fontSize: 13,
                                                       color: Color(0xFFb0b6c3)),
                                                   border: InputBorder.none,
@@ -1205,7 +1205,7 @@ class _EditTenantsState extends State<EditTenants> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                           Padding(
@@ -1321,20 +1321,20 @@ class _EditTenantsState extends State<EditTenants> {
                                       }
                                     },
                                     child: isLoading
-                                        ? Center(
+                                        ? const Center(
                                             child: SpinKitFadingCircle(
                                               color: Colors.white,
                                               size: 55.0,
                                             ),
                                           )
-                                        : Text(
+                                        : const Text(
                                             'Edit Tenant',
                                             style: TextStyle(
                                                 color: Color(0xFFf7f8f9)),
                                           ),
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 8,
                                 ),
                                 Container(
@@ -1345,7 +1345,7 @@ class _EditTenantsState extends State<EditTenants> {
                                             BorderRadius.circular(8.0)),
                                     child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                            backgroundColor: Color(0xFFffffff),
+                                            backgroundColor: const Color(0xFFffffff),
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(
@@ -1353,7 +1353,7 @@ class _EditTenantsState extends State<EditTenants> {
                                         onPressed: () {
                                           Navigator.pop(context);
                                         },
-                                        child: Text(
+                                        child: const Text(
                                           'Cancel',
                                           style: TextStyle(
                                               color: Color(0xFF748097)),
@@ -1361,7 +1361,7 @@ class _EditTenantsState extends State<EditTenants> {
                               ],
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                         ],
@@ -1372,14 +1372,14 @@ class _EditTenantsState extends State<EditTenants> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           height: 25,
                         ),
                         titleBar(
                           width: MediaQuery.of(context).size.width * .99,
                           title: 'Edit Tenant',
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15,
                         ),
                         Padding(
@@ -1390,22 +1390,22 @@ class _EditTenantsState extends State<EditTenants> {
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10.0),
                                 border: Border.all(
-                                  color: Color(0xFFDBE0E5),
+                                  color: const Color(0xFFDBE0E5),
                                 )),
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 4,
                                   ),
-                                  Text('Personal Information',
+                                  const Text('Personal Information',
                                       style: TextStyle(
                                           fontSize: 17,
                                           fontWeight: FontWeight.bold,
                                           color: Color(0xFF152B51))),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 20,
                                   ),
                                   //firstname and last name
@@ -1417,14 +1417,14 @@ class _EditTenantsState extends State<EditTenants> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text('First Name *',
+                                              const Text('First Name *',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color:
                                                           Color(0xFF101828))),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 10,
                                               ),
                                               CustomTextField(
@@ -1435,7 +1435,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                 showElevation: false,
                                                 isInRow:
                                                     true, // ADD FOR ROW ALIGNMENT
-                                                borderColor: Color(
+                                                borderColor: const Color(
                                                     0xFFCED4DA), // ADD BORDER COLOR
                                                 borderWidth:
                                                     1.5, // ADD BORDER WIDTH
@@ -1456,7 +1456,7 @@ class _EditTenantsState extends State<EditTenants> {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 12,
                                       ),
                                       Expanded(
@@ -1465,14 +1465,14 @@ class _EditTenantsState extends State<EditTenants> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text('Last Name *',
+                                              const Text('Last Name *',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color:
                                                           Color(0xFF101828))),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 10,
                                               ),
                                               CustomTextField(
@@ -1480,7 +1480,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                     TextInputType.text,
                                                 hintText: 'Enter last name',
                                                 controller: lastName,
-                                                borderColor: Color(0xFFCED4DA),
+                                                borderColor: const Color(0xFFCED4DA),
                                                 isInRow:
                                                     true, // ADD FOR ROW ALIGNMENT
                                                 showElevation: false,
@@ -1512,14 +1512,14 @@ class _EditTenantsState extends State<EditTenants> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text('Phone Number *',
+                                              const Text('Phone Number *',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color:
                                                           Color(0xFF101828))),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 10,
                                               ),
                                               CustomTextField(
@@ -1529,7 +1529,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                 //     signed: true, decimal: true),
                                                 hintText: 'Enter phone number',
                                                 controller: phoneNumber,
-                                                borderColor: Color(0xFFCED4DA),
+                                                borderColor: const Color(0xFFCED4DA),
                                                 isInRow:
                                                     true, // ADD FOR ROW ALIGNMENT
                                                 showElevation: false,
@@ -1562,7 +1562,7 @@ class _EditTenantsState extends State<EditTenants> {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 10,
                                       ),
                                       Expanded(
@@ -1571,14 +1571,14 @@ class _EditTenantsState extends State<EditTenants> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text('Work Number ',
+                                              const Text('Work Number ',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color:
                                                           Color(0xFF101828))),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 10,
                                               ),
                                               CustomTextField(
@@ -1588,7 +1588,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                 //     signed: true, decimal: true),
                                                 hintText: 'Enter work number',
                                                 controller: workNumber,
-                                                borderColor: Color(0xFFCED4DA),
+                                                borderColor: const Color(0xFFCED4DA),
                                                 isInRow:
                                                     true, // ADD FOR ROW ALIGNMENT
                                                 showElevation: false,
@@ -1621,14 +1621,14 @@ class _EditTenantsState extends State<EditTenants> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text('Email *',
+                                              const Text('Email *',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color:
                                                           Color(0xFF101828))),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 10,
                                               ),
                                               CustomTextField(
@@ -1638,7 +1638,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                 controller: email,
                                                 isInRow: true,
                                                 alterController: alterEmail,
-                                                borderColor: Color(0xFFCED4DA),
+                                                borderColor: const Color(0xFFCED4DA),
                                                 showElevation: false,
                                                 validator: (value) {
                                                   if (value == null ||
@@ -1657,7 +1657,7 @@ class _EditTenantsState extends State<EditTenants> {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 10,
                                       ),
                                       Expanded(
@@ -1666,14 +1666,14 @@ class _EditTenantsState extends State<EditTenants> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text('Alternative Email',
+                                              const Text('Alternative Email',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color:
                                                           Color(0xFF101828))),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 10,
                                               ),
                                               CustomTextField(
@@ -1684,7 +1684,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                 controller: alterEmail,
                                                 isInRow: true,
                                                 showElevation: false,
-                                                borderColor: Color(0xFFCED4DA),
+                                                borderColor: const Color(0xFFCED4DA),
                                                 alterController: email,
                                                 optional: true,
                                                 email: true,
@@ -1713,7 +1713,7 @@ class _EditTenantsState extends State<EditTenants> {
                                               children: [
                                                 Row(
                                                   children: [
-                                                    Text(
+                                                    const Text(
                                                       'Password *',
                                                       style: TextStyle(
                                                         fontSize: 13,
@@ -1723,7 +1723,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                             Color(0xFF101828),
                                                       ),
                                                     ),
-                                                    SizedBox(width: 7),
+                                                    const SizedBox(width: 7),
                                                     GestureDetector(
                                                       onTap: () {
                                                         _tooltipKey.currentState
@@ -1732,11 +1732,11 @@ class _EditTenantsState extends State<EditTenants> {
                                                       child: Tooltip(
                                                         key: _tooltipKey,
                                                         verticalOffset: 16.0,
-                                                        textStyle: TextStyle(
+                                                        textStyle: const TextStyle(
                                                           fontSize: 14,
                                                           color: Colors.white,
                                                         ),
-                                                        margin: EdgeInsets
+                                                        margin: const EdgeInsets
                                                             .symmetric(
                                                                 horizontal: 42),
                                                         message:
@@ -1749,7 +1749,7 @@ class _EditTenantsState extends State<EditTenants> {
     • Avoid strictly sequential patterns (e.g.,Akl 2345678!).
     • Don't use birthdays, names, addresses, or other personal information.
                                                 ''',
-                                                        child: Icon(
+                                                        child: const Icon(
                                                             Icons.info_outline,
                                                             size: 18),
                                                       ),
@@ -1757,10 +1757,10 @@ class _EditTenantsState extends State<EditTenants> {
                                                   ],
                                                 ),
                                                 IconButton(
-                                                  icon: Icon(Icons.refresh,
+                                                  icon: const Icon(Icons.refresh,
                                                       size: 20),
                                                   padding: EdgeInsets.zero,
-                                                  constraints: BoxConstraints(),
+                                                  constraints: const BoxConstraints(),
                                                   onPressed: () {
                                                     String generatedPassword =
                                                         generateRandomPassword();
@@ -1772,7 +1772,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                 ),
                                               ],
                                             ),
-                                            SizedBox(height: 6),
+                                            const SizedBox(height: 6),
                                             // Password Field
                                             CustomTextField(
                                               keyboardType: TextInputType.text,
@@ -1781,7 +1781,7 @@ class _EditTenantsState extends State<EditTenants> {
                                               controller: passWord,
                                               isInRow: true,
                                               showElevation: false,
-                                              borderColor: Color(0xFFCED4DA),
+                                              borderColor: const Color(0xFFCED4DA),
                                               suffixIcon: GestureDetector(
                                                 onTap: () {
                                                   setState(() {
@@ -1808,13 +1808,13 @@ class _EditTenantsState extends State<EditTenants> {
                                           ],
                                         ),
                                       ),
-                                      SizedBox(width: 10),
+                                      const SizedBox(width: 10),
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text(
+                                            const Text(
                                               'Date of Birth',
                                               style: TextStyle(
                                                 fontSize: 13,
@@ -1822,19 +1822,19 @@ class _EditTenantsState extends State<EditTenants> {
                                                 color: Color(0xFF101828),
                                               ),
                                             ),
-                                            SizedBox(height: 11),
+                                            const SizedBox(height: 11),
                                             Material(
                                               // elevation: 2,
                                               borderRadius:
                                                   BorderRadius.circular(8.0),
                                               child: Container(
                                                 height: 50,
-                                                padding: EdgeInsets.symmetric(
+                                                padding: const EdgeInsets.symmetric(
                                                     horizontal: 16.0),
                                                 decoration: BoxDecoration(
                                                   color: Colors.white,
                                                   border: Border.all(
-                                                    color: Color(0xFFCED4DA),
+                                                    color: const Color(0xFFCED4DA),
                                                   ),
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -1853,20 +1853,20 @@ class _EditTenantsState extends State<EditTenants> {
                                                   readOnly: true,
                                                   onTap: () =>
                                                       _selectDate(context),
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                     color: Color(0xFF8898aa),
                                                     fontSize: 16.0,
                                                     fontWeight: FontWeight.w400,
                                                   ),
                                                   decoration: InputDecoration(
                                                     hintText: 'Select Date',
-                                                    hintStyle: TextStyle(
+                                                    hintStyle: const TextStyle(
                                                         fontSize: 13,
                                                         color:
                                                             Color(0xFFb0b6c3)),
                                                     border: InputBorder.none,
                                                     suffixIcon: IconButton(
-                                                      icon: Icon(
+                                                      icon: const Icon(
                                                           Icons.calendar_today),
                                                       onPressed: () =>
                                                           _selectDate(context),
@@ -1889,28 +1889,28 @@ class _EditTenantsState extends State<EditTenants> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text('TaxPayer ID',
+                                              const Text('TaxPayer ID',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color:
                                                           Color(0xFF101828))),
-                                              SizedBox(height: 10),
+                                              const SizedBox(height: 10),
                                               CustomTextField(
                                                 keyboardType:
                                                     TextInputType.text,
                                                 hintText: 'Enter tax payer id',
                                                 controller: taxPayerId,
                                                 showElevation: false,
-                                                borderColor: Color(0xFFCED4DA),
+                                                borderColor: const Color(0xFFCED4DA),
                                                 optional: true,
                                               ),
                                             ],
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 10,
                                       ),
                                       Expanded(
@@ -1919,19 +1919,19 @@ class _EditTenantsState extends State<EditTenants> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text('Comments',
+                                              const Text('Comments',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color:
                                                           Color(0xFF101828))),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 10,
                                               ),
                                               Container(
                                                 height: 50,
-                                                padding: EdgeInsets.symmetric(
+                                                padding: const EdgeInsets.symmetric(
                                                     horizontal: 12.0,
                                                     vertical: 0),
                                                 decoration: BoxDecoration(
@@ -1949,7 +1949,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                     // ],
                                                     border: Border.all(
                                                       width: 0,
-                                                      color: Color(0xFFCED4DA),
+                                                      color: const Color(0xFFCED4DA),
                                                     ),
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -1959,7 +1959,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                         TextInputType.text,
                                                     controller: comments,
                                                     maxLines: 5,
-                                                    decoration: InputDecoration(
+                                                    decoration: const InputDecoration(
                                                       border: InputBorder.none,
                                                       hintStyle: TextStyle(
                                                           fontSize: 13,
@@ -1975,13 +1975,13 @@ class _EditTenantsState extends State<EditTenants> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 20,
                                   ),
-                                  Divider(
+                                  const Divider(
                                     color: Color(0xFFCED4DA),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 10,
                                   ),
                                   //emergency con
@@ -1989,12 +1989,12 @@ class _EditTenantsState extends State<EditTenants> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text('Emergency Contact',
+                                      const Text('Emergency Contact',
                                           style: TextStyle(
                                               fontSize: 17,
                                               fontWeight: FontWeight.bold,
                                               color: Color(0xFF152B51))),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 20,
                                       ),
                                       Row(
@@ -2005,14 +2005,14 @@ class _EditTenantsState extends State<EditTenants> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text('Contact Name',
+                                                  const Text('Contact Name',
                                                       style: TextStyle(
                                                           fontSize: 13,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           color: Color(
                                                               0xFF101828))),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 10,
                                                   ),
                                                   CustomTextField(
@@ -2023,14 +2023,14 @@ class _EditTenantsState extends State<EditTenants> {
                                                     controller: contactName,
                                                     showElevation: false,
                                                     borderColor:
-                                                        Color(0xFFCED4DA),
+                                                        const Color(0xFFCED4DA),
                                                     optional: true,
                                                   ),
                                                 ],
                                               ),
                                             ),
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 10,
                                           ),
                                           Expanded(
@@ -2039,14 +2039,14 @@ class _EditTenantsState extends State<EditTenants> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text('Relationship to Tenant',
+                                                  const Text('Relationship to Tenant',
                                                       style: TextStyle(
                                                           fontSize: 13,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           color: Color(
                                                               0xFF101828))),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 10,
                                                   ),
                                                   CustomTextField(
@@ -2058,7 +2058,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                         relationToTenant,
                                                     showElevation: false,
                                                     borderColor:
-                                                        Color(0xFFCED4DA),
+                                                        const Color(0xFFCED4DA),
                                                     optional: true,
                                                   ),
                                                 ],
@@ -2067,7 +2067,7 @@ class _EditTenantsState extends State<EditTenants> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 10,
                                       ),
                                       Row(
@@ -2078,14 +2078,14 @@ class _EditTenantsState extends State<EditTenants> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text('E-Mail',
+                                                  const Text('E-Mail',
                                                       style: TextStyle(
                                                           fontSize: 13,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           color: Color(
                                                               0xFF101828))),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 10,
                                                   ),
                                                   CustomTextField(
@@ -2096,7 +2096,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                     optional: true,
                                                     showElevation: false,
                                                     borderColor:
-                                                        Color(0xFFCED4DA),
+                                                        const Color(0xFFCED4DA),
                                                     alterController: email,
                                                     emrgencyController:
                                                         alterEmail,
@@ -2106,7 +2106,7 @@ class _EditTenantsState extends State<EditTenants> {
                                               ),
                                             ),
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 10,
                                           ),
                                           Expanded(
@@ -2115,14 +2115,14 @@ class _EditTenantsState extends State<EditTenants> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text('Phone Number',
+                                                  const Text('Phone Number',
                                                       style: TextStyle(
                                                           fontSize: 13,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           color: Color(
                                                               0xFF101828))),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 10,
                                                   ),
                                                   CustomTextField(
@@ -2142,7 +2142,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                     businessController:
                                                         phoneNumber,
                                                     borderColor:
-                                                        Color(0xFFCED4DA),
+                                                        const Color(0xFFCED4DA),
                                                     inputFormatters: [
                                                       FilteringTextInputFormatter
                                                           .digitsOnly,
@@ -2158,18 +2158,18 @@ class _EditTenantsState extends State<EditTenants> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 10,
                                       ),
                                     ],
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 10,
                                   ),
-                                  Divider(
+                                  const Divider(
                                     color: Color(0xFFCED4DA),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 10,
                                   ),
                                   //card accepted
@@ -2177,12 +2177,12 @@ class _EditTenantsState extends State<EditTenants> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text('Override Debit Card Fee',
+                                      const Text('Override Debit Card Fee',
                                           style: TextStyle(
                                               fontSize: 17,
                                               fontWeight: FontWeight.bold,
                                               color: Color(0xFF152B51))),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 10,
                                       ),
                                       Row(
@@ -2199,7 +2199,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                   }
                                                 });
                                               }),
-                                          Text('Enable Debit Card Fee',
+                                          const Text('Enable Debit Card Fee',
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold,
@@ -2213,13 +2213,13 @@ class _EditTenantsState extends State<EditTenants> {
                                                   BorderRadius.circular(8.0),
                                               child: Container(
                                                 height: 50,
-                                                padding: EdgeInsets.symmetric(
+                                                padding: const EdgeInsets.symmetric(
                                                     horizontal: 16.0,
                                                     vertical: 0),
                                                 decoration: BoxDecoration(
                                                   color: Colors.white,
                                                   border: Border.all(
-                                                    color: Color(0xFFCED4DA),
+                                                    color: const Color(0xFFCED4DA),
                                                   ),
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -2234,11 +2234,11 @@ class _EditTenantsState extends State<EditTenants> {
                                                   // ],
                                                 ),
                                                 child: TextField(
-                                                  keyboardType: TextInputType
+                                                  keyboardType: const TextInputType
                                                       .numberWithOptions(
                                                           decimal: true),
                                                   decoration: InputDecoration(
-                                                    hintStyle: TextStyle(
+                                                    hintStyle: const TextStyle(
                                                         fontSize: 13,
                                                         color:
                                                             Color(0xFFb0b6c3)),
@@ -2286,7 +2286,7 @@ class _EditTenantsState extends State<EditTenants> {
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         Padding(
@@ -2305,7 +2305,7 @@ class _EditTenantsState extends State<EditTenants> {
                                               BorderRadius.circular(8),
                                           color: Colors.white,
                                           border: Border.all(
-                                              color: Color(0x80152B51))
+                                              color: const Color(0x80152B51))
                                           // boxShadow: [
                                           //   BoxShadow(
                                           //     color: Colors.grey,
@@ -2329,7 +2329,7 @@ class _EditTenantsState extends State<EditTenants> {
                                       ),
                                     )),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 8,
                               ),
                               Expanded(
@@ -2519,7 +2519,7 @@ class _EditTenantsState extends State<EditTenants> {
                                             BorderRadius.circular(5.0),
                                         color: blueColor,
                                         boxShadow: [
-                                          BoxShadow(
+                                          const BoxShadow(
                                             color: Colors.grey,
                                             offset: Offset(0.0, 1.0), //(x,y)
                                             blurRadius: 6.0,
@@ -2528,7 +2528,7 @@ class _EditTenantsState extends State<EditTenants> {
                                       ),
                                       child: Center(
                                         child: isLoading
-                                            ? SpinKitFadingCircle(
+                                            ? const SpinKitFadingCircle(
                                                 color: Colors.white,
                                                 size: 25.0,
                                               )
@@ -2553,7 +2553,7 @@ class _EditTenantsState extends State<EditTenants> {
                             ],
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15,
                         ),
                       ],
@@ -2685,7 +2685,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                   }
                   node.unfocus(); // Dismiss the keyboard
                 },
-                child: Padding(
+                child: const Padding(
                   padding: EdgeInsets.all(14.0),
                   child: Text(
                     "Done",
@@ -2877,7 +2877,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                   child: Container(
                     height: 50,
                     padding:
-                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                        const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.0),
@@ -2892,7 +2892,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                           ? [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.2),
-                                offset: Offset(4, 4),
+                                offset: const Offset(4, 4),
                                 blurRadius: 3,
                               ),
                             ]
@@ -2932,7 +2932,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       decoration: InputDecoration(
                         suffixIcon: widget.suffixIcon,
                         hintStyle:
-                            TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                            const TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                         border: InputBorder.none,
                         hintText: widget.hintText,
                       ),
@@ -2947,13 +2947,13 @@ class CustomTextFieldState extends State<CustomTextField> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (widget.pass == true) SizedBox(width: 4),
+                              if (widget.pass == true) const SizedBox(width: 4),
                               Expanded(
                                 child: Padding(
                                   padding: const EdgeInsets.all(1.0),
                                   child: Text(
                                     _errorMessage!,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: Colors.red,
                                       fontSize: 11.0, // Even smaller font size
                                       height: 1.1, // Even tighter line height
@@ -2971,7 +2971,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                           ),
                         ),
                       )
-                    : SizedBox.shrink(),
+                    : const SizedBox.shrink(),
               ],
             );
           },

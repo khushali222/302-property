@@ -176,7 +176,8 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                 },
                 child: Row(
                   children: [
-                    Text("       Rental \n     Address",
+                    Text("Rental\nAddress",
+                        textAlign: TextAlign.left,
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold)),
                     // SizedBox(width: 5),
@@ -226,7 +227,8 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                 },
                 child: Row(
                   children: [
-                    Text("          Sent",
+                    Text("   Sent",
+                        textAlign: TextAlign.left,
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 3),
@@ -780,27 +782,20 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                     height: 20,
                   ),
                   //add propertytype
+
                   Padding(
-                    padding: const EdgeInsets.only(left: 4, right: 0),
-                    child: Row(
-                      //mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: titleBar(
-                            width: MediaQuery.of(context).size.width * .90,
-                            title: 'Email Logs',
-                          ),
-                        ),
-                        if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 4),
-                        if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 22),
-                      ],
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+                      child: titleBar(
+                        width: double.infinity,
+                        title: 'Email Logs',
+                      ),
                     ),
                   ),
                   SizedBox(
-                    height: 8,
+                    height: 10,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 12, right: 12),
@@ -809,7 +804,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                         if (MediaQuery.of(context).size.width < 500)
                           SizedBox(width: 1),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 24),
+                          SizedBox(width: 18),
                         Material(
                           elevation: 2,
                           borderRadius: BorderRadius.circular(8),
@@ -874,9 +869,10 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                       ],
                     ),
                   ),
-                  if (MediaQuery.of(context).size.width < 500)
+                  // if (MediaQuery.of(context).size.width < 500)
                     Padding(
-                      padding: const EdgeInsets.all(15.0),
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width < 500 ? 15 : 28),
                       child: FutureBuilder<Email_log_table>(
                         future: futureEmailss,
                         builder: (context, snapshot) {
@@ -887,7 +883,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                             return Center(
                                 child: Text('Error: ${snapshot.error}'));
                           } else if (!snapshot.hasData ||
-                              snapshot.data!.emails!.isEmpty) {
+                              snapshot.data?.emails?.isEmpty == true) {
                             return Container(
                               height: MediaQuery.of(context).size.height * .5,
                               child: Center(
@@ -916,7 +912,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                             );
                           } else {
                             // Store all emails for frontend pagination
-                            _allEmails = snapshot.data!.emails!;
+                            _allEmails = snapshot.data?.emails ?? [];
                             // Apply search filter if needed
                             List<Emails> filteredEmails = _allEmails;
                             if (searchvalue.isNotEmpty) {
@@ -1115,7 +1111,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                                       ?.isNotEmpty ==
                                                                   true
                                                               ? '${Propertytype.rentalAddress}'
-                                                              : '         N/A',
+                                                              : 'N/A',
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:

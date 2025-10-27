@@ -48,7 +48,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
 
       final response = await http.get(
         Uri.parse(
-            'https://staging.cloudrentalmanager.com/api/mortgage/details/${widget.mortgageData!['_id']}'),
+            '${Api_url}/api/mortgage/details/${widget.mortgageData!['_id']}'),
         headers: {
           'Content-Type': 'application/json',
           'authorization': 'CRM $token',
@@ -138,19 +138,18 @@ class _MortgageSummaryState extends State<MortgageSummary> {
     final dateProvider = Provider.of<DateProvider>(context);
     if (_isLoading) {
       return Scaffold(
-        appBar: widget_302.App_Bar(context: context),
-        backgroundColor: Colors.white,
-        drawer: CustomDrawer(
-          currentpage: "Mortgage Summary",
-          dropdown: true,
-        ),
-        body:  Center(
-          child: SpinKitFadingCircle(
-            color: Colors.black,
-            size: 45,
+          appBar: widget_302.App_Bar(context: context),
+          backgroundColor: Colors.white,
+          drawer: CustomDrawer(
+            currentpage: "Mortgage Summary",
+            dropdown: true,
           ),
-        )
-      );
+          body: Center(
+            child: SpinKitFadingCircle(
+              color: Colors.black,
+              size: 44,
+            ),
+          ));
     }
 
     if (mortgageData == null) {
@@ -183,11 +182,16 @@ class _MortgageSummaryState extends State<MortgageSummary> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
             Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: titleBar(
-                width: MediaQuery.of(context).size.width * .90,
-                title: 'Mortgage Summary',
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0, vertical: 8.0),
+              child: Padding(
+                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+                child: titleBar(
+                  width: double.infinity,
+                  title: 'Mortgage Summary',
+                ),
               ),
             ),
             Padding(
@@ -450,6 +454,15 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                   ),
 
                   const SizedBox(height: 20),
+                  const SizedBox(height: 20),
+
+                  // Properties Section
+                  _buildPropertiesSection(),
+
+                  const SizedBox(height: 20),
+
+                  // Payment Information Section
+                  _buildPaymentInfoSection(),
 
                   // Property Information
                   // _buildInfoCard(
@@ -633,6 +646,292 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                 color: Color(0xFF1E3A8A),
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPropertiesSection() {
+    final properties = mortgageData!['properties'] as List<dynamic>? ?? [];
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Properties (${properties.length})',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF1E3A8A),
+            ),
+          ),
+          const SizedBox(height: 12),
+          ...properties
+              .map((property) => _buildPropertyCard(property))
+              .toList(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPropertyCard(Map<String, dynamic> property) {
+    final owner = property['owner'] as Map<String, dynamic>? ?? {};
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  property['address'] ?? 'N/A',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1E3A8A),
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  property['rental_id'] ?? '',
+                  style: const TextStyle(
+                    fontSize: 10,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '${property['city'] ?? ''}, ${property['state'] ?? ''} ${property['zipcode'] ?? ''}',
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 8),
+          if (owner.isNotEmpty) ...[
+            const Divider(height: 1),
+            const SizedBox(height: 8),
+            Text(
+              owner['name'] ?? 'N/A',
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF1E3A8A),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const FaIcon(
+                  FontAwesomeIcons.phone,
+                  size: 12,
+                  color: Colors.grey,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  owner['phone'] ?? 'N/A',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                const FaIcon(
+                  FontAwesomeIcons.envelope,
+                  size: 12,
+                  color: Colors.grey,
+                ),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    owner['email'] ?? 'N/A',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaymentInfoSection() {
+    final paymentHistory =
+        mortgageData!['payment_history'] as Map<String, dynamic>? ?? {};
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Payment Information',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF1E3A8A),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _buildPaymentDateRow(
+                  'Last Payment Date',
+                  paymentHistory['last_payment_date'] ??
+                      mortgageData!['last_payment_date'],
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _buildPaymentDateRow(
+                  'Next Payment Date',
+                  paymentHistory['next_payment_date'] ??
+                      mortgageData!['next_payment_date'],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: _buildPaymentStatCard(
+                  'Total Payments Made',
+                  '${paymentHistory['total_payments_made'] ?? 0}',
+                  Colors.green,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _buildPaymentStatCard(
+                  'Missed Payments',
+                  '${paymentHistory['missed_payments'] ?? 0}',
+                  Colors.red,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaymentDateRow(String label, String? dateString) {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    String formattedDate = 'N/A';
+
+    if (dateString != null && dateString.isNotEmpty) {
+      try {
+        final date = DateTime.parse(dateString);
+        final apiFormatDate = DateFormat('yyyy-MM-dd').format(date);
+        formattedDate = dateProvider.formatCurrentDate(apiFormatDate);
+      } catch (e) {
+        formattedDate = 'Invalid Date';
+      }
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 12,
+            color: Colors.grey,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          formattedDate,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF1E3A8A),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPaymentStatCard(String label, String value, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: color,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),

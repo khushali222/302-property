@@ -77,9 +77,9 @@ class _Vendor_tableState extends State<Vendor_table> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-          color: Color(0xFFF4F8FF),
+          color: const Color(0xFFF4F8FF),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Color(0xFFDBE0E5))),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -92,7 +92,7 @@ class _Vendor_tableState extends State<Vendor_table> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -123,10 +123,14 @@ class _Vendor_tableState extends State<Vendor_table> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Name ", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold))
-                        : Text("Name", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
+                        ? Text("Name ",
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold))
+                        : Text("Name",
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
+                    const SizedBox(width: 3),
                     ascending1
                         ? Padding(
                             padding: const EdgeInsets.only(top: 7, left: 2),
@@ -141,7 +145,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
-                              color:blueColor,
+                              color: blueColor,
                             ),
                           ),
                   ],
@@ -173,8 +177,10 @@ class _Vendor_tableState extends State<Vendor_table> {
                 },
                 child: Row(
                   children: [
-                    Text("  Phone  Number", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
-                    SizedBox(width: 5),
+                    Text("  Phone  Number",
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 5),
                     ascending2
                         ? Padding(
                             padding: const EdgeInsets.only(top: 7, left: 2),
@@ -189,7 +195,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
-                              color:blueColor,
+                              color: blueColor,
                             ),
                           ),
                   ],
@@ -316,19 +322,19 @@ class _Vendor_tableState extends State<Vendor_table> {
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this vendor!",
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       content: Column(
         children: <Widget>[
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           SizedBox(
             height: 45,
             child: TextField(
               controller: reason,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Enter reason for deletion',
                   contentPadding: EdgeInsets.only(top: 8, left: 15)),
@@ -338,7 +344,7 @@ class _Vendor_tableState extends State<Vendor_table> {
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -362,10 +368,11 @@ class _Vendor_tableState extends State<Vendor_table> {
           },
           color: blueColor,
         ),
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -509,7 +516,7 @@ class _Vendor_tableState extends State<Vendor_table> {
           color: Colors.white,
           child: Container(
             height: 55,
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(4.0),
@@ -528,17 +535,17 @@ class _Vendor_tableState extends State<Vendor_table> {
                     _changeRowsPerPage(newValue);
                   }
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_drop_down,
                   size: 40,
                 ),
-                style: TextStyle(color: Colors.black, fontSize: 17),
+                style: const TextStyle(color: Colors.black, fontSize: 17),
                 dropdownColor: Colors.white,
               ),
             ),
           ),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         IconButton(
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
@@ -555,7 +562,7 @@ class _Vendor_tableState extends State<Vendor_table> {
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         IconButton(
           icon: FaIcon(
@@ -622,92 +629,89 @@ class _Vendor_tableState extends State<Vendor_table> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(height: 20),
-                  //add propertytype
+                  const SizedBox(height: 20),
+                  // Header Section with Title and Add Button
                   Padding(
-                    padding: const EdgeInsets.only(left: 0, right: 0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
                     child: Row(
-                      //  mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: titleBar(
-                            width: permissions!.vendorAdd! ? MediaQuery.of(context).size.width * .65 :MediaQuery.of(context).size.width * .93,
-                            title: 'Vendor',
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 13,),
+                        Expanded(
+                          flex: permissions!.vendorAdd! ? 3 : 1,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: titleBar(
+                              width: double.infinity,
+                              title: 'Vendor',
+                            ),
                           ),
                         ),
                         if (permissions!.vendorAdd!)
-                          GestureDetector(
-                            onTap: () async {
-                              final result = await Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) => Add_vendor()));
-                              if (result == true) {
-                                setState(() {
-                                  futurePropertyTypes =
-                                      VendorRepository(baseUrl: '')
-                                          .getVendors();
-                                });
-                                // fetchvendoradded();
-                              }
-                            },
-                            child: Container(
-                              height: (MediaQuery.of(context).size.width < 500)
-                                  ? 50
-                                  : MediaQuery.of(context).size.width * 0.058,
-
-                              // height:  MediaQuery.of(context).size.width * 0.07,
-                              // height:  40,
-                              width: (MediaQuery.of(context).size.width < 500)
-                                  ? MediaQuery.of(context).size.width * 0.25
-                                  : MediaQuery.of(context).size.width * 0.2,
-                              decoration: BoxDecoration(
-                                color: blueColor,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
+                          Flexible(
+                            flex: 1,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  final result = await Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                          builder: (context) =>
+                                              const Add_vendor()));
+                                  if (result == true) {
+                                    setState(() {
+                                      futurePropertyTypes =
+                                          VendorRepository(baseUrl: '')
+                                              .getVendors();
+                                    });
+                                  }
+                                },
+                                child: Container(
+                                  height:
+                                      (MediaQuery.of(context).size.width < 768)
+                                          ? 50
+                                          : 60,
+                                  decoration: BoxDecoration(
+                                    color: blueColor,
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Center(
+                                    child: Text(
                                       "+ Add",
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 16
-                                                : 20,
+                                        fontSize: 16,
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: permissions!.vendorAdd! ? 6 : 0),
+                          SizedBox(width: 3),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 22),
+                          SizedBox(width: 18),
                       ],
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   //search
                   Padding(
                     padding: const EdgeInsets.only(left: 11, right: 11),
                     child: Row(
                       children: [
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 2),
+                          const SizedBox(width: 2),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 24),
+                          const SizedBox(width: 18),
                         Material(
                           elevation: 3,
                           borderRadius: BorderRadius.circular(8),
                           child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
                             // height: 40,
                             height: MediaQuery.of(context).size.width < 500
                                 ? 45
@@ -719,7 +723,8 @@ class _Vendor_tableState extends State<Vendor_table> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(8),
                                 // border: Border.all(color: Colors.grey),
-                                border: Border.all(color: Color(0xFF8A95A8))),
+                                border:
+                                    Border.all(color: const Color(0xFF8A95A8))),
                             child: Stack(
                               children: [
                                 Positioned.fill(
@@ -754,9 +759,9 @@ class _Vendor_tableState extends State<Vendor_table> {
                                               ? 14
                                               : 18,
                                           // fontWeight: FontWeight.bold,
-                                          color: Color(0xFF8A95A8),
+                                          color: const Color(0xFF8A95A8),
                                         ),
-                                        contentPadding: EdgeInsets.only(
+                                        contentPadding: const EdgeInsets.only(
                                             left: 5, bottom: 10, top: 4)),
                                   ),
                                 ),
@@ -802,11 +807,12 @@ class _Vendor_tableState extends State<Vendor_table> {
                       ],
                     ),
                   ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(height: 25),
-                  if (MediaQuery.of(context).size.width < 500)
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   const SizedBox(height: 25),
+                  // if (MediaQuery.of(context).size.width < 500)
                     Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width < 500 ? 11 : 28),
                       child: FutureBuilder<List<Vendor>>(
                         future: futurePropertyTypes,
                         builder: (context, snapshot) {
@@ -830,7 +836,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                                       height: 200,
                                       width: 200,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     Text(
@@ -872,9 +878,9 @@ class _Vendor_tableState extends State<Vendor_table> {
                             return SingleChildScrollView(
                               child: Column(
                                 children: [
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   _buildHeaders(),
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   Container(
                                     child: Column(
                                       children: currentPageData
@@ -887,16 +893,16 @@ class _Vendor_tableState extends State<Vendor_table> {
                                         Vendor Propertytype = entry.value;
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
-                                          margin:
-                                          EdgeInsets.symmetric(vertical: 6),
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
-                                                ? Color(0xFFF4F8FF)
+                                                ? const Color(0xFFF4F8FF)
                                                 : Colors.white,
                                             border: Border.all(
-                                                color: Color(0xFFDBE0E5)),
+                                                color: const Color(0xFFDBE0E5)),
                                             borderRadius:
-                                            BorderRadius.circular(10),
+                                                BorderRadius.circular(10),
                                           ),
                                           child: Column(
                                             children: <Widget>[
@@ -940,12 +946,15 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                         },
                                                         child: Container(
                                                           margin:
-                                                              EdgeInsets.only(
+                                                              const EdgeInsets
+                                                                  .only(
                                                                   left: 5),
                                                           padding: !isExpanded
-                                                              ? EdgeInsets.only(
+                                                              ? const EdgeInsets
+                                                                  .only(
                                                                   bottom: 10)
-                                                              : EdgeInsets.only(
+                                                              : const EdgeInsets
+                                                                  .only(
                                                                   top: 10),
                                                           child: FaIcon(
                                                             isExpanded
@@ -1093,9 +1102,10 @@ class _Vendor_tableState extends State<Vendor_table> {
                                               ),
                                               if (isExpanded)
                                                 Container(
-                                                  padding: EdgeInsets.symmetric(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
                                                       horizontal: 2.0),
-                                                  margin: EdgeInsets.only(
+                                                  margin: const EdgeInsets.only(
                                                       bottom: 2),
                                                   child: SingleChildScrollView(
                                                     child: Column(
@@ -1155,140 +1165,142 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                       ),*/
                                                           ],
                                                         ),
-                                                        SizedBox(
+                                                        const SizedBox(
                                                           height: 10,
                                                         ),
                                                         Row(
                                                           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
-                                                            if(permissions!.vendorEdit!)
-                                                            Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap:
-                                                                    () async {
-                                                                  var check = await Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) => edit_vendor(
-                                                                                vender_id: Propertytype.vendorId,
-                                                                              )));
-                                                                  if (check ==
-                                                                      true) {
-                                                                    setState(
-                                                                        () {
-                                                                      futurePropertyTypes =
-                                                                          VendorRepository(baseUrl: '')
-                                                                              .getVendors();
-                                                                    });
-                                                                  }
-                                                                },
+                                                            if (permissions!
+                                                                .vendorEdit!)
+                                                              Expanded(
                                                                 child:
-                                                                Container(
-                                                                  height: 40,
-                                                                  decoration:
-                                                                  BoxDecoration(
-                                                                    border: Border.all(
-                                                                        color: Colors
-                                                                            .green,
-                                                                        width:
-                                                                        1.5),
-                                                                    borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(8),
-                                                                  ), // color:Colors.grey[100],
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                    crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .center,
-                                                                    children: [
-                                                                      FaIcon(
-                                                                        FontAwesomeIcons
-                                                                            .edit,
-                                                                        size:
-                                                                        15,
-                                                                        color: Colors
-                                                                            .green,
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                        10,
-                                                                      ),
-                                                                      Text(
-                                                                        "Edit",
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                            Colors.green,
-                                                                            fontWeight: FontWeight.bold),
-                                                                      ),
-                                                                    ],
+                                                                    GestureDetector(
+                                                                  onTap:
+                                                                      () async {
+                                                                    var check = await Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                            builder: (context) => edit_vendor(
+                                                                                  vender_id: Propertytype.vendorId,
+                                                                                )));
+                                                                    if (check ==
+                                                                        true) {
+                                                                      setState(
+                                                                          () {
+                                                                        futurePropertyTypes =
+                                                                            VendorRepository(baseUrl: '').getVendors();
+                                                                      });
+                                                                    }
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    height: 40,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      border: Border.all(
+                                                                          color: Colors
+                                                                              .green,
+                                                                          width:
+                                                                              1.5),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              8),
+                                                                    ), // color:Colors.grey[100],
+                                                                    child:
+                                                                        const Row(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .center,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .center,
+                                                                      children: [
+                                                                        FaIcon(
+                                                                          FontAwesomeIcons
+                                                                              .edit,
+                                                                          size:
+                                                                              15,
+                                                                          color:
+                                                                              Colors.green,
+                                                                        ),
+                                                                        SizedBox(
+                                                                          width:
+                                                                              10,
+                                                                        ),
+                                                                        Text(
+                                                                          "Edit",
+                                                                          style: TextStyle(
+                                                                              color: Colors.green,
+                                                                              fontWeight: FontWeight.bold),
+                                                                        ),
+                                                                      ],
+                                                                    ),
                                                                   ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                            if(permissions!.vendorEdit!)
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            if(permissions!.vendorDelete!)
-                                                            Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap: () {
-                                                                  _showAlert(
-                                                                      context,
-                                                                      Propertytype
-                                                                          .vendorId!);
-                                                                },
+                                                            if (permissions!
+                                                                .vendorEdit!)
+                                                              const SizedBox(
+                                                                width: 5,
+                                                              ),
+                                                            if (permissions!
+                                                                .vendorDelete!)
+                                                              Expanded(
                                                                 child:
-                                                                Container(
-                                                                  height: 40,
-                                                                  decoration:
-                                                                  BoxDecoration(
-                                                                    border: Border.all(
-                                                                        color: Colors
-                                                                            .red,
-                                                                        width:
-                                                                        1.5),
-                                                                    borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(8),
-                                                                  ),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                    crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .center,
-                                                                    children: [
-                                                                      FaIcon(
-                                                                        FontAwesomeIcons
-                                                                            .trashCan,
-                                                                        size:
-                                                                        15,
-                                                                        color: Colors
-                                                                            .red,
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                        10,
-                                                                      ),
-                                                                      Text(
-                                                                        "Delete",
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                            Colors.red,
-                                                                            fontWeight: FontWeight.bold),
-                                                                      )
-                                                                    ],
+                                                                    GestureDetector(
+                                                                  onTap: () {
+                                                                    _showAlert(
+                                                                        context,
+                                                                        Propertytype
+                                                                            .vendorId!);
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    height: 40,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      border: Border.all(
+                                                                          color: Colors
+                                                                              .red,
+                                                                          width:
+                                                                              1.5),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              8),
+                                                                    ),
+                                                                    child:
+                                                                        const Row(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .center,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .center,
+                                                                      children: [
+                                                                        FaIcon(
+                                                                          FontAwesomeIcons
+                                                                              .trashCan,
+                                                                          size:
+                                                                              15,
+                                                                          color:
+                                                                              Colors.red,
+                                                                        ),
+                                                                        SizedBox(
+                                                                          width:
+                                                                              10,
+                                                                        ),
+                                                                        Text(
+                                                                          "Delete",
+                                                                          style: TextStyle(
+                                                                              color: Colors.red,
+                                                                              fontWeight: FontWeight.bold),
+                                                                        )
+                                                                      ],
+                                                                    ),
                                                                   ),
                                                                 ),
                                                               ),
-                                                            ),
                                                           ],
                                                         ),
                                                       ],
@@ -1302,20 +1314,21 @@ class _Vendor_tableState extends State<Vendor_table> {
                                       }).toList(),
                                     ),
                                   ),
-                                  SizedBox(height: 20),
+                                  const SizedBox(height: 20),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       Row(
                                         children: [
                                           // Text('Rows per page:'),
-                                          SizedBox(width: 10),
+                                          const SizedBox(width: 10),
                                           Material(
                                             elevation: 3,
                                             child: Container(
                                               height: 40,
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 12.0),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12.0),
                                               decoration: BoxDecoration(
                                                 border: Border.all(
                                                     color: Colors.grey),
@@ -1420,176 +1433,176 @@ class _Vendor_tableState extends State<Vendor_table> {
                         },
                       ),
                     ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    FutureBuilder<List<Vendor>>(
-                      future: futurePropertyTypes,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return ShimmerTabletTable();
-                        } else if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
-                          return Container(
-                            height: MediaQuery.of(context).size.height * .5,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    "assets/images/no_data.jpg",
-                                    height: 200,
-                                    width: 200,
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    "No Data Available",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor,
-                                        fontSize: 16),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        } else {
-                          _tableData = snapshot.data!;
-                          if (searchvalue != "") {
-                            _tableData = snapshot.data!
-                                .where((property) =>
-                                    property.vendorName!
-                                        .toLowerCase()
-                                        .contains(searchvalue.toLowerCase()) ||
-                                    property.vendorPhoneNumber!
-                                        .toLowerCase()
-                                        .contains(searchvalue.toLowerCase()))
-                                .toList();
-                          }
-                          totalrecords = _tableData.length;
-                          return SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                Container(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 22.0, vertical: 5),
-                                    child: Column(
-                                      children: [
-                                        SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          child: Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .91,
-                                            child: Table(
-                                              defaultColumnWidth:
-                                                  IntrinsicColumnWidth(),
-                                              children: [
-                                                TableRow(
-                                                  decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        // color: blueColor
-                                                        ),
-                                                  ),
-                                                  children: [
-                                                    _buildHeader(
-                                                        'Name',
-                                                        0,
-                                                        (property) => property
-                                                            .vendorName!),
-                                                    _buildHeader(
-                                                        'PhoneNumber',
-                                                        1,
-                                                        (property) => property
-                                                            .vendorPhoneNumber!),
-                                                    _buildHeader(
-                                                        'Email', 2, null),
-                                                    _buildHeader(
-                                                        'Actions', 4, null),
-                                                  ],
-                                                ),
-                                                TableRow(
-                                                  decoration: BoxDecoration(
-                                                    border: Border.symmetric(
-                                                        horizontal:
-                                                            BorderSide.none),
-                                                  ),
-                                                  children: List.generate(
-                                                      4,
-                                                      (index) => TableCell(
-                                                          child: Container(
-                                                              height: 20))),
-                                                ),
-                                                for (var i = 0;
-                                                    i < _pagedData.length;
-                                                    i++)
-                                                  TableRow(
-                                                    decoration: BoxDecoration(
-                                                      border: Border(
-                                                        left: BorderSide(
-                                                            color: blueColor),
-                                                        right: BorderSide(
-                                                            color: blueColor),
-                                                        top: BorderSide(
-                                                            color: blueColor),
-                                                        bottom: i ==
-                                                                _pagedData
-                                                                        .length -
-                                                                    1
-                                                            ? BorderSide(
-                                                                color:
-                                                                    blueColor)
-                                                            : BorderSide.none,
-                                                      ),
-                                                    ),
-                                                    children: [
-
-                                                      // Text(
-                                                      //     '${_pagedData[i].propertyType!}'),
-                                                      // Text(
-                                                      //     '${_pagedData[i].propertysubType!}'),
-                                                      // Text(
-                                                      //     '${formatDate(_pagedData[i].createdAt!)}'),
-                                                      // Text(
-                                                      //     '${formatDate(_pagedData[i].updatedAt!)}'),
-                                                      _buildDataCell(
-                                                          _pagedData[i]
-                                                              .vendorName!),
-                                                      _buildDataCell(_pagedData[
-                                                              i]
-                                                          .vendorPhoneNumber!),
-                                                      _buildDataCell(
-                                                          _pagedData[i]
-                                                              .vendorEmail!),
-
-                                                      _buildActionsCell(
-                                                          _pagedData[i]),
-                                                    ],
-                                                  ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(height: 25),
-                                        _buildPaginationControls(),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 25),
-                              ],
-                            ),
-                          );
-                        }
-                      },
-                    ),
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   FutureBuilder<List<Vendor>>(
+                  //     future: futurePropertyTypes,
+                  //     builder: (context, snapshot) {
+                  //       if (snapshot.connectionState ==
+                  //           ConnectionState.waiting) {
+                  //         return ShimmerTabletTable();
+                  //       } else if (snapshot.hasError) {
+                  //         return Center(
+                  //             child: Text('Error: ${snapshot.error}'));
+                  //       } else if (!snapshot.hasData ||
+                  //           snapshot.data!.isEmpty) {
+                  //         return Container(
+                  //           height: MediaQuery.of(context).size.height * .5,
+                  //           child: Center(
+                  //             child: Column(
+                  //               mainAxisAlignment: MainAxisAlignment.center,
+                  //               crossAxisAlignment: CrossAxisAlignment.center,
+                  //               children: [
+                  //                 Image.asset(
+                  //                   "assets/images/no_data.jpg",
+                  //                   height: 200,
+                  //                   width: 200,
+                  //                 ),
+                  //                 const SizedBox(
+                  //                   height: 10,
+                  //                 ),
+                  //                 Text(
+                  //                   "No Data Available",
+                  //                   style: TextStyle(
+                  //                       fontWeight: FontWeight.bold,
+                  //                       color: blueColor,
+                  //                       fontSize: 16),
+                  //                 )
+                  //               ],
+                  //             ),
+                  //           ),
+                  //         );
+                  //       } else {
+                  //         _tableData = snapshot.data!;
+                  //         if (searchvalue != "") {
+                  //           _tableData = snapshot.data!
+                  //               .where((property) =>
+                  //                   property.vendorName!
+                  //                       .toLowerCase()
+                  //                       .contains(searchvalue.toLowerCase()) ||
+                  //                   property.vendorPhoneNumber!
+                  //                       .toLowerCase()
+                  //                       .contains(searchvalue.toLowerCase()))
+                  //               .toList();
+                  //         }
+                  //         totalrecords = _tableData.length;
+                  //         return SingleChildScrollView(
+                  //           child: Column(
+                  //             children: [
+                  //               Container(
+                  //                 child: Padding(
+                  //                   padding: const EdgeInsets.symmetric(
+                  //                       horizontal: 22.0, vertical: 5),
+                  //                   child: Column(
+                  //                     children: [
+                  //                       SingleChildScrollView(
+                  //                         scrollDirection: Axis.horizontal,
+                  //                         child: Container(
+                  //                           width: MediaQuery.of(context)
+                  //                                   .size
+                  //                                   .width *
+                  //                               .91,
+                  //                           child: Table(
+                  //                             defaultColumnWidth:
+                  //                                 const IntrinsicColumnWidth(),
+                  //                             children: [
+                  //                               TableRow(
+                  //                                 decoration: BoxDecoration(
+                  //                                   border: Border.all(
+                  //                                       // color: blueColor
+                  //                                       ),
+                  //                                 ),
+                  //                                 children: [
+                  //                                   _buildHeader(
+                  //                                       'Name',
+                  //                                       0,
+                  //                                       (property) => property
+                  //                                           .vendorName!),
+                  //                                   _buildHeader(
+                  //                                       'PhoneNumber',
+                  //                                       1,
+                  //                                       (property) => property
+                  //                                           .vendorPhoneNumber!),
+                  //                                   _buildHeader(
+                  //                                       'Email', 2, null),
+                  //                                   _buildHeader(
+                  //                                       'Actions', 4, null),
+                  //                                 ],
+                  //                               ),
+                  //                               TableRow(
+                  //                                 decoration:
+                  //                                     const BoxDecoration(
+                  //                                   border: Border.symmetric(
+                  //                                       horizontal:
+                  //                                           BorderSide.none),
+                  //                                 ),
+                  //                                 children: List.generate(
+                  //                                     4,
+                  //                                     (index) => TableCell(
+                  //                                         child: Container(
+                  //                                             height: 20))),
+                  //                               ),
+                  //                               for (var i = 0;
+                  //                                   i < _pagedData.length;
+                  //                                   i++)
+                  //                                 TableRow(
+                  //                                   decoration: BoxDecoration(
+                  //                                     border: Border(
+                  //                                       left: BorderSide(
+                  //                                           color: blueColor),
+                  //                                       right: BorderSide(
+                  //                                           color: blueColor),
+                  //                                       top: BorderSide(
+                  //                                           color: blueColor),
+                  //                                       bottom: i ==
+                  //                                               _pagedData
+                  //                                                       .length -
+                  //                                                   1
+                  //                                           ? BorderSide(
+                  //                                               color:
+                  //                                                   blueColor)
+                  //                                           : BorderSide.none,
+                  //                                     ),
+                  //                                   ),
+                  //                                   children: [
+                  //                                     // Text(
+                  //                                     //     '${_pagedData[i].propertyType!}'),
+                  //                                     // Text(
+                  //                                     //     '${_pagedData[i].propertysubType!}'),
+                  //                                     // Text(
+                  //                                     //     '${formatDate(_pagedData[i].createdAt!)}'),
+                  //                                     // Text(
+                  //                                     //     '${formatDate(_pagedData[i].updatedAt!)}'),
+                  //                                     _buildDataCell(
+                  //                                         _pagedData[i]
+                  //                                             .vendorName!),
+                  //                                     _buildDataCell(_pagedData[
+                  //                                             i]
+                  //                                         .vendorPhoneNumber!),
+                  //                                     _buildDataCell(
+                  //                                         _pagedData[i]
+                  //                                             .vendorEmail!),
+                  //
+                  //                                     _buildActionsCell(
+                  //                                         _pagedData[i]),
+                  //                                   ],
+                  //                                 ),
+                  //                             ],
+                  //                           ),
+                  //                         ),
+                  //                       ),
+                  //                       const SizedBox(height: 25),
+                  //                       _buildPaginationControls(),
+                  //                     ],
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //               const SizedBox(height: 25),
+                  //             ],
+                  //           ),
+                  //         );
+                  //       }
+                  //     },
+                  //   ),
                 ],
               ),
             )
@@ -1605,11 +1618,11 @@ class _Vendor_tableState extends State<Vendor_table> {
                     height: 200,
                     fit: BoxFit.fill,
                   ),
-                  Text(
+                  const Text(
                     'No Internet',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     'Check your internet connection',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),

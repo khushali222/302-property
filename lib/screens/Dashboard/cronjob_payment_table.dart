@@ -79,15 +79,15 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
       children: [
         // Title with border and rounded corners
         Container(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             color: blueColor, // Background color
-            borderRadius: BorderRadius.only(
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(13),
               topRight: Radius.circular(13),
             ),
           ),
-          child: Center(
+          child: const Center(
             child: Text(
               "Payments Last 7 Days",
               textAlign: TextAlign.center,
@@ -103,11 +103,12 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
           Container(
             decoration: BoxDecoration(
               color: Colors.blue.shade50,
-              borderRadius: BorderRadius.horizontal(
+              borderRadius: const BorderRadius.horizontal(
                 left: Radius.circular(0),
                 right: Radius.circular(0),
               ),
-              border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+              border:
+                  Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
             ),
             child: ListTile(
               contentPadding: EdgeInsets.zero,
@@ -121,7 +122,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    child: Icon(
+                    child: const Icon(
                       Icons.expand_less,
                       color: Colors.transparent,
                     ),
@@ -151,20 +152,20 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                       child: Row(
                         children: [
                           width < 400
-                              ? Text("  Rental\n Address",
+                              ? const Text("  Rental\n Address",
                                   style: TextStyle(
                                     color: Color.fromRGBO(50, 75, 119, 1),
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                   ))
-                              : Text("  Rental\n Address",
+                              : const Text("  Rental\n Address",
                                   style: TextStyle(
                                     color: Color.fromRGBO(50, 75, 119, 1),
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                   )),
                           // Text("Property", style: TextStyle(color: Colors.white)),
-                          SizedBox(width: 3),
+                          const SizedBox(width: 3),
                           // ascending1
                           //     ? Padding(
                           //         padding: const EdgeInsets.only(top: 7, left: 2),
@@ -208,7 +209,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                           // Sorting logic here
                         });
                       },
-                      child: Row(
+                      child: const Row(
                         children: [
                           Text("     Tenant\n      Name",
                               style: TextStyle(
@@ -261,7 +262,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                           // Sorting logic here
                         });
                       },
-                      child: Row(
+                      child: const Row(
                         children: [
                           Text("      Response",
                               style: TextStyle(
@@ -280,10 +281,10 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
           ),
         if (policyList.isEmpty)
           Container(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: Colors.grey.shade300, // Background color
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(13),
                 bottomRight: Radius.circular(13),
               ),
@@ -498,10 +499,10 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
       type: AlertType.warning,
       title: null,
       desc: null,
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
-      content: Column(
+      content: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 15),
@@ -527,7 +528,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "Confirm",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -571,10 +572,10 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
       type: AlertType.warning,
       title: null,
       desc: null,
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
-      content: Column(
+      content: const Column(
         children: [
           SizedBox(height: 15),
           Text(
@@ -594,7 +595,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "Yes",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -617,7 +618,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
           color: blueColor,
         ),
         DialogButton(
-          child: Text(
+          child: const Text(
             "No",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -638,8 +639,8 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
       content: Column(
         // crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          SizedBox(height: 15),
-          Text(
+          const SizedBox(height: 15),
+          const Text(
             "Reschedule Payment",
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -648,19 +649,19 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
               color: Colors.black,
             ),
           ),
-          SizedBox(height: 10),
-          Text(
+          const SizedBox(height: 10),
+          const Text(
             "Please select a payment date to retry. The date must be tomorrow or later:",
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 14, color: Colors.black87),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           SizedBox(
             height: 60,
             child: CustomTextField(
               onTap: () async {
                 DateTime now = DateTime.now();
-                DateTime tomorrow = now.add(Duration(days: 1));
+                DateTime tomorrow = now.add(const Duration(days: 1));
                 DateTime? pickedDate = await showDatePicker(
                   context: context,
                   initialDate: tomorrow,
@@ -696,7 +697,42 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
               },
               readOnnly: true,
               suffixIcon: IconButton(
-                onPressed: () {},
+                onPressed: () async {
+                  DateTime now = DateTime.now();
+                  DateTime tomorrow = now.add(const Duration(days: 1));
+                  DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: tomorrow,
+                    firstDate: tomorrow,
+                    lastDate: DateTime(2101),
+                    locale: const Locale('en', 'US'),
+                    builder: (BuildContext context, Widget? child) {
+                      return Theme(
+                        data: ThemeData.light().copyWith(
+                          colorScheme: ColorScheme.light(
+                            primary: blueColor,
+                            onPrimary: Colors.white,
+                            onSurface: blueColor,
+                          ),
+                          textButtonTheme: TextButtonThemeData(
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: blueColor,
+                            ),
+                          ),
+                        ),
+                        child: child!,
+                      );
+                    },
+                  );
+
+                  if (pickedDate != null) {
+                    setState(() {
+                      retrydate.text =
+                          pickedDate.toLocal().toString().split(' ')[0];
+                    });
+                  }
+                },
                 icon: const Icon(Icons.date_range_rounded),
               ),
               validator: (value) {
@@ -713,12 +749,12 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
           ),
         ],
       ),
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "Confirm",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -765,11 +801,11 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
     ).show();
   }
 
-  TextStyle cardTextStyle = TextStyle(
+  TextStyle cardTextStyle = const TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.bold,
   );
-  TextStyle subTextStyle = TextStyle(
+  TextStyle subTextStyle = const TextStyle(
     fontSize: 14,
   );
   Widget paymentCard(
@@ -788,7 +824,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
-          BoxShadow(
+          const BoxShadow(
             color: Colors.black12,
             blurRadius: 8,
             offset: Offset(0, 2),
@@ -811,7 +847,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                   ),
                 ),
               ),
-              SizedBox(width: 5),
+              const SizedBox(width: 5),
               GestureDetector(
                   onTap: () async {
                     // Fetch tenant data first using the tenantId
@@ -839,7 +875,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
           if (isExpanded)
             Column(
               children: [
-                Divider(
+                const Divider(
                   thickness: 2,
                 ),
                 const SizedBox(height: 4),
@@ -869,7 +905,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                         ],
                       ),
                     ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -917,7 +953,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                         ],
                       ),
                     ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     Expanded(
                       flex: 4,
                       child: Column(
@@ -1025,7 +1061,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                               child: Icon(Icons.check, color: blueColor),
                             ),
                           ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           GestureDetector(
                             onTap: () {
                               if (data.id != null) {
@@ -1043,7 +1079,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                   color: blueColor),
                             ),
                           ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           GestureDetector(
                             onTap: () {
                               if (data.id != null) {
@@ -1087,7 +1123,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                         ],
                       ),
                     if (data.response == "SUCCESS" && data.state == "settling")
@@ -1115,7 +1151,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                         ],
                       ),
                   ],
@@ -1162,14 +1198,14 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                     borderRadius: BorderRadius.circular(5.0),
                     color: blueColor,
                     boxShadow: [
-                      BoxShadow(
+                      const BoxShadow(
                         color: Colors.grey,
                         offset: Offset(0.0, 1.0),
                         blurRadius: 6.0,
                       ),
                     ],
                   ),
-                  child: Text(
+                  child: const Text(
                     "Make Refund",
                     style: TextStyle(
                       color: Colors.white,
@@ -1181,7 +1217,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Row(
@@ -1195,7 +1231,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 4,
           ),
           SizedBox(
@@ -1203,7 +1239,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
             child: CustomTextField(
               onTap: () async {
                 DateTime now = DateTime.now();
-                DateTime tomorrow = now.add(Duration(days: 1));
+                DateTime tomorrow = now.add(const Duration(days: 1));
                 DateTime? pickedDate = await showDatePicker(
                   context: context,
                   initialDate: tomorrow,
@@ -1256,7 +1292,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
               controller: retrydate,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Row(
@@ -1270,21 +1306,21 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 4,
           ),
           SizedBox(
             height: 45,
             child: TextField(
               controller: amount,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'Enter reason for void',
                 contentPadding: EdgeInsets.only(top: 8, left: 15),
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Row(
@@ -1298,14 +1334,14 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 4,
           ),
           SizedBox(
             height: 45,
             child: TextField(
               controller: memo,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: "if left blank , will show'Payment'",
                 contentPadding: EdgeInsets.only(top: 8, left: 15),
@@ -1314,12 +1350,12 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
           ),
         ],
       ),
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "Confirm",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -1371,12 +1407,12 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                 type: AlertType.success,
                 title: "Success",
                 desc: "Refund Done Successfully",
-                style: AlertStyle(
+                style: const AlertStyle(
                   backgroundColor: Colors.white,
                 ),
                 buttons: [
                   DialogButton(
-                    child: Text(
+                    child: const Text(
                       "Ok",
                       style: TextStyle(color: Colors.white, fontSize: 18),
                     ),
@@ -1561,8 +1597,8 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 12),
-                  Text(
+                  const SizedBox(height: 12),
+                  const Text(
                     "Are you sure you want to void this payment?",
                     textAlign: TextAlign.center,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
@@ -1619,7 +1655,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                               style: TextStyle(color: Colors.white)),
                         ),
                       ),
-                      SizedBox(width: 12),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: DialogButton(
                           child: Text(
@@ -1636,7 +1672,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                               context: context,
                               buttons: [
                                 DialogButton(
-                                  child: Text(
+                                  child: const Text(
                                     "Ok",
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 18),
@@ -1678,7 +1714,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
         children: [
           //SizedBox(height: 20),
           //Text("Renter's Insurance Policies Expiring Within 90 days",style: TextStyle(fontWeight: FontWeight.bold,color: blueColor),),
-          if (MediaQuery.of(context).size.width < 500)
+          // if (MediaQuery.of(context).size.width < 500)
             Padding(
               padding: const EdgeInsets.all(0.0),
               child: FutureBuilder<LeaseResponse>(
@@ -1697,7 +1733,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
-                              padding: EdgeInsets.only(left: 5),
+                              padding: const EdgeInsets.only(left: 5),
                               child: Text(
                                 "Payments Last 7 Days",
                                 style: TextStyle(
@@ -1707,7 +1743,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                 ),
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 5,
                             ),
                             Container(
@@ -1715,7 +1751,8 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: Color(0xFFDBE0E5))),
+                                  border: Border.all(
+                                      color: const Color(0xFFDBE0E5))),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -1724,12 +1761,12 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                     'assets/icons/Nodata.png',
                                     height: 20,
                                     width: 20,
-                                    color: Color(0xFF101828),
+                                    color: const Color(0xFF101828),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 10,
                                   ),
-                                  Center(
+                                  const Center(
                                     child: Text(
                                       "No data Available",
                                       style: TextStyle(
@@ -1819,7 +1856,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Text(
                             "Payments Last 7 Days",
                             style: TextStyle(
@@ -1827,7 +1864,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                 fontWeight: FontWeight.bold,
                                 color: blueColor),
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           Column(
                             children:
                                 currentPageData.asMap().entries.map((entry) {
@@ -1855,7 +1892,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                               }, Propertytype));
                             }).toList(),
                           ),
-                          if (data.length > 5) SizedBox(height: 20),
+                          if (data.length > 5) const SizedBox(height: 20),
                           if (data.length > 5)
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
@@ -1863,12 +1900,12 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                                 Row(
                                   children: [
                                     // Text('Rows per page:'),
-                                    SizedBox(width: 10),
+                                    const SizedBox(width: 10),
                                     Material(
                                       elevation: 3,
                                       child: Container(
                                         height: 40,
-                                        padding: EdgeInsets.symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                             horizontal: 12.0),
                                         decoration: BoxDecoration(
                                           border:

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -77,16 +76,20 @@ class DailyTransactionReportData {
   double grandTotal; // Added grandTotal field
   List<DailyTransactionReport> data;
 
-  DailyTransactionReportData({required this.statusCode, required this.grandTotal, required this.data});
+  DailyTransactionReportData(
+      {required this.statusCode, required this.grandTotal, required this.data});
 
   factory DailyTransactionReportData.fromJson(Map<String, dynamic> json) {
     return DailyTransactionReportData(
       statusCode: json['statusCode'],
-      grandTotal: (json['grandTotal'] as num).toDouble(), // Parsing grandTotal
-      data: List<DailyTransactionReport>.from(json['data'].map((x) => DailyTransactionReport.fromJson(x))),
+      grandTotal: (json['grandTotal'] as num?)?.toDouble() ??
+          0.0, // Handle missing grandTotal
+      data: List<DailyTransactionReport>.from(
+          json['data'].map((x) => DailyTransactionReport.fromJson(x))),
     );
   }
 }
+
 class DailyTransactionReport {
   final String? date;
   final double? subtotal;
@@ -168,36 +171,41 @@ class ChargeData {
 
   static ChargeData fromJson(Map<String, dynamic> json) {
     return ChargeData(
-      id: json['_id'],
-      paymentId: json['payment_id'],
-      adminId: json['admin_id'],
-      leaseId: json['lease_id'],
-      tenantId: json['tenant_id'],
+      id: json['_id']?.toString(),
+      paymentId: json['payment_id']?.toString(),
+      adminId: json['admin_id']?.toString(),
+      leaseId: json['lease_id']?.toString(),
+      tenantId: json['tenant_id']?.toString(),
       customerVaultId: json['customer_vault_id'],
       billingId: json['billing_id'],
-      paymentType: json['payment_type'],
-      transactionId: json['transaction_id'],
-      response: json['response'],
+      paymentType: json['payment_type']?.toString(),
+      transactionId: json['transaction_id']?.toString(),
+      response: json['response']?.toString(),
       entry: (json['entry'] as List<dynamic>?)
-          ?.map((e) => EntryData.fromJson(e))
+          ?.map((e) => e is Map<String, dynamic> ? EntryData.fromJson(e) : null)
+          .where((e) => e != null)
+          .cast<EntryData>()
           .toList(),
       totalAmount: (json['total_amount'] as num?)?.toDouble(),
-      type: json['type'],
-      cc_type: json['cc_type'],
-      cc_number: json['cc_number'],
-      reason: json['reason'],
+      type: json['type']?.toString(),
+      cc_type: json['cc_type']?.toString(),
+      cc_number: json['cc_number']?.toString(),
+      reason: json['reason']?.toString(),
       paymentAttachment: json['payment_attachment'],
-      updatedAt: json['updatedAt'],
+      updatedAt: json['updatedAt']?.toString(),
       isDelete: json['is_delete'],
-      tenantData: json['tenant_data'] != null
+      tenantData: json['tenant_data'] != null &&
+              json['tenant_data'] is Map<String, dynamic>
           ? TenantData.fromJson(json['tenant_data'])
           : null,
-      rentalData: json['rental_data'] != null
+      rentalData: json['rental_data'] != null &&
+              json['rental_data'] is Map<String, dynamic>
           ? RentalData.fromJson(json['rental_data'])
           : null,
-      unitData: json['unit_data'] != null
-          ? UnitData.fromJson(json['unit_data'])
-          : null,
+      unitData:
+          json['unit_data'] != null && json['unit_data'] is Map<String, dynamic>
+              ? UnitData.fromJson(json['unit_data'])
+              : null,
     );
   }
 
@@ -239,10 +247,10 @@ class EntryData {
 
   static EntryData fromJson(Map<String, dynamic> json) {
     return EntryData(
-      account: json['account'],
+      account: json['account']?.toString(),
       amount: (json['amount'] as num?)?.toDouble(),
-      chargeType: json['charge_type'],
-      date: json['date'],
+      chargeType: json['charge_type']?.toString(),
+      date: json['date']?.toString(),
     );
   }
 
@@ -264,8 +272,8 @@ class TenantData {
 
   static TenantData fromJson(Map<String, dynamic> json) {
     return TenantData(
-      tenantFirstName: json['tenant_firstName'],
-      tenantLastName: json['tenant_lastName'],
+      tenantFirstName: json['tenant_firstName']?.toString(),
+      tenantLastName: json['tenant_lastName']?.toString(),
     );
   }
 
@@ -284,7 +292,7 @@ class RentalData {
 
   static RentalData fromJson(Map<String, dynamic> json) {
     return RentalData(
-      rentalAddress: json['rental_adress'],
+      rentalAddress: json['rental_adress']?.toString(),
     );
   }
 
@@ -303,8 +311,8 @@ class UnitData {
 
   static UnitData fromJson(Map<String, dynamic> json) {
     return UnitData(
-      rentalUnit: json['rental_unit'],
-      rentalUnitAddress: json['rental_unit_adress'],
+      rentalUnit: json['rental_unit']?.toString(),
+      rentalUnitAddress: json['rental_unit_adress']?.toString(),
     );
   }
 
@@ -316,10 +324,7 @@ class UnitData {
   }
 }
 
-
-
 class DailyTrasactionReport {
-
   final String baseUrl = '$Api_url/api/payment/todayspayment';
 
   Future<DailyTransactionReportData> fetchDailyTransactions(
@@ -335,7 +340,9 @@ class DailyTrasactionReport {
     if (chargetype != null) {
       url = '$url&selectedChargeType=$chargetype';
     }
-    print(url);
+    print("API URL: $url");
+    print("selectedStartDate: '$selectedStartDate'");
+    print("selectedEndDate: '$selectedEndDate'");
 
     try {
       final response = await http.get(
@@ -364,15 +371,14 @@ class DailyTrasactionReport {
     }
   }
 }
-class DailyTrasactionReportStaff {
 
+class DailyTrasactionReportStaff {
   final String baseUrl = '$Api_url/api/payment/todayspayment';
 
   Future<DailyTransactionReportData> fetchDailyTransactionsstaff(
       String adminId, String selectedStartDate, String selectedEndDate,
       {String? chargetype}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? adminid = prefs.getString("adminId");
     String? token = prefs.getString('token');
     String? id = prefs.getString("staff_id");
     final String endpoint = '/$adminId';

@@ -118,9 +118,11 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                   children: [
                     width < 400
                         ? Text(" Subject",
-                            style: TextStyle( color: blueColor, fontWeight: FontWeight.bold))
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold))
                         : Text(" Subject",
-                            style: TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     // SizedBox(width: 3),
                     // ascending1
@@ -170,7 +172,8 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                 child: Row(
                   children: [
                     Text("              Sent",
-                        style: TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 3),
                   ],
                 ),
@@ -334,15 +337,28 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                               vertical: 8),
                                           child: Row(
                                             children: [
-                                              Text(
-                                                email,
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: blueColor,
+                                              // Text(
+                                              //   email,
+                                              //   style: TextStyle(
+                                              //     fontWeight: FontWeight.bold,
+                                              //     color: blueColor,
+                                              //   ),
+                                              // ),
+                                              // Spacer(), // Push icon to the right
+                                              Expanded(
+                                                flex: 3,
+                                                child: Text(
+                                                  email,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: blueColor,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 1,
                                                 ),
                                               ),
-                                              Spacer(), // Push icon to the right
-
+                                              const SizedBox(width: 8),
                                               if (isAccepted && isOpened)
                                                 Icon(Icons.done_all,
                                                     color: Colors.green)
@@ -713,87 +729,76 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                   SizedBox(
                     height: 20,
                   ),
-                  //add propertytype
+                  // Header Section with Title and Add Button
                   Padding(
-                    padding: const EdgeInsets.only(left: 0, right: 0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
                     child: Row(
-                      //mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: titleBar(
-                            width: MediaQuery.of(context).size.width * .65,
-                            title: 'Emails',
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 13,),
+                        Expanded(
+                          flex: 3,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: titleBar(
+                              width: double.infinity,
+                              title: 'Emails',
+                            ),
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () async {
-                            final result = await Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) => send_email()));
-                            // final result = await Navigator.of(context).push(
-                            //     MaterialPageRoute(
-                            //         builder: (context) => Add_property()));
-                            if (result == true) {
-                              setState(() {
-                                futureEmailss = SendemailRepository()
-                                    .fetchSendEmailTable(limit: 10, page: 1);
-                              });
-                            }
-                          },
-                          child: Container(
-                            height: (MediaQuery.of(context).size.width < 500)
-                                ? 50
-                                : MediaQuery.of(context).size.width * 0.062,
-
-                            // height:  MediaQuery.of(context).size.width * 0.07,
-                            // height:  40,
-                            width: (MediaQuery.of(context).size.width < 500)
-                                ? MediaQuery.of(context).size.width * 0.25
-                                : MediaQuery.of(context).size.width * 0.25,
-                            decoration: BoxDecoration(
-                              color: blueColor,
-                              borderRadius: BorderRadius.circular(5),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey,
-                                  offset: Offset(0.0, 4.0),
-                                  blurRadius: 6.0,
+                        Flexible(
+                          flex: 1,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: GestureDetector(
+                              onTap: () async {
+                                final result = await Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) => send_email()));
+                                if (result == true) {
+                                  setState(() {
+                                    futureEmailss = SendemailRepository()
+                                        .fetchSendEmailTable(
+                                            limit: 10, page: 1);
+                                  });
+                                }
+                              },
+                              child: Container(
+                                height:
+                                    (MediaQuery.of(context).size.width < 768)
+                                        ? 50
+                                        : 60,
+                                decoration: BoxDecoration(
+                                  color: blueColor,
+                                  borderRadius: BorderRadius.circular(5),
                                 ),
-                              ],
-                            ),
-                            child: Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Send Email",
+                                child: Center(
+                                  child: Text(
+                                    " Send\n Email",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 14
-                                              : 17,
+                                      fontSize: 16,
                                     ),
                                   ),
-                                ],
+                                ),
                               ),
                             ),
                           ),
                         ),
                         if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 6),
+                          SizedBox(width: 3),
                         if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 22),
+                          SizedBox(width: 18),
                       ],
                     ),
                   ),
 
-                  if (MediaQuery.of(context).size.width < 500)
+                  // if (MediaQuery.of(context).size.width < 500)
                     Padding(
-                      padding: const EdgeInsets.all(15.0),
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width < 500 ? 15 : 28),
                       child: FutureBuilder<Send_email_table>(
                         future: futureEmailss,
                         builder: (context, snapshot) {
@@ -878,7 +883,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                           //   border: Border.all(color: blueColor),
                                           // ),
                                           margin:
-                                          EdgeInsets.symmetric(vertical: 6),
+                                              EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
                                                 ? Color(0xFFF4F8FF)
@@ -886,7 +891,7 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                             border: Border.all(
                                                 color: Color(0xFFDBE0E5)),
                                             borderRadius:
-                                            BorderRadius.circular(10),
+                                                BorderRadius.circular(10),
                                           ),
                                           child: Column(
                                             children: <Widget>[

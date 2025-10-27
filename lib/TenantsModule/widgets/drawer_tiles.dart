@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
-import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.dart';
-
+import '../../widgets/navigation_helper.dart';
 import '../screen/documents/document_dashboard.dart';
 import '../screen/financial/financial_table.dart';
 import '../screen/dashboard.dart';
@@ -10,50 +9,64 @@ import '../screen/profile.dart';
 import '../screen/property/property_table.dart';
 import '../screen/work_order/workorder_table.dart';
 
+
 Widget buildListTile(
-  BuildContext context,
-  Widget leadingIcon,
-  String title,
-  bool active,
-) {
+    BuildContext context,
+    Widget leadingIcon,
+    String title,
+    bool active,
+    ) {
   return Container(
-    margin: EdgeInsets.symmetric(horizontal: 20),
+    margin: const EdgeInsets.symmetric(horizontal: 20),
     decoration: BoxDecoration(
       color: active ? blueColor : Colors.transparent,
       borderRadius: BorderRadius.circular(10),
     ),
-    padding: EdgeInsets.symmetric(horizontal: 16),
+    padding: const EdgeInsets.symmetric(horizontal: 16),
     child: ListTile(
       onTap: () {
-      //  navigateToOption(context, "Properties");
+        // Navigate with validation to prevent duplicate navigation
         if (title == "Dashboard") {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Dashboard_tenants()));
+          NavigationHelper.navigateWithValidation(
+            context,
+            Dashboard_tenants(),
+            "Dashboard",
+          );
         } else if (title == "Profile") {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => Profile_screen()));
+          NavigationHelper.navigateWithValidation(
+            context,
+            const Profile_screen(),
+            "Profile",
+          );
         } else if (title == "Properties") {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => PropertyTable()));
+          NavigationHelper.navigateWithValidation(
+            context,
+            PropertyTable(),
+            "Properties",
+          );
+        } else if (title == "Ledger") {
+          NavigationHelper.navigateWithValidation(
+            context,
+            FinancialTable(),
+            "Ledger",
+          );
+        } else if (title == "Work Order") {
+          NavigationHelper.navigateWithValidation(
+            context,
+            WorkOrderTable(),
+            "Work Order",
+          );
+        } else if (title == "Documents") {
+          NavigationHelper.navigateWithValidation(
+            context,
+            ReportsMainScreen(),
+            "Documents",
+          );
         }
-        else if (title == "Ledger") {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => FinancialTable()));
-        }
-        else if (title == "Work Order") {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => WorkOrderTable()));
-        }
-        else if (title == "Documents") {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => ReportsMainScreen()));
-        }
-
       },
       leading: leadingIcon,
       title: Text(
         title,
-
         style: TextStyle(
           color: active ? Colors.white : blueColor,
         ),
@@ -63,33 +76,35 @@ Widget buildListTile(
 }
 
 void navigateToOption(
-  BuildContext context,
-  String option,
-) {
-  int index = 0;
-  Map<String, WidgetBuilder> routes = {
-    "Properties": (context) => PropertyTable(),
-   /* "RentalOwner": (context) => Rentalowner_table(),
-    "Tenants": (context) => Tenants_table(),
-    "Vendor": (context) => Vendor_table(),
-    "Work Order": (context) => Workorder_table(),
-    "Rent Roll": (context) => Lease_table(),
-    "Applicants": (context) => Applicants_table(),
-    "Vendor": (context) => Vendor_table(),*/
-
+    BuildContext context,
+    String option,
+    ) {
+  Map<String, Widget> routes = {
+    "Properties": PropertyTable(),
+    /* "RentalOwner": Rentalowner_table(),
+    "Tenants": Tenants_table(),
+    "Vendor": Vendor_table(),
+    "Work Order": Workorder_table(),
+    "Rent Roll": Lease_table(),
+    "Applicants": Applicants_table(),
+    "Vendor": Vendor_table(),*/
   };
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: routes[option]!),
-  );
+
+  if (routes.containsKey(option)) {
+    NavigationHelper.navigateWithValidation(
+      context,
+      routes[option]!,
+      option,
+    );
+  }
 }
 
 Widget buildDropdownListTile(BuildContext context, Widget leadingIcon,
     String title, List<String> subTopics,
     {String? selectedSubtopic, bool? initvalue}) {
   return Container(
-    margin: EdgeInsets.symmetric(horizontal: 20),
-    padding: EdgeInsets.symmetric(horizontal: 16),
+    margin: const EdgeInsets.symmetric(horizontal: 20),
+    padding: const EdgeInsets.symmetric(horizontal: 16),
     // decoration: BoxDecoration(
     //   color: subTopics.contains(selectedOption) ? blueColor : Colors.transparent,
     //   borderRadius: BorderRadius.circular(10),
@@ -99,15 +114,14 @@ Widget buildDropdownListTile(BuildContext context, Widget leadingIcon,
       leading: leadingIcon,
       title: Text(title),
       children: subTopics.map((
-        subTopic,
-      ) {
+          subTopic,
+          ) {
         bool active = selectedSubtopic == subTopic;
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Container(
             decoration: BoxDecoration(
-              color:
-                  active ? blueColor : Colors.transparent,
+              color: active ? blueColor : Colors.transparent,
               borderRadius: BorderRadius.circular(10),
             ),
             child: ListTile(

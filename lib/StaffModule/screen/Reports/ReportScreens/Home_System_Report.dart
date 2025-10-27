@@ -199,7 +199,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                     }
                   });
                 },
-                child: Row(
+                child: const Row(
                   children: [
                     Text("       Appliance\n       Status",
                         style: TextStyle(color: Colors.white)),
@@ -221,7 +221,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
         text,
         style: isBold
             ? pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)
-            : pw.TextStyle(fontSize: 10),
+            : const pw.TextStyle(fontSize: 10),
       ),
     );
   }
@@ -233,7 +233,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
         text,
         style: isBold
             ? pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)
-            : pw.TextStyle(fontSize: 10),
+            : const pw.TextStyle(fontSize: 10),
       ),
     );
   }
@@ -272,13 +272,13 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                       pw.SizedBox(height: 5),
                       pw.Text(
                         'As of $currentDate',
-                        style: pw.TextStyle(fontSize: 10),
+                        style: const pw.TextStyle(fontSize: 10),
                       ),
                     ],
                   ),
                   pw.Text(
                     'Markdueltd',
-                    style: pw.TextStyle(fontSize: 10),
+                    style: const pw.TextStyle(fontSize: 10),
                   ),
                 ],
               ),
@@ -295,7 +295,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
             // Details Table
             pw.Table(
               border: pw.TableBorder.symmetric(
-                outside: pw.BorderSide(color: PdfColors.grey300),
+                outside: const pw.BorderSide(color: PdfColors.grey300),
               ),
               children: [
                 // Table Header
@@ -420,7 +420,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                       pw.SizedBox(height: 5),
                       pw.Text(
                         'As of $currentDate',
-                        style: pw.TextStyle(fontSize: 9),
+                        style: const pw.TextStyle(fontSize: 9),
                       ),
                     ],
                   ),
@@ -1077,7 +1077,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
     );
   }
 
-  final cellStyle = pw.TextStyle(fontSize: 7);
+  final cellStyle = const pw.TextStyle(fontSize: 7);
 
   final headerStyle = pw.TextStyle(
     fontWeight: pw.FontWeight.bold,
@@ -1251,7 +1251,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                           }
 
                           if (isLoading) {
-                            return Padding(
+                            return const Padding(
                               padding: EdgeInsets.all(16.0),
                               child: Center(
                                 child: SpinKitFadingCircle(
@@ -1324,7 +1324,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
       children: [
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1333,7 +1333,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 4.0), // Space between label and value
+                const SizedBox(height: 4.0), // Space between label and value
                 Text(
                   leftValue,
                   style: TextStyle(color: grey),
@@ -1344,7 +1344,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1353,7 +1353,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 4.0), // Space between label and value
+                const SizedBox(height: 4.0), // Space between label and value
                 Text(
                   centerValue,
                   style: TextStyle(color: grey),
@@ -1364,7 +1364,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1373,7 +1373,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 4.0), // Space between label and value
+                const SizedBox(height: 4.0), // Space between label and value
                 Text(
                   rightValue,
                   style: TextStyle(color: grey),
@@ -1416,7 +1416,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                     children: [
                       Icon(Icons.info_outline,
                           color: Colors.grey[600], size: 20),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Text(
                         'No appliances found in this unit',
                         style: TextStyle(
@@ -1459,8 +1459,8 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                       // Maintenance History Section
                       if (appliance.maintenanceHistory?.isNotEmpty == true) ...[
                         Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
                           child: Text(
                             'Maintenance History',
                             style: TextStyle(
@@ -1509,7 +1509,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                 TextSpan(
                                                   text:
                                                       "\n${_formatDate(history.timestamp ?? 'N/A')}",
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                     color: Colors.black,
                                                   ),
                                                 ),
@@ -1532,7 +1532,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                 TextSpan(
                                                   text:
                                                       "\n${history.adminName ?? history.staffmemberName ?? 'N/A'}",
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                     color: Colors.black,
                                                   ),
                                                 ),
@@ -1556,7 +1556,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                             ),
                                             TextSpan(
                                               text: "\n${history.workSubject}",
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 color: Colors.black,
                                               ),
                                             ),
@@ -1583,8 +1583,8 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                       // Notes Section
                       if (appliance.notes?.isNotEmpty == true) ...[
                         Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
                           child: Text(
                             'Notes',
                             style: TextStyle(
@@ -1633,7 +1633,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                 TextSpan(
                                                   text:
                                                       "\n${_formatDate(note.timestamp ?? 'N/A')}",
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                     color: Colors.black,
                                                   ),
                                                 ),
@@ -1656,7 +1656,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                 TextSpan(
                                                   text:
                                                       "\n${note.adminName ?? note.staffmemberName ?? 'N/A'}",
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                     color: Colors.black,
                                                   ),
                                                 ),
@@ -1679,7 +1679,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                           ),
                                           TextSpan(
                                             text: "\n${note.note ?? ''}",
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               color: Colors.black,
                                             ),
                                           ),
@@ -1728,7 +1728,8 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
             const SizedBox(height: 20),
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+                border:
+                    Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
               ),
               child: Column(
                 children: data.units?.asMap().entries.map((entry) {
@@ -1742,7 +1743,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                               ? Colors.white
                               : blueColor.withOpacity(0.09),
                           border: Border.all(
-                              color: Color.fromRGBO(152, 162, 179, .5)),
+                              color: const Color.fromRGBO(152, 162, 179, .5)),
                         ),
                         child: Column(
                           children: [
@@ -1776,7 +1777,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: 8),
+                                  const SizedBox(width: 8),
                                   // Unit info
                                   Expanded(
                                     child: Padding(
@@ -1813,7 +1814,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                     children: [
                                       Icon(Icons.info_outline,
                                           color: Colors.grey[600], size: 20),
-                                      SizedBox(width: 8),
+                                      const SizedBox(width: 8),
                                       Text(
                                         'No appliances found in this unit',
                                         style: TextStyle(
@@ -1881,7 +1882,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(width: 8),
+                                              const SizedBox(width: 8),
                                               Expanded(
                                                 flex: 1,
                                                 child: Text(
@@ -1895,7 +1896,8 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                               ),
                                               Expanded(
                                                 child: Container(
-                                                  padding: EdgeInsets.symmetric(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
                                                       horizontal: 8,
                                                       vertical: 4),
                                                   decoration: BoxDecoration(
@@ -1964,7 +1966,8 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                             TextSpan(
                                                               text:
                                                                   "\n${appliance.type ?? '-'}",
-                                                              style: TextStyle(
+                                                              style:
+                                                                  const TextStyle(
                                                                 color: Colors
                                                                     .black,
                                                               ),
@@ -1990,7 +1993,8 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                             TextSpan(
                                                               text:
                                                                   "\n${appliance.brand ?? '-'}",
-                                                              style: TextStyle(
+                                                              style:
+                                                                  const TextStyle(
                                                                 color: Colors
                                                                     .black,
                                                               ),
@@ -2001,7 +2005,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                     ),
                                                   ],
                                                 ),
-                                                SizedBox(height: 10),
+                                                const SizedBox(height: 10),
                                                 Row(
                                                   children: [
                                                     Expanded(
@@ -2020,7 +2024,8 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                             TextSpan(
                                                               text:
                                                                   "\n${appliance.model ?? '-'}",
-                                                              style: TextStyle(
+                                                              style:
+                                                                  const TextStyle(
                                                                 color: Colors
                                                                     .black,
                                                               ),
@@ -2046,7 +2051,8 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                             TextSpan(
                                                               text:
                                                                   "\n${appliance.serialNumber ?? '-'}",
-                                                              style: TextStyle(
+                                                              style:
+                                                                  const TextStyle(
                                                                 color: Colors
                                                                     .black,
                                                               ),
@@ -2057,7 +2063,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                     ),
                                                   ],
                                                 ),
-                                                SizedBox(height: 10),
+                                                const SizedBox(height: 10),
                                                 Row(
                                                   children: [
                                                     Expanded(
@@ -2078,7 +2084,8 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                             TextSpan(
                                                               text:
                                                                   "\n${appliance.installedDate ?? '-'}",
-                                                              style: TextStyle(
+                                                              style:
+                                                                  const TextStyle(
                                                                 color: Colors
                                                                     .black,
                                                               ),
@@ -2105,7 +2112,8 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                             TextSpan(
                                                               text:
                                                                   "\n${appliance.warrantyExpiry ?? '-'}",
-                                                              style: TextStyle(
+                                                              style:
+                                                                  const TextStyle(
                                                                 color: Colors
                                                                     .black,
                                                               ),
@@ -2116,7 +2124,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                     ),
                                                   ],
                                                 ),
-                                                SizedBox(height: 10),
+                                                const SizedBox(height: 10),
                                                 Row(
                                                   children: [
                                                     Expanded(
@@ -2137,7 +2145,8 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                             TextSpan(
                                                               text:
                                                                   "\n${appliance.lastMaintenanceDate ?? '-'}",
-                                                              style: TextStyle(
+                                                              style:
+                                                                  const TextStyle(
                                                                 color: Colors
                                                                     .black,
                                                               ),
@@ -2164,7 +2173,8 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                             TextSpan(
                                                               text:
                                                                   "\n${appliance.category ?? '-'}",
-                                                              style: TextStyle(
+                                                              style:
+                                                                  const TextStyle(
                                                                 color: Colors
                                                                     .black,
                                                               ),
@@ -2175,7 +2185,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                     ),
                                                   ],
                                                 ),
-                                                SizedBox(height: 10),
+                                                const SizedBox(height: 10),
                                                 Row(
                                                   children: [
                                                     Expanded(
@@ -2196,7 +2206,8 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                                                             TextSpan(
                                                               text:
                                                                   "\n${appliance.applianceDescription ?? '-'}",
-                                                              style: TextStyle(
+                                                              style:
+                                                                  const TextStyle(
                                                                 color: Colors
                                                                     .black,
                                                               ),
@@ -2385,9 +2396,9 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                   color: Colors.white,
                 ),
                 child: PopupMenuButton<String>(
-                  offset: Offset(5, 50),
+                  offset: const Offset(5, 50),
                   onSelected: handleDownload,
-                  icon: Row(
+                  icon: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       FaIcon(FontAwesomeIcons.download), // Download icon

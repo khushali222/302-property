@@ -164,6 +164,7 @@ class LeaseRepository {
     }
 
   Future<bool> updateLease(Lease lease) async {
+    print("calling navigate main");
     print(lease);
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -188,32 +189,43 @@ class LeaseRepository {
         body: json.encode(lease),
       );
       print('Request complete');
+      print('Response status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
 
       var responseData = jsonDecode(response.body);
       print('Response Data for update : $responseData');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        print('HTTP request successful (${response.statusCode})');
         if (responseData['statusCode'] == 200) {
-          print('Response successfully: ${responseData['data']}');
+          print('SUCCESS: Lease updated successfully');
+          print('Response data: ${responseData['data']}');
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Successfully updated lease');
-
+          print('=== LeaseRepository.updateLease SUCCESS ===');
           return true;
         } else {
-          print('Failed to add lease: ${responseData}');
+          print('ERROR: API returned error status code: ${responseData['statusCode']}');
+          print('Error message: ${responseData['message']}');
+          print('Full response: ${responseData}');
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Failed to update lease');
+          print('=== LeaseRepository.updateLease FAILED ===');
           return false;
         }
       } else {
+        print('ERROR: HTTP request failed with status code: ${response.statusCode}');
         print('Failed to add lease: ${responseData}');
         Fluttertoast.showToast(
             msg: responseData['message'] ?? 'Failed to update lease');
+        print('=== LeaseRepository.updateLease FAILED ===');
         return false;
       }
     } catch (error) {
-      print('Exception occurred: $error');
+      print('EXCEPTION in LeaseRepository.updateLease: $error');
+      print('Exception type: ${error.runtimeType}');
       Fluttertoast.showToast(msg: 'An error occurred: $error');
+      print('=== LeaseRepository.updateLease EXCEPTION ===');
       return false;
     }
   }

@@ -1,23 +1,17 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/User%20Permission/UserPermissionScreen.dart';
-import 'package:three_zero_two_property/provider/Plan%20Purchase/plancheckProvider.dart';
 import 'package:three_zero_two_property/screens/Profile/Profile_screen.dart';
 import 'package:three_zero_two_property/screens/Login/login_screen.dart';
-import 'package:three_zero_two_property/screens/Plans/plan_screen.dart';
-import 'package:three_zero_two_property/screens/Profile/Settings_screen.dart';
 import 'package:three_zero_two_property/screens/activity/activity_table.dart';
-import 'package:http/http.dart' as http;
 import '../constant/constant.dart';
 import '../provider/notification_provider.dart';
 import '../screens/notifications/notifications.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:package_info_plus/package_info_plus.dart';
 
 class widget_302 {
   static App_Bar({
@@ -35,107 +29,128 @@ class widget_302 {
   }) {
     Provider.of<NotificationProvider>(context, listen: false)
         .fetchNotifications(context);
-
-    bool isFreePlan = Provider.of<checkPlanPurchaseProiver>(context)
-        .checkplanpurchaseModel
-        ?.data
-        ?.planDetail
-        ?.planName ==
-        'Free Plan';
     return PreferredSize(
-      preferredSize: Size.fromHeight(85),
+      preferredSize: Size.fromHeight(60),
       child: AppBar(
         iconTheme: const IconThemeData(color: Colors.black),
         elevation: 1,
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
         titleSpacing: 00,
-        bottom: PreferredSize(
-            preferredSize: Size.fromHeight(20), // Height of the bottom section
-            child: FutureBuilder<String>(
-              future: _getCompanyNameFromSharedPreferences(),
-              builder: (context, snapshot) {
-                return Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.only(bottom: 3),
-                  alignment: Alignment.center,
-                  child: Text(
-                    snapshot.hasData ? snapshot.data! : "Company Name",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                );
-              },
-            )),
         toolbarHeight: MediaQuery.of(context).size.width < 500
             ? 60
             : 80, // Adjust height for tablet
         title: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             if (constraints.maxWidth < 350) {
-              return Image.asset(
-                'assets/images/applogo.png',
-                height: 40,
-                width: 40,
+              return Row(
+                children: [
+                  // Image.asset(
+                  //   'assets/images/applogo.png',
+                  //   height: 40,
+                  //   width: 40,
+                  // ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: FutureBuilder<String>(
+                      future: _getCompanyNameFromSharedPreferences(),
+                      builder: (context, snapshot) {
+                        return Center(
+                          child: Text(
+                            snapshot.hasData ? snapshot.data! : "Company Name",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               );
             } else {
-              return Image.asset(
-                'assets/images/logo.png',
-                width: 350,
-                fit: BoxFit.fill,
+              return Row(
+                children: [
+                  // Image.asset(
+                  //   'assets/images/logo.png',
+                  //   width: 200,
+                  //   fit: BoxFit.fill,
+                  // ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: FutureBuilder<String>(
+                      future: _getCompanyNameFromSharedPreferences(),
+                      builder: (context, snapshot) {
+                        return Center(
+                          child: Text(
+                            snapshot.hasData ? snapshot.data! : "Company Name",
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               );
             }
           },
         ),
         actions: [
-          InkWell(
-            onTap: () {
-              if (isPlanPageActive != true) {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => getPlanDetailScreen()));
-              }
-            },
-            child: Container(
-              width: 150,
-              margin: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                color: blueColor,
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Consumer<checkPlanPurchaseProiver>(
-                builder: (context, provider, child) {
-                  if (provider.isLoading) {
-                    return CircularProgressIndicator();
-                  } else {
-                    String planName = provider.checkplanpurchaseModel?.data
-                        ?.planDetail?.planName ??
-                        'No Plan';
-                    if (planName == 'Free Plan') {
-                      planName = 'Buy Now';
-                    }
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Center(
-                          child: Text(
-                            planName,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            softWrap: false,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize:
-                              MediaQuery.of(context).size.width > 500 ? 18 : 14,
-                            ),
-                          )),
-                    );
-                  }
-                },
-              ),
-            ),
-          ),
+          // InkWell(
+          //   // onTap: () {
+          //   //   if (isPlanPageActive != true) {
+          //   //     Navigator.of(context).push(MaterialPageRoute(
+          //   //         builder: (context) => getPlanDetailScreen()));
+          //   //   }
+          //   // },
+          //   child: Container(
+          //     width: 150,
+          //     margin: const EdgeInsets.symmetric(vertical: 12),
+          //     decoration: BoxDecoration(
+          //       color: blueColor,
+          //       borderRadius: BorderRadius.circular(5),
+          //     ),
+          //     child: Consumer<checkPlanPurchaseProiver>(
+          //       builder: (context, provider, child) {
+          //         if (provider.isLoading) {
+          //           return CircularProgressIndicator();
+          //         } else {
+          //           String planName = provider.checkplanpurchaseModel?.data
+          //               ?.planDetail?.planName ??
+          //               'No Plan';
+          //           if (planName == 'Free Plan') {
+          //             planName = 'Buy Now';
+          //           }
+          //           return Padding(
+          //             padding: const EdgeInsets.symmetric(horizontal: 20),
+          //             child: Center(
+          //                 child: Text(
+          //                   planName,
+          //                   maxLines: 1,
+          //                   overflow: TextOverflow.ellipsis,
+          //                   softWrap: false,
+          //                   style: TextStyle(
+          //                     fontWeight: FontWeight.bold,
+          //                     fontSize:
+          //                     MediaQuery.of(context).size.width > 500 ? 18 : 14,
+          //                   ),
+          //                 )),
+          //           );
+          //         }
+          //       },
+          //     ),
+          //   ),
+          // ),
           const SizedBox(
             width: 10,
           ),
@@ -171,18 +186,12 @@ class widget_302 {
                   ),
                 );
               } else {
-                return Center(
-                  child: FaIcon(
-                    FontAwesomeIcons.bell,
-                    size: 20,
-                    color: blueColor,
-                  ),
-                );
+                return Container();
               }
             },
           ),
           const SizedBox(
-            width: 10,
+            width: 20,
           ),
           FutureBuilder<String>(
             future: _getNameFromSharedPreferences(),
@@ -266,7 +275,7 @@ class widget_302 {
                           if (isUserPermitePageActive != true) {
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) =>
-                                const UserPermissionScreen()));
+                                    const UserPermissionScreen()));
                           }
                         },
                       ),
@@ -315,14 +324,39 @@ class widget_302 {
                         ),
                         onTap: () async {
                           SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
+                              await SharedPreferences.getInstance();
                           prefs.clear();
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => const Login_Screen()),
-                                  (route) => false);
+                              (route) => false);
                         },
+                      ),
+                      PopupMenuItem(
+                        height: 10,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            FutureBuilder<PackageInfo>(
+                              future: PackageInfo.fromPlatform(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return Text(
+                                    "v${snapshot.data!.version}",
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  );
+                                }
+                                return Container();
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

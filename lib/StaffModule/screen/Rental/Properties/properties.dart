@@ -36,28 +36,28 @@ class _PropertiesState extends State<Properties> {
       body: Container(
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
                   width: 150,
                   height: 40,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5.0),
                     color: blueColor,
                     boxShadow: [
-                      BoxShadow(
+                      const BoxShadow(
                         color: Colors.grey,
                         offset: Offset(0.0, 1.0), //(x,y)
                         blurRadius: 6.0,
                       ),
                     ],
                   ),
-                  child: Center(
+                  child: const Center(
                       child: Text(
                     "Add New Property",
                     style: TextStyle(
@@ -72,7 +72,7 @@ class _PropertiesState extends State<Properties> {
                 borderRadius: BorderRadius.circular(5.0),
                 child: Container(
                   height: 50.0,
-                  padding: EdgeInsets.only(top: 8, left: 10),
+                  padding: const EdgeInsets.only(top: 8, left: 10),
                   width: MediaQuery.of(context).size.width * .91,
                   margin: const EdgeInsets.only(
                       bottom: 6.0), //Same as `blurRadius` i guess
@@ -80,14 +80,14 @@ class _PropertiesState extends State<Properties> {
                     borderRadius: BorderRadius.circular(5.0),
                     color: blueColor,
                     boxShadow: [
-                      BoxShadow(
+                      const BoxShadow(
                         color: Colors.grey,
                         offset: Offset(0.0, 1.0), //(x,y)
                         blurRadius: 6.0,
                       ),
                     ],
                   ),
-                  child: Text(
+                  child: const Text(
                     "Properties",
                     style: TextStyle(
                         color: Colors.white,
@@ -102,7 +102,7 @@ class _PropertiesState extends State<Properties> {
                 SizedBox(
                   width: 150,
                   child: TextFormField(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         hintText: "Search here...",
                         border: OutlineInputBorder()),
                   ),

@@ -70,16 +70,16 @@ class _TempletTableState extends State<TempletTable> {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-          color: Color(0xFFF4F8FF),
+          color: const Color(0xFFF4F8FF),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Color(0xFFDBE0E5))),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -111,15 +111,20 @@ class _TempletTableState extends State<TempletTable> {
                   children: [
                     width < 400
                         ? Text("Name",
-                            style: TextStyle( color: blueColor, fontWeight: FontWeight.bold, fontSize: 18))
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18))
                         : Text("Name",
-                            style:
-                                TextStyle( color: blueColor, fontWeight: FontWeight.bold, fontSize: 18)),
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
+                    const SizedBox(width: 3),
                     ascending1
                         ? Padding(
-                            padding:  EdgeInsets.only(top: 7, left: 2),
+                            padding: const EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
@@ -127,7 +132,7 @@ class _TempletTableState extends State<TempletTable> {
                             ),
                           )
                         : Padding(
-                            padding:  EdgeInsets.only(bottom: 7, left: 2),
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
@@ -163,13 +168,16 @@ class _TempletTableState extends State<TempletTable> {
                 },
                 child: Row(
                   children: [
-                    SizedBox(width: 15),
+                    const SizedBox(width: 15),
                     Text("Type",
-                        style: TextStyle( color: blueColor, fontWeight: FontWeight.bold, fontSize: 18)),
-                    SizedBox(width: 5),
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18)),
+                    const SizedBox(width: 5),
                     ascending2
                         ? Padding(
-                            padding:  EdgeInsets.only(top: 7, left: 2),
+                            padding: const EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
                               size: 20,
@@ -292,14 +300,14 @@ class _TempletTableState extends State<TempletTable> {
       desc: "Once deleted, you will not be able to recover this template",
       content: Column(
         children: <Widget>[
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           SizedBox(
             height: 45,
             child: TextField(
               controller: reason,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Enter reason for deletion',
                   contentPadding: EdgeInsets.only(top: 8, left: 15)),
@@ -307,12 +315,12 @@ class _TempletTableState extends State<TempletTable> {
           ),
         ],
       ),
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -331,10 +339,11 @@ class _TempletTableState extends State<TempletTable> {
           },
           color: blueColor,
         ),
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -392,83 +401,75 @@ class _TempletTableState extends State<TempletTable> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
-            //add propertytype
+            // Header Section with Title and Add Button
             Padding(
-              padding: const EdgeInsets.only(left: 0, right: 0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Row(
-                //mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: titleBar(
-                      width: MediaQuery.of(context).size.width * .65,
-                      title: 'Templates',
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () async {
-                      final result = await Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => Add_Email_templet()));
-                      if (result == true) {
-                        setState(() {
-                          futureTemplet = TempletRepository().fetchTemplets();
-                        });
-                      }
-                    },
-                    child: Container(
-                      height: (MediaQuery.of(context).size.width < 500)
-                          ? 50
-                          : MediaQuery.of(context).size.width * 0.062,
-        
-                      // height:  MediaQuery.of(context).size.width * 0.07,
-                      // height:  40,
-                      width: (MediaQuery.of(context).size.width < 500)
-                          ? MediaQuery.of(context).size.width * 0.25
-                          : MediaQuery.of(context).size.width * 0.25,
-                      decoration: BoxDecoration(
-                        color: blueColor,
-                        borderRadius: BorderRadius.circular(5),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey,
-                            offset: Offset(0.0, 4.0),
-                            blurRadius: 6.0,
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "+ Add",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: MediaQuery.of(context).size.width < 500
-                                    ? 16
-                                    : 20,
-                              ),
-                            ),
-                          ],
+                  Expanded(
+                    flex: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Padding(
+                        padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+                        child: titleBar(
+                          width: double.infinity,
+                          title: 'Templates',
                         ),
                       ),
                     ),
                   ),
-                  if (MediaQuery.of(context).size.width < 500) SizedBox(width: 6),
-                  if (MediaQuery.of(context).size.width > 500)
-                    SizedBox(width: 22),
+                  Flexible(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: GestureDetector(
+                        onTap: () async {
+                          final result = await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => Add_Email_templet()));
+                          if (result == true) {
+                            setState(() {
+                              futureTemplet =
+                                  TempletRepository().fetchTemplets();
+                            });
+                          }
+                        },
+                        child: Container(
+                          height: (MediaQuery.of(context).size.width < 768)
+                              ? 50
+                              : 60,
+                          decoration: BoxDecoration(
+                            color: blueColor,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Center(
+                            child: Text(
+                              "+ Add",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
-            if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
-            if (MediaQuery.of(context).size.width < 500)
+            // if (MediaQuery.of(context).size.width > 500)
+            //   const SizedBox(height: 25),
+            // if (MediaQuery.of(context).size.width < 500)
               Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: EdgeInsets.all(
+                    MediaQuery.of(context).size.width < 500 ? 11 : 28),
                 child: FutureBuilder<List<EmailTemplate>>(
                   future: futureTemplet,
                   builder: (context, snapshot) {
@@ -489,7 +490,7 @@ class _TempletTableState extends State<TempletTable> {
                                 height: 200,
                                 width: 200,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                               Text(
@@ -533,30 +534,30 @@ class _TempletTableState extends State<TempletTable> {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             _buildHeaders(),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Container(
-
                               child: Column(
-                                children:
-                                    currentPageData.asMap().entries.map((entry) {
+                                children: currentPageData
+                                    .asMap()
+                                    .entries
+                                    .map((entry) {
                                   int index = entry.key;
                                   bool isExpanded = expandedIndex == index;
                                   EmailTemplate rentals = entry.value;
-                                //  print(rentals.body);
+                                  //  print(rentals.body);
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
                                     margin:
-                                    EdgeInsets.symmetric(vertical: 6),
+                                        const EdgeInsets.symmetric(vertical: 6),
                                     decoration: BoxDecoration(
                                       color: index % 2 != 0
-                                          ? Color(0xFFF4F8FF)
+                                          ? const Color(0xFFF4F8FF)
                                           : Colors.white,
                                       border: Border.all(
-                                          color: Color(0xFFDBE0E5)),
-                                      borderRadius:
-                                      BorderRadius.circular(10),
+                                          color: const Color(0xFFDBE0E5)),
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
                                     // decoration: BoxDecoration(
                                     //   border: Border.all(color: blueColor),
@@ -598,12 +599,13 @@ class _TempletTableState extends State<TempletTable> {
                                                     });
                                                   },
                                                   child: Container(
-                                                    margin: EdgeInsets.only(
-                                                        left: 5, right: 5),
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            left: 5, right: 5),
                                                     padding: !isExpanded
-                                                        ? EdgeInsets.only(
+                                                        ? const EdgeInsets.only(
                                                             bottom: 10)
-                                                        : EdgeInsets.only(
+                                                        : const EdgeInsets.only(
                                                             top: 10),
                                                     child: FaIcon(
                                                       isExpanded
@@ -643,10 +645,11 @@ class _TempletTableState extends State<TempletTable> {
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                    width: MediaQuery.of(context)
-                                                            .size
-                                                            .width *
-                                                        .08),
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .08),
                                                 Expanded(
                                                   flex: 3,
                                                   child: Text(
@@ -657,7 +660,8 @@ class _TempletTableState extends State<TempletTable> {
                                                     // '${rentals.rentalOwnerPhoneNumber}',
                                                     style: TextStyle(
                                                       color: blueColor,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       fontSize: 15,
                                                     ),
                                                   ),
@@ -668,9 +672,10 @@ class _TempletTableState extends State<TempletTable> {
                                         ),
                                         if (isExpanded)
                                           Container(
-                                            padding: EdgeInsets.symmetric(
+                                            padding: const EdgeInsets.symmetric(
                                                 horizontal: 2),
-                                            margin: EdgeInsets.only(bottom: 2),
+                                            margin: const EdgeInsets.only(
+                                                bottom: 2),
                                             child: SingleChildScrollView(
                                               child: Column(
                                                 children: [
@@ -685,7 +690,8 @@ class _TempletTableState extends State<TempletTable> {
                                                             : FontAwesomeIcons
                                                                 .sortDown,
                                                         size: 40,
-                                                        color: Colors.transparent,
+                                                        color:
+                                                            Colors.transparent,
                                                       ),
                                                       Expanded(
                                                         child: Column(
@@ -750,8 +756,7 @@ class _TempletTableState extends State<TempletTable> {
                                                                             .isEmpty
                                                                         ? 'N/A'
                                                                         : extractText(
-                                                                            rentals
-                                                                                .body!),
+                                                                            rentals.body!),
                                                                     style:
                                                                         TextStyle(
                                                                       fontWeight:
@@ -778,12 +783,12 @@ class _TempletTableState extends State<TempletTable> {
                                                           ],
                                                         ),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 2,
                                                       ),
                                                     ],
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 10,
                                                   ),
                                                   Row(
@@ -798,8 +803,7 @@ class _TempletTableState extends State<TempletTable> {
                                                                     MaterialPageRoute(
                                                                         builder: (context) =>
                                                                             Add_Email_templet(
-                                                                              templetid:
-                                                                                  rentals.templateId,
+                                                                              templetid: rentals.templateId,
                                                                             )));
                                                             if (check == true) {
                                                               setState(() {
@@ -809,53 +813,52 @@ class _TempletTableState extends State<TempletTable> {
                                                               });
                                                             }
                                                           },
-                                                          child:
-                                                          Container(
+                                                          child: Container(
                                                             height: 40,
                                                             decoration:
-                                                            BoxDecoration(
+                                                                BoxDecoration(
                                                               border: Border.all(
                                                                   color: Colors
                                                                       .green,
-                                                                  width:
-                                                                  1.5),
+                                                                  width: 1.5),
                                                               borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
                                                             ),
-                                                            child: Row(
+                                                            child: const Row(
                                                               mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
+                                                                  MainAxisAlignment
+                                                                      .center,
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
+                                                                  CrossAxisAlignment
+                                                                      .center,
                                                               children: [
                                                                 FaIcon(
                                                                   FontAwesomeIcons
                                                                       .edit,
-                                                                  size:
-                                                                  15,
+                                                                  size: 15,
                                                                   color: Colors
                                                                       .green,
                                                                 ),
                                                                 SizedBox(
-                                                                  width:
-                                                                  10,
+                                                                  width: 10,
                                                                 ),
                                                                 Text(
                                                                   "Edit",
                                                                   style: TextStyle(
-                                                                      color:
-                                                                      Colors.green,
-                                                                      fontWeight: FontWeight.bold),
+                                                                      color: Colors
+                                                                          .green,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
                                                                 ),
                                                               ],
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 5,
                                                       ),
                                                       Expanded(
@@ -866,46 +869,45 @@ class _TempletTableState extends State<TempletTable> {
                                                                 rentals
                                                                     .templateId!);
                                                           },
-                                                          child:
-                                                          Container(
+                                                          child: Container(
                                                             height: 40,
                                                             decoration:
-                                                            BoxDecoration(
+                                                                BoxDecoration(
                                                               border: Border.all(
                                                                   color: Colors
                                                                       .red,
-                                                                  width:
-                                                                  1.5),
+                                                                  width: 1.5),
                                                               borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
                                                             ),
-                                                            child: Row(
+                                                            child: const Row(
                                                               mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
+                                                                  MainAxisAlignment
+                                                                      .center,
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
+                                                                  CrossAxisAlignment
+                                                                      .center,
                                                               children: [
                                                                 FaIcon(
                                                                   FontAwesomeIcons
                                                                       .trashCan,
-                                                                  size:
-                                                                  15,
+                                                                  size: 15,
                                                                   color: Colors
                                                                       .red,
                                                                 ),
                                                                 SizedBox(
-                                                                  width:
-                                                                  10,
+                                                                  width: 10,
                                                                 ),
                                                                 Text(
                                                                   "Delete",
                                                                   style: TextStyle(
-                                                                      color:
-                                                                      Colors.red,
-                                                                      fontWeight: FontWeight.bold),
+                                                                      color: Colors
+                                                                          .red,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
                                                                 )
                                                               ],
                                                             ),
@@ -925,22 +927,23 @@ class _TempletTableState extends State<TempletTable> {
                                 }).toList(),
                               ),
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Row(
                                   children: [
                                     // Text('Rows per page:'),
-                                    SizedBox(width: 10),
+                                    const SizedBox(width: 10),
                                     Material(
                                       elevation: 3,
                                       child: Container(
                                         height: 40,
-                                        padding: EdgeInsets.symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                             horizontal: 12.0),
                                         decoration: BoxDecoration(
-                                          border: Border.all(color: Colors.grey),
+                                          border:
+                                              Border.all(color: Colors.grey),
                                         ),
                                         child: DropdownButtonHideUnderline(
                                           child: DropdownButton<int>(

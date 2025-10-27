@@ -525,7 +525,7 @@ class _RenewleaseState extends State<Renewlease> {
       ),
       body: ListView(
         children: [
-          SizedBox(
+          const SizedBox(
             height: 25,
           ),
           Padding(
@@ -559,7 +559,7 @@ class _RenewleaseState extends State<Renewlease> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 5,
           ),
           Container(
@@ -579,7 +579,7 @@ class _RenewleaseState extends State<Renewlease> {
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData) {
-                  return Center(child: Text('No data found'));
+                  return const Center(child: Text('No data found'));
                 } else {
                   final leasesummery = snapshot.data!;
                   // if (determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate)) {
@@ -668,7 +668,7 @@ class _RenewleaseState extends State<Renewlease> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 5,
                           ),
                           Material(
@@ -688,10 +688,10 @@ class _RenewleaseState extends State<Renewlease> {
                                       height: 40,
                                       decoration: BoxDecoration(
                                           color: grey,
-                                          borderRadius: BorderRadius.only(
+                                          borderRadius: const BorderRadius.only(
                                               topLeft: Radius.circular(8),
                                               topRight: Radius.circular(8))),
-                                      child: Column(
+                                      child: const Column(
                                         // crossAxisAlignment: CrossAxisAlignment.center,
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
@@ -713,20 +713,20 @@ class _RenewleaseState extends State<Renewlease> {
                                         ],
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 15,
                                     ),
                                     Table(
                                       children: [
                                         TableRow(children: [
-                                          TableCell(
+                                          const TableCell(
                                               child: Padding(
-                                            padding: const EdgeInsets.all(12.0),
+                                            padding: EdgeInsets.all(12.0),
                                             child: Text(
                                               'Lease Type',
                                               style: TextStyle(
                                                   color:
-                                                      const Color(0xFF8A95A8),
+                                                      Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 16),
                                             ),
@@ -745,14 +745,14 @@ class _RenewleaseState extends State<Renewlease> {
                                           )),
                                         ]),
                                         TableRow(children: [
-                                          TableCell(
+                                          const TableCell(
                                               child: Padding(
-                                            padding: const EdgeInsets.all(12.0),
+                                            padding: EdgeInsets.all(12.0),
                                             child: Text(
                                               'Start - End ',
                                               style: TextStyle(
                                                   color:
-                                                      const Color(0xFF8A95A8),
+                                                      Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 16),
                                             ),
@@ -771,14 +771,14 @@ class _RenewleaseState extends State<Renewlease> {
                                           )),
                                         ]),
                                         TableRow(children: [
-                                          TableCell(
+                                          const TableCell(
                                               child: Padding(
-                                            padding: const EdgeInsets.all(12.0),
+                                            padding: EdgeInsets.all(12.0),
                                             child: Text(
                                               'Rent',
                                               style: TextStyle(
                                                   color:
-                                                      const Color(0xFF8A95A8),
+                                                      Color(0xFF8A95A8),
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 16),
                                             ),
@@ -803,7 +803,7 @@ class _RenewleaseState extends State<Renewlease> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 15,
                           ),
                           Material(
@@ -823,10 +823,10 @@ class _RenewleaseState extends State<Renewlease> {
                                       height: 40,
                                       decoration: BoxDecoration(
                                           color: grey,
-                                          borderRadius: BorderRadius.only(
+                                          borderRadius: const BorderRadius.only(
                                               topLeft: Radius.circular(8),
                                               topRight: Radius.circular(8))),
-                                      child: Column(
+                                      child: const Column(
                                         // crossAxisAlignment: CrossAxisAlignment.center,
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
@@ -848,12 +848,12 @@ class _RenewleaseState extends State<Renewlease> {
                                         ],
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 15,
                                     ),
                                     Row(
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 5,
                                         ),
                                         Text(
@@ -865,12 +865,12 @@ class _RenewleaseState extends State<Renewlease> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     Row(
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 5,
                                         ),
                                         Expanded(
@@ -1023,7 +1023,7 @@ class _RenewleaseState extends State<Renewlease> {
                                             },
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 5,
                                         ),
                                       ],
@@ -1033,7 +1033,7 @@ class _RenewleaseState extends State<Renewlease> {
                                     ),
                                     Row(
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 5,
                                         ),
                                         Text('Start Date *',
@@ -1194,7 +1194,7 @@ class _RenewleaseState extends State<Renewlease> {
                                     ),
                                     Row(
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 5,
                                         ),
                                         Text('End Date *',
@@ -1390,7 +1390,7 @@ class _RenewleaseState extends State<Renewlease> {
                                     ),
                                     Row(
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 5,
                                         ),
                                         Text(
@@ -1451,7 +1451,7 @@ class _RenewleaseState extends State<Renewlease> {
                                     ),
                                     Row(
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 5,
                                         ),
                                         Text(
@@ -1473,7 +1473,7 @@ class _RenewleaseState extends State<Renewlease> {
                                     ),
                                     Row(
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 5,
                                         ),
                                         Text(
@@ -1485,12 +1485,12 @@ class _RenewleaseState extends State<Renewlease> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     Row(
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 5,
                                         ),
                                         Container(
@@ -1509,7 +1509,7 @@ class _RenewleaseState extends State<Renewlease> {
                                               ),
                                             ),
                                             onPressed: _pickPdfFiles,
-                                            child: Text('Choose Files'),
+                                            child: const Text('Choose Files'),
                                           ),
                                         ),
                                       ],
@@ -1539,7 +1539,7 @@ class _RenewleaseState extends State<Renewlease> {
                                                         .removeAt(index);
                                                   });
                                                 },
-                                                icon: FaIcon(
+                                                icon: const FaIcon(
                                                   FontAwesomeIcons.remove,
                                                   color: Color(0xFF748097),
                                                 ),
@@ -1549,7 +1549,7 @@ class _RenewleaseState extends State<Renewlease> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 20,
                                     ),
                                     isLoading
@@ -1575,7 +1575,7 @@ class _RenewleaseState extends State<Renewlease> {
                                                   TableRow(children: [
                                                     Padding(
                                                       padding:
-                                                          EdgeInsets.all(8.0),
+                                                          const EdgeInsets.all(8.0),
                                                       child: Center(
                                                         child: Text('Account',
                                                             style: TextStyle(
@@ -1588,7 +1588,7 @@ class _RenewleaseState extends State<Renewlease> {
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          EdgeInsets.all(8.0),
+                                                          const EdgeInsets.all(8.0),
                                                       child: Center(
                                                         child: Text('Amount',
                                                             style: TextStyle(
@@ -1601,7 +1601,7 @@ class _RenewleaseState extends State<Renewlease> {
                                                     ),
                                                     Padding(
                                                       padding:
-                                                          EdgeInsets.all(5.0),
+                                                          const EdgeInsets.all(5.0),
                                                       child: Center(
                                                         child: Text('Actions',
                                                             style: TextStyle(
@@ -1864,7 +1864,7 @@ class _RenewleaseState extends State<Renewlease> {
                                                                                               color: blueColor,
                                                                                             ),
                                                                                           ),
-                                                                                          SizedBox(
+                                                                                          const SizedBox(
                                                                                             height: 20,
                                                                                           ),
                                                                                           Text(
@@ -1966,7 +1966,7 @@ class _RenewleaseState extends State<Renewlease> {
                                                                                           RichText(
                                                                                             text: TextSpan(
                                                                                               children: <TextSpan>[
-                                                                                                TextSpan(
+                                                                                                const TextSpan(
                                                                                                   text: 'We stores this information ',
                                                                                                   style: TextStyle(
                                                                                                     fontSize: 12,
@@ -1982,7 +1982,7 @@ class _RenewleaseState extends State<Renewlease> {
                                                                                                     color: blueColor,
                                                                                                   ),
                                                                                                 ),
-                                                                                                TextSpan(
+                                                                                                const TextSpan(
                                                                                                   text: ' and ',
                                                                                                   style: TextStyle(
                                                                                                     fontSize: 12,
@@ -2080,8 +2080,8 @@ class _RenewleaseState extends State<Renewlease> {
                                                                                             ],
                                                                                           ),
                                                                                           if (isError)
-                                                                                            Padding(
-                                                                                              padding: const EdgeInsets.only(top: 8.0),
+                                                                                            const Padding(
+                                                                                              padding: EdgeInsets.only(top: 8.0),
                                                                                               child: Text(
                                                                                                 'Please fill all fields',
                                                                                                 style: TextStyle(color: Colors.red),
@@ -2098,7 +2098,7 @@ class _RenewleaseState extends State<Renewlease> {
                                                                         },
                                                                       );
                                                                     },
-                                                                    child: Row(
+                                                                    child: const Row(
                                                                       mainAxisAlignment:
                                                                           MainAxisAlignment
                                                                               .start,
@@ -2106,7 +2106,7 @@ class _RenewleaseState extends State<Renewlease> {
                                                                           CrossAxisAlignment
                                                                               .start,
                                                                       children: [
-                                                                        const Text(
+                                                                        Text(
                                                                           '+ Add One Time Charge',
                                                                           style: TextStyle(
                                                                               fontSize: 14,
@@ -2124,7 +2124,7 @@ class _RenewleaseState extends State<Renewlease> {
                                                                     CrossAxisAlignment
                                                                         .start,
                                                                 children: [
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                       height:
                                                                           5),
                                                                   DropdownButton2<
@@ -2226,8 +2226,8 @@ class _RenewleaseState extends State<Renewlease> {
                                                                       ),
                                                                     ),
                                                                     hint:
-                                                                        Padding(
-                                                                      padding: const EdgeInsets
+                                                                        const Padding(
+                                                                      padding: EdgeInsets
                                                                           .only(
                                                                           left:
                                                                               7,
@@ -2268,7 +2268,7 @@ class _RenewleaseState extends State<Renewlease> {
                                                         ),
                                                       ),
                                                       Container(
-                                                        margin: EdgeInsets.only(
+                                                        margin: const EdgeInsets.only(
                                                             top: 5),
                                                         child: Padding(
                                                           padding:
@@ -2424,7 +2424,7 @@ class _RenewleaseState extends State<Renewlease> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Row(

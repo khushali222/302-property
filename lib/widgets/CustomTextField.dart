@@ -528,7 +528,7 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
                   }
                   node.unfocus(); // Dismiss the keyboard
                 },
-                child: Padding(
+                child: const Padding(
                   padding: EdgeInsets.all(14.0),
                   child: Text(
                     "Done",
@@ -788,7 +788,7 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
                   child: Container(
                     height: 50,
                     padding:
-                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                        const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.0),
@@ -801,7 +801,7 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.2),
-                          offset: Offset(4, 4),
+                          offset: const Offset(4, 4),
                           blurRadius: 3,
                         ),
                       ],
@@ -871,7 +871,7 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
                         decoration: InputDecoration(
                           suffixIcon: widget.suffixIcon,
                           hintStyle:
-                              TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                              const TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                           border: InputBorder.none,
                           hintText: widget.hintText,
                         ),
@@ -881,7 +881,7 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
                 ),
                 if (state.hasError && _errorMessage != null ||
                     widget.amount_check != null)
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                 // Reserve space for error message
               ],
             );
@@ -895,16 +895,16 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
+                const Icon(
                   Icons.error_outline,
                   color: Colors.red,
                   size: 16.0,
                 ),
-                SizedBox(width: 4.0),
+                const SizedBox(width: 4.0),
                 Expanded(
                   child: Text(
                     _errorMessage!,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.red,
                       fontSize: 12.0,
                     ),

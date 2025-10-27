@@ -10,11 +10,37 @@ import '../model/workorder_model.dart';
 
 class WorkOrderRepository {
 
+ //  Future<List<WorkOrder>> fetchWorkOrders() async {
+ //    SharedPreferences prefs = await SharedPreferences.getInstance();
+ //    String? id = prefs.getString("vendor_id");
+ //    String? admin_id = prefs.getString("adminId");
+ //    String? token = prefs.getString('token');
+ //
+ //    final response = await http.get(
+ //      Uri.parse('${Api_url}/api/work-order/vendor_work/$id'),
+ //      headers: {
+ //        'authorization': 'CRM $token',
+ //        'id': 'CRM $id',
+ //      },
+ //    );
+ // // log(response.body);
+ //    if (response.statusCode == 200) {
+ //      List jsonResponse = json.decode(response.body)['data'];
+ //
+ //      return jsonResponse.map((data) => WorkOrder.fromJson(data)).toList();
+ //    } else {
+ //      throw Exception('Failed to load work orders');
+ //    }
+ //  }
   Future<List<WorkOrder>> fetchWorkOrders() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("vendor_id");
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+
+    print('id: $id');
+    print('admin_id: $admin_id');
+    print('token: $token');
 
     final response = await http.get(
       Uri.parse('${Api_url}/api/work-order/vendor_work/$id'),
@@ -23,11 +49,15 @@ class WorkOrderRepository {
         'id': 'CRM $id',
       },
     );
- // log(response.body);
+    print('response: ${response.body}');
+    // log(response.body);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
 
       return jsonResponse.map((data) => WorkOrder.fromJson(data)).toList();
+    } else if (json.decode(response.body)['message'] ==
+        'No work orders found for the specified vendor.') {
+      return [];
     } else {
       throw Exception('Failed to load work orders');
     }

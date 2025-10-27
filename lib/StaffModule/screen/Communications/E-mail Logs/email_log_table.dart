@@ -129,11 +129,11 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                   children: [
                     width < 400
                         ? Text("Recipient",
-                        style: TextStyle(
-                            color: blueColor, fontWeight: FontWeight.bold))
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold))
                         : Text("Recipient",
-                        style: TextStyle(
-                            color: blueColor, fontWeight: FontWeight.bold)),
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     // SizedBox(width: 3),
                     // ascending1
@@ -181,7 +181,8 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                 },
                 child: Row(
                   children: [
-                    Text("       Rental \n     Address",
+                    Text("Rental\nAddress",
+                        textAlign: TextAlign.left,
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold)),
                     // SizedBox(width: 5),
@@ -231,7 +232,8 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                 },
                 child: Row(
                   children: [
-                    Text("          Sent",
+                    Text("   Sent",
+                        textAlign: TextAlign.left,
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 3),
@@ -786,29 +788,97 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                   SizedBox(
                     height: 20,
                   ),
-                  //add propertytype
+                  // Header Section with Title
                   Padding(
-                    padding: const EdgeInsets.only(left: 4, right: 0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width > 500? 12 : 0,right:  MediaQuery.of(context).size.width > 500? 12 : 0),
+                      child: titleBar(
+                        width: double.infinity,
+                        title: 'Email Logs',
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12, right: 12),
                     child: Row(
-                      //mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: titleBar(
-                            width: MediaQuery.of(context).size.width * .90,
-                            title: 'Email Logs',
+                        if (MediaQuery.of(context).size.width < 500)
+                          SizedBox(width: 1),
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 18),
+                        Material(
+                          elevation: 2,
+                          borderRadius: BorderRadius.circular(8),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            // height: 40,
+                            height: MediaQuery.of(context).size.width < 500
+                                ? 45
+                                : 50,
+                            width: MediaQuery.of(context).size.width < 500
+                                ? MediaQuery.of(context).size.width * .52
+                                : MediaQuery.of(context).size.width * .49,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                // border: Border.all(color: Colors.grey),
+                                border: Border.all(color: Color(0xFF8A95A8))),
+                            child: Stack(
+                              children: [
+                                Positioned.fill(
+                                  child: TextField(
+                                    style: TextStyle(
+                                        fontSize:
+                                        MediaQuery.of(context).size.width <
+                                            500
+                                            ? 15
+                                            : 14),
+                                    // onChanged: (value) {
+                                    //   setState(() {
+                                    //     cvverror = false;
+                                    //   });
+                                    // },
+                                    // controller: cvv,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        searchvalue = value;
+                                        if (_currentPage != 0) _currentPage = 0;
+                                      });
+                                    },
+                                    cursorColor: blueColor,
+                                    decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: "Search here...",
+                                        hintStyle: TextStyle(
+                                          fontSize: MediaQuery.of(context)
+                                              .size
+                                              .width <
+                                              500
+                                              ? 14
+                                              : 18,
+                                          // fontWeight: FontWeight.bold,
+                                          color: Color(0xFF8A95A8),
+                                        ),
+                                        contentPadding: EdgeInsets.only(
+                                            left: 5, bottom: 12, top: 5)),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 4),
-                        if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 22),
                       ],
                     ),
                   ),
-                  if (MediaQuery.of(context).size.width < 500)
+                  // if (MediaQuery.of(context).size.width < 500)
                     Padding(
-                      padding: const EdgeInsets.all(15.0),
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width < 500 ? 15 : 28),
                       child: FutureBuilder<List<Emails>>(
                         future: futureEmailss,
                         builder: (context, snapshot) {
@@ -921,7 +991,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
                                           margin:
-                                          EdgeInsets.symmetric(vertical: 6),
+                                              EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
                                                 ? Color(0xFFF4F8FF)
@@ -929,7 +999,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                             border: Border.all(
                                                 color: Color(0xFFDBE0E5)),
                                             borderRadius:
-                                            BorderRadius.circular(10),
+                                                BorderRadius.circular(10),
                                           ),
                                           // decoration: BoxDecoration(
                                           //   border: Border.all(color: blueColor),
@@ -940,13 +1010,13 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                 contentPadding: EdgeInsets.zero,
                                                 title: Padding(
                                                   padding:
-                                                  const EdgeInsets.all(2.0),
+                                                      const EdgeInsets.all(2.0),
                                                   child: Row(
                                                     mainAxisAlignment:
-                                                    MainAxisAlignment.start,
+                                                        MainAxisAlignment.start,
                                                     crossAxisAlignment:
-                                                    CrossAxisAlignment
-                                                        .center,
+                                                        CrossAxisAlignment
+                                                            .center,
                                                     children: <Widget>[
                                                       InkWell(
                                                         onTap: () {
@@ -967,7 +1037,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                             if (expandedIndex ==
                                                                 index) {
                                                               expandedIndex =
-                                                              null;
+                                                                  null;
                                                             } else {
                                                               expandedIndex =
                                                                   index;
@@ -976,20 +1046,20 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                         },
                                                         child: Container(
                                                           margin:
-                                                          EdgeInsets.only(
-                                                              left: 5,
-                                                              right: 5),
+                                                              EdgeInsets.only(
+                                                                  left: 5,
+                                                                  right: 5),
                                                           padding: !isExpanded
                                                               ? EdgeInsets.only(
-                                                              bottom: 10)
+                                                                  bottom: 10)
                                                               : EdgeInsets.only(
-                                                              top: 10),
+                                                                  top: 10),
                                                           child: FaIcon(
                                                             isExpanded
                                                                 ? FontAwesomeIcons
-                                                                .sortUp
+                                                                    .sortUp
                                                                 : FontAwesomeIcons
-                                                                .sortDown,
+                                                                    .sortDown,
                                                             size: 20,
                                                             color: blueColor,
                                                           ),
@@ -1002,7 +1072,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                               if (expandedIndex ==
                                                                   index) {
                                                                 expandedIndex =
-                                                                null;
+                                                                    null;
                                                               } else {
                                                                 expandedIndex =
                                                                     index;
@@ -1011,15 +1081,15 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                           },
                                                           child: Text(
                                                             Propertytype.email
-                                                                ?.isNotEmpty ==
-                                                                true
+                                                                        ?.isNotEmpty ==
+                                                                    true
                                                                 ? '${Propertytype.email}'
                                                                 : 'N/A',
                                                             style: TextStyle(
                                                               color: blueColor,
                                                               fontWeight:
-                                                              FontWeight
-                                                                  .bold,
+                                                                  FontWeight
+                                                                      .bold,
                                                               fontSize: 13,
                                                             ),
                                                           ),
@@ -1027,30 +1097,30 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                       ),
                                                       SizedBox(
                                                           width: MediaQuery.of(
-                                                              context)
-                                                              .size
-                                                              .width *
+                                                                      context)
+                                                                  .size
+                                                                  .width *
                                                               .05),
                                                       Expanded(
                                                         child: Text(
                                                           Propertytype.rentalAddress
-                                                              ?.isNotEmpty ==
-                                                              true
+                                                                      ?.isNotEmpty ==
+                                                                  true
                                                               ? '${Propertytype.rentalAddress}'
-                                                              : '         N/A',
+                                                              : 'N/A',
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
-                                                            FontWeight.bold,
+                                                                FontWeight.bold,
                                                             fontSize: 13,
                                                           ),
                                                         ),
                                                       ),
                                                       SizedBox(
                                                           width: MediaQuery.of(
-                                                              context)
-                                                              .size
-                                                              .width *
+                                                                      context)
+                                                                  .size
+                                                                  .width *
                                                               .08),
                                                       Expanded(
                                                         child: Text(
@@ -1058,25 +1128,25 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                           // formatDate(
                                                           //     '${Propertytype.createdAt}'),
                                                           Propertytype.isAccepted ==
-                                                              true
+                                                                  true
                                                               ? dateProvider
-                                                              .formatCurrentDateTime(
-                                                              '${Propertytype.createdAt}')
+                                                                  .formatCurrentDateTime(
+                                                                      '${Propertytype.createdAt}')
                                                               : 'Not Sent',
 
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
-                                                            FontWeight.bold,
+                                                                FontWeight.bold,
                                                             fontSize: 13,
                                                           ),
                                                         ),
                                                       ),
                                                       SizedBox(
                                                           width: MediaQuery.of(
-                                                              context)
-                                                              .size
-                                                              .width *
+                                                                      context)
+                                                                  .size
+                                                                  .width *
                                                               .01),
                                                     ],
                                                   ),
@@ -1093,15 +1163,15 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                       children: [
                                                         Row(
                                                           mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
+                                                              MainAxisAlignment
+                                                                  .start,
                                                           children: [
                                                             FaIcon(
                                                               isExpanded
                                                                   ? FontAwesomeIcons
-                                                                  .sortUp
+                                                                      .sortUp
                                                                   : FontAwesomeIcons
-                                                                  .sortDown,
+                                                                      .sortDown,
                                                               size: 50,
                                                               color: Colors
                                                                   .transparent,
@@ -1109,15 +1179,15 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                             Expanded(
                                                               child: Column(
                                                                 crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
+                                                                    CrossAxisAlignment
+                                                                        .start,
                                                                 children: <Widget>[
                                                                   Text.rich(
                                                                     TextSpan(
                                                                       children: [
                                                                         TextSpan(
                                                                           text:
-                                                                          'Subject   :  ',
+                                                                              'Subject   :  ',
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.bold,
                                                                               color: blueColor), // Bold and black
@@ -1140,7 +1210,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                                       children: [
                                                                         TextSpan(
                                                                           text:
-                                                                          'Opened  :  ',
+                                                                              'Opened  :  ',
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.bold,
                                                                               color: blueColor), // Bold and black
@@ -1171,7 +1241,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                           children: [
                                                             Expanded(
                                                               child:
-                                                              GestureDetector(
+                                                                  GestureDetector(
                                                                 onTap: () {
                                                                   _showAlert(
                                                                       context,
@@ -1180,44 +1250,44 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                                                                       Propertytype);
                                                                 },
                                                                 child:
-                                                                Container(
+                                                                    Container(
                                                                   height: 40,
                                                                   decoration:
-                                                                  BoxDecoration(
+                                                                      BoxDecoration(
                                                                     border: Border.all(
                                                                         color:
-                                                                        blueColor,
+                                                                            blueColor,
                                                                         width:
-                                                                        1.5),
+                                                                            1.5),
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(8),
+                                                                        BorderRadius
+                                                                            .circular(8),
                                                                   ),
                                                                   child: Row(
                                                                     mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
+                                                                        MainAxisAlignment
+                                                                            .center,
                                                                     crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .center,
+                                                                        CrossAxisAlignment
+                                                                            .center,
                                                                     children: [
                                                                       Image
                                                                           .asset(
                                                                         'assets/icons/view.png',
                                                                         color:
-                                                                        blueColor,
+                                                                            blueColor,
                                                                       ),
                                                                       SizedBox(
                                                                         width:
-                                                                        10,
+                                                                            10,
                                                                       ),
                                                                       Text(
                                                                         "Details",
                                                                         style: TextStyle(
                                                                             color:
-                                                                            blueColor,
+                                                                                blueColor,
                                                                             fontWeight:
-                                                                            FontWeight.bold),
+                                                                                FontWeight.bold),
                                                                       )
                                                                     ],
                                                                   ),

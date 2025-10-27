@@ -11,6 +11,8 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class MortgageTable extends StatefulWidget {
   const MortgageTable({Key? key}) : super(key: key);
@@ -38,6 +40,33 @@ class _MortgageTableState extends State<MortgageTable> {
   ];
 
   List<int> itemsPerPageOptions = [10, 25, 50, 100];
+
+  // Sorting variables
+  bool sorting1 = false; // Bank name
+  bool sorting2 = false; // Status
+  bool ascending1 = false;
+  bool ascending2 = false;
+
+  void sortData(List<Map<String, dynamic>> data) {
+    // Apply user-selected sorting only if explicitly chosen
+    if (sorting1 && !sorting2) {
+      data.sort((a, b) => ascending1
+          ? (a['bank_name'] ?? '')
+              .toString()
+              .compareTo((b['bank_name'] ?? '').toString())
+          : (b['bank_name'] ?? '')
+              .toString()
+              .compareTo((a['bank_name'] ?? '').toString()));
+    } else if (sorting2 && !sorting1) {
+      data.sort((a, b) => ascending2
+          ? (a['status'] ?? '')
+              .toString()
+              .compareTo((b['status'] ?? '').toString())
+          : (b['status'] ?? '')
+              .toString()
+              .compareTo((a['status'] ?? '').toString()));
+    }
+  }
 
   @override
   void initState() {
@@ -250,38 +279,47 @@ class _MortgageTableState extends State<MortgageTable> {
   }
 
   void _deleteMortgage(String id) {
-    showDialog(
+    Alert(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Delete Mortgage'),
-          content: const Text('Are you sure you want to delete this mortgage?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  _mortgages.removeWhere((mortgage) => mortgage['_id'] == id);
-                  _filteredMortgages
-                      .removeWhere((mortgage) => mortgage['_id'] == id);
-                });
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Mortgage deleted successfully'),
-                    backgroundColor: Colors.green,
-                  ),
-                );
-              },
-              child: const Text('Delete', style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        );
-      },
-    );
+      type: AlertType.warning,
+      title: "Are you sure?",
+      desc: "Once deleted, you will not be able to recover this Mortgage!",
+      style: const AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      buttons: [
+        DialogButton(
+          child: const Text(
+            "Delete",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () async {
+            setState(() {
+              _mortgages.removeWhere((mortgage) => mortgage['_id'] == id);
+              _filteredMortgages
+                  .removeWhere((mortgage) => mortgage['_id'] == id);
+            });
+            Navigator.pop(context);
+            Fluttertoast.showToast(msg: "Mortgage deleted successfully");
+          },
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
+        ),
+      ],
+    ).show();
   }
 
   void _editMortgage(Map<String, dynamic> mortgage) {
@@ -360,15 +398,98 @@ class _MortgageTableState extends State<MortgageTable> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Text(
-              "    Bank",
-              style: TextStyle(
-                  color: const Color(0xFF1E3A8A), fontWeight: FontWeight.bold),
+            Expanded(
+              flex: 3,
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting1 == true) {
+                      sorting2 = false;
+                      ascending1 = sorting1 ? !ascending1 : true;
+                      ascending2 = false;
+                    } else {
+                      sorting1 = !sorting1;
+                      sorting2 = false;
+                      ascending1 = sorting1 ? !ascending1 : true;
+                      ascending2 = false;
+                    }
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text(
+                      "    Bank",
+                      style: TextStyle(
+                          color: blueColor, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(width: 3),
+                    ascending1
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          ),
+                  ],
+                ),
+              ),
             ),
-            Text(
-              "Status    ",
-              style: TextStyle(
-                  color: const Color(0xFF1E3A8A), fontWeight: FontWeight.bold),
+            Expanded(
+              flex: 1,
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    if (sorting2) {
+                      sorting1 = false;
+                      sorting2 = sorting2;
+                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending1 = false;
+                    } else {
+                      sorting1 = false;
+                      sorting2 = !sorting2;
+                      ascending2 = sorting2 ? !ascending2 : true;
+                      ascending1 = false;
+                    }
+                  });
+                },
+                child: Row(
+                  children: [
+                    Text(
+                      "Status",
+                      style: TextStyle(
+                          color: blueColor, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(width: 5),
+                    ascending2
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortUp,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(bottom: 7, left: 2),
+                            child: FaIcon(
+                              FontAwesomeIcons.sortDown,
+                              size: 20,
+                              color: blueColor,
+                            ),
+                          ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
@@ -430,6 +551,8 @@ class _MortgageTableState extends State<MortgageTable> {
 
   @override
   Widget build(BuildContext context) {
+    // Apply sorting to filtered mortgages
+    sortData(_filteredMortgages);
     final totalPages = (_filteredMortgages.length / itemsPerPage).ceil();
     final currentPageData = _filteredMortgages
         .skip(currentPage * itemsPerPage)
@@ -448,60 +571,65 @@ class _MortgageTableState extends State<MortgageTable> {
           const SizedBox(height: 20),
           // Header Section with Title and Add Button
           Padding(
-            padding: const EdgeInsets.all(0),
+            padding: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width < 500 ? 12 : 30,
+                right: MediaQuery.of(context).size.width < 500 ? 12 : 30),
             child: Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: titleBar(
-                    width: MediaQuery.of(context).size.width * .64,
-                    title: 'Mortgage',
+                Expanded(
+                  flex: 3,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: titleBar(
+                      width: double.infinity,
+                      title: 'Mortgage',
+                    ),
                   ),
                 ),
-                //  const SizedBox(width: 16),
-                GestureDetector(
-                  onTap: _openAddMortgageForm,
-                  child: Container(
-                    height: (MediaQuery.of(context).size.width < 500)
-                        ? 50
-                        : MediaQuery.of(context).size.width * 0.063,
-                    width: (MediaQuery.of(context).size.width < 500)
-                        ? MediaQuery.of(context).size.width * 0.23
-                        : MediaQuery.of(context).size.width * 0.2,
-                    decoration: BoxDecoration(
-                      color: blueColor,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "+ Add",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 16 : 22,
+                Flexible(
+                  flex: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: GestureDetector(
+                      onTap: _openAddMortgageForm,
+                      child: Container(
+                        height:
+                            (MediaQuery.of(context).size.width < 768) ? 50 : 60,
+                        decoration: BoxDecoration(
+                          color: blueColor,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "+ Add",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 20),
               ],
             ),
           ),
-          const SizedBox(height: 10),
-
+          const SizedBox(height: 20),
           // Search and Filter Section
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 11),
+            padding: const EdgeInsets.only(left: 11, right: 11),
             child: Row(
               children: [
-                const SizedBox(width: 10),
+                if (MediaQuery.of(context).size.width < 500) SizedBox(width: 2),
+                if (MediaQuery.of(context).size.width > 500)
+                  SizedBox(width: 20),
                 Material(
                   elevation: 0,
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
-                    height: 50,
+                    height: (MediaQuery.of(context).size.width < 768) ? 50 : 60,
                     width: MediaQuery.of(context).size.width * 0.49,
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -530,7 +658,7 @@ class _MortgageTableState extends State<MortgageTable> {
               ],
             ),
           ),
-          const SizedBox(height: 25),
+          // const SizedBox(height: 25),
 
           // Content Section
           Expanded(
@@ -572,7 +700,8 @@ class _MortgageTableState extends State<MortgageTable> {
                         ),
                       )
                     : SingleChildScrollView(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        padding: EdgeInsets.all(
+                            MediaQuery.of(context).size.width < 500 ? 10 : 28),
                         child: Column(
                           children: [
                             _buildHeaders(),
@@ -587,320 +716,341 @@ class _MortgageTableState extends State<MortgageTable> {
                                   bool isExpanded = expandedIndex == index;
                                   Map<String, dynamic> mortgage = entry.value;
 
-                                  return Container(
-                                    margin:
-                                        const EdgeInsets.symmetric(vertical: 6),
-                                    decoration: BoxDecoration(
-                                      color: index % 2 != 0
-                                          ? const Color(0xFFF4F8FF)
-                                          : Colors.white,
-                                      border: Border.all(
-                                          color: const Color(0xFFDBE0E5)),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Column(
-                                      children: <Widget>[
-                                        ListTile(
-                                          contentPadding: EdgeInsets.zero,
-                                          title: Padding(
-                                            padding: const EdgeInsets.all(2.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                InkWell(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      if (expandedIndex ==
-                                                          index) {
-                                                        expandedIndex = null;
-                                                      } else {
-                                                        expandedIndex = index;
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    margin:
-                                                        const EdgeInsets.only(
-                                                            left: 5, right: 5),
-                                                    padding: !isExpanded
-                                                        ? const EdgeInsets.only(
-                                                            bottom: 10)
-                                                        : const EdgeInsets.only(
-                                                            top: 10),
-                                                    child: FaIcon(
-                                                      isExpanded
-                                                          ? FontAwesomeIcons
-                                                              .sortUp
-                                                          : FontAwesomeIcons
-                                                              .sortDown,
-                                                      size: 20,
-                                                      color: const Color(
-                                                          0xFF1E3A8A),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 8.0),
-                                                    child: InkWell(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          if (expandedIndex ==
-                                                              index) {
-                                                            expandedIndex =
-                                                                null;
-                                                          } else {
-                                                            expandedIndex =
-                                                                index;
-                                                          }
-                                                        });
-                                                      },
-                                                      child: Text.rich(
-                                                        TextSpan(
-                                                          children: [
-                                                            TextSpan(
-                                                              text:
-                                                                  '${mortgage['bank_name'] ?? 'N/A'}',
-                                                              style: TextStyle(
-                                                                color:
-                                                                    blueColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 13,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: Container(
-                                                    margin: EdgeInsets.only(
-                                                        left: 50, right: 5),
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 6),
-                                                    decoration: BoxDecoration(
-                                                      color: _getStatusColor(
-                                                              mortgage[
-                                                                  'status'])
-                                                          .withOpacity(0.1),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
-                                                      border: Border.all(
-                                                        color: _getStatusColor(
-                                                            mortgage['status']),
-                                                        width: 1,
-                                                      ),
-                                                    ),
-                                                    child: Center(
-                                                      child: Text(
-                                                        (mortgage['status'] ??
-                                                                'unknown')
-                                                            .toString()
-                                                            .toUpperCase(),
-                                                        style: TextStyle(
-                                                          color: _getStatusColor(
-                                                              mortgage[
-                                                                  'status']),
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          fontSize: 10,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        if (isExpanded)
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 2.0),
-                                            margin: const EdgeInsets.only(
-                                                bottom: 2),
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      FaIcon(
+                                  return InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        if (expandedIndex == index) {
+                                          expandedIndex = null;
+                                        } else {
+                                          expandedIndex = index;
+                                        }
+                                      });
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 6),
+                                      decoration: BoxDecoration(
+                                        color: index % 2 != 0
+                                            ? const Color(0xFFF4F8FF)
+                                            : Colors.white,
+                                        border: Border.all(
+                                            color: const Color(0xFFDBE0E5)),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Column(
+                                        children: <Widget>[
+                                          ListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            title: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(2.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  InkWell(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        if (expandedIndex ==
+                                                            index) {
+                                                          expandedIndex = null;
+                                                        } else {
+                                                          expandedIndex = index;
+                                                        }
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              left: 5,
+                                                              right: 5),
+                                                      padding: !isExpanded
+                                                          ? const EdgeInsets
+                                                              .only(bottom: 10)
+                                                          : const EdgeInsets
+                                                              .only(top: 10),
+                                                      child: FaIcon(
                                                         isExpanded
                                                             ? FontAwesomeIcons
                                                                 .sortUp
                                                             : FontAwesomeIcons
                                                                 .sortDown,
-                                                        size: 40,
-                                                        color:
-                                                            Colors.transparent,
+                                                        size: 20,
+                                                        color: const Color(
+                                                            0xFF1E3A8A),
                                                       ),
-                                                      Expanded(
-                                                        child: Table(
-                                                          columnWidths: const {
-                                                            0: FlexColumnWidth(),
-                                                            1: FlexColumnWidth(),
-                                                          },
-                                                          children: [
-                                                            _buildTableRow(
-                                                              'Loan Amount:',
-                                                              _getDisplayValue(
-                                                                  _formatCurrency(
-                                                                      mortgage[
-                                                                          'loan_amount'])),
-                                                              'Interest Rate:',
-                                                              _getDisplayValue(
-                                                                  '${mortgage['interest_rate'] ?? 0}%'),
-                                                            ),
-                                                            _buildTableRow(
-                                                              'Mortgage#',
-                                                              _getDisplayValue(
-                                                                  mortgage[
-                                                                      'mortgage_no']),
-                                                              '',
-                                                              _getDisplayValue(
-                                                                  ''),
-                                                            ),
-                                                          ],
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 3,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 8.0),
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            if (expandedIndex ==
+                                                                index) {
+                                                              expandedIndex =
+                                                                  null;
+                                                            } else {
+                                                              expandedIndex =
+                                                                  index;
+                                                            }
+                                                          });
+                                                        },
+                                                        child: Text.rich(
+                                                          TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                    '${mortgage['bank_name'] ?? 'N/A'}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color:
+                                                                      blueColor,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 13,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
-                                                      const SizedBox(width: 5),
-                                                    ],
+                                                    ),
                                                   ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      GestureDetector(
-                                                        onTap: () =>
-                                                            _deleteMortgage(
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Container(
+                                                      margin: EdgeInsets.only(
+                                                          left: 25, right: 5),
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 0,
+                                                          vertical: 6),
+                                                      decoration: BoxDecoration(
+                                                        color: _getStatusColor(
                                                                 mortgage[
-                                                                    '_id']),
-                                                        child: Container(
-                                                          height: 35,
-                                                          width: 35,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8),
-                                                            color: Colors
-                                                                .red.shade50,
-                                                          ),
-                                                          child: const Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .trashCan,
-                                                                size: 15,
-                                                                color:
-                                                                    Colors.red,
-                                                              ),
-                                                            ],
+                                                                    'status'])
+                                                            .withOpacity(0.1),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                        border: Border.all(
+                                                          color: _getStatusColor(
+                                                              mortgage[
+                                                                  'status']),
+                                                          width: 1,
+                                                        ),
+                                                      ),
+                                                      child: Center(
+                                                        child: Text(
+                                                          (mortgage['status'] ??
+                                                                  'unknown')
+                                                              .toString()
+                                                              .toUpperCase(),
+                                                          style: TextStyle(
+                                                            color: _getStatusColor(
+                                                                mortgage[
+                                                                    'status']),
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13,
                                                           ),
                                                         ),
                                                       ),
-                                                      const SizedBox(width: 5),
-                                                      GestureDetector(
-                                                        onTap: () =>
-                                                            _editMortgage(
-                                                                mortgage),
-                                                        child: Container(
-                                                          height: 35,
-                                                          width: 35,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8),
-                                                            color: Colors
-                                                                .green.shade50,
-                                                          ),
-                                                          child: const Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .edit,
-                                                                size: 15,
-                                                                color: Colors
-                                                                    .green,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 5),
-                                                      GestureDetector(
-                                                        onTap: () =>
-                                                            _viewMortgage(
-                                                                mortgage),
-                                                        child: Container(
-                                                          height: 35,
-                                                          width: 35,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: Colors
-                                                                .grey.shade200,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8),
-                                                          ),
-                                                          child: const Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .eye,
-                                                                size: 15,
-                                                                color: Colors
-                                                                    .black,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 15),
-                                                    ],
+                                                    ),
                                                   ),
-                                                  const SizedBox(height: 15),
                                                 ],
                                               ),
                                             ),
                                           ),
-                                      ],
+                                          if (isExpanded)
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 2.0),
+                                              margin: const EdgeInsets.only(
+                                                  bottom: 2),
+                                              child: SingleChildScrollView(
+                                                child: Column(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        FaIcon(
+                                                          isExpanded
+                                                              ? FontAwesomeIcons
+                                                                  .sortUp
+                                                              : FontAwesomeIcons
+                                                                  .sortDown,
+                                                          size: 40,
+                                                          color: Colors
+                                                              .transparent,
+                                                        ),
+                                                        Expanded(
+                                                          child: Table(
+                                                            columnWidths: const {
+                                                              0: FlexColumnWidth(),
+                                                              1: FlexColumnWidth(),
+                                                            },
+                                                            children: [
+                                                              _buildTableRow(
+                                                                'Loan Amount:',
+                                                                _getDisplayValue(
+                                                                    _formatCurrency(
+                                                                        mortgage[
+                                                                            'loan_amount'])),
+                                                                'Interest Rate:',
+                                                                _getDisplayValue(
+                                                                    '${mortgage['interest_rate'] ?? 0}%'),
+                                                              ),
+                                                              _buildTableRow(
+                                                                'Mortgage#',
+                                                                _getDisplayValue(
+                                                                    mortgage[
+                                                                        'mortgage_no']),
+                                                                '',
+                                                                _getDisplayValue(
+                                                                    ''),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 5),
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        GestureDetector(
+                                                          onTap: () =>
+                                                              _deleteMortgage(
+                                                                  mortgage[
+                                                                      '_id']),
+                                                          child: Container(
+                                                            height: 35,
+                                                            width: 35,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                              color: Colors
+                                                                  .red.shade50,
+                                                            ),
+                                                            child: const Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .trashCan,
+                                                                  size: 15,
+                                                                  color: Colors
+                                                                      .red,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 5),
+                                                        GestureDetector(
+                                                          onTap: () =>
+                                                              _editMortgage(
+                                                                  mortgage),
+                                                          child: Container(
+                                                            height: 35,
+                                                            width: 35,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                              color: Colors
+                                                                  .green
+                                                                  .shade50,
+                                                            ),
+                                                            child: const Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .edit,
+                                                                  size: 15,
+                                                                  color: Colors
+                                                                      .green,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 5),
+                                                        GestureDetector(
+                                                          onTap: () =>
+                                                              _viewMortgage(
+                                                                  mortgage),
+                                                          child: Container(
+                                                            height: 35,
+                                                            width: 35,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: Colors.grey
+                                                                  .shade200,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                            ),
+                                                            child: const Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                FaIcon(
+                                                                  FontAwesomeIcons
+                                                                      .eye,
+                                                                  size: 15,
+                                                                  color: Colors
+                                                                      .black,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 15),
+                                                      ],
+                                                    ),
+                                                    const SizedBox(height: 15),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      ),
                                     ),
                                   );
                                 }).toList(),

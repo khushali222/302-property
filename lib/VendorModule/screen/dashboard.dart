@@ -284,11 +284,11 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                 onTap: () {
 
                 },
-                child: Row(
+                child: const Row(
                   children: [
-                    const Text("Status",
+                    Text("Status",
                         style: TextStyle(color: Colors.white)),
-                    const SizedBox(width: 5),
+                    SizedBox(width: 5),
 
                   ],
                 ),
@@ -300,11 +300,11 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                 onTap: () {
 
                 },
-                child: Row(
+                child: const Row(
                   children: [
-                    const Text("      Billable ",
+                    Text("      Billable ",
                         style: TextStyle(color: Colors.white)),
-                    const SizedBox(width: 5),
+                    SizedBox(width: 5),
                     /*ascending3
                         ? const Padding(
                             padding: EdgeInsets.only(top: 7, left: 2),
@@ -431,12 +431,12 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
       desc: "Do you want to exit the app?",
       style: AlertStyle(
         backgroundColor: Colors.white,
-        titleStyle: TextStyle(
+        titleStyle: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
           color: Colors.black,
         ),
-        descStyle: TextStyle(
+        descStyle: const TextStyle(
           fontSize: 16,
           color: Colors.black54,
         ),
@@ -445,13 +445,13 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
         overlayColor: Colors.black.withOpacity(0.5),
         alertBorder: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
-          side: BorderSide(color: Colors.blue, width: 2),
+          side: const BorderSide(color: Colors.blue, width: 2),
         ),
-        alertPadding: EdgeInsets.all(16.0),
+        alertPadding: const EdgeInsets.all(16.0),
       ),
       buttons: [
         DialogButton(
-          child: Text(
+          child: const Text(
             "No",
             style: TextStyle(
               color: Colors.white,
@@ -466,7 +466,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
           radius: BorderRadius.circular(8.0),
         ),
         DialogButton(
-          child: Text(
+          child: const Text(
             "Yes",
             style: TextStyle(
               color: Colors.white,
@@ -534,7 +534,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                       children: [
                         SizedBox(width: width * 0.03),
                         Container(
-                          color: Color.fromRGBO(2, 121, 210, 1),
+                          color: const Color.fromRGBO(2, 121, 210, 1),
                           margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.012,),
                           width: 3,
                           child: Column(
@@ -609,7 +609,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                         decoration: BoxDecoration(
                             border: Border.all(
                                 color:
-                                Color.fromRGBO(152, 162, 179, .5))),
+                                const Color.fromRGBO(152, 162, 179, .5))),
                         // decoration: BoxDecoration(
                         //     border: Border.all(color: blueColor)),
                         child: Column(
@@ -628,7 +628,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                     ? Colors.white
                                     : blueColor.withOpacity(0.09),
                                 border: Border.all(
-                                    color: Color.fromRGBO(
+                                    color: const Color.fromRGBO(
                                         152, 162, 179, .5)),
                               ),
                               // decoration: BoxDecoration(
@@ -671,12 +671,12 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                               });
                                             },
                                             child: Container(
-                                              margin: EdgeInsets.only(
+                                              margin: const EdgeInsets.only(
                                                   left: 5, right: 8),
                                               padding: !isExpanded
-                                                  ? EdgeInsets.only(
+                                                  ? const EdgeInsets.only(
                                                   bottom: 10)
-                                                  : EdgeInsets.only(
+                                                  : const EdgeInsets.only(
                                                   top: 10),
                                               child: FaIcon(
                                                 isExpanded
@@ -726,9 +726,9 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                   ),
                                   if (isExpanded)
                                     Container(
-                                      padding: EdgeInsets.symmetric(
+                                      padding: const EdgeInsets.symmetric(
                                           horizontal: 2),
-                                      margin: EdgeInsets.only(bottom: 1),
+                                      margin: const EdgeInsets.only(bottom: 1),
                                       child: SingleChildScrollView(
                                         child: Column(
                                           children: [
@@ -747,8 +747,8 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                 Expanded(
                                                   child: Table(
                                                     columnWidths: {
-                                                      0: FlexColumnWidth(), // Distribute columns equally
-                                                      1: FlexColumnWidth(),
+                                                      0: const FlexColumnWidth(), // Distribute columns equally
+                                                      1: const FlexColumnWidth(),
                                                       // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                                       // 1: FlexColumnWidth(),
                                                     },
@@ -764,7 +764,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                     ],
                                                   ),
                                                 ),
-                                                SizedBox(
+                                                const SizedBox(
                                                   width: 5,
                                                 ),
                                                 // Column(
@@ -814,7 +814,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                 // ),
                                               ],
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               height: 10,
                                             ),
 
@@ -829,7 +829,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                           }).toList(),
                         ),
                       ),
-                      SizedBox(height: 10,),
+                      const SizedBox(height: 10,),
                     ],
                   ),
 
@@ -838,8 +838,8 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
                         child: Text(
                           "Open Work Orders At Nearby Properties",
                           style: TextStyle(
@@ -889,7 +889,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                 //     color: Colors.transparent,
                 //   ),
                 // ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 LayoutBuilder(
@@ -899,7 +899,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                       children: [
                         SizedBox(width: width * 0.05),
                         Container(
-                          color: Color.fromRGBO(2, 121, 210, 1),
+                          color: const Color.fromRGBO(2, 121, 210, 1),
                           margin: EdgeInsets.only(
                             top: MediaQuery.of(context).size.height *
                                 0.012,
@@ -1137,7 +1137,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                         ),
                                         height: 50,
                                         width: 200,
-                                        child: Center(
+                                        child: const Center(
                                             child: Text(
                                               "View All",
                                               style: TextStyle(
@@ -1174,7 +1174,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                         // color: dashboardData.colorc[1],
                                         height: 50,
                                         width: 200,
-                                        child: Center(
+                                        child: const Center(
                                             child: Text(
                                               "View All",
                                               style: TextStyle(
@@ -1206,14 +1206,14 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                       crossAxisAlignment:
                                       CrossAxisAlignment.start,
                                       children: [
-                                        Text(
+                                        const Text(
                                           "Statistics",
                                           style: TextStyle(
                                               fontSize: 24,
                                               fontWeight:
                                               FontWeight.bold),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 30,
                                         ),
                                         Container(
@@ -1222,12 +1222,12 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                           decoration: BoxDecoration(
                                             borderRadius:
                                             BorderRadius.circular(6),
-                                            color: Color.fromRGBO(
+                                            color: const Color.fromRGBO(
                                                 206, 233, 255, 1),
                                           ),
                                           child: Row(
                                             children: [
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 10,
                                               ),
                                               Container(
@@ -1240,10 +1240,10 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                   color: blueColor,
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 10,
                                               ),
-                                              Text(
+                                              const Text(
                                                 "New Work Orders",
                                                 style: TextStyle(
                                                     fontSize: 18,
@@ -1253,7 +1253,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                             ],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 30,
                                         ),
                                         Container(
@@ -1262,12 +1262,12 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                           decoration: BoxDecoration(
                                             borderRadius:
                                             BorderRadius.circular(6),
-                                            color: Color.fromRGBO(
+                                            color: const Color.fromRGBO(
                                                 206, 233, 255, 1),
                                           ),
                                           child: Row(
                                             children: [
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 10,
                                               ),
                                               Container(
@@ -1277,14 +1277,14 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                   borderRadius:
                                                   BorderRadius
                                                       .circular(2),
-                                                  color: Color.fromRGBO(
+                                                  color: const Color.fromRGBO(
                                                       90, 134, 213, 1),
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 10,
                                               ),
-                                              Text(
+                                              const Text(
                                                 "OverDue Work Orders",
                                                 style: TextStyle(
                                                     fontSize: 18,
@@ -1294,7 +1294,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                             ],
                                           ),
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 10,
                                         ),
                                       ],
@@ -1461,7 +1461,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                           BorderRadius.circular(6),
                                         ),
                                         height: 50,
-                                        child: Center(
+                                        child: const Center(
                                             child: Text(
                                               "View All",
                                               style: TextStyle(
@@ -1495,7 +1495,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                         ),
                                         // color: dashboardData.colorc[1],
                                         height: 50,
-                                        child: Center(
+                                        child: const Center(
                                             child: Text(
                                               "View All",
                                               style: TextStyle(
@@ -1517,8 +1517,8 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                               crossAxisAlignment:
                               CrossAxisAlignment.start,
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
+                                const Padding(
+                                  padding: EdgeInsets.only(
                                       left: 8.0, bottom: 10),
                                   child: Text(
                                     "Statistics",
@@ -1542,12 +1542,12 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                         decoration: BoxDecoration(
                                           borderRadius:
                                           BorderRadius.circular(6),
-                                          color: Color.fromRGBO(
+                                          color: const Color.fromRGBO(
                                               206, 233, 255, 1),
                                         ),
                                         child: Row(
                                           children: [
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 10,
                                             ),
                                             Container(
@@ -1560,10 +1560,10 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                 color: blueColor,
                                               ),
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 10,
                                             ),
-                                            Text(
+                                            const Text(
                                               "New Work Orders",
                                               style: TextStyle(
                                                   fontSize: 14,
@@ -1579,12 +1579,12 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                         decoration: BoxDecoration(
                                           borderRadius:
                                           BorderRadius.circular(6),
-                                          color: Color.fromRGBO(
+                                          color: const Color.fromRGBO(
                                               206, 233, 255, 1),
                                         ),
                                         child: Row(
                                           children: [
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 10,
                                             ),
                                             Container(
@@ -1594,14 +1594,14 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                                 borderRadius:
                                                 BorderRadius.circular(
                                                     2),
-                                                color: Color.fromRGBO(
+                                                color: const Color.fromRGBO(
                                                     90, 134, 213, 1),
                                               ),
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 10,
                                             ),
-                                            Text(
+                                            const Text(
                                               "OverDue Work Orders",
                                               style: TextStyle(
                                                   fontSize: 14,
@@ -1614,7 +1614,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                                     ],
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 Barchart(),
@@ -2661,7 +2661,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
       children: [
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(4.0),
+            padding: const EdgeInsets.all(4.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2670,7 +2670,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                   style:
                   TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 2.0), // Space between label and value
+                const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   leftValue,
                   style: TextStyle(color: grey),
@@ -2681,7 +2681,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(4.0),
+            padding: const EdgeInsets.all(4.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2690,7 +2690,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                   style:
                   TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 2.0), // Space between label and value
+                const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   rightValue,
                   style: TextStyle(color: grey),
@@ -2816,10 +2816,10 @@ class _PropertyCardState extends State<PropertyCard> {
               flex: 3,
               child: InkWell(
                 onTap: () {},
-                child: Row(
+                child: const Row(
                   children: [
-                    const Text("Status", style: TextStyle(color: Colors.white)),
-                    const SizedBox(width: 5),
+                    Text("Status", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 5),
                   ],
                 ),
               ),
@@ -2828,11 +2828,11 @@ class _PropertyCardState extends State<PropertyCard> {
               flex: 3,
               child: InkWell(
                 onTap: () {},
-                child: Row(
+                child: const Row(
                   children: [
-                    const Text("      Billable ",
+                    Text("      Billable ",
                         style: TextStyle(color: Colors.white)),
-                    const SizedBox(width: 5),
+                    SizedBox(width: 5),
                     /*ascending3
                         ? const Padding(
                             padding: EdgeInsets.only(top: 7, left: 2),
@@ -2884,7 +2884,7 @@ class _PropertyCardState extends State<PropertyCard> {
           color:
           widget.index % 2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: Color.fromRGBO(152, 162, 179, .5)),
+          border: Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
           // border: Border.all(color: Colors.grey.shade300),
           // boxShadow: [
           //   BoxShadow(
@@ -2915,7 +2915,7 @@ class _PropertyCardState extends State<PropertyCard> {
                       Expanded(
                         child: Text(
                           rental.rentalAddress ?? 'No Address',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
@@ -2937,14 +2937,14 @@ class _PropertyCardState extends State<PropertyCard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // const SizedBox(height: 5),
-                        Divider(),
+                        const Divider(),
                         const SizedBox(height: 10),
                         _buildHeaders(),
                         const SizedBox(height: 10),
                         Container(
                           decoration: BoxDecoration(
                               border: Border.all(
-                                  color: Color.fromRGBO(152, 162, 179, .5))),
+                                  color: const Color.fromRGBO(152, 162, 179, .5))),
                           // decoration: BoxDecoration(
                           //     border: Border.all(color: blueColor)),
                           child: Column(
@@ -2966,7 +2966,7 @@ class _PropertyCardState extends State<PropertyCard> {
                                       ? Colors.white
                                       : blueColor.withOpacity(0.09),
                                   border: Border.all(
-                                      color: Color.fromRGBO(152, 162, 179, .5)),
+                                      color: const Color.fromRGBO(152, 162, 179, .5)),
                                 ),
                                 // decoration: BoxDecoration(
                                 //   border: Border.all(color: blueColor),
@@ -3019,11 +3019,11 @@ class _PropertyCardState extends State<PropertyCard> {
                                                 });
                                               },
                                               child: Container(
-                                                margin: EdgeInsets.only(
+                                                margin: const EdgeInsets.only(
                                                     left: 5, right: 8),
                                                 padding: !isExpanded
-                                                    ? EdgeInsets.only(bottom: 10)
-                                                    : EdgeInsets.only(top: 10),
+                                                    ? const EdgeInsets.only(bottom: 10)
+                                                    : const EdgeInsets.only(top: 10),
                                                 child: FaIcon(
                                                   isExpanded
                                                       ? FontAwesomeIcons.sortUp
@@ -3102,8 +3102,8 @@ class _PropertyCardState extends State<PropertyCard> {
                                     if (isExpanded)
                                       Container(
                                         padding:
-                                        EdgeInsets.symmetric(horizontal: 2),
-                                        margin: EdgeInsets.only(bottom: 1),
+                                        const EdgeInsets.symmetric(horizontal: 2),
+                                        margin: const EdgeInsets.only(bottom: 1),
                                         child: SingleChildScrollView(
                                           child: Column(
                                             children: [
@@ -3120,8 +3120,8 @@ class _PropertyCardState extends State<PropertyCard> {
                                                   Expanded(
                                                     child: Table(
                                                       columnWidths: {
-                                                        0: FlexColumnWidth(), // Distribute columns equally
-                                                        1: FlexColumnWidth(),
+                                                        0: const FlexColumnWidth(), // Distribute columns equally
+                                                        1: const FlexColumnWidth(),
                                                         // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                                         // 1: FlexColumnWidth(),
                                                       },
@@ -3137,12 +3137,12 @@ class _PropertyCardState extends State<PropertyCard> {
                                                       ],
                                                     ),
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     width: 5,
                                                   ),
                                                 ],
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 10,
                                               ),
                                               Row(
@@ -3176,7 +3176,7 @@ class _PropertyCardState extends State<PropertyCard> {
                                                           CrossAxisAlignment
                                                               .center,
                                                           children: [
-                                                            SizedBox(
+                                                            const SizedBox(
                                                               width: 5,
                                                             ),
                                                             Image.asset(
@@ -3188,7 +3188,7 @@ class _PropertyCardState extends State<PropertyCard> {
                                                             //   size: 15,
                                                             //   color:blueColor,
                                                             // ),
-                                                            SizedBox(
+                                                            const SizedBox(
                                                               width: 8,
                                                             ),
                                                             Text(
@@ -3219,20 +3219,20 @@ class _PropertyCardState extends State<PropertyCard> {
                             }).toList(),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                       ],
                     ),
                   if (!hasWorkOrders)
-                    Column(
+                    const Column(
                       children: [
-                        const SizedBox(height: 5),
+                        SizedBox(height: 5),
                         Divider(),
-                        const SizedBox(height: 10),
+                        SizedBox(height: 10),
                         Text("No Work Orders",
                             style: TextStyle(color: Colors.blueGrey)),
-                        const SizedBox(height: 10),
+                        SizedBox(height: 10),
                       ],
                     ),
                   // Add more fields if needed
@@ -3250,7 +3250,7 @@ class _PropertyCardState extends State<PropertyCard> {
       children: [
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(4.0),
+            padding: const EdgeInsets.all(4.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -3259,7 +3259,7 @@ class _PropertyCardState extends State<PropertyCard> {
                   style:
                   TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 2.0), // Space between label and value
+                const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   leftValue,
                   style: TextStyle(color: grey),
@@ -3270,7 +3270,7 @@ class _PropertyCardState extends State<PropertyCard> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(4.0),
+            padding: const EdgeInsets.all(4.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -3279,7 +3279,7 @@ class _PropertyCardState extends State<PropertyCard> {
                   style:
                   TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 2.0), // Space between label and value
+                const SizedBox(height: 2.0), // Space between label and value
                 Text(
                   rightValue,
                   style: TextStyle(color: grey),

@@ -275,7 +275,7 @@ class _add_insuranceState extends State<add_insurance> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 25,
                   ),
                   titleBar(
@@ -293,7 +293,7 @@ class _add_insuranceState extends State<add_insurance> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
                           border: Border.all(
-                            color: Color.fromRGBO(21, 43, 103, 1),
+                            color: const Color.fromRGBO(21, 43, 103, 1),
                           )),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -301,12 +301,12 @@ class _add_insuranceState extends State<add_insurance> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Provider *',
+                            const Text('Provider *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey)),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             CustomTextField(
@@ -321,15 +321,15 @@ class _add_insuranceState extends State<add_insurance> {
                                 return null;
                               },
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
-                            Text('Policy Id *',
+                            const Text('Policy Id *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey)),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             CustomTextField(
@@ -347,15 +347,15 @@ class _add_insuranceState extends State<add_insurance> {
                                 return null;
                               },
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
-                            Text('Effective Date *',
+                            const Text('Effective Date *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey)),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             CustomTextField(
@@ -380,15 +380,15 @@ class _add_insuranceState extends State<add_insurance> {
                                 color: blueColor,
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
-                            Text('Expiration Date *',
+                            const Text('Expiration Date *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey)),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             CustomTextField(
@@ -413,15 +413,15 @@ class _add_insuranceState extends State<add_insurance> {
                                 color: blueColor,
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
-                            Text('Liability Coverage *',
+                            const Text('Liability Coverage *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey)),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             // CustomTextField(
@@ -457,15 +457,15 @@ class _add_insuranceState extends State<add_insurance> {
                                 return null;
                               },
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
-                            Text('Upload Insurance Document',
+                            const Text('Upload Insurance Document',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey)),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             Container(
@@ -482,7 +482,7 @@ class _add_insuranceState extends State<add_insurance> {
                                   ),
                                 ),
                                 onPressed: _pickPdfFiles,
-                                child: Text('Choose Files'),
+                                child: const Text('Choose Files'),
                               ),
                             ),
                             SingleChildScrollView(
@@ -559,19 +559,19 @@ class _add_insuranceState extends State<add_insurance> {
                               }
                             },
                             child: isLoading
-                                ? Center(
+                                ? const Center(
                                     child: SpinKitFadingCircle(
                                       color: Colors.white,
                                       size: 55.0,
                                     ),
                                   )
-                                : Text(
+                                : const Text(
                                     'Save',
                                     style: TextStyle(color: Color(0xFFf7f8f9)),
                                   ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 8,
                         ),
                         Container(
@@ -581,14 +581,14 @@ class _add_insuranceState extends State<add_insurance> {
                                 borderRadius: BorderRadius.circular(8.0)),
                             child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Color(0xFFffffff),
+                                    backgroundColor: const Color(0xFFffffff),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(8.0))),
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: Text(
+                                child: const Text(
                                   'Cancel',
                                   style: TextStyle(color: Color(0xFF748097)),
                                 )))

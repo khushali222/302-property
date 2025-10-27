@@ -162,8 +162,8 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
       child: InkWell(
         onTap: getField != null
             ? () {
-                _sort(getField, columnIndex, !_sortAscending);
-              }
+          _sort(getField, columnIndex, !_sortAscending);
+        }
             : null,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -238,7 +238,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
           color: Colors.white,
           child: Container(
             height: 55,
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(4.0),
@@ -257,17 +257,17 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                     _changeRowsPerPage(newValue);
                   }
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_drop_down,
                   size: 40,
                 ),
-                style: TextStyle(color: Colors.black, fontSize: 17),
+                style: const TextStyle(color: Colors.black, fontSize: 17),
                 dropdownColor: Colors.white,
               ),
             ),
           ),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         IconButton(
           icon: FaIcon(
             size: 30,
@@ -277,14 +277,14 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
           onPressed: _currentPage == 0
               ? null
               : () {
-                  setState(() {
-                    _currentPage--;
-                  });
-                },
+            setState(() {
+              _currentPage--;
+            });
+          },
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         IconButton(
           icon: FaIcon(
@@ -292,15 +292,15 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
-                : Color.fromRGBO(21, 43, 83, 1),
+                : const Color.fromRGBO(21, 43, 83, 1),
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
               : () {
-                  setState(() {
-                    _currentPage++;
-                  });
-                },
+            setState(() {
+              _currentPage++;
+            });
+          },
         ),
       ],
     );
@@ -363,7 +363,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this applience!",
-      style: AlertStyle(
+      style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
       buttons: [
@@ -382,7 +382,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
           ),
         ),
         DialogButton(
-          child: Text(
+          child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
@@ -444,7 +444,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
     return Container(
       decoration: BoxDecoration(
         color: blueColor,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(13),
           topRight: Radius.circular(13),
         ),
@@ -455,7 +455,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              child: Icon(
+              child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
               ),
@@ -483,26 +483,28 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                 child: Row(
                   children: [
                     width < 400
-                        ? Text("Name", style: TextStyle(color: Colors.white))
-                        : Text("Name", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
+                        ? const Text("Name",
+                        style: TextStyle(color: Colors.white))
+                        : const Text("Name",
+                        style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 3),
                     ascending1
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                        ? const Padding(
+                      padding: EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
+                        : const Padding(
+                      padding: EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -530,25 +532,26 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                 },
                 child: Row(
                   children: [
-                    Text("Description", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                    const Text("Description",
+                        style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 5),
                     ascending2
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                        ? const Padding(
+                      padding: EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
+                        : const Padding(
+                      padding: EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -576,25 +579,26 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                 },
                 child: Row(
                   children: [
-                    Text("   Action", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 5),
+                    const Text("   Action",
+                        style: TextStyle(color: Colors.white)),
+                    const SizedBox(width: 5),
                     ascending3
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
+                        ? const Padding(
+                      padding: EdgeInsets.only(top: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortUp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    )
+                        : const Padding(
+                      padding: EdgeInsets.only(bottom: 7, left: 2),
+                      child: FaIcon(
+                        FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -770,9 +774,9 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                         if (widget.units != null && widget.units!.length > 1)
                           Expanded(
                             child: Container(
-                              margin: EdgeInsets.only(left: 20),
+                              margin: const EdgeInsets.only(left: 20),
                               height: 36,
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 0),
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -784,14 +788,14 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                   BoxShadow(
                                     color: Colors.grey.withOpacity(0.1),
                                     blurRadius: 4,
-                                    offset: Offset(0, 2),
+                                    offset: const Offset(0, 2),
                                   ),
                                 ],
                               ),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<unit_properties>(
                                   isExpanded:
-                                      true, // Makes dropdown text responsive
+                                  true, // Makes dropdown text responsive
                                   value: selectedUnit,
                                   icon: Icon(
                                     Icons.keyboard_arrow_down,
@@ -807,20 +811,20 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                   ),
                                   items: widget.units!
                                       .map((unit) =>
-                                          DropdownMenuItem<unit_properties>(
-                                            value: unit,
-                                            child: Text(
-                                              unit.rentalunit ??
-                                                  'Unit ${unit.unitId}',
-                                              overflow: TextOverflow
-                                                  .ellipsis, // Prevent overflow
-                                              style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.grey.shade800,
-                                              ),
-                                            ),
-                                          ))
+                                      DropdownMenuItem<unit_properties>(
+                                        value: unit,
+                                        child: Text(
+                                          unit.rentalunit ??
+                                              'Unit ${unit.unitId}',
+                                          overflow: TextOverflow
+                                              .ellipsis, // Prevent overflow
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.grey.shade800,
+                                          ),
+                                        ),
+                                      ))
                                       .toList(),
                                   onChanged: (unit) {
                                     setState(() {
@@ -835,7 +839,9 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                       ],
                     ),
                   ),
-                  SizedBox(width: 8,),
+                  const SizedBox(
+                    width: 8,
+                  ),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -856,8 +862,8 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                       });
                     },
                     child: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
                       decoration: BoxDecoration(
                         color: blueColor,
                         borderRadius: BorderRadius.circular(10),
@@ -865,11 +871,11 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                           BoxShadow(
                             color: blueColor.withOpacity(0.3),
                             blurRadius: 8,
-                            offset: Offset(0, 3),
+                            offset: const Offset(0, 3),
                           ),
                         ],
                       ),
-                      child: Row(
+                      child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(Icons.add, color: Colors.white, size: 18),
@@ -896,20 +902,48 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                     future: futureAppliences,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
+                        return const Center(
                             child: SpinKitFadingCircle(
-                          color: Colors.black,
-                          size: 40.0,
-                        ));
+                              color: Colors.black,
+                              size: 40.0,
+                            ));
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Center(
-                            child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 15.0),
-                          child: Text(
-                              'You don\'t have any infrastructure for this unit right now ..'),
-                        ));
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 30.0, horizontal: 20.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.home_work_outlined,
+                                  size: 60,
+                                  color: Colors.grey,
+                                ),
+                                SizedBox(height: 15),
+                                Text(
+                                  'No infrastructure found',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                SizedBox(height: 6),
+                                Text(
+                                  'You haven’t added any infrastructure for this unit yet.',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
                       } else {
                         var data = _currentFilteredData;
                         if (searchValue != null &&
@@ -917,8 +951,8 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                             searchValue != "All") {
                           data = _currentFilteredData
                               .where((rentals) => rentals.applianceName!
-                                  .toLowerCase()
-                                  .contains(searchValue.toLowerCase()))
+                              .toLowerCase()
+                              .contains(searchValue.toLowerCase()))
                               .toList();
                         }
                         sortData(data);
@@ -932,7 +966,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                         return SingleChildScrollView(
                           child: Column(
                             children: [
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                               Column(
                                 children: currentPageData
                                     .asMap()
@@ -943,7 +977,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                   unit_appliance rentals = entry.value;
                                   print("Brand name  ${rentals.brand} ");
                                   return Container(
-                                    margin: EdgeInsets.only(bottom: 16),
+                                    margin: const EdgeInsets.only(bottom: 16),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(16),
@@ -954,7 +988,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                         BoxShadow(
                                           color: Colors.grey.withOpacity(0.08),
                                           blurRadius: 8,
-                                          offset: Offset(0, 3),
+                                          offset: const Offset(0, 3),
                                           spreadRadius: 0,
                                         ),
                                       ],
@@ -963,7 +997,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                       children: <Widget>[
                                         // Header section
                                         Container(
-                                          padding: EdgeInsets.all(15),
+                                          padding: const EdgeInsets.all(15),
                                           child: Row(
                                             children: [
                                               // Left section with dropdown and text
@@ -976,7 +1010,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                           if (expandedIndex ==
                                                               index) {
                                                             expandedIndex =
-                                                                null;
+                                                            null;
                                                           } else {
                                                             expandedIndex =
                                                                 index;
@@ -984,30 +1018,32 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                         });
                                                       },
                                                       child: Container(
-                                                        margin: EdgeInsets.only(
+                                                        margin: const EdgeInsets
+                                                            .only(
                                                             left: 5, right: 2),
                                                         padding: !isExpanded
-                                                            ? EdgeInsets.only(
-                                                                bottom: 10)
-                                                            : EdgeInsets.only(
-                                                                top: 10),
+                                                            ? const EdgeInsets
+                                                            .only(
+                                                            bottom: 10)
+                                                            : const EdgeInsets
+                                                            .only(top: 10),
                                                         child: FaIcon(
                                                           isExpanded
                                                               ? FontAwesomeIcons
-                                                                  .sortUp
+                                                              .sortUp
                                                               : FontAwesomeIcons
-                                                                  .sortDown,
+                                                              .sortDown,
                                                           size: 20,
                                                           color: blueColor,
                                                         ),
                                                       ),
                                                     ),
-                                                    SizedBox(width: 16),
+                                                    const SizedBox(width: 16),
                                                     Expanded(
                                                       child: Column(
                                                         crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
+                                                        CrossAxisAlignment
+                                                            .start,
                                                         children: [
                                                           Text(
                                                             rentals.applianceName ??
@@ -1016,8 +1052,8 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                               color: Colors.grey
                                                                   .shade900,
                                                               fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
+                                                              FontWeight
+                                                                  .w700,
                                                               fontSize: 16,
                                                             ),
                                                           ),
@@ -1031,30 +1067,32 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                               if (rentals.brand != null &&
                                                   rentals.brand != "")
                                                 Container(
-                                                  padding: EdgeInsets.symmetric(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
                                                       horizontal: 16,
                                                       vertical: 8),
                                                   decoration: BoxDecoration(
                                                     color: blueColor
                                                         .withOpacity(0.3),
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            12),
+                                                    BorderRadius.circular(
+                                                        12),
                                                     boxShadow: [
                                                       BoxShadow(
                                                         color: blueColor
                                                             .withOpacity(0.3),
                                                         blurRadius: 4,
-                                                        offset: Offset(0, 2),
+                                                        offset:
+                                                        const Offset(0, 2),
                                                       ),
                                                     ],
                                                   ),
                                                   child: Text(
                                                     '${rentals.brand}',
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       color: Colors.white,
                                                       fontWeight:
-                                                          FontWeight.w700,
+                                                      FontWeight.w700,
                                                       fontSize: 14,
                                                     ),
                                                   ),
@@ -1065,13 +1103,14 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                         // Expanded details section
                                         if (isExpanded)
                                           Container(
-                                            padding: EdgeInsets.all(20),
+                                            padding: const EdgeInsets.all(20),
                                             decoration: BoxDecoration(
                                               color: Colors.grey.shade50,
-                                              borderRadius: BorderRadius.only(
+                                              borderRadius:
+                                              const BorderRadius.only(
                                                 bottomLeft: Radius.circular(16),
                                                 bottomRight:
-                                                    Radius.circular(16),
+                                                Radius.circular(16),
                                               ),
                                               border: Border(
                                                 top: BorderSide(
@@ -1087,8 +1126,8 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                     Expanded(
                                                       child: Column(
                                                         crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
+                                                        CrossAxisAlignment
+                                                            .start,
                                                         children: [
                                                           Text(
                                                             'Category',
@@ -1096,14 +1135,15 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                               color: Colors.grey
                                                                   .shade600,
                                                               fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
+                                                              FontWeight
+                                                                  .w600,
                                                               fontSize: 13,
                                                               letterSpacing:
-                                                                  0.5,
+                                                              0.5,
                                                             ),
                                                           ),
-                                                          SizedBox(height: 6),
+                                                          const SizedBox(
+                                                              height: 6),
                                                           Text(
                                                             '${rentals.categoryName}',
                                                             style: TextStyle(
@@ -1111,8 +1151,8 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                                   .shade800,
                                                               fontSize: 15,
                                                               fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
+                                                              FontWeight
+                                                                  .w500,
                                                             ),
                                                           ),
                                                         ],
@@ -1121,8 +1161,8 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                     Expanded(
                                                       child: Column(
                                                         crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
+                                                        CrossAxisAlignment
+                                                            .start,
                                                         children: [
                                                           Text(
                                                             'Installed Date',
@@ -1130,27 +1170,26 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                               color: Colors.grey
                                                                   .shade600,
                                                               fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
+                                                              FontWeight
+                                                                  .w600,
                                                               fontSize: 13,
                                                               letterSpacing:
-                                                                  0.5,
+                                                              0.5,
                                                             ),
                                                           ),
-                                                          SizedBox(height: 6),
-                                                          Text(dateProvider
-                                                              .formatCurrentDate(
-                                                              '${ formatDate(rentals
-                                                                  .installedDate ??
-                                                                  '')}')
-                                                           ,
+                                                          const SizedBox(
+                                                              height: 6),
+                                                          Text(
+                                                            dateProvider
+                                                                .formatCurrentDate(
+                                                                '${formatDate(rentals.installedDate ?? '')}'),
                                                             style: TextStyle(
                                                               color: Colors.grey
                                                                   .shade800,
                                                               fontSize: 15,
                                                               fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
+                                                              FontWeight
+                                                                  .w500,
                                                             ),
                                                           ),
                                                         ],
@@ -1158,11 +1197,11 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                     ),
                                                   ],
                                                 ),
-                                                SizedBox(height: 20),
+                                                const SizedBox(height: 20),
                                                 // Action buttons
                                                 Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.end,
+                                                  MainAxisAlignment.end,
                                                   children: [
                                                     // View button
                                                     GestureDetector(
@@ -1172,26 +1211,27 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                           MaterialPageRoute(
                                                             builder: (context) =>
                                                                 ApplianceSummary(
-                                                              appliance:
+                                                                  appliance:
                                                                   rentals,
-                                                              unit:
+                                                                  unit:
                                                                   selectedUnit,
-                                                              properties: widget
-                                                                  .properties,
-                                                            ),
+                                                                  properties: widget
+                                                                      .properties,
+                                                                ),
                                                           ),
                                                         );
                                                       },
                                                       child: Container(
                                                         padding:
-                                                            EdgeInsets.all(12),
+                                                        const EdgeInsets
+                                                            .all(12),
                                                         decoration:
-                                                            BoxDecoration(
+                                                        BoxDecoration(
                                                           color: Colors
                                                               .grey.shade100,
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(12),
+                                                          BorderRadius
+                                                              .circular(12),
                                                           border: Border.all(
                                                               color: Colors.grey
                                                                   .shade300),
@@ -1204,7 +1244,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                         ),
                                                       ),
                                                     ),
-                                                    SizedBox(width: 12),
+                                                    const SizedBox(width: 12),
                                                     // Edit button
                                                     GestureDetector(
                                                       onTap: () {
@@ -1213,13 +1253,13 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                           MaterialPageRoute(
                                                             builder: (context) =>
                                                                 AddApplience(
-                                                              unit:
+                                                                  unit:
                                                                   selectedUnit,
-                                                              properties: widget
-                                                                  .properties,
-                                                              appliance:
+                                                                  properties: widget
+                                                                      .properties,
+                                                                  appliance:
                                                                   rentals,
-                                                            ),
+                                                                ),
                                                           ),
                                                         ).then((result) {
                                                           // Refresh the data when returning from AddApplience
@@ -1234,19 +1274,20 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                       },
                                                       child: Container(
                                                         padding:
-                                                            EdgeInsets.all(12),
+                                                        const EdgeInsets
+                                                            .all(12),
                                                         decoration:
-                                                            BoxDecoration(
+                                                        BoxDecoration(
                                                           color: Colors.green
                                                               .withOpacity(0.1),
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(12),
+                                                          BorderRadius
+                                                              .circular(12),
                                                           border: Border.all(
                                                               color: Colors
                                                                   .green
                                                                   .withOpacity(
-                                                                      0.3)),
+                                                                  0.3)),
                                                         ),
                                                         child: InkWell(
                                                           child: Icon(
@@ -1258,7 +1299,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                         ),
                                                       ),
                                                     ),
-                                                    SizedBox(width: 12),
+                                                    const SizedBox(width: 12),
                                                     // Delete button
                                                     GestureDetector(
                                                       onTap: () {
@@ -1271,18 +1312,19 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                       },
                                                       child: Container(
                                                         padding:
-                                                            EdgeInsets.all(12),
+                                                        const EdgeInsets
+                                                            .all(12),
                                                         decoration:
-                                                            BoxDecoration(
+                                                        BoxDecoration(
                                                           color: Colors.red
                                                               .withOpacity(0.1),
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(12),
+                                                          BorderRadius
+                                                              .circular(12),
                                                           border: Border.all(
                                                               color: Colors.red
                                                                   .withOpacity(
-                                                                      0.3)),
+                                                                  0.3)),
                                                         ),
                                                         child: Icon(
                                                           Icons.delete,
@@ -1302,19 +1344,19 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                   );
                                 }).toList(),
                               ),
-                              SizedBox(height: 20),
+                              const SizedBox(height: 20),
                               if (totalPages > 1)
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Row(
                                       children: [
-                                        SizedBox(width: 10),
+                                        const SizedBox(width: 10),
                                         Material(
                                           elevation: 3,
                                           child: Container(
                                             height: 40,
-                                            padding: EdgeInsets.symmetric(
+                                            padding: const EdgeInsets.symmetric(
                                                 horizontal: 12.0),
                                             decoration: BoxDecoration(
                                               border: Border.all(
@@ -1328,7 +1370,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                   return DropdownMenuItem<int>(
                                                     value: value,
                                                     child:
-                                                        Text(value.toString()),
+                                                    Text(value.toString()),
                                                   );
                                                 }).toList(),
                                                 onChanged: (newValue) {
@@ -1357,10 +1399,10 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                             onPressed: currentPage == 0
                                                 ? null
                                                 : () {
-                                                    setState(() {
-                                                      currentPage--;
-                                                    });
-                                                  },
+                                              setState(() {
+                                                currentPage--;
+                                              });
+                                            },
                                           ),
                                           Text(
                                               'Page ${currentPage + 1} of $totalPages'),
@@ -1369,18 +1411,18 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                               FontAwesomeIcons
                                                   .circleChevronRight,
                                               color:
-                                                  currentPage < totalPages - 1
-                                                      ? blueColor
-                                                      : Colors.grey,
+                                              currentPage < totalPages - 1
+                                                  ? blueColor
+                                                  : Colors.grey,
                                             ),
                                             onPressed:
-                                                currentPage < totalPages - 1
-                                                    ? () {
-                                                        setState(() {
-                                                          currentPage++;
-                                                        });
-                                                      }
-                                                    : null,
+                                            currentPage < totalPages - 1
+                                                ? () {
+                                              setState(() {
+                                                currentPage++;
+                                              });
+                                            }
+                                                : null,
                                           ),
                                         ],
                                       ),
@@ -1398,15 +1440,15 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                   future: futureAppliences,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
+                      return const Center(
                           child: SpinKitFadingCircle(
-                        color: Colors.black,
-                        size: 40.0,
-                      ));
+                            color: Colors.black,
+                            size: 40.0,
+                          ));
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(
+                      return const Center(
                           child: Text(
                               'You don\'t have any infrastructure for this unit right now ..'));
                     } else {
@@ -1419,12 +1461,12 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                       } else if (searchValue.isNotEmpty) {
                         filteredData = _currentFilteredData
                             .where((staff) =>
-                                staff.applianceName!
-                                    .toLowerCase()
-                                    .contains(searchValue.toLowerCase()) ||
-                                staff.applianceDescription!
-                                    .toLowerCase()
-                                    .contains(searchValue.toLowerCase()))
+                        staff.applianceName!
+                            .toLowerCase()
+                            .contains(searchValue.toLowerCase()) ||
+                            staff.applianceDescription!
+                                .toLowerCase()
+                                .contains(searchValue.toLowerCase()))
                             .toList();
                       }
 
@@ -1439,32 +1481,33 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                               child: Container(
                                 width: MediaQuery.of(context).size.width * .91,
                                 child: Table(
-                                  defaultColumnWidth: IntrinsicColumnWidth(),
+                                  defaultColumnWidth:
+                                  const IntrinsicColumnWidth(),
                                   children: [
                                     TableRow(
                                       decoration:
-                                          BoxDecoration(border: Border.all()),
+                                      BoxDecoration(border: Border.all()),
                                       children: [
                                         _buildHeader('Name', 0,
-                                            (rental) => rental.applianceName!),
+                                                (rental) => rental.applianceName!),
                                         _buildHeader(
                                             'Description',
                                             1,
-                                            (rental) =>
-                                                rental.applianceDescription!),
+                                                (rental) =>
+                                            rental.applianceDescription!),
                                         _buildHeader('InstalledDate', 2,
-                                            (rental) => rental.installedDate!),
+                                                (rental) => rental.installedDate!),
                                         _buildHeader('Actions', 3, null),
                                       ],
                                     ),
                                     TableRow(
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         border: Border.symmetric(
                                             horizontal: BorderSide.none),
                                       ),
                                       children: List.generate(
                                           4,
-                                          (index) => TableCell(
+                                              (index) => TableCell(
                                               child: Container(height: 20))),
                                     ),
                                     for (var i = 0; i < _pagedData.length; i++)
@@ -1494,8 +1537,8 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                               ),
                             ),
                             if (_tableData.isEmpty)
-                              Text("No Search Records Found"),
-                            SizedBox(height: 25),
+                              const Text("No Search Records Found"),
+                            const SizedBox(height: 25),
                             _buildPaginationControls(),
                           ],
                         ),
@@ -1546,7 +1589,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
           ),
-          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          contentPadding:
+          const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         ),
       ),
     );

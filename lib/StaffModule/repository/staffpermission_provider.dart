@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:three_zero_two_property/StaffModule/repository/staffpermission_repo.dart';
-  
-import '../model/staffpermission.dart';
 
+import '../model/staffpermission.dart';
 
 class StaffPermissionProvider with ChangeNotifier {
   StaffPermission? _permissions;
@@ -15,10 +14,12 @@ class StaffPermissionProvider with ChangeNotifier {
   }
   Future<void> fetchPermissions() async {
     try {
-      StaffPermission fetchedPermissions = await StaffPermissionService.fetchPermissions();
+      StaffPermission fetchedPermissions =
+          await StaffPermissionService.fetchPermissions();
       _permissions = fetchedPermissions;
     } catch (e) {
-      // Handle error
+      // Handle error - set default permissions if fetch fails
+      _permissions = StaffPermission();
     } finally {
       _isLoading = false;
       notifyListeners();

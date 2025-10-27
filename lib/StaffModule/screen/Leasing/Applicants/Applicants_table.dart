@@ -30,6 +30,7 @@ import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../../../model/ApplicantModel.dart';
 import '../../../widgets/custom_drawer.dart';
+
 class Applicants_table extends StatefulWidget {
   @override
   _Applicants_tableState createState() => _Applicants_tableState();
@@ -127,14 +128,16 @@ class _Applicants_tableState extends State<Applicants_table> {
                 child: Row(
                   children: [
                     width < 400
-                        ?  Text("Name",
-                            style: TextStyle( color: blueColor, fontWeight: FontWeight.bold))
-                        :  Text("Name",
-                            style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
+                        ? Text("Name",
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold))
+                        : Text("Name",
+                            style: TextStyle(
+                                color: blueColor, fontWeight: FontWeight.bold)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     const SizedBox(width: 3),
                     ascending1
-                        ?  Padding(
+                        ? Padding(
                             padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
@@ -142,7 +145,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                               color: blueColor,
                             ),
                           )
-                        :  Padding(
+                        : Padding(
                             padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
@@ -179,10 +182,14 @@ class _Applicants_tableState extends State<Applicants_table> {
                 },
                 child: Row(
                   children: [
-                     Text("   Phone Number", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold,fontSize: 14)),
-                     SizedBox(width: 5),
+                    Text("   Phone Number",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14)),
+                    SizedBox(width: 5),
                     ascending2
-                        ?  Padding(
+                        ? Padding(
                             padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
@@ -190,7 +197,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                               color: blueColor,
                             ),
                           )
-                        :  Padding(
+                        : Padding(
                             padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
@@ -229,10 +236,12 @@ class _Applicants_tableState extends State<Applicants_table> {
                 child: Row(
                   children: [
                     SizedBox(width: 15),
-                     Text("Status", style: TextStyle( color: blueColor, fontWeight: FontWeight.bold)),
+                    Text("Status",
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 5),
                     ascending3
-                        ?  Padding(
+                        ? Padding(
                             padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
@@ -240,12 +249,12 @@ class _Applicants_tableState extends State<Applicants_table> {
                               color: blueColor,
                             ),
                           )
-                        :  Padding(
+                        : Padding(
                             padding: EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
                               size: 20,
-                              color:blueColor,
+                              color: blueColor,
                             ),
                           ),
                   ],
@@ -257,7 +266,6 @@ class _Applicants_tableState extends State<Applicants_table> {
       ),
     );
   }
-
 
   final List<String> items = ['Approved', "Rejected", 'Undecided', "All"];
   String? selectedValue = "Undecided";
@@ -272,20 +280,20 @@ class _Applicants_tableState extends State<Applicants_table> {
       });
     });
     checkInternet();
-    Provider.of<StaffPermissionProvider>(context, listen: false).fetchPermissions();
+    Provider.of<StaffPermissionProvider>(context, listen: false)
+        .fetchPermissions();
     futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
     futureApplicantdata = ApplicantRepository().fetchApplicants();
     fetchapplicantadded();
   }
-  ConnectivityResult? _connectivityResult ;
-  void checkInternet()async{
 
+  ConnectivityResult? _connectivityResult;
+  void checkInternet() async {
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
     setState(() {
       _connectivityResult = connectiondata;
     });
-
   }
 
   void handleEdit(Datum applicant) async {
@@ -326,7 +334,9 @@ class _Applicants_tableState extends State<Applicants_table> {
       ),
       content: Column(
         children: <Widget>[
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           SizedBox(
             height: 45,
             child: TextField(
@@ -334,8 +344,7 @@ class _Applicants_tableState extends State<Applicants_table> {
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Enter reason for deletion',
-                  contentPadding: EdgeInsets.only(top: 8,left: 15)
-              ),
+                  contentPadding: EdgeInsets.only(top: 8, left: 15)),
             ),
           ),
         ],
@@ -347,10 +356,9 @@ class _Applicants_tableState extends State<Applicants_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            if(reason.text.isEmpty){
+            if (reason.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please enter a reason for deletion");
-            }
-            else{
+            } else {
               await ApplicantRepository()
                   .DeleteApplicant(Applicantid: id, reason: reason.text);
               setState(() {
@@ -365,7 +373,8 @@ class _Applicants_tableState extends State<Applicants_table> {
         DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -378,8 +387,6 @@ class _Applicants_tableState extends State<Applicants_table> {
       ],
     ).show();
   }
-
-
 
   List<Datum> _tableData = [];
   int _rowsPerPage = 10;
@@ -416,8 +423,10 @@ class _Applicants_tableState extends State<Applicants_table> {
   }
 
   void handleDelete(Datum applicant) {
-    _showDeleteAlert(context, applicant.applicantId!);
-   // _showAlert(context, applicant.applicantId!);
+    if (applicant.applicantId != null) {
+      _showDeleteAlert(context, applicant.applicantId!);
+    }
+    // _showAlert(context, applicant.applicantId!);
     // Handle delete action
     print('Delete ${applicant.applicantId}');
   }
@@ -449,23 +458,21 @@ class _Applicants_tableState extends State<Applicants_table> {
     );
   }
 
-  Widget _buildDataCell(String text,Datum applicant) {
+  Widget _buildDataCell(String text, Datum applicant) {
     return TableCell(
       child: InkWell(
-        onTap: (){
+        onTap: () {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      applicant_summery(
-                        applicant_id:
-                        applicant
-                            .applicantId,
+                  builder: (context) => applicant_summery(
+                        applicant_id: applicant.applicantId,
                       )));
         },
         child: Padding(
           padding: const EdgeInsets.only(top: 20.0, left: 16),
-          child: Text(text.isEmpty ? "N/A": text, style: const TextStyle(fontSize: 18)),
+          child: Text(text.isEmpty ? "N/A" : text,
+              style: const TextStyle(fontSize: 18)),
         ),
       ),
     );
@@ -559,9 +566,7 @@ class _Applicants_tableState extends State<Applicants_table> {
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
             size: 30,
-            color: _currentPage == 0
-                ? Colors.grey
-                : blueColor,
+            color: _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -581,10 +586,7 @@ class _Applicants_tableState extends State<Applicants_table> {
             FontAwesomeIcons.circleChevronRight,
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
-                :  blueColor
-
-
-, // Change color based on availability
+                : blueColor, // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
@@ -606,11 +608,12 @@ class _Applicants_tableState extends State<Applicants_table> {
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    final response = await http
-        .get(Uri.parse('${Api_url}/api/applicant/limitation/$adminid'), headers: {
-      "authorization": "CRM $token",
-      "id": "CRM $id",
-    });
+    final response = await http.get(
+        Uri.parse('${Api_url}/api/applicant/limitation/$adminid'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        });
     final jsonData = json.decode(response.body);
     print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
@@ -668,6 +671,7 @@ class _Applicants_tableState extends State<Applicants_table> {
       ],
     ).show();
   }
+
   final _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
@@ -676,1095 +680,1099 @@ class _Applicants_tableState extends State<Applicants_table> {
     return Scaffold(
       appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer:CustomDrawerStaff(currentpage: "Applicants",dropdown: true,),
-      body: _connectivityResult !=ConnectivityResult.none ?
-      SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 20,
-            ),
-            //add propertytype
-            Padding(
-              padding: const EdgeInsets.only(left: 0, right: 0),
-              child: Row(
-               // mainAxisAlignment: MainAxisAlignment.end,
+      drawer: CustomDrawerStaff(
+        currentpage: "Applicants",
+        dropdown: true,
+      ),
+      body: _connectivityResult != ConnectivityResult.none
+          ? SingleChildScrollView(
+              child: Column(
                 children: [
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  //add propertytype
+                  // Header Section with Title and Add Button
                   Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: titleBar(
-                      width:permissions!.applicantAdd! ? MediaQuery.of(context).size.width * .65 :MediaQuery.of(context).size.width * .93,
-                      title: 'Applicants',
-                    ),
-                  ),
-                  if(permissions!.applicantAdd!)
-                  GestureDetector(
-                    onTap: () async {
-                      print(applicantCount);
-                      print(applicantCountLimit);
-                      // final result = await Navigator.of(context).push(MaterialPageRoute(
-                      //     builder: (context) => Add_staffmember()));
-                      // if (result == true) {
-                      //   setState(() {
-                      //     futureStaffMembers = StaffMemberRepository().fetchStaffmembers();
-                      //   });
-                      // }
-                      // if (applicantCount < applicantCountLimit) {
-                      //   final result = await Navigator.of(context).push(
-                      //       MaterialPageRoute(
-                      //           builder: (context) => const AddApplicant()));
-                      //   if (result == true) {
-                      //     setState(() {
-                      //       futureApplicantdata =
-                      //           ApplicantRepository().fetchApplicants();
-                      //     });
-                      //     fetchapplicantadded();
-                      //   }
-                      // } else {
-                      //   _showAlertforLimit(context);
-                      // }
-                      final result = await Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => const AddApplicant()));
-                      if (result == true) {
-                        setState(() {
-                          futureApplicantdata =
-                              ApplicantRepository().fetchApplicants();
-                        });
-
-                      }
-                    },
-                    child: Container(
-                      height: (MediaQuery.of(context).size.width < 500)
-                          ? 50
-                          : MediaQuery.of(context).size.width * 0.063,
-
-                      // height:  MediaQuery.of(context).size.width * 0.07,
-                      // height:  40,
-                      width:  (MediaQuery.of(context).size.width < 500)
-                          ? MediaQuery.of(context).size.width * 0.25
-                          : MediaQuery.of(context).size.width * 0.2,
-                      decoration: BoxDecoration(
-                        color:blueColor,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "+ Add",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                MediaQuery.of(context).size.width < 500
-                                    ? 16
-                                    : 20,
-                              ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: Row(
+                      children: [
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(
+                            width: 13,
+                          ),
+                        Expanded(
+                          flex: permissions!.applicantAdd! ? 3 : 1,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: titleBar(
+                              width: double.infinity,
+                              title: 'Applicants',
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                  if (MediaQuery.of(context).size.width < 500)
-                     SizedBox(width:permissions!.applicantAdd! ? 6 :0),
-                  if (MediaQuery.of(context).size.width > 500)
-                    const SizedBox(width: 22),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-
-            Padding(
-              padding: const EdgeInsets.only(left: 11, right: 11),
-              child: Row(
-                children: [
-                  if (MediaQuery.of(context).size.width < 500)
-                    const SizedBox(width: 2),
-                  if (MediaQuery.of(context).size.width > 500)
-                    const SizedBox(width: 19),
-                  Material(
-                    elevation: 3,
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      // height: 40,
-                      height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
-                      width: MediaQuery.of(context).size.width < 500
-                          ? MediaQuery.of(context).size.width * .45
-                          : MediaQuery.of(context).size.width * .4,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: const Color(0xFF8A95A8)),
-                      ),
-                      child: TextField(
-                        onChanged: (value) {
-                          setState(() {
-                            searchvalue = value;
-                            if (currentPage != 0) currentPage = 0;
-                          });
-                        },
-                        cursorColor: Colors.blue,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "Search here...",
-                          hintStyle: TextStyle(color: Color(0xFF8A95A8)),
-                           contentPadding: EdgeInsets.all(11),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  DropdownButtonHideUnderline(
-                    child: Material(
-                      elevation: 3,
-                      borderRadius: BorderRadius.circular(8),
-                      child: DropdownButton2<String>(
-                        isExpanded: true,
-                        hint: const Row(
-                          children: [
-                            SizedBox(
-                              width: 4,
-                            ),
-                            Expanded(
-                              child: Text(
-                                'Type',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  // fontWeight: FontWeight.bold,
-                                  color: Color(0xFF8A95A8),
+                        if (permissions!.applicantAdd!)
+                          Flexible(
+                            flex: 1,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  final result = await Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                          builder: (context) =>
+                                              const AddApplicant()));
+                                  if (result == true) {
+                                    setState(() {
+                                      futureApplicantdata =
+                                          ApplicantRepository()
+                                              .fetchApplicants();
+                                    });
+                                  }
+                                },
+                                child: Container(
+                                  height:
+                                      (MediaQuery.of(context).size.width < 768)
+                                          ? 50
+                                          : 60,
+                                  decoration: BoxDecoration(
+                                    color: blueColor,
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "+ Add",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                          ],
-                        ),
-                        items: items
-                            .map(
-                                (String item) => DropdownMenuItem<String>(
-                              value: item,
-                              child: Text(
-                                item,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                                overflow: TextOverflow.ellipsis,
+                          ),
+                        if (MediaQuery.of(context).size.width < 500)
+                          SizedBox(width: 3),
+                        if (MediaQuery.of(context).size.width > 500)
+                          SizedBox(width: 18),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Padding(
+                    padding: const EdgeInsets.only(left: 11, right: 11),
+                    child: Row(
+                      children: [
+                        if (MediaQuery.of(context).size.width < 500)
+                          const SizedBox(width: 2),
+                        if (MediaQuery.of(context).size.width > 500)
+                          const SizedBox(width: 19),
+                        Material(
+                          elevation: 3,
+                          borderRadius: BorderRadius.circular(8),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            // height: 40,
+                            height: MediaQuery.of(context).size.width < 500
+                                ? 45
+                                : 50,
+                            width: MediaQuery.of(context).size.width < 500
+                                ? MediaQuery.of(context).size.width * .45
+                                : MediaQuery.of(context).size.width * .4,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              border:
+                                  Border.all(color: const Color(0xFF8A95A8)),
+                            ),
+                            child: TextField(
+                              onChanged: (value) {
+                                setState(() {
+                                  searchvalue = value;
+                                  if (currentPage != 0) currentPage = 0;
+                                });
+                              },
+                              cursorColor: Colors.blue,
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                hintText: "Search here...",
+                                hintStyle: TextStyle(color: Color(0xFF8A95A8)),
+                                contentPadding: EdgeInsets.all(11),
                               ),
-                            ))
-                            .toList(),
-                        value: selectedValue,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedValue = value;
-                          });
-                        },
-                        buttonStyleData: ButtonStyleData(
-                          height: MediaQuery.of(context).size.width < 500
-                              ? 45
-                              : 50,
-                          // width: 180,
-                          width: MediaQuery.of(context).size.width < 500
-                              ? MediaQuery.of(context).size.width * .39
-                              : MediaQuery.of(context).size.width * .4,
-                          padding:
-                          const EdgeInsets.only(left: 14, right: 14),
-                          decoration: BoxDecoration(
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        DropdownButtonHideUnderline(
+                          child: Material(
+                            elevation: 3,
                             borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              // color: Colors.black26,
-                              color: Color(0xFF8A95A8),
+                            child: DropdownButton2<String>(
+                              isExpanded: true,
+                              hint: const Row(
+                                children: [
+                                  SizedBox(
+                                    width: 4,
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      'Type',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        // fontWeight: FontWeight.bold,
+                                        color: Color(0xFF8A95A8),
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              items: items
+                                  .map(
+                                      (String item) => DropdownMenuItem<String>(
+                                            value: item,
+                                            child: Text(
+                                              item,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ))
+                                  .toList(),
+                              value: selectedValue,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedValue = value;
+                                });
+                              },
+                              buttonStyleData: ButtonStyleData(
+                                height: MediaQuery.of(context).size.width < 500
+                                    ? 45
+                                    : 50,
+                                // width: 180,
+                                width: MediaQuery.of(context).size.width < 500
+                                    ? MediaQuery.of(context).size.width * .39
+                                    : MediaQuery.of(context).size.width * .4,
+                                padding:
+                                    const EdgeInsets.only(left: 14, right: 14),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    // color: Colors.black26,
+                                    color: Color(0xFF8A95A8),
+                                  ),
+                                  color: Colors.white,
+                                ),
+                                elevation: 0,
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 200,
+                                width: 200,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  //color: Colors.redAccent,
+                                ),
+                                offset: const Offset(-20, 0),
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(40),
+                                  thickness: MaterialStateProperty.all(6),
+                                  thumbVisibility:
+                                      MaterialStateProperty.all(true),
+                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                                padding: EdgeInsets.only(left: 14, right: 14),
+                              ),
                             ),
-                            color: Colors.white,
-                          ),
-                          elevation: 0,
-                        ),
-                        dropdownStyleData: DropdownStyleData(
-                          maxHeight: 200,
-                          width: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(14),
-                            //color: Colors.redAccent,
-                          ),
-                          offset: const Offset(-20, 0),
-                          scrollbarTheme: ScrollbarThemeData(
-                            radius: const Radius.circular(40),
-                            thickness: MaterialStateProperty.all(6),
-                            thumbVisibility:
-                            MaterialStateProperty.all(true),
                           ),
                         ),
-                        menuItemStyleData: const MenuItemStyleData(
-                          height: 40,
-                          padding: EdgeInsets.only(left: 14, right: 14),
-                        ),
-                      ),
+                        // Column(
+                        //   mainAxisAlignment: MainAxisAlignment.end,
+                        //   crossAxisAlignment: CrossAxisAlignment.end,
+                        //   children: [
+                        //     Text(
+                        //       'Added : ${applicantCount.toString()}',
+                        //       // 'Added : 5',
+                        //       style: TextStyle(
+                        //         fontWeight: FontWeight.bold,
+                        //         color: const Color(0xFF8A95A8),
+                        //         fontSize:
+                        //             MediaQuery.of(context).size.width < 500 ? 14 : 21,
+                        //       ),
+                        //     ),
+                        //     const SizedBox(
+                        //       width: 5,
+                        //     ),
+                        //     //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
+                        //     Text(
+                        //       'Total: ${applicantCountLimit.toString()}',
+                        //       // 'Total: 10',
+                        //       style: TextStyle(
+                        //         fontWeight: FontWeight.bold,
+                        //         color: const Color(0xFF8A95A8),
+                        //         fontSize:
+                        //             MediaQuery.of(context).size.width < 500 ? 14 : 21,
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        if (MediaQuery.of(context).size.width < 500)
+                          const SizedBox(width: 2),
+                        if (MediaQuery.of(context).size.width > 500)
+                          const SizedBox(width: 25),
+                      ],
                     ),
                   ),
-                  // Column(
-                  //   mainAxisAlignment: MainAxisAlignment.end,
-                  //   crossAxisAlignment: CrossAxisAlignment.end,
-                  //   children: [
-                  //     Text(
-                  //       'Added : ${applicantCount.toString()}',
-                  //       // 'Added : 5',
-                  //       style: TextStyle(
-                  //         fontWeight: FontWeight.bold,
-                  //         color: const Color(0xFF8A95A8),
-                  //         fontSize:
-                  //             MediaQuery.of(context).size.width < 500 ? 14 : 21,
-                  //       ),
-                  //     ),
-                  //     const SizedBox(
-                  //       width: 5,
-                  //     ),
-                  //     //  Text("rentalOwnerCountLimit: ${response['rentalOwnerCountLimit']}"),
-                  //     Text(
-                  //       'Total: ${applicantCountLimit.toString()}',
-                  //       // 'Total: 10',
-                  //       style: TextStyle(
-                  //         fontWeight: FontWeight.bold,
-                  //         color: const Color(0xFF8A95A8),
-                  //         fontSize:
-                  //             MediaQuery.of(context).size.width < 500 ? 14 : 21,
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-                  if (MediaQuery.of(context).size.width < 500)
-                    const SizedBox(width: 2),
-                  if (MediaQuery.of(context).size.width > 500)
-                    const SizedBox(width: 25),
-                ],
-              ),
-            ),
-            if (MediaQuery.of(context).size.width > 500)
-              const SizedBox(height: 25),
-            if (MediaQuery.of(context).size.width < 500)
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: FutureBuilder<List<Datum>>(
-                  future: futureApplicantdata,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return ColabShimmerLoadingWidget();
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Container(
-                        height: MediaQuery.of(context).size.height * .5,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
-                              SizedBox(height: 10,),
-                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
-                            ],
-                          ),
-                        ),
-                      );
-                    } else {
-                      var data = snapshot.data!;
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   const SizedBox(height: 25),
+                  // if (MediaQuery.of(context).size.width < 500)
+                  Padding(
+                    padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.width < 500 ? 11 : 28),
+                    child: FutureBuilder<List<Datum>>(
+                      future: futureApplicantdata,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return ColabShimmerLoadingWidget();
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return Container(
+                            height: MediaQuery.of(context).size.height * .5,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "No Data Available",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        } else {
+                          var data = snapshot.data!;
 
-                      if (selectedValue == null && searchvalue.isEmpty) {
-                        data = snapshot.data!;
-                      } else if (selectedValue == "All") {
-                        data = snapshot.data!;
-                      } else if (searchvalue.isNotEmpty) {
-                        data = snapshot.data!
-                            .where((applicant) =>
-                                applicant.applicantFirstName!
-                                    .toLowerCase()
-                                    .contains(searchvalue.toLowerCase()) ||
-                                    applicant.applicantLastName!
-                                        .toLowerCase()
+                          if (selectedValue == null && searchvalue.isEmpty) {
+                            data = snapshot.data!;
+                          } else if (selectedValue == "All") {
+                            data = snapshot.data!;
+                          } else if (searchvalue.isNotEmpty) {
+                            data = snapshot.data!
+                                .where((applicant) =>
+                                    (applicant.applicantFirstName?.toLowerCase() ?? '')
                                         .contains(searchvalue.toLowerCase()) ||
-                                    applicant.applicantPhoneNumber!
-                                        .toLowerCase()
-                                        .contains(searchvalue.toLowerCase())||
-                                    applicant.applicantEmail!
-                                        .toLowerCase()
-                                        .contains(searchvalue.toLowerCase())||
-                                    applicant.rentalData!.rentalAdress!
-                                        .toLowerCase()
+                                    (applicant.applicantLastName?.toLowerCase() ?? '')
+                                        .contains(searchvalue.toLowerCase()) ||
+                                    (applicant.applicantPhoneNumber
+                                                ?.toLowerCase() ??
+                                            '')
+                                        .contains(searchvalue.toLowerCase()) ||
+                                    (applicant.applicantEmail?.toLowerCase() ?? '')
+                                        .contains(searchvalue.toLowerCase()) ||
+                                    (applicant.rentalData?.rentalAdress
+                                                ?.toLowerCase() ??
+                                            '')
                                         .contains(searchvalue.toLowerCase()) ||
                                     (applicant.applicantStatus.isNotEmpty &&
-                                        applicant.applicantStatus.last.status.toString()
+                                        applicant.applicantStatus.last.status
+                                            .toString()
                                             .toLowerCase()
-                                            .contains(searchvalue.toLowerCase()))
+                                            .contains(searchvalue.toLowerCase())))
+                                .toList();
+                          } else {
+                            // data = snapshot.data!
+                            //     .where((applicant) =>
+                            //         applicant.applicantFirstName == selectedValue)
+                            //     .toList();
+                            data = snapshot.data!.where((applicant) {
+                              // If "Undecided" is selected, include applicants with no status
+                              if (selectedValue == "Undecided") {
+                                return applicant.applicantStatus == null ||
+                                    applicant.applicantStatus.isEmpty;
+                              }
 
-                        )
-                            .toList();
-                      } else {
-                        // data = snapshot.data!
-                        //     .where((applicant) =>
-                        //         applicant.applicantFirstName == selectedValue)
-                        //     .toList();
-                        data = snapshot.data!.where((applicant) {
-                          // If "Undecided" is selected, include applicants with no status
-                          if (selectedValue == "Undecided") {
-                            return applicant.applicantStatus == null ||
-                                applicant.applicantStatus.isEmpty;
+                              return applicant.applicantStatus.isNotEmpty &&
+                                  applicant.applicantStatus.last.status ==
+                                      selectedValue;
+                            }).toList();
                           }
-
-                          return applicant.applicantStatus != null &&
-                              applicant.applicantStatus.isNotEmpty &&
-                              applicant.applicantStatus.last.status == selectedValue;
-                        }).toList();
-                      }
-                      if (data.isEmpty) {
-                        return Center(
-                          child:
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height: 50,
-                              ),
-                              Image.asset(
-                                "assets/images/no_data.jpg",
-                                height: 200,
-                                width: 200,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "No Data Available",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: blueColor,
-                                    fontSize: 16),
-                              )
-                            ],
-                          ),
-                        );
-                      }
-                     // data = data.reversed.toList();
-                      sortData(data);
-                      final totalPages = (data.length / itemsPerPage).ceil();
-                      final currentPageData = data
-                          .skip(currentPage * itemsPerPage)
-                          .take(itemsPerPage)
-                          .toList();
-                      return SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 10),
-                            _buildHeaders(),
-                            const SizedBox(height: 10),
-                            Container(
-                              // decoration: BoxDecoration(
-                              //     border: Border.all(
-                              //         color:
-                              //             blueColor)
-                              // ),
-
+                          if (data.isEmpty) {
+                            return Center(
                               child: Column(
-                                children: currentPageData
-                                    .asMap()
-                                    .entries
-                                    .map((entry) {
-                                  int index = entry.key;
-                                  bool isExpanded = expandedIndex == index;
-                                  Datum applicant = entry.value;
-                                  return Container(
-                                    // decoration: BoxDecoration(
-                                    //   border: Border.all(
-                                    //       color: const Color.fromRGBO(
-                                    //           21, 43, 83, 1)),
-                                    // ),
-                                      margin:
-                                      EdgeInsets.symmetric(vertical: 6),
-                                  decoration: BoxDecoration(
-                                  color: index % 2 != 0
-                                  ? Color(0xFFF4F8FF)
-                                      : Colors.white,
-                                  border: Border.all(
-                                  color: Color(0xFFDBE0E5)),
-                                  borderRadius:
-                                  BorderRadius.circular(10),
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    height: 50,
                                   ),
-                                    child: Column(
-                                      children: <Widget>[
-                                        ListTile(
-                                          contentPadding: EdgeInsets.zero,
-                                          title: Padding(
-                                            padding: const EdgeInsets.all(2.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                InkWell(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      if (expandedIndex ==
-                                                          index) {
-                                                        expandedIndex = null;
-                                                      } else {
-                                                        expandedIndex = index;
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    margin:
-                                                        const EdgeInsets.only(
-                                                            left: 5,right:
-                                                        5),
-                                                    padding: !isExpanded
-                                                        ? const EdgeInsets.only(
-                                                            bottom: 10)
-                                                        : const EdgeInsets.only(
-                                                            top: 10),
-                                                    child: FaIcon(
-                                                      isExpanded
-                                                          ? FontAwesomeIcons
-                                                              .sortUp
-                                                          : FontAwesomeIcons
-                                                              .sortDown,
-                                                      size: 20,
-                                                      color:
-                                                           blueColor
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 200,
+                                    width: 200,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "No Data Available",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor,
+                                        fontSize: 16),
+                                  )
+                                ],
+                              ),
+                            );
+                          }
+                          // data = data.reversed.toList();
+                          sortData(data);
+                          final totalPages =
+                              (data.length / itemsPerPage).ceil();
+                          final currentPageData = data
+                              .skip(currentPage * itemsPerPage)
+                              .take(itemsPerPage)
+                              .toList();
+                          return SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 10),
+                                _buildHeaders(),
+                                const SizedBox(height: 10),
+                                Container(
+                                  // decoration: BoxDecoration(
+                                  //     border: Border.all(
+                                  //         color:
+                                  //             blueColor)
+                                  // ),
 
-
-,
+                                  child: Column(
+                                    children: currentPageData
+                                        .asMap()
+                                        .entries
+                                        .map((entry) {
+                                      int index = entry.key;
+                                      bool isExpanded = expandedIndex == index;
+                                      Datum applicant = entry.value;
+                                      return Container(
+                                        // decoration: BoxDecoration(
+                                        //   border: Border.all(
+                                        //       color: const Color.fromRGBO(
+                                        //           21, 43, 83, 1)),
+                                        // ),
+                                        margin:
+                                            EdgeInsets.symmetric(vertical: 6),
+                                        decoration: BoxDecoration(
+                                          color: index % 2 != 0
+                                              ? Color(0xFFF4F8FF)
+                                              : Colors.white,
+                                          border: Border.all(
+                                              color: Color(0xFFDBE0E5)),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Column(
+                                          children: <Widget>[
+                                            ListTile(
+                                              contentPadding: EdgeInsets.zero,
+                                              title: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(2.0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    InkWell(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          if (expandedIndex ==
+                                                              index) {
+                                                            expandedIndex =
+                                                                null;
+                                                          } else {
+                                                            expandedIndex =
+                                                                index;
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        margin: const EdgeInsets
+                                                            .only(
+                                                            left: 5, right: 5),
+                                                        padding: !isExpanded
+                                                            ? const EdgeInsets
+                                                                .only(
+                                                                bottom: 10)
+                                                            : const EdgeInsets
+                                                                .only(top: 10),
+                                                        child: FaIcon(
+                                                          isExpanded
+                                                              ? FontAwesomeIcons
+                                                                  .sortUp
+                                                              : FontAwesomeIcons
+                                                                  .sortDown,
+                                                          size: 20,
+                                                          color: blueColor,
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        if (expandedIndex ==
-                                                            index) {
-                                                          expandedIndex = null;
-                                                        } else {
-                                                          expandedIndex = index;
-                                                        }
-                                                      });
-                                                    },
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 0.0),
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            if (expandedIndex ==
+                                                                index) {
+                                                              expandedIndex =
+                                                                  null;
+                                                            } else {
+                                                              expandedIndex =
+                                                                  index;
+                                                            }
+                                                          });
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  left: 0.0),
+                                                          child: Text(
+                                                            '${applicant.applicantFirstName} ${applicant.applicantLastName}',
+                                                            style: TextStyle(
+                                                              color: blueColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 13,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            .02),
+                                                    Expanded(
+                                                      flex: 3,
                                                       child: Text(
-                                                        '${applicant.applicantFirstName} ${applicant.applicantLastName}',
-                                                        style:  TextStyle(
-                                                          color: blueColor
-
-
-,
+                                                        formatPhoneNumber(
+                                                            '${applicant.applicantPhoneNumber ?? "---------"}'),
+                                                        // '${applicant.applicantPhoneNumber}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           fontSize: 13,
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .02),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Text(
-                                                    formatPhoneNumber( '${applicant.applicantPhoneNumber??"---------"}'),
-                                                    // '${applicant.applicantPhoneNumber}',
-                                                    style:  TextStyle(
-                                                      color: blueColor
-,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
                                                                 .size
                                                                 .width *
                                                             .05),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.only(left:15.0),
-                                                    child: Text(
-                                                      '   ${applicant.applicantStatus != null && applicant.applicantStatus.isNotEmpty ? applicant.applicantStatus.first.status.toString() : 'Undecided'}',
-                                                      style:  TextStyle(
-                                                        color: blueColor
-
-
-,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 13,
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 15.0),
+                                                        child: Text(
+                                                          '   ${applicant.applicantStatus.isNotEmpty ? applicant.applicantStatus.first.status.toString() : 'Undecided'}',
+                                                          style: TextStyle(
+                                                            color: blueColor,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
                                                                 .size
                                                                 .width *
                                                             .02),
-                                              ],
+                                                  ],
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        ),
-                                        if (isExpanded)
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 2.0),
-                                            margin: const EdgeInsets.only(
-                                                bottom: 2),
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
+                                            if (isExpanded)
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 2.0),
+                                                margin: const EdgeInsets.only(
+                                                    bottom: 2),
+                                                child: SingleChildScrollView(
+                                                  child: Column(
                                                     children: [
-                                                      FaIcon(
-                                                        isExpanded
-                                                            ? FontAwesomeIcons
-                                                                .sortUp
-                                                            : FontAwesomeIcons
-                                                                .sortDown,
-                                                        size: 50,
-                                                        color:
-                                                            Colors.transparent,
-                                                      ),
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: <Widget>[
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                   TextSpan(
-                                                                    text:
-                                                                        'Email : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color: blueColor
-
-
-),
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: applicant.applicantEmail !=
-                                                                            null
-                                                                        ? applicant
-                                                                            .applicantEmail
-                                                                            .toString()
-                                                                        : 'N/A',
-                                                                    style:  TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w700,
-                                                                        color: grey),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: 8,
-                                                            ),
-                                                            Text.rich(
-                                                              TextSpan(
-                                                                children: [
-                                                                  TextSpan(
-                                                                    text:
-                                                                    'Property : ',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                        color: blueColor
-
-
-                                                                    ),
-                                                                  ),
-                                                                  TextSpan(
-                                                                    text: applicant.applicantEmail !=
-                                                                        null
-                                                                        ? applicant.rentalData?.rentalAdress
-                                                                        .toString()
-                                                                        : 'N/A',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                        color:
-                                                                        grey),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: 5,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .end,
-                                                    children: [
-                                                      if(permissions!.applicantView!)
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder: (context) =>
-                                                                        applicant_summery(
-                                                                          applicant_id:
-                                                                          applicant
-                                                                              .applicantId,
-                                                                        )));
-
-                                                          },
-                                                          child:  Container(
-                                                            height: 35,
-                                                            width: 35,
-                                                            decoration:
-                                                            BoxDecoration(
-                                                              color: Colors
-                                                                  .grey
-                                                                  .shade200,
-                                                              borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                  8),
-                                                            ),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          FaIcon(
+                                                            isExpanded
+                                                                ? FontAwesomeIcons
+                                                                    .sortUp
+                                                                : FontAwesomeIcons
+                                                                    .sortDown,
+                                                            size: 50,
+                                                            color: Colors
+                                                                .transparent,
+                                                          ),
+                                                          Expanded(
+                                                            child: Column(
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                              children: [
-                                                                FaIcon(
-                                                                  FontAwesomeIcons
-                                                                      .eye,
-                                                                  size: 15,
-                                                                  color: Colors
-                                                                      .black,
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: <Widget>[
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Email : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text: applicant.applicantEmail !=
+                                                                                null
+                                                                            ? applicant.applicantEmail.toString()
+                                                                            : 'N/A',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: grey),
+                                                                      ),
+                                                                    ],
+                                                                  ),
                                                                 ),
                                                                 SizedBox(
-                                                                    width:
-                                                                    2),
+                                                                  height: 8,
+                                                                ),
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Property : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text: applicant.rentalData?.rentalAdress ??
+                                                                            'N/A',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: grey),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 5,
+                                                                ),
                                                               ],
                                                             ),
                                                           ),
-                                                        ),
-                                                      if(permissions!.applicantEdit!)
-                                                        SizedBox(width: 5,),
-                                                      if(permissions!.applicantEdit!)
-                                                      GestureDetector(
-                                                        onTap:()async{
-                                                          var check = await Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder: (context) => EditApplicant(
-                                                                    applicant: applicant,
-                                                                    applicantId: applicant.applicantId!,
-                                                                  )));
-                                                          if (check ==
-                                                              true) {
-                                                            setState(
-                                                                    () {
-                                                                  futureApplicantdata =     ApplicantRepository().fetchApplicants();
-                                                                });
-                                                          }
-                                                        },
-                                                        child:
-                                                        Container(
-                                                          height: 35,
-                                                          width: 35,
-                                                          decoration: BoxDecoration(
-                                                              borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                  8),
-                                                              color: Colors
-                                                                  .green
-                                                                  .shade50), // color:Colors.grey[100],
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                            crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                            children: [
-                                                              FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .edit,
-                                                                size: 15,
-                                                                color: Colors
-                                                                    .green,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
+                                                        ],
                                                       ),
-                                                      if(permissions!.applicantDelete!)
-                                                        SizedBox(width: 5,),
-                                                      if(permissions!.applicantDelete!)
-                                                      GestureDetector(
-                                                        onTap:(){
-                                                          _showDeleteAlert(
-                                                              context,
-                                                              applicant
-                                                                  .applicantId
-                                                                  .toString());
-                                                        },
-                                                        child:
-                                                        Container(
-                                                          height: 35,
-                                                          width: 35,
-                                                          decoration: BoxDecoration(
-                                                              borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                  8),
-                                                              color: Colors
-                                                                  .red
-                                                                  .shade50),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                            crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                            children: [
-                                                              FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .trashCan,
-                                                                size: 15,
-                                                                color: Colors
-                                                                    .red,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
+                                                      SizedBox(
+                                                        height: 10,
                                                       ),
-                                                      SizedBox(width: 10,),
-
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          if (permissions!
+                                                              .applicantView!)
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) =>
+                                                                            applicant_summery(
+                                                                              applicant_id: applicant.applicantId,
+                                                                            )));
+                                                              },
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .shade200,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                ),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .eye,
+                                                                      size: 15,
+                                                                      color: Colors
+                                                                          .black,
+                                                                    ),
+                                                                    SizedBox(
+                                                                        width:
+                                                                            2),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          if (permissions!
+                                                              .applicantEdit!)
+                                                            SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                          if (permissions!
+                                                              .applicantEdit!)
+                                                            GestureDetector(
+                                                              onTap: () async {
+                                                                var check = await Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) => EditApplicant(
+                                                                              applicant: applicant,
+                                                                              applicantId: applicant.applicantId!,
+                                                                            )));
+                                                                if (check ==
+                                                                    true) {
+                                                                  setState(() {
+                                                                    futureApplicantdata =
+                                                                        ApplicantRepository()
+                                                                            .fetchApplicants();
+                                                                  });
+                                                                }
+                                                              },
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                8),
+                                                                    color: Colors
+                                                                        .green
+                                                                        .shade50), // color:Colors.grey[100],
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .edit,
+                                                                      size: 15,
+                                                                      color: Colors
+                                                                          .green,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          if (permissions!
+                                                              .applicantDelete!)
+                                                            SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                          if (permissions!
+                                                              .applicantDelete!)
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                _showDeleteAlert(
+                                                                    context,
+                                                                    applicant
+                                                                        .applicantId
+                                                                        .toString());
+                                                              },
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                8),
+                                                                    color: Colors
+                                                                        .red
+                                                                        .shade50),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .trashCan,
+                                                                      size: 15,
+                                                                      color: Colors
+                                                                          .red,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        height: 8,
+                                                      ),
                                                     ],
                                                   ),
-                                                  SizedBox(
-                                                    height: 8,
-                                                  ),
-                                                ],
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const SizedBox(width: 10),
+                                        Material(
+                                          elevation: 3,
+                                          child: Container(
+                                            height: 40,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.grey),
+                                            ),
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<int>(
+                                                value: itemsPerPage,
+                                                items: itemsPerPageOptions
+                                                    .map((int value) {
+                                                  return DropdownMenuItem<int>(
+                                                    value: value,
+                                                    child:
+                                                        Text(value.toString()),
+                                                  );
+                                                }).toList(),
+                                                onChanged: data.length >
+                                                        itemsPerPageOptions
+                                                            .first // Condition to check if dropdown should be enabled
+                                                    ? (newValue) {
+                                                        setState(() {
+                                                          itemsPerPage =
+                                                              newValue!;
+                                                          currentPage =
+                                                              0; // Reset to first page when items per page change
+                                                        });
+                                                      }
+                                                    : null,
                                               ),
                                             ),
                                           ),
+                                        ),
                                       ],
                                     ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Row(
-                                  children: [
-                                    const SizedBox(width: 10),
-                                    Material(
-                                      elevation: 3,
-                                      child: Container(
-                                        height: 40,
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 12.0),
-                                        decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.grey),
-                                        ),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<int>(
-                                            value: itemsPerPage,
-                                            items: itemsPerPageOptions
-                                                .map((int value) {
-                                              return DropdownMenuItem<int>(
-                                                value: value,
-                                                child: Text(value.toString()),
-                                              );
-                                            }).toList(),
-                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
-                                                ? (newValue) {
-                                              setState(() {
-                                                itemsPerPage = newValue!;
-                                                currentPage = 0; // Reset to first page when items per page change
-                                              });
-                                            }
-                                                : null,
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronLeft,
+                                            color: currentPage == 0
+                                                ? Colors.grey
+                                                : const Color.fromRGBO(
+                                                    21, 43, 83, 1),
                                           ),
+                                          onPressed: currentPage == 0
+                                              ? null
+                                              : () {
+                                                  setState(() {
+                                                    currentPage--;
+                                                  });
+                                                },
                                         ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronLeft,
-                                        color: currentPage == 0
-                                            ? Colors.grey
-                                            : const Color.fromRGBO(
-                                                21, 43, 83, 1),
-                                      ),
-                                      onPressed: currentPage == 0
-                                          ? null
-                                          : () {
-                                              setState(() {
-                                                currentPage--;
-                                              });
-                                            },
-                                    ),
-                                    Text(
-                                        'Page ${currentPage + 1} of $totalPages'),
-                                    IconButton(
-                                      icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronRight,
-                                        color: currentPage < totalPages - 1
-                                            ? const Color.fromRGBO(
-                                                21, 43, 83, 1)
-                                            : Colors.grey,
-                                      ),
-                                      onPressed: currentPage < totalPages - 1
-                                          ? () {
-                                              setState(() {
-                                                currentPage++;
-                                              });
-                                            }
-                                          : null,
+                                        Text(
+                                            'Page ${currentPage + 1} of $totalPages'),
+                                        IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.circleChevronRight,
+                                            color: currentPage < totalPages - 1
+                                                ? const Color.fromRGBO(
+                                                    21, 43, 83, 1)
+                                                : Colors.grey,
+                                          ),
+                                          onPressed:
+                                              currentPage < totalPages - 1
+                                                  ? () {
+                                                      setState(() {
+                                                        currentPage++;
+                                                      });
+                                                    }
+                                                  : null,
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   FutureBuilder<List<Datum>>(
+                  //     future: futureApplicantdata,
+                  //     builder: (context, snapshot) {
+                  //       if (snapshot.connectionState ==
+                  //           ConnectionState.waiting) {
+                  //         return ShimmerTabletTable();
+                  //       } else if (snapshot.hasError) {
+                  //         return Center(
+                  //             child: Text('Error: ${snapshot.error}'));
+                  //       } else if (!snapshot.hasData ||
+                  //           snapshot.data!.isEmpty) {
+                  //         return const Center(child: Text('No data available'));
+                  //       } else {
+                  //         _tableData = snapshot.data!;
+                  //         if (selectedValue == null && searchvalue.isEmpty) {
+                  //           _tableData = snapshot.data!;
+                  //         } else if (selectedValue == "All") {
+                  //           _tableData = snapshot.data!;
+                  //         } else if (searchvalue.isNotEmpty) {
+                  //           _tableData = snapshot.data!
+                  //               .where((applicant) =>
+                  //                   !applicant.applicantFirstName!
+                  //                       .toLowerCase()
+                  //                       .contains(searchvalue.toLowerCase()) ||
+                  //                   applicant.applicantLastName!
+                  //                       .toLowerCase()
+                  //                       .contains(searchvalue.toLowerCase()))
+                  //               .toList();
+                  //         } else {
+                  //           _tableData = snapshot.data!
+                  //               .where((applicant) =>
+                  //                   applicant.applicantFirstName ==
+                  //                   selectedValue)
+                  //               .toList();
+                  //         }
+                  //         _tableData = _tableData.reversed.toList();
+                  //         totalrecords = _tableData.length;
+                  //         return SingleChildScrollView(
+                  //           child: Column(
+                  //             children: [
+                  //               Container(
+                  //                 child: Padding(
+                  //                   padding: const EdgeInsets.symmetric(
+                  //                       horizontal: 40.0, vertical: 5),
+                  //                   child: Column(
+                  //                     children: [
+                  //                       SingleChildScrollView(
+                  //                         scrollDirection: Axis.horizontal,
+                  //                         child: SizedBox(
+                  //                           child: Table(
+                  //                             defaultColumnWidth:
+                  //                                 const IntrinsicColumnWidth(),
+                  //                             children: [
+                  //                               TableRow(
+                  //                                 decoration: BoxDecoration(
+                  //                                   border: Border.all(
+                  //                                       // color: blueColor
+                  //                                       ),
+                  //                                 ),
+                  //                                 children: [
+                  //                                   _buildHeader(
+                  //                                       'Name',
+                  //                                       0,
+                  //                                       (property) => property
+                  //                                           .applicantFirstName!),
+                  //                                   _buildHeader(
+                  //                                       'Email',
+                  //                                       1,
+                  //                                       (property) => property
+                  //                                           .applicantEmail!),
+                  //                                   _buildHeader(
+                  //                                       'Phone ..', 2, null),
+                  //                                   _buildHeader(
+                  //                                       'Home ..', 3, null),
+                  //                                   _buildHeader(
+                  //                                       'Actions', 4, null),
+                  //                                 ],
+                  //                               ),
+                  //                               TableRow(
+                  //                                 decoration:
+                  //                                     const BoxDecoration(
+                  //                                   border: Border.symmetric(
+                  //                                       horizontal:
+                  //                                           BorderSide.none),
+                  //                                 ),
+                  //                                 children: List.generate(
+                  //                                     5,
+                  //                                     (index) => TableCell(
+                  //                                         child: Container(
+                  //                                             height: 20))),
+                  //                               ),
+                  //                               for (var i = 0;
+                  //                                   i < _pagedData.length;
+                  //                                   i++)
+                  //                                 TableRow(
+                  //                                   decoration: BoxDecoration(
+                  //                                     border: Border(
+                  //                                       left: BorderSide(
+                  //                                           color: blueColor),
+                  //                                       right: BorderSide(
+                  //                                           color: blueColor),
+                  //                                       top: BorderSide(
+                  //                                           color: blueColor),
+                  //                                       bottom: i ==
+                  //                                               _pagedData
+                  //                                                       .length -
+                  //                                                   1
+                  //                                           ? BorderSide(
+                  //                                               color:
+                  //                                                   blueColor)
+                  //                                           : BorderSide.none,
+                  //                                     ),
+                  //                                   ),
+                  //                                   children: [
+                  //                                     _buildDataCell(
+                  //                                         _pagedData[i]
+                  //                                             .applicantFirstName!,
+                  //                                         _pagedData[i]),
+                  //                                     _buildDataCell(
+                  //                                         _pagedData[i]
+                  //                                             .applicantEmail!,
+                  //                                         _pagedData[i]),
+                  //                                     _buildDataCell(
+                  //                                         _pagedData[i]
+                  //                                                     .applicantHomeNumber ==
+                  //                                                 null
+                  //                                             ? ''
+                  //                                             : _pagedData[i]
+                  //                                                 .applicantHomeNumber!
+                  //                                                 .toString(),
+                  //                                         _pagedData[i]),
+                  //                                     _buildDataCell(
+                  //                                         _pagedData[i]
+                  //                                                     .applicantHomeNumber ==
+                  //                                                 null
+                  //                                             ? ''
+                  //                                             : _pagedData[i]
+                  //                                                 .applicantHomeNumber!
+                  //                                                 .toString(),
+                  //                                         _pagedData[i]),
+                  //                                     // _buildDataCell(
+                  //                                     //   _pagedData[i]
+                  //                                     //       .applicantLastName!,
+                  //                                     // ),
+                  //                                     _buildActionsCell(
+                  //                                         _pagedData[i]),
+                  //                                   ],
+                  //                                 ),
+                  //                             ],
+                  //                           ),
+                  //                         ),
+                  //                       ),
+                  //                       const SizedBox(height: 25),
+                  //                       _buildPaginationControls(),
+                  //                     ],
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //               const SizedBox(height: 25),
+                  //             ],
+                  //           ),
+                  //         );
+                  //       }
+                  //     },
+                  //   ),
+                ],
               ),
-            if (MediaQuery.of(context).size.width > 500)
-              FutureBuilder<List<Datum>>(
-                future: futureApplicantdata,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return ShimmerTabletTable();
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(child: Text('No data available'));
-                  } else {
-                    _tableData = snapshot.data!;
-                    if (selectedValue == null && searchvalue.isEmpty) {
-                      _tableData = snapshot.data!;
-                    } else if (selectedValue == "All") {
-                      _tableData = snapshot.data!;
-                    } else if (searchvalue.isNotEmpty) {
-                      _tableData = snapshot.data!
-                          .where((applicant) =>
-                              !applicant.applicantFirstName!
-                                  .toLowerCase()
-                                  .contains(searchvalue.toLowerCase()) ||
-                              applicant.applicantLastName!
-                                  .toLowerCase()
-                                  .contains(searchvalue.toLowerCase()))
-                          .toList();
-                    } else {
-                      _tableData = snapshot.data!
-                          .where((applicant) =>
-                              applicant.applicantFirstName == selectedValue)
-                          .toList();
-                    }
-                    _tableData = _tableData.reversed.toList();
-                    totalrecords = _tableData.length;
-                    return SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Container(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 40.0, vertical: 5),
-                              child: Column(
-                                children: [
-                                  SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: SizedBox(
-
-                                      child: Table(
-                                        defaultColumnWidth:
-                                            const IntrinsicColumnWidth(),
-                                        children: [
-                                          TableRow(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  // color: blueColor
-                                                  ),
-                                            ),
-                                            children: [
-
-                                              _buildHeader(
-                                                  'Name',
-                                                  0,
-                                                  (property) => property
-                                                      .applicantFirstName!),
-                                              _buildHeader(
-                                                  'Email',
-                                                  1,
-                                                  (property) =>
-                                                      property.applicantEmail!),
-                                              _buildHeader('Phone ..', 2, null),
-                                              _buildHeader('Home ..', 3, null),
-                                              _buildHeader('Actions', 4, null),
-                                            ],
-                                          ),
-                                          TableRow(
-                                            decoration: const BoxDecoration(
-                                              border: Border.symmetric(
-                                                  horizontal: BorderSide.none),
-                                            ),
-                                            children: List.generate(
-                                                5,
-                                                (index) => TableCell(
-                                                    child:
-                                                        Container(height: 20))),
-                                          ),
-                                          for (var i = 0;
-                                              i < _pagedData.length;
-                                              i++)
-                                            TableRow(
-                                              decoration: BoxDecoration(
-                                                border: Border(
-                                                  left:  BorderSide(
-                                                      color: blueColor),
-                                                  right:  BorderSide(
-                                                      color:blueColor),
-                                                  top:  BorderSide(
-                                                      color: blueColor),
-                                                  bottom: i ==
-                                                          _pagedData.length - 1
-                                                      ?  BorderSide(
-                                                          color:blueColor
-
-
-)
-                                                      : BorderSide.none,
-                                                ),
-                                              ),
-                                              children: [
-
-                                                _buildDataCell(_pagedData[i]
-                                                    .applicantFirstName!,_pagedData[i]),
-                                                _buildDataCell(_pagedData[i]
-                                                    .applicantEmail!,_pagedData[i]),
-                                                _buildDataCell(
-                                                  _pagedData[i]
-                                                              .applicantHomeNumber ==
-                                                          null
-                                                      ? ''
-                                                      : _pagedData[i]
-                                                          .applicantHomeNumber!
-                                                          .toString(),_pagedData[i]
-                                                ),
-                                                _buildDataCell(
-                                                  _pagedData[i]
-                                                              .applicantHomeNumber ==
-                                                          null
-                                                      ? ''
-                                                      : _pagedData[i]
-                                                          .applicantHomeNumber!
-                                                          .toString(),_pagedData[i]
-                                                ),
-                                                // _buildDataCell(
-                                                //   _pagedData[i]
-                                                //       .applicantLastName!,
-                                                // ),
-                                                _buildActionsCell(
-                                                    _pagedData[i]),
-                                              ],
-                                            ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 25),
-                                  _buildPaginationControls(),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 25),
-                        ],
-                      ),
-                    );
-                  }
-                },
+            )
+          : SizedBox(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Lottie.asset(
+                    'assets/no_internet.json',
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.fill,
+                  ),
+                  Text(
+                    'No Internet',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'Check your internet connection',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                ],
               ),
-          ],
-        ),
-      ): SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Lottie.asset(
-              'assets/no_internet.json',
-              width: 200,
-              height: 200,
-              fit: BoxFit.fill,
             ),
-            Text(
-              'No Internet',
-              style: TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Check your internet connection',
-              style: TextStyle(
-                  fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

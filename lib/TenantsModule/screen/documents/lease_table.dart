@@ -146,11 +146,13 @@ class _Lease_TableState extends State<Lease_Table> {
                   children: [
                     width < 400
                         ? Text("        Lease ",
-                            style: TextStyle( color: blueColor,
+                            style: TextStyle(
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15))
                         : Text("       Lease",
-                            style: TextStyle( color: blueColor,
+                            style: TextStyle(
+                                color: blueColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
@@ -202,7 +204,8 @@ class _Lease_TableState extends State<Lease_Table> {
                 child: Row(
                   children: [
                     Text("  Lease Start",
-                        style: TextStyle( color: blueColor,
+                        style: TextStyle(
+                            color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15)),
                     SizedBox(width: 5),
@@ -254,7 +257,8 @@ class _Lease_TableState extends State<Lease_Table> {
                 child: Row(
                   children: [
                     Text(" Lease End",
-                        style: TextStyle( color: blueColor,
+                        style: TextStyle(
+                            color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15)),
                     SizedBox(width: 5),
@@ -726,9 +730,14 @@ class _Lease_TableState extends State<Lease_Table> {
                     height: 20,
                   ),
 
-                  titleBar(
-                    width: MediaQuery.of(context).size.width * .91,
-                    title: 'Leases',
+                  // Header Section with Title
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: titleBar(
+                      width: double.infinity,
+                      title: 'Leases',
+                    ),
                   ),
                   SizedBox(height: 10),
                   //search
@@ -974,7 +983,6 @@ class _Lease_TableState extends State<Lease_Table> {
                                   _buildHeaders(),
                                   SizedBox(height: 10),
                                   Container(
-
                                     child: Column(
                                       children: currentPageData
                                           .asMap()
@@ -989,7 +997,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return Container(
                                           margin:
-                                          EdgeInsets.symmetric(vertical: 6),
+                                              EdgeInsets.symmetric(vertical: 6),
                                           decoration: BoxDecoration(
                                             color: index % 2 != 0
                                                 ? Color(0xFFF4F8FF)
@@ -997,7 +1005,7 @@ class _Lease_TableState extends State<Lease_Table> {
                                             border: Border.all(
                                                 color: Color(0xFFDBE0E5)),
                                             borderRadius:
-                                            BorderRadius.circular(10),
+                                                BorderRadius.circular(10),
                                           ),
                                           child: Column(
                                             children: <Widget>[

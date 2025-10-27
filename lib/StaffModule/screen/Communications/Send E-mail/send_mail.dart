@@ -151,7 +151,7 @@ class _send_emailState extends State<send_email> {
           subject.text = selectedTemplete.subject;
           htmlBody = selectedTemplete.body;
           eventError = false;
-          Future.delayed(Duration(milliseconds: 500), () {
+          Future.delayed(const Duration(milliseconds: 500), () {
             if (mounted) {
               _htmlEditorController.setFocus();
               _htmlEditorController.setText(replaceDollarWithAt(replaceSpanTags(htmlBody)));
@@ -331,7 +331,7 @@ class _send_emailState extends State<send_email> {
           //_htmlEditorController.setText(htmlBody);
         });
 
-        Future.delayed(Duration(milliseconds: 500), () {
+        Future.delayed(const Duration(milliseconds: 500), () {
           if (mounted) {
             _htmlEditorController.setFocus();
             _htmlEditorController.setText(replaceDollarWithAt(replaceSpanTags(htmlBody)));
@@ -566,14 +566,14 @@ class _send_emailState extends State<send_email> {
                             borderRadius: BorderRadius.circular(5.0),
                             color: blueColor,
                             boxShadow: [
-                              BoxShadow(
+                              const BoxShadow(
                                 color: Colors.grey,
                                 offset: Offset(0.0, 1.0),
                                 blurRadius: 6.0,
                               ),
                             ],
                           ),
-                          child: Text(
+                          child: const Text(
                           'Send Email',
                             style: TextStyle(
                               color: Colors.white,
@@ -606,7 +606,7 @@ class _send_emailState extends State<send_email> {
 
                               isExpanded: true,
                               hint: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 5),
+                                padding: const EdgeInsets.symmetric(horizontal: 5),
                                 child: Text(
                                   selectedTenantIds.isEmpty
                                       ? "Select Tenant"
@@ -616,7 +616,7 @@ class _send_emailState extends State<send_email> {
                                     return "${tenant['tenant_firstName']} ${tenant['tenant_lastName']}";
                                   })
                                       .join(', '),
-                                  style: TextStyle(fontSize: 14, color: Colors.black),
+                                  style: const TextStyle(fontSize: 14, color: Colors.black),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -630,7 +630,7 @@ class _send_emailState extends State<send_email> {
                                     bool isAllSelected =
                                         selectedTenantIds.length == tenants.length;
                                     return CheckboxListTile(
-                                      title: Text(
+                                      title: const Text(
                                         "Select All",
                                         style: TextStyle(
                                           fontSize: 14,
@@ -698,7 +698,7 @@ class _send_emailState extends State<send_email> {
                               buttonStyleData: ButtonStyleData(
                                 height: 46,
                                 padding:
-                                EdgeInsets.symmetric(horizontal: 3),
+                                const EdgeInsets.symmetric(horizontal: 3),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(6),
                                   color: Colors.white,
@@ -744,7 +744,7 @@ class _send_emailState extends State<send_email> {
 
                     children: [
 
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
@@ -767,7 +767,7 @@ class _send_emailState extends State<send_email> {
                                   ),
                                   DropdownButtonHideUnderline(
                                     child: DropdownButton2<String>(
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 15, color: Colors.black),
                                       isExpanded: true,
                                       hint: const Text(
@@ -794,7 +794,7 @@ class _send_emailState extends State<send_email> {
                                       buttonStyleData: ButtonStyleData(
                                         height: 46,
                                         padding:
-                                        EdgeInsets.symmetric(horizontal: 3),
+                                        const EdgeInsets.symmetric(horizontal: 3),
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(6),
                                           color: Colors.white,
@@ -829,11 +829,11 @@ class _send_emailState extends State<send_email> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 3),
+                                  const SizedBox(height: 3),
                                   eventError
                                       ? Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 3,
                                       ),
                                       Text(
@@ -845,7 +845,7 @@ class _send_emailState extends State<send_email> {
                                                 .width *
                                                 .035),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 2,
                                       ),
                                     ],
@@ -853,7 +853,7 @@ class _send_emailState extends State<send_email> {
                                       : nameError
                                       ? Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 3,
                                       ),
                                       Text(
@@ -866,7 +866,7 @@ class _send_emailState extends State<send_email> {
                                                 .width *
                                                 .035),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 2,
                                       ),
                                     ],
@@ -881,13 +881,13 @@ class _send_emailState extends State<send_email> {
                     ],
                   ),
                   if(_selectedEvent != null && templateList.length > 0)
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   if(_selectedEvent != null && templateList.length > 0)
                   Column(
 
                     children: [
 
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Row(
@@ -910,7 +910,7 @@ class _send_emailState extends State<send_email> {
                                   ),
                                   DropdownButtonHideUnderline(
                                     child: DropdownButton2<String>(
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 15, color: Colors.black),
                                       isExpanded: true,
                                       hint: const Text(
@@ -930,7 +930,7 @@ class _send_emailState extends State<send_email> {
                                           subject.text = selectedTemplete.subject;
                                           htmlBody = selectedTemplete.body;
                                           eventError = false;
-                                          Future.delayed(Duration(milliseconds: 500), () {
+                                          Future.delayed(const Duration(milliseconds: 500), () {
                                             if (mounted) {
                                               _htmlEditorController.setFocus();
                                               _htmlEditorController.setText(replaceDollarWithAt(replaceSpanTags(htmlBody)));
@@ -945,7 +945,7 @@ class _send_emailState extends State<send_email> {
                                       buttonStyleData: ButtonStyleData(
                                         height: 46,
                                         padding:
-                                        EdgeInsets.symmetric(horizontal: 3),
+                                        const EdgeInsets.symmetric(horizontal: 3),
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(6),
                                           color: Colors.white,
@@ -980,11 +980,11 @@ class _send_emailState extends State<send_email> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 3),
+                                  const SizedBox(height: 3),
                                   eventError
                                       ? Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 3,
                                       ),
                                       Text(
@@ -996,7 +996,7 @@ class _send_emailState extends State<send_email> {
                                                 .width *
                                                 .035),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 2,
                                       ),
                                     ],
@@ -1004,7 +1004,7 @@ class _send_emailState extends State<send_email> {
                                       : nameError
                                       ? Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 3,
                                       ),
                                       Text(
@@ -1017,7 +1017,7 @@ class _send_emailState extends State<send_email> {
                                                 .width *
                                                 .035),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 2,
                                       ),
                                     ],
@@ -1031,10 +1031,10 @@ class _send_emailState extends State<send_email> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Row(
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         width: 2,
                       ),
                       Text('Subject *',
@@ -1044,17 +1044,17 @@ class _send_emailState extends State<send_email> {
                               color: blueColor)),
                     ],
                   ),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   Row(
                     children: [
-                      SizedBox(width: 2),
+                      const SizedBox(width: 2),
                       Expanded(
                         child: Material(
                           elevation: 2,
                           borderRadius: BorderRadius.circular(8.0),
                           child: Container(
                             height: 47,
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 16.0, vertical: 0),
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -1063,7 +1063,7 @@ class _send_emailState extends State<send_email> {
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.2),
-                                  offset: Offset(4, 4),
+                                  offset: const Offset(4, 4),
                                   blurRadius: 3,
                                 ),
                               ],
@@ -1087,7 +1087,7 @@ class _send_emailState extends State<send_email> {
                                       _htmlEditorController
                                           .setFocus(); // Move focus to the editor
                                     },
-                                    decoration: InputDecoration(
+                                    decoration: const InputDecoration(
                                       hintStyle: TextStyle(
                                           fontSize: 13,
                                           color: Color(0xFFb0b6c3)),
@@ -1101,14 +1101,14 @@ class _send_emailState extends State<send_email> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 2),
+                      const SizedBox(width: 2),
                     ],
                   ),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   subjectError
                       ? Row(
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         width: 2,
                       ),
                       Text(
@@ -1118,16 +1118,16 @@ class _send_emailState extends State<send_email> {
                             fontSize:
                             MediaQuery.of(context).size.width * .035),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 2,
                       ),
                     ],
                   )
                       : Container(),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Row(
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         width: 2,
                       ),
                       Text(
@@ -1135,15 +1135,15 @@ class _send_emailState extends State<send_email> {
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       SuperTooltip(
                         controller: _controller,
                         popupDirection: TooltipDirection.down,
-                        backgroundColor: Color(0xff2f2d2f),
+                        backgroundColor: const Color(0xff2f2d2f),
                         arrowTipDistance: 20.0,
                         touchThroughAreaShape: ClipAreaShape.rectangle,
                         touchThroughAreaCornerRadius: 30,
-                        barrierColor: Color.fromARGB(26, 47, 45, 47),
+                        barrierColor: const Color.fromARGB(26, 47, 45, 47),
                         content: Padding(
                           padding: const EdgeInsets.all(4.0),
                           child: Text(
@@ -1157,7 +1157,7 @@ class _send_emailState extends State<send_email> {
                                     .join("\n")
                                 : 'You can personalize transaction templates using the following dynamic variables :',
                             softWrap: true,
-                            style: TextStyle(color: Colors.white, fontSize: 15),
+                            style: const TextStyle(color: Colors.white, fontSize: 15),
                           ),
                         ),
                         child: Icon(
@@ -1167,7 +1167,7 @@ class _send_emailState extends State<send_email> {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 4,
                   ),
                   SingleChildScrollView(
@@ -1179,7 +1179,7 @@ class _send_emailState extends State<send_email> {
                             focusNode: _bodyFocusNode,
                             child: HtmlEditor(
                               controller: _htmlEditorController,
-                              htmlEditorOptions: HtmlEditorOptions(
+                              htmlEditorOptions: const HtmlEditorOptions(
                                 adjustHeightForKeyboard: false,
 
                                 //  shouldEnsureVisible: true,
@@ -1187,7 +1187,7 @@ class _send_emailState extends State<send_email> {
                               otherOptions: OtherOptions(
                                 decoration: BoxDecoration(
                                   border: Border.all(color: Colors.black),
-                                  borderRadius: BorderRadius.only(
+                                  borderRadius: const BorderRadius.only(
                                       topLeft: Radius.circular(4),
                                       topRight: Radius.circular(4)),
                                 ),
@@ -1198,8 +1198,8 @@ class _send_emailState extends State<send_email> {
                                   Row(
                                     children: [
                                       PopupMenuButton<String>(
-                                        padding: EdgeInsets.all(0),
-                                        icon: Row(
+                                        padding: const EdgeInsets.all(0),
+                                        icon: const Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Icon(Icons.format_list_bulleted, color: Colors.black),
@@ -1208,7 +1208,7 @@ class _send_emailState extends State<send_email> {
                                           ],
                                         ),
                                         tooltip: "Unordered List",
-                                        offset: Offset(
+                                        offset: const Offset(
                                             0, 40), // Adjusts dropdown position
                                         shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
@@ -1220,7 +1220,7 @@ class _send_emailState extends State<send_email> {
                                               '<ul style="list-style-type: $style;"><li>List Item</li></ul>');
                                         },
                                         itemBuilder: (context) => [
-                                          PopupMenuItem(
+                                          const PopupMenuItem(
                                             value: "disc",
                                             child: Row(
                                               children: [
@@ -1231,7 +1231,7 @@ class _send_emailState extends State<send_email> {
                                               ],
                                             ),
                                           ),
-                                          PopupMenuItem(
+                                          const PopupMenuItem(
                                             value: "circle",
                                             child: Row(
                                               children: [
@@ -1242,7 +1242,7 @@ class _send_emailState extends State<send_email> {
                                               ],
                                             ),
                                           ),
-                                          PopupMenuItem(
+                                          const PopupMenuItem(
                                             value: "square",
                                             child: Row(
                                               children: [
@@ -1255,14 +1255,14 @@ class _send_emailState extends State<send_email> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(width: 5,),
+                                      const SizedBox(width: 5,),
                                       PopupMenuButton<String>(
-                                        constraints: BoxConstraints(
+                                        constraints: const BoxConstraints(
                                           minWidth: 100, // Minimum width of the popup
                                           maxWidth: 200, // Maximum width
                                         ),
-                                        padding: EdgeInsets.all(0),
-                                        icon: Row(
+                                        padding: const EdgeInsets.all(0),
+                                        icon: const Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Icon(Icons.format_list_numbered, color: Colors.black),
@@ -1271,7 +1271,7 @@ class _send_emailState extends State<send_email> {
                                           ],
                                         ), // Ordered List Button
                                         tooltip: "Ordered List",
-                                        offset: Offset(0, 40),
+                                        offset: const Offset(0, 40),
                                         shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(10)),
                                         onSelected: (String style) {
@@ -1314,7 +1314,7 @@ class _send_emailState extends State<send_email> {
 
 
                                   PopupMenuButton<String>(
-                                    child: Padding(
+                                    child: const Padding(
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 8, vertical: 4),
                                       child: Row(
@@ -1336,28 +1336,28 @@ class _send_emailState extends State<send_email> {
                                           argument: format);
                                     },
                                     itemBuilder: (context) => [
-                                      PopupMenuItem(
+                                      const PopupMenuItem(
                                         value: "h1",
                                         child: Text("Heading 1",
                                             style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.bold)),
                                       ),
-                                      PopupMenuItem(
+                                      const PopupMenuItem(
                                         value: "h2",
                                         child: Text("Heading 2",
                                             style: TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold)),
                                       ),
-                                      PopupMenuItem(
+                                      const PopupMenuItem(
                                         value: "h3",
                                         child: Text("Heading 3",
                                             style: TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold)),
                                       ),
-                                      PopupMenuItem(
+                                      const PopupMenuItem(
                                         value: "p",
                                         child: Text("Paragraph",
                                             style: TextStyle(fontSize: 14)),
@@ -1365,7 +1365,7 @@ class _send_emailState extends State<send_email> {
                                     ],
                                   ),
                                   IconButton(
-                                    icon: Icon(Icons.format_quote),
+                                    icon: const Icon(Icons.format_quote),
                                     tooltip: "Insert Quote",
                                     onPressed: () {
                                       _htmlEditorController.execCommand(
@@ -1374,7 +1374,7 @@ class _send_emailState extends State<send_email> {
                                     },
                                   ),
                                   PopupMenuButton<String>(
-                                    icon: Icon(Icons.text_fields),
+                                    icon: const Icon(Icons.text_fields),
                                     tooltip: "Font Size",
                                     onSelected: (String text) {
                                       _htmlEditorController.execCommand(
@@ -1382,21 +1382,21 @@ class _send_emailState extends State<send_email> {
                                           argument: text);
                                     },
                                     itemBuilder: (context) => [
-                                      PopupMenuItem(
+                                      const PopupMenuItem(
                                           value: "1", child: Text("tiny")),
-                                      PopupMenuItem(
+                                      const PopupMenuItem(
                                           value: "2", child: Text("small")),
-                                      PopupMenuItem(
+                                      const PopupMenuItem(
                                           value: "3", child: Text("default")),
-                                      PopupMenuItem(
+                                      const PopupMenuItem(
                                           value: "5", child: Text("big")),
-                                      PopupMenuItem(
+                                      const PopupMenuItem(
                                           value: "7", child: Text("huge")),
                                     ],
                                   ),
                                 ],
                                 defaultToolbarButtons: [
-                                  OtherButtons(
+                                  const OtherButtons(
                                       fullscreen: false,
                                       help: false,
                                       codeview: false,
@@ -1404,7 +1404,7 @@ class _send_emailState extends State<send_email> {
                                       redo: true,
                                       copy: false,
                                       paste: false),
-                                  FontButtons(
+                                  const FontButtons(
                                     bold: true,
                                     italic: true,
                                     underline: false,
@@ -1413,26 +1413,26 @@ class _send_emailState extends State<send_email> {
                                     superscript: false,
                                     clearAll: false,
                                   ),
-                                  InsertButtons(
+                                  const InsertButtons(
                                     picture: false,
                                     video: false,
                                     audio: false,
                                     table: true,
                                     hr: false,
                                   ),
-                                  ListButtons(
+                                  const ListButtons(
                                     ul: false,
                                     ol: false,
                                     listStyles: false,
                                   ),
-                                  ParagraphButtons(
+                                  const ParagraphButtons(
                                     textDirection: false,
                                     lineHeight: false,
                                     caseConverter: false,
                                     decreaseIndent: false,
                                     increaseIndent: false,
                                   ),
-                                  ColorButtons(),
+                                  const ColorButtons(),
                                 ],
                               ),
                             ),
@@ -1441,11 +1441,11 @@ class _send_emailState extends State<send_email> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   bodyError
                       ? Row(
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         width: 2,
                       ),
                       Text(
@@ -1455,13 +1455,13 @@ class _send_emailState extends State<send_email> {
                             fontSize:
                             MediaQuery.of(context).size.width * .035),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 2,
                       ),
                     ],
                   )
                       : Container(),
-                  SizedBox(
+                  const SizedBox(
                     height: 8,
                   ),
                   Row(
@@ -1545,7 +1545,7 @@ class _send_emailState extends State<send_email> {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               horizontal: 32, vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -1553,17 +1553,17 @@ class _send_emailState extends State<send_email> {
                           backgroundColor: blueColor,
                         ),
                         child: isLoading
-                            ? SpinKitFadingCircle(
+                            ? const SpinKitFadingCircle(
                           color: Colors.white,
                           size: 25.0,
                         )
-                            : Text(
+                            : const Text(
                           "Send",
                           style: TextStyle(
                               fontSize: 16, color: Colors.white),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       ElevatedButton(
@@ -1571,7 +1571,7 @@ class _send_emailState extends State<send_email> {
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               horizontal: 32, vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),

@@ -1,43 +1,23 @@
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:csv/csv.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
 import 'package:three_zero_two_property/Model/lease_renter_insurance.dart';
-import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
-import 'package:three_zero_two_property/provider/getAdminAddress.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Renters%20Insurance/RentersInsuranceAdd.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Renters%20Insurance/ViewRentersDetails.dart';
 
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
-import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
-import 'package:three_zero_two_property/widgets/titleBar.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:intl/intl.dart';
-import 'package:printing/printing.dart';
-import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
-import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../../repository/lease_rental_insurance_repo.dart';
-import '../../../../widgets/custom_drawer.dart';
-import '../../../Communications/Send E-mail/send_mail.dart';
-import '../Send_email.dart';
 import 'Edit_Renters_insurance.dart';
 
 class Renters_Insurance_table extends StatefulWidget {

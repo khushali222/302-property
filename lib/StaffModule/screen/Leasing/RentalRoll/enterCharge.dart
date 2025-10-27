@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:intl/intl.dart' as intl;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -253,8 +254,8 @@ class _enterChargeState extends State<enterCharge> {
       setState(() {
         selectedTenantId = fetchedCharge!.tenantId;
         Amount.text = fetchedCharge.totalAmount.toString();
-        _startDate.text =
-            formatDate(fetchedCharge.entry!.first!.date.toString());
+        _startDate.text = intl.DateFormat('yyyy-MM-dd')
+            .format(fetchedCharge.entry!.first!.date!);
         Memo.text = fetchedCharge.entry!.first.memo!;
         double total = 0;
 
@@ -478,7 +479,7 @@ class _enterChargeState extends State<enterCharge> {
 
     var responseBody = json.decode(responseData.body);
     if (responseBody['status'] == 'ok') {
-     // Fluttertoast.showToast(msg: 'PDF added successfully');
+      // Fluttertoast.showToast(msg: 'PDF added successfully');
       List file = responseBody['files'];
       return file.first["filename"];
     } else {
@@ -721,7 +722,7 @@ class _enterChargeState extends State<enterCharge> {
                               );
                               if (pickedDate != null) {
                                 String formattedDate =
-                                    "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                    "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                                 setState(() {
                                   _startDate.text = formattedDate;
                                 });
@@ -738,7 +739,7 @@ class _enterChargeState extends State<enterCharge> {
                               return null;
                             },
                             keyboardType: TextInputType.text,
-                            hintText: 'dd-mm-yyyy',
+                            hintText: 'yyyy-MM-dd',
                             controller: _startDate,
                           ),
                         if (MediaQuery.of(context).size.width < 500)
@@ -958,7 +959,7 @@ class _enterChargeState extends State<enterCharge> {
                                           );
                                           if (pickedDate != null) {
                                             String formattedDate =
-                                                "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                                "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                                             setState(() {
                                               _startDate.text = formattedDate;
                                             });
@@ -976,7 +977,7 @@ class _enterChargeState extends State<enterCharge> {
                                           return null;
                                         },
                                         keyboardType: TextInputType.text,
-                                        hintText: 'dd-mm-yyyy',
+                                        hintText: 'yyyy-MM-dd',
                                         controller: _startDate,
                                       ),
                                       SizedBox(height: 5),
@@ -1678,7 +1679,10 @@ class _enterChargeState extends State<enterCharge> {
                                           dueAmount:
                                               0, // Adjust according to your requirement
                                           memo: row['memo'],
-                                          date: reverseFormatDate(row['date']),
+                                          date: reverseFormatDate(
+                                              row['date'] != ""
+                                                  ? row['date']
+                                                  : _startDate.text),
                                           chargeType: row['charge_type'],
                                           isRepeatable:
                                               false, // Adjust according to your requirement
@@ -1737,7 +1741,10 @@ class _enterChargeState extends State<enterCharge> {
                                           dueAmount:
                                               0, // Adjust according to your requirement
                                           memo: row['memo'],
-                                          date: reverseFormatDate(row['date']),
+                                          date: reverseFormatDate(
+                                              row['date'] != ""
+                                                  ? row['date']
+                                                  : _startDate.text),
                                           chargeType: row['charge_type'],
                                           isRepeatable:
                                               false, // Adjust according to your requirement
@@ -1853,7 +1860,7 @@ class _enterChargeState extends State<enterCharge> {
                   const SizedBox(
                     height: 20,
                   ),
-                  if(widget.chargeid == null)
+                  if (widget.chargeid == null)
                     Row(
                       children: [
                         SizedBox(
@@ -1877,13 +1884,14 @@ class _enterChargeState extends State<enterCharge> {
                         ),
                         Text(
                           "Add Another Charge",
-                          style:
-                          TextStyle(color: blueColor, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              color: blueColor, fontWeight: FontWeight.bold),
                         ),
-
                       ],
                     ),
-                  SizedBox(height: 50,)
+                  SizedBox(
+                    height: 50,
+                  )
                 ],
               ),
             ),

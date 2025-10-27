@@ -23,7 +23,6 @@ import '../../repository/tenant_repository.dart';
 import '../../widgets/custom_drawer.dart';
 import '../../widgets/drawer_tiles.dart';
 
-
 class PropertyTable extends StatefulWidget {
   @override
   _PropertyTableState createState() => _PropertyTableState();
@@ -45,7 +44,7 @@ class _PropertyTableState extends State<PropertyTable> {
   ]; // Options for items per page
 
   void sortData(List<tenant_property> data) {
-  /*  if (sorting1) {
+    /*  if (sorting1) {
       data.sort((a, b) => ascending1
           ? a.propertyType!.compareTo(b.propertyType!)
           : b.propertyType!.compareTo(a.propertyType!));
@@ -94,7 +93,7 @@ class _PropertyTableState extends State<PropertyTable> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-           /* Container(
+            /* Container(
               child: Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
@@ -128,11 +127,13 @@ class _PropertyTableState extends State<PropertyTable> {
                   children: [
                     width < 400
                         ? Text("     Rental Address ",
-                        style: TextStyle(  color: blueColor,
+                        style: TextStyle(
+                            color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15))
                         : Text("     Rental Address",
-                        style: TextStyle(  color: blueColor,
+                        style: TextStyle(
+                            color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
@@ -183,11 +184,13 @@ class _PropertyTableState extends State<PropertyTable> {
                 },
                 child: Row(
                   children: [
-                    Text("   Start Date", style: TextStyle(  color: blueColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15)),
+                    Text("   Start Date",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
-                   /* ascending2
+                    /* ascending2
                         ? Padding(
                       padding: const EdgeInsets.only(top: 7, left: 2),
                       child: FaIcon(
@@ -234,9 +237,11 @@ class _PropertyTableState extends State<PropertyTable> {
                 },
                 child: Row(
                   children: [
-                    Text("End Date", style: TextStyle(  color: blueColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15)),
+                    Text("End Date",
+                        style: TextStyle(
+                            color: blueColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15)),
                     SizedBox(width: 5),
                     /*ascending3
                         ? Padding(
@@ -268,7 +273,7 @@ class _PropertyTableState extends State<PropertyTable> {
   final List<String> items = ['Residential', "Commercial", "All"];
   String? selectedValue;
 
-  ConnectivityResult? _connectivityResult ;
+  ConnectivityResult? _connectivityResult;
   String searchvalue = "";
   @override
   void initState() {
@@ -284,17 +289,16 @@ class _PropertyTableState extends State<PropertyTable> {
     futurePropertyTypes = TenantPropertyRepository().fetchTenantProperties();
   }
 
-  void checkInternet()async{
-
+  void checkInternet() async {
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
     setState(() {
       _connectivityResult = connectiondata;
     });
-
   }
+
   void handleEdit(tenant_property property) async {
-   /* // Handle edit action
+    /* // Handle edit action
     print('Edit ${property.sId}');
     var check = await Navigator.push(
         context,
@@ -328,10 +332,11 @@ class _PropertyTableState extends State<PropertyTable> {
         backgroundColor: Colors.white,
       ),
       buttons: [
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -347,7 +352,7 @@ class _PropertyTableState extends State<PropertyTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-           /* var data = TenantPropertyRepository().DeletePropertyType(id: id);
+            /* var data = TenantPropertyRepository().DeletePropertyType(id: id);
             // Add your delete logic here
             setState(() {
               futurePropertyTypes =
@@ -474,14 +479,14 @@ class _PropertyTableState extends State<PropertyTable> {
   //     ),
   //   );
   // }
-  Widget _buildDataCell(String text,tenant_property Propertytype) {
+  Widget _buildDataCell(String text, tenant_property Propertytype) {
     return TableCell(
       child: InkWell(
-        onTap: (){
-
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => summery_page(lease_id: Propertytype.leaseId,)));
-
+        onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => summery_page(
+                lease_id: Propertytype.leaseId,
+              )));
         },
         child: Container(
           height: 60,
@@ -619,8 +624,7 @@ class _PropertyTableState extends State<PropertyTable> {
           icon: FaIcon(
             FontAwesomeIcons.circleChevronLeft,
             size: 30,
-            color:
-            _currentPage == 0 ? Colors.grey : blueColor,
+            color: _currentPage == 0 ? Colors.grey : blueColor,
           ),
           onPressed: _currentPage == 0
               ? null
@@ -662,21 +666,25 @@ class _PropertyTableState extends State<PropertyTable> {
     final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       key: key,
-      appBar: widget_302.App_Bar(context: context,onDrawerIconPressed: () {
-        key.currentState!.openDrawer();
-      },),
+      appBar: widget_302.App_Bar(
+        context: context,
+        onDrawerIconPressed: () {
+          key.currentState!.openDrawer();
+        },
+      ),
       backgroundColor: Colors.white,
-      drawer:  CustomDrawer(currentpage: 'Properties',),
-      body:
-      _connectivityResult !=ConnectivityResult.none ?
-      SingleChildScrollView(
+      drawer: CustomDrawer(
+        currentpage: 'Properties',
+      ),
+      body: _connectivityResult != ConnectivityResult.none
+          ? SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(
               height: 20,
             ),
             //add propertytype
-          /*  Padding(
+            /*  Padding(
               padding: const EdgeInsets.only(left: 13, right: 13),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -688,12 +696,12 @@ class _PropertyTableState extends State<PropertyTable> {
                           MaterialPageRoute(
                               builder: (context) => Add_property()));*/
             /*
-                     *//* if (result == true) {
+                     */ /* if (result == true) {
                         setState(() {
                           futurePropertyTypes =
                               TenantPropertyRepository().fetchTenantProperties();
                         });
-                      }*//*
+                      }*/ /*
                     },
                     child: Container(
                       height: (MediaQuery.of(context).size.width < 500)
@@ -734,9 +742,14 @@ class _PropertyTableState extends State<PropertyTable> {
             ),
             SizedBox(height: 10),*/
 
-            titleBar(
-              width: MediaQuery.of(context).size.width * .91,
-              title: 'Properties',
+            // Header Section with Title
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0, vertical: 8.0),
+              child: titleBar(
+                width: double.infinity,
+                title: 'Properties',
+              ),
             ),
             SizedBox(height: 10),
             //search
@@ -754,7 +767,9 @@ class _PropertyTableState extends State<PropertyTable> {
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       // height: 40,
-                      height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                      height: MediaQuery.of(context).size.width < 500
+                          ? 40
+                          : 50,
                       width: MediaQuery.of(context).size.width < 500
                           ? MediaQuery.of(context).size.width * .52
                           : MediaQuery.of(context).size.width * .49,
@@ -767,9 +782,12 @@ class _PropertyTableState extends State<PropertyTable> {
                         children: [
                           Positioned.fill(
                             child: TextField(
-                              style:TextStyle(
-                                  fontSize:  MediaQuery.of(context).size.width < 500 ? 12 : 14
-                              ),
+                              style: TextStyle(
+                                  fontSize:
+                                  MediaQuery.of(context).size.width <
+                                      500
+                                      ? 12
+                                      : 14),
                               // onChanged: (value) {
                               //   setState(() {
                               //     cvverror = false;
@@ -786,13 +804,17 @@ class _PropertyTableState extends State<PropertyTable> {
                                   border: InputBorder.none,
                                   hintText: "Search here...",
                                   hintStyle: TextStyle(
-                                    fontSize: MediaQuery.of(context).size.width < 500 ? 14 : 18 ,
+                                    fontSize: MediaQuery.of(context)
+                                        .size
+                                        .width <
+                                        500
+                                        ? 14
+                                        : 18,
                                     // fontWeight: FontWeight.bold,
                                     color: Color(0xFF8A95A8),
                                   ),
-                                  contentPadding:
-                                  EdgeInsets.only(left: 5,bottom: 10,top: 14)
-                              ),
+                                  contentPadding: EdgeInsets.only(
+                                      left: 5, bottom: 10, top: 14)),
                             ),
                           ),
                         ],
@@ -800,7 +822,7 @@ class _PropertyTableState extends State<PropertyTable> {
                     ),
                   ),
                   SizedBox(width: 15),
-                /*  DropdownButtonHideUnderline(
+                  /*  DropdownButtonHideUnderline(
                     child: Material(
                       elevation: 3,
                       child: DropdownButton2<String>(
@@ -885,21 +907,25 @@ class _PropertyTableState extends State<PropertyTable> {
                 ],
               ),
             ),
-            if (MediaQuery.of(context).size.width > 500) SizedBox(height: 25),
+            if (MediaQuery.of(context).size.width > 500)
+              SizedBox(height: 25),
             if (MediaQuery.of(context).size.width < 500)
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 child: FutureBuilder<List<tenant_property>>(
                   future: futurePropertyTypes,
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
+                    if (snapshot.connectionState ==
+                        ConnectionState.waiting) {
                       return Container(
                         margin: const EdgeInsets.only(top: 20.0),
                         child: ColabShimmerLoadingWidget(),
                       );
                     } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(
+                          child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData ||
+                        snapshot.data!.isEmpty) {
                       return Container(
                         height: MediaQuery.of(context).size.height * .5,
                         child: Center(
@@ -907,9 +933,21 @@ class _PropertyTableState extends State<PropertyTable> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
-                              SizedBox(height: 10,),
-                              Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                              Image.asset(
+                                "assets/images/no_data.jpg",
+                                height: 200,
+                                width: 200,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                "No Data Available",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                    fontSize: 16),
+                              )
                             ],
                           ),
                         ),
@@ -918,21 +956,21 @@ class _PropertyTableState extends State<PropertyTable> {
                       var data = snapshot.data!;
                       if (selectedValue == null && searchvalue!.isEmpty) {
                         data = snapshot.data!;
-
                       } else if (selectedValue == "All") {
                         data = snapshot.data!;
                       } else if (searchvalue!.isNotEmpty) {
                         data = snapshot.data!
-                            .where((property) =>
-                        property.rentalAdress!
+                            .where((property) => property.rentalAdress!
                             .toLowerCase()
                             .contains(searchvalue!.toLowerCase()))
                             .toList();
                       }
-                      if(data.length == 0){
+                      if (data.length == 0) {
                         return Column(
                           children: [
-                            SizedBox(height: 20,),
+                            SizedBox(
+                              height: 20,
+                            ),
                             Center(
                               child: Text("No data Found"),
                             ),
@@ -940,7 +978,8 @@ class _PropertyTableState extends State<PropertyTable> {
                         );
                       }
                       sortData(data);
-                      final totalPages = (data.length / itemsPerPage).ceil();
+                      final totalPages =
+                      (data.length / itemsPerPage).ceil();
                       final currentPageData = data
                           .skip(currentPage * itemsPerPage)
                           .take(itemsPerPage)
@@ -958,8 +997,10 @@ class _PropertyTableState extends State<PropertyTable> {
                                     .entries
                                     .map((entry) {
                                   int index = entry.key;
-                                  bool isExpanded = expandedIndex == index;
-                                  tenant_property Propertytype = entry.value;
+                                  bool isExpanded =
+                                      expandedIndex == index;
+                                  tenant_property Propertytype =
+                                      entry.value;
                                   //return CustomExpansionTile(data: Propertytype, index: index);
                                   return Container(
                                     margin:
@@ -978,12 +1019,14 @@ class _PropertyTableState extends State<PropertyTable> {
                                         ListTile(
                                           contentPadding: EdgeInsets.zero,
                                           title: Padding(
-                                            padding: const EdgeInsets.all(2.0),
+                                            padding:
+                                            const EdgeInsets.all(2.0),
                                             child: Row(
                                               mainAxisAlignment:
                                               MainAxisAlignment.start,
                                               crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                              CrossAxisAlignment
+                                                  .center,
                                               children: <Widget>[
                                                 /*InkWell(
                                                   onTap: () {
@@ -1032,18 +1075,28 @@ class _PropertyTableState extends State<PropertyTable> {
                                                 Expanded(
                                                   flex: 4,
                                                   child: InkWell(
-                                                    onTap: (){
-                                                      Navigator.of(context)
-                                                          .push(MaterialPageRoute(builder: (context) => summery_page(lease_id: Propertytype.leaseId,)));
+                                                    onTap: () {
+                                                      Navigator.of(context).push(
+                                                          MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                  summery_page(
+                                                                    lease_id: Propertytype.leaseId,
+                                                                  )));
                                                     },
                                                     child: Padding(
-                                                      padding: const EdgeInsets.only(left: 8.0),
+                                                      padding:
+                                                      const EdgeInsets
+                                                          .only(
+                                                          left: 8.0),
                                                       child: Text(
                                                         '${Propertytype.rentalAdress}',
                                                         style: TextStyle(
-                                                          color: blueColor,
+                                                          color:
+                                                          blueColor,
                                                           fontWeight:
-                                                          FontWeight.bold,
+                                                          FontWeight
+                                                              .bold,
                                                           fontSize: 13,
                                                         ),
                                                       ),
@@ -1051,18 +1104,22 @@ class _PropertyTableState extends State<PropertyTable> {
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                    width:
-                                                    MediaQuery.of(context)
+                                                    width: MediaQuery.of(
+                                                        context)
                                                         .size
                                                         .width *
                                                         .08),
                                                 Expanded(
                                                   flex: 2,
                                                   child: Text(
-                                                    Propertytype.startDate?.isNotEmpty == true
-                                                        ? dateProvider.formatCurrentDate('${Propertytype.startDate}')
+                                                    Propertytype.startDate
+                                                        ?.isNotEmpty ==
+                                                        true
+                                                        ? dateProvider
+                                                        .formatCurrentDate(
+                                                        '${Propertytype.startDate}')
                                                         : 'N/A'
-                                                    '${ formatDate4(Propertytype.startDate!)}',
+                                                        '${formatDate4(Propertytype.startDate!)}',
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
@@ -1072,8 +1129,8 @@ class _PropertyTableState extends State<PropertyTable> {
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                    width:
-                                                    MediaQuery.of(context)
+                                                    width: MediaQuery.of(
+                                                        context)
                                                         .size
                                                         .width *
                                                         .08),
@@ -1081,8 +1138,12 @@ class _PropertyTableState extends State<PropertyTable> {
                                                   flex: 2,
                                                   child: Text(
                                                     // '${widget.data.createdAt}',
-                                                    Propertytype.endDate?.isNotEmpty == true
-                                                        ? dateProvider.formatCurrentDate('${Propertytype.endDate}')
+                                                    Propertytype.endDate
+                                                        ?.isNotEmpty ==
+                                                        true
+                                                        ? dateProvider
+                                                        .formatCurrentDate(
+                                                        '${Propertytype.endDate}')
                                                         : 'N/A'
                                                         '${formatDate4(Propertytype.endDate!)}',
 
@@ -1095,8 +1156,8 @@ class _PropertyTableState extends State<PropertyTable> {
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                    width:
-                                                    MediaQuery.of(context)
+                                                    width: MediaQuery.of(
+                                                        context)
                                                         .size
                                                         .width *
                                                         .02),
@@ -1104,7 +1165,7 @@ class _PropertyTableState extends State<PropertyTable> {
                                             ),
                                           ),
                                         ),
-                                      /*  if (isExpanded)
+                                        /*  if (isExpanded)
                                           Container(
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 8.0),
@@ -1329,24 +1390,31 @@ class _PropertyTableState extends State<PropertyTable> {
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 12.0),
                                         decoration: BoxDecoration(
-                                          border:
-                                          Border.all(color: Colors.grey),
+                                          border: Border.all(
+                                              color: Colors.grey),
                                         ),
-                                        child: DropdownButtonHideUnderline(
+                                        child:
+                                        DropdownButtonHideUnderline(
                                           child: DropdownButton<int>(
                                             value: itemsPerPage,
                                             items: itemsPerPageOptions
                                                 .map((int value) {
-                                              return DropdownMenuItem<int>(
+                                              return DropdownMenuItem<
+                                                  int>(
                                                 value: value,
-                                                child: Text(value.toString()),
+                                                child: Text(
+                                                    value.toString()),
                                               );
                                             }).toList(),
-                                            onChanged: data.length > itemsPerPageOptions.first // Condition to check if dropdown should be enabled
+                                            onChanged: data.length >
+                                                itemsPerPageOptions
+                                                    .first // Condition to check if dropdown should be enabled
                                                 ? (newValue) {
                                               setState(() {
-                                                itemsPerPage = newValue!;
-                                                currentPage = 0; // Reset to first page when items per page change
+                                                itemsPerPage =
+                                                newValue!;
+                                                currentPage =
+                                                0; // Reset to first page when items per page change
                                               });
                                             }
                                                 : null,
@@ -1360,7 +1428,8 @@ class _PropertyTableState extends State<PropertyTable> {
                                   children: [
                                     IconButton(
                                       icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronLeft,
+                                        FontAwesomeIcons
+                                            .circleChevronLeft,
                                         color: currentPage == 0
                                             ? Colors.grey
                                             : blueColor,
@@ -1397,12 +1466,15 @@ class _PropertyTableState extends State<PropertyTable> {
                                     // ),
                                     IconButton(
                                       icon: FaIcon(
-                                        FontAwesomeIcons.circleChevronRight,
-                                        color: currentPage < totalPages - 1
+                                        FontAwesomeIcons
+                                            .circleChevronRight,
+                                        color:
+                                        currentPage < totalPages - 1
                                             ? blueColor
                                             : Colors.grey,
                                       ),
-                                      onPressed: currentPage < totalPages - 1
+                                      onPressed:
+                                      currentPage < totalPages - 1
                                           ? () {
                                         setState(() {
                                           currentPage++;
@@ -1425,31 +1497,45 @@ class _PropertyTableState extends State<PropertyTable> {
               FutureBuilder<List<tenant_property>>(
                 future: futurePropertyTypes,
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
+                  if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
                     return Center(
                       child: SpinKitFadingCircle(
                         color: Colors.black,
                         size: 55.0,
                       ),
                     );
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                   return Container(
+                  } else if (!snapshot.hasData ||
+                      snapshot.data!.isEmpty) {
+                    return Container(
                       height: MediaQuery.of(context).size.height * .5,
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Image.asset("assets/images/no_data.jpg",height: 200,width: 200,),
-                            SizedBox(height: 10,),
-                            Text("No Data Available",style: TextStyle(fontWeight: FontWeight.bold,color:blueColor,fontSize: 16),)
+                            Image.asset(
+                              "assets/images/no_data.jpg",
+                              height: 200,
+                              width: 200,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              "No Data Available",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor,
+                                  fontSize: 16),
+                            )
                           ],
                         ),
                       ),
                     );
                   } else {
                     _tableData = snapshot.data!;
-                   /* if (selectedValue == null && searchvalue.isEmpty) {
+                    /* if (selectedValue == null && searchvalue.isEmpty) {
                       _tableData = snapshot.data!;
                     } else if (selectedValue == "All") {
                       _tableData = snapshot.data!;
@@ -1482,99 +1568,204 @@ class _PropertyTableState extends State<PropertyTable> {
                                   SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     child: Container(
-                                      padding:    const EdgeInsets.only(left: 2),
-                                      width: MediaQuery.of(context).size.width *
+                                      padding:
+                                      const EdgeInsets.only(left: 2),
+                                      width: MediaQuery.of(context)
+                                          .size
+                                          .width *
                                           .91,
-                                      child: Table(
-                                        defaultColumnWidth:
-                                        IntrinsicColumnWidth(),
+                                      child: Column(
                                         children: [
-                                          TableRow(
+                                          // Header Row with Mobile-like Styling
+                                          Container(
                                             decoration: BoxDecoration(
+                                              color: Color(0xFFF4F8FF),
+                                              borderRadius:
+                                              BorderRadius.circular(
+                                                  10),
                                               border: Border.all(
-                                                // color: blueColor
-                                              ),
+                                                  color:
+                                                  Color(0xFFDBE0E5)),
                                             ),
-                                            children: [
-
-                                              _buildHeader(
-                                                  'Rental Address',
-                                                  0,
-                                                      (property) =>
-                                                  property.rentalAdress!),
-
-                                              _buildHeader(
-                                                  'Start Date', 2, null),
-                                              _buildHeader(
-                                                  'End Date', 3, null),
-
-                                             // _buildHeader('Actions', 4, null),
-                                            ],
-                                          ),
-                                          TableRow(
-                                            decoration: BoxDecoration(
-                                              border: Border.symmetric(
-                                                  horizontal: BorderSide.none),
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Container(
+                                                    padding: EdgeInsets
+                                                        .symmetric(
+                                                        horizontal:
+                                                        16,
+                                                        vertical: 20),
+                                                    child: Text(
+                                                      'Rental Address',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        fontSize: 15,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Container(
+                                                    padding: EdgeInsets
+                                                        .symmetric(
+                                                        horizontal:
+                                                        16,
+                                                        vertical: 20),
+                                                    child: Text(
+                                                      'Start Date',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        fontSize: 15,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Container(
+                                                    padding: EdgeInsets
+                                                        .symmetric(
+                                                        horizontal:
+                                                        16,
+                                                        vertical: 20),
+                                                    child: Text(
+                                                      'End Date',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold,
+                                                        fontSize: 15,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                            children: List.generate(
-                                                3,
-                                                    (index) => TableCell(
-                                                    child:
-                                                    Container(height: 20))),
                                           ),
+
+                                          SizedBox(
+                                              height:
+                                              10), // Space between header and first data row
+                                          // Data Rows with Mobile-like Styling
                                           for (var i = 0;
                                           i < _pagedData.length;
                                           i++)
-                                            TableRow(
-                                              decoration: BoxDecoration(
-                                                border: Border(
-                                                  left: BorderSide(
-                                                      color: blueColor
-
-
-),
-                                                  right: BorderSide(
-                                                      color: blueColor
-
-
-),
-                                                  top: BorderSide(
-                                                      color: blueColor
-
-
-),
-                                                  bottom: i ==
-                                                      _pagedData.length - 1
-                                                      ? BorderSide(
-                                                      color: blueColor
-
-
-)
-                                                      : BorderSide.none,
-                                                ),
-                                              ),
+                                            Column(
                                               children: [
-
-                                                // Text(
-                                                //     '${_pagedData[i].propertyType!}'),
-                                                // Text(
-                                                //     '${_pagedData[i].propertysubType!}'),
-                                                // Text(
-                                                //     '${formatDate(_pagedData[i].createdAt!)}'),
-                                                // Text(
-                                                //     '${formatDate(_pagedData[i].updatedAt!)}'),
-                                                _buildDataCell(_pagedData[i]
-                                                    .rentalAdress!,_pagedData[i]),
-
-                                                _buildDataCell(
-
-                                                      _pagedData[i].startDate!,_pagedData[i]
+                                                Container(
+                                                  decoration:
+                                                  BoxDecoration(
+                                                    color: i % 2 != 0
+                                                        ? Color(
+                                                        0xFFF4F8FF)
+                                                        : Colors.white,
+                                                    border: Border.all(
+                                                        color: Color(
+                                                            0xFFDBE0E5)),
+                                                    borderRadius:
+                                                    BorderRadius
+                                                        .circular(10),
+                                                  ),
+                                                  child: Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: Container(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                              horizontal:
+                                                              16,
+                                                              vertical:
+                                                              20),
+                                                          child: InkWell(
+                                                            onTap: () {
+                                                              Navigator.of(
+                                                                  context)
+                                                                  .push(MaterialPageRoute(
+                                                                  builder: (context) => summery_page(
+                                                                    lease_id: _pagedData[i].leaseId,
+                                                                  )));
+                                                            },
+                                                            child: Text(
+                                                              _pagedData[
+                                                              i]
+                                                                  .rentalAdress!,
+                                                              style:
+                                                              TextStyle(
+                                                                color:
+                                                                blueColor,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold,
+                                                                fontSize:
+                                                                13,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        child: Container(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                              horizontal:
+                                                              16,
+                                                              vertical:
+                                                              20),
+                                                          child: Text(
+                                                            _pagedData[i]
+                                                                .startDate!,
+                                                            style:
+                                                            TextStyle(
+                                                              color:
+                                                              blueColor,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              fontSize:
+                                                              12,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        child: Container(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                              horizontal:
+                                                              16,
+                                                              vertical:
+                                                              20),
+                                                          child: Text(
+                                                            _pagedData[i]
+                                                                .endDate!,
+                                                            style:
+                                                            TextStyle(
+                                                              color:
+                                                              blueColor,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              fontSize:
+                                                              12,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                                _buildDataCell(
-
-                                                      _pagedData[i].endDate!,_pagedData[i]
-                                                ),
-                                               /* _buildActionsCell(_pagedData[i]),*/
+                                                if (i <
+                                                    _pagedData.length - 1)
+                                                  SizedBox(
+                                                      height:
+                                                      10), // Space between data rows
                                               ],
                                             ),
                                         ],
@@ -1596,7 +1787,8 @@ class _PropertyTableState extends State<PropertyTable> {
               ),
           ],
         ),
-      ):SizedBox(
+      )
+          : SizedBox(
         width: double.infinity,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1610,13 +1802,11 @@ class _PropertyTableState extends State<PropertyTable> {
             ),
             Text(
               'No Internet',
-              style: TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Text(
               'Check your internet connection',
-              style: TextStyle(
-                  fontSize: 16, fontWeight: FontWeight.w500),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
           ],
         ),

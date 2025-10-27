@@ -81,15 +81,18 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
   }
 
   fetchReport() {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     setState(() {
       daterange = "Today";
-      fromDate.text = formatDate(DateTime.now().toString());
-      toDate.text = formatDate(DateTime.now().toString());
+      String todayApiFormat = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      fromDate.text = dateProvider.formatCurrentDate(todayApiFormat);
+      toDate.text = dateProvider.formatCurrentDate(todayApiFormat);
     });
     DateTime time = DateTime.now();
     DateTime date = DateFormat('yyyy-MM-dd').parse(time.toString());
     _futureRentersInsurance = fetchDelinquentTenantsData(
-        formatDate(date.toString()), formatDate(date.toString()));
+        DateFormat('yyyy-MM-dd').format(date),
+        DateFormat('yyyy-MM-dd').format(date));
   }
 
   Future<List<RentalOwnerReport>> fetchDelinquentTenantsData(
@@ -295,182 +298,187 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
 
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
-    return Container(
-      decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
+    return Padding(
+      padding: EdgeInsets.only(
+          left: MediaQuery.of(context).size.width > 500 ? 12 : 0,
+          right: MediaQuery.of(context).size.width > 500 ? 12 : 0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: blueColor,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(13),
+            topRight: Radius.circular(13),
+          ),
         ),
-      ),
-      child: ListTile(
-        contentPadding: EdgeInsets.zero,
-        // leading: Container(
-        //   child: Icon(
-        //     Icons.expand_less,
-        //     color: Colors.transparent,
-        //   ),
-        // ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              child: const Icon(
-                Icons.expand_less,
-                color: Colors.transparent,
+        child: ListTile(
+          contentPadding: EdgeInsets.zero,
+          // leading: Container(
+          //   child: Icon(
+          //     Icons.expand_less,
+          //     color: Colors.transparent,
+          //   ),
+          // ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                child: const Icon(
+                  Icons.expand_less,
+                  color: Colors.transparent,
+                ),
               ),
-            ),
-            Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    if (sorting1 == true) {
-                      sorting2 = false;
-                      sorting3 = false;
-                      ascending1 = sorting1 ? !ascending1 : true;
-                      ascending2 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = !sorting1;
-                      sorting2 = false;
-                      sorting3 = false;
-                      ascending1 = sorting1 ? !ascending1 : true;
-                      ascending2 = false;
-                      ascending3 = false;
-                    }
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (sorting1 == true) {
+                        sorting2 = false;
+                        sorting3 = false;
+                        ascending1 = sorting1 ? !ascending1 : true;
+                        ascending2 = false;
+                        ascending3 = false;
+                      } else {
+                        sorting1 = !sorting1;
+                        sorting2 = false;
+                        sorting3 = false;
+                        ascending1 = sorting1 ? !ascending1 : true;
+                        ascending2 = false;
+                        ascending3 = false;
+                      }
 
-                    // Sorting logic here
-                  });
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 0),
-                  child: Row(
-                    children: [
-                      width < 400
-                          ? const Text("Rental Owner",
-                              style: TextStyle(color: Colors.white))
-                          : const Text("Rental Owner",
-                              style: TextStyle(color: Colors.white)),
-                      // Text("Property", style: TextStyle(color: Colors.white)),
-                      const SizedBox(width: 3),
-                      ascending1
-                          ? const Padding(
-                              padding: EdgeInsets.only(top: 7, left: 2),
-                              child: FaIcon(
-                                FontAwesomeIcons.sortUp,
-                                size: 20,
-                                color: Colors.white,
+                      // Sorting logic here
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 0),
+                    child: Row(
+                      children: [
+                        width < 400
+                            ? const Text("Rental Owner",
+                                style: TextStyle(color: Colors.white))
+                            : const Text("Rental Owner",
+                                style: TextStyle(color: Colors.white)),
+                        // Text("Property", style: TextStyle(color: Colors.white)),
+                        const SizedBox(width: 3),
+                        ascending1
+                            ? const Padding(
+                                padding: EdgeInsets.only(top: 7, left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.sortUp,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Padding(
+                                padding: EdgeInsets.only(bottom: 7, left: 2),
+                                child: FaIcon(
+                                  FontAwesomeIcons.sortDown,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
                               ),
-                            )
-                          : const Padding(
-                              padding: EdgeInsets.only(bottom: 7, left: 2),
-                              child: FaIcon(
-                                FontAwesomeIcons.sortDown,
-                                size: 20,
-                                color: Colors.white,
-                              ),
-                            ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            // Expanded(
-            //   child: GestureDetector(
-            //     onTap: () {
-            //       setState(() {
-            //         if (sorting2) {
-            //           sorting1 = false;
-            //           sorting2 = sorting2;
-            //           sorting3 = false;
-            //           ascending2 = sorting2 ? !ascending2 : true;
-            //           ascending1 = false;
-            //           ascending3 = false;
-            //         } else {
-            //           sorting1 = false;
-            //           sorting2 = !sorting2;
-            //           sorting3 = false;
-            //           ascending2 = sorting2 ? !ascending2 : true;
-            //           ascending1 = false;
-            //           ascending3 = false;
-            //         }
-            //         // Sorting logic here
-            //       });
-            //     },
-            //     child: Row(
-            //       children: [
-            //         Text("Address", style: TextStyle(color: Colors.white)),
-            //         SizedBox(width: 5),
-            //         ascending2
-            //             ? Padding(
-            //                 padding: const EdgeInsets.only(top: 7, left: 2),
-            //                 child: FaIcon(
-            //                   FontAwesomeIcons.sortUp,
-            //                   size: 20,
-            //                   color: Colors.white,
-            //                 ),
-            //               )
-            //             : Padding(
-            //                 padding: const EdgeInsets.only(bottom: 7, left: 2),
-            //                 child: FaIcon(
-            //                   FontAwesomeIcons.sortDown,
-            //                   size: 20,
-            //                   color: Colors.white,
-            //                 ),
-            //               ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
-            // Expanded(
-            //   child: GestureDetector(
-            //     onTap: () {
-            //       setState(() {
-            //         if (sorting3) {
-            //           sorting1 = false;
-            //           sorting2 = false;
-            //           sorting3 = sorting3;
-            //           ascending3 = sorting3 ? !ascending3 : true;
-            //           ascending2 = false;
-            //           ascending1 = false;
-            //         } else {
-            //           sorting1 = false;
-            //           sorting2 = false;
-            //           sorting3 = !sorting3;
-            //           ascending3 = sorting3 ? !ascending3 : true;
-            //           ascending2 = false;
-            //           ascending1 = false;
-            //         }
+              // Expanded(
+              //   child: GestureDetector(
+              //     onTap: () {
+              //       setState(() {
+              //         if (sorting2) {
+              //           sorting1 = false;
+              //           sorting2 = sorting2;
+              //           sorting3 = false;
+              //           ascending2 = sorting2 ? !ascending2 : true;
+              //           ascending1 = false;
+              //           ascending3 = false;
+              //         } else {
+              //           sorting1 = false;
+              //           sorting2 = !sorting2;
+              //           sorting3 = false;
+              //           ascending2 = sorting2 ? !ascending2 : true;
+              //           ascending1 = false;
+              //           ascending3 = false;
+              //         }
+              //         // Sorting logic here
+              //       });
+              //     },
+              //     child: Row(
+              //       children: [
+              //         Text("Address", style: TextStyle(color: Colors.white)),
+              //         SizedBox(width: 5),
+              //         ascending2
+              //             ? Padding(
+              //                 padding: const EdgeInsets.only(top: 7, left: 2),
+              //                 child: FaIcon(
+              //                   FontAwesomeIcons.sortUp,
+              //                   size: 20,
+              //                   color: Colors.white,
+              //                 ),
+              //               )
+              //             : Padding(
+              //                 padding: const EdgeInsets.only(bottom: 7, left: 2),
+              //                 child: FaIcon(
+              //                   FontAwesomeIcons.sortDown,
+              //                   size: 20,
+              //                   color: Colors.white,
+              //                 ),
+              //               ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+              // Expanded(
+              //   child: GestureDetector(
+              //     onTap: () {
+              //       setState(() {
+              //         if (sorting3) {
+              //           sorting1 = false;
+              //           sorting2 = false;
+              //           sorting3 = sorting3;
+              //           ascending3 = sorting3 ? !ascending3 : true;
+              //           ascending2 = false;
+              //           ascending1 = false;
+              //         } else {
+              //           sorting1 = false;
+              //           sorting2 = false;
+              //           sorting3 = !sorting3;
+              //           ascending3 = sorting3 ? !ascending3 : true;
+              //           ascending2 = false;
+              //           ascending1 = false;
+              //         }
 
-            //         // Sorting logic here
-            //       });
-            //     },
-            //     child: Row(
-            //       children: [
-            //         Text("Work", style: TextStyle(color: Colors.white)),
-            //         SizedBox(width: 5),
-            //         ascending3
-            //             ? Padding(
-            //                 padding: const EdgeInsets.only(top: 7, left: 2),
-            //                 child: FaIcon(
-            //                   FontAwesomeIcons.sortUp,
-            //                   size: 20,
-            //                   color: Colors.white,
-            //                 ),
-            //               )
-            //             : Padding(
-            //                 padding: const EdgeInsets.only(bottom: 7, left: 2),
-            //                 child: FaIcon(
-            //                   FontAwesomeIcons.sortDown,
-            //                   size: 20,
-            //                   color: Colors.white,
-            //                 ),
-            //               ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
-          ],
+              //         // Sorting logic here
+              //       });
+              //     },
+              //     child: Row(
+              //       children: [
+              //         Text("Work", style: TextStyle(color: Colors.white)),
+              //         SizedBox(width: 5),
+              //         ascending3
+              //             ? Padding(
+              //                 padding: const EdgeInsets.only(top: 7, left: 2),
+              //                 child: FaIcon(
+              //                   FontAwesomeIcons.sortUp,
+              //                   size: 20,
+              //                   color: Colors.white,
+              //                 ),
+              //               )
+              //             : Padding(
+              //                 padding: const EdgeInsets.only(bottom: 7, left: 2),
+              //                 child: FaIcon(
+              //                   FontAwesomeIcons.sortDown,
+              //                   size: 20,
+              //                   color: Colors.white,
+              //                 ),
+              //               ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+            ],
+          ),
         ),
       ),
     );
@@ -753,7 +761,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
           pw.Align(
             alignment: pw.Alignment.centerRight,
             child: pw.Text(
-              '\$${(property.totalAmount ?? 0.0).toStringAsFixed(2)}',
+              formatCurrency(property.totalAmount),
               style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
               // Total Amount formatted to 2 decimal places
               // Align text to the right
@@ -771,8 +779,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
             '', '', '', '', '', '',
             pw.Align(
                 alignment: pw.Alignment.centerRight,
-                child: pw.Text(
-                    '\$${(payment.amount ?? 0.0).toStringAsFixed(2)}',
+                child: pw.Text(formatCurrency(payment.amount),
                     style: pw.TextStyle(fontSize: 10),
                     textAlign: pw.TextAlign.right // Align text to the right
                     ))
@@ -1009,7 +1016,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
           property.paymentId ?? '',
           property.ccType ?? '',
           property.ccNumber ?? '',
-          '\$${property.totalAmount?.toStringAsFixed(2) ?? '0.00'}'
+          formatCurrency(property.totalAmount)
         ].join(','));
 
         // Iterate through payment entries for the current property
@@ -1023,7 +1030,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
             '',
             '',
             '',
-            '\$${payment.amount.toStringAsFixed(2)}'
+            formatCurrency(payment.amount)
           ].join(','));
         }
 
@@ -1199,6 +1206,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
   }
 
   Future<void> _pickDate(BuildContext context) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     DateTime? _selectedDate;
     DateTime? picked = await showDatePicker(
       context: context,
@@ -1224,13 +1232,10 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
       setState(() {
         _selectedDate = picked;
 
-        fromDate.text = DateFormat('dd-MM-yyyy')
-            .parse(picked.toString())
-            .toString()
-            .split(" ")[0];
-        fromDate.text = formatDate(fromDate.text);
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        fromDate.text = dateProvider.formatCurrentDate(apiFormatDate);
         _futureRentersInsurance =
-            fetchDelinquentTenantsData(fromDate.text, toDate.text);
+            fetchDelinquentTenantsData(apiFormatDate, toDate.text);
       });
 
       // Notify the FormField state of the change
@@ -1238,6 +1243,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
   }
 
   Future<void> _endDate(BuildContext context) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     DateTime? _selectedDate;
     DateTime? picked = await showDatePicker(
       context: context,
@@ -1263,13 +1269,10 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
       setState(() {
         _selectedDate = picked;
 
-        toDate.text = DateFormat('dd-MM-yyyy')
-            .parse(picked.toString())
-            .toString()
-            .split(" ")[0];
-        toDate.text = formatDate(toDate.text);
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        toDate.text = dateProvider.formatCurrentDate(apiFormatDate);
         _futureRentersInsurance =
-            fetchDelinquentTenantsData(fromDate.text, toDate.text);
+            fetchDelinquentTenantsData(fromDate.text, apiFormatDate);
       });
 
       // Notify the FormField state of the change
@@ -1295,6 +1298,13 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
         rentalowners = (jsonDecode(response.body) as List)
             .map((e) => e as Map<String, dynamic>)!
             .toList();
+
+        // Sort rental owners alphabetically by name
+        rentalowners.sort((a, b) {
+          String nameA = a['rentalOwner_name']?.toString() ?? '';
+          String nameB = b['rentalOwner_name']?.toString() ?? '';
+          return nameA.toLowerCase().compareTo(nameB.toLowerCase());
+        });
       });
       log(rentalowners.toString());
     } else {
@@ -1324,97 +1334,112 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
               child: Column(
                 children: [
                   const SizedBox(height: 16),
-                  titleBar(
-                    title: 'Rental Owner Report',
-                    width: MediaQuery.of(context).size.width * .91,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          left:
+                              MediaQuery.of(context).size.width > 500 ? 12 : 0,
+                          right:
+                              MediaQuery.of(context).size.width > 500 ? 12 : 0),
+                      child: titleBar(
+                        width: double.infinity,
+                        title: "Rental Owner Report",
+                      ),
+                    ),
                   ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    const SizedBox(height: 16),
-                  if (MediaQuery.of(context).size.width < 500)
-                    FutureBuilder<List<RentalOwnerReport>>(
-                      future: _futureRentersInsurance,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Column(
-                              children: [
-                                filters(),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                ColabShimmerLoadingWidget(),
-                              ],
-                            ),
-                          );
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
-                          return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Column(
-                              children: [
-                                filters(),
-                                Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * .5,
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Image.asset(
-                                          "assets/images/no_data.jpg",
-                                          height: 200,
-                                          width: 200,
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          "No Data Available",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: blueColor,
-                                              fontSize: 16),
-                                        )
-                                      ],
-                                    ),
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   const SizedBox(height: 16),
+                  // if (MediaQuery.of(context).size.width < 500)
+                  FutureBuilder<List<RentalOwnerReport>>(
+                    future: _futureRentersInsurance,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Column(
+                            children: [
+                              filters(),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              ColabShimmerLoadingWidget(),
+                            ],
+                          ),
+                        );
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Column(
+                            children: [
+                              filters(),
+                              Container(
+                                height: MediaQuery.of(context).size.height * .5,
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        "assets/images/no_data.jpg",
+                                        height: 200,
+                                        width: 200,
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        "No Data Available",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor,
+                                            fontSize: 16),
+                                      )
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
-                          );
-                        }
+                              ),
+                            ],
+                          ),
+                        );
+                      }
 
-                        var data = snapshot.data!;
+                      var data = snapshot.data!;
 
-                        // Pagination logic
-                        final totalPages = (data.length / itemsPerPage).ceil();
-                        final currentPageData = data
-                            .skip(currentPage * itemsPerPage)
-                            .take(itemsPerPage)
-                            .toList();
+                      // Pagination logic
+                      final totalPages = (data.length / itemsPerPage).ceil();
+                      final currentPageData = data
+                          .skip(currentPage * itemsPerPage)
+                          .take(itemsPerPage)
+                          .toList();
 
-                        return SingleChildScrollView(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 5),
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                filters(data: data),
-                                const SizedBox(height: 10),
-                                _buildHeaders(),
-                                const SizedBox(height: 20),
-                                if (showTableData)
-                                  Container(
+                      return SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 5),
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 5,
+                              ),
+                              filters(data: data),
+                              const SizedBox(height: 10),
+                              _buildHeaders(),
+                              const SizedBox(height: 20),
+                              if (showTableData)
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      left: MediaQuery.of(context).size.width >
+                                              500
+                                          ? 12
+                                          : 0,
+                                      right: MediaQuery.of(context).size.width >
+                                              500
+                                          ? 12
+                                          : 0),
+                                  child: Container(
                                     decoration: BoxDecoration(
                                         border: Border.all(
                                             color: Color.fromRGBO(
@@ -1706,7 +1731,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                                             'Payment Details:',
                                                                             _getDisplayValue("${tenant.ccType} ${tenant.ccNumber}"),
                                                                             'Payment Amount:',
-                                                                            _getDisplayValue("\$${tenant.totalAmount}")),
+                                                                            _getDisplayValue(formatCurrency(tenant.totalAmount))),
                                                                       ],
                                                                     ),
                                                                   ),
@@ -1883,7 +1908,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                                                                   TextSpan(
                                                                                     children: [
                                                                                       TextSpan(
-                                                                                        text: ' \$ ${entry.amount ?? "N/A"}',
+                                                                                        text: ' ${formatCurrency(entry.amount)}',
                                                                                         style: TextStyle(
                                                                                           fontWeight: FontWeight.w700,
                                                                                           color: grey,
@@ -1940,92 +1965,91 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                                       }).toList(),
                                     ),
                                   ),
-                                const SizedBox(height: 20),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        const SizedBox(width: 10),
-                                        Material(
-                                          elevation: 3,
-                                          child: Container(
-                                            height: 40,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 12.0),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.grey),
-                                            ),
-                                            child: DropdownButtonHideUnderline(
-                                              child: DropdownButton<int>(
-                                                value: itemsPerPage,
-                                                items: itemsPerPageOptions
-                                                    .map((int value) {
-                                                  return DropdownMenuItem<int>(
-                                                    value: value,
-                                                    child:
-                                                        Text(value.toString()),
-                                                  );
-                                                }).toList(),
-                                                onChanged: (newValue) {
-                                                  setState(() {
-                                                    itemsPerPage = newValue!;
-                                                    currentPage =
-                                                        0; // Reset to first page when items per page change
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                          icon: FaIcon(
-                                            FontAwesomeIcons.circleChevronLeft,
-                                            color: currentPage == 0
-                                                ? Colors.grey
-                                                : blueColor,
-                                          ),
-                                          onPressed: currentPage == 0
-                                              ? null
-                                              : () {
-                                                  setState(() {
-                                                    currentPage--;
-                                                  });
-                                                },
-                                        ),
-                                        Text(
-                                            'Page ${currentPage + 1} of $totalPages'),
-                                        IconButton(
-                                          icon: FaIcon(
-                                            FontAwesomeIcons.circleChevronRight,
-                                            color: currentPage < totalPages - 1
-                                                ? blueColor
-                                                : Colors.grey,
-                                          ),
-                                          onPressed:
-                                              currentPage < totalPages - 1
-                                                  ? () {
-                                                      setState(() {
-                                                        currentPage++;
-                                                      });
-                                                    }
-                                                  : null,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
                                 ),
-                              ],
-                            ),
+                              const SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const SizedBox(width: 10),
+                                      Material(
+                                        elevation: 3,
+                                        child: Container(
+                                          height: 40,
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12.0),
+                                          decoration: BoxDecoration(
+                                            border:
+                                                Border.all(color: Colors.grey),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton<int>(
+                                              value: itemsPerPage,
+                                              items: itemsPerPageOptions
+                                                  .map((int value) {
+                                                return DropdownMenuItem<int>(
+                                                  value: value,
+                                                  child: Text(value.toString()),
+                                                );
+                                              }).toList(),
+                                              onChanged: (newValue) {
+                                                setState(() {
+                                                  itemsPerPage = newValue!;
+                                                  currentPage =
+                                                      0; // Reset to first page when items per page change
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.circleChevronLeft,
+                                          color: currentPage == 0
+                                              ? Colors.grey
+                                              : blueColor,
+                                        ),
+                                        onPressed: currentPage == 0
+                                            ? null
+                                            : () {
+                                                setState(() {
+                                                  currentPage--;
+                                                });
+                                              },
+                                      ),
+                                      Text(
+                                          'Page ${currentPage + 1} of $totalPages'),
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.circleChevronRight,
+                                          color: currentPage < totalPages - 1
+                                              ? blueColor
+                                              : Colors.grey,
+                                        ),
+                                        onPressed: currentPage < totalPages - 1
+                                            ? () {
+                                                setState(() {
+                                                  currentPage++;
+                                                });
+                                              }
+                                            : null,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      );
+                    },
+                  ),
                   /* if (MediaQuery.of(context).size.width > 500)
               FutureBuilder<List<DelinquentTenantsData>>(
                 future: _futureRentersInsurance,
@@ -2814,359 +2838,443 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
   }
 
   filters({List<RentalOwnerReport>? data}) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 10,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: DropdownButtonHideUnderline(
-                  child: Material(
-                    elevation: 3,
-                    borderRadius: BorderRadius.circular(8),
-                    child: DropdownButton2<String>(
-                      isExpanded: true,
-                      hint: Row(
-                        children: [
-                          SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              selectedRentalOwnerIds.isEmpty
-                                  ? "Select Rental Owners"
-                                  : selectedRentalOwnerIds.length == 1
-                                      ? rentalowners.firstWhere((owner) =>
-                                          owner['rentalowner_id'] ==
-                                          selectedRentalOwnerIds
-                                              .first)['rentalOwner_name']
-                                      : "${selectedRentalOwnerIds.length} Rental Owners Selected",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black,
+    return Padding(
+      padding: EdgeInsets.only(
+          left: MediaQuery.of(context).size.width > 500 ? 12 : 0,
+          right: MediaQuery.of(context).size.width > 500 ? 12 : 0),
+      child: Column(
+        children: [
+          SizedBox(
+            height: 10,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: DropdownButtonHideUnderline(
+                    child: Material(
+                      elevation: 3,
+                      borderRadius: BorderRadius.circular(8),
+                      child: DropdownButton2<String>(
+                        isExpanded: true,
+                        hint: Row(
+                          children: [
+                            SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                selectedRentalOwnerIds.isEmpty
+                                    ? "Select Rental Owners"
+                                    : selectedRentalOwnerIds.length == 1
+                                        ? rentalowners.firstWhere((owner) =>
+                                            owner['rentalowner_id'] ==
+                                            selectedRentalOwnerIds
+                                                .first)['rentalOwner_name']
+                                        : "${selectedRentalOwnerIds.length} Rental Owners Selected",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              overflow: TextOverflow.ellipsis,
                             ),
+                          ],
+                        ),
+                        items: rentalowners.map((owner) {
+                          return DropdownMenuItem<String>(
+                            value: owner['rentalowner_id'],
+                            child: StatefulBuilder(
+                              builder: (context, setState) {
+                                bool isSelected = selectedRentalOwnerIds
+                                    .contains(owner['rentalowner_id']);
+                                return CheckboxListTile(
+                                  value: isSelected,
+                                  title: Text(
+                                    owner['rentalOwner_name']!,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  controlAffinity:
+                                      ListTileControlAffinity.leading,
+                                  onChanged: (bool? checked) {
+                                    setState(() {
+                                      if (checked == true) {
+                                        selectedRentalOwnerIds
+                                            .add(owner['rentalowner_id']!);
+                                      } else {
+                                        selectedRentalOwnerIds
+                                            .remove(owner['rentalowner_id']!);
+                                      }
+                                    });
+                                    // Update the outer state
+                                    this.setState(() {});
+                                  },
+                                );
+                              },
+                            ),
+                          );
+                        }).toList(),
+                        value:
+                            null, // Since we're using multi-select, we don't set a single value
+                        onChanged: (_) {}, // Keep the existing functionality
+                        buttonStyleData: ButtonStyleData(
+                          height: 42,
+                          width: double.infinity,
+                          padding: const EdgeInsets.only(left: 14, right: 14),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: const Color(0xFF8A95A8),
+                            ),
+                            color: Colors.white,
+                          ),
+                          elevation: 0,
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 250,
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          offset: const Offset(-20, 0),
+                          scrollbarTheme: ScrollbarThemeData(
+                            radius: const Radius.circular(40),
+                            thickness: MaterialStateProperty.all(6),
+                            thumbVisibility: MaterialStateProperty.all(true),
+                          ),
+                        ),
+                        menuItemStyleData: const MenuItemStyleData(
+                          height: 40,
+                          padding: EdgeInsets.only(left: 14, right: 14),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Container(
+                    height: 42,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: Colors.grey)),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: daterange,
+                        padding: EdgeInsets.symmetric(horizontal: 5),
+                        hint: Text(
+                          "Date Range",
+                          style: TextStyle(fontSize: 14, color: Colors.black),
+                        ),
+                        items: const [
+                          DropdownMenuItem<String>(
+                            value: 'Today',
+                            child: Text('Today'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'This Week',
+                            child: Text('This Week'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'This Month',
+                            child: Text('This Month'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'This Year',
+                            child: Text('This Year'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Custom',
+                            child: Text('Custom'),
                           ),
                         ],
-                      ),
-                      items: rentalowners.map((owner) {
-                        return DropdownMenuItem<String>(
-                          value: owner['rentalowner_id'],
-                          child: StatefulBuilder(
-                            builder: (context, setState) {
-                              bool isSelected = selectedRentalOwnerIds
-                                  .contains(owner['rentalowner_id']);
-                              return CheckboxListTile(
-                                value: isSelected,
-                                title: Text(
-                                  owner['rentalOwner_name']!,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                                controlAffinity:
-                                    ListTileControlAffinity.leading,
-                                onChanged: (bool? checked) {
-                                  setState(() {
-                                    if (checked == true) {
-                                      selectedRentalOwnerIds
-                                          .add(owner['rentalowner_id']!);
-                                    } else {
-                                      selectedRentalOwnerIds
-                                          .remove(owner['rentalowner_id']!);
-                                    }
-                                  });
-                                  // Update the outer state
-                                  this.setState(() {});
-                                },
-                              );
-                            },
-                          ),
-                        );
-                      }).toList(),
-                      value:
-                          null, // Since we're using multi-select, we don't set a single value
-                      onChanged: (_) {}, // Keep the existing functionality
-                      buttonStyleData: ButtonStyleData(
-                        height: 42,
-                        width: double.infinity,
-                        padding: const EdgeInsets.only(left: 14, right: 14),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: const Color(0xFF8A95A8),
-                          ),
-                          color: Colors.white,
-                        ),
-                        elevation: 0,
-                      ),
-                      dropdownStyleData: DropdownStyleData(
-                        maxHeight: 250,
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        offset: const Offset(-20, 0),
-                        scrollbarTheme: ScrollbarThemeData(
-                          radius: const Radius.circular(40),
-                          thickness: MaterialStateProperty.all(6),
-                          thumbVisibility: MaterialStateProperty.all(true),
-                        ),
-                      ),
-                      menuItemStyleData: const MenuItemStyleData(
-                        height: 40,
-                        padding: EdgeInsets.only(left: 14, right: 14),
+                        onChanged: (value) {
+                          final dateProvider =
+                              Provider.of<DateProvider>(context, listen: false);
+                          setState(() {
+                            daterange = value;
+                            if (value == "Today") {
+                              customdate = false;
+                              String todayApiFormat = DateFormat('yyyy-MM-dd')
+                                  .format(DateTime.now());
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(todayApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(todayApiFormat);
+                            } else if (value == "This Week") {
+                              DateTime now = DateTime.now();
+                              customdate = false;
+                              String startWeekApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(now.subtract(
+                                      Duration(days: now.weekday - 1)));
+                              String endWeekApiFormat = DateFormat('yyyy-MM-dd')
+                                  .format(now.add(Duration(
+                                      days:
+                                          DateTime.daysPerWeek - now.weekday)));
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(startWeekApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(endWeekApiFormat);
+                            } else if (value == "This Month") {
+                              customdate = false;
+                              DateTime now = DateTime.now();
+                              String startMonthApiFormat =
+                                  DateFormat('yyyy-MM-dd')
+                                      .format(DateTime(now.year, now.month, 1));
+                              String endMonthApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(
+                                      DateTime(now.year, now.month + 1, 0));
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(startMonthApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(endMonthApiFormat);
+                            } else if (value == "This Year") {
+                              customdate = false;
+                              DateTime now = DateTime.now();
+                              String startYearApiFormat =
+                                  DateFormat('yyyy-MM-dd')
+                                      .format(DateTime(now.year, 1, 1));
+                              String endYearApiFormat = DateFormat('yyyy-MM-dd')
+                                  .format(DateTime(now.year, 12, 31));
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(startYearApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(endYearApiFormat);
+                            } else if (value == "Custom") {
+                              customdate = true;
+                            }
+                            if (value != "Custom" && customdate == true) {
+                              customdate = false;
+                              fromDate.text = "";
+                              toDate.text = "";
+                            }
+                            if (value != "Custom") {
+                              // _futureRentersInsurance =
+                              //     fetchDelinquentTenantsData(
+                              //         fromDate.text, toDate.text);
+                            }
+                          });
+                          // Handle the selected charge type
+                          print(value);
+                        },
                       ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Container(
-                  height: 42,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Colors.grey)),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: daterange,
-                      padding: EdgeInsets.symmetric(horizontal: 5),
-                      hint: Text(
-                        "Date Range",
-                        style: TextStyle(fontSize: 14, color: Colors.black),
-                      ),
-                      items: const [
-                        DropdownMenuItem<String>(
-                          value: 'Today',
-                          child: Text('Today'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'This Week',
-                          child: Text('This Week'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'This Month',
-                          child: Text('This Month'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'This Year',
-                          child: Text('This Year'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Custom',
-                          child: Text('Custom'),
-                        ),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          daterange = value;
-                          if (value == "Today") {
-                            customdate = false;
-                            fromDate.text =
-                                formatDate(DateTime.now().toString());
-                            toDate.text = formatDate(DateTime.now().toString());
-                          } else if (value == "This Week") {
-                            DateTime now = DateTime.now();
-                            //  fromDate.text = formatDate(now.toString());
-                            customdate = false;
-                            fromDate.text = formatDate(now
-                                .subtract(Duration(days: now.weekday - 1))
-                                .toString());
-                            toDate.text = formatDate(now
-                                .add(Duration(
-                                    days: DateTime.daysPerWeek - now.weekday))
-                                .toString());
-                          } else if (value == "This Month") {
-                            customdate = false;
-                            DateTime now = DateTime.now();
-                            fromDate.text = formatDate(
-                                DateTime(now.year, now.month, 1).toString());
-                            toDate.text = formatDate(
-                                DateTime(now.year, now.month + 1, 0)
-                                    .toString());
-                          } else if (value == "This Year") {
-                            customdate = false;
-                            DateTime now = DateTime.now();
-                            fromDate.text =
-                                formatDate(DateTime(now.year, 1, 1).toString());
-                            toDate.text = formatDate(
-                                DateTime(now.year, 12, 31).toString());
-                          } else if (value == "Custom") {
-                            customdate = true;
-                          }
-                          if (value != "Custom" && customdate == true) {
-                            customdate = false;
-                            fromDate.text = "";
-                            toDate.text = "";
-                          }
-                          if (value != "Custom") {
-                            // _futureRentersInsurance =
-                            //     fetchDelinquentTenantsData(
-                            //         fromDate.text, toDate.text);
-                          }
-                        });
-                        // Handle the selected charge type
-                        print(value);
-                      },
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 6),
-            ],
+                const SizedBox(width: 6),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0.0),
-          child: Row(
-            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Container(
-                  // width: 110,
-                  child: TextFormField(
-                    controller: fromDate,
-                    // enabled: customdate,
-                    onTap: customdate
-                        ? () {
-                            _pickDate(context);
-                          }
-                        : null,
-                    readOnly: true,
-                    style: TextStyle(fontSize: 14, color: Colors.black),
-                    textInputAction: TextInputAction.next,
-                    textAlignVertical: TextAlignVertical.center,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 10), //Imp Line
-                      isDense: true,
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0.0),
+            child: Row(
+              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Container(
+                    // width: 110,
+                    child: TextFormField(
+                      controller: fromDate,
+                      // enabled: customdate,
+                      onTap: customdate
+                          ? () {
+                              _pickDate(context);
+                            }
+                          : null,
+                      readOnly: true,
+                      style: TextStyle(fontSize: 14, color: Colors.black),
+                      textInputAction: TextInputAction.next,
+                      textAlignVertical: TextAlignVertical.center,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 10), //Imp Line
+                        isDense: true,
 
-                      hintText: "From",
+                        hintText: "From",
 
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: const BorderSide(
-                            width: 1,
-                          )),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: Container(
-                  // width: 110,
-                  child: TextFormField(
-                    controller: toDate,
-                    // enabled: customdate,
-                    style: TextStyle(fontSize: 14, color: Colors.black),
-                    onTap: customdate
-                        ? () {
-                            _endDate(context);
-                          }
-                        : null,
-                    readOnly: true,
-                    textInputAction: TextInputAction.next,
-                    textAlignVertical: TextAlignVertical.center,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 10), //Imp Line
-                      isDense: true,
-                      hintText: "To",
-
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: const BorderSide(
-                            width: 0.5,
-                          )),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 6),
-            ],
-          ),
-        ),
-        const SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Container(
-                  height: 42,
-                  // width: 170,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Colors.grey)),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: chargeType,
-                      padding: EdgeInsets.symmetric(horizontal: 5),
-                      hint: Text(
-                        "Charge type",
-                        style: TextStyle(fontSize: 14, color: Colors.black),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: const BorderSide(
+                              width: 1,
+                            )),
                       ),
-                      items: const [
-                        DropdownMenuItem<String>(
-                          value: 'Card',
-                          child: Text('Card'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'ACH',
-                          child: Text('ACH'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Check',
-                          child: Text('Check'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Cash',
-                          child: Text('Cash'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Manual',
-                          child: Text('Manual'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Money Order',
-                          child: Text('Money Order'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: "Cashier's Check",
-                          child: Text("Cashier's Check"),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: "All",
-                          child: Text('All'),
-                        ),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          chargeType = value;
-                          // _futureRentersInsurance = fetchDelinquentTenantsData(
-                          //     fromDate.text, toDate.text,
-                          //     charge: value);
-                        });
-                        // Handle the selected charge type
-                        print(value);
-                      },
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 6),
-              if (showTableData)
+                SizedBox(width: 10),
+                Expanded(
+                  child: Container(
+                    // width: 110,
+                    child: TextFormField(
+                      controller: toDate,
+                      // enabled: customdate,
+                      style: TextStyle(fontSize: 14, color: Colors.black),
+                      onTap: customdate
+                          ? () {
+                              _endDate(context);
+                            }
+                          : null,
+                      readOnly: true,
+                      textInputAction: TextInputAction.next,
+                      textAlignVertical: TextAlignVertical.center,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 10), //Imp Line
+                        isDense: true,
+                        hintText: "To",
+
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: const BorderSide(
+                              width: 0.5,
+                            )),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 42,
+                    // width: 170,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: Colors.grey)),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: chargeType,
+                        padding: EdgeInsets.symmetric(horizontal: 5),
+                        hint: Text(
+                          "Charge type",
+                          style: TextStyle(fontSize: 14, color: Colors.black),
+                        ),
+                        items: const [
+                          DropdownMenuItem<String>(
+                            value: 'Card',
+                            child: Text('Card'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'ACH',
+                            child: Text('ACH'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Check',
+                            child: Text('Check'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Cash',
+                            child: Text('Cash'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Manual',
+                            child: Text('Manual'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Money Order',
+                            child: Text('Money Order'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: "Cashier's Check",
+                            child: Text("Cashier's Check"),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: "All",
+                            child: Text('All'),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            chargeType = value;
+                            // _futureRentersInsurance = fetchDelinquentTenantsData(
+                            //     fromDate.text, toDate.text,
+                            //     charge: value);
+                          });
+                          // Handle the selected charge type
+                          print(value);
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                if (showTableData)
+                  Expanded(
+                    child: SizedBox(
+                      //  width: 100,
+                      height: 42,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: blueColor,
+                        ),
+                        onPressed: () {},
+                        child: PopupMenuButton<String>(
+                          onSelected: (value) async {
+                            // Export logic
+                            if (value == 'PDF' && data != null) {
+                              print('pdf');
+                              generateDelinquentTenantsPdf(data);
+                            } else if (value == 'XLSX' && data != null) {
+                              print('XLSX');
+                              generateRentalOwnerReportExcel(data);
+                              //generateDelinquentTenantsExcel(data);
+                            } else if (value == 'CSV' && data != null) {
+                              print('CSV');
+                              generateRentalOwnerReportCsv(data);
+                              //  generateDelinquentTenantsCsv(data);
+                            }
+                          },
+                          itemBuilder: (BuildContext context) =>
+                              <PopupMenuEntry<String>>[
+                            const PopupMenuItem<String>(
+                                value: 'PDF', child: Text('PDF')),
+                            const PopupMenuItem<String>(
+                                value: 'XLSX', child: Text('XLSX')),
+                            const PopupMenuItem<String>(
+                                value: 'CSV', child: Text('CSV')),
+                          ],
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              istenantDataLoading
+                                  ? const Center(
+                                      child: SpinKitFadingCircle(
+                                        color: Colors.white,
+                                        size: 21.0,
+                                      ),
+                                    )
+                                  : Text('Export'),
+                              Icon(Icons.arrow_drop_down),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Spacer(),
                 Expanded(
                   child: SizedBox(
                     //  width: 100,
@@ -3175,96 +3283,42 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: blueColor,
                       ),
-                      onPressed: () {},
-                      child: PopupMenuButton<String>(
-                        onSelected: (value) async {
-                          // Export logic
-                          if (value == 'PDF' && data != null) {
-                            print('pdf');
-                            generateDelinquentTenantsPdf(data);
-                          } else if (value == 'XLSX' && data != null) {
-                            print('XLSX');
-                            generateRentalOwnerReportExcel(data);
-                            //generateDelinquentTenantsExcel(data);
-                          } else if (value == 'CSV' && data != null) {
-                            print('CSV');
-                            generateRentalOwnerReportCsv(data);
-                            //  generateDelinquentTenantsCsv(data);
-                          }
-                        },
-                        itemBuilder: (BuildContext context) =>
-                            <PopupMenuEntry<String>>[
-                          const PopupMenuItem<String>(
-                              value: 'PDF', child: Text('PDF')),
-                          const PopupMenuItem<String>(
-                              value: 'XLSX', child: Text('XLSX')),
-                          const PopupMenuItem<String>(
-                              value: 'CSV', child: Text('CSV')),
+                      onPressed: () async {
+                        final dateProvider =
+                            Provider.of<DateProvider>(context, listen: false);
+                        setState(() {
+                          showTableData =
+                              true; // Set to true when the button is pressed
+                        });
+
+                        // Convert formatted dates back to API format (yyyy-MM-dd)
+                        String apiFromDate = formatDate(fromDate.text);
+                        String apiToDate = formatDate(toDate.text);
+
+                        _futureRentersInsurance = fetchDelinquentTenantsData(
+                            apiFromDate, apiToDate); // Call the API
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          isAddLoading
+                              ? const Center(
+                                  child: SpinKitFadingCircle(
+                                    color: Colors.white,
+                                    size: 21.0,
+                                  ),
+                                )
+                              : Text('Run'),
                         ],
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            istenantDataLoading
-                                ? const Center(
-                                    child: SpinKitFadingCircle(
-                                      color: Colors.white,
-                                      size: 21.0,
-                                    ),
-                                  )
-                                : Text('Export'),
-                            Icon(Icons.arrow_drop_down),
-                          ],
-                        ),
                       ),
                     ),
                   ),
                 )
-            ],
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Spacer(),
-              Expanded(
-                child: SizedBox(
-                  //  width: 100,
-                  height: 42,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: blueColor,
-                    ),
-                    onPressed: () async {
-                      setState(() {
-                        showTableData =
-                            true; // Set to true when the button is pressed
-                      });
-                      _futureRentersInsurance = fetchDelinquentTenantsData(
-                          fromDate.text, toDate.text); // Call the API
-                    },
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        isAddLoading
-                            ? const Center(
-                                child: SpinKitFadingCircle(
-                                  color: Colors.white,
-                                  size: 21.0,
-                                ),
-                              )
-                            : Text('Run'),
-                      ],
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

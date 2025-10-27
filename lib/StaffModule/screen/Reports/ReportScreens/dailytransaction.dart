@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
@@ -18,31 +17,12 @@ import '../../../../Model/profile.dart';
 import '../../../../repository/daily_transaction_report.dart';
 import '../../../repository/GetAdminAddressPdf.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:csv/csv.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:three_zero_two_property/Model/OpenWorkOrderReportModel.dart';
-import 'package:three_zero_two_property/Model/profile.dart';
-import 'package:three_zero_two_property/constant/constant.dart';
-
-import 'package:three_zero_two_property/repository/OpenWorkOrderReportService.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
-
-import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:intl/intl.dart';
-import 'package:printing/printing.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:fluttertoast/fluttertoast.dart';
-
-import 'dart:io';
 
 import '../../../widgets/custom_drawer.dart';
 import '../../../widgets/appbar.dart';
@@ -99,14 +79,12 @@ class _DailyTransactionsState extends State<DailyTransactions> {
       });
     });
     DateTime time = DateTime.now();
-    DateTime date = DateFormat('yyyy-MM-dd').parse(time.toString());
-    _futureDailytrnsaction = fetchDelinquentTenantsData(
-        formatDate(date.toString()), formatDate(date.toString()));
-    if (_futureDailytrnsaction != null) {
-      setState(() {
-        showTableData = true;
-      });
-    }
+    String todayApiFormat = DateFormat('yyyy-MM-dd').format(time);
+    _futureDailytrnsaction =
+        fetchDelinquentTenantsData(todayApiFormat, todayApiFormat);
+    setState(() {
+      showTableData = true;
+    });
   }
 
   Future<DailyTransactionReportData> fetchDelinquentTenantsData(
@@ -115,13 +93,12 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
-      String? token = prefs.getString('token');
 
       String? chargedata = chargeType == "All" ? null : chargeType;
 
       DailyTransactionReportData data = await DailyTrasactionReportStaff()
           .fetchDailyTransactionsstaff(
-              id!, reverseFormatDate(fromDate), reverseFormatDate(toDate),
+              id!, formatDate(fromDate), formatDate(toDate),
               chargetype: chargedata);
 
       setState(() {
@@ -308,148 +285,153 @@ class _DailyTransactionsState extends State<DailyTransactions> {
 
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
-    return Container(
-      decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
+    return Padding(
+      padding: EdgeInsets.only(
+          left: MediaQuery.of(context).size.width > 500 ? 12 : 0,
+          right: MediaQuery.of(context).size.width > 500 ? 12 : 0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: blueColor,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(13),
+            topRight: Radius.circular(13),
+          ),
         ),
-      ),
-      child: ListTile(
-        contentPadding: EdgeInsets.zero,
-        // leading: Container(
-        //   child: Icon(
-        //     Icons.expand_less,
-        //     color: Colors.transparent,
-        //   ),
-        // ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              child: const Icon(
-                Icons.expand_less,
-                color: Colors.transparent,
+        child: ListTile(
+          contentPadding: EdgeInsets.zero,
+          // leading: Container(
+          //   child: Icon(
+          //     Icons.expand_less,
+          //     color: Colors.transparent,
+          //   ),
+          // ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                child: const Icon(
+                  Icons.expand_less,
+                  color: Colors.transparent,
+                ),
               ),
-            ),
-            Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    if (sorting1 == true) {
-                      sorting2 = false;
-                      sorting3 = false;
-                      ascending1 = sorting1 ? !ascending1 : true;
-                      ascending2 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = !sorting1;
-                      sorting2 = false;
-                      sorting3 = false;
-                      ascending1 = sorting1 ? !ascending1 : true;
-                      ascending2 = false;
-                      ascending3 = false;
-                    }
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (sorting1 == true) {
+                        sorting2 = false;
+                        sorting3 = false;
+                        ascending1 = sorting1 ? !ascending1 : true;
+                        ascending2 = false;
+                        ascending3 = false;
+                      } else {
+                        sorting1 = !sorting1;
+                        sorting2 = false;
+                        sorting3 = false;
+                        ascending1 = sorting1 ? !ascending1 : true;
+                        ascending2 = false;
+                        ascending3 = false;
+                      }
 
-                    // Sorting logic here
-                  });
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 0),
-                  child: Row(
+                      // Sorting logic here
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 0),
+                    child: Row(
+                      children: [
+                        width < 400
+                            ? const Text("   Date",
+                                style: TextStyle(color: Colors.white))
+                            : const Text("   Date",
+                                style: TextStyle(color: Colors.white)),
+                        // Text("Property", style: TextStyle(color: Colors.white)),
+                        // const SizedBox(width: 3),
+                        // ascending1
+                        //     ? const Padding(
+                        //         padding: EdgeInsets.only(top: 7, left: 2),
+                        //         child: FaIcon(
+                        //           FontAwesomeIcons.sortUp,
+                        //           size: 20,
+                        //           color: Colors.white,
+                        //         ),
+                        //       )
+                        //     : const Padding(
+                        //         padding: EdgeInsets.only(bottom: 7, left: 2),
+                        //         child: FaIcon(
+                        //           FontAwesomeIcons.sortDown,
+                        //           size: 20,
+                        //           color: Colors.white,
+                        //         ),
+                        //       ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (sorting2) {
+                        sorting1 = false;
+                        sorting2 = sorting2;
+                        sorting3 = false;
+                        ascending2 = sorting2 ? !ascending2 : true;
+                        ascending1 = false;
+                        ascending3 = false;
+                      } else {
+                        sorting1 = false;
+                        sorting2 = !sorting2;
+                        sorting3 = false;
+                        ascending2 = sorting2 ? !ascending2 : true;
+                        ascending1 = false;
+                        ascending3 = false;
+                      }
+                      // Sorting logic here
+                    });
+                  },
+                  child: const Row(
                     children: [
-                      width < 400
-                          ? const Text("   Date",
-                              style: TextStyle(color: Colors.white))
-                          : const Text("   Date",
-                              style: TextStyle(color: Colors.white)),
-                      // Text("Property", style: TextStyle(color: Colors.white)),
-                      // const SizedBox(width: 3),
-                      // ascending1
-                      //     ? const Padding(
-                      //         padding: EdgeInsets.only(top: 7, left: 2),
-                      //         child: FaIcon(
-                      //           FontAwesomeIcons.sortUp,
-                      //           size: 20,
-                      //           color: Colors.white,
-                      //         ),
-                      //       )
-                      //     : const Padding(
-                      //         padding: EdgeInsets.only(bottom: 7, left: 2),
-                      //         child: FaIcon(
-                      //           FontAwesomeIcons.sortDown,
-                      //           size: 20,
-                      //           color: Colors.white,
-                      //         ),
-                      //       ),
+                      Text("       Subtotal",
+                          style: TextStyle(color: Colors.white)),
                     ],
                   ),
                 ),
               ),
-            ),
-            Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    if (sorting2) {
-                      sorting1 = false;
-                      sorting2 = sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = !sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    }
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("       Subtotal",
-                        style: TextStyle(color: Colors.white)),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    if (sorting3) {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
-                      ascending1 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = !sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
-                      ascending1 = false;
-                    }
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (sorting3) {
+                        sorting1 = false;
+                        sorting2 = false;
+                        sorting3 = sorting3;
+                        ascending3 = sorting3 ? !ascending3 : true;
+                        ascending2 = false;
+                        ascending1 = false;
+                      } else {
+                        sorting1 = false;
+                        sorting2 = false;
+                        sorting3 = !sorting3;
+                        ascending3 = sorting3 ? !ascending3 : true;
+                        ascending2 = false;
+                        ascending1 = false;
+                      }
 
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("        Record",
-                        style: TextStyle(color: Colors.white)),
-                  ],
+                      // Sorting logic here
+                    });
+                  },
+                  child: const Row(
+                    children: [
+                      Text("        Record",
+                          style: TextStyle(color: Colors.white)),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -493,7 +475,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
             margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
             child: pw.Text(
               'Page ${context.pageNumber} of ${context.pagesCount}',
-              style: pw.TextStyle(color: PdfColors.grey),
+              style: const pw.TextStyle(color: PdfColors.grey),
             ),
           );
         },
@@ -589,24 +571,24 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   color: PdfColor.fromHex("#5A86D5"),
                   //color:PdfColor.fromRYB(90, 134, 213,)
                 ),
-                cellStyle: pw.TextStyle(fontSize: 10),
+                cellStyle: const pw.TextStyle(fontSize: 10),
                 cellAlignment: pw.Alignment.centerLeft,
                 headerAlignment: pw.Alignment.centerLeft,
                 columnWidths: {
-                  0: pw.FlexColumnWidth(2), // Date
-                  1: pw.FlexColumnWidth(1.5), // Address
-                  2: pw.FlexColumnWidth(1), // Work
-                  3: pw.FlexColumnWidth(.8), // Performed
-                  4: pw.FlexColumnWidth(1.3), // Performed
-                  5: pw.FlexColumnWidth(1.5), // Performed
-                  6: pw.FlexColumnWidth(.8), // Performed
-                  7: pw.FlexColumnWidth(1.5), // Performed
-                  8: pw.FlexColumnWidth(1), // Performed
+                  0: const pw.FlexColumnWidth(2), // Date
+                  1: const pw.FlexColumnWidth(1.5), // Address
+                  2: const pw.FlexColumnWidth(1), // Work
+                  3: const pw.FlexColumnWidth(.8), // Performed
+                  4: const pw.FlexColumnWidth(1.3), // Performed
+                  5: const pw.FlexColumnWidth(1.5), // Performed
+                  6: const pw.FlexColumnWidth(.8), // Performed
+                  7: const pw.FlexColumnWidth(1.5), // Performed
+                  8: const pw.FlexColumnWidth(1), // Performed
                 },
                 border: null),
             pw.Divider(thickness: 3),
             pw.Padding(
-                padding: pw.EdgeInsets.symmetric(horizontal: 5),
+                padding: const pw.EdgeInsets.symmetric(horizontal: 5),
                 child: pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
@@ -656,7 +638,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   fontWeight: pw.FontWeight.bold,
                 ),
               ),
-              padding: pw.EdgeInsets.only(left: 15)), // Property Name
+              padding: const pw.EdgeInsets.only(left: 15)), // Property Name
           pw.Text(
             '${property.tenantData!.tenantFirstName ?? 'N/A'} ${property.tenantData!.tenantLastName ?? 'N/A'}',
             style: pw.TextStyle(
@@ -712,7 +694,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
           pw.Align(
             alignment: pw.Alignment.centerRight,
             child: pw.Text(
-              '\$${(property.totalAmount ?? 0.0).toStringAsFixed(2)}',
+              formatCurrency(property.totalAmount),
               style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
               // Total Amount formatted to 2 decimal places
               // Align text to the right
@@ -720,20 +702,19 @@ class _DailyTransactionsState extends State<DailyTransactions> {
           ),
         ]);
         print(property.response);
-        if (property.response != "FAILURE" && property.isDelete == false)
+        if (property.response != "FAILURE" && !property.isDelete!)
           for (var payment in property.entry!) {
             tableData.add([
               pw.Padding(
                   child: pw.Text('${payment.account ?? 'N/A'}',
-                      style: pw.TextStyle(fontSize: 10)),
-                  padding: pw.EdgeInsets.only(left: 15)), // Account Name
+                      style: const pw.TextStyle(fontSize: 10)),
+                  padding: const pw.EdgeInsets.only(left: 15)), // Account Name
               '', // Account Amount
               '', '', '', '', '', '',
               pw.Align(
                   alignment: pw.Alignment.centerRight,
-                  child: pw.Text(
-                      '\$${(payment.amount ?? 0.0).toStringAsFixed(2)}',
-                      style: pw.TextStyle(
+                  child: pw.Text(formatCurrency(payment.amount),
+                      style: const pw.TextStyle(
                         fontSize: 10,
                       ),
                       textAlign: pw.TextAlign.right // Align text to the right
@@ -786,10 +767,10 @@ class _DailyTransactionsState extends State<DailyTransactions> {
             child: pw.Text('Subtotal :-',
                 style:
                     pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-            padding: pw.EdgeInsets.only(left: 15)),
+            padding: const pw.EdgeInsets.only(left: 15)),
         pw.Align(
             alignment: pw.Alignment.centerRight,
-            child: pw.Text('\$${(owner.subtotal ?? 0.0).toStringAsFixed(2)}',
+            child: pw.Text(formatCurrency(owner.subtotal),
                 style:
                     pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
                 textAlign: pw.TextAlign.right // Align text to the right
@@ -845,8 +826,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     boldAmountStyle.hAlign = syncXlsx.HAlignType.right;
     final syncXlsx.Style AmountTitleStyle =
         workbook.styles.add('AmountTitleStyle');
-    boldAmountStyle.bold = true;
-    boldAmountStyle.numberFormat = '\$#,##0.00';
+    AmountTitleStyle.bold = true;
+    AmountTitleStyle.numberFormat = '\$#,##0.00';
 
     for (int i = 0; i < headers.length; i++) {
       final cell = sheet.getRangeByIndex(1, i + 1);
@@ -992,7 +973,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
           property.paymentId ?? 'N/A',
           property.cc_type ?? 'N/A',
           property.cc_number ?? 'N/A',
-          '\$${property.totalAmount?.toStringAsFixed(2) ?? '0.00'}'
+          formatCurrency(property.totalAmount)
         ].join(','));
 
         // Iterate through payment entries for the current property
@@ -1006,7 +987,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
             '',
             '',
             '',
-            '\$${payment.amount!.toStringAsFixed(2)}'
+            formatCurrency(payment.amount)
           ].join(','));
         }
 
@@ -1036,7 +1017,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
         '',
         '',
         '',
-        '\$${(owner.subtotal ?? 0.0).toStringAsFixed(2)}'
+        formatCurrency(owner.subtotal)
       ].join(','));
 
       // Accumulate grand total
@@ -1053,7 +1034,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
       '',
       '',
       '',
-      '\$${grandTotal.toStringAsFixed(2)}'
+      formatCurrency(grandTotal)
     ].join(','));
 
     // Convert buffer to list of bytes for CSV file
@@ -1196,7 +1177,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
             colorScheme: ColorScheme.light(
               primary: blueColor,
             ),
-            buttonTheme: ButtonThemeData(
+            buttonTheme: const ButtonThemeData(
               textTheme: ButtonTextTheme.primary,
             ),
           ),
@@ -1210,9 +1191,6 @@ class _DailyTransactionsState extends State<DailyTransactions> {
 
         String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
         fromDate.text = dateProvider.formatCurrentDate(apiFormatDate);
-
-        // _futureDailytrnsaction =
-        //     fetchDelinquentTenantsData(fromDate.text, toDate.text);
       });
 
       // Notify the FormField state of the change
@@ -1234,7 +1212,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
             colorScheme: ColorScheme.light(
               primary: blueColor,
             ),
-            buttonTheme: ButtonThemeData(
+            buttonTheme: const ButtonThemeData(
               textTheme: ButtonTextTheme.primary,
             ),
           ),
@@ -1248,8 +1226,6 @@ class _DailyTransactionsState extends State<DailyTransactions> {
 
         String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
         toDate.text = dateProvider.formatCurrentDate(apiFormatDate);
-        // _futureDailytrnsaction =
-        //     fetchDelinquentTenantsData(fromDate.text, toDate.text);
       });
 
       // Notify the FormField state of the change
@@ -1262,40 +1238,6 @@ class _DailyTransactionsState extends State<DailyTransactions> {
   String? chargeType;
   String? selectedrenatalownerid;
   bool showTableData = false;
-
-  String _convertToApiFormat(String displayDate) {
-    if (displayDate.isEmpty) return "";
-    try {
-      DateTime? parsedDate;
-
-      // Try to parse the date using common formats
-      List<String> dateFormats = [
-        'MM/dd/yyyy',
-        'MM-dd-yyyy',
-        'yyyy-MM-dd',
-        'yyyy-MMM-dd', // Added for API format like "2025-Aug-22"
-        'dd/MM/yyyy',
-        'dd-MM-yyyy'
-      ];
-
-      for (String format in dateFormats) {
-        try {
-          parsedDate = DateFormat(format).parse(displayDate);
-          break;
-        } catch (e) {
-          continue;
-        }
-      }
-
-      if (parsedDate != null) {
-        return DateFormat('yyyy-MM-dd').format(parsedDate);
-      } else {
-        return displayDate; // Return original if parsing fails
-      }
-    } catch (e) {
-      return displayDate; // Return original if parsing fails
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -1311,94 +1253,110 @@ class _DailyTransactionsState extends State<DailyTransactions> {
               child: Column(
                 children: [
                   const SizedBox(height: 16),
-                  titleBar(
-                    title: 'Daily Transaction Report',
-                    width: MediaQuery.of(context).size.width * .91,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          left:
+                              MediaQuery.of(context).size.width > 500 ? 12 : 0,
+                          right:
+                              MediaQuery.of(context).size.width > 500 ? 12 : 0),
+                      child: titleBar(
+                        width: double.infinity,
+                        title: "Daily Transaction Report",
+                      ),
+                    ),
                   ),
-                  if (MediaQuery.of(context).size.width > 500)
-                    const SizedBox(height: 16),
-                  if (MediaQuery.of(context).size.width < 500)
-                    FutureBuilder<DailyTransactionReportData>(
-                      future: _futureDailytrnsaction,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Column(
-                              children: [
-                                filters(),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                ColabShimmerLoadingWidget(),
-                              ],
-                            ),
-                          );
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.data.isEmpty) {
-                          return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Column(
-                              children: [
-                                filters(),
-                                Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * .5,
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Image.asset(
-                                          "assets/images/no_data.jpg",
-                                          height: 200,
-                                          width: 200,
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          "No Data Available",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: blueColor,
-                                              fontSize: 16),
-                                        )
-                                      ],
-                                    ),
+                  // if (MediaQuery.of(context).size.width > 500)
+                  //   const SizedBox(height: 16),
+                  // if (MediaQuery.of(context).size.width < 500)
+                  FutureBuilder<DailyTransactionReportData>(
+                    future: _futureDailytrnsaction,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Column(
+                            children: [
+                              filters(),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              ColabShimmerLoadingWidget(),
+                            ],
+                          ),
+                        );
+                      } else if (!snapshot.hasData ||
+                          snapshot.data!.data.isEmpty) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Column(
+                            children: [
+                              filters(),
+                              Container(
+                                height: MediaQuery.of(context).size.height * .5,
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        "assets/images/no_data.jpg",
+                                        height: 200,
+                                        width: 200,
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        "No Data Available",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor,
+                                            fontSize: 16),
+                                      )
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
-                          );
-                        }
+                              ),
+                            ],
+                          ),
+                        );
+                      }
 
-                        var data = snapshot.data!.data;
+                      var data = snapshot.data!.data;
 
-                        // Pagination logic
-                        final totalPages = (data.length / itemsPerPage).ceil();
-                        final currentPageData = data
-                            .skip(currentPage * itemsPerPage)
-                            .take(itemsPerPage)
-                            .toList();
+                      // Pagination logic
+                      final totalPages = (data.length / itemsPerPage).ceil();
+                      final currentPageData = data
+                          .skip(currentPage * itemsPerPage)
+                          .take(itemsPerPage)
+                          .toList();
 
-                        return SingleChildScrollView(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 5),
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                filters(data: data),
-                                const SizedBox(height: 20),
-                                Row(
+                      return SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 5),
+                          child: Column(
+                            children: [
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              filters(data: data),
+                              const SizedBox(height: 20),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left:
+                                        MediaQuery.of(context).size.width > 500
+                                            ? 12
+                                            : 0,
+                                    right:
+                                        MediaQuery.of(context).size.width > 500
+                                            ? 12
+                                            : 0),
+                                child: Row(
                                   children: [
                                     Text(
                                       "Grand total ",
@@ -1407,9 +1365,9 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                           fontSize: 15,
                                           color: blueColor),
                                     ),
-                                    Spacer(),
+                                    const Spacer(),
                                     Text(
-                                      "\$${snapshot.data?.grandTotal.toStringAsFixed(2)} ",
+                                      formatCurrency(snapshot.data?.grandTotal),
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 15,
@@ -1417,14 +1375,25 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 5),
-                                _buildHeaders(),
-                                const SizedBox(height: 20),
-                                if (showTableData)
-                                  Container(
+                              ),
+                              const SizedBox(height: 5),
+                              _buildHeaders(),
+                              const SizedBox(height: 20),
+                              if (showTableData)
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      left: MediaQuery.of(context).size.width >
+                                              500
+                                          ? 12
+                                          : 0,
+                                      right: MediaQuery.of(context).size.width >
+                                              500
+                                          ? 12
+                                          : 0),
+                                  child: Container(
                                     decoration: BoxDecoration(
                                         border: Border.all(
-                                            color: Color.fromRGBO(
+                                            color: const Color.fromRGBO(
                                                 152, 162, 179, .5))),
                                     child: Column(
                                       children: currentPageData
@@ -1447,7 +1416,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                 ? Colors.white
                                                 : blueColor.withOpacity(0.09),
                                             border: Border.all(
-                                                color: Color.fromRGBO(
+                                                color: const Color.fromRGBO(
                                                     152, 162, 179, .5)),
                                           ),
                                           child: Column(
@@ -1532,13 +1501,14 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 2,
                                                       ),
                                                       Expanded(
                                                         flex: 2,
                                                         child: Text(
-                                                          '\$${item.subtotal}',
+                                                          formatCurrency(
+                                                              item.subtotal),
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
@@ -1565,7 +1535,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         width: 10,
                                                       ),
                                                     ],
@@ -1689,7 +1659,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                 children: [
                                                                   Row(
                                                                     children: [
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         width:
                                                                             20,
                                                                       ),
@@ -1699,8 +1669,8 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                           columnWidths: {
                                                                             // 0: FixedColumnWidth(150.0), // Adjust width as needed
                                                                             // 1: FlexColumnWidth(),
-                                                                            0: FlexColumnWidth(), // Distribute columns equally
-                                                                            1: FlexColumnWidth(),
+                                                                            0: const FlexColumnWidth(), // Distribute columns equally
+                                                                            1: const FlexColumnWidth(),
                                                                           },
                                                                           children: [
                                                                             _buildTableRow(
@@ -1712,7 +1682,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                               'Payment Details:',
                                                                               _getDisplayValue((tenant.cc_type != null && tenant.cc_number != null && tenant.cc_type!.isNotEmpty && tenant.cc_number!.isNotEmpty) ? "${tenant.cc_type} ${tenant.cc_number}" : "N/A"),
                                                                               'Total:',
-                                                                              _getDisplayValue("\$${tenant.totalAmount ?? '0.00'}"),
+                                                                              _getDisplayValue(formatCurrency(tenant.totalAmount)),
                                                                             )
                                                                           ],
                                                                         ),
@@ -1873,7 +1843,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                                   ],
                                                                                 ),
                                                                               ),
-                                                                              SizedBox(
+                                                                              const SizedBox(
                                                                                 width: 15,
                                                                               ),
                                                                               Expanded(
@@ -1885,7 +1855,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                                       TextSpan(
                                                                                         children: [
                                                                                           TextSpan(
-                                                                                            text: ' \$ ${entry.amount ?? "N/A"}',
+                                                                                            text: ' ${formatCurrency(entry.amount)}',
                                                                                             style: TextStyle(
                                                                                               fontWeight: FontWeight.w700,
                                                                                               color: grey,
@@ -1944,14 +1914,14 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                                                     ),
                                                                 ],
                                                               ),
-                                                            SizedBox(
+                                                            const SizedBox(
                                                               height: 8,
                                                             ),
                                                             if (item.charges!
                                                                         .length -
                                                                     1 !=
                                                                 tenantIndex)
-                                                              Divider(
+                                                              const Divider(
                                                                 thickness: 2,
                                                               )
                                                           ],
@@ -1966,92 +1936,91 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                       }).toList(),
                                     ),
                                   ),
-                                const SizedBox(height: 20),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        const SizedBox(width: 10),
-                                        Material(
-                                          elevation: 3,
-                                          child: Container(
-                                            height: 40,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 12.0),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.grey),
-                                            ),
-                                            child: DropdownButtonHideUnderline(
-                                              child: DropdownButton<int>(
-                                                value: itemsPerPage,
-                                                items: itemsPerPageOptions
-                                                    .map((int value) {
-                                                  return DropdownMenuItem<int>(
-                                                    value: value,
-                                                    child:
-                                                        Text(value.toString()),
-                                                  );
-                                                }).toList(),
-                                                onChanged: (newValue) {
-                                                  setState(() {
-                                                    itemsPerPage = newValue!;
-                                                    currentPage =
-                                                        0; // Reset to first page when items per page change
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                          icon: FaIcon(
-                                            FontAwesomeIcons.circleChevronLeft,
-                                            color: currentPage == 0
-                                                ? Colors.grey
-                                                : blueColor,
-                                          ),
-                                          onPressed: currentPage == 0
-                                              ? null
-                                              : () {
-                                                  setState(() {
-                                                    currentPage--;
-                                                  });
-                                                },
-                                        ),
-                                        Text(
-                                            'Page ${currentPage + 1} of $totalPages'),
-                                        IconButton(
-                                          icon: FaIcon(
-                                            FontAwesomeIcons.circleChevronRight,
-                                            color: currentPage < totalPages - 1
-                                                ? blueColor
-                                                : Colors.grey,
-                                          ),
-                                          onPressed:
-                                              currentPage < totalPages - 1
-                                                  ? () {
-                                                      setState(() {
-                                                        currentPage++;
-                                                      });
-                                                    }
-                                                  : null,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
                                 ),
-                              ],
-                            ),
+                              const SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const SizedBox(width: 10),
+                                      Material(
+                                        elevation: 3,
+                                        child: Container(
+                                          height: 40,
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12.0),
+                                          decoration: BoxDecoration(
+                                            border:
+                                                Border.all(color: Colors.grey),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton<int>(
+                                              value: itemsPerPage,
+                                              items: itemsPerPageOptions
+                                                  .map((int value) {
+                                                return DropdownMenuItem<int>(
+                                                  value: value,
+                                                  child: Text(value.toString()),
+                                                );
+                                              }).toList(),
+                                              onChanged: (newValue) {
+                                                setState(() {
+                                                  itemsPerPage = newValue!;
+                                                  currentPage =
+                                                      0; // Reset to first page when items per page change
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.circleChevronLeft,
+                                          color: currentPage == 0
+                                              ? Colors.grey
+                                              : blueColor,
+                                        ),
+                                        onPressed: currentPage == 0
+                                            ? null
+                                            : () {
+                                                setState(() {
+                                                  currentPage--;
+                                                });
+                                              },
+                                      ),
+                                      Text(
+                                          'Page ${currentPage + 1} of $totalPages'),
+                                      IconButton(
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.circleChevronRight,
+                                          color: currentPage < totalPages - 1
+                                              ? blueColor
+                                              : Colors.grey,
+                                        ),
+                                        onPressed: currentPage < totalPages - 1
+                                            ? () {
+                                                setState(() {
+                                                  currentPage++;
+                                                });
+                                              }
+                                            : null,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      );
+                    },
+                  ),
                   /* if (MediaQuery.of(context).size.width > 500)
               FutureBuilder<List<DelinquentTenantsData>>(
                 future: _futureDailytrnsaction,
@@ -2725,11 +2694,11 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                     height: 200,
                     fit: BoxFit.fill,
                   ),
-                  Text(
+                  const Text(
                     'No Internet',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     'Check your internet connection',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
@@ -2750,7 +2719,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
       children: [
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2759,7 +2728,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 4.0), // Space between label and value
+                const SizedBox(height: 4.0), // Space between label and value
                 Text(
                   leftValue,
                   style: TextStyle(color: grey),
@@ -2770,7 +2739,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
         ),
         TableCell(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2779,7 +2748,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   style:
                       TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                 ),
-                SizedBox(height: 4.0), // Space between label and value
+                const SizedBox(height: 4.0), // Space between label and value
                 Text(
                   rightValue,
                   style: TextStyle(color: grey),
@@ -2840,326 +2809,391 @@ class _DailyTransactionsState extends State<DailyTransactions> {
   // }
 
   filters({List<DailyTransactionReport>? data}) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 10,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Expanded(
-              //   child: Container(
-              //     height: 42,
-              //     //width: 160,
-              //     decoration: BoxDecoration(
-              //         borderRadius: BorderRadius.circular(5),
-              //         border: Border.all(color: Colors.grey)),
-              //     child: DropdownButtonHideUnderline(
-              //       child: DropdownButton<String>(
-              //         value: selectedrenatalownerid,
-              //         padding: EdgeInsets.symmetric(horizontal: 5),
-              //         hint: Text(
-              //           "Rental Owner",
-              //           style: TextStyle(fontSize: 14, color: Colors.black),
-              //         ),
-              //         items: rentalowners.map((property) {
-              //           return DropdownMenuItem<String>(
-              //             value: property['rentalowner_id'],
-              //             child: Container(
-              //               width: MediaQuery.of(context).size.width * .34,
-              //               child: Text(
-              //                 property['rentalOwner_name']!,
-              //                 style: const TextStyle(
-              //                   fontSize: 14,
-              //                   fontWeight: FontWeight.w400,
-              //                   color: Colors.black87,
-              //                 ),
-              //                 overflow: TextOverflow.ellipsis,
-              //               ),
-              //             ),
-              //           );
-              //         }).toList(),
-              //         onChanged: (value) {
-              //           setState(() {
-              //             selectedrenatalownerid = value;
-              //             // _futureDailytrnsaction = fetchDelinquentTenantsData(
-              //             //     fromDate.text, toDate.text,
-              //             //     rentalownerid: value);
-              //           });
-              //           // Handle the selected charge type
-              //           print(value);
-              //         },
-              //       ),
-              //     ),
-              //   ),
-              // ),
-              // const SizedBox(width: 4),
-              Expanded(
-                child: Container(
-                  height: 42,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Colors.grey)),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: daterange,
-                      padding: EdgeInsets.symmetric(horizontal: 5),
-                      hint: Text(
-                        "Date Range",
-                        style: TextStyle(fontSize: 14, color: Colors.black),
-                      ),
-                      items: const [
-                        DropdownMenuItem<String>(
-                          value: 'Today',
-                          child: Text('Today'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'This Week',
-                          child: Text('This Week'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'This Month',
-                          child: Text('This Month'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'This Year',
-                          child: Text('This Year'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Custom',
-                          child: Text('Custom'),
-                        ),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          daterange = value;
-                          if (value == "Today") {
-                            customdate = false;
-                            final dateProvider = Provider.of<DateProvider>(
-                                context,
-                                listen: false);
-                            String todayApiFormat =
-                                DateFormat('yyyy-MM-dd').format(DateTime.now());
-                            fromDate.text =
-                                dateProvider.formatCurrentDate(todayApiFormat);
-                            toDate.text =
-                                dateProvider.formatCurrentDate(todayApiFormat);
-                          } else if (value == "This Week") {
-                            DateTime now = DateTime.now();
-                            customdate = false;
-                            final dateProvider = Provider.of<DateProvider>(
-                                context,
-                                listen: false);
-                            String weekStartApiFormat = DateFormat('yyyy-MM-dd')
-                                .format(now
-                                    .subtract(Duration(days: now.weekday - 1)));
-                            String weekEndApiFormat = DateFormat('yyyy-MM-dd')
-                                .format(now.add(Duration(
-                                    days: DateTime.daysPerWeek - now.weekday)));
-                            fromDate.text = dateProvider
-                                .formatCurrentDate(weekStartApiFormat);
-                            toDate.text = dateProvider
-                                .formatCurrentDate(weekEndApiFormat);
-                          } else if (value == "This Month") {
-                            customdate = false;
-                            DateTime now = DateTime.now();
-                            final dateProvider = Provider.of<DateProvider>(
-                                context,
-                                listen: false);
-                            String monthStartApiFormat =
-                                DateFormat('yyyy-MM-dd')
-                                    .format(DateTime(now.year, now.month, 1));
-                            String monthEndApiFormat = DateFormat('yyyy-MM-dd')
-                                .format(DateTime(now.year, now.month + 1, 0));
-                            fromDate.text = dateProvider
-                                .formatCurrentDate(monthStartApiFormat);
-                            toDate.text = dateProvider
-                                .formatCurrentDate(monthEndApiFormat);
-                          } else if (value == "This Year") {
-                            customdate = false;
-                            DateTime now = DateTime.now();
-                            final dateProvider = Provider.of<DateProvider>(
-                                context,
-                                listen: false);
-                            String yearStartApiFormat = DateFormat('yyyy-MM-dd')
-                                .format(DateTime(now.year, 1, 1));
-                            String yearEndApiFormat = DateFormat('yyyy-MM-dd')
-                                .format(DateTime(now.year, 12, 31));
-                            fromDate.text = dateProvider
-                                .formatCurrentDate(yearStartApiFormat);
-                            toDate.text = dateProvider
-                                .formatCurrentDate(yearEndApiFormat);
-                          } else if (value == "Custom") {
-                            customdate = true;
-                          }
-                          if (value != "Custom" && customdate == true) {
-                            customdate = false;
-                            fromDate.text = "";
-                            toDate.text = "";
-                          }
-                          if (value != "Custom") {
-                            // _futureDailytrnsaction =
-                            //     fetchDelinquentTenantsData(
-                            //         fromDate.text, toDate.text);
-                          }
-                        });
-                        // Handle the selected charge type
-                        print(value);
-                      },
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 6),
-            ],
+    return Padding(
+      padding: EdgeInsets.only(
+          left: MediaQuery.of(context).size.width > 500 ? 12 : 0,
+          right: MediaQuery.of(context).size.width > 500 ? 12 : 0),
+      child: Column(
+        children: [
+          const SizedBox(
+            height: 10,
           ),
-        ),
-        const SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0.0),
-          child: Row(
-            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Container(
-                  // width: 110,
-                  child: TextFormField(
-                    controller: fromDate,
-                    // enabled: customdate,
-                    onTap: customdate
-                        ? () {
-                            _pickDate(context);
-                          }
-                        : null,
-                    readOnly: true,
-                    style: TextStyle(fontSize: 14, color: Colors.black),
-                    textInputAction: TextInputAction.next,
-                    textAlignVertical: TextAlignVertical.center,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 10), //Imp Line
-                      isDense: true,
-
-                      hintText: "From",
-
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: const BorderSide(
-                            width: 1,
-                          )),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: Container(
-                  // width: 110,
-                  child: TextFormField(
-                    controller: toDate,
-                    // enabled: customdate,
-                    style: TextStyle(fontSize: 14, color: Colors.black),
-                    onTap: customdate
-                        ? () {
-                            _endDate(context);
-                          }
-                        : null,
-                    readOnly: true,
-                    textInputAction: TextInputAction.next,
-                    textAlignVertical: TextAlignVertical.center,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 10), //Imp Line
-                      isDense: true,
-                      hintText: "To",
-
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: const BorderSide(
-                            width: 0.5,
-                          )),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 6),
-            ],
-          ),
-        ),
-        const SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Container(
-                  height: 42,
-                  // width: 170,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Colors.grey)),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: chargeType,
-                      padding: EdgeInsets.symmetric(horizontal: 4),
-                      hint: Text(
-                        "Charge type",
-                        style: TextStyle(fontSize: 14, color: Colors.black),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Expanded(
+                //   child: Container(
+                //     height: 42,
+                //     //width: 160,
+                //     decoration: BoxDecoration(
+                //         borderRadius: BorderRadius.circular(5),
+                //         border: Border.all(color: Colors.grey)),
+                //     child: DropdownButtonHideUnderline(
+                //       child: DropdownButton<String>(
+                //         value: selectedrenatalownerid,
+                //         padding: EdgeInsets.symmetric(horizontal: 5),
+                //         hint: Text(
+                //           "Rental Owner",
+                //           style: TextStyle(fontSize: 14, color: Colors.black),
+                //         ),
+                //         items: rentalowners.map((property) {
+                //           return DropdownMenuItem<String>(
+                //             value: property['rentalowner_id'],
+                //             child: Container(
+                //               width: MediaQuery.of(context).size.width * .34,
+                //               child: Text(
+                //                 property['rentalOwner_name']!,
+                //                 style: const TextStyle(
+                //                   fontSize: 14,
+                //                   fontWeight: FontWeight.w400,
+                //                   color: Colors.black87,
+                //                 ),
+                //                 overflow: TextOverflow.ellipsis,
+                //               ),
+                //             ),
+                //           );
+                //         }).toList(),
+                //         onChanged: (value) {
+                //           setState(() {
+                //             selectedrenatalownerid = value;
+                //             // _futureDailytrnsaction = fetchDelinquentTenantsData(
+                //             //     fromDate.text, toDate.text,
+                //             //     rentalownerid: value);
+                //           });
+                //           // Handle the selected charge type
+                //           print(value);
+                //         },
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                // const SizedBox(width: 4),
+                Expanded(
+                  child: Container(
+                    height: 42,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: Colors.grey)),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: daterange,
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        hint: const Text(
+                          "Date Range",
+                          style: TextStyle(fontSize: 14, color: Colors.black),
+                        ),
+                        items: const [
+                          DropdownMenuItem<String>(
+                            value: 'Today',
+                            child: Text('Today'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'This Week',
+                            child: Text('This Week'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'This Month',
+                            child: Text('This Month'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'This Year',
+                            child: Text('This Year'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Custom',
+                            child: Text('Custom'),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            daterange = value;
+                            if (value == "Today") {
+                              customdate = false;
+                              final dateProvider = Provider.of<DateProvider>(
+                                  context,
+                                  listen: false);
+                              String todayApiFormat = DateFormat('yyyy-MM-dd')
+                                  .format(DateTime.now());
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(todayApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(todayApiFormat);
+                            } else if (value == "This Week") {
+                              DateTime now = DateTime.now();
+                              customdate = false;
+                              final dateProvider = Provider.of<DateProvider>(
+                                  context,
+                                  listen: false);
+                              String weekStartApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(now.subtract(
+                                      Duration(days: now.weekday - 1)));
+                              String weekEndApiFormat = DateFormat('yyyy-MM-dd')
+                                  .format(now.add(Duration(
+                                      days:
+                                          DateTime.daysPerWeek - now.weekday)));
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(weekStartApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(weekEndApiFormat);
+                            } else if (value == "This Month") {
+                              customdate = false;
+                              DateTime now = DateTime.now();
+                              final dateProvider = Provider.of<DateProvider>(
+                                  context,
+                                  listen: false);
+                              String monthStartApiFormat =
+                                  DateFormat('yyyy-MM-dd')
+                                      .format(DateTime(now.year, now.month, 1));
+                              String monthEndApiFormat =
+                                  DateFormat('yyyy-MM-dd').format(
+                                      DateTime(now.year, now.month + 1, 0));
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(monthStartApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(monthEndApiFormat);
+                            } else if (value == "This Year") {
+                              customdate = false;
+                              DateTime now = DateTime.now();
+                              final dateProvider = Provider.of<DateProvider>(
+                                  context,
+                                  listen: false);
+                              String yearStartApiFormat =
+                                  DateFormat('yyyy-MM-dd')
+                                      .format(DateTime(now.year, 1, 1));
+                              String yearEndApiFormat = DateFormat('yyyy-MM-dd')
+                                  .format(DateTime(now.year, 12, 31));
+                              fromDate.text = dateProvider
+                                  .formatCurrentDate(yearStartApiFormat);
+                              toDate.text = dateProvider
+                                  .formatCurrentDate(yearEndApiFormat);
+                            } else if (value == "Custom") {
+                              customdate = true;
+                            }
+                            if (value != "Custom" && customdate == true) {
+                              customdate = false;
+                              fromDate.text = "";
+                              toDate.text = "";
+                            }
+                            // Auto-fetch data only for "Today" selection
+                            if (value == "Today") {
+                              _futureDailytrnsaction =
+                                  fetchDelinquentTenantsData(
+                                      formatDate(fromDate.text),
+                                      formatDate(toDate.text));
+                            }
+                            // For other date ranges, user must click "Run" button
+                          });
+                          // Handle the selected charge type
+                          print(value);
+                        },
                       ),
-                      items: const [
-                        DropdownMenuItem<String>(
-                          value: 'All',
-                          child: Text('All'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'ACH',
-                          child: Text('ACH'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Card',
-                          child: Text('Card'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Cash',
-                          child: Text('Cash'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: "Cashier's Check",
-                          child: Text("Cashier's Check"),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Check',
-                          child: Text('Check'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Manual',
-                          child: Text('Manual'),
-                        ),
-                        DropdownMenuItem<String>(
-                          value: 'Money Order',
-                          child: Text('Money Order'),
-                        ),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          chargeType = value;
-                          // _futureDailytrnsaction = fetchDelinquentTenantsData(
-                          //     fromDate.text, toDate.text,
-                          //     charge: value);
-                        });
-                        // Handle the selected charge type
-                        print(value);
-                      },
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 6),
-              if (showTableData)
+                const SizedBox(width: 6),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0.0),
+            child: Row(
+              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Container(
+                    // width: 110,
+                    child: TextFormField(
+                      controller: fromDate,
+                      // enabled: customdate,
+                      onTap: customdate
+                          ? () {
+                              _pickDate(context);
+                            }
+                          : null,
+                      readOnly: true,
+                      style: const TextStyle(fontSize: 14, color: Colors.black),
+                      textInputAction: TextInputAction.next,
+                      textAlignVertical: TextAlignVertical.center,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 10), //Imp Line
+                        isDense: true,
+
+                        hintText: "From",
+
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: const BorderSide(
+                              width: 1,
+                            )),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Container(
+                    // width: 110,
+                    child: TextFormField(
+                      controller: toDate,
+                      // enabled: customdate,
+                      style: const TextStyle(fontSize: 14, color: Colors.black),
+                      onTap: customdate
+                          ? () {
+                              _endDate(context);
+                            }
+                          : null,
+                      readOnly: true,
+                      textInputAction: TextInputAction.next,
+                      textAlignVertical: TextAlignVertical.center,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 10), //Imp Line
+                        isDense: true,
+                        hintText: "To",
+
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: const BorderSide(
+                              width: 0.5,
+                            )),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 42,
+                    // width: 170,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: Colors.grey)),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: chargeType,
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        hint: const Text(
+                          "Charge type",
+                          style: TextStyle(fontSize: 14, color: Colors.black),
+                        ),
+                        items: const [
+                          DropdownMenuItem<String>(
+                            value: 'All',
+                            child: Text('All'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'ACH',
+                            child: Text('ACH'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Card',
+                            child: Text('Card'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Cash',
+                            child: Text('Cash'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: "Cashier's Check",
+                            child: Text("Cashier's Check"),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Check',
+                            child: Text('Check'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Manual',
+                            child: Text('Manual'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Money Order',
+                            child: Text('Money Order'),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            chargeType = value;
+                            // _futureDailytrnsaction = fetchDelinquentTenantsData(
+                            //     fromDate.text, toDate.text,
+                            //     charge: value);
+                          });
+                          // Handle the selected charge type
+                          print(value);
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                if (showTableData)
+                  Expanded(
+                    child: SizedBox(
+                      //  width: 100,
+                      height: 42,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: blueColor,
+                        ),
+                        onPressed: () {},
+                        child: PopupMenuButton<String>(
+                          onSelected: (value) async {
+                            // Export logic
+                            if (value == 'PDF' && data != null) {
+                              print('pdf');
+                              generateDelinquentTenantsPdf(data);
+                            } else if (value == 'XLSX' && data != null) {
+                              print('XLSX');
+                              generateRentalOwnerReportExcel(data);
+                              //generateDelinquentTenantsExcel(data);
+                            } else if (value == 'CSV' && data != null) {
+                              print('CSV');
+                              generateRentalOwnerReportCsv(data);
+                              //  generateDelinquentTenantsCsv(data);
+                            }
+                          },
+                          itemBuilder: (BuildContext context) =>
+                              <PopupMenuEntry<String>>[
+                            const PopupMenuItem<String>(
+                                value: 'PDF', child: Text('PDF')),
+                            const PopupMenuItem<String>(
+                                value: 'XLSX', child: Text('XLSX')),
+                            const PopupMenuItem<String>(
+                                value: 'CSV', child: Text('CSV')),
+                          ],
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('Export'),
+                              Icon(Icons.arrow_drop_down),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Spacer(),
                 Expanded(
                   child: SizedBox(
                     //  width: 100,
@@ -3168,83 +3202,29 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: blueColor,
                       ),
-                      onPressed: () {},
-                      child: PopupMenuButton<String>(
-                        onSelected: (value) async {
-                          // Export logic
-                          if (value == 'PDF' && data != null) {
-                            print('pdf');
-                            generateDelinquentTenantsPdf(data);
-                          } else if (value == 'XLSX' && data != null) {
-                            print('XLSX');
-                            generateRentalOwnerReportExcel(data);
-                            //generateDelinquentTenantsExcel(data);
-                          } else if (value == 'CSV' && data != null) {
-                            print('CSV');
-                            generateRentalOwnerReportCsv(data);
-                            //  generateDelinquentTenantsCsv(data);
-                          }
-                        },
-                        itemBuilder: (BuildContext context) =>
-                            <PopupMenuEntry<String>>[
-                          const PopupMenuItem<String>(
-                              value: 'PDF', child: Text('PDF')),
-                          const PopupMenuItem<String>(
-                              value: 'XLSX', child: Text('XLSX')),
-                          const PopupMenuItem<String>(
-                              value: 'CSV', child: Text('CSV')),
+                      onPressed: () async {
+                        setState(() {
+                          showTableData =
+                              true; // Set to true when the button is pressed
+                        });
+                        _futureDailytrnsaction = fetchDelinquentTenantsData(
+                            formatDate(fromDate.text),
+                            formatDate(toDate.text)); // Call the API
+                      },
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Run'),
                         ],
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text('Export'),
-                            Icon(Icons.arrow_drop_down),
-                          ],
-                        ),
                       ),
                     ),
                   ),
                 )
-            ],
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Spacer(),
-              Expanded(
-                child: SizedBox(
-                  //  width: 100,
-                  height: 42,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: blueColor,
-                    ),
-                    onPressed: () async {
-                      setState(() {
-                        showTableData =
-                            true; // Set to true when the button is pressed
-                      });
-                      _futureDailytrnsaction = fetchDelinquentTenantsData(
-                          _convertToApiFormat(fromDate.text),
-                          _convertToApiFormat(toDate.text)); // Call the API
-                    },
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('Run'),
-                      ],
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

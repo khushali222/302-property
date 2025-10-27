@@ -84,9 +84,30 @@ class Emailss {
     leaseId = json['lease_id'];
     rentalAddress = json['rentalAddress'];
     from = json['from'];
-    to = json['to'].cast<String>() ?? [];
-    accepted = json['accepted'].cast<String>() ?? [];
-    rejected = json['rejected'].cast<String>() ?? [];
+    if (json['to'] != null) {
+      to = (json['to'] as List)
+          .where((item) => item != null)
+          .cast<String>()
+          .toList();
+    } else {
+      to = [];
+    }
+    if (json['accepted'] != null) {
+      accepted = (json['accepted'] as List)
+          .where((item) => item != null)
+          .cast<String>()
+          .toList();
+    } else {
+      accepted = [];
+    }
+    if (json['rejected'] != null) {
+      rejected = (json['rejected'] as List)
+          .where((item) => item != null)
+          .cast<String>()
+          .toList();
+    } else {
+      rejected = [];
+    }
     subject = json['subject'];
     body = json['body'];
     sendByAdmin = json['send_by_admin'];

@@ -74,9 +74,16 @@ class Setting2 {
   String id;
   String adminId;
   String latefeeId;
-
   String duration;
   String late_fee;
+  String createdAt;
+  String updatedAt;
+  bool isDelete;
+  int v;
+  String calculationType;
+  String chargeAccount;
+  String description;
+  int graceBalance;
 
   Setting2({
     required this.id,
@@ -84,6 +91,14 @@ class Setting2 {
     required this.latefeeId,
     required this.duration,
     required this.late_fee,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.isDelete,
+    required this.v,
+    required this.calculationType,
+    required this.chargeAccount,
+    required this.description,
+    required this.graceBalance,
   });
 
   factory Setting2.fromJson(Map<String, dynamic> json) {
@@ -93,7 +108,33 @@ class Setting2 {
       latefeeId: json['latefee_id'],
       duration: json['duration'].toString(),
       late_fee: json['late_fee'].toString(),
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
+      isDelete: json['is_delete'],
+      v: json['__v'],
+      calculationType: json['calculation_type'] ?? '',
+      chargeAccount: json['charge_account'] ?? '',
+      description: json['description'] ?? '',
+      graceBalance: json['grace_balance'] ?? 0,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'admin_id': adminId,
+      'latefee_id': latefeeId,
+      'duration': duration,
+      'late_fee': late_fee,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+      'is_delete': isDelete,
+      '__v': v,
+      'calculation_type': calculationType,
+      'charge_account': chargeAccount,
+      'description': description,
+      'grace_balance': graceBalance,
+    };
   }
 }
 

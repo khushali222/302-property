@@ -8,6 +8,8 @@ import 'package:share_plus/share_plus.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:provider/provider.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/Recurring_Payments_Configuration_model.dart';
@@ -29,10 +31,12 @@ class Recurring_Payments_Configuration_Report extends StatefulWidget {
   const Recurring_Payments_Configuration_Report({super.key});
 
   @override
-  State<Recurring_Payments_Configuration_Report> createState() => _Recurring_Payments_Configuration_ReportState();
+  State<Recurring_Payments_Configuration_Report> createState() =>
+      _Recurring_Payments_Configuration_ReportState();
 }
 
-class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Payments_Configuration_Report> {
+class _Recurring_Payments_Configuration_ReportState
+    extends State<Recurring_Payments_Configuration_Report> {
   Recurring_Payments_Configuration? recurringPaymentsConfiguration;
   bool isLoading = true;
   String? errorMessage;
@@ -43,6 +47,7 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
     super.initState();
     fetchRecurringPaymentConfiguration();
   }
+
   Future<void> fetchRecurringPaymentConfiguration() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -50,7 +55,8 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
       String? token = prefs.getString('token');
       String? id = prefs.getString("staff_id");
       final response = await http.get(
-        Uri.parse('$Api_url/api/recurring-cards/recurring-payment-configuration/$adminId'),
+        Uri.parse(
+            '$Api_url/api/recurring-cards/recurring-payment-configuration/$adminId'),
         headers: {
           "authorization": "CRM $token",
           "id": "CRM $id",
@@ -75,6 +81,7 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
       });
     }
   }
+
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
@@ -104,19 +111,17 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
             ),
             Expanded(
               child: GestureDetector(
-
                 child: Padding(
                   padding: const EdgeInsets.only(left: 0),
                   child: Row(
                     children: [
                       width < 400
                           ? const Text("Property",
-                          style: TextStyle(color: Colors.white))
+                              style: TextStyle(color: Colors.white))
                           : const Text("Property",
-                          style: TextStyle(color: Colors.white)),
+                              style: TextStyle(color: Colors.white)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
-
                     ],
                   ),
                 ),
@@ -124,486 +129,596 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
             ),
             Expanded(
               child: GestureDetector(
-
                 child: Padding(
                   padding: const EdgeInsets.only(left: 0),
                   child: Row(
                     children: [
                       width < 400
                           ? const Text("Lease End Date",
-                          style: TextStyle(color: Colors.white))
+                              style: TextStyle(color: Colors.white))
                           : const Text("Lease End Date",
-                          style: TextStyle(color: Colors.white)),
+                              style: TextStyle(color: Colors.white)),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
-
                     ],
                   ),
                 ),
               ),
             ),
-
-
           ],
         ),
       ),
     );
   }
+
   Set<int> expandedIndices = {};
   int totalDisplayData = 0;
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
         appBar: widget_302_Staff.App_Bar(context: context),
         drawer: CustomDrawerStaff(
           currentpage: "Reports",
           dropdown: false,
         ),
-      body: isLoading
-          ?  Center(
-          child: SpinKitFadingCircle(
-            color: Colors.black,
-            size: 40.0,
-          ))
-          : errorMessage != null
-          ? Center(child: Text(errorMessage!, style: const TextStyle(color: Colors.red)))
-          : recurringPaymentsConfiguration == null ||
-          recurringPaymentsConfiguration!.data!.isEmpty
-          ? const Center(child: Text("No Data Available"))
-          :
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 16),
-                titleBar(
-                  title: 'Recurring Payments Configuration',
-                  width: MediaQuery.of(context).size.width * .91,
-                  size: 18,
-
-                ),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        flex: 4,
-                        child: Row(
+        body: isLoading
+            ? Center(
+                child: SpinKitFadingCircle(
+                color: Colors.black,
+                size: 40.0,
+              ))
+            : errorMessage != null
+                ? Center(
+                    child: Text(errorMessage!,
+                        style: const TextStyle(color: Colors.red)))
+                : recurringPaymentsConfiguration == null ||
+                        recurringPaymentsConfiguration!.data!.isEmpty
+                    ? const Center(child: Text("No Data Available"))
+                    : SingleChildScrollView(
+                        child: Column(
                           children: [
-                            Material(
-                              elevation: 3,
-                              borderRadius: BorderRadius.circular(8),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10),
-                                // height: 40,
-                                height: MediaQuery.of(context).size.width < 500
-                                    ? 45
-                                    : 50,
-                                width: MediaQuery.of(context).size.width < 500
-                                    ? MediaQuery.of(context).size.width * .5
-                                    : MediaQuery.of(context).size.width * .4,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                  border:
-                                  Border.all(color: const Color(0xFF8A95A8)),
-                                ),
-                                child: TextField(
-                                  onChanged: (value) {
-                                    setState(() {
-                                     // searchvalue = value;
-                                    });
-                                  },
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: "Search here...",
-                                    hintStyle: TextStyle(color: Color(0xFF8A95A8)),
-                                    contentPadding: EdgeInsets.all(11),
-                                  ),
+                            const SizedBox(height: 16),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0, vertical: 8.0),
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    left:
+                                        MediaQuery.of(context).size.width > 500
+                                            ? 12
+                                            : 0,
+                                    right:
+                                        MediaQuery.of(context).size.width > 500
+                                            ? 12
+                                            : 0),
+                                child: titleBar(
+                                  width: double.infinity,
+                                  title: "Recurring Payments Configuration",
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(width: 5,),
-                      Expanded(flex: 3,
-                        child: SizedBox(
-                          //  width: 100,
-                          height: 42,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: blueColor,
-                            ),
-                            onPressed: () {},
-                            child: PopupMenuButton<String>(
-                              onSelected: (value) async {
-                                // Export logic
-                                if (value == 'PDF') {
-                                  print('pdf');
-                                  generateAccountTotalReportPdf();
-                                }
-                                else  if (value == 'XLSX') {
-                                  print('pdf');
-                                  generateRecurringPaymentExcel(recurringPaymentsConfiguration!.data!);
-                                }
-                                else if(value == 'CSV'){
-                                  generateRecurringPaymentCsv(recurringPaymentsConfiguration!.data!);
-                                }
-                              },
-                              itemBuilder: (BuildContext context) =>
-                              <PopupMenuEntry<String>>[
-                                const PopupMenuItem<String>(
-                                    value: 'PDF', child: Text('PDF')),
-                                const PopupMenuItem<String>(
-                                    value: 'XLSX', child: Text('XLSX')),
-                                const PopupMenuItem<String>(
-                                    value: 'CSV', child: Text('CSV')),
-                              ],
+                            const SizedBox(height: 10),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 16,
+                                  right: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 16),
                               child: Row(
-                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('Export'),
-                                  Icon(Icons.arrow_drop_down),
+                                  Expanded(
+                                    flex: 4,
+                                    child: Row(
+                                      children: [
+                                        Material(
+                                          elevation: 3,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10),
+                                            // height: 40,
+                                            height: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? 45
+                                                : 50,
+                                            width: MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    500
+                                                ? MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .5
+                                                : MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .4,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                  color:
+                                                      const Color(0xFF8A95A8)),
+                                            ),
+                                            child: TextField(
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  // searchvalue = value;
+                                                });
+                                              },
+                                              decoration: const InputDecoration(
+                                                border: InputBorder.none,
+                                                hintText: "Search here...",
+                                                hintStyle: TextStyle(
+                                                    color: Color(0xFF8A95A8)),
+                                                contentPadding:
+                                                    EdgeInsets.all(11),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: SizedBox(
+                                      //  width: 100,
+                                      height: 42,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: blueColor,
+                                        ),
+                                        onPressed: () {},
+                                        child: PopupMenuButton<String>(
+                                          onSelected: (value) async {
+                                            // Export logic
+                                            if (value == 'PDF') {
+                                              print('pdf');
+                                              generateAccountTotalReportPdf();
+                                            } else if (value == 'XLSX') {
+                                              print('pdf');
+                                              generateRecurringPaymentExcel(
+                                                  recurringPaymentsConfiguration!
+                                                      .data!);
+                                            } else if (value == 'CSV') {
+                                              generateRecurringPaymentCsv(
+                                                  recurringPaymentsConfiguration!
+                                                      .data!);
+                                            }
+                                          },
+                                          itemBuilder: (BuildContext context) =>
+                                              <PopupMenuEntry<String>>[
+                                            const PopupMenuItem<String>(
+                                                value: 'PDF',
+                                                child: Text('PDF')),
+                                            const PopupMenuItem<String>(
+                                                value: 'XLSX',
+                                                child: Text('XLSX')),
+                                            const PopupMenuItem<String>(
+                                                value: 'CSV',
+                                                child: Text('CSV')),
+                                          ],
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text('Export'),
+                                              Icon(Icons.arrow_drop_down),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
                                 ],
                               ),
                             ),
-                          ),
+                            const SizedBox(height: 10),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 23,
+                                  right: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 23),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Grand Total",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: greyColor),
+                                  ),
+                                  Text(
+                                    "\$${recurringPaymentsConfiguration!.grandTotal}",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: greyColor),
+                                  )
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 16,
+                                  right: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 16),
+                              child: _buildHeaders(),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 16,
+                                  right: MediaQuery.of(context).size.width > 500
+                                      ? 25
+                                      : 16),
+                              child: Column(
+                                children: recurringPaymentsConfiguration!.data!
+                                    .asMap()
+                                    .entries
+                                    .map((leaseData) {
+                                  int rowIndex = leaseData.key;
+                                  var leasesData = leaseData.value;
+
+                                  return Column(
+                                      children: leasesData!.leases!
+                                          .asMap()
+                                          .entries
+                                          .map((lease) {
+                                    int LeaserowIndex = lease.key;
+                                    var payment = lease.value;
+
+                                    bool isRowExpanded = expandedRowIndex ==
+                                        "${rowIndex}${LeaserowIndex}";
+                                    totalDisplayData++;
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        color: totalDisplayData % 2 == 0
+                                            ? Colors.white
+                                            : blueColor.withOpacity(0.09),
+                                        border: Border.all(
+                                            color: Color.fromRGBO(
+                                                152, 162, 179, .5)),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          ListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            title: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(2.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        if (expandedRowIndex ==
+                                                            "${rowIndex}${LeaserowIndex}") {
+                                                          expandedRowIndex =
+                                                              null;
+                                                        } else {
+                                                          expandedRowIndex =
+                                                              "${rowIndex}${LeaserowIndex}";
+                                                        }
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              left: 5,
+                                                              right: 5),
+                                                      padding: !isRowExpanded
+                                                          ? const EdgeInsets
+                                                              .only(bottom: 10)
+                                                          : const EdgeInsets
+                                                              .only(top: 10),
+                                                      child: FaIcon(
+                                                        isRowExpanded
+                                                            ? FontAwesomeIcons
+                                                                .sortUp
+                                                            : FontAwesomeIcons
+                                                                .sortDown,
+                                                        size: 20,
+                                                        color: isRowExpanded
+                                                            ? blueColor
+                                                            : blueColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 3,
+                                                    child: GestureDetector(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          if (expandedRowIndex ==
+                                                              "${rowIndex}${LeaserowIndex}") {
+                                                            expandedRowIndex =
+                                                                null;
+                                                          } else {
+                                                            expandedRowIndex =
+                                                                "${rowIndex}${LeaserowIndex}";
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Text(
+                                                        '${payment.rentalAdress ?? '-'}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 14,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 3,
+                                                    child: Text(
+                                                      '  ${payment.endDate != null ? dateProvider.formatCurrentDate(payment.endDate!) : '-'}',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          if (isRowExpanded)
+                                            Column(
+                                              children: payment.tenants!
+                                                  .where((recurruing) =>
+                                                      recurruing
+                                                          .recurrings!.length >
+                                                      0)
+                                                  .toList()!
+                                                  .asMap()
+                                                  .entries
+                                                  .map((tenantEntry) {
+                                                int tenantIndex =
+                                                    tenantEntry.key;
+                                                var tenant = tenantEntry.value;
+                                                bool isTenantExpanded =
+                                                    expandedTenantIndex[
+                                                            "${rowIndex}${LeaserowIndex}"] ==
+                                                        tenantIndex.toString();
+                                                return Column(
+                                                  children: [
+                                                    Divider(
+                                                      color: blueColor,
+                                                      thickness: 1,
+                                                    ),
+                                                    ListTile(
+                                                      contentPadding:
+                                                          EdgeInsets.zero,
+                                                      title: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(2.0),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: <Widget>[
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  if (expandedTenantIndex[
+                                                                          "${rowIndex}${LeaserowIndex}"] ==
+                                                                      tenantIndex
+                                                                          .toString()) {
+                                                                    expandedTenantIndex[
+                                                                            "${rowIndex}${LeaserowIndex}"] =
+                                                                        null;
+                                                                  } else {
+                                                                    expandedTenantIndex[
+                                                                            "${rowIndex}${LeaserowIndex}"] =
+                                                                        tenantIndex
+                                                                            .toString();
+                                                                  }
+                                                                });
+                                                              },
+                                                              child: Container(
+                                                                margin:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            5),
+                                                                padding: !isTenantExpanded
+                                                                    ? const EdgeInsets
+                                                                        .only(
+                                                                        bottom:
+                                                                            10)
+                                                                    : const EdgeInsets
+                                                                        .only(
+                                                                        top:
+                                                                            10),
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                          left:
+                                                                              24),
+                                                                  child: FaIcon(
+                                                                    isTenantExpanded
+                                                                        ? FontAwesomeIcons
+                                                                            .sortUp
+                                                                        : FontAwesomeIcons
+                                                                            .sortDown,
+                                                                    size: 20,
+                                                                    color:
+                                                                        blueColor,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                                width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    .02),
+                                                            Expanded(
+                                                              child: RichText(
+                                                                  text: TextSpan(
+                                                                      children: [
+                                                                    TextSpan(
+                                                                      text:
+                                                                          'Tenant ${tenantIndex + 1} ',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color:
+                                                                            grey,
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                        fontSize:
+                                                                            14,
+                                                                      ),
+                                                                    ),
+                                                                    TextSpan(
+                                                                      text:
+                                                                          ': ${tenant.tenantName ?? '-'}',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color:
+                                                                            blueColor,
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                        fontSize:
+                                                                            14,
+                                                                      ),
+                                                                    ),
+                                                                  ])),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    if (isTenantExpanded)
+                                                      Column(
+                                                        children: tenant
+                                                            .recurrings!
+                                                            .asMap()
+                                                            .entries
+                                                            .map((entry) {
+                                                          var recurring =
+                                                              entry.value;
+                                                          return Column(
+                                                            children: [
+                                                              Divider(
+                                                                color:
+                                                                    blueColor,
+                                                              ),
+                                                              ListTile(
+                                                                contentPadding:
+                                                                    EdgeInsets
+                                                                        .zero,
+                                                                title: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(
+                                                                          2.0),
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .start,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
+                                                                    children: <Widget>[
+                                                                      Expanded(
+                                                                          flex:
+                                                                              1,
+                                                                          child:
+                                                                              Text("")),
+                                                                      Expanded(
+                                                                          flex:
+                                                                              2,
+                                                                          child:
+                                                                              Text(
+                                                                            "Date: ${recurring.date != null ? dateProvider.formatCurrentDate(DateTime.fromMillisecondsSinceEpoch(recurring.date! * 1000).toString()) : ""}",
+                                                                            style:
+                                                                                TextStyle(fontSize: 14, color: blueColor),
+                                                                          )),
+                                                                      Expanded(
+                                                                          flex:
+                                                                              5,
+                                                                          child:
+                                                                              Text(
+                                                                            "    ${recurring.account}",
+                                                                            style:
+                                                                                TextStyle(fontSize: 14, color: blueColor),
+                                                                          )),
+                                                                      Expanded(
+                                                                          flex:
+                                                                              3,
+                                                                          child:
+                                                                              Text(
+                                                                            "\$${recurring.amount}",
+                                                                            style:
+                                                                                TextStyle(fontSize: 14, color: blueColor),
+                                                                          )),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          );
+                                                        }).toList(),
+                                                      ),
+                                                  ],
+                                                );
+                                              }).toList(),
+                                            ),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList());
+                                }).toList(),
+                              ),
+                            )
+                          ],
                         ),
-                      )
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Padding(padding: EdgeInsets.symmetric(horizontal: 23),child:
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                  Text("Grand Total",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,color: greyColor),),
-                  Text("\$${recurringPaymentsConfiguration!.grandTotal}",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,color: greyColor),)
-                ],),),
-
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: _buildHeaders(),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    children: recurringPaymentsConfiguration!.data!.asMap().entries.map((leaseData){
-                      int rowIndex = leaseData.key;
-                      var leasesData = leaseData.value;
-
-                      return Column(
-                        children: leasesData!.leases!.asMap().entries.map((lease){
-                          int LeaserowIndex = lease.key;
-                          var payment = lease.value;
-
-                          bool isRowExpanded =
-                              expandedRowIndex == "${rowIndex}${LeaserowIndex}";
-                          totalDisplayData++;
-                           return Container(
-                              decoration: BoxDecoration(
-                              color: totalDisplayData % 2 == 0
-                              ? Colors.white
-                              : blueColor.withOpacity(0.09),
-                          border: Border.all(
-                          color: Color.fromRGBO(
-                          152, 162, 179, .5)),),
-                             child: Column(
-                               children: [
-                                 ListTile(
-                                   contentPadding: EdgeInsets.zero,
-                                   title: Padding(
-                                     padding:
-                                     const EdgeInsets.all(2.0),
-                                     child: Row(
-                                       mainAxisAlignment:
-                                       MainAxisAlignment.start,
-                                       crossAxisAlignment:
-                                       CrossAxisAlignment.center,
-                                       children: <Widget>[
-                                         GestureDetector(
-                                           onTap: () {
-                                             setState(() {
-                                               if (expandedRowIndex ==
-                                                   "${rowIndex}${LeaserowIndex}") {
-                                                 expandedRowIndex =
-                                                 null;
-                                               } else {
-                                                 expandedRowIndex =
-                                                 "${rowIndex}${LeaserowIndex}";
-                                               }
-                                             });
-                                           },
-                                           child: Container(
-                                             margin: const EdgeInsets
-                                                 .only(
-                                                 left: 5, right: 5),
-                                             padding: !isRowExpanded
-                                                 ? const EdgeInsets
-                                                 .only(
-                                                 bottom: 10)
-                                                 : const EdgeInsets
-                                                 .only(top: 10),
-                                             child: FaIcon(
-                                               isRowExpanded
-                                                   ? FontAwesomeIcons
-                                                   .sortUp
-                                                   : FontAwesomeIcons
-                                                   .sortDown,
-                                               size: 20,
-                                               color: isRowExpanded
-                                                   ? blueColor
-                                                   : blueColor,
-                                             ),
-                                           ),
-                                         ),
-                                         Expanded(
-                                           flex: 3,
-                                           child: GestureDetector(
-                                             onTap: () {
-                                               setState(() {
-                                                 if (expandedRowIndex ==
-                                                     "${rowIndex}${LeaserowIndex}") {
-                                                   expandedRowIndex =
-                                                   null;
-                                                 } else {
-                                                   expandedRowIndex =
-                                                       "${rowIndex}${LeaserowIndex}";
-                                                 }
-                                               });
-
-                                             },
-                                             child: Text(
-                                               '${payment.rentalAdress ?? '-'}',
-                                               style: TextStyle(
-                                                 color: blueColor,
-                                                 fontWeight:
-                                                 FontWeight.bold,
-                                                 fontSize: 14,
-                                               ),
-                                             ),
-                                           ),
-                                         ),
-
-
-                                         Expanded(
-                                           flex: 3,
-                                           child: Text(
-                                             '  ${ payment.endDate ?? '-'}',
-                                             style: TextStyle(
-                                               color: blueColor,
-                                               fontWeight:
-                                               FontWeight.bold,
-                                               fontSize: 14,
-                                             ),
-                                           ),
-                                         ),
-                                         SizedBox(
-                                           width: 5,
-                                         ),
-                                       ],
-                                     ),
-                                   ),
-                                 ),
-                                 if(isRowExpanded)
-                                 Column(
-                                 children: payment.tenants!.where((recurruing)=>recurruing.recurrings!.length >0).toList()!.asMap().entries.map((tenantEntry){
-                                   int tenantIndex =
-                                       tenantEntry.key;
-                                   var tenant =
-                                       tenantEntry.value;
-                                   bool isTenantExpanded =
-                                       expandedTenantIndex[
-                                       "${rowIndex}${LeaserowIndex}"] ==
-                                           tenantIndex.toString();
-                                   return Column(
-                                     children: [
-                                       Divider(
-                                         color: blueColor,
-                                         thickness: 1,
-                                       ),
-                                       ListTile(
-                                         contentPadding:
-                                         EdgeInsets.zero,
-                                         title: Padding(
-                                           padding:
-                                           const EdgeInsets
-                                               .all(2.0),
-                                           child: Row(
-                                             mainAxisAlignment:
-                                             MainAxisAlignment
-                                                 .start,
-                                             crossAxisAlignment:
-                                             CrossAxisAlignment
-                                                 .center,
-                                             children: <Widget>[
-                                               GestureDetector(
-                                                 onTap: () {
-                                                   setState(() {
-                                                     if (expandedTenantIndex[
-                                                     "${rowIndex}${LeaserowIndex}"] ==
-                                                         tenantIndex.toString()) {
-                                                       expandedTenantIndex[
-                                                       "${rowIndex}${LeaserowIndex}"] =
-                                                       null;
-                                                     } else {
-                                                       expandedTenantIndex[
-                                                       "${rowIndex}${LeaserowIndex}"] =
-                                                           tenantIndex.toString();
-                                                     }
-                                                   });
-                                                 },
-                                                 child:
-                                                 Container(
-                                                   margin:
-                                                   const EdgeInsets
-                                                       .only(
-                                                       left:
-                                                       5),
-                                                   padding: !isTenantExpanded
-                                                       ? const EdgeInsets
-                                                       .only(
-                                                       bottom:
-                                                       10)
-                                                       : const EdgeInsets
-                                                       .only(
-                                                       top:
-                                                       10),
-                                                   child:
-                                                   Padding(
-                                                     padding: const EdgeInsets
-                                                         .only(
-                                                         left:
-                                                         24),
-                                                     child:
-                                                     FaIcon(
-                                                       isTenantExpanded
-                                                           ? FontAwesomeIcons
-                                                           .sortUp
-                                                           : FontAwesomeIcons
-                                                           .sortDown,
-                                                       size: 20,
-                                                       color:
-                                                       blueColor,
-                                                     ),
-                                                   ),
-                                                 ),
-                                               ),
-                                               SizedBox(
-                                                   width: MediaQuery.of(
-                                                       context)
-                                                       .size
-                                                       .width *
-                                                       .02),
-                                               Expanded(
-                                                 child: RichText(
-                                                     text: TextSpan(
-                                                         children: [
-                                                           TextSpan(
-                                                             text:
-                                                             'Tenant ${tenantIndex + 1} ',
-                                                             style:
-                                                             TextStyle(
-                                                               color:
-                                                               grey,
-                                                               fontWeight:
-                                                               FontWeight.w500,
-                                                               fontSize:
-                                                               14,
-                                                             ),
-                                                           ),
-                                                           TextSpan(
-                                                             text:
-                                                             ': ${tenant.tenantName ?? '-'}',
-                                                             style:
-                                                             TextStyle(
-                                                               color:
-                                                               blueColor,
-                                                               fontWeight:
-                                                               FontWeight.bold,
-                                                               fontSize:
-                                                               14,
-                                                             ),
-                                                           ),
-                                                         ])),
-                                               ),
-                                             ],
-                                           ),
-                                         ),
-                                       ),
-                                       if(isTenantExpanded)
-                                       Column(children: tenant.recurrings!.asMap().entries.map((entry){
-                                         var recurring = entry.value;
-                                         return Column(
-                                           children: [
-                                             Divider(
-                                               color: blueColor,
-                                             ),
-                                             ListTile(
-                                               contentPadding:
-                                               EdgeInsets.zero,
-                                               title: Padding(
-                                                 padding:
-                                                 const EdgeInsets
-                                                     .all(2.0),
-                                                 child: Row(
-                                                   mainAxisAlignment:
-                                                   MainAxisAlignment
-                                                       .start,
-                                                   crossAxisAlignment:
-                                                   CrossAxisAlignment
-                                                       .center,
-                                                   children: <Widget>[
-                                                     Expanded(
-                                                         flex: 1,
-                                                         child: Text("")
-                                                     ),
-
-                                                     Expanded(
-                                                         flex: 2,
-                                                         child: Text("Date: ${recurring.date??""}",style: TextStyle(fontSize: 14,color: blueColor),)
-                                                     ),
-                                                     Expanded(
-                                                         flex: 5,
-                                                         child: Text("    ${recurring.account}",style: TextStyle(fontSize: 14,color: blueColor),)
-                                                     ),
-                                                     Expanded(
-                                                         flex: 3,
-                                                         child: Text("\$${recurring.amount}",style: TextStyle(fontSize: 14,color: blueColor),)
-                                                     ),
-                                                   ],
-                                                 ),
-                                               ),
-                                             ),
-                                           ],
-                                         );
-                                       }).toList(),),
-                                     ],
-                                   );
-                                 }).toList(),
-                                                         ),
-                               ],
-                             ),
-                           );
-                        }).toList()
-                      );
-                    }).toList(),
-                  ),
-                )
-              ],
-            ),
-          )
-    );
+                      ));
   }
 
-
-  Future<void> generateAccountTotalReportPdf(
-     ) async {
+  Future<void> generateAccountTotalReportPdf() async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final GetAddressAdminPdfService service = GetAddressAdminPdfService();
     profile? profileData;
 
@@ -652,7 +767,7 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
                     ),
                   ),
                   pw.Text(
-                    'Date : - ${DateFormat('yyyy-MM-dd').format(DateTime.now())}',
+                    'Date : - ${dateProvider.formatCurrentDate(DateTime.now().toString())}',
                     style: pw.TextStyle(
                       fontSize: 14,
                       fontWeight: pw.FontWeight.bold,
@@ -683,8 +798,8 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
                   ),
                   pw.Text(
                     '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
-                        '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
-                        '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
+                    '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
+                    '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
                     style: pw.TextStyle(
                       fontSize: 10,
                       fontWeight: pw.FontWeight.bold,
@@ -717,7 +832,8 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
                   'Account',
                   'Amount'
                 ],
-                data: _generateTableData(recurringPaymentsConfiguration!.data!),
+                data: _generateTableData(
+                    recurringPaymentsConfiguration!.data!, dateProvider),
                 headerStyle: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold, color: PdfColors.white),
                 headerDecoration: pw.BoxDecoration(
@@ -736,10 +852,10 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
                     children: [
                       pw.Text('Grand Total',
                           style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                      pw.Text('\$${recurringPaymentsConfiguration!.grandTotal!.toStringAsFixed(2)}',
+                      pw.Text(
+                          '\$${recurringPaymentsConfiguration!.grandTotal!.toStringAsFixed(2)}',
                           style: pw.TextStyle(fontWeight: pw.FontWeight.bold))
                     ])),
-
           ];
         },
       ),
@@ -750,7 +866,9 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
   }
-  List<List<dynamic>> _generateTableData(List<Data> recurringPayment) {
+
+  List<List<dynamic>> _generateTableData(
+      List<Data> recurringPayment, DateProvider dateProvider) {
     final List<List<dynamic>> tableData = [];
 
     for (int i = 0; i < recurringPayment.length; i++) {
@@ -759,7 +877,7 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
       for (int j = 0; j < (rental.leases?.length ?? 0); j++) {
         var lease = rental.leases![j];
         int tenantCount = 0;
-        bool isFirstTenant =false;
+        bool isFirstTenant = false;
         for (int k = 0; k < (lease.tenants?.length ?? 0); k++) {
           var tenant = lease.tenants![k];
 
@@ -770,18 +888,41 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
             tenantCount = 1;
             print("${lease.rentalAdress} ${k}");
             tableData.add([
-              isFirstTenant ? pw.Text("${lease.rentalAdress ?? ''} ${lease.rentalUnit ?? ''}",
-                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)) : pw.Text(''),
-              isFirstTenant ? pw.Text(lease.endDate ?? "",
-                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)) : pw.Text(''),
+              isFirstTenant
+                  ? pw.Text(
+                      "${lease.rentalAdress ?? ''} ${lease.rentalUnit ?? ''}",
+                      style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold, fontSize: 10))
+                  : pw.Text(''),
+              isFirstTenant
+                  ? pw.Text(
+                      lease.endDate != null
+                          ? dateProvider.formatCurrentDate(lease.endDate!)
+                          : "",
+                      style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold, fontSize: 10))
+                  : pw.Text(''),
               pw.Text(tenant.tenantName ?? "",
-                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-              pw.Text( tenant.recurrings![0].date != null? tenant.recurrings![0].date.toString():"", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-              pw.Text(tenant.recurrings![0].account ?? "", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                  style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold, fontSize: 10)),
+              pw.Text(
+                  tenant.recurrings![0].date != null
+                      ? dateProvider.formatCurrentDate(
+                          DateTime.fromMillisecondsSinceEpoch(
+                                  tenant.recurrings![0].date! * 1000)
+                              .toString())
+                      : "",
+                  style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold, fontSize: 10)),
+              pw.Text(tenant.recurrings![0].account ?? "",
+                  style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold, fontSize: 10)),
               pw.Align(
-                  alignment:  pw.Alignment.centerRight,
-                  child: pw.Text("\$${tenant.recurrings![0].amount?.toString()}" ?? "0", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)))
-              ,
+                  alignment: pw.Alignment.centerRight,
+                  child: pw.Text(
+                      "\$${tenant.recurrings![0].amount?.toString()}" ?? "0",
+                      style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold, fontSize: 10))),
             ]);
 
             // Add remaining recurring payments for the tenant without repeating address, end date, or tenant name
@@ -792,12 +933,24 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
                 "", // Empty property column (avoid repeating address)
                 "", // Empty lease end date column
                 "", // Empty tenant column
-                pw.Text(recurring.date != null? recurring.date.toString():"", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-                pw.Text(recurring.account ?? "", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                pw.Text(
+                    recurring.date != null
+                        ? dateProvider.formatCurrentDate(
+                            DateTime.fromMillisecondsSinceEpoch(
+                                    recurring.date! * 1000)
+                                .toString())
+                        : "",
+                    style: pw.TextStyle(
+                        fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                pw.Text(recurring.account ?? "",
+                    style: pw.TextStyle(
+                        fontWeight: pw.FontWeight.bold, fontSize: 10)),
                 pw.Align(
-                  alignment:  pw.Alignment.centerRight,
-                  child: pw.Text("\$${recurring.amount?.toString()}" ?? "0", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),)
-
+                  alignment: pw.Alignment.centerRight,
+                  child: pw.Text("\$${recurring.amount?.toString()}" ?? "0",
+                      style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                )
               ]);
             }
           }
@@ -805,14 +958,12 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
       }
     }
 
-
-
-
     return tableData;
   }
 
   Future<void> generateRecurringPaymentExcel(
-    List<Data> recurringPayment) async  {
+      List<Data> recurringPayment) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final syncXlsx.Workbook workbook = syncXlsx.Workbook();
     final syncXlsx.Worksheet sheet = workbook.worksheets[0];
 
@@ -831,7 +982,7 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
 
     // Header cell style
     final syncXlsx.Style headerCellStyle =
-    workbook.styles.add('headerCellStyle');
+        workbook.styles.add('headerCellStyle');
     headerCellStyle.bold = true;
     headerCellStyle.backColor = '#5A86D5';
     headerCellStyle.fontColor = '#FFFFFF';
@@ -840,7 +991,7 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
 
     // Currency cell style
     final syncXlsx.Style currencyCellStyle =
-    workbook.styles.add('currencyCellStyle');
+        workbook.styles.add('currencyCellStyle');
     currencyCellStyle.numberFormat = '\$#,##0.00'; // Currency format
     currencyCellStyle.hAlign = syncXlsx.HAlignType.right; // Right-align amounts
 
@@ -859,7 +1010,7 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
       for (int j = 0; j < (rental.leases?.length ?? 0); j++) {
         var lease = rental.leases![j];
         int tenantCount = 0;
-        bool isFirstTenant =false;
+        bool isFirstTenant = false;
         for (int k = 0; k < (lease.tenants?.length ?? 0); k++) {
           var tenant = lease.tenants![k];
 
@@ -873,13 +1024,25 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
                 ? "${lease.rentalAdress ?? ''} ${lease.rentalUnit ?? ''}"
                 : '');
             sheet.getRangeByIndex(rowIndex, 2).setText(isFirstTenant
-                ? lease.endDate ?? ''
+                ? (lease.endDate != null
+                    ? dateProvider.formatCurrentDate(lease.endDate!)
+                    : '')
                 : '');
             sheet.getRangeByIndex(rowIndex, 3).setText(tenant.tenantName ?? '');
-            sheet.getRangeByIndex(rowIndex, 4).setText( tenant.recurrings![0].date != null? tenant.recurrings![0].date.toString():"",);
-            sheet.getRangeByIndex(rowIndex, 5).setText(tenant.recurrings![0].account ?? "");
-            sheet.getRangeByIndex(rowIndex, 6).setNumber(
-                tenant.recurrings![0].amount ?? 0.0);
+            sheet.getRangeByIndex(rowIndex, 4).setText(
+                  tenant.recurrings![0].date != null
+                      ? dateProvider.formatCurrentDate(
+                          DateTime.fromMillisecondsSinceEpoch(
+                                  tenant.recurrings![0].date! * 1000)
+                              .toString())
+                      : "",
+                );
+            sheet
+                .getRangeByIndex(rowIndex, 5)
+                .setText(tenant.recurrings![0].account ?? "");
+            sheet
+                .getRangeByIndex(rowIndex, 6)
+                .setNumber(tenant.recurrings![0].amount ?? 0.0);
             sheet.getRangeByIndex(rowIndex, 6).cellStyle = currencyCellStyle;
 
             rowIndex++;
@@ -891,9 +1054,20 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
               sheet.getRangeByIndex(rowIndex, 1).setText('');
               sheet.getRangeByIndex(rowIndex, 2).setText('');
               sheet.getRangeByIndex(rowIndex, 3).setText('');
-              sheet.getRangeByIndex(rowIndex, 4).setText(recurring.date != null? recurring.date.toString():"",);
-              sheet.getRangeByIndex(rowIndex, 5).setText(recurring.account ?? "");
-              sheet.getRangeByIndex(rowIndex, 6).setNumber(recurring.amount ?? 0.0);
+              sheet.getRangeByIndex(rowIndex, 4).setText(
+                    recurring.date != null
+                        ? dateProvider.formatCurrentDate(
+                            DateTime.fromMillisecondsSinceEpoch(
+                                    recurring.date! * 1000)
+                                .toString())
+                        : "",
+                  );
+              sheet
+                  .getRangeByIndex(rowIndex, 5)
+                  .setText(recurring.account ?? "");
+              sheet
+                  .getRangeByIndex(rowIndex, 6)
+                  .setNumber(recurring.amount ?? 0.0);
               sheet.getRangeByIndex(rowIndex, 6).cellStyle = currencyCellStyle;
               rowIndex++;
             }
@@ -903,7 +1077,9 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
                 ? "${lease.rentalAdress ?? ''} ${lease.rentalUnit ?? ''}"
                 : '');
             sheet.getRangeByIndex(rowIndex, 2).setText(k == 0
-                ? lease.endDate ?? ''
+                ? (lease.endDate != null
+                    ? dateProvider.formatCurrentDate(lease.endDate!)
+                    : '')
                 : '');
             sheet.getRangeByIndex(rowIndex, 3).setText(tenant.tenantName ?? '');
             sheet.getRangeByIndex(rowIndex, 4).setText('');
@@ -915,12 +1091,16 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
       }
     }
     sheet.getRangeByIndex(rowIndex, 1).setText('Grand Total');
-    sheet.getRangeByName('A$rowIndex:E$rowIndex').merge(); // Merge first 5 cells
+    sheet
+        .getRangeByName('A$rowIndex:E$rowIndex')
+        .merge(); // Merge first 5 cells
     sheet.getRangeByIndex(rowIndex, 1).cellStyle.bold = true;
     //sheet.getRangeByIndex(rowIndex, 1).hAlign = syncXlsx.HAlignType.center; // Center align text
 
 // Set Grand Total amount
-    sheet.getRangeByIndex(rowIndex, 6).setText("\$${recurringPaymentsConfiguration!.grandTotal}");
+    sheet
+        .getRangeByIndex(rowIndex, 6)
+        .setText("\$${recurringPaymentsConfiguration!.grandTotal}");
     sheet.getRangeByIndex(rowIndex, 6).cellStyle = currencyCellStyle;
     // sheet.getRangeByIndex(rowIndex, 6).cellStyle = boldAmountStyle; // Apply bold amount style
     final List<int> bytes = workbook.saveAsStream();
@@ -945,8 +1125,8 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
     Fluttertoast.showToast(msg: 'Excel file saved to $path');
   }
 
-
   Future<void> generateRecurringPaymentCsv(List<Data> recurringPayment) async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     // Define headers for CSV
     final List<String> headers = [
       'Property',
@@ -977,13 +1157,25 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
           // If the tenant has recurring payments, add the first recurring row with full details
           if (tenant.recurrings != null && tenant.recurrings!.isNotEmpty) {
             csvBuffer.writeln([
-              isFirstTenant ? "${lease.rentalAdress ?? ''} ${lease.rentalUnit ?? ''}" : '',
-              isFirstTenant ? lease.endDate ?? '' : '',
+              isFirstTenant
+                  ? "${lease.rentalAdress ?? ''} ${lease.rentalUnit ?? ''}"
+                  : '',
+              isFirstTenant
+                  ? (lease.endDate != null
+                      ? dateProvider.formatCurrentDate(lease.endDate!)
+                      : '')
+                  : '',
               tenant.tenantName ?? '',
-              tenant.recurrings![0].date != null? tenant.recurrings![0].date.toString():"",
+              tenant.recurrings![0].date != null
+                  ? dateProvider.formatCurrentDate(
+                      DateTime.fromMillisecondsSinceEpoch(
+                              tenant.recurrings![0].date! * 1000)
+                          .toString())
+                  : "",
               tenant.recurrings![0].account ?? "",
-              "\$${tenant.recurrings![0].amount }"?? 0.0
-            ].map((e) => '"$e"').join(',')); // Wrap each value in quotes to handle special characters
+              "\$${tenant.recurrings![0].amount}" ?? 0.0
+            ].map((e) => '"$e"').join(
+                ',')); // Wrap each value in quotes to handle special characters
 
             grandTotal += tenant.recurrings![0].amount ?? 0.0;
 
@@ -995,9 +1187,14 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
                 '',
                 '',
                 '',
-                recurring.date != null? recurring.date.toString():"",
+                recurring.date != null
+                    ? dateProvider.formatCurrentDate(
+                        DateTime.fromMillisecondsSinceEpoch(
+                                recurring.date! * 1000)
+                            .toString())
+                    : "",
                 recurring.account ?? "",
-                "\$${recurring.amount }"?? 0.0
+                "\$${recurring.amount}" ?? 0.0
               ].map((e) => '"$e"').join(','));
 
               grandTotal += recurring.amount ?? 0.0;
@@ -1005,8 +1202,14 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
           } else {
             // If no recurring payments, just add tenant details without recurring columns
             csvBuffer.writeln([
-              isFirstTenant ? "${lease.rentalAdress ?? ''} ${lease.rentalUnit ?? ''}" : '',
-              isFirstTenant ? lease.endDate ?? '' : '',
+              isFirstTenant
+                  ? "${lease.rentalAdress ?? ''} ${lease.rentalUnit ?? ''}"
+                  : '',
+              isFirstTenant
+                  ? (lease.endDate != null
+                      ? dateProvider.formatCurrentDate(lease.endDate!)
+                      : '')
+                  : '',
               tenant.tenantName ?? '',
               '',
               '',
@@ -1057,6 +1260,4 @@ class _Recurring_Payments_Configuration_ReportState extends State<Recurring_Paym
       msg: 'CSV file saved to $path',
     );
   }
-
-
 }
