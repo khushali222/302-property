@@ -1127,6 +1127,157 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     );
   }
 
+  void _showImageDialog(String imageUrl, int imageIndex) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          child: Container(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header with title and close button
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Preview',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: blueColor,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: blueColor, width: 1),
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          color: blueColor,
+                          size: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                // Image with rounded corners
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    height: 300,
+                    width: 300,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: 300,
+                        width: 300,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.grey[100],
+                        ),
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.error, size: 50, color: Colors.red),
+                              SizedBox(height: 10),
+                              Text('Failed to load image'),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(height: 20),
+                // Action buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: blueColor,
+                        side: BorderSide(color: blueColor, width: 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                      ),
+                      child: Text(
+                        'Back',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: blueColor),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        _updateImageAtIndex(imageIndex);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green[100],
+                        // foregroundColor: Colors.green[800],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                      ),
+                      child: Text(
+                        'Update',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.green),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _updateImageAtIndex(int index) async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickMedia();
+
+    if (image != null) {
+      final File file = File(image.path);
+      setState(() {
+        _images.add(file);
+      });
+
+      // Upload the new image and update the uploaded file names
+      try {
+        String? fileName = await uploadImage(file);
+        if (fileName != null) {
+          setState(() {
+            _uploadedFileNames.add(fileName);
+            _imageUrls[index] = fileName; // Replace the specific image URL
+          });
+        }
+      } catch (e) {
+        print('Image upload failed: $e');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -1201,164 +1352,295 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                           const SizedBox(
                             height: 10,
                           ),
-                          Container(
-                            height: 40,
-                            width: 140,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: blueColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                              ),
-                              onPressed: _images.length >= 10
-                                  ? null // disables the button
-                                  : () async {
-                                      _showImageSourceDialog();
-                                    },
-                              // onPressed: () async {
-                              //   _pickImage().then((_) {
-                              //     setState(
-                              //         () {}); // Rebuild the widget after selecting the image
-                              //   });
-                              // },
-                              child: isLoading
-                                  ? const Center(
-                                      child: SpinKitFadingCircle(
-                                        color: Colors.white,
-                                        size: 20.0,
-                                      ),
-                                    )
-                                  : const Text(
-                                      'Upload here',
-                                      style:
-                                          TextStyle(color: Color(0xFFf7f8f9)),
-                                    ),
-                            ),
-                          ),
                           const SizedBox(
                             height: 10,
                           ),
-                          _imageUrls.isNotEmpty
-                              ? Row(
+                          // Container(
+                          //   height: 40,
+                          //   width: 140,
+                          //   decoration: BoxDecoration(
+                          //     borderRadius: BorderRadius.circular(8.0),
+                          //   ),
+                          //   child: ElevatedButton(
+                          //     style: ElevatedButton.styleFrom(
+                          //       backgroundColor: blueColor,
+                          //       shape: RoundedRectangleBorder(
+                          //         borderRadius: BorderRadius.circular(8.0),
+                          //       ),
+                          //     ),
+                          //     onPressed: _images.length >= 10
+                          //         ? null // disables the button
+                          //         : () async {
+                          //             _showImageSourceDialog();
+                          //           },
+                          //     // onPressed: () async {
+                          //     //   _pickImage().then((_) {
+                          //     //     setState(
+                          //     //         () {}); // Rebuild the widget after selecting the image
+                          //     //   });
+                          //     // },
+                          //     child: isLoading
+                          //         ? const Center(
+                          //             child: SpinKitFadingCircle(
+                          //               color: Colors.white,
+                          //               size: 20.0,
+                          //             ),
+                          //           )
+                          //         : const Text(
+                          //             'Upload here',
+                          //             style:
+                          //                 TextStyle(color: Color(0xFFf7f8f9)),
+                          //           ),
+                          //   ),
+                          // ),
+                          if (_imageUrls.isEmpty)
+                            GestureDetector(
+                              onTap: () {
+                                _showImageSourceDialog();
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.grey.shade300,
+                                      style: BorderStyle.solid),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Column(
                                   children: [
-                                    Expanded(
-                                      child: Container(
-                                        child: Wrap(
-                                          spacing:
-                                              8.0, // Horizontal spacing between items
-                                          runSpacing:
-                                              8.0, // Vertical spacing between rows
-                                          children: List.generate(
-                                            _imageUrls.length,
-                                            (index) {
-                                              bool isMp4 =
-                                                  isVideo(_imageUrls[index]);
-                                              return Container(
-                                                width: 85,
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        const SizedBox(
-                                                            width: 60),
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              _imageUrls
-                                                                  .removeAt(
-                                                                      index);
-                                                            });
-                                                          },
-                                                          child: const Icon(
-                                                            Icons.close,
-                                                            color: Colors.grey,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        isMp4
-                                                            ? Container(
-                                                                height: 80,
-                                                                width: 80,
-                                                                child:
-                                                                    GestureDetector(
-                                                                  onTap: () {
-                                                                    _showVideoDialog(
-                                                                        '$image_url${_imageUrls[index]}');
-                                                                  },
-                                                                  child: Stack(
-                                                                    alignment:
-                                                                        Alignment
-                                                                            .center,
-                                                                    children: [
-                                                                      // Image.file(
-                                                                      // File(snapshot.data!),
-                                                                      // height:80,
-                                                                      // width: 80,
-                                                                      // fit: BoxFit.cover,
-                                                                      // ),
-                                                                      VideoItem(
-                                                                          url:
-                                                                              '$image_url${_imageUrls[index]}'),
-                                                                      const Icon(
-                                                                          Icons
-                                                                              .play_circle_fill,
-                                                                          color: Colors
-                                                                              .white,
-                                                                          size:
-                                                                              40),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              )
-                                                            : Container(
-                                                                child: Image
-                                                                    .network(
-                                                                  "$image_url${_imageUrls[index]}",
-                                                                  height: 80,
-                                                                  width: 80,
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                  errorBuilder:
-                                                                      (context,
-                                                                          error,
-                                                                          stackTrace) {
-                                                                    return const Icon(
-                                                                        Icons
-                                                                            .error); // Placeholder for errors
-                                                                  },
-                                                                ),
-                                                              ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ),
+                                    // Icon(Icons.upload,
+                                    //     size: 40, color: Colors.grey[600]),
+                                    Image.asset(
+                                      'assets/icons/Upload.png',
+                                      height: 50,
+                                      width: 50,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Upload your Photo here',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.grey[700],
                                       ),
                                     ),
+                                    const SizedBox(height: 4),
+                                    const Text(
+                                      'Maximum File Size is 20MB',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.grey),
+                                    ),
+                                    const Text(
+                                      'Supported File Types are .png, .jpeg, .pdf, .csv',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.grey),
+                                    ),
                                   ],
+                                ),
+                              ),
+                            ),
+                          if (_imageUrls.isEmpty)
+                            const SizedBox(
+                              height: 10,
+                            ),
+                          _imageUrls.isNotEmpty
+                              ? Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: Colors.grey.shade300,
+                                        style: BorderStyle.solid),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      if (_imageUrls.length < 10)
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          // crossAxisAlignment: CrossAxisAlignment.end,
+                                          children: [
+                                            GestureDetector(
+                                                onTap: () {
+                                                  _showImageSourceDialog();
+                                                },
+                                                child: Container(
+                                                    height: 20,
+                                                    width: 20,
+                                                    decoration: BoxDecoration(
+                                                      color: blueColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              7),
+                                                    ),
+                                                    child: const Icon(
+                                                      Icons.add,
+                                                      color: Colors.white,
+                                                      size: 15,
+                                                    ))),
+                                          ],
+                                        ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Container(
+                                              //color: Colors.blue,
+                                              child: Wrap(
+                                                spacing:
+                                                    8.0, // Horizontal spacing between items
+                                                runSpacing:
+                                                    8.0, // Vertical spacing between rows
+                                                children: List.generate(
+                                                  _imageUrls.length,
+                                                  (index) {
+                                                    bool isMp4 = isVideo(
+                                                        _imageUrls[index]);
+                                                    return Container(
+                                                      // color: Colors.green,
+                                                      width: 85,
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              const SizedBox(
+                                                                  width: 60),
+                                                              GestureDetector(
+                                                                onTap: () {
+                                                                  setState(() {
+                                                                    _imageUrls
+                                                                        .removeAt(
+                                                                            index);
+                                                                  });
+                                                                },
+                                                                child:
+                                                                    const Icon(
+                                                                  Icons.close,
+                                                                  color: Colors
+                                                                      .grey,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              isMp4
+                                                                  ? Container(
+                                                                      height:
+                                                                          80,
+                                                                      width: 80,
+                                                                      child:
+                                                                          GestureDetector(
+                                                                        onTap:
+                                                                            () {
+                                                                          _showVideoDialog(
+                                                                              '$image_url${_imageUrls[index]}');
+                                                                        },
+                                                                        child:
+                                                                            Stack(
+                                                                          alignment:
+                                                                              Alignment.center,
+                                                                          children: [
+                                                                            // Image.file(
+                                                                            // File(snapshot.data!),
+                                                                            // height:80,
+                                                                            // width: 80,
+                                                                            // fit: BoxFit.cover,
+                                                                            // ),
+                                                                            VideoItem(url: '$image_url${_imageUrls[index]}'),
+                                                                            const Icon(Icons.play_circle_fill,
+                                                                                color: Colors.white,
+                                                                                size: 40),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                  : GestureDetector(
+                                                                      onTap:
+                                                                          () {
+                                                                        _showImageDialog(
+                                                                            "$image_url${_imageUrls[index]}",
+                                                                            index);
+                                                                      },
+                                                                      child:
+                                                                          Stack(
+                                                                        alignment:
+                                                                            Alignment.center,
+                                                                        children: [
+                                                                          Image
+                                                                              .network(
+                                                                            "$image_url${_imageUrls[index]}",
+                                                                            height:
+                                                                                80,
+                                                                            width:
+                                                                                80,
+                                                                            fit:
+                                                                                BoxFit.cover,
+                                                                            errorBuilder: (context,
+                                                                                error,
+                                                                                stackTrace) {
+                                                                              return const Icon(Icons.error);
+                                                                            },
+                                                                          ),
+                                                                          Positioned(
+                                                                            top:
+                                                                                20,
+                                                                            right:
+                                                                                25,
+                                                                            child:
+                                                                                Container(
+                                                                              padding: EdgeInsets.all(4),
+                                                                              decoration: BoxDecoration(
+                                                                                color: Colors.black54,
+                                                                                borderRadius: BorderRadius.circular(15),
+                                                                              ),
+                                                                              child: Icon(
+                                                                                Icons.visibility,
+                                                                                color: Colors.white,
+                                                                                size: 16,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 )
-                              : const Center(
-                                  child: Text("No images selected.")),
+                              : Container(),
                           const SizedBox(
                             height: 10,
                           ),
@@ -3868,6 +4150,150 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
     }
   }
 
+  void _showImageDialog(String imageUrl, int imageIndex) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          child: Container(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header with title and close button
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Preview',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue[800],
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border:
+                              Border.all(color: Colors.blue[800]!, width: 1),
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          color: Colors.blue[800],
+                          size: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                // Image with rounded corners
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    height: 300,
+                    width: 300,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: 300,
+                        width: 300,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.grey[100],
+                        ),
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.error, size: 50, color: Colors.red),
+                              SizedBox(height: 10),
+                              Text('Failed to load image'),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(height: 20),
+                // Action buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.blue[800],
+                        side: BorderSide(color: Colors.blue[800]!, width: 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                      ),
+                      child: Text('Back'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        _updateImageAtIndex(imageIndex);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green[400],
+                        foregroundColor: Colors.green[800],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                      ),
+                      child: Text('Update'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _updateImageAtIndex(int index) async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickMedia();
+
+    if (image != null) {
+      final File file = File(image.path);
+      setState(() {
+        _images.add(file);
+      });
+
+      // Upload the new image and update the uploaded file names
+      try {
+        String? fileName = await uploadImage(file);
+        if (fileName != null) {
+          setState(() {
+            _uploadedFileNames.add(fileName);
+            _imageUrls[index] = fileName; // Replace the specific image URL
+          });
+        }
+      } catch (e) {
+        print('Image upload failed: $e');
+      }
+    }
+  }
+
   List<String> _imageUrls = [];
 
   @override
@@ -3985,91 +4411,254 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                   const SizedBox(
                                     height: 10,
                                   ),
-                                  _imageUrls.isNotEmpty
-                                      ? Row(
+                                  // Container(
+                                  //   height: 50,
+                                  //   width: 150,
+                                  //   decoration: BoxDecoration(
+                                  //     borderRadius: BorderRadius.circular(8.0),
+                                  //   ),
+                                  //   child: ElevatedButton(
+                                  //     style: ElevatedButton.styleFrom(
+                                  //       backgroundColor: blueColor,
+                                  //       shape: RoundedRectangleBorder(
+                                  //         borderRadius:
+                                  //             BorderRadius.circular(8.0),
+                                  //       ),
+                                  //     ),
+                                  //     onPressed: () async {
+                                  //       _showImageSourceDialog();
+                                  //     },
+                                  //     child: isLoading
+                                  //         ? const Center(
+                                  //             child: SpinKitFadingCircle(
+                                  //               color: Colors.white,
+                                  //               size: 55.0,
+                                  //             ),
+                                  //           )
+                                  //         : const Text(
+                                  //             'Upload here',
+                                  //             style: TextStyle(
+                                  //                 color: Color(0xFFf7f8f9)),
+                                  //           ),
+                                  //   ),
+                                  // ),
+                                  if (_imageUrls.isEmpty)
+                                    GestureDetector(
+                                      onTap: () {
+                                        _showImageSourceDialog();
+                                      },
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.all(16),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: Colors.grey.shade300,
+                                              style: BorderStyle.solid),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: Column(
                                           children: [
-                                            Expanded(
-                                              child: Container(
-                                                child: Wrap(
-                                                  spacing:
-                                                      8.0, // Horizontal spacing between items
-                                                  runSpacing:
-                                                      8.0, // Vertical spacing between rows
-                                                  children: List.generate(
-                                                    _imageUrls.length,
-                                                    (index) {
-                                                      return Container(
-                                                        width: 85,
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Row(
-                                                              children: [
-                                                                const SizedBox(
-                                                                    width: 60),
-                                                                GestureDetector(
-                                                                  onTap: () {
-                                                                    setState(
-                                                                        () {
-                                                                      _imageUrls
-                                                                          .removeAt(
-                                                                              index);
-                                                                    });
-                                                                  },
-                                                                  child:
-                                                                      const Icon(
-                                                                    Icons.close,
-                                                                    color: Colors
-                                                                        .grey,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Container(
-                                                                  child: Image
-                                                                      .network(
-                                                                    "$image_url${_imageUrls[index]}",
-                                                                    height: 80,
-                                                                    width: 80,
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                    errorBuilder:
-                                                                        (context,
-                                                                            error,
-                                                                            stackTrace) {
-                                                                      return const Icon(
-                                                                          Icons
-                                                                              .error); // Placeholder for errors
-                                                                    },
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
-                                                ),
+                                            // Icon(Icons.upload,
+                                            //     size: 40, color: Colors.grey[600]),
+                                            Image.asset(
+                                              'assets/icons/Upload.png',
+                                              height: 50,
+                                              width: 50,
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              'Upload your Photo here',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.grey[700],
                                               ),
                                             ),
+                                            const SizedBox(height: 4),
+                                            const Text(
+                                              'Maximum File Size is 20MB',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey),
+                                            ),
+                                            const Text(
+                                              'Supported File Types are .png, .jpeg, .pdf, .csv',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey),
+                                            ),
                                           ],
+                                        ),
+                                      ),
+                                    ),
+                                  if (_imageUrls.isEmpty)
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                  _imageUrls.isNotEmpty
+                                      ? Container(
+                                          width: double.infinity,
+                                          padding: const EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.grey.shade300,
+                                                style: BorderStyle.solid),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              if (_imageUrls.length < 10)
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  // crossAxisAlignment: CrossAxisAlignment.end,
+                                                  children: [
+                                                    GestureDetector(
+                                                        onTap: () {
+                                                          _showImageSourceDialog();
+                                                        },
+                                                        child: Container(
+                                                            height: 20,
+                                                            width: 20,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: blueColor,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          7),
+                                                            ),
+                                                            child: const Icon(
+                                                              Icons.add,
+                                                              color:
+                                                                  Colors.white,
+                                                              size: 15,
+                                                            ))),
+                                                  ],
+                                                ),
+                                              const SizedBox(
+                                                height: 15,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Container(
+                                                      //color: Colors.blue,
+                                                      child: Wrap(
+                                                        spacing:
+                                                            8.0, // Horizontal spacing between items
+                                                        runSpacing:
+                                                            8.0, // Vertical spacing between rows
+                                                        children: List.generate(
+                                                          _imageUrls.length,
+                                                          (index) {
+                                                            return Container(
+                                                              // color: Colors.green,
+                                                              width: 85,
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Row(
+                                                                    children: [
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              60),
+                                                                      GestureDetector(
+                                                                        onTap:
+                                                                            () {
+                                                                          setState(
+                                                                              () {
+                                                                            _imageUrls.removeAt(index);
+                                                                          });
+                                                                        },
+                                                                        child:
+                                                                            const Icon(
+                                                                          Icons
+                                                                              .close,
+                                                                          color:
+                                                                              Colors.grey,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .start,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      GestureDetector(
+                                                                        onTap:
+                                                                            () {
+                                                                          _showImageDialog(
+                                                                              "$image_url${_imageUrls[index]}",
+                                                                              index);
+                                                                        },
+                                                                        child:
+                                                                            Stack(
+                                                                          alignment:
+                                                                              Alignment.center,
+                                                                          children: [
+                                                                            Container(
+                                                                              child: Image.network(
+                                                                                "$image_url${_imageUrls[index]}",
+                                                                                height: 80,
+                                                                                width: 80,
+                                                                                fit: BoxFit.cover,
+                                                                                errorBuilder: (context, error, stackTrace) {
+                                                                                  return const Icon(Icons.error); // Placeholder for errors
+                                                                                },
+                                                                              ),
+                                                                            ),
+                                                                            Positioned(
+                                                                              top: 20,
+                                                                              right: 25,
+                                                                              child: Container(
+                                                                                padding: EdgeInsets.all(4),
+                                                                                decoration: BoxDecoration(
+                                                                                  color: Colors.black54,
+                                                                                  borderRadius: BorderRadius.circular(15),
+                                                                                ),
+                                                                                child: Icon(
+                                                                                  Icons.visibility,
+                                                                                  color: Colors.white,
+                                                                                  size: 16,
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         )
-                                      : const Center(
-                                          child: Text("No images selected.")),
+                                      : Container(),
                                   const SizedBox(
                                     height: 10,
                                   ),

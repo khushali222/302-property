@@ -128,9 +128,9 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                   children: [
                     width < 400
                         ? Text("        Work Order",
-                        style: TextStyle(color: Colors.white))
+                            style: TextStyle(color: Colors.white))
                         : Text("         Work Order",
-                        style: TextStyle(color: Colors.white)),
+                            style: TextStyle(color: Colors.white)),
                     // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     /*ascending1
@@ -424,8 +424,8 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
       child: InkWell(
         onTap: getField != null
             ? () {
-          _sort(getField, columnIndex, !_sortAscending);
-        }
+                _sort(getField, columnIndex, !_sortAscending);
+              }
             : null,
         child: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -468,8 +468,8 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => Workorder_summery(
-                workorder_id: id,
-              )));
+                    workorder_id: id,
+                  )));
         },
         child: Container(
           height: 60,
@@ -612,10 +612,10 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
           onPressed: _currentPage == 0
               ? null
               : () {
-            setState(() {
-              _currentPage--;
-            });
-          },
+                  setState(() {
+                    _currentPage--;
+                  });
+                },
         ),
         Text(
           'Page ${_currentPage + 1} of $numorpages',
@@ -628,15 +628,15 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
             color: (_currentPage + 1) * _rowsPerPage >= _tableData.length
                 ? Colors.grey
                 : Color.fromRGBO(
-                21, 43, 83, 1), // Change color based on availability
+                    21, 43, 83, 1), // Change color based on availability
           ),
           onPressed: (_currentPage + 1) * _rowsPerPage >= _tableData.length
               ? null
               : () {
-            setState(() {
-              _currentPage++;
-            });
-          },
+                  setState(() {
+                    _currentPage++;
+                  });
+                },
         ),
       ],
     );
@@ -756,9 +756,9 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                             child: TextField(
                               style: TextStyle(
                                   fontSize:
-                                  MediaQuery.of(context).size.width < 500
-                                      ? 12
-                                      : 14),
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 12
+                                          : 14),
                               // onChanged: (value) {
                               //   setState(() {
                               //     cvverror = false;
@@ -776,9 +776,9 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                   hintText: "Search here...",
                                   hintStyle: TextStyle(
                                     fontSize:
-                                    MediaQuery.of(context).size.width < 500
-                                        ? 14
-                                        : 18,
+                                        MediaQuery.of(context).size.width < 500
+                                            ? 14
+                                            : 18,
                                     // fontWeight: FontWeight.bold,
                                     color: Color(0xFF8A95A8),
                                   ),
@@ -816,17 +816,17 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                         ),
                         items: items
                             .map((String item) => DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(
-                            item,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ))
+                                  value: item,
+                                  child: Text(
+                                    item,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ))
                             .toList(),
                         value: selectedValue,
                         onChanged: (value) {
@@ -836,7 +836,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                         },
                         buttonStyleData: ButtonStyleData(
                           height:
-                          MediaQuery.of(context).size.width < 500 ? 40 : 50,
+                              MediaQuery.of(context).size.width < 500 ? 40 : 50,
                           // width: 180,
                           width: MediaQuery.of(context).size.width < 500
                               ? MediaQuery.of(context).size.width * .35
@@ -926,12 +926,12 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                       } else if (searchvalue!.isNotEmpty) {
                         data = snapshot.data!
                             .where((property) =>
-                        property.workSubject!
-                            .toLowerCase()
-                            .contains(searchvalue!.toLowerCase()) ||
-                            property.rentalData!.rentalAddress!
-                                .toLowerCase()
-                                .contains(searchvalue!.toLowerCase()))
+                                property.workSubject!
+                                    .toLowerCase()
+                                    .contains(searchvalue!.toLowerCase()) ||
+                                property.rentalData!.rentalAddress!
+                                    .toLowerCase()
+                                    .contains(searchvalue!.toLowerCase()))
                             .toList();
                       } else {
                         if (selectedValue == "Over Due") {
@@ -955,7 +955,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                         } else {
                           data = snapshot.data!
                               .where((property) =>
-                          property.status == selectedValue)
+                                  property.status == selectedValue)
                               .toList();
                         }
                       }
@@ -990,7 +990,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color:
-                                      Color.fromRGBO(152, 162, 179, .5))),
+                                          Color.fromRGBO(152, 162, 179, .5))),
                               child: Column(
                                 children: currentPageData
                                     .asMap()
@@ -1018,9 +1018,9 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                             padding: const EdgeInsets.all(2.0),
                                             child: Row(
                                               mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                                  MainAxisAlignment.start,
                                               crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                                  CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 InkWell(
                                                   onTap: () {
@@ -1051,15 +1051,15 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                         left: 5),
                                                     padding: !isExpanded
                                                         ? EdgeInsets.only(
-                                                        bottom: 10)
+                                                            bottom: 10)
                                                         : EdgeInsets.only(
-                                                        top: 10),
+                                                            top: 10),
                                                     child: FaIcon(
                                                       isExpanded
                                                           ? FontAwesomeIcons
-                                                          .sortUp
+                                                              .sortUp
                                                           : FontAwesomeIcons
-                                                          .sortDown,
+                                                              .sortDown,
                                                       size: 20,
                                                       color: blueColor,
                                                     ),
@@ -1093,14 +1093,14 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                     },
                                                     child: Padding(
                                                       padding:
-                                                      const EdgeInsets.only(
-                                                          left: 8.0),
+                                                          const EdgeInsets.only(
+                                                              left: 8.0),
                                                       child: Text(
                                                         '${workorder.workSubject!}',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
-                                                          FontWeight.bold,
+                                                              FontWeight.bold,
                                                           fontSize: 13,
                                                         ),
                                                       ),
@@ -1109,10 +1109,10 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                 ),
                                                 SizedBox(
                                                     width:
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        .03),
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .03),
                                                 Expanded(
                                                   flex: 3,
                                                   child: Text(
@@ -1120,17 +1120,17 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
-                                                      FontWeight.bold,
+                                                          FontWeight.bold,
                                                       fontSize: 12,
                                                     ),
                                                   ),
                                                 ),
                                                 SizedBox(
                                                     width:
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        .02),
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .02),
                                                 Expanded(
                                                   flex: 2,
                                                   child: Text(
@@ -1139,17 +1139,17 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                     style: TextStyle(
                                                       color: blueColor,
                                                       fontWeight:
-                                                      FontWeight.bold,
+                                                          FontWeight.bold,
                                                       fontSize: 12,
                                                     ),
                                                   ),
                                                 ),
                                                 SizedBox(
                                                     width:
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        .02),
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .02),
                                               ],
                                             ),
                                           ),
@@ -1164,17 +1164,17 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                 children: [
                                                   Row(
                                                     mainAxisAlignment:
-                                                    MainAxisAlignment.start,
+                                                        MainAxisAlignment.start,
                                                     children: [
                                                       FaIcon(
                                                         isExpanded
                                                             ? FontAwesomeIcons
-                                                            .sortUp
+                                                                .sortUp
                                                             : FontAwesomeIcons
-                                                            .sortDown,
+                                                                .sortDown,
                                                         size: 30,
                                                         color:
-                                                        Colors.transparent,
+                                                            Colors.transparent,
                                                       ),
                                                       Expanded(
                                                         child: Table(
@@ -1267,24 +1267,24 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                                 MaterialPageRoute(
                                                                     builder:
                                                                         (context) =>
-                                                                        Workorder_summery(
-                                                                          workorder_id: workorder.workOrderId,
-                                                                        )));
+                                                                            Workorder_summery(
+                                                                              workorder_id: workorder.workOrderId,
+                                                                            )));
                                                           },
                                                           child: Container(
                                                             height: 40,
                                                             decoration:
-                                                            BoxDecoration(
-                                                                color: Colors
-                                                                    .grey[
-                                                                350]),
+                                                                BoxDecoration(
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        350]),
                                                             child: Row(
                                                               mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
+                                                                  MainAxisAlignment
+                                                                      .center,
                                                               crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
+                                                                  CrossAxisAlignment
+                                                                      .center,
                                                               children: [
                                                                 SizedBox(
                                                                   width: 5,
@@ -1292,7 +1292,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                                 Image.asset(
                                                                   'assets/icons/view.png',
                                                                   color:
-                                                                  blueColor,
+                                                                      blueColor,
                                                                 ),
                                                                 // FaIcon(
                                                                 //   FontAwesomeIcons.trashCan,
@@ -1306,12 +1306,12 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                                   "View Summery",
                                                                   style: TextStyle(
                                                                       fontSize:
-                                                                      11,
+                                                                          11,
                                                                       color:
-                                                                      blueColor,
+                                                                          blueColor,
                                                                       fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
+                                                                          FontWeight
+                                                                              .bold),
                                                                 )
                                                               ],
                                                             ),
@@ -1347,7 +1347,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                             horizontal: 12.0),
                                         decoration: BoxDecoration(
                                           border:
-                                          Border.all(color: Colors.grey),
+                                              Border.all(color: Colors.grey),
                                         ),
                                         child: DropdownButtonHideUnderline(
                                           child: DropdownButton<int>(
@@ -1363,7 +1363,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                               setState(() {
                                                 itemsPerPage = newValue!;
                                                 currentPage =
-                                                0; // Reset to first page when items per page change
+                                                    0; // Reset to first page when items per page change
                                               });
                                             },
                                           ),
@@ -1384,10 +1384,10 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                       onPressed: currentPage == 0
                                           ? null
                                           : () {
-                                        setState(() {
-                                          currentPage--;
-                                        });
-                                      },
+                                              setState(() {
+                                                currentPage--;
+                                              });
+                                            },
                                     ),
                                     // IconButton(
                                     //   icon: Icon(Icons.arrow_back),
@@ -1420,10 +1420,10 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                       ),
                                       onPressed: currentPage < totalPages - 1
                                           ? () {
-                                        setState(() {
-                                          currentPage++;
-                                        });
-                                      }
+                                              setState(() {
+                                                currentPage++;
+                                              });
+                                            }
                                           : null,
                                     ),
                                   ],
@@ -1486,12 +1486,12 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                     } else if (searchvalue.isNotEmpty) {
                       _tableData = snapshot.data!
                           .where((property) =>
-                      property.workSubject!
-                          .toLowerCase()
-                          .contains(searchvalue.toLowerCase()) ||
-                          property.rentalData!.rentalAddress!
-                              .toLowerCase()
-                              .contains(searchvalue.toLowerCase()))
+                              property.workSubject!
+                                  .toLowerCase()
+                                  .contains(searchvalue.toLowerCase()) ||
+                              property.rentalData!.rentalAddress!
+                                  .toLowerCase()
+                                  .contains(searchvalue.toLowerCase()))
                           .toList();
                     } else {
                       if (selectedValue == "Over Due") {
@@ -1528,15 +1528,15 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                             scrollDirection: Axis.horizontal,
                             child: Padding(
                               padding:
-                              const EdgeInsets.only(left: 22, right: 22),
+                                  const EdgeInsets.only(left: 22, right: 22),
                               child: Table(
                                 defaultColumnWidth: IntrinsicColumnWidth(),
                                 children: [
                                   TableRow(
                                     decoration: BoxDecoration(
                                       border: Border.all(
-                                        // color: blueColor
-                                      ),
+                                          // color: blueColor
+                                          ),
                                     ),
                                     children: [
                                       // _buildHeader('Actions', 4, null),
@@ -1549,7 +1549,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                     ),
                                     children: List.generate(
                                         7,
-                                            (index) => TableCell(
+                                        (index) => TableCell(
                                             child: Container(height: 20))),
                                   ),
                                   for (var i = 0; i < _pagedData.length; i++)
@@ -1567,9 +1567,9 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                   21, 43, 81, 1)),
                                           bottom: i == _pagedData.length - 1
                                               ? BorderSide(
-                                              width: 2,
-                                              color: Color.fromRGBO(
-                                                  21, 43, 81, 1))
+                                                  width: 2,
+                                                  color: Color.fromRGBO(
+                                                      21, 43, 81, 1))
                                               : BorderSide.none,
                                         ),
                                       ),

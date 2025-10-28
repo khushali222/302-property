@@ -183,7 +183,33 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                               ),
                             ],
                           ),
+                          SizedBox(height: 2),
+                          Row(
+                            children: [
+                              nameerror
+                                  ? Padding(
+                                padding: const EdgeInsets.only(top: 4,left: 3),
+                                child: Container(
+                                  alignment: Alignment
+                                      .centerLeft, // Ensure left alignment
+                                  child: Text(
+                                    namemessage,
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: MediaQuery.of(context)
+                                          .size
+                                          .width *
+                                          0.035,
+                                    ),
+                                  ),
+                                ),
+                              )
+                                  : SizedBox.shrink(),
+
+                            ],
+                          ),
                           SizedBox(height: 8),
+
                           Row(
                             children: [
                               Expanded(
@@ -251,49 +277,25 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                           // SizedBox(height: 6),
                           Row(
                             children: [
-                              Expanded(
-                                child: nameerror
-                                    ? Padding(
-                                        padding: const EdgeInsets.only(top: 4),
-                                        child: Container(
-                                          alignment: Alignment
-                                              .centerLeft, // Ensure left alignment
-                                          child: Text(
-                                            namemessage,
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.035,
-                                            ),
+                              designationerror
+                                  ? Padding(
+                                      padding: const EdgeInsets.only(top: 4,left: 3),
+                                      child: Container(
+                                        alignment: Alignment
+                                            .centerLeft, // Ensure left alignment
+                                        child: Text(
+                                          designationmessage,
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.035,
                                           ),
                                         ),
-                                      )
-                                    : SizedBox.shrink(),
-                              ),
-                              SizedBox(width: 8),
-                              Expanded(
-                                child: designationerror
-                                    ? Padding(
-                                        padding: const EdgeInsets.only(top: 4),
-                                        child: Container(
-                                          alignment: Alignment
-                                              .centerLeft, // Ensure left alignment
-                                          child: Text(
-                                            designationmessage,
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.035,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    : SizedBox.shrink(),
-                              ),
+                                      ),
+                                    )
+                                  : SizedBox.shrink(),
                             ],
                           ),
                         ],
@@ -354,6 +356,32 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                               ),
                             ),
                           ),
+                        ],
+                      ),
+
+                      SizedBox(height: 2),
+                      Row(
+                        children: [
+                          phonenumbererror
+                              ? Padding(
+                            padding: const EdgeInsets.only(top: 4,left: 3),
+                            child: Container(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                phonenumbermessage,
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: MediaQuery.of(context)
+                                      .size
+                                      .width *
+                                      0.035,
+                                ),
+                              ),
+                            ),
+                          )
+                              : SizedBox
+                              .shrink(),
+
                         ],
                       ),
                       SizedBox(height: 8),
@@ -422,49 +450,25 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                           ),
                           Row(
                             children: [
-                              Expanded(
-                                child: phonenumbererror
-                                    ? Padding(
-                                        padding: const EdgeInsets.only(top: 4),
-                                        child: Container(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            phonenumbermessage,
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.035,
-                                            ),
+                              emailerror
+                                  ? Padding(
+                                      padding: const EdgeInsets.only(top: 4,left: 3),
+                                      child: Container(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          emailmessage,
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.035,
                                           ),
                                         ),
-                                      )
-                                    : SizedBox
-                                        .shrink(), // Keeps height consistent when error is absent
-                              ),
-                              SizedBox(width: 8),
-                              Expanded(
-                                child: emailerror
-                                    ? Padding(
-                                        padding: const EdgeInsets.only(top: 4),
-                                        child: Container(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            emailmessage,
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.035,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    : SizedBox
-                                        .shrink(), // Keeps height consistent
-                              ),
+                                      ),
+                                    )
+                                  : SizedBox
+                                      .shrink(),
                             ],
                           ),
                         ],
@@ -532,6 +536,31 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                               ),
                             ),
                           ),
+                        ],
+                      ),
+                      SizedBox(height: 2),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          passworderror
+                              ? Padding(
+                            padding: const EdgeInsets.only(top: 4,left: 3),
+                            child: Container(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                passwordmessage,
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: MediaQuery.of(context)
+                                      .size
+                                      .width *
+                                      0.035,
+                                ),
+                              ),
+                            ),
+                          )
+                              : SizedBox
+                              .shrink(),
                         ],
                       ),
                       SizedBox(height: 8),
@@ -616,49 +645,25 @@ class _Add_staffmemberState extends State<Add_staffmember> {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: passworderror
-                                    ? Padding(
-                                        padding: const EdgeInsets.only(top: 4),
-                                        child: Container(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            passwordmessage,
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.035,
-                                            ),
+                              conpassworderror
+                                  ? Padding(
+                                      padding: const EdgeInsets.only(top: 4,left: 3),
+                                      child: Container(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          conpasswordmessage,
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.035,
                                           ),
                                         ),
-                                      )
-                                    : SizedBox
-                                        .shrink(), // Ensures consistent spacing
-                              ),
-                              SizedBox(width: 8),
-                              Expanded(
-                                child: conpassworderror
-                                    ? Padding(
-                                        padding: const EdgeInsets.only(top: 4),
-                                        child: Container(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            conpasswordmessage,
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.035,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    : SizedBox
-                                        .shrink(), // Ensures consistent spacing
-                              ),
+                                      ),
+                                    )
+                                  : SizedBox
+                                      .shrink(),
                             ],
                           ),
                         ],
